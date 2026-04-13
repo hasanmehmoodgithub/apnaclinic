@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Extensions Guide</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: #2c3e50;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+
+        h2 {
+            color: #34495e;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            padding-top: 15px;
+            border-top: 2px solid #ecf0f1;
+            font-size: 1.6em;
+        }
+
+        h3 {
+            color: #555;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+
+        p {
+            margin-bottom: 15px;
+        }
+
+        ul {
+            margin-left: 30px;
+            margin-bottom: 20px;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        code {
+            background: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            color: #e74c3c;
+        }
+
+        pre {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 20px;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin: 20px 0;
+            border-left: 4px solid #3498db;
+        }
+
+        pre code {
+            background: none;
+            color: #f8f8f2;
+            padding: 0;
+        }
+
+        .info-box {
+            background: #e8f4f8;
+            border-left: 4px solid #3498db;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+
+        .success-box {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+
+        .error-box {
+            background: #f8d7da;
+            border-left: 4px solid #dc3545;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background: #3498db;
+            color: white;
+            font-weight: bold;
+        }
+
+        tr:hover {
+            background: #f5f5f5;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            h1 {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Extensions Guide</h1>
+        
+        <div class="info-box">
+            <strong>What are Extensions?</strong>
+            <p>Extensions add new methods to existing classes without modifying them:</p>
+            <ul>
+                <li><strong>Context Extensions</strong> - Easy access to MediaQuery, screen size, etc.</li>
+                <li><strong>Text Style Extensions</strong> - Responsive text sizing</li>
+                <li><strong>DateTime Extensions</strong> - Date formatting and time ago</li>
+            </ul>
+        </div>
+
+        <h2>🚀 Quick Start</h2>
+
+        <h3>Import Extensions</h3>
+        <pre><code>// Import all extensions
+import 'core/extensions/extensions_export.dart';
+
+// Or import specific extension
+import 'core/extensions/context_extensions.dart';
+import 'core/extensions/text_style_extensions.dart';
+import 'core/extensions/datetime_extensions.dart';</code></pre>
+
+        <h2>📱 Context Extensions</h2>
+
+        <h3>Screen Size</h3>
+        <pre><code>// Get screen dimensions
+final width = context.screenWidth;
+final height = context.screenHeight;
+final size = context.screenSize;
+
+// Check orientation
+if (context.isLandscape) { }
+if (context.isPortrait) { }</code></pre>
+
+        <h3>Responsive Sizing</h3>
+        <pre><code>// Get percentage of screen
+final halfWidth = context.widthPercent(50);  // 50% of screen width
+final quarterHeight = context.heightPercent(25);  // 25% of screen height
+
+// Responsive sizing based on design
+final responsiveWidth = context.responsiveWidth(100);  // Scales from design width
+final responsiveHeight = context.responsiveHeight(50);  // Scales from design height</code></pre>
+
+        <h3>Screen Type</h3>
+        <pre><code>// Check screen size
+if (context.isSmallScreen) { }   // width &lt; 600
+if (context.isMediumScreen) { } // 600 &lt;= width &lt; 1200
+if (context.isLargeScreen) { }   // width &gt;= 1200
+
+// Check device type
+if (context.isPhone) { }   // width &lt; 600
+if (context.isTablet) { } // width &gt;= 600</code></pre>
+
+        <h3>Safe Areas</h3>
+        <pre><code>// Get safe area padding
+final topPadding = context.statusBarHeight;
+final bottomPadding = context.bottomSafeArea;
+final padding = context.padding;
+
+// Check keyboard
+if (context.isKeyboardVisible) { }
+final keyboardHeight = context.keyboardHeight;</code></pre>
+
+        <h3>Complete Example</h3>
+        <pre><code>import 'core/extensions/context_extensions.dart';
+
+class MyWidget extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: context.widthPercent(80),  // 80% of screen width
+      height: context.responsiveHeight(200),  // Responsive height
+      padding: EdgeInsets.only(
+        top: context.statusBarHeight,
+        bottom: context.bottomSafeArea,
+      ),
+      child: Column(
+        children: [
+          if (context.isTablet)
+            Text('Tablet View'),
+          if (context.isPhone)
+            Text('Phone View'),
+        ],
+      ),
+    );
+  }
+}</code></pre>
+
+        <h2>📝 Text Style Extensions</h2>
+
+        <h3>Responsive Text</h3>
+        <pre><code>import 'core/extensions/text_style_extensions.dart';
+
+// Method 1: Using extension on TextStyle
+Text(
+  'Hello',
+  style: TextStyle(fontSize: 16).responsive(
+    context: context,
+    baseSize: 16,
+    minSize: 12,
+    maxSize: 20,
+  ),
+)
+
+// Method 2: Using context extension
+Text(
+  'Hello',
+  style: context.responsiveTextStyle(
+    baseSize: 16,
+    minSize: 12,
+    maxSize: 20,
+    color: Colors.black,
+    fontWeight: FontWeight.bold,
+  ),
+)
+
+// Method 3: Get responsive font size
+Text(
+  'Hello',
+  style: TextStyle(
+    fontSize: context.responsiveFontSize(16, minSize: 12, maxSize: 20),
+  ),
+)</code></pre>
+
+        <h3>Predefined Text Styles</h3>
+        <pre><code>// Small text
+Text('Small', style: context.smallTextStyle)
+
+// Medium text
+Text('Medium', style: context.mediumTextStyle)
+
+// Large text
+Text('Large', style: context.largeTextStyle)
+
+// Extra large text
+Text('Extra Large', style: context.extraLargeTextStyle)</code></pre>
+
+        <h2>📅 DateTime Extensions</h2>
+
+        <h3>Date Formatting</h3>
+        <pre><code>import 'core/extensions/datetime_extensions.dart';
+
+final date = DateTime.now();
+
+// Formatted date
+date.toFormattedDate();      // "Jan 15, 2024"
+date.toShortDate();          // "15/01/2024"
+date.toIsoDate();            // "2024-01-15"
+
+// Time formatting
+date.toTime();               // "14:30"
+date.to12HourTime();         // "02:30 PM"
+
+// Date and time
+date.toFormattedDateTime();  // "Jan 15, 2024 14:30"
+date.toShortDateTime();      // "15/01/2024 14:30"</code></pre>
+
+        <h3>Time Ago</h3>
+        <pre><code>final date = DateTime.now().subtract(Duration(hours: 2));
+
+// Time ago
+date.timeAgo();              // "2 hours ago"
+date.timeAgo(numericDates: false);  // "Today"
+
+// Relative time
+date.relativeTime();         // "2 hours ago" or "in 2 hours"</code></pre>
+
+        <h3>Date Checks</h3>
+        <pre><code>final date = DateTime.now();
+
+// Check date
+date.isToday;      // true
+date.isYesterday;  // false
+date.isTomorrow;   // false
+date.isPast;       // false
+date.isFuture;     // false
+date.isThisWeek;   // true
+date.isThisMonth;  // true
+date.isThisYear;   // true</code></pre>
+
+        <h3>Date Calculations</h3>
+        <pre><code>final date = DateTime.now();
+
+// Get start/end
+date.startOfDay;     // 00:00:00
+date.endOfDay;       // 23:59:59
+date.startOfWeek;    // Monday 00:00:00
+date.endOfWeek;      // Sunday 23:59:59
+date.startOfMonth;   // First day of month
+date.endOfMonth;     // Last day of month
+
+// Add/subtract
+date.addDays(5);           // Add 5 days
+date.subtractDays(3);       // Subtract 3 days
+date.addMonths(2);         // Add 2 months
+date.addYears(1);          // Add 1 year
+
+// Differences
+date.daysDifference(otherDate);
+date.hoursDifference(otherDate);
+date.minutesDifference(otherDate);
+
+// Check if between
+date.isBetween(startDate, endDate);
+
+// Get age
+date.age;  // Age in years</code></pre>
+
+        <h2>✅ Best Practices</h2>
+
+        <h3>1. Use Context Extensions for Responsive Design</h3>
+        <div class="success-box">
+            <strong>✅ Good</strong>
+            <pre><code>Container(
+  width: context.widthPercent(80),
+  padding: EdgeInsets.only(top: context.statusBarHeight),
+)</code></pre>
+        </div>
+        <div class="error-box">
+            <strong>❌ Bad</strong> - Hardcoded
+            <pre><code>Container(
+  width: 300,
+  padding: EdgeInsets.only(top: 50),
+)</code></pre>
+        </div>
+
+        <h3>2. Use Responsive Text for All Devices</h3>
+        <div class="success-box">
+            <strong>✅ Good</strong>
+            <pre><code>Text('Hello', style: context.responsiveTextStyle(baseSize: 16))</code></pre>
+        </div>
+        <div class="error-box">
+            <strong>❌ Bad</strong> - Fixed size
+            <pre><code>Text('Hello', style: TextStyle(fontSize: 16))</code></pre>
+        </div>
+
+        <h3>3. Use DateTime Extensions for Formatting</h3>
+        <div class="success-box">
+            <strong>✅ Good</strong>
+            <pre><code>Text(date.timeAgo())
+Text(date.toFormattedDate())</code></pre>
+        </div>
+        <div class="error-box">
+            <strong>❌ Bad</strong> - Manual formatting
+            <pre><code>Text('${date.day}/${date.month}/${date.year}')</code></pre>
+        </div>
+
+        <h2>📋 Quick Reference</h2>
+
+        <h3>Context Extensions</h3>
+        <table>
+            <tr>
+                <th>Property</th>
+                <th>Description</th>
+            </tr>
+            <tr>
+                <td><code>context.screenWidth</code></td>
+                <td>Screen width</td>
+            </tr>
+            <tr>
+                <td><code>context.screenHeight</code></td>
+                <td>Screen height</td>
+            </tr>
+            <tr>
+                <td><code>context.widthPercent(50)</code></td>
+                <td>50% of screen width</td>
+            </tr>
+            <tr>
+                <td><code>context.isPhone</code></td>
+                <td>Check if phone</td>
+            </tr>
+            <tr>
+                <td><code>context.isTablet</code></td>
+                <td>Check if tablet</td>
+            </tr>
+            <tr>
+                <td><code>context.statusBarHeight</code></td>
+                <td>Status bar height</td>
+            </tr>
+        </table>
+
+        <h3>Text Extensions</h3>
+        <table>
+            <tr>
+                <th>Method</th>
+                <th>Description</th>
+            </tr>
+            <tr>
+                <td><code>context.responsiveTextStyle(baseSize: 16)</code></td>
+                <td>Responsive text style</td>
+            </tr>
+            <tr>
+                <td><code>context.responsiveFontSize(16)</code></td>
+                <td>Responsive font size</td>
+            </tr>
+            <tr>
+                <td><code>context.smallTextStyle</code></td>
+                <td>Small text style</td>
+            </tr>
+            <tr>
+                <td><code>context.mediumTextStyle</code></td>
+                <td>Medium text style</td>
+            </tr>
+        </table>
+
+        <h3>DateTime Extensions</h3>
+        <table>
+            <tr>
+                <th>Method</th>
+                <th>Description</th>
+            </tr>
+            <tr>
+                <td><code>date.toFormattedDate()</code></td>
+                <td>"Jan 15, 2024"</td>
+            </tr>
+            <tr>
+                <td><code>date.timeAgo()</code></td>
+                <td>"2 hours ago"</td>
+            </tr>
+            <tr>
+                <td><code>date.isToday</code></td>
+                <td>Check if today</td>
+            </tr>
+            <tr>
+                <td><code>date.addDays(5)</code></td>
+                <td>Add 5 days</td>
+            </tr>
+        </table>
+
+        <h3>Files</h3>
+        <ul>
+            <li><strong>Context</strong>: <code>lib/core/extensions/context_extensions.dart</code></li>
+            <li><strong>Text Style</strong>: <code>lib/core/extensions/text_style_extensions.dart</code></li>
+            <li><strong>DateTime</strong>: <code>lib/core/extensions/datetime_extensions.dart</code></li>
+            <li><strong>Export</strong>: <code>lib/core/extensions/extensions_export.dart</code></li>
+        </ul>
+
+        <h2>🎯 Summary</h2>
+        <div class="success-box">
+            <ol>
+                <li><strong>Import</strong>: <code>import 'core/extensions/extensions_export.dart';</code></li>
+                <li><strong>Use Context</strong>: <code>context.screenWidth</code>, <code>context.widthPercent(50)</code></li>
+                <li><strong>Use Responsive Text</strong>: <code>context.responsiveTextStyle(baseSize: 16)</code></li>
+                <li><strong>Use DateTime</strong>: <code>date.timeAgo()</code>, <code>date.toFormattedDate()</code></li>
+                <li><strong>Keep it Simple</strong>: Extensions make code cleaner and easier to read</li>
+            </ol>
+        </div>
+
+        <hr style="margin: 40px 0; border: none; border-top: 2px solid #ecf0f1;">
+        <p style="text-align: center; color: #7f8c8d;">
+            That's it! Simple and easy. 🔧
+        </p>
+    </div>
+</body>
+</html>

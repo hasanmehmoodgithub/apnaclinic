@@ -1,0 +1,48 @@
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+// TODO: Uncomment when feature screens are created
+// import '../../features/example_clean/presentation/screens/clean_structure_guide_page.dart';
+import '../../features/example/presentation/screens/examples_main_screen.dart';
+// import '../../features/example_mvvm/view/screens/mvvm_structure_guide_page.dart';
+// import '../../features/products/presentation/screens/products_page.dart';
+import '../../features/app/presentation/screens/splash_screen.dart';
+import '../../features/dashboard/presentation/screens/main_navigation_shell.dart';
+import '../../features/onboarding/presentation/screens/onboarding_screen.dart';
+import 'app_routes.dart';
+import 'router_observer.dart';
+
+class AppRouter {
+  static final GoRouter router = GoRouter(
+    initialLocation: AppRoutes.path(AppRoutes.splash),
+    observers: [GoRouterObserver()], // Router debug logging
+
+    routes: [
+      GoRoute(
+        path: AppRoutes.path(AppRoutes.root),
+        redirect: (context, state) => AppRoutes.path(AppRoutes.splash),
+      ),
+      GoRoute(
+        path: AppRoutes.path(AppRoutes.splash),
+        name: AppRoutes.splash,
+        builder: (context, state) => const SplashScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.path(AppRoutes.onboarding),
+        name: AppRoutes.onboarding,
+        builder: (context, state) => const OnboardingScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.path(AppRoutes.home),
+        name: AppRoutes.home,
+        builder: (context, state) => const MainNavigationShell(),
+      ),
+      GoRoute(
+        path: AppRoutes.path(AppRoutes.examples),
+        name: AppRoutes.examples,
+        builder: (context, state) => const ExamplesMainScreen(),
+      ),
+    ],
+    errorBuilder: (context, state) =>
+        Scaffold(body: Center(child: Text('Page not found: ${state.uri}'))),
+  );
+}

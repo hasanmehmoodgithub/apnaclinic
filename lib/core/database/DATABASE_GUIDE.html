@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Database Guide - Drift</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: #2c3e50;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+
+        h2 {
+            color: #34495e;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            padding-top: 20px;
+            border-top: 2px solid #ecf0f1;
+            font-size: 1.8em;
+        }
+
+        h3 {
+            color: #555;
+            margin-top: 25px;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        h4 {
+            color: #666;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        p {
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+
+        ul, ol {
+            margin-left: 30px;
+            margin-bottom: 20px;
+        }
+
+        li {
+            margin-bottom: 10px;
+        }
+
+        code {
+            background: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            color: #e74c3c;
+        }
+
+        pre {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 20px;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin: 20px 0;
+            border-left: 4px solid #3498db;
+        }
+
+        pre code {
+            background: none;
+            color: #f8f8f2;
+            padding: 0;
+        }
+
+        .info-box {
+            background: #e8f4f8;
+            border-left: 4px solid #3498db;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+
+        .warning-box {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+
+        .success-box {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+
+        .error-box {
+            background: #f8d7da;
+            border-left: 4px solid #dc3545;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+
+        .toc {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 30px;
+            border: 1px solid #dee2e6;
+        }
+
+        .toc h3 {
+            margin-top: 0;
+            color: #2c3e50;
+        }
+
+        .toc ul {
+            list-style: none;
+            margin-left: 0;
+        }
+
+        .toc a {
+            color: #3498db;
+            text-decoration: none;
+        }
+
+        .toc a:hover {
+            text-decoration: underline;
+        }
+
+        .step {
+            background: #f8f9fa;
+            padding: 15px;
+            margin: 15px 0;
+            border-left: 4px solid #28a745;
+            border-radius: 4px;
+        }
+
+        .step-number {
+            font-weight: bold;
+            color: #28a745;
+            font-size: 1.2em;
+        }
+
+        .command {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            margin: 10px 0;
+            border-left: 4px solid #3498db;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 3px;
+            font-size: 0.85em;
+            font-weight: bold;
+            margin-right: 5px;
+        }
+
+        .badge-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .badge-error {
+            background: #dc3545;
+            color: white;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background: #3498db;
+            color: white;
+            font-weight: bold;
+        }
+
+        tr:hover {
+            background: #f5f5f5;
+        }
+
+        .highlight {
+            background: #fff3cd;
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+
+        .file-structure {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            margin: 20px 0;
+            border: 1px solid #dee2e6;
+        }
+
+        @media print {
+            body {
+                background: white;
+            }
+            .container {
+                box-shadow: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            h1 {
+                font-size: 2em;
+            }
+            h2 {
+                font-size: 1.5em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🗄️ Database Guide - Drift</h1>
+        
+        <div class="toc">
+            <h3>📖 Table of Contents</h3>
+            <ul>
+                <li><a href="#overview">Overview</a></li>
+                <li><a href="#folder-structure">Folder Structure</a></li>
+                <li><a href="#adding-table">Adding a New Table in a Feature</a></li>
+                <li><a href="#registering">Registering Table in Database</a></li>
+                <li><a href="#creating-dao">Creating DAO</a></li>
+                <li><a href="#migrations">Migrations</a></li>
+                <li><a href="#using-code">Using in Code</a></li>
+                <li><a href="#best-practices">Best Practices</a></li>
+                <li><a href="#troubleshooting">Troubleshooting</a></li>
+            </ul>
+        </div>
+
+        <h2 id="overview">🎯 Overview</h2>
+        <p>This project uses <strong>Drift</strong> (formerly Moor) for local database management. Drift is a reactive persistence library for Flutter and Dart.</p>
+
+        <h3>Key Concepts</h3>
+        <ul>
+            <li><strong>Table</strong>: Defines the database schema (columns, types, constraints)</li>
+            <li><strong>DAO</strong>: Data Access Object - provides methods to interact with tables</li>
+            <li><strong>Migration</strong>: Handles database schema changes</li>
+            <li><strong>Companion</strong>: Used for inserts and updates</li>
+        </ul>
+
+        <h2 id="folder-structure">📁 Folder Structure</h2>
+
+        <h3>Recommended Structure</h3>
+        <div class="file-structure">
+lib/
+├── core/
+│   └── database/
+│       ├── app_database.dart          # Main database class
+│       ├── app_database.g.dart        # Generated (don't edit)
+│       └── DATABASE_GUIDE.md          # This guide
+│
+└── features/
+    └── [feature_name]/
+        └── data/
+            └── database/
+                ├── [table_name]_table.dart    # Table definition
+                └── [table_name]_dao.dart      # DAO (Data Access Object)
+        </div>
+
+        <h3>Example: Products Feature</h3>
+        <div class="file-structure">
+lib/
+├── core/
+│   └── database/
+│       └── app_database.dart
+│
+└── features/
+    └── products/
+        └── data/
+            └── database/
+                ├── products_table.dart
+                └── products_dao.dart
+        </div>
+
+        <h2 id="adding-table">➕ Adding a New Table in a Feature</h2>
+
+        <div class="step">
+            <span class="step-number">Step 1:</span> Create Table File
+            <p>Create: <code>lib/features/[feature_name]/data/database/[table_name]_table.dart</code></p>
+        </div>
+
+        <h3>Example: Products Table</h3>
+        <pre><code>import 'package:drift/drift.dart';
+
+/// Products table for storing product information
+class Products extends Table {
+  // Primary key - auto increment
+  IntColumn get id => integer().autoIncrement()();
+  
+  // Text columns
+  TextColumn get name => text()();
+  TextColumn get description => text().nullable()();
+  TextColumn get category => text()();
+  
+  // Numeric columns
+  RealColumn get price => real()();
+  IntColumn get quantity => integer().withDefault(const Constant(0))();
+  
+  // Boolean
+  BoolColumn get isActive => boolean().withDefault(const Constant(true))();
+  
+  // Timestamps (stored as milliseconds)
+  IntColumn get createdAt => integer()();
+  IntColumn get updatedAt => integer().nullable()();
+  
+  // Primary key definition
+  @override
+  Set&lt;Column&gt; get primaryKey => {id};
+}</code></pre>
+
+        <h3>Column Types Reference</h3>
+        <table>
+            <tr>
+                <th>Type</th>
+                <th>Syntax</th>
+                <th>Example</th>
+            </tr>
+            <tr>
+                <td>Integer</td>
+                <td><code>IntColumn get field => integer()();</code></td>
+                <td><code>IntColumn get age => integer()();</code></td>
+            </tr>
+            <tr>
+                <td>Auto Increment</td>
+                <td><code>IntColumn get id => integer().autoIncrement()();</code></td>
+                <td>Primary key</td>
+            </tr>
+            <tr>
+                <td>Text</td>
+                <td><code>TextColumn get field => text()();</code></td>
+                <td><code>TextColumn get name => text()();</code></td>
+            </tr>
+            <tr>
+                <td>Nullable Text</td>
+                <td><code>TextColumn get field => text().nullable()();</code></td>
+                <td><code>TextColumn get notes => text().nullable()();</code></td>
+            </tr>
+            <tr>
+                <td>Real (Float)</td>
+                <td><code>RealColumn get field => real()();</code></td>
+                <td><code>RealColumn get price => real()();</code></td>
+            </tr>
+            <tr>
+                <td>Boolean</td>
+                <td><code>BoolColumn get field => boolean()();</code></td>
+                <td><code>BoolColumn get isActive => boolean()();</code></td>
+            </tr>
+            <tr>
+                <td>Boolean with Default</td>
+                <td><code>BoolColumn get field => boolean().withDefault(const Constant(false))();</code></td>
+                <td>Default value</td>
+            </tr>
+            <tr>
+                <td>DateTime</td>
+                <td><code>DateTimeColumn get field => dateTime()();</code></td>
+                <td><code>DateTimeColumn get createdAt => dateTime()();</code></td>
+            </tr>
+            <tr>
+                <td>Blob</td>
+                <td><code>BlobColumn get field => blob()();</code></td>
+                <td>For binary data</td>
+            </tr>
+        </table>
+
+        <h2 id="registering">📝 Registering Table in Database</h2>
+
+        <div class="step">
+            <span class="step-number">Step 1:</span> Import Table
+            <p>Edit: <code>lib/core/database/app_database.dart</code></p>
+        </div>
+
+        <pre><code>import 'dart:io';
+import 'package:drift/drift.dart';
+import 'package:drift/native.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:path/path.dart' as p;
+
+// Import feature tables
+import '../../features/products/data/database/products_table.dart';
+// Add more table imports here
+
+part 'app_database.g.dart';
+
+@DriftDatabase(tables: [Products]) // Add your table here
+class AppDatabase extends _$AppDatabase {
+  AppDatabase() : super(_openConnection());
+
+  @override
+  int get schemaVersion => 1; // Increment when adding migrations
+
+  @override
+  MigrationStrategy get migration {
+    return MigrationStrategy(
+      onCreate: (Migrator m) async {
+        await m.createAll();
+      },
+      onUpgrade: (Migrator m, int from, int to) async {
+        // Handle migrations here
+      },
+    );
+  }
+}</code></pre>
+
+        <div class="step">
+            <span class="step-number">Step 2:</span> Generate Code
+            <div class="command">
+flutter pub run build_runner build --delete-conflicting-outputs
+            </div>
+            <p>Or with watch mode (auto-regenerates on changes):</p>
+            <div class="command">
+flutter pub run build_runner watch --delete-conflicting-outputs
+            </div>
+        </div>
+
+        <div class="info-box">
+            <strong>After generation, you should see:</strong>
+            <ul>
+                <li><code>app_database.g.dart</code> updated</li>
+                <li>Data class <code>Product</code> (singular) generated</li>
+                <li>Companion class <code>ProductCompanion</code> generated</li>
+            </ul>
+        </div>
+
+        <h2 id="creating-dao">📚 Creating DAO</h2>
+
+        <div class="step">
+            <span class="step-number">Step 1:</span> Create DAO File
+            <p>Create: <code>lib/features/[feature_name]/data/database/[table_name]_dao.dart</code></p>
+        </div>
+
+        <h3>Example: Products DAO</h3>
+        <pre><code>import 'package:drift/drift.dart';
+import '../../../../core/database/app_database.dart';
+
+/// Data Access Object for Products table
+@DriftAccessor(tables: [Products])
+class ProductsDao extends DatabaseAccessor&lt;AppDatabase&gt; with _$ProductsDaoMixin {
+  ProductsDao(AppDatabase db) : super(db);
+
+  // READ Operations
+  Future&lt;List&lt;Product&gt;&gt; getAll() {
+    return select(products).get();
+  }
+
+  Future&lt;Product?&gt; getById(int id) {
+    return (select(products)..where((t) => t.id.equals(id))).getSingleOrNull();
+  }
+
+  Future&lt;List&lt;Product&gt;&gt; getByCategory(String category) {
+    return (select(products)
+          ..where((t) => t.category.equals(category)))
+          .get();
+  }
+
+  // CREATE Operations
+  Future&lt;int&gt; insert(ProductCompanion product) {
+    return into(products).insert(product);
+  }
+
+  // UPDATE Operations
+  Future&lt;bool&gt; updateById(int id, ProductCompanion product) {
+    return (update(products)..where((t) => t.id.equals(id))).write(product);
+  }
+
+  // DELETE Operations
+  Future&lt;int&gt; deleteById(int id) {
+    return (delete(products)..where((t) => t.id.equals(id))).go();
+  }
+}</code></pre>
+
+        <div class="step">
+            <span class="step-number">Step 2:</span> Register DAO in Database
+            <pre><code>// Import DAO
+import '../../features/products/data/database/products_dao.dart';
+
+@DriftDatabase(
+  tables: [Products],
+  daos: [ProductsDao], // Add your DAO here
+)
+class AppDatabase extends _$AppDatabase {
+  // ...
+}</code></pre>
+        </div>
+
+        <div class="step">
+            <span class="step-number">Step 3:</span> Generate Code Again
+            <div class="command">
+flutter pub run build_runner build --delete-conflicting-outputs
+            </div>
+        </div>
+
+        <h2 id="migrations">🔄 Migrations</h2>
+
+        <div class="info-box">
+            <strong>When to Use Migrations:</strong>
+            <ul>
+                <li>Adding a new table to an existing database</li>
+                <li>Adding/removing columns</li>
+                <li>Changing column types</li>
+                <li>Adding indexes or constraints</li>
+                <li>Renaming tables or columns</li>
+            </ul>
+        </div>
+
+        <h3>Scenario 1: Adding New Table (Existing Database)</h3>
+
+        <div class="step">
+            <span class="step-number">Step 1:</span> Increment Schema Version
+            <pre><code>@override
+int get schemaVersion => 2; // Increment from 1 to 2</code></pre>
+        </div>
+
+        <div class="step">
+            <span class="step-number">Step 2:</span> Add Migration
+            <pre><code>@override
+MigrationStrategy get migration {
+  return MigrationStrategy(
+    onCreate: (Migrator m) async {
+      await m.createAll();
+    },
+    onUpgrade: (Migrator m, int from, int to) async {
+      if (from &lt; 2) {
+        // Add new table
+        await m.createTable(products);
+      }
+    },
+  );
+}</code></pre>
+        </div>
+
+        <h3>Scenario 2: Adding Column to Existing Table</h3>
+
+        <div class="step">
+            <span class="step-number">Step 1:</span> Update Table Definition
+            <pre><code>class Products extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  TextColumn get name => text()();
+  
+  // NEW COLUMN
+  TextColumn get sku => text().nullable()(); // Added column
+}</code></pre>
+        </div>
+
+        <div class="step">
+            <span class="step-number">Step 2:</span> Increment Schema Version
+            <pre><code>@override
+int get schemaVersion => 3; // Increment</code></pre>
+        </div>
+
+        <div class="step">
+            <span class="step-number">Step 3:</span> Add Migration
+            <pre><code>onUpgrade: (Migrator m, int from, int to) async {
+  if (from &lt; 2) {
+    await m.createTable(products);
+  }
+  if (from &lt; 3) {
+    // Add new column
+    await m.addColumn(products, products.sku);
+  }
+},</code></pre>
+        </div>
+
+        <h3>Scenario 3: Multiple Changes</h3>
+        <pre><code>@override
+int get schemaVersion => 4;
+
+@override
+MigrationStrategy get migration {
+  return MigrationStrategy(
+    onCreate: (Migrator m) async {
+      await m.createAll();
+    },
+    onUpgrade: (Migrator m, int from, int to) async {
+      if (from &lt; 2) {
+        // Version 2: Add products table
+        await m.createTable(products);
+      }
+      if (from &lt; 3) {
+        // Version 3: Add sku column
+        await m.addColumn(products, products.sku);
+      }
+      if (from &lt; 4) {
+        // Version 4: Add category column
+        await m.addColumn(products, products.category);
+      }
+    },
+  );
+}</code></pre>
+
+        <h3>Migration Methods</h3>
+        <table>
+            <tr>
+                <th>Method</th>
+                <th>Description</th>
+                <th>Example</th>
+            </tr>
+            <tr>
+                <td><code>createTable()</code></td>
+                <td>Create a new table</td>
+                <td><code>await m.createTable(products);</code></td>
+            </tr>
+            <tr>
+                <td><code>addColumn()</code></td>
+                <td>Add column to table</td>
+                <td><code>await m.addColumn(products, products.sku);</code></td>
+            </tr>
+            <tr>
+                <td><code>dropTable()</code></td>
+                <td>Remove a table</td>
+                <td><code>await m.dropTable(products);</code></td>
+            </tr>
+            <tr>
+                <td><code>deleteTable()</code></td>
+                <td>Delete table data</td>
+                <td><code>await m.deleteTable(products);</code></td>
+            </tr>
+            <tr>
+                <td><code>renameTable()</code></td>
+                <td>Rename a table</td>
+                <td><code>await m.renameTable(oldName, newName);</code></td>
+            </tr>
+        </table>
+
+        <div class="warning-box">
+            <strong>Important Notes:</strong>
+            <ul>
+                <li><strong>Always increment <code>schemaVersion</code></strong> when making schema changes</li>
+                <li><strong>Test migrations</strong> on a copy of production data</li>
+                <li><strong>Backup data</strong> before major migrations</li>
+                <li><strong>Use <code>if (from &lt; version)</code></strong> to handle multiple migrations</li>
+                <li><strong>New databases</strong> use <code>onCreate</code> (creates all tables)</li>
+            </ul>
+        </div>
+
+        <h2 id="using-code">💻 Using in Code</h2>
+
+        <h3>Step 1: Get Database Instance</h3>
+        <pre><code>import 'core/di/dependency_injection.dart';
+import 'core/database/app_database.dart';
+
+// Get database from DI
+final database = sl&lt;AppDatabase&gt;();
+
+// Or get DAO directly
+final productsDao = database.productsDao;</code></pre>
+
+        <h3>Step 2: CRUD Operations</h3>
+
+        <h4>CREATE (Insert)</h4>
+        <pre><code>// Using Companion
+final product = ProductCompanion.insert(
+  name: 'iPhone 15',
+  description: const Value('Latest iPhone model'),
+  category: 'Electronics',
+  price: 999.99,
+  quantity: 10,
+  isActive: const Value(true),
+  createdAt: DateTime.now().millisecondsSinceEpoch,
+);
+
+// Insert
+final id = await database.productsDao.insert(product);
+print('Inserted product with ID: $id');</code></pre>
+
+        <h4>READ (Select)</h4>
+        <pre><code>// Get all products
+final allProducts = await database.productsDao.getAll();
+
+// Get by ID
+final product = await database.productsDao.getById(1);
+
+// Get by category
+final electronics = await database.productsDao.getByCategory('Electronics');
+
+// Search
+final results = await database.productsDao.searchByName('iPhone');</code></pre>
+
+        <h4>UPDATE</h4>
+        <pre><code>// Update by ID
+await database.productsDao.updateById(
+  1,
+  ProductCompanion(
+    name: const Value('iPhone 15 Pro'),
+    price: const Value(1199.99),
+  ),
+);</code></pre>
+
+        <h4>DELETE</h4>
+        <pre><code>// Delete by ID
+await database.productsDao.deleteById(1);
+
+// Delete all
+await database.productsDao.deleteAll();</code></pre>
+
+        <h3>Step 3: Using in Repository</h3>
+        <pre><code>class ProductsRepository {
+  final ProductsDao _productsDao;
+
+  ProductsRepository(this._productsDao);
+
+  Future&lt;Either&lt;Failure, List&lt;Product&gt;&gt;&gt; getProducts() async {
+    try {
+      final products = await _productsDao.getAll();
+      return Right(products);
+    } catch (e) {
+      return Left(DatabaseFailure(e.toString()));
+    }
+  }
+}</code></pre>
+
+        <h3>Step 4: Using in Cubit/BLoC</h3>
+        <pre><code>class ProductsCubit extends Cubit&lt;ProductsState&gt; {
+  final ProductsDao _productsDao;
+
+  ProductsCubit(this._productsDao) : super(ProductsInitial());
+
+  Future&lt;void&gt; loadProducts() async {
+    emit(ProductsLoading());
+    try {
+      final products = await _productsDao.getAll();
+      emit(ProductsLoaded(products));
+    } catch (e) {
+      emit(ProductsError(e.toString()));
+    }
+  }
+}</code></pre>
+
+        <h2 id="best-practices">✅ Best Practices</h2>
+
+        <h3>1. Keep Tables in Feature Folders</h3>
+        <div class="success-box">
+            <strong>✅ Good</strong> - Feature-specific
+            <pre><code>lib/features/products/data/database/products_table.dart
+lib/features/products/data/database/products_dao.dart</code></pre>
+        </div>
+        <div class="error-box">
+            <strong>❌ Bad</strong> - In core
+            <pre><code>lib/core/database/products_table.dart</code></pre>
+        </div>
+        <div class="error-box">
+            <strong>❌ Bad</strong> - Separate folders
+            <pre><code>lib/features/products/data/database/tables/products_table.dart
+lib/features/products/data/daos/products_dao.dart</code></pre>
+        </div>
+
+        <h3>2. Use DAOs for All Database Operations</h3>
+        <div class="success-box">
+            <strong>✅ Good</strong> - Use DAO
+            <pre><code>await database.productsDao.insert(product);</code></pre>
+        </div>
+        <div class="error-box">
+            <strong>❌ Bad</strong> - Direct database access
+            <pre><code>await database.into(database.products).insert(product);</code></pre>
+        </div>
+
+        <h3>3. Always Increment Schema Version</h3>
+        <div class="success-box">
+            <strong>✅ Good</strong>
+            <pre><code>@override
+int get schemaVersion => 2; // Incremented</code></pre>
+        </div>
+        <div class="error-box">
+            <strong>❌ Bad</strong>
+            <pre><code>@override
+int get schemaVersion => 1; // Not incremented after changes</code></pre>
+        </div>
+
+        <h3>4. Handle Nullable Fields Properly</h3>
+        <div class="success-box">
+            <strong>✅ Good</strong> - Use Value() for nullable
+            <pre><code>ProductCompanion.insert(
+  name: 'Product',
+  description: const Value(null), // Explicit null
+);</code></pre>
+        </div>
+
+        <h3>5. Use Transactions for Multiple Operations</h3>
+        <div class="success-box">
+            <strong>✅ Good</strong> - Transaction
+            <pre><code>await database.transaction(() async {
+  await database.productsDao.insert(product1);
+  await database.productsDao.insert(product2);
+});</code></pre>
+        </div>
+
+        <h2 id="troubleshooting">🐛 Troubleshooting</h2>
+
+        <h3>Error: "Table not found"</h3>
+        <div class="warning-box">
+            <strong>Problem:</strong> Table not registered in <code>@DriftDatabase</code>
+            <br><br>
+            <strong>Solution:</strong>
+            <ol>
+                <li>Check table is imported</li>
+                <li>Check table is in <code>tables: [Products]</code> list</li>
+                <li>Run <code>build_runner</code> again</li>
+            </ol>
+        </div>
+
+        <h3>Error: "Column not found"</h3>
+        <div class="warning-box">
+            <strong>Problem:</strong> Column added but migration not run
+            <br><br>
+            <strong>Solution:</strong>
+            <ol>
+                <li>Increment <code>schemaVersion</code></li>
+                <li>Add migration in <code>onUpgrade</code></li>
+                <li>Run app to trigger migration</li>
+            </ol>
+        </div>
+
+        <h3>Error: "DAO not found"</h3>
+        <div class="warning-box">
+            <strong>Problem:</strong> DAO not registered
+            <br><br>
+            <strong>Solution:</strong>
+            <ol>
+                <li>Check DAO is imported</li>
+                <li>Check DAO is in <code>daos: [ProductsDao]</code> list</li>
+                <li>Run <code>build_runner</code> again</li>
+            </ol>
+        </div>
+
+        <h3>Build Runner Issues</h3>
+        <div class="warning-box">
+            <strong>Problem:</strong> Code not generating
+            <br><br>
+            <strong>Solution:</strong>
+            <div class="command">
+# Clean and rebuild
+flutter clean
+flutter pub get
+flutter pub run build_runner clean
+flutter pub run build_runner build --delete-conflicting-outputs
+            </div>
+        </div>
+
+        <h2>📋 Quick Reference</h2>
+
+        <h3>Complete Example: Adding Products Table</h3>
+        <ol>
+            <li><strong>Create Table</strong>: <code>lib/features/products/data/database/products_table.dart</code></li>
+            <li><strong>Import in Database</strong>: <code>app_database.dart</code></li>
+            <li><strong>Add to @DriftDatabase</strong>: <code>tables: [Products]</code></li>
+            <li><strong>Run build_runner</strong>: Generate code</li>
+            <li><strong>Create DAO</strong>: <code>lib/features/products/data/database/products_dao.dart</code></li>
+            <li><strong>Register DAO</strong>: <code>daos: [ProductsDao]</code></li>
+            <li><strong>Run build_runner</strong>: Generate again</li>
+            <li><strong>Use</strong>: <code>database.productsDao.getAll()</code></li>
+        </ol>
+
+        <h3>Migration Checklist</h3>
+        <ul>
+            <li>Update table definition</li>
+            <li>Increment <code>schemaVersion</code></li>
+            <li>Add migration in <code>onUpgrade</code></li>
+            <li>Test migration on sample data</li>
+            <li>Run <code>build_runner</code></li>
+            <li>Test app with migration</li>
+        </ul>
+
+        <h2>🎯 Summary</h2>
+        <div class="success-box">
+            <ol>
+                <li><strong>Create Table</strong> in feature folder</li>
+                <li><strong>Register Table</strong> in <code>@DriftDatabase(tables: [...])</code></li>
+                <li><strong>Generate Code</strong> with <code>build_runner</code></li>
+                <li><strong>Create DAO</strong> with CRUD methods</li>
+                <li><strong>Register DAO</strong> in <code>@DriftDatabase(daos: [...])</code></li>
+                <li><strong>Generate Code</strong> again</li>
+                <li><strong>Use DAO</strong> in repositories/Cubits</li>
+                <li><strong>Handle Migrations</strong> when schema changes</li>
+            </ol>
+        </div>
+
+        <hr style="margin: 40px 0; border: none; border-top: 2px solid #ecf0f1;">
+        <p style="text-align: center; color: #7f8c8d;">
+            <strong>Need Help?</strong> Check the <a href="https://drift.simonbinder.eu/" target="_blank">Drift Documentation</a>
+        </p>
+    </div>
+</body>
+</html>

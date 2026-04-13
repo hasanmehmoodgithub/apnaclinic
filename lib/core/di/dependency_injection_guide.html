@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Dependency Injection Guide</title>
+<style>
+body {
+font-family: 'Segoe UI', Roboto, Arial, sans-serif;
+margin: 40px;
+line-height: 1.6;
+color: #333;
+background-color: #fafafa;
+max-width: 1000px;
+}
+h1, h2, h3 {
+color: #2c3e50;
+}
+h2 {
+border-bottom: 2px solid #3498db;
+padding-bottom: 10px;
+}
+pre {
+background: #f4f4f4;
+padding: 15px;
+border-radius: 6px;
+overflow-x: auto;
+border: 1px solid #ddd;
+}
+code {
+background-color: #f0f0f0;
+padding: 2px 5px;
+border-radius: 3px;
+font-size: 0.95em;
+color: #c7254e;
+}
+.note {
+background-color: #eaf7ff;
+padding: 10px 15px;
+border-left: 4px solid #007acc;
+border-radius: 5px;
+margin: 20px 0;
+}
+.warning {
+background-color: #fff3cd;
+padding: 10px 15px;
+border-left: 4px solid #ffc107;
+border-radius: 5px;
+margin: 20px 0;
+}
+ul, ol {
+margin-left: 20px;
+}
+table {
+border-collapse: collapse;
+width: 100%;
+margin: 20px 0;
+}
+th, td {
+border: 1px solid #ddd;
+padding: 12px;
+text-align: left;
+}
+th {
+background-color: #3498db;
+color: white;
+}
+tr:nth-child(even) {
+background-color: #f2f2f2;
+}
+</style>
+</head>
+<body>
+
+<h1>Dependency Injection Guide</h1>
+
+<h2>Quick Start: Adding a New Feature</h2>
+
+<h3>Step 1: Create Feature Injection File</h3>
+
+<p>Create <code>lib/features/[feature_name]/[feature_name]_injection.dart</code>:</p>
+
+<pre><code class="language-dart">import '../../core/di/dependency_injection.dart';
+import '../../core/network/api_client.dart';
+import 'data/data_sources/[feature]_remote_data_source.dart';
+import 'data/data_sources/[feature]_remote_data_source_impl.dart';
+import 'data/repositories/[feature]_repository_impl.dart';
+import 'domain/repositories/[feature]_repository.dart';
+import 'domain/use_cases/[use_case_1].dart';
+import 'domain/use_cases/[use_case_2].dart';
+import 'presentation/cubit/[feature]_cubit.dart';
+
+void init[Feature]Injector() {
+  sl.registerLazySingleton&lt;[Feature]RemoteDataSource&gt;(
+    () =&gt; [Feature]RemoteDataSourceImpl(sl&lt;ApiClient&gt;()),
+  );
+
+  sl.registerLazySingleton&lt;[Feature]Repository&gt;(
+    () =&gt; [Feature]RepositoryImpl(sl&lt;[Feature]RemoteDataSource&gt;()),
+  );
+
+  sl.registerLazySingleton&lt;[UseCase1]&gt;(
+    () =&gt; [UseCase1](repository: sl&lt;[Feature]Repository&gt;()),
+  );
+
+  sl.registerLazySingleton&lt;[UseCase2]&gt;(
+    () =&gt; [UseCase2](repository: sl&lt;[Feature]Repository&gt;()),
+  );
+
+  sl.registerFactory&lt;[Feature]Cubit&gt;(
+    () =&gt; [Feature]Cubit(
+      useCase1: sl&lt;[UseCase1]&gt;(),
+      useCase2: sl&lt;[UseCase2]&gt;(),
+    ),
+  );
+}</code></pre>
+
+<h3>Step 2: Register in Main DI File</h3>
+
+<p>Add import and call the injector in <code>lib/core/di/dependency_injection.dart</code>:</p>
+
+<pre><code class="language-dart">import '../../features/[feature_name]/[feature_name]_injection.dart';
+
+Future&lt;void&gt; initDependencyInjection() async {
+  await _initCore();
+  init[Feature]Injector();
+}</code></pre>
+
+<h3>Step 3: Use in UI</h3>
+
+<pre><code class="language-dart">import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../../core/di/dependency_injection.dart';
+import '../cubit/[feature]_cubit.dart';
+
+BlocProvider(
+  create: (context) =&gt; sl&lt;[Feature]Cubit&gt;(),
+  child: YourWidget(),
+)</code></pre>
+
+<h2>Registration Types</h2>
+
+<table>
+<tr>
+<th>Method</th>
+<th>Behavior</th>
+<th>Use For</th>
+</tr>
+<tr>
+<td><code>registerLazySingleton&lt;T&gt;</code></td>
+<td>Creates instance only when first accessed, then reuses it</td>
+<td>Repositories, Data Sources, Use Cases, Services, Singletons</td>
+</tr>
+<tr>
+<td><code>registerFactory&lt;T&gt;</code></td>
+<td>Creates new instance every time it's accessed</td>
+<td>Cubits, BLoCs, ViewModels (stateful widgets need fresh instances)</td>
+</tr>
+<tr>
+<td><code>registerSingleton&lt;T&gt;</code></td>
+<td>Creates instance immediately at registration time</td>
+<td>Services that need immediate initialization</td>
+</tr>
+</table>
+
+<h3>Examples</h3>
+
+<pre><code class="language-dart">sl.registerLazySingleton&lt;ApiClient&gt;(() =&gt; ApiClient());
+
+sl.registerFactory&lt;LoginCubit&gt;(() =&gt; LoginCubit(useCase: sl&lt;LoginUseCase&gt;()));
+
+sl.registerSingleton&lt;AppDatabase&gt;(AppDatabase());</code></pre>
+
+<h2>Registration Order</h2>
+
+<p>Always register dependencies in this order:</p>
+<ol>
+<li><strong>Data Sources</strong> (RemoteDataSource, LocalDataSource)</li>
+<li><strong>Repositories</strong> (depends on Data Sources)</li>
+<li><strong>Use Cases</strong> (depends on Repositories)</li>
+<li><strong>Cubits/BLoCs</strong> (depends on Use Cases)</li>
+</ol>
+
+<h2>Common Patterns</h2>
+
+<h3>Adding a Service</h3>
+<pre><code class="language-dart">sl.registerLazySingleton&lt;MyService&gt;(() =&gt; MyService());</code></pre>
+
+<h3>Adding a Repository with Local Data Source</h3>
+<pre><code class="language-dart">sl.registerLazySingleton&lt;LocalDataSource&gt;(() =&gt; LocalDataSourceImpl());
+sl.registerLazySingleton&lt;Repository&gt;(
+  () =&gt; RepositoryImpl(
+    remoteDataSource: sl&lt;RemoteDataSource&gt;(),
+    localDataSource: sl&lt;LocalDataSource&gt;(),
+  ),
+);</code></pre>
+
+<h3>Conditional Registration</h3>
+<pre><code class="language-dart">if (!sl.isRegistered&lt;MyService&gt;()) {
+  sl.registerLazySingleton&lt;MyService&gt;(() =&gt; MyService());
+}</code></pre>
+
+<h3>Resolving Dependencies</h3>
+<pre><code class="language-dart">final cubit = sl&lt;MyCubit&gt;();
+final useCase = sl&lt;MyUseCase&gt;();
+final repository = sl&lt;MyRepository&gt;();</code></pre>
+
+<h2>Best Practices</h2>
+
+<ul>
+<li>✅ Register dependencies in dependency order (Data Sources → Repositories → Use Cases → Cubits)</li>
+<li>✅ Use <code>sl&lt;T&gt;()</code> to resolve dependencies</li>
+<li>✅ Keep feature injection files separate for better organization</li>
+<li>✅ Use <code>registerFactory</code> for Cubits/BLoCs to ensure fresh instances per widget</li>
+<li>✅ Use <code>registerLazySingleton</code> for stateless services and repositories</li>
+<li>✅ Check registration with <code>sl.isRegistered&lt;T&gt;()</code> if needed</li>
+<li>✅ Keep core dependencies in <code>_initCore()</code> and feature dependencies in separate injectors</li>
+</ul>
+
+<h2>Troubleshooting</h2>
+
+<h3>Error: "Object/factory with type X is not registered"</h3>
+<ul>
+<li>Make sure you registered the dependency before using it</li>
+<li>Check that you called the injector function in <code>initDependencyInjection()</code></li>
+<li>Verify the registration order (dependencies must be registered before dependents)</li>
+</ul>
+
+<h3>Error: "Circular dependency detected"</h3>
+<ul>
+<li>Review your dependency graph</li>
+<li>Consider using lazy initialization or restructuring dependencies</li>
+</ul>
+
+<h3>Multiple instances created</h3>
+<ul>
+<li>Use <code>registerLazySingleton</code> instead of <code>registerFactory</code> for services</li>
+<li>Use <code>registerFactory</code> only for Cubits/BLoCs that need fresh instances</li>
+</ul>
+
+<div class="note">
+💡 <strong>Tip:</strong> Keep your DI registrations modular — each feature should manage its own injection file for easy maintenance and scalability.
+</div>
+
+</body>
+</html>

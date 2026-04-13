@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Notification Service Guide</title>
+<style>
+body {
+  font-family: 'Segoe UI', Roboto, Arial, sans-serif;
+  margin: 0;
+  padding: 40px;
+  line-height: 1.6;
+  color: #333;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  min-height: 100vh;
+}
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  background: white;
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+}
+h1 {
+  color: #2c3e50;
+  border-bottom: 4px solid #3498db;
+  padding-bottom: 15px;
+  margin-top: 0;
+}
+h2 {
+  color: #2c3e50;
+  border-bottom: 2px solid #3498db;
+  padding-bottom: 10px;
+  margin-top: 40px;
+}
+h3 {
+  color: #34495e;
+  margin-top: 30px;
+}
+pre {
+  background: #2d2d2d;
+  color: #f8f8f2;
+  padding: 20px;
+  border-radius: 8px;
+  overflow-x: auto;
+  border: 1px solid #ddd;
+}
+code {
+  background-color: #f4f4f4;
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-size: 0.9em;
+  color: #c7254e;
+  font-family: 'Courier New', monospace;
+}
+pre code {
+  background-color: transparent;
+  color: #f8f8f2;
+  padding: 0;
+}
+.note {
+  background: linear-gradient(135deg, #eaf7ff 0%, #d4edda 100%);
+  padding: 20px;
+  border-left: 5px solid #007acc;
+  border-radius: 8px;
+  margin: 20px 0;
+}
+.success {
+  background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+  padding: 20px;
+  border-left: 5px solid #28a745;
+  border-radius: 8px;
+  margin: 20px 0;
+}
+.warning {
+  background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+  padding: 20px;
+  border-left: 5px solid #ffc107;
+  border-radius: 8px;
+  margin: 20px 0;
+}
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 20px 0;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+th, td {
+  border: 1px solid #ddd;
+  padding: 15px;
+  text-align: left;
+}
+th {
+  background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+  color: white;
+  font-weight: 600;
+}
+tr:nth-child(even) {
+  background-color: #f8f9fa;
+}
+.checklist {
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 8px;
+  border: 1px solid #dee2e6;
+  margin: 15px 0;
+}
+.checklist-item {
+  padding: 8px 0;
+  border-bottom: 1px solid #dee2e6;
+}
+.checklist-item:last-child {
+  border-bottom: none;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+<h1>🔔 Notification Service Guide</h1>
+
+<p>Complete guide for Firebase Cloud Messaging (FCM) notifications with custom routing.</p>
+
+<div class="note">
+  <strong>📖 Overview:</strong> The Notification Service handles foreground, background, and terminated notifications with automatic custom routing to screens. Local notifications are automatically shown when app is in foreground. Automatically subscribes to <code>TestNotification</code> topic in debug/staging/development for easy testing.
+</div>
+
+<h2>🚀 Setup</h2>
+
+<h3>Step 1: Add Dependencies</h3>
+
+<p>Already added to <code>pubspec.yaml</code>:</p>
+
+<pre><code class="language-yaml">firebase_core: ^3.6.0
+firebase_messaging: ^15.1.3
+flutter_local_notifications: ^18.0.1</code></pre>
+
+<h3>Step 2: Initialize Firebase</h3>
+
+<ol>
+  <li><strong>Install Firebase CLI:</strong>
+    <pre><code class="language-bash">npm install -g firebase-tools</code></pre>
+  </li>
+  <li><strong>Login to Firebase:</strong>
+    <pre><code class="language-bash">firebase login</code></pre>
+  </li>
+  <li><strong>Configure Firebase:</strong>
+    <pre><code class="language-bash">flutter pub add firebase_core
+flutterfire configure</code></pre>
+  </li>
+  <li><strong>Uncomment in <code>main.dart</code>:</strong>
+    <pre><code class="language-dart">import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
+
+await Firebase.initializeApp(
+  options: DefaultFirebaseOptions.currentPlatform,
+);</code></pre>
+  </li>
+</ol>
+
+<h3>Step 3: Android Setup</h3>
+
+<p><strong>File:</strong> <code>android/app/build.gradle</code></p>
+
+<pre><code class="language-gradle">android {
+    defaultConfig {
+        minSdkVersion 21
+    }
+}</code></pre>
+
+<p><strong>File:</strong> <code>android/app/src/main/AndroidManifest.xml</code></p>
+
+<pre><code class="language-xml">&lt;manifest&gt;
+    &lt;application&gt;
+        &lt;meta-data
+            android:name="com.google.firebase.messaging.default_notification_channel_id"
+            android:value="high_importance_channel" /&gt;
+    &lt;/application&gt;
+&lt;/manifest&gt;</code></pre>
+
+<h3>Step 4: iOS Setup</h3>
+
+<p><strong>File:</strong> <code>ios/Runner/Info.plist</code></p>
+
+<pre><code class="language-xml">&lt;key&gt;FirebaseAppDelegateProxyEnabled&lt;/key&gt;
+&lt;false/&gt;</code></pre>
+
+<h2>🔔 Local Notifications</h2>
+
+<div class="success">
+  <p><strong>✅ Already Implemented!</strong> Local notifications are automatically shown when notifications are received in the foreground.</p>
+</div>
+
+<h3>Show Local Notification Manually</h3>
+
+<pre><code class="language-dart">final notificationService = NotificationService();
+
+// Show notification with route
+await notificationService.showLocalNotification(
+  title: 'New Message',
+  body: 'You have a new message',
+  route: 'profile',
+  data: {'userId': '123'},
+);
+
+// Show notification without route
+await notificationService.showLocalNotification(
+  title: 'Reminder',
+  body: 'Don\'t forget to complete your task',
+);</code></pre>
+
+<h3>Notification Tap Handling</h3>
+
+<p>When a local notification is tapped, it automatically navigates to the route specified in the payload.</p>
+
+<h2>📱 Usage</h2>
+
+<h3>Initialize Service</h3>
+
+<p>Already initialized in <code>main.dart</code>:</p>
+
+<pre><code class="language-dart">final notificationService = NotificationService();
+await notificationService.initialize();
+notificationService.setupBackgroundMessageHandler();</code></pre>
+
+<h3>Get FCM Token</h3>
+
+<pre><code class="language-dart">final notificationService = NotificationService();
+final token = notificationService.fcmToken;
+print('FCM Token: $token');</code></pre>
+
+<h3>Listen to Notifications</h3>
+
+<p>Already set up in <code>FlutterSampleApp</code>:</p>
+
+<pre><code class="language-dart">NotificationService().notificationStream.listen((payload) {
+  print('Notification received: ${payload.title}');
+  print('Route: ${payload.route}');
+  print('Data: ${payload.data}');
+});</code></pre>
+
+<h3>Navigate to Custom Route</h3>
+
+<p>The service automatically navigates based on notification data. Notification payload should include:</p>
+
+<pre><code class="language-json">{
+  "notification": {
+    "title": "New Message",
+    "body": "You have a new message"
+  },
+  "data": {
+    "route": "profile",
+    "userId": "123"
+  }
+}</code></pre>
+
+<h3>Subscribe to Topic</h3>
+
+<pre><code class="language-dart">final notificationService = NotificationService();
+await notificationService.subscribeToTopic('news');</code></pre>
+
+<h3>Unsubscribe from Topic</h3>
+
+<pre><code class="language-dart">final notificationService = NotificationService();
+await notificationService.unsubscribeFromTopic('news');</code></pre>
+
+<h3>Auto-Subscribe to Test Topic 🧪</h3>
+
+<div class="success">
+  <p><strong>Automatic Testing Subscription:</strong></p>
+  <p>The service <strong>automatically subscribes</strong> to <code>TestNotification</code> topic when:</p>
+  <ul>
+    <li>App is running in <strong>debug mode</strong> (<code>kDebugMode</code>)</li>
+    <li>App flavor is <strong>development</strong></li>
+    <li>App flavor is <strong>staging</strong></li>
+  </ul>
+  <p>This allows you to easily test notifications by sending to the <code>TestNotification</code> topic from Firebase Console without manual subscription.</p>
+</div>
+
+<pre><code class="language-dart">// Automatically called during initialization
+if (kDebugMode || FlavorConfig.isDevelopment || FlavorConfig.isStaging) {
+  await subscribeToTopic('TestNotification');
+}</code></pre>
+
+<h4>Testing Steps:</h4>
+<ol>
+  <li>Run app in debug/staging/development mode</li>
+  <li>Go to Firebase Console → Cloud Messaging</li>
+  <li>Send notification to topic: <code>TestNotification</code></li>
+  <li>All test devices will receive the notification</li>
+</ol>
+
+<div class="warning">
+  <p><strong>Note:</strong> Production builds do NOT auto-subscribe to test topics.</p>
+</div>
+
+<h2>🎯 Notification States</h2>
+
+<h3>1. Foreground (App Open)</h3>
+
+<p><strong>Handler:</strong> <code>FirebaseMessaging.onMessage</code></p>
+
+<p>Automatically handled in <code>NotificationService._setupForegroundHandler()</code></p>
+
+<h3>2. Background (App in Background)</h3>
+
+<p><strong>Handler:</strong> <code>FirebaseMessaging.onMessageOpenedApp</code></p>
+
+<p>Automatically handled in <code>NotificationService.setupBackgroundMessageHandler()</code></p>
+
+<h3>3. Terminated (App Closed)</h3>
+
+<p><strong>Handler:</strong> <code>FirebaseMessaging.getInitialMessage()</code></p>
+
+<p>Automatically handled in <code>NotificationService._handleInitialMessage()</code></p>
+
+<h2>🔧 Custom Routing</h2>
+
+<h3>Notification Payload Format</h3>
+
+<pre><code class="language-json">{
+  "notification": {
+    "title": "Notification Title",
+    "body": "Notification Body"
+  },
+  "data": {
+    "route": "profile",
+    "userId": "123",
+    "type": "message"
+  }
+}</code></pre>
+
+<h3>Route Mapping</h3>
+
+<p>The service navigates to routes defined in <code>AppRoutes</code>:</p>
+
+<pre><code class="language-dart">// Example routes
+static const String profile = 'profile';
+static const String home = 'home';
+static const String settings = 'settings';</code></pre>
+
+<h2>📝 Example: Send Notification from Server</h2>
+
+<h3>Using cURL</h3>
+
+<pre><code class="language-bash">curl -X POST https://fcm.googleapis.com/fcm/send \
+  -H "Authorization: key=YOUR_SERVER_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "to": "FCM_TOKEN",
+    "notification": {
+      "title": "New Message",
+      "body": "You have a new message"
+    },
+    "data": {
+      "route": "profile",
+      "userId": "123"
+    }
+  }'</code></pre>
+
+<h2>✅ Checklist</h2>
+
+<div class="checklist">
+  <div class="checklist-item">☐ Firebase project created</div>
+  <div class="checklist-item">☐ <code>firebase_options.dart</code> generated</div>
+  <div class="checklist-item">☐ Firebase initialized in <code>main.dart</code></div>
+  <div class="checklist-item">☐ Notification service initialized</div>
+  <div class="checklist-item">☐ Android manifest updated</div>
+  <div class="checklist-item">☐ iOS Info.plist updated</div>
+  <div class="checklist-item">☐ Routes added to <code>AppRoutes</code></div>
+  <div class="checklist-item">☐ Test notification sent</div>
+  <div class="checklist-item">☐ Test foreground notification</div>
+  <div class="checklist-item">☐ Test background notification</div>
+  <div class="checklist-item">☐ Test terminated notification</div>
+  <div class="checklist-item">☐ Test custom routing</div>
+</div>
+
+<h2>📚 Files</h2>
+
+<ul>
+  <li><strong>Service:</strong> <code>lib/core/services/notification_service.dart</code></li>
+  <li><strong>Background Handler:</strong> <code>lib/core/services/notification_background_handler.dart</code></li>
+  <li><strong>Initialization:</strong> <code>lib/main.dart</code></li>
+  <li><strong>App Widget:</strong> <code>lib/features/app/presentation/screens/flutter_sample_app.dart</code></li>
+  <li><strong>Router:</strong> <code>lib/core/router/app_router.dart</code></li>
+</ul>
+
+<p style="text-align: center; margin-top: 40px; font-size: 1.2em; color: #3498db;">
+  <strong>That's it! Your notification service is ready. 🔔</strong>
+</p>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flavor Configuration Guide</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: #2c3e50;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+
+        h2 {
+            color: #34495e;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            padding-top: 20px;
+            border-top: 2px solid #ecf0f1;
+            font-size: 1.8em;
+        }
+
+        h3 {
+            color: #555;
+            margin-top: 25px;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        h4 {
+            color: #666;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        p {
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+
+        ul, ol {
+            margin-left: 30px;
+            margin-bottom: 20px;
+        }
+
+        li {
+            margin-bottom: 10px;
+        }
+
+        code {
+            background: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            color: #e74c3c;
+        }
+
+        pre {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 20px;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin: 20px 0;
+            border-left: 4px solid #3498db;
+        }
+
+        pre code {
+            background: none;
+            color: #f8f8f2;
+            padding: 0;
+        }
+
+        .info-box {
+            background: #e8f4f8;
+            border-left: 4px solid #3498db;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+
+        .warning-box {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+
+        .success-box {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+
+        .error-box {
+            background: #f8d7da;
+            border-left: 4px solid #dc3545;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+
+        .toc {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 30px;
+            border: 1px solid #dee2e6;
+        }
+
+        .toc h3 {
+            margin-top: 0;
+            color: #2c3e50;
+        }
+
+        .toc ul {
+            list-style: none;
+            margin-left: 0;
+        }
+
+        .toc a {
+            color: #3498db;
+            text-decoration: none;
+        }
+
+        .toc a:hover {
+            text-decoration: underline;
+        }
+
+        .step {
+            background: #f8f9fa;
+            padding: 15px;
+            margin: 15px 0;
+            border-left: 4px solid #28a745;
+            border-radius: 4px;
+        }
+
+        .step-number {
+            font-weight: bold;
+            color: #28a745;
+            font-size: 1.2em;
+        }
+
+        .command {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            margin: 10px 0;
+            border-left: 4px solid #3498db;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 3px;
+            font-size: 0.85em;
+            font-weight: bold;
+            margin-right: 5px;
+        }
+
+        .badge-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .badge-error {
+            background: #dc3545;
+            color: white;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background: #3498db;
+            color: white;
+            font-weight: bold;
+        }
+
+        tr:hover {
+            background: #f5f5f5;
+        }
+
+        .highlight {
+            background: #fff3cd;
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+
+        .screenshot-placeholder {
+            background: #e9ecef;
+            border: 2px dashed #adb5bd;
+            padding: 40px;
+            text-align: center;
+            border-radius: 5px;
+            margin: 20px 0;
+            color: #6c757d;
+        }
+
+        @media print {
+            body {
+                background: white;
+            }
+            .container {
+                box-shadow: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            h1 {
+                font-size: 2em;
+            }
+            h2 {
+                font-size: 1.5em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>⚙️ Flavor Configuration Guide</h1>
+        
+        <div class="toc">
+            <h3>📖 Table of Contents</h3>
+            <ul>
+                <li><a href="#what-are-flavors">What are Flavors?</a></li>
+                <li><a href="#quick-start">Quick Start</a></li>
+                <li><a href="#initialization">Initialization Guide</a></li>
+                <li><a href="#running">Running with Flavors</a></li>
+                <li><a href="#ide-setup">IDE Setup</a></li>
+                <li><a href="#using-code">Using in Code</a></li>
+                <li><a href="#configuration">Configuration</a></li>
+                <li><a href="#best-practices">Best Practices</a></li>
+                <li><a href="#troubleshooting">Troubleshooting</a></li>
+            </ul>
+        </div>
+
+        <h2 id="what-are-flavors">🎯 What are Flavors?</h2>
+        <p>Flavors let you run different versions of your app with different configurations:</p>
+        <ul>
+            <li><strong>Development</strong> - For local development and testing</li>
+            <li><strong>Staging</strong> - For testing before production release</li>
+            <li><strong>Production</strong> - For end users</li>
+        </ul>
+
+        <p>Each flavor can have different:</p>
+        <ul>
+            <li>API URLs</li>
+            <li>App names</li>
+            <li>Logging settings</li>
+            <li>Debug features</li>
+        </ul>
+
+        <div class="info-box">
+            <strong>📌 Important:</strong> If you don't specify <code>--dart-define=APP_FLAVOR</code>, it defaults to <strong>development</strong>.
+        </div>
+
+        <h2 id="quick-start">🚀 Quick Start</h2>
+
+        <h3>1. Initialize in main()</h3>
+        <p>First, add initialization in your <code>main.dart</code>:</p>
+        <pre><code>import 'package:flutter/material.dart';
+import 'core/flavor/flavor_config.dart';
+import 'core/di/dependency_injection.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  
+  // Initialize flavor configuration (call this first!)
+  FlavorConfig.initialize();
+  
+  // Initialize dependency injection
+  await initDependencyInjection();
+  
+  runApp(MyApp());
+}</code></pre>
+
+        <h3>2. Run with Different Flavors</h3>
+        <div class="command">
+# Development (default - no need to specify)
+flutter run
+
+# Staging
+flutter run --dart-define=APP_FLAVOR=staging
+
+# Production
+flutter run --dart-define=APP_FLAVOR=production
+        </div>
+
+        <h3>3. Build for Production</h3>
+        <div class="command">
+# Android APK
+flutter build apk --dart-define=APP_FLAVOR=production
+
+# Android App Bundle
+flutter build appbundle --dart-define=APP_FLAVOR=production
+
+# iOS
+flutter build ios --dart-define=APP_FLAVOR=production
+        </div>
+
+        <h2 id="initialization">📝 Initialization Guide</h2>
+
+        <div class="step">
+            <span class="step-number">Step 1:</span> Import FlavorConfig
+            <pre><code>import 'core/flavor/flavor_config.dart';</code></pre>
+        </div>
+
+        <div class="step">
+            <span class="step-number">Step 2:</span> Initialize in main()
+            <pre><code>void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  
+  // Initialize flavor (prints flavor info if logging enabled)
+  FlavorConfig.initialize();
+  
+  // Rest of your initialization
+  await initDependencyInjection();
+  
+  runApp(MyApp());
+}</code></pre>
+        </div>
+
+        <h3>What initialize() Does</h3>
+        <ul>
+            <li>Reads the <code>APP_FLAVOR</code> environment variable</li>
+            <li>Sets up the current flavor (defaults to development if not specified)</li>
+            <li>Prints flavor information if logging is enabled:
+                <ul>
+                    <li>Current flavor name</li>
+                    <li>API Base URL</li>
+                    <li>Debug features status</li>
+                </ul>
+            </li>
+        </ul>
+
+        <h3>Example Output</h3>
+        <p>When running in development mode:</p>
+        <pre><code>[DEVELOPMENT] App initialized with flavor: Development
+[DEVELOPMENT] API Base URL: https://dev-api.example.com/api
+[DEVELOPMENT] Debug features: true</code></pre>
+
+        <h2 id="running">🏃 Running with Flavors</h2>
+
+        <h3>Command Line</h3>
+
+        <h4>Development (Default)</h4>
+        <div class="command">
+# No dart-define needed - defaults to development
+flutter run
+
+# Or explicitly
+flutter run --dart-define=APP_FLAVOR=development
+        </div>
+
+        <h4>Staging</h4>
+        <div class="command">flutter run --dart-define=APP_FLAVOR=staging</div>
+
+        <h4>Production</h4>
+        <div class="command">flutter run --dart-define=APP_FLAVOR=production</div>
+
+        <h3>Override API URL</h3>
+        <p>You can override the API URL for any flavor:</p>
+        <div class="command">
+flutter run --dart-define=APP_FLAVOR=development --dart-define=API_BASE_URL=https://custom-api.com
+        </div>
+
+        <h2 id="ide-setup">🛠️ IDE Setup</h2>
+
+        <h3>VS Code Setup</h3>
+
+        <div class="step">
+            <span class="step-number">Step 1:</span> Create Launch Configuration
+            <p>Create or edit <code>.vscode/launch.json</code> in your project root:</p>
+            <pre><code>{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Development",
+      "request": "launch",
+      "type": "dart",
+      "args": ["--dart-define=APP_FLAVOR=development"]
+    },
+    {
+      "name": "Staging",
+      "request": "launch",
+      "type": "dart",
+      "args": ["--dart-define=APP_FLAVOR=staging"]
+    },
+    {
+      "name": "Production",
+      "request": "launch",
+      "type": "dart",
+      "args": ["--dart-define=APP_FLAVOR=production"]
+    },
+    {
+      "name": "Development (Custom API)",
+      "request": "launch",
+      "type": "dart",
+      "args": [
+        "--dart-define=APP_FLAVOR=development",
+        "--dart-define=API_BASE_URL=https://custom-api.com"
+      ]
+    }
+  ]
+}</code></pre>
+        </div>
+
+        <div class="step">
+            <span class="step-number">Step 2:</span> Use Launch Configuration
+            <ol>
+                <li>Open VS Code</li>
+                <li>Go to <strong>Run and Debug</strong> (Ctrl+Shift+D / Cmd+Shift+D)</li>
+                <li>Select configuration from dropdown (Development, Staging, or Production)</li>
+                <li>Click <strong>Start Debugging</strong> (F5)</li>
+            </ol>
+        </div>
+
+        <div class="screenshot-placeholder">
+            📸 Screenshot: VS Code Run and Debug panel with flavor configurations
+        </div>
+
+        <h3>Android Studio Setup</h3>
+
+        <div class="step">
+            <span class="step-number">Step 1:</span> Create Run Configuration
+            <ol>
+                <li>Go to <strong>Run → Edit Configurations...</strong></li>
+                <li>Click <strong>+</strong> (Plus icon) → Select <strong>Flutter</strong></li>
+                <li>Configure each flavor:</li>
+            </ol>
+        </div>
+
+        <h4>Development Configuration:</h4>
+        <ul>
+            <li><strong>Name</strong>: <code>Development</code></li>
+            <li><strong>Dart entrypoint</strong>: <code>lib/main.dart</code></li>
+            <li><strong>Additional run args</strong>: <code>--dart-define=APP_FLAVOR=development</code></li>
+            <li>Click <strong>Apply</strong></li>
+        </ul>
+
+        <h4>Staging Configuration:</h4>
+        <ul>
+            <li><strong>Name</strong>: <code>Staging</code></li>
+            <li><strong>Dart entrypoint</strong>: <code>lib/main.dart</code></li>
+            <li><strong>Additional run args</strong>: <code>--dart-define=APP_FLAVOR=staging</code></li>
+            <li>Click <strong>Apply</strong></li>
+        </ul>
+
+        <h4>Production Configuration:</h4>
+        <ul>
+            <li><strong>Name</strong>: <code>Production</code></li>
+            <li><strong>Dart entrypoint</strong>: <code>lib/main.dart</code></li>
+            <li><strong>Additional run args</strong>: <code>--dart-define=APP_FLAVOR=production</code></li>
+            <li>Click <strong>Apply</strong></li>
+        </ul>
+
+        <div class="screenshot-placeholder">
+            📸 Screenshot: Android Studio Edit Configurations dialog
+        </div>
+
+        <div class="step">
+            <span class="step-number">Step 2:</span> Use Run Configuration
+            <ol>
+                <li>Select configuration from dropdown (top toolbar)</li>
+                <li>Click <strong>Run</strong> (▶️) or press <strong>Shift+F10</strong></li>
+            </ol>
+        </div>
+
+        <div class="screenshot-placeholder">
+            📸 Screenshot: Android Studio run configuration dropdown
+        </div>
+
+        <div class="step">
+            <span class="step-number">Step 3:</span> Create Build Configuration (Optional)
+            <p>For building APKs/App Bundles:</p>
+            <ol>
+                <li>Go to <strong>Run → Edit Configurations...</strong></li>
+                <li>Click <strong>+</strong> → <strong>Flutter</strong></li>
+                <li><strong>Name</strong>: <code>Build Production APK</code></li>
+                <li><strong>Dart entrypoint</strong>: <code>lib/main.dart</code></li>
+                <li><strong>Additional run args</strong>: <code>build apk --dart-define=APP_FLAVOR=production</code></li>
+                <li>Click <strong>Apply</strong></li>
+            </ol>
+        </div>
+
+        <h2 id="using-code">💻 Using in Code</h2>
+
+        <h3>Import</h3>
+        <pre><code>import 'core/flavor/flavor_config.dart';</code></pre>
+
+        <h3>Get Current Flavor</h3>
+        <pre><code>// Get flavor enum
+final flavor = FlavorConfig.currentFlavor;
+
+// Get flavor name
+final flavorName = FlavorConfig.currentFlavor.name; 
+// "Development", "Staging", or "Production"</code></pre>
+
+        <h3>Check Flavor Type</h3>
+        <pre><code>// Check if development
+if (FlavorConfig.isDevelopment) {
+  // Development-only code
+  print('Running in development mode');
+}
+
+// Check if staging
+if (FlavorConfig.isStaging) {
+  // Staging-only code
+}
+
+// Check if production
+if (FlavorConfig.isProduction) {
+  // Production-only code
+}</code></pre>
+
+        <h3>Get API URL</h3>
+        <pre><code>// Get API base URL (from flavor or environment override)
+final apiUrl = FlavorConfig.apiBaseUrl;
+
+// Use in API calls
+final response = await http.get(
+  Uri.parse('${FlavorConfig.apiBaseUrl}/users')
+);</code></pre>
+
+        <h3>Get App Name</h3>
+        <pre><code>final appName = FlavorConfig.appName;
+// Development: "My App (Dev)"
+// Staging: "My App (Staging)"
+// Production: "My App"</code></pre>
+
+        <h3>Conditional Logging</h3>
+        <pre><code>// Only logs if logging is enabled for current flavor
+FlavorConfig.log('Debug message');
+FlavorConfig.logError('Error occurred', exception, stackTrace);</code></pre>
+
+        <h3>Check Debug Features</h3>
+        <pre><code>if (FlavorConfig.enableDebugFeatures) {
+  // Show debug menu, enable developer options, etc.
+  showDebugMenu();
+}</code></pre>
+
+        <h3>Complete Example</h3>
+        <pre><code>import 'core/flavor/flavor_config.dart';
+
+class MyWidget extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    // Show debug banner only in development
+    if (FlavorConfig.isDevelopment) {
+      return Banner(
+        message: 'DEV',
+        location: BannerLocation.topEnd,
+        child: _buildContent(),
+      );
+    }
+    
+    return _buildContent();
+  }
+  
+  Widget _buildContent() {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(FlavorConfig.appName),
+      ),
+      body: Center(
+        child: Column(
+          children: [
+            Text('Current Flavor: ${FlavorConfig.currentFlavor.name}'),
+            Text('API URL: ${FlavorConfig.apiBaseUrl}'),
+            if (FlavorConfig.enableDebugFeatures)
+              ElevatedButton(
+                onPressed: () => _showDebugMenu(),
+                child: Text('Debug Menu'),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}</code></pre>
+
+        <h2 id="configuration">⚙️ Configuration</h2>
+
+        <h3>Edit Flavor Settings</h3>
+        <p>Edit <code>lib/core/flavor/app_flavor.dart</code> to customize each flavor:</p>
+        <pre><code>enum AppFlavor {
+  development(
+    name: 'Development',
+    apiBaseUrl: 'https://dev-api.example.com/api',  // Change this
+    appName: 'My App (Dev)',  // Change this
+    enableLogging: true,
+    enableDebugFeatures: true,
+  ),
+  staging(
+    name: 'Staging',
+    apiBaseUrl: 'https://staging-api.example.com/api',  // Change this
+    appName: 'My App (Staging)',  // Change this
+    enableLogging: true,
+    enableDebugFeatures: false,
+  ),
+  production(
+    name: 'Production',
+    apiBaseUrl: 'https://api.example.com/api',  // Change this
+    appName: 'My App',  // Change this
+    enableLogging: false,
+    enableDebugFeatures: false,
+  );
+
+  final String name;
+  final String apiBaseUrl;
+  final String appName;
+  final bool enableLogging;
+  final bool enableDebugFeatures;
+
+  const AppFlavor({
+    required this.name,
+    required this.apiBaseUrl,
+    required this.appName,
+    required this.enableLogging,
+    required this.enableDebugFeatures,
+  });
+}</code></pre>
+
+        <h2 id="best-practices">✅ Best Practices</h2>
+
+        <h3>1. Always Use FlavorConfig</h3>
+        <div class="success-box">
+            <strong>✅ Good</strong> - Uses flavor config
+            <pre><code>final url = FlavorConfig.apiBaseUrl;</code></pre>
+        </div>
+        <div class="error-box">
+            <strong>❌ Bad</strong> - Hardcoded URL
+            <pre><code>final url = 'https://api.example.com';</code></pre>
+        </div>
+
+        <h3>2. Use Conditional Logging</h3>
+        <div class="success-box">
+            <strong>✅ Good</strong> - Only logs if enabled
+            <pre><code>FlavorConfig.log('Debug message');</code></pre>
+        </div>
+        <div class="error-box">
+            <strong>❌ Bad</strong> - Always logs
+            <pre><code>print('Debug message');</code></pre>
+        </div>
+
+        <h3>3. Initialize Early</h3>
+        <div class="success-box">
+            <strong>✅ Good</strong> - Initialize first
+            <pre><code>void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  FlavorConfig.initialize();  // First!
+  await initDependencyInjection();
+  runApp(MyApp());
+}</code></pre>
+        </div>
+
+        <h3>4. Test All Flavors</h3>
+        <p>Always test your app in all flavors before releasing:</p>
+        <ul>
+            <li><span class="badge badge-success">✅</span> Development</li>
+            <li><span class="badge badge-success">✅</span> Staging</li>
+            <li><span class="badge badge-success">✅</span> Production</li>
+        </ul>
+
+        <h2 id="troubleshooting">🔧 Troubleshooting</h2>
+
+        <h3>Problem: Flavor Not Changing</h3>
+        <div class="warning-box">
+            <strong>Solutions:</strong>
+            <ul>
+                <li>Check command syntax: <code>--dart-define=APP_FLAVOR=production</code> (no spaces around <code>=</code>)</li>
+                <li>Restart app completely (hot restart won't pick up flavor changes)</li>
+                <li>Clean build: <code>flutter clean && flutter pub get</code></li>
+                <li>Verify in code: <code>print(FlavorConfig.currentFlavor.name)</code></li>
+            </ul>
+        </div>
+
+        <h3>Problem: Wrong API URL</h3>
+        <div class="warning-box">
+            <strong>Solutions:</strong>
+            <ul>
+                <li>Check <code>app_flavor.dart</code> for correct URLs</li>
+                <li>Check if <code>API_BASE_URL</code> environment variable is overriding</li>
+                <li>Verify URL: <code>print(FlavorConfig.apiBaseUrl)</code></li>
+            </ul>
+        </div>
+
+        <h3>Problem: Logging Not Working</h3>
+        <div class="warning-box">
+            <strong>Solutions:</strong>
+            <ul>
+                <li>Check <code>enableLogging</code> in <code>app_flavor.dart</code> for current flavor</li>
+                <li>Use <code>FlavorConfig.log()</code> not <code>print()</code></li>
+                <li>Verify flavor: <code>print(FlavorConfig.currentFlavor.name)</code></li>
+            </ul>
+        </div>
+
+        <h3>Problem: VS Code Launch Not Working</h3>
+        <div class="warning-box">
+            <strong>Solutions:</strong>
+            <ul>
+                <li>Check <code>.vscode/launch.json</code> syntax</li>
+                <li>Verify file is in project root</li>
+                <li>Restart VS Code</li>
+                <li>Check Flutter extension is installed</li>
+            </ul>
+        </div>
+
+        <h3>Problem: Android Studio Configuration Not Working</h3>
+        <div class="warning-box">
+            <strong>Solutions:</strong>
+            <ul>
+                <li>Verify "Additional run args" field has correct syntax</li>
+                <li>Check for typos: <code>--dart-define=APP_FLAVOR=production</code></li>
+                <li>Make sure configuration is saved (click Apply)</li>
+                <li>Restart Android Studio</li>
+            </ul>
+        </div>
+
+        <h2>📋 Quick Reference</h2>
+
+        <h3>Commands</h3>
+        <table>
+            <tr>
+                <th>Action</th>
+                <th>Command</th>
+            </tr>
+            <tr>
+                <td>Development (default)</td>
+                <td><code>flutter run</code></td>
+            </tr>
+            <tr>
+                <td>Staging</td>
+                <td><code>flutter run --dart-define=APP_FLAVOR=staging</code></td>
+            </tr>
+            <tr>
+                <td>Production</td>
+                <td><code>flutter run --dart-define=APP_FLAVOR=production</code></td>
+            </tr>
+            <tr>
+                <td>Build Production APK</td>
+                <td><code>flutter build apk --dart-define=APP_FLAVOR=production</code></td>
+            </tr>
+            <tr>
+                <td>Override API URL</td>
+                <td><code>flutter run --dart-define=APP_FLAVOR=dev --dart-define=API_BASE_URL=https://custom.com</code></td>
+            </tr>
+        </table>
+
+        <h3>Code Snippets</h3>
+        <pre><code>// Import
+import 'core/flavor/flavor_config.dart';
+
+// Get flavor
+FlavorConfig.currentFlavor
+
+// Get API URL
+FlavorConfig.apiBaseUrl
+
+// Check flavor
+FlavorConfig.isDevelopment
+FlavorConfig.isStaging
+FlavorConfig.isProduction
+
+// Logging
+FlavorConfig.log('Message');
+FlavorConfig.logError('Error', exception, stackTrace);
+
+// Features
+FlavorConfig.enableDebugFeatures
+FlavorConfig.enableLogging
+FlavorConfig.appName</code></pre>
+
+        <h2>🎯 Summary</h2>
+        <div class="success-box">
+            <ul>
+                <li><strong>Default:</strong> If not specified, defaults to <strong>development</strong></li>
+                <li><strong>Initialize:</strong> Call <code>FlavorConfig.initialize()</code> in <code>main()</code></li>
+                <li><strong>Use:</strong> Access via <code>FlavorConfig.apiBaseUrl</code>, <code>FlavorConfig.isDevelopment</code>, etc.</li>
+                <li><strong>IDE Setup:</strong> Configure VS Code or Android Studio for easy switching</li>
+                <li><strong>Test:</strong> Always test all flavors before releasing</li>
+            </ul>
+        </div>
+
+        <hr style="margin: 40px 0; border: none; border-top: 2px solid #ecf0f1;">
+        <p style="text-align: center; color: #7f8c8d;">
+            <strong>Need Help?</strong> Check the <a href="https://docs.flutter.dev/deployment/flavors" target="_blank">Flutter Documentation on Build Modes</a>
+        </p>
+    </div>
+</body>
+</html>

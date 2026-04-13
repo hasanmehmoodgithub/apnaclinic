@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Theme Guide</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: #2c3e50;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+
+        h2 {
+            color: #34495e;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            padding-top: 15px;
+            border-top: 2px solid #ecf0f1;
+            font-size: 1.6em;
+        }
+
+        h3 {
+            color: #555;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+
+        p {
+            margin-bottom: 15px;
+        }
+
+        ul {
+            margin-left: 30px;
+            margin-bottom: 20px;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        code {
+            background: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            color: #e74c3c;
+        }
+
+        pre {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 20px;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin: 20px 0;
+            border-left: 4px solid #3498db;
+        }
+
+        pre code {
+            background: none;
+            color: #f8f8f2;
+            padding: 0;
+        }
+
+        .info-box {
+            background: #e8f4f8;
+            border-left: 4px solid #3498db;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+
+        .success-box {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+
+        .error-box {
+            background: #f8d7da;
+            border-left: 4px solid #dc3545;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+
+        .step {
+            background: #f8f9fa;
+            padding: 15px;
+            margin: 15px 0;
+            border-left: 4px solid #28a745;
+            border-radius: 4px;
+        }
+
+        .step-number {
+            font-weight: bold;
+            color: #28a745;
+            font-size: 1.1em;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background: #3498db;
+            color: white;
+            font-weight: bold;
+        }
+
+        tr:hover {
+            background: #f5f5f5;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            h1 {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎨 Theme Guide</h1>
+        
+        <div class="info-box">
+            <strong>Quick Overview:</strong>
+            <ul>
+                <li><strong>Theme</strong>: Defines colors, styles, and appearance</li>
+                <li><strong>Theme Extension</strong>: Custom colors that work with Material 3</li>
+                <li><strong>Usage</strong>: Access via <code>Theme.of(context)</code> or extensions</li>
+            </ul>
+        </div>
+
+        <h2>➕ Adding Custom Colors</h2>
+
+        <div class="step">
+            <span class="step-number">Step 1:</span> Edit Theme Extension
+            <p>Edit: <code>lib/core/theme/app_theme_colors.dart</code></p>
+        </div>
+
+        <h3>Add Your Color</h3>
+        <pre><code>@immutable
+class AppThemeColors extends ThemeExtension&lt;AppThemeColors&gt; {
+  final Color primary;
+  final Color secondary;
+  final Color background;
+  final Color yourCustomColorName;  // Add your color here
+  
+  const AppThemeColors({
+    required this.primary,
+    required this.secondary,
+    required this.background,
+    required this.yourCustomColorName,  // Add here
+  });
+
+  // Light theme
+  static const AppThemeColors light = AppThemeColors(
+    primary: Color(0xFF6750A4),
+    secondary: Color(0xFF625B71),
+    background: Color(0xFFFFFBFE),
+    yourCustomColorName: Color(0xFF4CAF50),  // Light color
+  );
+
+  // Dark theme
+  static const AppThemeColors dark = AppThemeColors(
+    primary: Color(0xFFD0BCFF),
+    secondary: Color(0xFFCCC2DC),
+    background: Color(0xFF1C1B1F),
+    yourCustomColorName: Color(0xFF690005),  // Dark color
+  );
+
+  @override
+  AppThemeColors copyWith({
+    Color? primary,
+    Color? secondary,
+    Color? background,
+    Color? yourCustomColorName,  // Add here
+  }) {
+    return AppThemeColors(
+      primary: primary ?? this.primary,
+      secondary: secondary ?? this.secondary,
+      background: background ?? this.background,
+      yourCustomColorName: yourCustomColorName ?? this.yourCustomColorName,  // Add here
+    );
+  }
+
+  @override
+  AppThemeColors lerp(ThemeExtension&lt;AppThemeColors&gt;? other, double t) {
+    if (other is! AppThemeColors) return this;
+    return AppThemeColors(
+      primary: Color.lerp(primary, other.primary, t)!,
+      secondary: Color.lerp(secondary, other.secondary, t)!,
+      background: Color.lerp(background, other.background, t)!,
+      yourCustomColorName: Color.lerp(yourCustomColorName, other.yourCustomColorName, t)!,  // Add here
+    );
+  }
+}</code></pre>
+
+        <div class="step">
+            <span class="step-number">Step 2:</span> Use in Widgets
+            <pre><code>// Get theme extension
+final themeColors = Theme.of(context).extension&lt;AppThemeColors&gt;();
+
+// Use custom color
+Container(
+  color: themeColors?.yourCustomColorName ?? Colors.grey,
+  child: Text('Hello'),
+)</code></pre>
+        </div>
+
+        <h2>💻 Using Theme in Code</h2>
+
+        <h3>Method 1: Using Theme Extension (Recommended)</h3>
+        <pre><code>// Get theme extension
+final themeColors = Theme.of(context).extension&lt;AppThemeColors&gt;();
+
+// Use colors
+Container(
+  color: themeColors?.primary ?? Colors.blue,
+  child: Text(
+    'Hello',
+    style: TextStyle(color: themeColors?.secondary),
+  ),
+)</code></pre>
+
+        <h3>Method 2: Using ThemeData</h3>
+        <pre><code>// Get theme
+final theme = Theme.of(context);
+
+// Use theme colors
+Container(
+  color: theme.colorScheme.primary,
+  child: Text(
+    'Hello',
+    style: TextStyle(color: theme.colorScheme.onPrimary),
+  ),
+)</code></pre>
+
+        <h3>Method 3: Using AppColors (Constants)</h3>
+        <pre><code>import 'core/constants/app_colors.dart';
+
+Container(
+  color: AppColors.primaryColor,
+  child: Text('Hello'),
+)</code></pre>
+
+        <h2>🎯 Complete Example</h2>
+        <pre><code>import 'package:flutter/material.dart';
+import 'core/theme/app_theme_colors.dart';
+
+class MyWidget extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    // Get theme extension
+    final themeColors = Theme.of(context).extension&lt;AppThemeColors&gt;();
+    
+    return Scaffold(
+      backgroundColor: themeColors?.background,
+      body: Center(
+        child: Column(
+          children: [
+            // Use primary color
+            Container(
+              padding: EdgeInsets.all(20),
+              color: themeColors?.primary,
+              child: Text(
+                'Primary Color',
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+            
+            SizedBox(height: 20),
+            
+            // Use custom color
+            Container(
+              padding: EdgeInsets.all(20),
+              color: themeColors?.yourCustomColorName,
+              child: Text(
+                'Custom Color',
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}</code></pre>
+
+        <h2>✅ Best Practices</h2>
+
+        <h3>1. Use Theme Extensions for Custom Colors</h3>
+        <div class="success-box">
+            <strong>✅ Good</strong>
+            <pre><code>final colors = Theme.of(context).extension&lt;AppThemeColors&gt;();
+color: colors?.primary</code></pre>
+        </div>
+        <div class="error-box">
+            <strong>❌ Bad</strong> - Hardcoded
+            <pre><code>color: Color(0xFF6750A4)</code></pre>
+        </div>
+
+        <h3>2. Always Provide Fallback</h3>
+        <div class="success-box">
+            <strong>✅ Good</strong>
+            <pre><code>color: themeColors?.primary ?? Colors.blue</code></pre>
+        </div>
+        <div class="error-box">
+            <strong>❌ Bad</strong> - Can be null
+            <pre><code>color: themeColors!.primary</code></pre>
+        </div>
+
+        <h3>3. Use Material 3 Colors When Possible</h3>
+        <div class="success-box">
+            <strong>✅ Good</strong>
+            <pre><code>color: Theme.of(context).colorScheme.primary</code></pre>
+        </div>
+        <div class="error-box">
+            <strong>❌ Bad</strong> - Custom when Material 3 has it
+            <pre><code>color: AppColors.primaryColor</code></pre>
+        </div>
+
+        <h2>📋 Quick Reference</h2>
+
+        <h3>Get Theme Extension</h3>
+        <pre><code>final themeColors = Theme.of(context).extension&lt;AppThemeColors&gt;();</code></pre>
+
+        <h3>Use Colors</h3>
+        <table>
+            <tr>
+                <th>Type</th>
+                <th>Code</th>
+            </tr>
+            <tr>
+                <td>Custom Primary</td>
+                <td><code>themeColors?.primary</code></td>
+            </tr>
+            <tr>
+                <td>Custom Secondary</td>
+                <td><code>themeColors?.secondary</code></td>
+            </tr>
+            <tr>
+                <td>Custom Color</td>
+                <td><code>themeColors?.yourCustomColorName</code></td>
+            </tr>
+            <tr>
+                <td>Material 3 Primary</td>
+                <td><code>Theme.of(context).colorScheme.primary</code></td>
+            </tr>
+            <tr>
+                <td>Material 3 Secondary</td>
+                <td><code>Theme.of(context).colorScheme.secondary</code></td>
+            </tr>
+            <tr>
+                <td>Material 3 Surface</td>
+                <td><code>Theme.of(context).colorScheme.surface</code></td>
+            </tr>
+        </table>
+
+        <h3>Files</h3>
+        <ul>
+            <li><strong>Theme</strong>: <code>lib/core/theme/app_theme.dart</code></li>
+            <li><strong>Theme Colors</strong>: <code>lib/core/theme/app_theme_colors.dart</code></li>
+            <li><strong>App Colors</strong>: <code>lib/core/constants/app_colors.dart</code></li>
+        </ul>
+
+        <hr style="margin: 40px 0; border: none; border-top: 2px solid #ecf0f1;">
+        <p style="text-align: center; color: #7f8c8d;">
+            That's it! Simple and easy. 🎨
+        </p>
+    </div>
+</body>
+</html>

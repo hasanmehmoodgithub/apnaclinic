@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Feature Creation Guide</title>
+<style>
+body {
+  font-family: 'Segoe UI', Roboto, Arial, sans-serif;
+  margin: 40px;
+  line-height: 1.6;
+  color: #333;
+  background-color: #fafafa;
+  max-width: 1200px;
+}
+h1 {
+  color: #2c3e50;
+  border-bottom: 3px solid #3498db;
+  padding-bottom: 15px;
+}
+h2 {
+  color: #2c3e50;
+  border-bottom: 2px solid #3498db;
+  padding-bottom: 10px;
+  margin-top: 30px;
+}
+h3 {
+  color: #34495e;
+  margin-top: 25px;
+}
+pre {
+  background: #2d2d2d;
+  color: #f8f8f2;
+  padding: 15px;
+  border-radius: 6px;
+  overflow-x: auto;
+  border: 1px solid #ddd;
+}
+code {
+  background-color: #f0f0f0;
+  padding: 2px 5px;
+  border-radius: 3px;
+  font-size: 0.95em;
+  color: #c7254e;
+}
+pre code {
+  background-color: transparent;
+  color: #f8f8f2;
+  padding: 0;
+}
+.note {
+  background-color: #eaf7ff;
+  padding: 15px;
+  border-left: 4px solid #007acc;
+  border-radius: 5px;
+  margin: 20px 0;
+}
+.warning {
+  background-color: #fff3cd;
+  padding: 15px;
+  border-left: 4px solid #ffc107;
+  border-radius: 5px;
+  margin: 20px 0;
+}
+.success {
+  background-color: #d4edda;
+  padding: 15px;
+  border-left: 4px solid #28a745;
+  border-radius: 5px;
+  margin: 20px 0;
+}
+ul, ol {
+  margin-left: 20px;
+}
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 20px 0;
+}
+th, td {
+  border: 1px solid #ddd;
+  padding: 12px;
+  text-align: left;
+}
+th {
+  background-color: #3498db;
+  color: white;
+}
+tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+.folder-structure {
+  background: #f4f4f4;
+  padding: 15px;
+  border-radius: 6px;
+  font-family: 'Courier New', monospace;
+  margin: 15px 0;
+}
+.checklist {
+  background: #f9f9f9;
+  padding: 15px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+  margin: 15px 0;
+}
+.checklist-item {
+  margin: 8px 0;
+}
+</style>
+</head>
+<body>
+
+<h1>🚀 Feature Creation Guide</h1>
+
+<p>Complete guide for creating new features using Clean Architecture in your Flutter app.</p>
+
+<div class="note">
+  <strong>📖 Overview:</strong> This guide shows you how to create a new feature with GET API, POST API, local fallback, and Clean Architecture structure.
+</div>
+
+<h2>📁 Feature Folder Structure</h2>
+
+<div class="folder-structure">
+<pre>lib/features/
+└── your_feature_name/          # Replace with your feature name
+    ├── data/
+    │   ├── data_sources/
+    │   │   ├── your_feature_remote_data_source.dart
+    │   │   ├── your_feature_remote_data_source_impl.dart
+    │   │   ├── your_feature_local_data_source.dart
+    │   │   └── your_feature_local_data_source_impl.dart
+    │   ├── mappers/
+    │   │   └── your_feature_mapper.dart
+    │   ├── models/
+    │   │   └── your_feature_model.dart
+    │   └── repositories/
+    │       └── your_feature_repository_impl.dart
+    ├── domain/
+    │   ├── entities/
+    │   │   └── your_feature_entity.dart
+    │   ├── repositories/
+    │   │   └── your_feature_repository.dart
+    │   └── use_cases/
+    │       ├── get_your_features_use_case.dart
+    │       ├── create_your_feature_use_case.dart
+    │       └── create_feature_params.dart
+    ├── presentation/
+    │   ├── cubit/
+    │   │   ├── your_features_cubit.dart
+    │   │   ├── your_features_state.dart
+    │   │   └── your_features_state.freezed.dart
+    │   ├── pages/
+    │   │   └── your_features_page.dart
+    │   └── widgets/
+    │       └── your_feature_widget.dart
+    └── your_feature_injection.dart</pre>
+</div>
+
+<h2>🎯 Step-by-Step Guide</h2>
+
+<h3>Step 1: Create Feature Folder</h3>
+
+<pre><code class="language-bash">mkdir -p lib/features/your_feature_name/{data/{data_sources,mappers,models,repositories},domain/{entities,repositories,use_cases},presentation/{cubit,pages,widgets}}</code></pre>
+
+<div class="note">
+  <strong>Example:</strong> For a "products" feature:<br>
+  <code>mkdir -p lib/features/products/{data/{data_sources,mappers,models,repositories},domain/{entities,repositories,use_cases},presentation/{cubit,pages,widgets}}</code>
+</div>
+
+<h3>Step 2: Create Domain Layer (Business Logic)</h3>
+
+<h4>2.1 Entity (Domain Model)</h4>
+
+<p><strong>File:</strong> <code>lib/features/your_feature_name/domain/entities/your_feature_entity.dart</code></p>
+
+<pre><code class="language-dart">import 'package:equatable/equatable.dart';
+
+/// Domain entity - Pure Dart class with no framework dependencies
+class YourFeatureEntity extends Equatable {
+  final String id;
+  final String title;
+  final String description;
+  final DateTime createdAt;
+
+  const YourFeatureEntity({
+    required this.id,
+    required this.title,
+    required this.description,
+    required this.createdAt,
+  });
+
+  /// Create a copy with updated fields
+  YourFeatureEntity copyWith({
+    String? id,
+    String? title,
+    String? description,
+    DateTime? createdAt,
+  }) {
+    return YourFeatureEntity(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      description: description ?? this.description,
+      createdAt: createdAt ?? this.createdAt,
+    );
+  }
+
+  @override
+  List&lt;Object?&gt; get props =&gt; [id, title, description, createdAt];
+}</code></pre>
+
+<h4>2.2 Repository Interface</h4>
+
+<p><strong>File:</strong> <code>lib/features/your_feature_name/domain/repositories/your_feature_repository.dart</code></p>
+
+<pre><code class="language-dart">import '../../../../core/functional/functional_export.dart';
+import '../entities/your_feature_entity.dart';
+import '../use_cases/create_feature_params.dart';
+
+/// Repository interface - Defines what data operations are available
+abstract class YourFeatureRepository {
+  /// GET: Get all features
+  Future&lt;Either&lt;ErrorMsg, List&lt;YourFeatureEntity&gt;&gt;&gt; getFeatures();
+
+  /// POST: Create a new feature
+  Future&lt;Either&lt;ErrorMsg, YourFeatureEntity&gt;&gt; createFeature(
+    CreateFeatureParams params,
+  );
+}</code></pre>
+
+<h4>2.3 Use Case Parameters</h4>
+
+<p><strong>File:</strong> <code>lib/features/your_feature_name/domain/use_cases/create_feature_params.dart</code></p>
+
+<pre><code class="language-dart">/// Parameters for creating a feature
+/// This object is passed through all layers
+class CreateFeatureParams {
+  final String title;
+  final String description;
+
+  CreateFeatureParams({
+    required this.title,
+    required this.description,
+  });
+}</code></pre>
+
+<h4>2.4 GET Use Case</h4>
+
+<p><strong>File:</strong> <code>lib/features/your_feature_name/domain/use_cases/get_your_features_use_case.dart</code></p>
+
+<pre><code class="language-dart">import '../../../../core/functional/functional_export.dart';
+import '../../../../core/use_case/base_use_case.dart';
+import '../entities/your_feature_entity.dart';
+import '../repositories/your_feature_repository.dart';
+
+/// Use case for getting all features (GET)
+class GetYourFeaturesUseCase
+    implements UseCaseNoParams&lt;List&lt;YourFeatureEntity&gt;&gt; {
+  final YourFeatureRepository repository;
+
+  GetYourFeaturesUseCase({required this.repository});
+
+  @override
+  Future&lt;Either&lt;ErrorMsg, List&lt;YourFeatureEntity&gt;&gt;&gt; call() async {
+    return await repository.getFeatures();
+  }
+}</code></pre>
+
+<h4>2.5 POST Use Case</h4>
+
+<p><strong>File:</strong> <code>lib/features/your_feature_name/domain/use_cases/create_your_feature_use_case.dart</code></p>
+
+<pre><code class="language-dart">import '../../../../core/functional/functional_export.dart';
+import '../../../../core/use_case/base_use_case.dart';
+import '../entities/your_feature_entity.dart';
+import '../repositories/your_feature_repository.dart';
+import 'create_feature_params.dart';
+
+/// Use case for creating a feature (POST)
+class CreateYourFeatureUseCase
+    implements UseCase&lt;YourFeatureEntity, CreateFeatureParams&gt; {
+  final YourFeatureRepository repository;
+
+  CreateYourFeatureUseCase({required this.repository});
+
+  @override
+  Future&lt;Either&lt;ErrorMsg, YourFeatureEntity&gt;&gt; call(
+    CreateFeatureParams params,
+  ) async {
+    return await repository.createFeature(params);
+  }
+}</code></pre>
+
+<h3>Step 3: Create Data Layer</h3>
+
+<h4>3.1 Data Model</h4>
+
+<p><strong>File:</strong> <code>lib/features/your_feature_name/data/models/your_feature_model.dart</code></p>
+
+<pre><code class="language-dart">import '../../domain/entities/your_feature_entity.dart';
+
+/// Data model - Extends entity and adds JSON serialization
+class YourFeatureModel extends YourFeatureEntity {
+  const YourFeatureModel({
+    required super.id,
+    required super.title,
+    required super.description,
+    required super.createdAt,
+  });
+
+  /// Create from JSON (API response)
+  factory YourFeatureModel.fromJson(Map&lt;String, dynamic&gt; json) {
+    return YourFeatureModel(
+      id: json['id'] as String? ?? '',
+      title: json['title'] as String? ?? '',
+      description: json['description'] as String? ?? '',
+      createdAt: json['createdAt'] != null
+          ? DateTime.parse(json['createdAt'] as String)
+          : DateTime.now(),
+    );
+  }
+
+  /// Convert to JSON (for API request or local storage)
+  Map&lt;String, dynamic&gt; toJson() {
+    return {
+      'id': id,
+      'title': title,
+      'description': description,
+      'createdAt': createdAt.toIso8601String(),
+    };
+  }
+
+  /// Convert to entity
+  YourFeatureEntity toEntity() {
+    return YourFeatureEntity(
+      id: id,
+      title: title,
+      description: description,
+      createdAt: createdAt,
+    );
+  }
+}</code></pre>
+
+<h4>3.2 Mapper</h4>
+
+<p><strong>File:</strong> <code>lib/features/your_feature_name/data/mappers/your_feature_mapper.dart</code></p>
+
+<pre><code class="language-dart">import '../../domain/entities/your_feature_entity.dart';
+import '../models/your_feature_model.dart';
+
+/// Mapper - Converts between Model and Entity
+class YourFeatureMapper {
+  /// Convert Model to Entity
+  static YourFeatureEntity toEntity(YourFeatureModel model) {
+    return YourFeatureEntity(
+      id: model.id,
+      title: model.title,
+      description: model.description,
+      createdAt: model.createdAt,
+    );
+  }
+
+  /// Convert Entity to Model
+  static YourFeatureModel toModel(YourFeatureEntity entity) {
+    return YourFeatureModel(
+      id: entity.id,
+      title: entity.title,
+      description: entity.description,
+      createdAt: entity.createdAt,
+    );
+  }
+}</code></pre>
+
+<h4>3.3 Remote Data Source Implementation</h4>
+
+<p><strong>File:</strong> <code>lib/features/your_feature_name/data/data_sources/your_feature_remote_data_source_impl.dart</code></p>
+
+<pre><code class="language-dart">import '../../../../core/network/api_client.dart';
+import '../models/your_feature_model.dart';
+import '../../domain/use_cases/create_feature_params.dart';
+import 'your_feature_remote_data_source.dart';
+
+/// Remote data source implementation - API calls
+class YourFeatureRemoteDataSourceImpl
+    implements YourFeatureRemoteDataSource {
+  final ApiClient apiClient;
+
+  YourFeatureRemoteDataSourceImpl({required this.apiClient});
+
+  @override
+  Future&lt;List&lt;YourFeatureModel&gt;&gt; getFeatures() async {
+    try {
+      // GET /your-features
+      final response = await apiClient.get('/your-features');
+      
+      // Parse JSON response
+      final List&lt;dynamic&gt; jsonList = response.data as List&lt;dynamic&gt;;
+      
+      // Convert to models
+      return jsonList
+          .map((json) =&gt; YourFeatureModel.fromJson(json as Map&lt;String, dynamic&gt;))
+          .toList();
+    } catch (e) {
+      throw Exception('Failed to get features: ${e.toString()}');
+    }
+  }
+
+  @override
+  Future&lt;YourFeatureModel&gt; createFeature(CreateFeatureParams params) async {
+    try {
+      // POST /your-features
+      final response = await apiClient.post(
+        '/your-features',
+        data: {
+          'title': params.title,
+          'description': params.description,
+        },
+      );
+      
+      // Parse JSON response
+      return YourFeatureModel.fromJson(response.data as Map&lt;String, dynamic&gt;);
+    } catch (e) {
+      throw Exception('Failed to create feature: ${e.toString()}');
+    }
+  }
+}</code></pre>
+
+<h4>3.4 Local Data Source Implementation</h4>
+
+<p><strong>File:</strong> <code>lib/features/your_feature_name/data/data_sources/your_feature_local_data_source_impl.dart</code></p>
+
+<pre><code class="language-dart">import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../models/your_feature_model.dart';
+import 'your_feature_local_data_source.dart';
+
+/// Local data source implementation - SharedPreferences
+class YourFeatureLocalDataSourceImpl
+    implements YourFeatureLocalDataSource {
+  final SharedPreferences sharedPreferences;
+  static const String _key = 'your_features';
+
+  YourFeatureLocalDataSourceImpl({required this.sharedPreferences});
+
+  @override
+  Future&lt;List&lt;YourFeatureModel&gt;&gt; getFeatures() async {
+    try {
+      final jsonString = sharedPreferences.getString(_key);
+      if (jsonString == null) return [];
+
+      final decoded = jsonDecode(jsonString) as List;
+      return decoded
+          .map((json) =&gt;
+              YourFeatureModel.fromJson(json as Map&lt;String, dynamic&gt;))
+          .toList();
+    } catch (e) {
+      throw Exception('Failed to get features from local storage: $e');
+    }
+  }
+
+  @override
+  Future&lt;YourFeatureModel?&gt; getFeatureById(String id) async {
+    try {
+      final features = await getFeatures();
+      return features.firstWhere(
+        (feature) =&gt; feature.id == id,
+        orElse: () =&gt; throw Exception('Feature not found'),
+      );
+    } catch (e) {
+      return null;
+    }
+  }
+
+  @override
+  Future&lt;void&gt; saveFeature(YourFeatureModel feature) async {
+    try {
+      final features = await getFeatures();
+      final index = features.indexWhere((f) =&gt; f.id == feature.id);
+
+      if (index &gt;= 0) {
+        features[index] = feature; // Update existing
+      } else {
+        features.add(feature); // Add new
+      }
+
+      await saveFeatures(features);
+    } catch (e) {
+      throw Exception('Failed to save feature to local storage: $e');
+    }
+  }
+
+  @override
+  Future&lt;void&gt; saveFeatures(List&lt;YourFeatureModel&gt; features) async {
+    try {
+      final jsonString = jsonEncode(
+        features.map((feature) =&gt; feature.toJson()).toList(),
+      );
+      await sharedPreferences.setString(_key, jsonString);
+    } catch (e) {
+      throw Exception('Failed to save features to local storage: $e');
+    }
+  }
+}</code></pre>
+
+<h4>3.5 Repository Implementation (with Local Fallback)</h4>
+
+<p><strong>File:</strong> <code>lib/features/your_feature_name/data/repositories/your_feature_repository_impl.dart</code></p>
+
+<pre><code class="language-dart">import '../../../../core/functional/functional_export.dart';
+import '../../domain/entities/your_feature_entity.dart';
+import '../../domain/repositories/your_feature_repository.dart';
+import '../../domain/use_cases/create_feature_params.dart';
+import '../data_sources/your_feature_local_data_source.dart';
+import '../data_sources/your_feature_remote_data_source.dart';
+import '../mappers/your_feature_mapper.dart';
+
+/// Repository implementation - Combines remote and local data sources
+class YourFeatureRepositoryImpl implements YourFeatureRepository {
+  final YourFeatureRemoteDataSource remoteDataSource;
+  final YourFeatureLocalDataSource localDataSource;
+
+  YourFeatureRepositoryImpl({
+    required this.remoteDataSource,
+    required this.localDataSource,
+  });
+
+  @override
+  Future&lt;Either&lt;ErrorMsg, List&lt;YourFeatureEntity&gt;&gt;&gt; getFeatures() async {
+    try {
+      // GET: Try remote first (API call)
+      final remoteFeatures = await remoteDataSource.getFeatures();
+
+      // Save to local storage for offline access
+      await localDataSource.saveFeatures(remoteFeatures);
+
+      // Convert models to entities
+      final entities = remoteFeatures
+          .map((model) =&gt; YourFeatureMapper.toEntity(model))
+          .toList();
+
+      return Right(entities);
+    } catch (e) {
+      // Fallback to local storage if API fails (no internet)
+      try {
+        final localFeatures = await localDataSource.getFeatures();
+        final entities = localFeatures
+            .map((model) =&gt; YourFeatureMapper.toEntity(model))
+            .toList();
+
+        return Right(entities);
+      } catch (localError) {
+        return Left('Failed to load features: ${localError.toString()}');
+      }
+    }
+  }
+
+  @override
+  Future&lt;Either&lt;ErrorMsg, YourFeatureEntity&gt;&gt; createFeature(
+    CreateFeatureParams params,
+  ) async {
+    try {
+      // POST: Create via API
+      final feature = await remoteDataSource.createFeature(params);
+
+      // Save to local storage
+      await localDataSource.saveFeature(feature);
+
+      // Convert to entity
+      return Right(YourFeatureMapper.toEntity(feature));
+    } catch (e) {
+      return Left('Failed to create feature: ${e.toString()}');
+    }
+  }
+}</code></pre>
+
+<h3>Step 4: Create Presentation Layer</h3>
+
+<h4>4.1 State</h4>
+
+<p><strong>File:</strong> <code>lib/features/your_feature_name/presentation/cubit/your_features_state.dart</code></p>
+
+<pre><code class="language-dart">import 'package:freezed_annotation/freezed_annotation.dart';
+import '../../domain/entities/your_feature_entity.dart';
+
+part 'your_features_state.freezed.dart';
+
+/// State for Your Features
+@freezed
+class YourFeaturesState with _$YourFeaturesState {
+  const factory YourFeaturesState({
+    @Default([]) List&lt;YourFeatureEntity&gt; features,
+    @Default(false) bool isLoading,
+    String? errorMessage,
+  }) = _YourFeaturesState;
+
+  const YourFeaturesState._();
+}</code></pre>
+
+<div class="warning">
+  <strong>⚠️ Important:</strong> Run <code>flutter pub run build_runner build --delete-conflicting-outputs</code> to generate the freezed file.
+</div>
+
+<h4>4.2 Cubit</h4>
+
+<p><strong>File:</strong> <code>lib/features/your_feature_name/presentation/cubit/your_features_cubit.dart</code></p>
+
+<pre><code class="language-dart">import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../domain/entities/your_feature_entity.dart';
+import '../../domain/use_cases/get_your_features_use_case.dart';
+import '../../domain/use_cases/create_your_feature_use_case.dart';
+import '../../domain/use_cases/create_feature_params.dart';
+import 'your_features_state.dart';
+
+/// Cubit for managing Your Features state
+class YourFeaturesCubit extends Cubit&lt;YourFeaturesState&gt; {
+  final GetYourFeaturesUseCase getFeaturesUseCase;
+  final CreateYourFeatureUseCase createFeatureUseCase;
+
+  YourFeaturesCubit({
+    required this.getFeaturesUseCase,
+    required this.createFeatureUseCase,
+  }) : super(const YourFeaturesState()) {
+    loadFeatures();
+  }
+
+  /// GET: Load all features
+  Future&lt;void&gt; loadFeatures() async {
+    emit(state.copyWith(isLoading: true, errorMessage: null));
+
+    final result = await getFeaturesUseCase.call();
+
+    result.fold(
+      (error) {
+        emit(state.copyWith(isLoading: false, errorMessage: error));
+      },
+      (features) {
+        emit(
+          state.copyWith(
+            features: features,
+            isLoading: false,
+            errorMessage: null,
+          ),
+        );
+      },
+    );
+  }
+
+  /// POST: Create a new feature
+  Future&lt;void&gt; createFeature({
+    required String title,
+    required String description,
+  }) async {
+    emit(state.copyWith(isLoading: true, errorMessage: null));
+
+    final result = await createFeatureUseCase.call(
+      CreateFeatureParams(title: title, description: description),
+    );
+
+    result.fold(
+      (error) {
+        emit(state.copyWith(isLoading: false, errorMessage: error));
+      },
+      (feature) {
+        // Add new feature to list
+        final updatedFeatures = [feature, ...state.features];
+        emit(
+          state.copyWith(
+            features: updatedFeatures,
+            isLoading: false,
+            errorMessage: null,
+          ),
+        );
+      },
+    );
+  }
+}</code></pre>
+
+<h3>Step 5: Dependency Injection</h3>
+
+<p><strong>File:</strong> <code>lib/features/your_feature_name/your_feature_injection.dart</code></p>
+
+<pre><code class="language-dart">import '../../core/di/dependency_injection.dart';
+import '../../core/network/api_client.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'data/data_sources/your_feature_local_data_source.dart';
+import 'data/data_sources/your_feature_local_data_source_impl.dart';
+import 'data/data_sources/your_feature_remote_data_source.dart';
+import 'data/data_sources/your_feature_remote_data_source_impl.dart';
+import 'data/repositories/your_feature_repository_impl.dart';
+import 'domain/repositories/your_feature_repository.dart';
+import 'domain/use_cases/get_your_features_use_case.dart';
+import 'domain/use_cases/create_your_feature_use_case.dart';
+import 'presentation/cubit/your_features_cubit.dart';
+
+/// Initialize your feature dependencies
+void initYourFeatureInjector() {
+  // Register Remote Data Source
+  sl.registerLazySingleton&lt;YourFeatureRemoteDataSource&gt;(
+    () =&gt; YourFeatureRemoteDataSourceImpl(apiClient: sl&lt;ApiClient&gt;()),
+  );
+
+  // Register Local Data Source
+  sl.registerLazySingleton&lt;YourFeatureLocalDataSource&gt;(
+    () =&gt; YourFeatureLocalDataSourceImpl(
+      sharedPreferences: sl&lt;SharedPreferences&gt;(),
+    ),
+  );
+
+  // Register Repository
+  sl.registerLazySingleton&lt;YourFeatureRepository&gt;(
+    () =&gt; YourFeatureRepositoryImpl(
+      remoteDataSource: sl&lt;YourFeatureRemoteDataSource&gt;(),
+      localDataSource: sl&lt;YourFeatureLocalDataSource&gt;(),
+    ),
+  );
+
+  // Register Use Cases
+  sl.registerLazySingleton&lt;GetYourFeaturesUseCase&gt;(
+    () =&gt; GetYourFeaturesUseCase(
+      repository: sl&lt;YourFeatureRepository&gt;(),
+    ),
+  );
+
+  sl.registerLazySingleton&lt;CreateYourFeatureUseCase&gt;(
+    () =&gt; CreateYourFeatureUseCase(
+      repository: sl&lt;YourFeatureRepository&gt;(),
+    ),
+  );
+
+  // Register Cubit (Factory - creates new instance each time)
+  sl.registerFactory&lt;YourFeaturesCubit&gt;(
+    () =&gt; YourFeaturesCubit(
+      getFeaturesUseCase: sl&lt;GetYourFeaturesUseCase&gt;(),
+      createFeatureUseCase: sl&lt;CreateYourFeatureUseCase&gt;(),
+    ),
+  );
+}</code></pre>
+
+<div class="note">
+  <strong>Add to main DI file:</strong> In <code>lib/core/di/dependency_injection.dart</code>, add:
+  <pre><code>import '../../features/your_feature_name/your_feature_injection.dart';
+
+// In initDependencyInjection function:
+Future&lt;void&gt; initDependencyInjection() async {
+  await _initCore();
+  initYourFeatureInjector(); // Add this line
+}</code></pre>
+</div>
+
+<h2>📋 Complete Example: Products Feature</h2>
+
+<h3>GET API Call Example</h3>
+
+<pre><code class="language-dart">// Remote Data Source
+@override
+Future&lt;List&lt;ProductModel&gt;&gt; getProducts() async {
+  final response = await apiClient.get('/products');
+  final List&lt;dynamic&gt; jsonList = response.data as List&lt;dynamic&gt;;
+  return jsonList
+      .map((json) =&gt; ProductModel.fromJson(json as Map&lt;String, dynamic&gt;))
+      .toList();
+}
+
+// Repository (with local fallback)
+@override
+Future&lt;Either&lt;ErrorMsg, List&lt;ProductEntity&gt;&gt;&gt; getProducts() async {
+  try {
+    // Try API first
+    final remoteProducts = await remoteDataSource.getProducts();
+    await localDataSource.saveProducts(remoteProducts);
+    return Right(remoteProducts.map((m) =&gt; ProductMapper.toEntity(m)).toList());
+  } catch (e) {
+    // Fallback to local if no internet
+    try {
+      final localProducts = await localDataSource.getProducts();
+      return Right(localProducts.map((m) =&gt; ProductMapper.toEntity(m)).toList());
+    } catch (localError) {
+      return Left('Failed to load products: ${localError.toString()}');
+    }
+  }
+}</code></pre>
+
+<h3>POST API Call Example</h3>
+
+<pre><code class="language-dart">// Remote Data Source
+@override
+Future&lt;ProductModel&gt; createProduct(CreateProductParams params) async {
+  final response = await apiClient.post(
+    '/products',
+    data: {
+      'name': params.name,
+      'price': params.price,
+      'description': params.description,
+    },
+  );
+  return ProductModel.fromJson(response.data as Map&lt;String, dynamic&gt;);
+}
+
+// Repository
+@override
+Future&lt;Either&lt;ErrorMsg, ProductEntity&gt;&gt; createProduct(
+  CreateProductParams params,
+) async {
+  try {
+    final product = await remoteDataSource.createProduct(params);
+    await localDataSource.saveProduct(product);
+    return Right(ProductMapper.toEntity(product));
+  } catch (e) {
+    return Left('Failed to create product: ${e.toString()}');
+  }
+}</code></pre>
+
+<h2>🎯 Key Points</h2>
+
+<h3>1. Data Flow</h3>
+
+<div class="folder-structure">
+<pre>UI (Cubit) 
+  → Use Case 
+    → Repository 
+      → Remote Data Source (API)
+      → Local Data Source (Fallback)</pre>
+</div>
+
+<h3>2. Local Fallback Strategy</h3>
+
+<pre><code class="language-dart">// Always try remote first
+try {
+  final remoteData = await remoteDataSource.getData();
+  await localDataSource.saveData(remoteData); // Cache for offline
+  return Right(remoteData);
+} catch (e) {
+  // If API fails, use local data
+  try {
+    final localData = await localDataSource.getData();
+    return Right(localData);
+  } catch (localError) {
+    return Left('Error message');
+  }
+}</code></pre>
+
+<h3>3. Naming Convention</h3>
+
+<ul>
+  <li><strong>Feature name:</strong> <code>your_feature_name</code> (snake_case)</li>
+  <li><strong>Files:</strong> <code>your_feature_entity.dart</code>, <code>your_feature_model.dart</code></li>
+  <li><strong>Classes:</strong> <code>YourFeatureEntity</code>, <code>YourFeatureModel</code> (PascalCase)</li>
+</ul>
+
+<h2>✅ Checklist</h2>
+
+<div class="checklist">
+  <div class="checklist-item">☐ Create folder structure</div>
+  <div class="checklist-item">☐ Create domain layer (entity, repository interface, use cases)</div>
+  <div class="checklist-item">☐ Create data layer (model, mapper, data sources, repository impl)</div>
+  <div class="checklist-item">☐ Create presentation layer (state, cubit, page)</div>
+  <div class="checklist-item">☐ Setup dependency injection</div>
+  <div class="checklist-item">☐ Add route</div>
+  <div class="checklist-item">☐ Run <code>build_runner</code> for freezed files</div>
+  <div class="checklist-item">☐ Test GET API call</div>
+  <div class="checklist-item">☐ Test POST API call</div>
+  <div class="checklist-item">☐ Test local fallback (turn off internet)</div>
+</div>
+
+<h2>🎯 Summary</h2>
+
+<div class="success">
+  <ol>
+    <li><strong>Structure:</strong> Follow Clean Architecture (domain → data → presentation)</li>
+    <li><strong>GET API:</strong> Remote data source → Repository → Use case → Cubit</li>
+    <li><strong>POST API:</strong> Cubit → Use case → Repository → Remote data source</li>
+    <li><strong>Local Fallback:</strong> Try remote, fallback to local if fails</li>
+    <li><strong>DI:</strong> Register all dependencies in injection file</li>
+  </ol>
+</div>
+
+<p><strong>That's it! You now know how to create features. 🚀</strong></p>
+
+</body>
+</html>
