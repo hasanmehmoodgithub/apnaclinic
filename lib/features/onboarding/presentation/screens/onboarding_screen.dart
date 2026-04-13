@@ -2,8 +2,9 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../../../core/di/dependency_injection.dart';
+import '../../../../core/preference/app_pref.dart';
 import '../../../../core/router/app_routes.dart';
 import '../widgets/onboarding_backdrop.dart';
 import '../widgets/onboarding_header.dart';
@@ -14,8 +15,6 @@ import '../widgets/onboarding_pager_indicator.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
-
-  static const String seenKey = 'onboarding_seen';
 
   @override
   State<OnboardingScreen> createState() => _OnboardingScreenState();
@@ -29,32 +28,31 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     OnboardingPageData(
       title: 'Doctor Consultation',
       subtitle: 'Access to PMDC certified doctors',
-      imageAsset: 'assets/img/onboarding/doctor_consultation.png',
+      imageAsset: 'assets/img/onboarding/doctor_consultation.webp',
     ),
     OnboardingPageData(
       title: 'Pharmacy',
       subtitle: 'Get authentic medicines at your doorstep.',
-      imageAsset: 'assets/img/onboarding/pharmacy.png',
+      imageAsset: 'assets/img/onboarding/pharmacy.webp',
     ),
     OnboardingPageData(
       title: 'Laboratory Testing',
       subtitle: 'Access reliable lab tests with accurate results.',
-      imageAsset: 'assets/img/onboarding/laboratory.png',
+      imageAsset: 'assets/img/onboarding/laboratory.webp',
     ),
     OnboardingPageData(
       title: 'Surgery Booking',
       subtitle: 'Book your surgery with ease.',
-      imageAsset: 'assets/img/onboarding/surgery_booking.png',
+      imageAsset: 'assets/img/onboarding/surgery_booking.webp',
     ),
   ];
 
   bool get _isLast => _currentIndex == _pages.length - 1;
 
   Future<void> _finishOnboarding() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool(OnboardingScreen.seenKey, true);
+    await sl<AppPref>().setOnboardingCompleted(true);
     if (!mounted) return;
-    context.go(AppRoutes.path(AppRoutes.home));
+    context.go(AppRoutes.path(AppRoutes.authLogin));
   }
 
   Future<void> _onNext() async {

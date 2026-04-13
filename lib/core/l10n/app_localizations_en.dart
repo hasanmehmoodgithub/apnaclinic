@@ -61,4 +61,47 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get changeLanguage => 'Change Language';
+
+  @override
+  String get authVerifyPhoneTitle => 'Verify Your Phone Number';
+
+  @override
+  String get authMobileNumberLabel => 'Enter Mobile Number';
+
+  @override
+  String get authPhoneHint => '3045770007';
+
+  @override
+  String get authOtpHint => 'An OTP will be sent to this number';
+
+  @override
+  String get authSendOtpCta => 'Send OTP';
+
+  @override
+  String get authOtpVerificationTitle => 'OTP Verification';
+
+  @override
+  String get authOtpHintCode => '1 2 3 4';
+
+  @override
+  String get authProceedCta => 'Proceed';
+
+  @override
+  String get authResendOtp => 'Resend OTP';
+
+  @override
+  String get authOtpSentTo => 'OTP sent to';
+
+  @override
+  String get authOtpSentMessage => 'OTP sent successfully.';
+
+  @override
+  String get authPhoneValidationError => 'Please enter a valid phone number.';
+
+  @override
+  String get authOtpValidationError => 'Please enter a valid 4-digit OTP.';
+
+  @override
+  String get authTermsAndPrivacy =>
+      'By Signing in, I agree to Terms & Conditions and privacy policy.';
 }

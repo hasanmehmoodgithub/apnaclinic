@@ -17,5 +17,19 @@
   "logout": "لاگ آؤٹ",
   "welcome": "خوش آمدید",
   "changeTheme": "تھیم تبدیل کریں",
-  "changeLanguage": "زبان تبدیل کریں"
+  "changeLanguage": "زبان تبدیل کریں",
+  "authVerifyPhoneTitle": "اپنا فون نمبر تصدیق کریں",
+  "authMobileNumberLabel": "موبائل نمبر درج کریں",
+  "authPhoneHint": "3045770007",
+  "authOtpHint": "اس نمبر پر OTP بھیجا جائے گا",
+  "authSendOtpCta": "OTP بھیجیں",
+  "authOtpVerificationTitle": "OTP تصدیق",
+  "authOtpHintCode": "1 2 3 4",
+  "authProceedCta": "آگے بڑھیں",
+  "authResendOtp": "OTP دوبارہ بھیجیں",
+  "authOtpSentTo": "OTP بھیجا گیا",
+  "authOtpSentMessage": "OTP کامیابی سے بھیج دیا گیا۔",
+  "authPhoneValidationError": "درست فون نمبر درج کریں۔",
+  "authOtpValidationError": "درست 4 ہندسوں کا OTP درج کریں۔",
+  "authTermsAndPrivacy": "سائن ان کرکے میں شرائط و ضوابط اور پرائیویسی پالیسی سے اتفاق کرتا ہوں۔"
 }

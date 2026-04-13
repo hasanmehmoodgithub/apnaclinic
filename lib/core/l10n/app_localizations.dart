@@ -205,6 +205,90 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Change Language'**
   String get changeLanguage;
+
+  /// No description provided for @authVerifyPhoneTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify Your Phone Number'**
+  String get authVerifyPhoneTitle;
+
+  /// No description provided for @authMobileNumberLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter Mobile Number'**
+  String get authMobileNumberLabel;
+
+  /// No description provided for @authPhoneHint.
+  ///
+  /// In en, this message translates to:
+  /// **'3045770007'**
+  String get authPhoneHint;
+
+  /// No description provided for @authOtpHint.
+  ///
+  /// In en, this message translates to:
+  /// **'An OTP will be sent to this number'**
+  String get authOtpHint;
+
+  /// No description provided for @authSendOtpCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Send OTP'**
+  String get authSendOtpCta;
+
+  /// No description provided for @authOtpVerificationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'OTP Verification'**
+  String get authOtpVerificationTitle;
+
+  /// No description provided for @authOtpHintCode.
+  ///
+  /// In en, this message translates to:
+  /// **'1 2 3 4'**
+  String get authOtpHintCode;
+
+  /// No description provided for @authProceedCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Proceed'**
+  String get authProceedCta;
+
+  /// No description provided for @authResendOtp.
+  ///
+  /// In en, this message translates to:
+  /// **'Resend OTP'**
+  String get authResendOtp;
+
+  /// No description provided for @authOtpSentTo.
+  ///
+  /// In en, this message translates to:
+  /// **'OTP sent to'**
+  String get authOtpSentTo;
+
+  /// No description provided for @authOtpSentMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'OTP sent successfully.'**
+  String get authOtpSentMessage;
+
+  /// No description provided for @authPhoneValidationError.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a valid phone number.'**
+  String get authPhoneValidationError;
+
+  /// No description provided for @authOtpValidationError.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a valid 4-digit OTP.'**
+  String get authOtpValidationError;
+
+  /// No description provided for @authTermsAndPrivacy.
+  ///
+  /// In en, this message translates to:
+  /// **'By Signing in, I agree to Terms & Conditions and privacy policy.'**
+  String get authTermsAndPrivacy;
 }
 
 class _AppLocalizationsDelegate

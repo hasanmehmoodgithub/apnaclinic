@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import '../../../../core/constants/app_system_ui.dart';
 import '../../../../core/flavor/flavor_config.dart';
+import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/router/app_router.dart';
 // TODO: Uncomment when notification service is enabled
 // import '../../../../core/services/notification_service.dart';
@@ -110,6 +112,13 @@ class _FlutterSampleAppState extends State<FlutterSampleApp> {
           systemOverlayStyle: AppSystemUi.overlayStyle,
         ),
       ),
+      localizationsDelegates: const [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: AppLocalizations.supportedLocales,
 
       // TODO: Uncomment if you want to use theme (without state management)
       // theme: AppTheme.lightTheme,

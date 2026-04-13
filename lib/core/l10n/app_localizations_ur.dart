@@ -61,4 +61,47 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get changeLanguage => 'زبان تبدیل کریں';
+
+  @override
+  String get authVerifyPhoneTitle => 'اپنا فون نمبر تصدیق کریں';
+
+  @override
+  String get authMobileNumberLabel => 'موبائل نمبر درج کریں';
+
+  @override
+  String get authPhoneHint => '3045770007';
+
+  @override
+  String get authOtpHint => 'اس نمبر پر OTP بھیجا جائے گا';
+
+  @override
+  String get authSendOtpCta => 'OTP بھیجیں';
+
+  @override
+  String get authOtpVerificationTitle => 'OTP تصدیق';
+
+  @override
+  String get authOtpHintCode => '1 2 3 4';
+
+  @override
+  String get authProceedCta => 'آگے بڑھیں';
+
+  @override
+  String get authResendOtp => 'OTP دوبارہ بھیجیں';
+
+  @override
+  String get authOtpSentTo => 'OTP بھیجا گیا';
+
+  @override
+  String get authOtpSentMessage => 'OTP کامیابی سے بھیج دیا گیا۔';
+
+  @override
+  String get authPhoneValidationError => 'درست فون نمبر درج کریں۔';
+
+  @override
+  String get authOtpValidationError => 'درست 4 ہندسوں کا OTP درج کریں۔';
+
+  @override
+  String get authTermsAndPrivacy =>
+      'سائن ان کرکے میں شرائط و ضوابط اور پرائیویسی پالیسی سے اتفاق کرتا ہوں۔';
 }

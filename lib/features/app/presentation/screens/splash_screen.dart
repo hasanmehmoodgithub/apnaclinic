@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import '../../../../core/di/dependency_injection.dart';
+import '../../../../core/preference/app_pref.dart';
 import '../../../../core/router/app_routes.dart';
-import '../../../onboarding/presentation/screens/onboarding_screen.dart';
 
 /// Splash Screen - First screen shown when app launches
 class SplashScreen extends StatefulWidget {
@@ -22,12 +22,13 @@ class _SplashScreenState extends State<SplashScreen> {
   Future<void> _navigateToNext() async {
     await Future<void>.delayed(const Duration(seconds: 3));
     if (!mounted) return;
-    final prefs = await SharedPreferences.getInstance();
-    if (!mounted) return;
-    final seenOnboarding = prefs.getBool(OnboardingScreen.seenKey) ?? false;
-    context.go(
-      AppRoutes.path(seenOnboarding ? AppRoutes.home : AppRoutes.onboarding),
-    );
+    final appPref = sl<AppPref>();
+    final seenOnboarding = appPref.isOnboardingCompleted();
+    final isLoggedIn = appPref.getLoginStatus();
+    final nextRoute = !seenOnboarding
+        ? AppRoutes.onboarding
+        : (isLoggedIn ? AppRoutes.home : AppRoutes.authLogin);
+    context.go(AppRoutes.path(nextRoute));
   }
 
   @override
@@ -39,7 +40,7 @@ class _SplashScreenState extends State<SplashScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SizedBox.expand(
-        child: Image.asset('assets/img/splash.png', fit: BoxFit.cover),
+        child: Image.asset('assets/img/splash.webp', fit: BoxFit.cover),
       ),
     );
   }
