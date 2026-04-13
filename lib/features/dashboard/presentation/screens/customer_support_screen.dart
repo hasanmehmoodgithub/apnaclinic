@@ -1,3 +1,4 @@
+import 'package:apnaclinic/core/extensions/context_extensions.dart';
 import 'package:apnaclinic/generated/assets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -16,7 +17,7 @@ class CustomerSupportScreen extends StatelessWidget {
   static const Color _headingDark = Color(0xFF111827);
   static const Color _subtitleGrey = Color(0xFF6B7280);
 
-  static const double _topBannerFraction = 0.32;
+  static const double _topBannerFraction = 0.39;
   static const double _cardOverlap = 32;
   static const double _cardTopRadius = 32;
 
@@ -24,10 +25,9 @@ class CustomerSupportScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final bannerHeight = MediaQuery.sizeOf(context).height * _topBannerFraction;
 
-    return ColoredBox(
-      color: const Color(0xFFF8FAF9),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+    return Scaffold(
+      body: Column(
+
         children: [
           SizedBox(
             height: bannerHeight,
@@ -102,11 +102,11 @@ class _SupportTopHeader extends StatelessWidget {
             ),
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(24, 4, 24, 8),
+                padding: const EdgeInsets.fromLTRB(0, 1, 0, 30),
                 child: Image.asset(
                   CustomerSupportScreen._heroAsset,
-                  fit: BoxFit.contain,
-                  alignment: Alignment.bottomCenter,
+                  fit: BoxFit.fill,
+                  alignment: Alignment.topCenter,
                 ),
               ),
             ),
@@ -192,7 +192,9 @@ class _ApnaSupportCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     const radius = BorderRadius.all(Radius.circular(_radius));
-
+    final curveWidth = context.screenWidth * 0.7206; // Figma ratio
+    final curveHeight = 281.37;
+    final curveLeft = context.screenWidth* 0.6290; //
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -218,16 +220,15 @@ class _ApnaSupportCard extends StatelessWidget {
               clipBehavior: Clip.hardEdge,
               children: [
                 Positioned(
-                  right: -56,
-                  top: -8,
-                  bottom: -8,
-                  child: Center(
+                  left: curveLeft,
+                  top: -48.78,
+                  child: IgnorePointer(
                     child: Container(
-                      width: 132,
-                      height: 132,
-                      decoration: const BoxDecoration(
+                      width: curveWidth,
+                      height: curveHeight,
+                      decoration:  BoxDecoration(
                         shape: BoxShape.circle,
-                        color: _accentBlob,
+                        color: Color(0xFFDDE2EE).withValues(alpha: 0.6),
                       ),
                     ),
                   ),

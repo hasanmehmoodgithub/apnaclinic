@@ -7,7 +7,7 @@ import 'package:apnaclinic/core/flavor/flavor_config.dart';
 
 import 'core/di/dependency_injection.dart';
 import 'core/security/security_widget.dart';
-import 'features/app/presentation/screens/flutter_sample_app.dart';
+import 'features/app/presentation/screens/apna_clinic_app.dart';
 
 void main() {
   // Run app in a zone with error handling
@@ -39,8 +39,8 @@ void main() {
         // Run app with security guard in release mode
         runApp(
           kDebugMode
-              ? const FlutterSampleApp()
-              : SecurityGate(child: const FlutterSampleApp()),
+              ? const ApnaClinicApp()
+              : SecurityGate(child: const ApnaClinicApp()),
         );
       } catch (e, stackTrace) {
         // Guard: Handle initialization errors gracefully
@@ -83,7 +83,7 @@ void main() {
           );
         } else {
           // In release mode, try to run app anyway (may work with fallbacks)
-          runApp(const FlutterSampleApp());
+          runApp(const ApnaClinicApp());
         }
       }
     },

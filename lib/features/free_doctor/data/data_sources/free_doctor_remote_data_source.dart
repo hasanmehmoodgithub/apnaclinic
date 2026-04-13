@@ -1,0 +1,5 @@
+import '../models/free_doctor_model.dart';
+
+abstract class FreeDoctorRemoteDataSource {
+  Future<FreeDoctorModel> getFreeDoctorContent();
+}

@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
+import 'dart:async';
+import 'dart:io';
 
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/widgets/apna_clinic_app_bar.dart';
@@ -17,6 +20,13 @@ class DashboardHomeScreen extends StatefulWidget {
 
 class _DashboardHomeScreenState extends State<DashboardHomeScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  Timer? _promoDialogTimer;
+  bool _isPromoDialogShown = false;
+
+  static const String _promoImagePath =
+      '/Users/hasan/.cursor/projects/Users-hasan-StudioProjects-apnaclinic/assets/Broadway__1_-f6b22543-8696-4c1f-8f93-b1fb978e73e4.png';
+  static const String _closeIconSvgPath =
+      '/Users/hasan/Downloads/fi_1617543.svg';
 
   static const List<_ServiceItem> _services = [
     _ServiceItem(
@@ -48,6 +58,75 @@ class _DashboardHomeScreenState extends State<DashboardHomeScreen> {
       route: null,
     ),
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    _promoDialogTimer = Timer(const Duration(seconds: 2), _showPromoDialog);
+  }
+
+  @override
+  void dispose() {
+    _promoDialogTimer?.cancel();
+    super.dispose();
+  }
+
+  Future<void> _showPromoDialog() async {
+    if (!mounted || _isPromoDialogShown) return;
+    _isPromoDialogShown = true;
+
+    await showDialog<void>(
+      context: context,
+      barrierDismissible: true,
+      barrierColor: Colors.black.withValues(alpha: 0.45),
+      builder: (dialogContext) {
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          insetPadding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Stack(
+            clipBehavior: Clip.none,
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(14),
+                child: Image.file(
+                  File(_promoImagePath),
+                  fit: BoxFit.cover,
+                ),
+              ),
+              Positioned(
+                top: 10,
+                right: 10,
+                child: Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    onTap: () => Navigator.of(dialogContext).pop(),
+                    borderRadius: BorderRadius.circular(16),
+                    child: Container(
+                      width: 32,
+                      height: 32,
+                      padding: const EdgeInsets.all(7),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF0A8D84).withValues(alpha: 0.9),
+                        shape: BoxShape.circle,
+                        border: Border.all(color: Colors.white, width: 1.2),
+                      ),
+                      child: SvgPicture.file(
+                        File(_closeIconSvgPath),
+                        colorFilter: const ColorFilter.mode(
+                          Colors.white,
+                          BlendMode.srcIn,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {

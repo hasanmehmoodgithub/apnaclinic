@@ -1,6 +1,7 @@
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../features/consultation/consultation_injection.dart';
+import '../../features/free_doctor/free_doctor_injection.dart';
 import '../../features/your_clean_feature/your_feature_injection.dart';
 import '../../features/auth/auth_injection.dart';
 import '../../features/profile_setup/profile_setup_injection.dart';
@@ -20,6 +21,7 @@ Future<void> initDependencyInjection() async {
   initProfileSetupInjector();
   initYourFeatureInjector();
   initConsultationInjector();
+  initFreeDoctorInjector();
 }
 
 Future<void> _initCore() async {

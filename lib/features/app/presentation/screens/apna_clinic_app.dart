@@ -25,14 +25,14 @@ import '../../../../core/router/app_router.dart';
 // import '../../../../features/auth/presentation/cubit/auth_cubit.dart';
 
 /// Main application widget
-class FlutterSampleApp extends StatefulWidget {
-  const FlutterSampleApp({super.key});
+class ApnaClinicApp extends StatefulWidget {
+  const ApnaClinicApp({super.key});
 
   @override
-  State<FlutterSampleApp> createState() => _FlutterSampleAppState();
+  State<ApnaClinicApp> createState() => _ApnaClinicAppState();
 }
 
-class _FlutterSampleAppState extends State<FlutterSampleApp> {
+class _ApnaClinicAppState extends State<ApnaClinicApp> {
   final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
 
   @override
