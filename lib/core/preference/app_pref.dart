@@ -12,7 +12,10 @@ abstract class AppPref {
 
   // ==================== Theme ====================
 
-  Future<bool> setThemeMode(String themeMode, {String? defaultValue}); // 'light', 'dark', 'system'
+  Future<bool> setThemeMode(
+    String themeMode, {
+    String? defaultValue,
+  }); // 'light', 'dark', 'system'
   String getThemeMode(); // Default: 'system'
 
   // ==================== Localization ====================
@@ -24,6 +27,11 @@ abstract class AppPref {
 
   Future<bool> setOnboardingCompleted(bool completed, {bool? defaultValue});
   bool isOnboardingCompleted(); // Default: false
+
+  // ==================== Profile ====================
+
+  Future<bool> setProfileCompleted(bool completed, {bool? defaultValue});
+  bool isProfileCompleted(); // Default: false
 
   // ==================== Generic Methods ====================
 
@@ -39,14 +47,14 @@ abstract class AppPref {
   Future<bool> setBool(String key, bool value, {bool? defaultValue});
   bool? getBool(String key);
 
-  Future<bool> setStringList(String key, List<String> value, {List<String>? defaultValue});
+  Future<bool> setStringList(
+    String key,
+    List<String> value, {
+    List<String>? defaultValue,
+  });
   List<String>? getStringList(String key);
 
   // ==================== Encryption ====================
-
-
-
-
 
   // ==================== Utility ====================
 

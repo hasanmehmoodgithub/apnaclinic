@@ -93,7 +93,7 @@ class _LoginViewState extends State<_LoginView> {
 
     final success = await cubit.verifyOtp(_otpCode);
     if (!mounted || !success) return;
-    context.go(AppRoutes.path(AppRoutes.home));
+    context.go(AppRoutes.path(AppRoutes.profileSetup));
   }
 
   @override

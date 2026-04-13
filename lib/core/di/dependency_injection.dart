@@ -2,6 +2,7 @@ import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../features/your_clean_feature/your_feature_injection.dart';
 import '../../features/auth/auth_injection.dart';
+import '../../features/profile_setup/profile_setup_injection.dart';
 import '../database/app_database.dart';
 import '../network/api_service.dart';
 import '../preference/app_pref.dart';
@@ -15,6 +16,7 @@ final GetIt sl = GetIt.instance;
 Future<void> initDependencyInjection() async {
   await _initCore();
   initAuthInjector();
+  initProfileSetupInjector();
   initYourFeatureInjector();
 }
 

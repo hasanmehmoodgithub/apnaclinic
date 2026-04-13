@@ -104,4 +104,79 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get authTermsAndPrivacy =>
       'By Signing in, I agree to Terms & Conditions and privacy policy.';
+
+  @override
+  String get profileTitle => 'Profile Edit';
+
+  @override
+  String get profileSetupTitle => 'Set up your profile';
+
+  @override
+  String get profileSetupSubtitle => 'Enter your personal information';
+
+  @override
+  String get profileFirstNameLabel => 'First Name';
+
+  @override
+  String get profileFirstNameHint => 'Enter First Name Here';
+
+  @override
+  String get profileFirstNameRequired => 'First name is required.';
+
+  @override
+  String get profileLastNameLabel => 'Last Name';
+
+  @override
+  String get profileLastNameHint => 'Enter Last Name Here';
+
+  @override
+  String get profileLastNameRequired => 'Last name is required.';
+
+  @override
+  String get profileGenderLabel => 'Gender';
+
+  @override
+  String get profileGenderHint => 'Select';
+
+  @override
+  String get profileGenderMale => 'Male';
+
+  @override
+  String get profileGenderFemale => 'Female';
+
+  @override
+  String get profileGenderOther => 'Other';
+
+  @override
+  String get profileGenderRequired => 'Please select gender.';
+
+  @override
+  String get profileEmailLabel => 'Email';
+
+  @override
+  String get profileEmailHint => 'name@example.com';
+
+  @override
+  String get profileEmailRequired => 'Please enter a valid email.';
+
+  @override
+  String get profileAddressLabel => 'Address';
+
+  @override
+  String get profileAddressHint => 'Enter Address';
+
+  @override
+  String get profileAddressRequired => 'Address is required.';
+
+  @override
+  String get profileDobLabel => 'Date of Birth';
+
+  @override
+  String get profileDobHint => 'DD/MM/YY';
+
+  @override
+  String get profileDobRequired => 'Please select date of birth.';
+
+  @override
+  String get profileSaveCta => 'Save';
 }

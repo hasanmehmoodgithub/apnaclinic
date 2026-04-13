@@ -11,6 +11,7 @@ import '../../features/dashboard/presentation/screens/main_navigation_shell.dart
 import '../../features/onboarding/presentation/screens/onboarding_screen.dart';
 import '../../features/auth/presentation/screens/login_screen.dart';
 import '../../features/auth/presentation/screens/otp_verification_screen.dart';
+import '../../features/profile_setup/presentation/screens/profile_setup_screen.dart';
 import 'app_routes.dart';
 import 'router_observer.dart';
 
@@ -47,6 +48,11 @@ class AppRouter {
           final phoneNumber = extra is OtpRouteData ? extra.phoneNumber : '';
           return OtpVerificationScreen(phoneNumber: phoneNumber);
         },
+      ),
+      GoRoute(
+        path: AppRoutes.path(AppRoutes.profileSetup),
+        name: AppRoutes.profileSetup,
+        builder: (context, state) => const ProfileSetupScreen(),
       ),
       GoRoute(
         path: AppRoutes.path(AppRoutes.home),

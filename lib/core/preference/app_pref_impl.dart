@@ -9,12 +9,8 @@ class AppPrefImpl implements AppPref {
   final SharedPreferences _prefs;
   final EncryptionService _encryptionService;
 
-  AppPrefImpl(
-      this._prefs, {
-        EncryptionService? encryptionService,
-      }) : _encryptionService = encryptionService ?? EncryptionService();
-
-
+  AppPrefImpl(this._prefs, {EncryptionService? encryptionService})
+    : _encryptionService = encryptionService ?? EncryptionService();
 
   SharedPreferences get _instance => _prefs;
 
@@ -92,7 +88,10 @@ class AppPrefImpl implements AppPref {
   // ==================== Onboarding ====================
 
   @override
-  Future<bool> setOnboardingCompleted(bool completed, {bool? defaultValue}) async {
+  Future<bool> setOnboardingCompleted(
+    bool completed, {
+    bool? defaultValue,
+  }) async {
     return _instance.setBool(AppPrefKeys.onboardingCompleted, completed);
   }
 
@@ -100,10 +99,23 @@ class AppPrefImpl implements AppPref {
   bool isOnboardingCompleted() =>
       _instance.getBool(AppPrefKeys.onboardingCompleted) ?? false;
 
+  @override
+  Future<bool> setProfileCompleted(bool completed, {bool? defaultValue}) async {
+    return _instance.setBool(AppPrefKeys.profileCompleted, completed);
+  }
+
+  @override
+  bool isProfileCompleted() =>
+      _instance.getBool(AppPrefKeys.profileCompleted) ?? false;
+
   // ==================== Generic ====================
 
   @override
-  Future<bool> setString(String key, String value, {String? defaultValue}) async {
+  Future<bool> setString(
+    String key,
+    String value, {
+    String? defaultValue,
+  }) async {
     final val = value.isNotEmpty ? value : (defaultValue ?? '');
     return _setEncrypted(key, val);
   }
@@ -124,7 +136,11 @@ class AppPrefImpl implements AppPref {
   int? getInt(String key) => _instance.getInt(key);
 
   @override
-  Future<bool> setDouble(String key, double value, {double? defaultValue}) async {
+  Future<bool> setDouble(
+    String key,
+    double value, {
+    double? defaultValue,
+  }) async {
     return _instance.setDouble(key, value);
   }
 
@@ -140,11 +156,16 @@ class AppPrefImpl implements AppPref {
   bool? getBool(String key) => _instance.getBool(key);
 
   @override
-  Future<bool> setStringList(String key, List<String> value,
-      {List<String>? defaultValue}) async {
+  Future<bool> setStringList(
+    String key,
+    List<String> value, {
+    List<String>? defaultValue,
+  }) async {
     try {
       final list = value.isNotEmpty ? value : (defaultValue ?? []);
-      final encryptedList = list.map((e) => _encryptionService.encrypt(e)).toList();
+      final encryptedList = list
+          .map((e) => _encryptionService.encrypt(e))
+          .toList();
       return await _instance.setStringList(key, encryptedList);
     } catch (_) {
       return false;
@@ -165,5 +186,4 @@ class AppPrefImpl implements AppPref {
 
   @override
   Future<bool> clear() async => _instance.clear();
-
 }
