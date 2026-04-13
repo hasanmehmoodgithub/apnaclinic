@@ -1,5 +1,6 @@
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../features/consultation/consultation_injection.dart';
 import '../../features/your_clean_feature/your_feature_injection.dart';
 import '../database/app_database.dart';
 import '../network/api_service.dart';
@@ -7,7 +8,7 @@ import '../preference/app_pref.dart';
 import '../preference/app_pref_impl.dart';
 import '../services/encryption_service.dart';
 import '../services/connectivity_service.dart';
-import '../services/notification_service.dart';
+import '../services/responsive_config_service.dart';
 
 final GetIt sl = GetIt.instance;
 
@@ -15,6 +16,7 @@ Future<void> initDependencyInjection() async {
   await _initCore();
   //await initYourNewFeatures();
   initYourFeatureInjector();
+  initConsultationInjector();
 }
 
 Future<void> _initCore() async {
@@ -35,5 +37,8 @@ Future<void> _initCore() async {
   );
   sl.registerLazySingleton<AppDatabase>(() => AppDatabase());
   sl.registerLazySingleton<ConnectivityService>(() => ConnectivityService());
-  sl.registerLazySingleton<NotificationService>(() => NotificationService());
+  sl.registerLazySingleton<ResponsiveConfigService>(
+    () => const ResponsiveConfigService(),
+  );
+  // sl.registerLazySingleton<NotificationService>(() => NotificationService());
 }
