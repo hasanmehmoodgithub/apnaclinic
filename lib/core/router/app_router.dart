@@ -6,6 +6,7 @@ import '../../features/example/presentation/screens/examples_main_screen.dart';
 // import '../../features/example_mvvm/view/screens/mvvm_structure_guide_page.dart';
 // import '../../features/products/presentation/screens/products_page.dart';
 import '../../features/app/presentation/screens/splash_screen.dart';
+import '../../features/dashboard/presentation/screens/dashboard_menu_screen.dart';
 import '../../features/dashboard/presentation/screens/main_navigation_shell.dart';
 import '../../features/onboarding/presentation/screens/onboarding_screen.dart';
 import 'app_routes.dart';
@@ -35,6 +36,11 @@ class AppRouter {
         path: AppRoutes.path(AppRoutes.home),
         name: AppRoutes.home,
         builder: (context, state) => const MainNavigationShell(),
+      ),
+      GoRoute(
+        path: AppRoutes.path(AppRoutes.dashboardMenu),
+        name: AppRoutes.dashboardMenu,
+        builder: (context, state) => const DashboardMenuScreen(),
       ),
       GoRoute(
         path: AppRoutes.path(AppRoutes.examples),

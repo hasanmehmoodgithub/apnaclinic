@@ -52,42 +52,33 @@ class _DashboardHomeScreenState extends State<DashboardHomeScreen> {
     return Scaffold(
       key: _scaffoldKey,
       backgroundColor: const Color(0xFFF8FAF9),
-      drawer: Drawer(
-        child: ListTile(
-          leading: const Icon(Icons.extension_outlined),
-          title: const Text('Examples playground'),
-          onTap: () {
-            Navigator.of(context).pop();
-            context.push(AppRoutes.path(AppRoutes.examples));
-          },
-        ),
-      ),
       body: Column(
         children: [
           Container(
             color: Color(0xFF52A898),
-            child: Column(children: [
-
-            SafeArea(
-              child: ApnaClinicAppBar(
-                style: ApnaAppBarStyle.light,
-                systemOverlayStyle: ApnaClinicAppBar.lightBarColoredStatus,
-                onMenuTap: () => _scaffoldKey.currentState?.openDrawer(),
-                onNotificationTap: () {
-                  // TODO: notifications screen
-                },
-                onProfileTap: () {
-                  // TODO: profile screen
-                },
-              ),
+            child: Column(
+              children: [
+                SafeArea(
+                  child: ApnaClinicAppBar(
+                    style: ApnaAppBarStyle.light,
+                    systemOverlayStyle: ApnaClinicAppBar.lightBarColoredStatus,
+                    onMenuTap: () =>
+                        context.push(AppRoutes.path(AppRoutes.dashboardMenu)),
+                    onNotificationTap: () {
+                      // TODO: notifications screen
+                    },
+                    onProfileTap: () {
+                      // TODO: profile screen
+                    },
+                  ),
+                ),
+              ],
             ),
-
-          ],),),
+          ),
 
           Expanded(
             child: CustomScrollView(
               slivers: [
-
                 SliverToBoxAdapter(
                   child: HomeHeroHeader(
                     onSearchSubmitted: (_) {
@@ -119,7 +110,7 @@ class _DashboardHomeScreenState extends State<DashboardHomeScreen> {
                   sliver: SliverList.separated(
                     itemCount: _services.length,
                     separatorBuilder: (context, index) =>
-                        const SizedBox(height: 14),
+                        const SizedBox(height: 4),
                     itemBuilder: (context, index) {
                       final s = _services[index];
                       return ServiceCard(

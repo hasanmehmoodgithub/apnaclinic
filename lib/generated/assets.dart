@@ -7,18 +7,26 @@ class Assets {
   static const String imgHeroFamily = 'assets/img/hero_family.png';
   static const String imgProfileAvatar = 'assets/img/profile_avatar.png';
   static const String imgSplash = 'assets/img/splash.png';
-  static const String imgSupportHero = 'assets/img/support_hero.png';
+  static const String onboardingDoctorConsultation = 'assets/img/onboarding/doctor_consultation.png';
+  static const String onboardingLaboratory = 'assets/img/onboarding/laboratory.png';
+  static const String onboardingPharmacy = 'assets/img/onboarding/pharmacy.png';
+  static const String onboardingSurgeryBooking = 'assets/img/onboarding/surgery_booking.png';
   static const String servicesLaboratory = 'assets/img/services/laboratory.png';
   static const String servicesOnlineConsultation = 'assets/img/services/online_consultation.png';
   static const String servicesPharmacy = 'assets/img/services/pharmacy.png';
   static const String servicesSurgeryBooking = 'assets/img/services/surgery_booking.png';
+  static const String supportSupportHero = 'assets/support/support_hero.png';
   static const String svgBrandApnaClinic = 'assets/svg/brand_apna_clinic.svg';
   static const String svgIcMenu = 'assets/svg/ic_menu.svg';
   static const String svgIcNotification = 'assets/svg/ic_notification.svg';
+  static const String svgIcServiceCardArrow = 'assets/svg/ic_service_card_arrow.svg';
+  static const String svgIcServiceOffer = 'assets/svg/ic_service_offer.svg';
+  static const String svgIcSupportCardArrow = 'assets/svg/ic_support_card_arrow.svg';
   static const String svgNavBookings = 'assets/svg/nav_bookings.svg';
   static const String svgNavFreeDoctor = 'assets/svg/nav_free_doctor.svg';
   static const String svgNavHomeLogo = 'assets/svg/nav_home_logo.svg';
   static const String svgNavProfile = 'assets/svg/nav_profile.svg';
   static const String svgNavSupport = 'assets/svg/nav_support.svg';
+  static const String svgOnboardingBgTop = 'assets/svg/onboarding_bg_top.svg';
 
 }
