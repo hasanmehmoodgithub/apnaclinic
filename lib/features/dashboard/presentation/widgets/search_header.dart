@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 /// Solid teal header with rounded bottom + search row overlapping into the body.
-class HomeHeroHeader extends StatelessWidget {
-  const HomeHeroHeader({
+class SearchHeader extends StatelessWidget {
+  const SearchHeader({
     super.key,
     this.userName = 'Hafiz Bilal',
     this.onSearchSubmitted,
@@ -19,12 +20,14 @@ class HomeHeroHeader extends StatelessWidget {
   static const Color _headerTeal = Color(0xFF52A898);
 
   /// Placeholder / icons — muted blue-grey & dark blue.
-  static const Color _hintText = Color(0xFF5A6B7A);
+  static const Color _hintText = Color(0xFF1D4E89);
   static const Color _iconBlue = Color(0xFF024886);
+  static const Color _fieldBg = Color(0xFFF3F4F6);
+  static const String _micAsset = 'assets/svg/ic_search_mic.svg';
 
   static const double _cornerRadius = 28;
-  static const double _searchHeight = 52.0;
-  static const double _overlap = 26;
+  static const double _searchHeight = 54.0;
+  static const double _overlap = 24;
 
   @override
   Widget build(BuildContext context) {
@@ -46,22 +49,23 @@ class HomeHeroHeader extends StatelessWidget {
                   bottomRight: Radius.circular(_cornerRadius),
                 ),
               ),
-              padding: const EdgeInsets.fromLTRB(20, 14, 20, 40),
+              padding: const EdgeInsets.fromLTRB(32, 18, 20, 42),
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
                   'Hello, $userName',
                   style: theme.textTheme.titleLarge?.copyWith(
                     color: Colors.white,
-                    fontWeight: FontWeight.w600,
+                    fontWeight: FontWeight.w500,
+                    fontSize: 42 / 1.4,
                     letterSpacing: 0.15,
                   ),
                 ),
               ),
             ),
             Positioned(
-              left: 20,
-              right: 20,
+              left: 24,
+              right: 24,
               bottom: -_overlap,
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -70,15 +74,8 @@ class HomeHeroHeader extends StatelessWidget {
                     child: Container(
                       height: _searchHeight,
                       decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(16),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.06),
-                            blurRadius: 10,
-                            offset: const Offset(0, 3),
-                          ),
-                        ],
+                        color: _fieldBg,
+                        borderRadius: BorderRadius.circular(10),
                       ),
                       alignment: Alignment.center,
                       child: TextField(
@@ -92,12 +89,12 @@ class HomeHeroHeader extends StatelessWidget {
                           hintText: 'Search Medicine, Doctor, Test....',
                           hintStyle: theme.textTheme.bodyMedium?.copyWith(
                             color: _hintText,
-                            fontWeight: FontWeight.w400,
-                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                            fontSize: 34 / 2.4,
                           ),
                           border: InputBorder.none,
                           contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 16,
+                            horizontal: 20,
                             vertical: 14,
                           ),
                           suffixIcon: Material(
@@ -107,10 +104,10 @@ class HomeHeroHeader extends StatelessWidget {
                               borderRadius: BorderRadius.circular(22),
                               child: Padding(
                                 padding: const EdgeInsets.all(12),
-                                child: Icon(
-                                  Icons.mic_none_rounded,
-                                  color: _iconBlue,
-                                  size: 22,
+                                child: SizedBox(
+                                  width: 17,
+                                  height: 23,
+                                  child: SvgPicture.asset(_micAsset),
                                 ),
                               ),
                             ),
@@ -119,33 +116,26 @@ class HomeHeroHeader extends StatelessWidget {
                       ),
                     ),
                   ),
-                  const SizedBox(width: 10),
+                  const SizedBox(width: 6),
                   Container(
                     width: _searchHeight,
                     height: _searchHeight,
                     decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(16),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.06),
-                          blurRadius: 10,
-                          offset: const Offset(0, 3),
-                        ),
-                      ],
+                      color: _fieldBg,
+                      borderRadius: BorderRadius.circular(12),
                     ),
                     child: Material(
                       color: Colors.transparent,
-                      borderRadius: BorderRadius.circular(16),
+                      borderRadius: BorderRadius.circular(12),
                       clipBehavior: Clip.antiAlias,
                       child: InkWell(
                         onTap: onSearchButtonTap,
-                        borderRadius: BorderRadius.circular(16),
+                        borderRadius: BorderRadius.circular(12),
                         child: const Center(
                           child: Icon(
                             Icons.search_rounded,
                             color: _iconBlue,
-                            size: 26,
+                            size: 34 / 1.35,
                           ),
                         ),
                       ),

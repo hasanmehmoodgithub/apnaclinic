@@ -39,7 +39,7 @@ class ApnaBottomNavigationBar extends StatelessWidget {
                 left: 0,
                 right: 0,
                 bottom: 0,
-                height: 64,
+                height: 66,
                 child: DecoratedBox(
                   decoration: BoxDecoration(
                     color: Colors.white,
@@ -92,7 +92,7 @@ class ApnaBottomNavigationBar extends StatelessWidget {
                 ),
               ),
               Positioned(
-                bottom: 20,
+                bottom: 12,
                 child: _HomeCenterButton(
                   selected: currentIndex == 2,
                   onTap: () => onTap(2),
@@ -134,19 +134,19 @@ class _SideTab extends StatelessWidget {
           children: [
             SvgPicture.asset(
               asset,
-              width: 22,
-              height: 22,
+              width: 24,
+              height: 24,
               colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
             ),
-            const SizedBox(height: 4),
+            const SizedBox(height: 6),
             Text(
               label,
               textAlign: TextAlign.center,
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
-                fontSize: 10,
-                fontWeight: FontWeight.w600,
+                fontSize: 11,
+                fontWeight: FontWeight.w400,
                 height: 1.1,
                 color: color,
               ),
@@ -181,31 +181,15 @@ class _HomeCenterButton extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Container(
+            SizedBox(
               width: 64,
               height: 64,
-              padding: const EdgeInsets.all(6),
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.white,
-                border: Border.all(
-                  color: const Color(0xFFEEF9FF),
-                  width: 4,
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.12),
-                    blurRadius: 12,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
-              ),
               child: SvgPicture.asset(
                 ApnaBottomNavigationBar.homeLogo,
                 fit: BoxFit.contain,
               ),
             ),
-            const SizedBox(height: 2),
+            const SizedBox(height: 4),
             Text(
               'Home',
               style: TextStyle(

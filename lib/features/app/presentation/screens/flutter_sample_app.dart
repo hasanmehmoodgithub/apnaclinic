@@ -105,6 +105,7 @@ class _FlutterSampleAppState extends State<FlutterSampleApp> {
       routerConfig: AppRouter.router,
       theme: ThemeData(
         useMaterial3: true,
+        fontFamily: 'Satoshi',
         appBarTheme: const AppBarTheme(
           systemOverlayStyle: AppSystemUi.overlayStyle,
         ),

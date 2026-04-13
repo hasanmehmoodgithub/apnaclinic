@@ -19,92 +19,86 @@ class ServiceCard extends StatelessWidget {
   final VoidCallback? onTap;
 
   static const double _cardHeight = 105;
-  static const String _offerAsset = 'assets/svg/ic_service_offer.svg';
+
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(14),
-      child: InkWell(
-        onTap: onTap,
-        child: SizedBox(
-          height: _cardHeight,
-          width: double.infinity,
-          child: Stack(
-            fit: StackFit.expand,
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(16),
+      child: Container(
+        height: _cardHeight,
+        width: double.infinity,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16),
+          image: DecorationImage(
+            image: AssetImage(imageAsset),
+            fit: BoxFit.cover, // better than contain for background
+            alignment: Alignment.centerRight, // tweak based on design
+          ),
+        ),
+        child: Container(
+
+          padding: const EdgeInsets.fromLTRB(12, 11, 10, 10),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              Image.asset(
-                imageAsset,
-                fit: BoxFit.contain,
-                alignment: Alignment.center,
+              Text(
+                title,
+                style: theme.textTheme.titleSmall?.copyWith(
+                  fontWeight: FontWeight.w700,
+                  color: const Color(0xFF1A1A1A),
+                  height: 1.2,
+                  fontSize: 16,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(12, 11, 10, 10),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.start,
+              const SizedBox(height: 5),
+              Text(
+                subtitle,
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: const Color(0xFF374151),
+                  height: 1.3,
+                  fontWeight: FontWeight.w500,
+                  fontSize: 11,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+              const SizedBox(height: 6),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 8,
+                  vertical: 4,
+                ),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFFFDB61),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
+                    SvgPicture.asset(
+                      "assets/svg/ic_service_offer.svg",
+                      width: 14,
+                      height: 14,
+                    ),
+                    const SizedBox(width: 4),
                     Text(
-                      title,
-                      style: theme.textTheme.titleSmall?.copyWith(
+                      discountLabel,
+                      style: theme.textTheme.labelSmall?.copyWith(
                         fontWeight: FontWeight.w700,
+                        fontSize: 12,
                         color: const Color(0xFF1A1A1A),
-                        height: 1.2,
-                        fontSize: 16,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const SizedBox(height: 5),
-                    Text(
-                      subtitle,
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: const Color(0xFF374151),
-                        height: 1.3,
-                        fontWeight: FontWeight.w500,
-                        fontSize: 11,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const SizedBox(height: 6),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 4,
-                      ),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFFFDB61),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          SvgPicture.asset(
-                            _offerAsset,
-                            width: 14,
-                            height: 14,
-                          ),
-                          const SizedBox(width: 2),
-                          Flexible(
-                            child: Text(
-                              discountLabel,
-                              style: theme.textTheme.labelSmall?.copyWith(
-                                fontWeight: FontWeight.w700,
-                                fontSize: 12,
-                                color: const Color(0xFF1A1A1A),
-                              ),
-                            ),
-                          ),
-                        ],
                       ),
                     ),
                   ],
                 ),
               ),
-
             ],
           ),
         ),

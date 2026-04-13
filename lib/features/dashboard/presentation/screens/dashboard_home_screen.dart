@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/widgets/apna_clinic_app_bar.dart';
 import '../widgets/fikrfree_health_banner.dart';
-import '../widgets/home_hero_header.dart';
+import '../widgets/search_header.dart';
 import '../widgets/service_card.dart';
 
 /// Home dashboard with "Our Services" list.
@@ -54,44 +54,39 @@ class _DashboardHomeScreenState extends State<DashboardHomeScreen> {
       backgroundColor: const Color(0xFFF8FAF9),
       body: Column(
         children: [
+
           Container(
             color: Color(0xFF52A898),
-            child: Column(
-              children: [
-                SafeArea(
-                  child: ApnaClinicAppBar(
-                    style: ApnaAppBarStyle.light,
-                    systemOverlayStyle: ApnaClinicAppBar.lightBarColoredStatus,
-                    onMenuTap: () =>
-                        context.push(AppRoutes.path(AppRoutes.dashboardMenu)),
-                    onNotificationTap: () {
-                      // TODO: notifications screen
-                    },
-                    onProfileTap: () {
-                      // TODO: profile screen
-                    },
-                  ),
-                ),
-              ],
+            child:  SafeArea(
+              child: ApnaClinicAppBar(
+                style: ApnaAppBarStyle.light,
+                systemOverlayStyle: ApnaClinicAppBar.lightBarColoredStatus,
+                onMenuTap: () =>
+                    context.push(AppRoutes.path(AppRoutes.dashboardMenu)),
+                onNotificationTap: () {
+                  // TODO: notifications screen
+                },
+                onProfileTap: () {
+                  // TODO: profile screen
+                },
+              ),
             ),
           ),
-
+          SearchHeader(
+            onSearchSubmitted: (_) {
+              // TODO: global search
+            },
+            onVoiceTap: () {
+              // TODO: voice search
+            },
+            onSearchButtonTap: () {
+              // TODO: submit search
+            },
+          ),
           Expanded(
             child: CustomScrollView(
               slivers: [
-                SliverToBoxAdapter(
-                  child: HomeHeroHeader(
-                    onSearchSubmitted: (_) {
-                      // TODO: global search
-                    },
-                    onVoiceTap: () {
-                      // TODO: voice search
-                    },
-                    onSearchButtonTap: () {
-                      // TODO: submit search
-                    },
-                  ),
-                ),
+
                 SliverPadding(
                   padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
                   sliver: SliverToBoxAdapter(
@@ -110,7 +105,7 @@ class _DashboardHomeScreenState extends State<DashboardHomeScreen> {
                   sliver: SliverList.separated(
                     itemCount: _services.length,
                     separatorBuilder: (context, index) =>
-                        const SizedBox(height: 4),
+                        const SizedBox(height: 10),
                     itemBuilder: (context, index) {
                       final s = _services[index];
                       return ServiceCard(
