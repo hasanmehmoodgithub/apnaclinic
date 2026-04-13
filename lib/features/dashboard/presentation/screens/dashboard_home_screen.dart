@@ -24,24 +24,28 @@ class _DashboardHomeScreenState extends State<DashboardHomeScreen> {
       subtitle: 'PMDC certified doctors',
       discountLabel: 'Up to 20% off',
       imageAsset: 'assets/img/services/online_consultation.png',
+      route: AppRoutes.consultation,
     ),
     _ServiceItem(
       title: 'Pharmacy',
       subtitle: 'Authentic medicines at your doorstep',
       discountLabel: 'Up to 10% off',
       imageAsset: 'assets/img/services/pharmacy.png',
+      route: null,
     ),
     _ServiceItem(
       title: 'Laboratory Testing',
       subtitle: 'Reliable lab tests with accurate results',
       discountLabel: 'Up to 40% off',
       imageAsset: 'assets/img/services/laboratory.png',
+      route: null,
     ),
     _ServiceItem(
       title: 'Surgery Booking',
       subtitle: 'Hassle-free surgery scheduling',
       discountLabel: 'Up to 40% off',
       imageAsset: 'assets/img/services/surgery_booking.png',
+      route: null,
     ),
   ];
 
@@ -54,10 +58,9 @@ class _DashboardHomeScreenState extends State<DashboardHomeScreen> {
       backgroundColor: const Color(0xFFF8FAF9),
       body: Column(
         children: [
-
           Container(
             color: Color(0xFF52A898),
-            child:  SafeArea(
+            child: SafeArea(
               child: ApnaClinicAppBar(
                 style: ApnaAppBarStyle.light,
                 systemOverlayStyle: ApnaClinicAppBar.lightBarColoredStatus,
@@ -86,7 +89,6 @@ class _DashboardHomeScreenState extends State<DashboardHomeScreen> {
           Expanded(
             child: CustomScrollView(
               slivers: [
-
                 SliverPadding(
                   padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
                   sliver: SliverToBoxAdapter(
@@ -114,7 +116,9 @@ class _DashboardHomeScreenState extends State<DashboardHomeScreen> {
                         discountLabel: s.discountLabel,
                         imageAsset: s.imageAsset,
                         onTap: () {
-                          // TODO: Navigate to service detail when routes exist
+                          if (s.route != null) {
+                            context.push(AppRoutes.path(s.route!));
+                          }
                         },
                       );
                     },
@@ -145,10 +149,12 @@ class _ServiceItem {
     required this.subtitle,
     required this.discountLabel,
     required this.imageAsset,
+    required this.route,
   });
 
   final String title;
   final String subtitle;
   final String discountLabel;
   final String imageAsset;
+  final String? route;
 }

@@ -6,12 +6,15 @@ import '../../features/example/presentation/screens/examples_main_screen.dart';
 // import '../../features/example_mvvm/view/screens/mvvm_structure_guide_page.dart';
 // import '../../features/products/presentation/screens/products_page.dart';
 import '../../features/app/presentation/screens/splash_screen.dart';
+import '../../features/consultation/presentation/cubit/consultation_cubit.dart';
+import '../../features/consultation/presentation/screens/doctor_consultation_screen.dart';
 import '../../features/dashboard/presentation/screens/dashboard_menu_screen.dart';
 import '../../features/dashboard/presentation/screens/dashboard_notifications_screen.dart';
 import '../../features/dashboard/presentation/screens/main_navigation_shell.dart';
 import '../../features/onboarding/presentation/screens/onboarding_screen.dart';
 import '../../features/auth/presentation/screens/login_screen.dart';
 import '../../features/auth/presentation/screens/otp_verification_screen.dart';
+import '../di/dependency_injection.dart';
 import 'app_routes.dart';
 import 'router_observer.dart';
 
@@ -63,6 +66,14 @@ class AppRouter {
         path: AppRoutes.path(AppRoutes.notifications),
         name: AppRoutes.notifications,
         builder: (context, state) => const DashboardNotificationsScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.path(AppRoutes.consultation),
+        name: AppRoutes.consultation,
+        builder: (context, state) => BlocProvider<ConsultationCubit>(
+          create: (_) => sl<ConsultationCubit>(),
+          child: const DoctorConsultationScreen(),
+        ),
       ),
       GoRoute(
         path: AppRoutes.path(AppRoutes.examples),

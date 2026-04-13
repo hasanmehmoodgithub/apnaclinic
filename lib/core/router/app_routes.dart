@@ -12,6 +12,7 @@ class AppRoutes {
   static const String home = 'home';
   static const String dashboardMenu = 'dashboard-menu';
   static const String notifications = 'notifications';
+  static const String consultation = 'consultation';
   static const String examples = 'examples';
 
   /// Get route path with leading "/"
