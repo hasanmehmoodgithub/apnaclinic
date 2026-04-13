@@ -7,6 +7,8 @@ class AppRoutes {
   static const String root = '';
   static const String splash = 'splash';
   static const String onboarding = 'onboarding';
+  static const String authLogin = 'auth-login';
+  static const String authOtp = 'auth-otp';
   static const String home = 'home';
   static const String dashboardMenu = 'dashboard-menu';
   static const String notifications = 'notifications';

@@ -71,5 +71,19 @@
   "changeLanguage": "Change Language",
   "@changeLanguage": {
     "description": "Change language button text"
-  }
+  },
+  "authVerifyPhoneTitle": "Verify Your Phone Number",
+  "authMobileNumberLabel": "Enter Mobile Number",
+  "authPhoneHint": "3045770007",
+  "authOtpHint": "An OTP will be sent to this number",
+  "authSendOtpCta": "Send OTP",
+  "authOtpVerificationTitle": "OTP Verification",
+  "authOtpHintCode": "1 2 3 4",
+  "authProceedCta": "Proceed",
+  "authResendOtp": "Resend OTP",
+  "authOtpSentTo": "OTP sent to",
+  "authOtpSentMessage": "OTP sent successfully.",
+  "authPhoneValidationError": "Please enter a valid phone number.",
+  "authOtpValidationError": "Please enter a valid 4-digit OTP.",
+  "authTermsAndPrivacy": "By Signing in, I agree to Terms & Conditions and privacy policy."
 }
