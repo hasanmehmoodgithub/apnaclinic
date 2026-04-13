@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 // TODO: Uncomment when feature screens are created
 // import '../../features/example_clean/presentation/screens/clean_structure_guide_page.dart';
@@ -16,6 +15,7 @@ import '../../features/onboarding/presentation/screens/onboarding_screen.dart';
 import '../../features/auth/presentation/screens/login_screen.dart';
 import '../../features/auth/presentation/screens/otp_verification_screen.dart';
 import '../di/dependency_injection.dart';
+import '../../features/profile_setup/presentation/screens/profile_setup_screen.dart';
 import 'app_routes.dart';
 import 'router_observer.dart';
 
@@ -52,6 +52,11 @@ class AppRouter {
           final phoneNumber = extra is OtpRouteData ? extra.phoneNumber : '';
           return OtpVerificationScreen(phoneNumber: phoneNumber);
         },
+      ),
+      GoRoute(
+        path: AppRoutes.path(AppRoutes.profileSetup),
+        name: AppRoutes.profileSetup,
+        builder: (context, state) => const ProfileSetupScreen(),
       ),
       GoRoute(
         path: AppRoutes.path(AppRoutes.home),

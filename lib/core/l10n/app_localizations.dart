@@ -289,6 +289,156 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'By Signing in, I agree to Terms & Conditions and privacy policy.'**
   String get authTermsAndPrivacy;
+
+  /// No description provided for @profileTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile Edit'**
+  String get profileTitle;
+
+  /// No description provided for @profileSetupTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Set up your profile'**
+  String get profileSetupTitle;
+
+  /// No description provided for @profileSetupSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your personal information'**
+  String get profileSetupSubtitle;
+
+  /// No description provided for @profileFirstNameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'First Name'**
+  String get profileFirstNameLabel;
+
+  /// No description provided for @profileFirstNameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter First Name Here'**
+  String get profileFirstNameHint;
+
+  /// No description provided for @profileFirstNameRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'First name is required.'**
+  String get profileFirstNameRequired;
+
+  /// No description provided for @profileLastNameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Last Name'**
+  String get profileLastNameLabel;
+
+  /// No description provided for @profileLastNameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter Last Name Here'**
+  String get profileLastNameHint;
+
+  /// No description provided for @profileLastNameRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Last name is required.'**
+  String get profileLastNameRequired;
+
+  /// No description provided for @profileGenderLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Gender'**
+  String get profileGenderLabel;
+
+  /// No description provided for @profileGenderHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Select'**
+  String get profileGenderHint;
+
+  /// No description provided for @profileGenderMale.
+  ///
+  /// In en, this message translates to:
+  /// **'Male'**
+  String get profileGenderMale;
+
+  /// No description provided for @profileGenderFemale.
+  ///
+  /// In en, this message translates to:
+  /// **'Female'**
+  String get profileGenderFemale;
+
+  /// No description provided for @profileGenderOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get profileGenderOther;
+
+  /// No description provided for @profileGenderRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select gender.'**
+  String get profileGenderRequired;
+
+  /// No description provided for @profileEmailLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Email'**
+  String get profileEmailLabel;
+
+  /// No description provided for @profileEmailHint.
+  ///
+  /// In en, this message translates to:
+  /// **'name@example.com'**
+  String get profileEmailHint;
+
+  /// No description provided for @profileEmailRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a valid email.'**
+  String get profileEmailRequired;
+
+  /// No description provided for @profileAddressLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Address'**
+  String get profileAddressLabel;
+
+  /// No description provided for @profileAddressHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter Address'**
+  String get profileAddressHint;
+
+  /// No description provided for @profileAddressRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Address is required.'**
+  String get profileAddressRequired;
+
+  /// No description provided for @profileDobLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Date of Birth'**
+  String get profileDobLabel;
+
+  /// No description provided for @profileDobHint.
+  ///
+  /// In en, this message translates to:
+  /// **'DD/MM/YY'**
+  String get profileDobHint;
+
+  /// No description provided for @profileDobRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select date of birth.'**
+  String get profileDobRequired;
+
+  /// No description provided for @profileSaveCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get profileSaveCta;
 }
 
 class _AppLocalizationsDelegate

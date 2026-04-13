@@ -55,7 +55,7 @@ class _OtpViewState extends State<_OtpView> {
 
     final success = await context.read<AuthCubit>().verifyOtp(otp);
     if (!mounted || !success) return;
-    context.go(AppRoutes.path(AppRoutes.home));
+    context.go(AppRoutes.path(AppRoutes.profileSetup));
   }
 
   Future<void> _resendOtp() async {
