@@ -20,7 +20,7 @@ class DashboardMenuScreen extends StatelessWidget {
     final theme = Theme.of(context);
 
     return Scaffold(
-      backgroundColor: const Color(0xFFEDEFF1),
+      backgroundColor: const Color(0xFFC7EFEB),
       body: SafeArea(
         child: Column(
           children: [
@@ -54,11 +54,7 @@ class DashboardMenuScreen extends StatelessWidget {
               child: Container(
                 width: double.infinity,
                 decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [Color(0xFFF4F8FA), Color(0xFFE9ECEF)],
-                  ),
+                  color: Color(0xFFF4F6F8),
                   borderRadius: BorderRadius.vertical(top: Radius.circular(42)),
                 ),
                 child: Column(
@@ -148,23 +144,31 @@ class _ProfileCard extends StatelessWidget {
                 const SizedBox(width: 7),
                 Expanded(
                   child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         'Haseeb Qasim',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                         style: theme.textTheme.titleMedium?.copyWith(
                           color: const Color(0xFF1E2B44),
                           fontWeight: FontWeight.w500,
-                          fontSize: 20,
+                          fontSize: 18,
+                          height: 1,
                         ),
                       ),
-                      const SizedBox(height: 7),
+                      const SizedBox(height: 2),
                       Text(
                         '03045770007',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                         style: theme.textTheme.bodyMedium?.copyWith(
                           color: const Color(0xFF5F6D7A),
                           fontWeight: FontWeight.w400,
-                          fontSize: 14,
+                          fontSize: 12,
+                          height: 1,
                         ),
                       ),
                     ],
@@ -175,21 +179,22 @@ class _ProfileCard extends StatelessWidget {
                   style: OutlinedButton.styleFrom(
                     side: const BorderSide(color: Color(0xFF9BA6A7), width: 0.3),
                     foregroundColor: const Color(0xFF2E3B52),
+                    minimumSize: const Size(92, 30),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(39.4),
                     ),
                     padding: const EdgeInsets.symmetric(
-                      horizontal: 16.5,
-                      vertical: 9,
+                      horizontal: 14,
+                      vertical: 7,
                     ),
                     visualDensity: VisualDensity.compact,
-                    backgroundColor: Colors.white.withValues(alpha: 0.2),
+                    backgroundColor: Colors.transparent,
                   ),
                   child: Text(
                     'Edit Profile',
                     style: theme.textTheme.labelLarge?.copyWith(
                       fontWeight: FontWeight.w500,
-                      fontSize: 12,
+                      fontSize: 11,
                       color: const Color(0xFF061E40),
                     ),
                   ),
@@ -230,74 +235,92 @@ class _MenuTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return ClipRRect(
       borderRadius: BorderRadius.circular(14),
-      child: Stack(
-        children: [
-          Container(
-            height: 96,
-            color: Colors.white,
-            padding: const EdgeInsets.fromLTRB(28, 25, 28, 25),
-            child: Row(
+      child: SizedBox(
+        height: 96,
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final curveWidth = constraints.maxWidth * 0.7606; // Figma ratio
+            final curveHeight = 281.37;
+            final curveLeft = constraints.maxWidth * 0.6493; // Figma ratio
+
+            return Stack(
               children: [
-                Container(
-                  width: 46.07,
-                  height: 46.14,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    shape: BoxShape.circle,
-                    border: Border.all(
-                      color: Colors.black.withValues(alpha: 0.21),
-                      width: 0.33,
-                    ),
-                  ),
-                  child: Icon(item.icon, size: 24, color: const Color(0xFF303D4F)),
+                const Positioned.fill(
+                  child: ColoredBox(color: Colors.white),
                 ),
-                const SizedBox(width: 7),
-                Expanded(
-                  child: Text(
-                    item.title,
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      color: const Color(0xFF111827),
-                      fontWeight: FontWeight.w700,
-                      fontSize: 16,
-                    ),
-                  ),
-                ),
-                InkWell(
-                  onTap: onTap,
-                  borderRadius: BorderRadius.circular(16),
-                  child: Container(
-                    width: 25.66,
-                    height: 25.33,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        color: const Color(0xFF6E7A88),
-                        width: 0.8,
+                Positioned(
+                  left: curveLeft,
+                  top: -28.78,
+                  child: IgnorePointer(
+                    child: Container(
+                      width: curveWidth,
+                      height: curveHeight,
+                      decoration: const BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Color(0xFFDDE2EE),
                       ),
                     ),
-                    child: const Icon(
-                      Icons.chevron_right_rounded,
-                      size: 17,
-                      color: Color(0xFF6E7A88),
-                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(28, 25, 28, 25),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 46.07,
+                        height: 46.14,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: Colors.black.withValues(alpha: 0.21),
+                            width: 0.33,
+                          ),
+                        ),
+                        child: Icon(
+                          item.icon,
+                          size: 24,
+                          color: const Color(0xFF303D4F),
+                        ),
+                      ),
+                      const SizedBox(width: 7),
+                      Expanded(
+                        child: Text(
+                          item.title,
+                          style: theme.textTheme.titleMedium?.copyWith(
+                            color: const Color(0xFF111827),
+                            fontWeight: FontWeight.w700,
+                            fontSize: 16,
+                          ),
+                        ),
+                      ),
+                      InkWell(
+                        onTap: onTap,
+                        borderRadius: BorderRadius.circular(16),
+                        child: Container(
+                          width: 25.66,
+                          height: 25.33,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: const Color(0xFF6E7A88),
+                              width: 0.8,
+                            ),
+                          ),
+                          child: const Icon(
+                            Icons.arrow_forward_ios_rounded,
+                            size: 12,
+                            color: Color(0xFF6E7A88),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],
-            ),
-          ),
-          Positioned(
-            right: -95,
-            top: -29,
-            child: Container(
-              width: 294,
-              height: 281,
-              decoration: const BoxDecoration(
-                shape: BoxShape.circle,
-                color: Color(0xFFDDE2EE),
-              ),
-            ),
-          ),
-        ],
+            );
+          },
+        ),
       ),
     );
   }

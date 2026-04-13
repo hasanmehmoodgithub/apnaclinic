@@ -64,7 +64,7 @@ class _DashboardHomeScreenState extends State<DashboardHomeScreen> {
                 onMenuTap: () =>
                     context.push(AppRoutes.path(AppRoutes.dashboardMenu)),
                 onNotificationTap: () {
-                  // TODO: notifications screen
+                  context.push(AppRoutes.path(AppRoutes.notifications));
                 },
                 onProfileTap: () {
                   // TODO: profile screen
