@@ -3,15 +3,6 @@ import 'package:flutter/material.dart';
 class DashboardProfileScreen extends StatelessWidget {
   const DashboardProfileScreen({super.key});
 
-  static const List<_ProfileRowItem> _items = [
-    _ProfileRowItem('Personal Information', Icons.person_outline_rounded),
-    _ProfileRowItem('Medical History', Icons.folder_open_rounded),
-    _ProfileRowItem('Addresses', Icons.location_on_outlined),
-    _ProfileRowItem('Payment Methods', Icons.account_balance_wallet_outlined),
-    _ProfileRowItem('Security', Icons.shield_outlined),
-    _ProfileRowItem('Language', Icons.language_rounded),
-  ];
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -22,10 +13,16 @@ class DashboardProfileScreen extends StatelessWidget {
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.fromLTRB(8, 6, 16, 12),
+              padding: const EdgeInsets.fromLTRB(8, 6, 16, 6),
               child: Row(
                 children: [
-                  const SizedBox(width: 48),
+                  IconButton(
+                    onPressed: () => Navigator.of(context).maybePop(),
+                    icon: const Icon(
+                      Icons.arrow_back_rounded,
+                      color: Color(0xFF061E40),
+                    ),
+                  ),
                   Expanded(
                     child: Text(
                       'Profile',
@@ -42,57 +39,182 @@ class DashboardProfileScreen extends StatelessWidget {
               ),
             ),
             Expanded(
-              child: Container(
-                width: double.infinity,
-                decoration: const BoxDecoration(
-                  color: Color(0xFFF4F6F8),
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(42)),
-                ),
-                child: ListView(
-                  padding: const EdgeInsets.fromLTRB(22, 22, 22, 24),
-                  children: [
-                    _ProfileHeaderCard(theme: theme),
-                    const SizedBox(height: 16),
-                    DecoratedBox(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(14),
+              child: Stack(
+                children: [
+                  Positioned.fill(
+                    top: 78,
+                    child: Container(
+                      width: double.infinity,
+                      decoration: const BoxDecoration(
+                        color: Color(0xFFF4F6F8),
+                        borderRadius:
+                            BorderRadius.vertical(top: Radius.circular(42)),
                       ),
-                      child: Column(
+                      child: ListView(
+                        padding: const EdgeInsets.fromLTRB(18, 26, 18, 24),
                         children: [
-                          for (int i = 0; i < _items.length; i++) ...[
-                            _ProfileRow(item: _items[i]),
-                            if (i != _items.length - 1)
-                              const Divider(
-                                height: 1,
-                                indent: 54,
-                                endIndent: 12,
-                                color: Color(0xFFE4E7EB),
+                          const SizedBox(height: 28),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'Haseeb Qasim',
+                                      style: theme.textTheme.headlineSmall
+                                          ?.copyWith(
+                                        color: const Color(0xFF1A2A4A),
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 38 / 1.6,
+                                        height: 1,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 2),
+                                    Text(
+                                      '+92 3045770007',
+                                      style:
+                                          theme.textTheme.bodyMedium?.copyWith(
+                                        color: const Color(0xFF7A8594),
+                                        fontSize: 16,
+                                        height: 1,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
-                          ],
+                              InkWell(
+                                onTap: () {},
+                                borderRadius: BorderRadius.circular(18),
+                                child: Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 2),
+                                  child: Row(
+                                    children: [
+                                      Container(
+                                        width: 16,
+                                        height: 16,
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          color: const Color(0xFFE4E7EB),
+                                          border: Border.all(
+                                            color: const Color(0xFFC2C9D2),
+                                          ),
+                                        ),
+                                        child: const Icon(
+                                          Icons.edit_rounded,
+                                          size: 10,
+                                          color: Color(0xFF7B8794),
+                                        ),
+                                      ),
+                                      const SizedBox(width: 6),
+                                      Text(
+                                        'Edit',
+                                        style: theme.textTheme.bodyMedium
+                                            ?.copyWith(
+                                          color: const Color(0xFF3D4C63),
+                                          fontSize: 22 / 1.6,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 12),
+                          const _InfoTilesRow(),
+                          const SizedBox(height: 14),
+                          Text(
+                            'Account Details',
+                            style: theme.textTheme.titleMedium?.copyWith(
+                              color: const Color(0xFF2D2D2D),
+                              fontWeight: FontWeight.w500,
+                              fontSize: 16 / 1.05,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Container(
+                            height: 56,
+                            padding: const EdgeInsets.symmetric(horizontal: 12),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withValues(alpha: 0.7),
+                              borderRadius: BorderRadius.circular(6),
+                              border: Border.all(
+                                color: const Color(0xFFD4D9E1),
+                                width: 0.6,
+                              ),
+                            ),
+                            child: Row(
+                              children: [
+                                Text(
+                                  'Add Account',
+                                  style: theme.textTheme.titleSmall?.copyWith(
+                                    color: const Color(0xFF2C2F5A),
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                                const Spacer(),
+                                Container(
+                                  width: 40,
+                                  height: 40,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    border: Border.all(
+                                      color: const Color(0xFFC6CCD5),
+                                    ),
+                                  ),
+                                  child: const Icon(
+                                    Icons.add,
+                                    color: Color(0xFF2C2F5A),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
                         ],
                       ),
                     ),
-                    const SizedBox(height: 18),
-                    OutlinedButton(
-                      onPressed: () {},
-                      style: OutlinedButton.styleFrom(
-                        minimumSize: const Size.fromHeight(52),
-                        side: const BorderSide(color: Color(0xFFD5DCE4)),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
+                  ),
+                  Align(
+                    alignment: const Alignment(0, -0.96),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                          width: 126,
+                          height: 126,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(color: Colors.white, width: 3),
+                          ),
+                          child: ClipOval(
+                            child: Image.network(
+                              'https://www.figma.com/api/mcp/asset/3c2178b9-9945-4ebd-a491-e269f473a940',
+                              fit: BoxFit.cover,
+                            ),
+                          ),
                         ),
-                      ),
-                      child: Text(
-                        'Logout',
-                        style: theme.textTheme.titleMedium?.copyWith(
-                          color: const Color(0xFFDC2626),
-                          fontWeight: FontWeight.w700,
+                        Container(
+                          margin: const EdgeInsets.only(top: 4),
+                          width: 122,
+                          height: 10,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(99),
+                            boxShadow: const [
+                              BoxShadow(
+                                color: Color.fromRGBO(79, 109, 138, 0.35),
+                                blurRadius: 10,
+                                spreadRadius: 1,
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           ],
@@ -102,129 +224,81 @@ class DashboardProfileScreen extends StatelessWidget {
   }
 }
 
-class _ProfileHeaderCard extends StatelessWidget {
-  const _ProfileHeaderCard({required this.theme});
-
-  final ThemeData theme;
+class _InfoTilesRow extends StatelessWidget {
+  const _InfoTilesRow();
 
   @override
   Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(16),
-      child: Stack(
+    return Row(
+      children: const [
+        Expanded(
+          child: _InfoTile(
+            title: 'Gender',
+            value: 'Male',
+          ),
+        ),
+        SizedBox(width: 6),
+        Expanded(
+          child: _InfoTile(
+            title: 'Date of Birth',
+            value: '27 Oct 1994',
+          ),
+        ),
+        SizedBox(width: 6),
+        Expanded(
+          child: _InfoTile(
+            title: 'Email',
+            value: 'i.hash34@gmail.com',
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _InfoTile extends StatelessWidget {
+  const _InfoTile({required this.title, required this.value});
+
+  final String title;
+  final String value;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Container(
+      constraints: const BoxConstraints(minHeight: 52),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(4),
+        border: Border.all(color: const Color(0xFFC9CFD7), width: 0.8),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Container(
-            padding: const EdgeInsets.fromLTRB(18, 18, 18, 18),
-            color: const Color(0xFFECEDEF),
-            child: Row(
-              children: [
-                const CircleAvatar(
-                  radius: 28,
-                  backgroundColor: Color(0xFFD1DDFE),
-                  child: Icon(
-                    Icons.person_rounded,
-                    color: Color(0xFF0B77C5),
-                    size: 30,
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Haseeb Qasim',
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: theme.textTheme.titleMedium?.copyWith(
-                          color: const Color(0xFF1E2B44),
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        'haseeb.qasim@email.com',
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: const Color(0xFF5F6D7A),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                IconButton(
-                  onPressed: () {},
-                  icon: const Icon(Icons.edit_rounded, color: Color(0xFF0E2D55)),
-                ),
-              ],
+          Text(
+            title,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: const Color(0xFF7A91AE),
+              fontSize: 12 / 1.05,
             ),
           ),
-          Positioned(
-            right: -85,
-            top: -34,
-            child: Container(
-              width: 250,
-              height: 220,
-              decoration: const BoxDecoration(
-                shape: BoxShape.circle,
-                color: Color(0xFFE8E7F1),
-              ),
+          const SizedBox(height: 3),
+          Text(
+            value,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: theme.textTheme.titleMedium?.copyWith(
+              color: const Color(0xFF2B2C58),
+              fontWeight: FontWeight.w500,
+              fontSize: 26 / 1.6,
+              height: 1,
             ),
           ),
         ],
       ),
     );
   }
-}
-
-class _ProfileRow extends StatelessWidget {
-  const _ProfileRow({required this.item});
-
-  final _ProfileRowItem item;
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () {},
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-        child: Row(
-          children: [
-            Container(
-              width: 34,
-              height: 34,
-              decoration: BoxDecoration(
-                color: const Color(0xFFEEF7F5),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Icon(item.icon, size: 20, color: const Color(0xFF0E2D55)),
-            ),
-            const SizedBox(width: 10),
-            Expanded(
-              child: Text(
-                item.title,
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      color: const Color(0xFF111827),
-                      fontWeight: FontWeight.w600,
-                    ),
-              ),
-            ),
-            const Icon(
-              Icons.chevron_right_rounded,
-              color: Color(0xFF8793A1),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _ProfileRowItem {
-  const _ProfileRowItem(this.title, this.icon);
-
-  final String title;
-  final IconData icon;
 }

@@ -1,5 +1,6 @@
 import 'package:apnaclinic/generated/assets.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 /// Free Doctor: mint header + hero, overlapping info card, FikrFree CTA.
 class FreeDoctorScreen extends StatelessWidget {
@@ -18,6 +19,7 @@ class FreeDoctorScreen extends StatelessWidget {
   static const double _cardTopRadius = 32;
 
   static const double _topBannerFraction = 0.30;
+  static final Uri _fikrfreeUrl = Uri.parse('https://www.fikrfree.com');
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +27,7 @@ class FreeDoctorScreen extends StatelessWidget {
         MediaQuery.sizeOf(context).height * _topBannerFraction;
 
     return ColoredBox(
-      color: const Color(0xFFF8FAF9),
+      color: const Color(0xFFF4F6F8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -48,10 +50,28 @@ class FreeDoctorScreen extends StatelessWidget {
               ],
             ),
           ),
-          const _OpenFikrfreeButton(),
+          _OpenFikrfreeButton(
+            onPressed: () => _openFikrfree(context),
+          ),
         ],
       ),
     );
+  }
+
+  Future<void> _openFikrfree(BuildContext context) async {
+    final messenger = ScaffoldMessenger.of(context);
+    final opened = await launchUrl(
+      _fikrfreeUrl,
+      mode: LaunchMode.externalApplication,
+    );
+    if (!opened && context.mounted) {
+      messenger.showSnackBar(
+        const SnackBar(
+          content: Text('Could not open FikrFree right now.'),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+    }
   }
 }
 
@@ -134,7 +154,7 @@ class _ConsultationInfoCard extends StatelessWidget {
 
     return DecoratedBox(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: const Color(0xFFF4F6F8),
         borderRadius: radius,
         boxShadow: [
           BoxShadow(
@@ -264,7 +284,9 @@ class _Bullet extends StatelessWidget {
 }
 
 class _OpenFikrfreeButton extends StatelessWidget {
-  const _OpenFikrfreeButton();
+  const _OpenFikrfreeButton({required this.onPressed});
+
+  final VoidCallback onPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -285,14 +307,7 @@ class _OpenFikrfreeButton extends StatelessWidget {
               borderRadius: BorderRadius.circular(14),
             ),
           ),
-          onPressed: () {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('FikrFree app link will open here.'),
-                behavior: SnackBarBehavior.floating,
-              ),
-            );
-          },
+          onPressed: onPressed,
           child: Text(
             'Open Fikrfree app',
             style: theme.textTheme.titleSmall?.copyWith(

@@ -119,102 +119,108 @@ class _ProfileCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return ClipRRect(
       borderRadius: BorderRadius.circular(16),
-      child: Stack(
-        children: [
-          Container(
-            height: 96,
-            padding: const EdgeInsets.fromLTRB(28, 25, 16, 24),
-            color: const Color(0xFFECEDEF),
-            child: Row(
-              children: [
-                Container(
-                  width: 46.08,
-                  height: 46.08,
+      child: SizedBox(
+        height: 96,
+        child: Stack(
+          children: [
+            const Positioned.fill(
+              child: ColoredBox(color: Color(0xFFECEDEF)),
+            ),
+            Positioned(
+              right: -94,
+              top: -29,
+              child: IgnorePointer(
+                child: Container(
+                  width: 294,
+                  height: 281,
                   decoration: const BoxDecoration(
                     shape: BoxShape.circle,
-                    color: Color(0xFFD1DDFE),
-                  ),
-                  child: ClipOval(
-                    child: Image.network(
-                      'https://www.figma.com/api/mcp/asset/3c2178b9-9945-4ebd-a491-e269f473a940',
-                      fit: BoxFit.cover,
-                    ),
+                    color: Color(0xFFE8E7F1),
                   ),
                 ),
-                const SizedBox(width: 7),
-                Expanded(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Haseeb Qasim',
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: theme.textTheme.titleMedium?.copyWith(
-                          color: const Color(0xFF1E2B44),
-                          fontWeight: FontWeight.w500,
-                          fontSize: 18,
-                          height: 1,
-                        ),
-                      ),
-                      const SizedBox(height: 2),
-                      Text(
-                        '03045770007',
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: theme.textTheme.bodyMedium?.copyWith(
-                          color: const Color(0xFF5F6D7A),
-                          fontWeight: FontWeight.w400,
-                          fontSize: 12,
-                          height: 1,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                OutlinedButton(
-                  onPressed: () {},
-                  style: OutlinedButton.styleFrom(
-                    side: const BorderSide(color: Color(0xFF9BA6A7), width: 0.3),
-                    foregroundColor: const Color(0xFF2E3B52),
-                    minimumSize: const Size(92, 30),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(39.4),
-                    ),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 14,
-                      vertical: 7,
-                    ),
-                    visualDensity: VisualDensity.compact,
-                    backgroundColor: Colors.transparent,
-                  ),
-                  child: Text(
-                    'Edit Profile',
-                    style: theme.textTheme.labelLarge?.copyWith(
-                      fontWeight: FontWeight.w500,
-                      fontSize: 11,
-                      color: const Color(0xFF061E40),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Positioned(
-            right: -94,
-            top: -29,
-            child: Container(
-              width: 294,
-              height: 281,
-              decoration: const BoxDecoration(
-                shape: BoxShape.circle,
-                color: Color(0xFFE8E7F1),
               ),
             ),
-          ),
-        ],
+            Padding(
+              padding: const EdgeInsets.fromLTRB(28, 25, 16, 24),
+              child: Row(
+                children: [
+                  Container(
+                    width: 46.08,
+                    height: 46.08,
+                    decoration: const BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Color(0xFFD1DDFE),
+                    ),
+                    child: ClipOval(
+                      child: Image.network(
+                        'https://www.figma.com/api/mcp/asset/3c2178b9-9945-4ebd-a491-e269f473a940',
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 7),
+                  Expanded(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Haseeb Qasim',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: theme.textTheme.titleMedium?.copyWith(
+                            color: const Color(0xFF0E2D55),
+                            fontWeight: FontWeight.w500,
+                            fontSize: 20,
+                            height: 1,
+                          ),
+                        ),
+                        const SizedBox(height: 7),
+                        Text(
+                          '03045770007',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            color: const Color(0xFF4A4A4A),
+                            fontWeight: FontWeight.w400,
+                            fontSize: 14,
+                            height: 1,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  OutlinedButton(
+                    onPressed: () {},
+                    style: OutlinedButton.styleFrom(
+                      side: const BorderSide(color: Color(0xFF9BA6A7), width: 0.8),
+                      foregroundColor: const Color(0xFF0E2D55),
+                      minimumSize: const Size(92, 30),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(22),
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16.5,
+                        vertical: 9,
+                      ),
+                      backgroundColor: Colors.transparent,
+                    ),
+                    child: Text(
+                      'Edit Profile',
+                      style: theme.textTheme.labelLarge?.copyWith(
+                        fontWeight: FontWeight.w500,
+                        fontSize: 12,
+                        color: const Color(0xFF0E2D55),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -255,9 +261,9 @@ class _MenuTile extends StatelessWidget {
                     child: Container(
                       width: curveWidth,
                       height: curveHeight,
-                      decoration: const BoxDecoration(
+                      decoration:  BoxDecoration(
                         shape: BoxShape.circle,
-                        color: Color(0xFFDDE2EE),
+                        color: Color(0xFFDDE2EE).withValues(alpha: 0.6),
                       ),
                     ),
                   ),
