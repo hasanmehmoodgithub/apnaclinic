@@ -38,183 +38,176 @@ class DashboardProfileScreen extends StatelessWidget {
                 ],
               ),
             ),
-            Expanded(
-              child: Stack(
+            Align(
+              alignment: const Alignment(0, -0.96),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  Positioned.fill(
-                    top: 78,
-                    child: Container(
-                      width: double.infinity,
-                      decoration: const BoxDecoration(
-                        color: Color(0xFFF4F6F8),
-                        borderRadius:
-                            BorderRadius.vertical(top: Radius.circular(42)),
-                      ),
-                      child: ListView(
-                        padding: const EdgeInsets.fromLTRB(18, 26, 18, 24),
-                        children: [
-                          const SizedBox(height: 28),
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      'Haseeb Qasim',
-                                      style: theme.textTheme.headlineSmall
-                                          ?.copyWith(
-                                        color: const Color(0xFF1A2A4A),
-                                        fontWeight: FontWeight.w500,
-                                        fontSize: 38 / 1.6,
-                                        height: 1,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 2),
-                                    Text(
-                                      '+92 3045770007',
-                                      style:
-                                          theme.textTheme.bodyMedium?.copyWith(
-                                        color: const Color(0xFF7A8594),
-                                        fontSize: 16,
-                                        height: 1,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              InkWell(
-                                onTap: () {},
-                                borderRadius: BorderRadius.circular(18),
-                                child: Padding(
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 2),
-                                  child: Row(
-                                    children: [
-                                      Container(
-                                        width: 16,
-                                        height: 16,
-                                        decoration: BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          color: const Color(0xFFE4E7EB),
-                                          border: Border.all(
-                                            color: const Color(0xFFC2C9D2),
-                                          ),
-                                        ),
-                                        child: const Icon(
-                                          Icons.edit_rounded,
-                                          size: 10,
-                                          color: Color(0xFF7B8794),
-                                        ),
-                                      ),
-                                      const SizedBox(width: 6),
-                                      Text(
-                                        'Edit',
-                                        style: theme.textTheme.bodyMedium
-                                            ?.copyWith(
-                                          color: const Color(0xFF3D4C63),
-                                          fontSize: 22 / 1.6,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 12),
-                          const _InfoTilesRow(),
-                          const SizedBox(height: 14),
-                          Text(
-                            'Account Details',
-                            style: theme.textTheme.titleMedium?.copyWith(
-                              color: const Color(0xFF2D2D2D),
-                              fontWeight: FontWeight.w500,
-                              fontSize: 16 / 1.05,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          Container(
-                            height: 56,
-                            padding: const EdgeInsets.symmetric(horizontal: 12),
-                            decoration: BoxDecoration(
-                              color: Colors.white.withValues(alpha: 0.7),
-                              borderRadius: BorderRadius.circular(6),
-                              border: Border.all(
-                                color: const Color(0xFFD4D9E1),
-                                width: 0.6,
-                              ),
-                            ),
-                            child: Row(
-                              children: [
-                                Text(
-                                  'Add Account',
-                                  style: theme.textTheme.titleSmall?.copyWith(
-                                    color: const Color(0xFF2C2F5A),
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                                const Spacer(),
-                                Container(
-                                  width: 40,
-                                  height: 40,
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    border: Border.all(
-                                      color: const Color(0xFFC6CCD5),
-                                    ),
-                                  ),
-                                  child: const Icon(
-                                    Icons.add,
-                                    color: Color(0xFF2C2F5A),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
+                  Container(
+                    width: 126,
+                    height: 126,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(color: Colors.white, width: 3),
+                    ),
+                    child: ClipOval(
+                      child: Image.network(
+                        'https://www.figma.com/api/mcp/asset/3c2178b9-9945-4ebd-a491-e269f473a940',
+                        fit: BoxFit.cover,
                       ),
                     ),
                   ),
-                  Align(
-                    alignment: const Alignment(0, -0.96),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Container(
-                          width: 126,
-                          height: 126,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(color: Colors.white, width: 3),
-                          ),
-                          child: ClipOval(
-                            child: Image.network(
-                              'https://www.figma.com/api/mcp/asset/3c2178b9-9945-4ebd-a491-e269f473a940',
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        ),
-                        Container(
-                          margin: const EdgeInsets.only(top: 4),
-                          width: 122,
-                          height: 10,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(99),
-                            boxShadow: const [
-                              BoxShadow(
-                                color: Color.fromRGBO(79, 109, 138, 0.35),
-                                blurRadius: 10,
-                                spreadRadius: 1,
-                              ),
-                            ],
-                          ),
+                  Container(
+                    margin: const EdgeInsets.only(top: 4),
+                    width: 122,
+                    height: 10,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(99),
+                      boxShadow: const [
+                        BoxShadow(
+                          color: Color.fromRGBO(79, 109, 138, 0.35),
+                          blurRadius: 10,
+                          spreadRadius: 1,
                         ),
                       ],
                     ),
                   ),
                 ],
+              ),
+            ),
+            Expanded(
+              child: Container(
+                width: double.infinity,
+                decoration: const BoxDecoration(
+                  color: Color(0xFFF4F6F8),
+                  borderRadius:
+                      BorderRadius.vertical(top: Radius.circular(42)),
+                ),
+                child: ListView(
+                  padding: const EdgeInsets.fromLTRB(18, 26, 18, 24),
+                  children: [
+                    const SizedBox(height: 28),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Haseeb Qasim',
+                                style: theme.textTheme.headlineSmall
+                                    ?.copyWith(
+                                  color: const Color(0xFF1A2A4A),
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 38 / 1.6,
+                                  height: 1,
+                                ),
+                              ),
+                              const SizedBox(height: 2),
+                              Text(
+                                '+92 3045770007',
+                                style:
+                                    theme.textTheme.bodyMedium?.copyWith(
+                                  color: const Color(0xFF7A8594),
+                                  fontSize: 16,
+                                  height: 1,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        InkWell(
+                          onTap: () {},
+                          borderRadius: BorderRadius.circular(18),
+                          child: Padding(
+                            padding:
+                                const EdgeInsets.symmetric(vertical: 2),
+                            child: Row(
+                              children: [
+                                Container(
+                                  width: 16,
+                                  height: 16,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: const Color(0xFFE4E7EB),
+                                    border: Border.all(
+                                      color: const Color(0xFFC2C9D2),
+                                    ),
+                                  ),
+                                  child: const Icon(
+                                    Icons.edit_rounded,
+                                    size: 10,
+                                    color: Color(0xFF7B8794),
+                                  ),
+                                ),
+                                const SizedBox(width: 6),
+                                Text(
+                                  'Edit',
+                                  style: theme.textTheme.bodyMedium
+                                      ?.copyWith(
+                                    color: const Color(0xFF3D4C63),
+                                    fontSize: 22 / 1.6,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    const _InfoTilesRow(),
+                    const SizedBox(height: 14),
+                    Text(
+                      'Account Details',
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        color: const Color(0xFF2D2D2D),
+                        fontWeight: FontWeight.w500,
+                        fontSize: 16 / 1.05,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Container(
+                      height: 56,
+                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.7),
+                        borderRadius: BorderRadius.circular(6),
+                        border: Border.all(
+                          color: const Color(0xFFD4D9E1),
+                          width: 0.6,
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          Text(
+                            'Add Account',
+                            style: theme.textTheme.titleSmall?.copyWith(
+                              color: const Color(0xFF2C2F5A),
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          const Spacer(),
+                          Container(
+                            width: 40,
+                            height: 40,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: const Color(0xFFC6CCD5),
+                              ),
+                            ),
+                            child: const Icon(
+                              Icons.add,
+                              color: Color(0xFF2C2F5A),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ],

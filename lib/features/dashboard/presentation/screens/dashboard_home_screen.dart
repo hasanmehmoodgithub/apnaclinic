@@ -134,7 +134,7 @@ class _DashboardHomeScreenState extends State<DashboardHomeScreen> {
 
     return Scaffold(
       key: _scaffoldKey,
-      backgroundColor: const Color(0xFFF8FAF9),
+      backgroundColor:  Colors.white,
       body: Column(
         children: [
           Container(

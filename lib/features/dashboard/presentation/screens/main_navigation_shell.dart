@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../../../core/constants/app_system_ui.dart';
+import '../../../bookings/presentation/screens/bookings_dashboard_screen.dart';
 import '../../../free_doctor/presentation/screens/free_doctor_screen.dart';
 import '../widgets/apna_bottom_navigation_bar.dart';
 import 'dashboard_home_screen.dart';
-import 'dashboard_my_bookings_screen.dart';
 import 'dashboard_profile_screen.dart';
 import 'customer_support_screen.dart';
 
@@ -70,7 +70,7 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
             FreeDoctorScreen(onBack: () => _onNavTap(_homeIndex)),
             CustomerSupportScreen(onBack: () => _onNavTap(_homeIndex)),
             const DashboardHomeScreen(),
-            const DashboardMyBookingsScreen(),
+            const BookingsDashboardScreen(),
             const DashboardProfileScreen(),
           ],
         ),

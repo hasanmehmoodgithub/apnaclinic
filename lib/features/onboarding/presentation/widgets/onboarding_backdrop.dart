@@ -1,3 +1,4 @@
+import 'package:apnaclinic/core/extensions/context_extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -13,12 +14,14 @@ class OnboardingBackdrop extends StatelessWidget {
     return Stack(
       children: [
         Positioned(
-          top: -150 * scale,
-          left: -120 * scale,
-          right: 20,
+          top:-context.screenHeight/4,
+          left: -context.screenWidth/2,
+          right:0,
           child: SvgPicture.asset(
             'assets/svg/onboarding_bg_top.svg',
-            fit: BoxFit.fitWidth,
+            fit: BoxFit.cover,
+            height: context.screenHeight/1.5,
+
           ),
         ),
         Positioned(
