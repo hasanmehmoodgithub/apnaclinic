@@ -9,9 +9,14 @@ import '../cubit/free_doctor_cubit.dart';
 import '../cubit/free_doctor_state.dart';
 
 class FreeDoctorScreen extends StatelessWidget {
-  const FreeDoctorScreen({super.key, required this.onBack});
+  const FreeDoctorScreen({
+    super.key,
+    this.showBackButton = true,
+    this.onBack,
+  });
 
-  final VoidCallback onBack;
+  final bool showBackButton;
+  final VoidCallback? onBack;
 
   static const String _watermarkAsset = 'assets/img/fikrfree_logo.png';
   static const Color _titleNavy = Color(0xFF0B2239);
@@ -43,7 +48,10 @@ class FreeDoctorScreen extends StatelessWidget {
               children: [
                 SizedBox(
                   height: bannerHeight,
-                  child: _FreeDoctorTopHeader(onBack: onBack),
+                  child: _FreeDoctorTopHeader(
+                    showBackButton: showBackButton,
+                    onBack: onBack,
+                  ),
                 ),
                 Expanded(
                   child: Stack(
@@ -86,9 +94,13 @@ class FreeDoctorScreen extends StatelessWidget {
 }
 
 class _FreeDoctorTopHeader extends StatelessWidget {
-  const _FreeDoctorTopHeader({required this.onBack});
+  const _FreeDoctorTopHeader({
+    required this.showBackButton,
+    required this.onBack,
+  });
 
-  final VoidCallback onBack;
+  final bool showBackButton;
+  final VoidCallback? onBack;
 
   @override
   Widget build(BuildContext context) {
@@ -118,11 +130,14 @@ class _FreeDoctorTopHeader extends StatelessWidget {
                 children: [
                   Align(
                     alignment: Alignment.centerLeft,
-                    child: IconButton(
-                      onPressed: onBack,
-                      icon: const Icon(Icons.arrow_back_rounded),
-                      color: FreeDoctorScreen._titleNavy,
-                    ),
+                    child: showBackButton
+                        ? IconButton(
+                            onPressed:
+                                onBack ?? () => Navigator.of(context).maybePop(),
+                            icon: const Icon(Icons.arrow_back_rounded),
+                            color: FreeDoctorScreen._titleNavy,
+                          )
+                        : const SizedBox(width: 48),
                   ),
                   Text(
                     'Free Doctor',

@@ -6,7 +6,14 @@ import '../../../../core/preference/app_pref.dart';
 import '../../../../core/router/app_routes.dart';
 
 class DashboardProfileScreen extends StatelessWidget {
-  const DashboardProfileScreen({super.key});
+  const DashboardProfileScreen({
+    super.key,
+    this.showBackButton = true,
+    this.onBack,
+  });
+
+  final bool showBackButton;
+  final VoidCallback? onBack;
 
   @override
   Widget build(BuildContext context) {
@@ -22,13 +29,16 @@ class DashboardProfileScreen extends StatelessWidget {
               padding: const EdgeInsets.fromLTRB(8, 6, 16, 6),
               child: Row(
                 children: [
-                  IconButton(
-                    onPressed: () => Navigator.of(context).maybePop(),
-                    icon: const Icon(
-                      Icons.arrow_back_rounded,
-                      color: Color(0xFF061E40),
-                    ),
-                  ),
+                  showBackButton
+                      ? IconButton(
+                          onPressed:
+                              onBack ?? () => Navigator.of(context).maybePop(),
+                          icon: const Icon(
+                            Icons.arrow_back_rounded,
+                            color: Color(0xFF061E40),
+                          ),
+                        )
+                      : const SizedBox(width: 48),
                   Expanded(
                     child: Text(
                       'Profile',

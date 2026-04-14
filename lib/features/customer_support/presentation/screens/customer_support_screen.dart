@@ -6,9 +6,14 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 /// Customer Support: cyan header + shield/phone hero, overlapping help body.
 class CustomerSupportScreen extends StatelessWidget {
-  const CustomerSupportScreen({super.key, required this.onBack});
+  const CustomerSupportScreen({
+    super.key,
+    this.showBackButton = true,
+    this.onBack,
+  });
 
-  final VoidCallback onBack;
+  final bool showBackButton;
+  final VoidCallback? onBack;
 
   static const String _heroAsset = 'assets/img/support/support_hero.png';
   static const String _supportCardArrowSvg =
@@ -31,7 +36,10 @@ class CustomerSupportScreen extends StatelessWidget {
         children: [
           SizedBox(
             height: bannerHeight,
-            child: _SupportTopHeader(onBack: onBack),
+            child: _SupportTopHeader(
+              showBackButton: showBackButton,
+              onBack: onBack,
+            ),
           ),
           Expanded(
             child: Stack(
@@ -55,9 +63,13 @@ class CustomerSupportScreen extends StatelessWidget {
 }
 
 class _SupportTopHeader extends StatelessWidget {
-  const _SupportTopHeader({required this.onBack});
+  const _SupportTopHeader({
+    required this.showBackButton,
+    required this.onBack,
+  });
 
-  final VoidCallback onBack;
+  final bool showBackButton;
+  final VoidCallback? onBack;
 
   @override
   Widget build(BuildContext context) {
@@ -84,11 +96,14 @@ class _SupportTopHeader extends StatelessWidget {
                 children: [
                   Align(
                     alignment: Alignment.centerLeft,
-                    child: IconButton(
-                      onPressed: onBack,
-                      icon: const Icon(Icons.arrow_back_rounded),
-                      color: CustomerSupportScreen._titleNavy,
-                    ),
+                    child: showBackButton
+                        ? IconButton(
+                            onPressed:
+                                onBack ?? () => Navigator.of(context).maybePop(),
+                            icon: const Icon(Icons.arrow_back_rounded),
+                            color: CustomerSupportScreen._titleNavy,
+                          )
+                        : const SizedBox(width: 48),
                   ),
                   Text(
                     'Customer Support',

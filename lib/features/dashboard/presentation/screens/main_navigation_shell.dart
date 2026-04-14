@@ -77,11 +77,11 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
           onPageChanged: _onPageChanged,
           physics: const BouncingScrollPhysics(),
           children: [
-            FreeDoctorScreen(onBack: () => _onNavTap(_homeIndex)),
-            CustomerSupportScreen(onBack: () => _onNavTap(_homeIndex)),
+            const FreeDoctorScreen(showBackButton: false),
+            const CustomerSupportScreen(showBackButton: false),
             const DashboardHomeScreen(),
-            const BookingsDashboardScreen(),
-            const DashboardProfileScreen(),
+            const BookingsDashboardScreen(showBackButton: false),
+            const DashboardProfileScreen(showBackButton: false),
           ],
         ),
         bottomNavigationBar: ApnaBottomNavigationBar(
