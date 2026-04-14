@@ -18,13 +18,13 @@ class AuthShell extends StatelessWidget {
             children: [
               Container(
                 width: double.infinity,
-                height: 104.61 + topInset,
-                clipBehavior: Clip.antiAlias,
+                height: 95 + topInset,
+                // clipBehavior: Clip.antiAlias,
                 decoration: const BoxDecoration(
                   color: Colors.white,
-                  borderRadius: BorderRadius.vertical(
-                    bottom: Radius.circular(40),
-                  ),
+                  // borderRadius: BorderRadius.vertical(
+                  //   // bottom: Radius.circular(40),
+                  // ),
                 ),
                 child: Stack(
                   children: [
@@ -66,7 +66,7 @@ class AuthShell extends StatelessWidget {
                   decoration: const BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.vertical(
-                      top: Radius.circular(42),
+                      top: Radius.circular(30),
                     ),
                   ),
                   child: child,

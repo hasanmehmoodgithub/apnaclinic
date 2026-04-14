@@ -295,14 +295,29 @@ class _LoginViewState extends State<_LoginView> {
                                 _formatPhoneInput(_phoneController.text.trim()),
                               )
                             : null,
-                        child: Text(
-                          state.canResendOtp
-                              ? l10n.authResendOtp
-                              : '${l10n.authResendOtp} ${state.otpSecondsRemaining} Sec',
-                          style: theme.textTheme.bodyMedium?.copyWith(
-                            color: const Color(0xFF5D758F),
-                          ),
-                        ),
+                        child: state.canResendOtp
+                            ? Text(
+                                l10n.authResendOtp,
+                                style: theme.textTheme.bodyMedium?.copyWith(
+                                  color: const Color(0xFF5D758F),
+                                ),
+                              )
+                            : Text.rich(
+                                TextSpan(
+                                  children: [
+                                    TextSpan(text: '${l10n.authResendOtp} '),
+                                    TextSpan(
+                                      text: '${state.otpSecondsRemaining} Sec',
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                style: theme.textTheme.bodyMedium?.copyWith(
+                                  color: const Color(0xFF5D758F),
+                                ),
+                              ),
                       ),
                     ),
                     if (state.errorMessage != null) ...[
@@ -330,8 +345,21 @@ class _LoginViewState extends State<_LoginView> {
                     fontSize: 30 / 1.65,
                   ),
                   const SizedBox(height: 20),
-                  Text(
-                    l10n.authTermsAndPrivacy,
+                  Text.rich(
+                    TextSpan(
+                      children: [
+                        TextSpan(text: '${l10n.authLegalPrefix} '),
+                        TextSpan(
+                          text: l10n.authTermsLabel,
+                          style: const TextStyle(fontWeight: FontWeight.w700),
+                        ),
+                        TextSpan(text: ' ${l10n.authLegalConnector} '),
+                        TextSpan(
+                          text: l10n.authPrivacyLabel,
+                          style: const TextStyle(fontWeight: FontWeight.w700),
+                        ),
+                      ],
+                    ),
                     textAlign: TextAlign.center,
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: const Color(0xFF667085),

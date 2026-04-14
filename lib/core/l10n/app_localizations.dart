@@ -296,6 +296,30 @@ abstract class AppLocalizations {
   /// **'By Signing in, I agree to Terms & Conditions and Privacy Policy.'**
   String get authTermsAndPrivacy;
 
+  /// No description provided for @authLegalPrefix.
+  ///
+  /// In en, this message translates to:
+  /// **'By Signing in, I agree to'**
+  String get authLegalPrefix;
+
+  /// No description provided for @authTermsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Terms & Conditions'**
+  String get authTermsLabel;
+
+  /// No description provided for @authLegalConnector.
+  ///
+  /// In en, this message translates to:
+  /// **'and'**
+  String get authLegalConnector;
+
+  /// No description provided for @authPrivacyLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy Policy.'**
+  String get authPrivacyLabel;
+
   /// No description provided for @profileTitle.
   ///
   /// In en, this message translates to:
