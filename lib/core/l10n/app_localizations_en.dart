@@ -69,7 +69,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get authMobileNumberLabel => 'Enter Mobile Number';
 
   @override
-  String get authPhoneHint => '3045770007';
+  String get authLoginSubtitle => 'Get started by Signing Up/Logging In';
+
+  @override
+  String get authPhoneHint => '+92 3XXXXXXXXX';
 
   @override
   String get authOtpHint => 'An OTP will be sent to this number';
@@ -103,7 +106,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get authTermsAndPrivacy =>
-      'By Signing in, I agree to Terms & Conditions and privacy policy.';
+      'By Signing in, I agree to Terms & Conditions and Privacy Policy.';
 
   @override
   String get profileTitle => 'Profile Edit';

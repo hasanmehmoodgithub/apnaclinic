@@ -218,10 +218,16 @@ abstract class AppLocalizations {
   /// **'Enter Mobile Number'**
   String get authMobileNumberLabel;
 
+  /// No description provided for @authLoginSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Get started by Signing Up/Logging In'**
+  String get authLoginSubtitle;
+
   /// No description provided for @authPhoneHint.
   ///
   /// In en, this message translates to:
-  /// **'3045770007'**
+  /// **'+92 3XXXXXXXXX'**
   String get authPhoneHint;
 
   /// No description provided for @authOtpHint.
@@ -287,7 +293,7 @@ abstract class AppLocalizations {
   /// No description provided for @authTermsAndPrivacy.
   ///
   /// In en, this message translates to:
-  /// **'By Signing in, I agree to Terms & Conditions and privacy policy.'**
+  /// **'By Signing in, I agree to Terms & Conditions and Privacy Policy.'**
   String get authTermsAndPrivacy;
 
   /// No description provided for @profileTitle.

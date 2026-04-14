@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
@@ -118,329 +117,324 @@ class _ProfileSetupViewState extends State<_ProfileSetupView> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
+    final topInset = MediaQuery.paddingOf(context).top;
 
     return Scaffold(
       backgroundColor: const Color(0xFFF4F5F7),
-      body: SafeArea(
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            final width = constraints.maxWidth.clamp(0, 430).toDouble();
-            return Align(
-              alignment: Alignment.topCenter,
-              child: SizedBox(
-                width: width,
-                child: BlocBuilder<ProfileSetupCubit, ProfileSetupState>(
-                  builder: (context, state) {
-                    final dobLabel = state.dateOfBirth == null
-                        ? l10n.profileDobHint
-                        : DateFormat('dd/MM/yy').format(state.dateOfBirth!);
-                    return Stack(
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          return BlocBuilder<ProfileSetupCubit, ProfileSetupState>(
+            builder: (context, state) {
+              final dobLabel = state.dateOfBirth == null
+                  ? l10n.profileDobHint
+                  : DateFormat('dd/MM/yy').format(state.dateOfBirth!);
+              return Stack(
+                children: [
+                  SizedBox(
+                    height: 260,
+                    child: Stack(
+                      fit: StackFit.expand,
                       children: [
-                        SizedBox(
-                          height: 260,
-                          child: Stack(
-                            fit: StackFit.expand,
+                        const DecoratedBox(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: [Color(0xFF87DDD3), Color(0xFFF4F5F7)],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Column(
+                    children: [
+                      SizedBox(
+                        height: topInset + 48,
+                        child: Padding(
+                          padding: EdgeInsets.only(top: topInset + 4),
+                          child: Row(
                             children: [
-                              const DecoratedBox(
-                                decoration: BoxDecoration(
-                                  gradient: LinearGradient(
-                                    begin: Alignment.topCenter,
-                                    end: Alignment.bottomCenter,
-                                    colors: [
-                                      Color(0xFF87DDD3),
-                                      Color(0xFFF4F5F7),
-                                    ],
+                              Material(
+                                color: Colors.transparent,
+                                child: InkWell(
+                                  borderRadius: BorderRadius.circular(20),
+                                  onTap: () {
+                                    if (context.canPop()) {
+                                      context.pop();
+                                    } else {
+                                      context.go(
+                                        AppRoutes.path(AppRoutes.authLogin),
+                                      );
+                                    }
+                                  },
+                                  child: const SizedBox(
+                                    width: 40,
+                                    height: 40,
+                                    child: Center(
+                                      child: Icon(
+                                        Icons.arrow_back_rounded,
+                                        color: Color(0xFF061E40),
+                                        size: 22,
+                                      ),
+                                    ),
                                   ),
                                 ),
                               ),
-                              Positioned(
-                                top: -190,
-                                left: 0,
-                                right: 0,
-                                child: SvgPicture.asset(
-                                  'assets/svg/frame_1171275326.svg',
-                                  height: 355,
-                                  fit: BoxFit.cover,
+                              Expanded(
+                                child: Center(
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(right: 40),
+                                    child: Text(
+                                      l10n.profileTitle,
+                                      style: theme.textTheme.titleLarge
+                                          ?.copyWith(
+                                            fontWeight: FontWeight.w700,
+                                            color: const Color(0xFF061E40),
+                                          ),
+                                    ),
+                                  ),
                                 ),
                               ),
                             ],
                           ),
                         ),
-                        Column(
-                          children: [
-                            const SizedBox(height: 24),
-                            Text(
-                              l10n.profileTitle,
-                              style: theme.textTheme.titleLarge?.copyWith(
-                                fontWeight: FontWeight.w700,
-                                color: const Color(0xFF061E40),
+                      ),
+                      const SizedBox(height: 8),
+                      Stack(
+                        children: [
+                          CircleAvatar(
+                            radius: 56,
+                            backgroundColor: Colors.white.withValues(
+                              alpha: 0.95,
+                            ),
+                            backgroundImage: const AssetImage(
+                              'assets/img/profile_avatar.png',
+                            ),
+                          ),
+                          Positioned(
+                            right: 2,
+                            bottom: 4,
+                            child: Container(
+                              padding: const EdgeInsets.all(6),
+                              decoration: const BoxDecoration(
+                                color: Color(0xFFDDF3EE),
+                                shape: BoxShape.circle,
+                              ),
+                              child: const Icon(
+                                Icons.camera_alt_outlined,
+                                size: 16,
+                                color: Color(0xFF0FAA9A),
                               ),
                             ),
-                            const SizedBox(height: 16),
-                            Stack(
-                              children: [
-                                CircleAvatar(
-                                  radius: 56,
-                                  backgroundColor: Colors.white.withValues(
-                                    alpha: 0.95,
-                                  ),
-                                  backgroundImage: const AssetImage(
-                                    'assets/img/profile_avatar.png',
-                                  ),
-                                ),
-                                Positioned(
-                                  right: 2,
-                                  bottom: 4,
-                                  child: Container(
-                                    padding: const EdgeInsets.all(6),
-                                    decoration: const BoxDecoration(
-                                      color: Color(0xFFDDF3EE),
-                                      shape: BoxShape.circle,
-                                    ),
-                                    child: const Icon(
-                                      Icons.camera_alt_outlined,
-                                      size: 16,
-                                      color: Color(0xFF0FAA9A),
-                                    ),
-                                  ),
-                                ),
-                              ],
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 14),
+                      Expanded(
+                        child: Container(
+                          width: double.infinity,
+                          decoration: const BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.vertical(
+                              top: Radius.circular(24),
                             ),
-                            const SizedBox(height: 14),
-                            Expanded(
-                              child: Container(
-                                width: double.infinity,
-                                decoration: const BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.vertical(
-                                    top: Radius.circular(24),
+                          ),
+                          child: SingleChildScrollView(
+                            padding: const EdgeInsets.fromLTRB(18, 20, 18, 24),
+                            child: Form(
+                              key: _formKey,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: [
+                                  Text(
+                                    l10n.profileSetupTitle,
+                                    style: theme.textTheme.titleMedium
+                                        ?.copyWith(
+                                          fontWeight: FontWeight.w700,
+                                          color: const Color(0xFF061E40),
+                                        ),
                                   ),
-                                ),
-                                child: SingleChildScrollView(
-                                  padding: const EdgeInsets.fromLTRB(
-                                    18,
-                                    20,
-                                    18,
-                                    24,
-                                  ),
-                                  child: Form(
-                                    key: _formKey,
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.stretch,
-                                      children: [
-                                        Text(
-                                          l10n.profileSetupTitle,
-                                          style: theme.textTheme.titleMedium
-                                              ?.copyWith(
-                                                fontWeight: FontWeight.w700,
-                                                color: const Color(0xFF061E40),
-                                              ),
-                                        ),
-                                        const SizedBox(height: 4),
-                                        Text(
-                                          l10n.profileSetupSubtitle,
-                                          style: theme.textTheme.bodySmall
-                                              ?.copyWith(
-                                                color: const Color(0xFF98A2B3),
-                                              ),
-                                        ),
-                                        const SizedBox(height: 18),
-                                        Text(
-                                          l10n.profileFirstNameLabel,
-                                          style: theme.textTheme.bodySmall
-                                              ?.copyWith(
-                                                color: const Color(0xFF98A2B3),
-                                              ),
-                                        ),
-                                        TextFormField(
-                                          controller: _firstNameController,
-                                          decoration: _lineInputDecoration(
-                                            context,
-                                            hintText: l10n.profileFirstNameHint,
-                                          ),
-                                          validator: (value) {
-                                            if ((value ?? '').trim().isEmpty) {
-                                              return l10n
-                                                  .profileFirstNameRequired;
-                                            }
-                                            return null;
-                                          },
-                                        ),
-                                        const SizedBox(height: 22),
-                                        Text(
-                                          l10n.profileLastNameLabel,
-                                          style: theme.textTheme.bodySmall
-                                              ?.copyWith(
-                                                color: const Color(0xFF98A2B3),
-                                              ),
-                                        ),
-                                        TextFormField(
-                                          controller: _lastNameController,
-                                          decoration: _lineInputDecoration(
-                                            context,
-                                            hintText: l10n.profileLastNameHint,
-                                          ),
-                                          validator: (value) {
-                                            if ((value ?? '').trim().isEmpty) {
-                                              return l10n
-                                                  .profileLastNameRequired;
-                                            }
-                                            return null;
-                                          },
-                                        ),
-                                        const SizedBox(height: 22),
-                                        Text(
-                                          l10n.profileGenderLabel,
-                                          style: theme.textTheme.bodySmall
-                                              ?.copyWith(
-                                                color: const Color(0xFF98A2B3),
-                                              ),
-                                        ),
-                                        DropdownButtonFormField<String>(
-                                          key: ValueKey(state.selectedGender),
-                                          initialValue: state.selectedGender,
-                                          decoration: _lineInputDecoration(
-                                            context,
-                                            hintText: l10n.profileGenderHint,
-                                          ),
-                                          items: [
-                                            DropdownMenuItem(
-                                              value: 'male',
-                                              child: Text(
-                                                l10n.profileGenderMale,
-                                              ),
-                                            ),
-                                            DropdownMenuItem(
-                                              value: 'female',
-                                              child: Text(
-                                                l10n.profileGenderFemale,
-                                              ),
-                                            ),
-                                            DropdownMenuItem(
-                                              value: 'other',
-                                              child: Text(
-                                                l10n.profileGenderOther,
-                                              ),
-                                            ),
-                                          ],
-                                          onChanged: context
-                                              .read<ProfileSetupCubit>()
-                                              .setGender,
-                                        ),
-                                        const SizedBox(height: 22),
-                                        Text(
-                                          l10n.profileEmailLabel,
-                                          style: theme.textTheme.bodySmall
-                                              ?.copyWith(
-                                                color: const Color(0xFF98A2B3),
-                                              ),
-                                        ),
-                                        TextFormField(
-                                          controller: _emailController,
-                                          keyboardType:
-                                              TextInputType.emailAddress,
-                                          decoration: _lineInputDecoration(
-                                            context,
-                                            hintText: l10n.profileEmailHint,
-                                          ),
-                                          validator: (value) {
-                                            final email = (value ?? '').trim();
-                                            if (email.isEmpty ||
-                                                !email.contains('@')) {
-                                              return l10n.profileEmailRequired;
-                                            }
-                                            return null;
-                                          },
-                                        ),
-                                        const SizedBox(height: 22),
-                                        Text(
-                                          l10n.profileAddressLabel,
-                                          style: theme.textTheme.bodySmall
-                                              ?.copyWith(
-                                                color: const Color(0xFF98A2B3),
-                                              ),
-                                        ),
-                                        TextFormField(
-                                          controller: _addressController,
-                                          decoration: _lineInputDecoration(
-                                            context,
-                                            hintText: l10n.profileAddressHint,
-                                          ),
-                                          validator: (value) {
-                                            if ((value ?? '').trim().isEmpty) {
-                                              return l10n
-                                                  .profileAddressRequired;
-                                            }
-                                            return null;
-                                          },
-                                        ),
-                                        const SizedBox(height: 22),
-                                        Text(
-                                          l10n.profileDobLabel,
-                                          style: theme.textTheme.bodySmall
-                                              ?.copyWith(
-                                                color: const Color(0xFF98A2B3),
-                                              ),
-                                        ),
-                                        InkWell(
-                                          onTap: () => _pickDate(context),
-                                          child: IgnorePointer(
-                                            child: TextFormField(
-                                              decoration: _lineInputDecoration(
-                                                context,
-                                                hintText: dobLabel,
-                                                suffixIcon: const Icon(
-                                                  Icons.calendar_today_outlined,
-                                                  size: 18,
-                                                  color: Color(0xFF98A2B3),
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                        if (state.errorMessage != null) ...[
-                                          const SizedBox(height: 12),
-                                          Text(
-                                            state.errorMessage!,
-                                            style: theme.textTheme.bodySmall
-                                                ?.copyWith(
-                                                  color: const Color(
-                                                    0xFFE01F26,
-                                                  ),
-                                                ),
-                                          ),
-                                        ],
-                                        const SizedBox(height: 26),
-                                        AppButton.primary(
-                                          text: l10n.profileSaveCta,
-                                          onPressed: state.isSaving
-                                              ? null
-                                              : () => _save(state),
-                                          isLoading: state.isSaving,
-                                          backgroundColor: const Color(
-                                            0xFF0FAA9A,
-                                          ),
-                                          foregroundColor: Colors.white,
-                                          height: 52,
-                                          borderRadius: 12,
-                                        ),
-                                      ],
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    l10n.profileSetupSubtitle,
+                                    style: theme.textTheme.bodySmall?.copyWith(
+                                      color: const Color(0xFF98A2B3),
                                     ),
                                   ),
-                                ),
+                                  const SizedBox(height: 18),
+                                  Text(
+                                    l10n.profileFirstNameLabel,
+                                    style: theme.textTheme.bodySmall?.copyWith(
+                                      color: const Color(0xFF98A2B3),
+                                    ),
+                                  ),
+                                  TextFormField(
+                                    controller: _firstNameController,
+                                    decoration: _lineInputDecoration(
+                                      context,
+                                      hintText: l10n.profileFirstNameHint,
+                                    ),
+                                    validator: (value) {
+                                      if ((value ?? '').trim().isEmpty) {
+                                        return l10n.profileFirstNameRequired;
+                                      }
+                                      return null;
+                                    },
+                                  ),
+                                  const SizedBox(height: 22),
+                                  Text(
+                                    l10n.profileLastNameLabel,
+                                    style: theme.textTheme.bodySmall?.copyWith(
+                                      color: const Color(0xFF98A2B3),
+                                    ),
+                                  ),
+                                  TextFormField(
+                                    controller: _lastNameController,
+                                    decoration: _lineInputDecoration(
+                                      context,
+                                      hintText: l10n.profileLastNameHint,
+                                    ),
+                                    validator: (value) {
+                                      if ((value ?? '').trim().isEmpty) {
+                                        return l10n.profileLastNameRequired;
+                                      }
+                                      return null;
+                                    },
+                                  ),
+                                  const SizedBox(height: 22),
+                                  Text(
+                                    l10n.profileGenderLabel,
+                                    style: theme.textTheme.bodySmall?.copyWith(
+                                      color: const Color(0xFF98A2B3),
+                                    ),
+                                  ),
+                                  DropdownButtonFormField<String>(
+                                    key: ValueKey(state.selectedGender),
+                                    initialValue: state.selectedGender,
+                                    decoration: _lineInputDecoration(
+                                      context,
+                                      hintText: l10n.profileGenderHint,
+                                    ),
+                                    items: [
+                                      DropdownMenuItem(
+                                        value: 'male',
+                                        child: Text(l10n.profileGenderMale),
+                                      ),
+                                      DropdownMenuItem(
+                                        value: 'female',
+                                        child: Text(l10n.profileGenderFemale),
+                                      ),
+                                      DropdownMenuItem(
+                                        value: 'other',
+                                        child: Text(l10n.profileGenderOther),
+                                      ),
+                                    ],
+                                    onChanged: context
+                                        .read<ProfileSetupCubit>()
+                                        .setGender,
+                                  ),
+                                  const SizedBox(height: 22),
+                                  Text(
+                                    l10n.profileEmailLabel,
+                                    style: theme.textTheme.bodySmall?.copyWith(
+                                      color: const Color(0xFF98A2B3),
+                                    ),
+                                  ),
+                                  TextFormField(
+                                    controller: _emailController,
+                                    keyboardType: TextInputType.emailAddress,
+                                    decoration: _lineInputDecoration(
+                                      context,
+                                      hintText: l10n.profileEmailHint,
+                                    ),
+                                    validator: (value) {
+                                      final email = (value ?? '').trim();
+                                      if (email.isEmpty ||
+                                          !email.contains('@')) {
+                                        return l10n.profileEmailRequired;
+                                      }
+                                      return null;
+                                    },
+                                  ),
+                                  const SizedBox(height: 22),
+                                  Text(
+                                    l10n.profileAddressLabel,
+                                    style: theme.textTheme.bodySmall?.copyWith(
+                                      color: const Color(0xFF98A2B3),
+                                    ),
+                                  ),
+                                  TextFormField(
+                                    controller: _addressController,
+                                    decoration: _lineInputDecoration(
+                                      context,
+                                      hintText: l10n.profileAddressHint,
+                                    ),
+                                    validator: (value) {
+                                      if ((value ?? '').trim().isEmpty) {
+                                        return l10n.profileAddressRequired;
+                                      }
+                                      return null;
+                                    },
+                                  ),
+                                  const SizedBox(height: 22),
+                                  Text(
+                                    l10n.profileDobLabel,
+                                    style: theme.textTheme.bodySmall?.copyWith(
+                                      color: const Color(0xFF98A2B3),
+                                    ),
+                                  ),
+                                  InkWell(
+                                    onTap: () => _pickDate(context),
+                                    child: IgnorePointer(
+                                      child: TextFormField(
+                                        decoration: _lineInputDecoration(
+                                          context,
+                                          hintText: dobLabel,
+                                          suffixIcon: const Icon(
+                                            Icons.calendar_today_outlined,
+                                            size: 18,
+                                            color: Color(0xFF98A2B3),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  if (state.errorMessage != null) ...[
+                                    const SizedBox(height: 12),
+                                    Text(
+                                      state.errorMessage!,
+                                      style: theme.textTheme.bodySmall
+                                          ?.copyWith(
+                                            color: const Color(0xFFE01F26),
+                                          ),
+                                    ),
+                                  ],
+                                  const SizedBox(height: 26),
+                                  AppButton.primary(
+                                    text: l10n.profileSaveCta,
+                                    onPressed: state.isSaving
+                                        ? null
+                                        : () => _save(state),
+                                    isLoading: state.isSaving,
+                                    backgroundColor: const Color(0xFF0FAA9A),
+                                    foregroundColor: Colors.white,
+                                    height: 52,
+                                    borderRadius: 12,
+                                  ),
+                                ],
                               ),
                             ),
-                          ],
+                          ),
                         ),
-                      ],
-                    );
-                  },
-                ),
-              ),
-            );
-          },
-        ),
+                      ),
+                    ],
+                  ),
+                ],
+              );
+            },
+          );
+        },
       ),
     );
   }
