@@ -19,7 +19,7 @@ class FreeDoctorScreen extends StatelessWidget {
   final bool showBackButton;
   final VoidCallback? onBack;
 
-  static const String _watermarkAsset = 'assets/img/fikrfree_logo.png';
+  static const String _watermarkAsset = Assets.imgPartner;
   static const Color _titleNavy = Color(0xFF0B2239);
   static const Color _bodyText = Color(0xFF374151);
   static const Color _primaryTeal = Color(0xFF0FAA9A);
