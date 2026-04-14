@@ -65,6 +65,22 @@ class _LoginViewState extends State<_LoginView> {
     }
   }
 
+  void _handleBackTap(AuthState state) {
+    if (!mounted) return;
+
+    if (state.otpRequested) {
+      context.read<AuthCubit>().hideOtpSection();
+      return;
+    }
+
+    if (Navigator.of(context).canPop()) {
+      Navigator.of(context).pop();
+      return;
+    }
+
+    context.go(AppRoutes.path(AppRoutes.onboarding));
+  }
+
   Future<void> _submit(AuthState state) async {
     final l10n = AppLocalizations.of(context)!;
     FocusScope.of(context).unfocus();
@@ -115,13 +131,7 @@ class _LoginViewState extends State<_LoginView> {
     return BlocBuilder<AuthCubit, AuthState>(
       builder: (context, state) {
         return AuthShell(
-          onBackTap: () {
-            if (state.otpRequested) {
-              context.read<AuthCubit>().hideOtpSection();
-              return;
-            }
-            context.go(AppRoutes.path(AppRoutes.onboarding));
-          },
+          onBackTap: () => _handleBackTap(state),
           child: Padding(
             padding: const EdgeInsets.fromLTRB(30, 22, 30, 20),
             child: Form(

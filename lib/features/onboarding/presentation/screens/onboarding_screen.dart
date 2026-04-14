@@ -52,7 +52,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   Future<void> _finishOnboarding() async {
     await sl<AppPref>().setOnboardingCompleted(true);
     if (!mounted) return;
-    context.go(AppRoutes.path(AppRoutes.authLogin));
+    context.go(AppRoutes.path(AppRoutes.home));
   }
 
   Future<void> _onNext() async {

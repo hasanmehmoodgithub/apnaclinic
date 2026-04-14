@@ -20,22 +20,12 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   Future<void> _navigateToNext() async {
-
-
     await Future<void>.delayed(const Duration(seconds: 3));
 
     if (!mounted) return;
     final appPref = sl<AppPref>();
     final seenOnboarding = appPref.isOnboardingCompleted();
-    final isLoggedIn = appPref.getLoginStatus();
-    final isProfileCompleted = appPref.isProfileCompleted();
-    context.go(AppRoutes.path( AppRoutes.home));
-    return;
-    final nextRoute = !seenOnboarding
-        ? AppRoutes.onboarding
-        : (!isLoggedIn
-              ? AppRoutes.authLogin
-              : (isProfileCompleted ? AppRoutes.home : AppRoutes.profileSetup));
+    final nextRoute = !seenOnboarding ? AppRoutes.onboarding : AppRoutes.home;
     context.go(AppRoutes.path(nextRoute));
   }
 
