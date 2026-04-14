@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+
+import '../../../../core/di/dependency_injection.dart';
+import '../../../../core/preference/app_pref.dart';
+import '../../../../core/router/app_routes.dart';
 
 class DashboardMenuScreen extends StatelessWidget {
   const DashboardMenuScreen({super.key});
@@ -18,6 +23,14 @@ class DashboardMenuScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final appPref = sl<AppPref>();
+    final isLoggedIn = appPref.getLoginStatus();
+    final firstName = (appPref.getString('profile_first_name') ?? '').trim();
+    final lastName = (appPref.getString('profile_last_name') ?? '').trim();
+    final fullName = '$firstName $lastName'.trim();
+    final phone = (appPref.getString('profile_phone') ?? '').trim();
+    final displayName = fullName.isEmpty ? 'Guest User' : fullName;
+    final displayPhone = phone.isEmpty ? 'Sign in to manage your account' : phone;
 
     return Scaffold(
       backgroundColor: const Color(0xFFC7EFEB),
@@ -63,7 +76,21 @@ class DashboardMenuScreen extends StatelessWidget {
                       child: ListView(
                         padding: const EdgeInsets.fromLTRB(22, 22, 22, 18),
                         children: [
-                          _ProfileCard(theme: theme),
+                          _ProfileCard(
+                            theme: theme,
+                            isLoggedIn: isLoggedIn,
+                            name: isLoggedIn ? displayName : 'Guest User',
+                            phone: isLoggedIn
+                                ? displayPhone
+                                : 'Sign in to continue',
+                            onActionTap: () {
+                              if (!isLoggedIn) {
+                                context.push(AppRoutes.path(AppRoutes.authLogin));
+                                return;
+                              }
+                              // TODO: wire Edit Profile screen when available.
+                            },
+                          ),
                           const SizedBox(height: 14),
                           for (final item in _mainItems) ...[
                             _MenuTile(item: item, theme: theme, onTap: () {}),
@@ -111,9 +138,19 @@ class DashboardMenuScreen extends StatelessWidget {
 }
 
 class _ProfileCard extends StatelessWidget {
-  const _ProfileCard({required this.theme});
+  const _ProfileCard({
+    required this.theme,
+    required this.isLoggedIn,
+    required this.name,
+    required this.phone,
+    required this.onActionTap,
+  });
 
   final ThemeData theme;
+  final bool isLoggedIn;
+  final String name;
+  final String phone;
+  final VoidCallback onActionTap;
 
   @override
   Widget build(BuildContext context) {
@@ -151,11 +188,11 @@ class _ProfileCard extends StatelessWidget {
                       shape: BoxShape.circle,
                       color: Color(0xFFD1DDFE),
                     ),
-                    child: ClipOval(
-                      child: Image.network(
-                        'https://www.figma.com/api/mcp/asset/3c2178b9-9945-4ebd-a491-e269f473a940',
-                        fit: BoxFit.cover,
-                      ),
+                    child: Icon(
+                      Icons.person_rounded,
+                      color: isLoggedIn
+                          ? const Color(0xFF0B77C5)
+                          : const Color(0xFF6B7280),
                     ),
                   ),
                   const SizedBox(width: 7),
@@ -166,7 +203,7 @@ class _ProfileCard extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Haseeb Qasim',
+                          name,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: theme.textTheme.titleMedium?.copyWith(
@@ -178,7 +215,7 @@ class _ProfileCard extends StatelessWidget {
                         ),
                         const SizedBox(height: 7),
                         Text(
-                          '03045770007',
+                          phone,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: theme.textTheme.bodyMedium?.copyWith(
@@ -193,7 +230,7 @@ class _ProfileCard extends StatelessWidget {
                   ),
                   const SizedBox(width: 8),
                   OutlinedButton(
-                    onPressed: () {},
+                    onPressed: onActionTap,
                     style: OutlinedButton.styleFrom(
                       side: const BorderSide(color: Color(0xFF9BA6A7), width: 0.8),
                       foregroundColor: const Color(0xFF0E2D55),
@@ -208,7 +245,7 @@ class _ProfileCard extends StatelessWidget {
                       backgroundColor: Colors.transparent,
                     ),
                     child: Text(
-                      'Edit Profile',
+                      isLoggedIn ? 'Edit Profile' : 'Login / Signup',
                       style: theme.textTheme.labelLarge?.copyWith(
                         fontWeight: FontWeight.w500,
                         fontSize: 12,
