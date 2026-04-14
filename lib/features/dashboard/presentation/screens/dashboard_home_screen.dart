@@ -22,6 +22,10 @@ class DashboardHomeScreen extends StatefulWidget {
 }
 
 class _DashboardHomeScreenState extends State<DashboardHomeScreen> {
+  /// Only the first time the home tab is shown in this app session — avoids
+  /// repeating when [DashboardHomeScreen] is recreated (e.g. tab switches).
+  static bool _dashboardLoaderShownThisSession = false;
+
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   bool _isLoggedIn = false;
   Timer? _promoDialogTimer;
@@ -69,6 +73,7 @@ class _DashboardHomeScreenState extends State<DashboardHomeScreen> {
     super.initState();
     _isLoggedIn = sl<AppPref>().getLoginStatus();
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_dashboardLoaderShownThisSession || !mounted) return;
       _showDashboardLoaderDialog();
     });
     _promoDialogTimer = Timer(const Duration(seconds: 3), _showPromoDialog);
@@ -83,6 +88,7 @@ class _DashboardHomeScreenState extends State<DashboardHomeScreen> {
 
   void _showDashboardLoaderDialog() {
     if (!mounted || _isLoaderDialogVisible) return;
+    _dashboardLoaderShownThisSession = true;
     _isLoaderDialogVisible = true;
 
     showDialog<void>(
