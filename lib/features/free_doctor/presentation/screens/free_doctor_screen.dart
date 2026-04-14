@@ -278,8 +278,9 @@ class _ConsultationInfoCard extends StatelessWidget {
                       _Bullet(
                         text: points[i],
                         style: theme.textTheme.bodyMedium?.copyWith(
-                          color: FreeDoctorScreen._bodyText,
+                          color: Colors.black,
                           height: 1.45,
+                          fontWeight: FontWeight.w500
                         ),
                       ),
                       if (i != points.length - 1) const SizedBox(height: 12),
@@ -357,7 +358,7 @@ class _Bullet extends StatelessWidget {
           ),
         ),
         const SizedBox(width: 12),
-        Expanded(child: Text(text, style: style)),
+        Expanded(child: Text(text, style: style,)),
       ],
     );
   }
