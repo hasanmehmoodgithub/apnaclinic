@@ -22,6 +22,8 @@ class ApnaClinicAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.onMenuTap,
     this.onNotificationTap,
     this.onProfileTap,
+    this.onLoginTap,
+    this.showLoginButton = false,
     this.bottom,
   });
 
@@ -34,6 +36,8 @@ class ApnaClinicAppBar extends StatelessWidget implements PreferredSizeWidget {
   final VoidCallback? onMenuTap;
   final VoidCallback? onNotificationTap;
   final VoidCallback? onProfileTap;
+  final VoidCallback? onLoginTap;
+  final bool showLoginButton;
   final PreferredSizeWidget? bottom;
 
   static const String menuAsset = 'assets/svg/ic_menu.svg';
@@ -144,26 +148,54 @@ class ApnaClinicAppBar extends StatelessWidget implements PreferredSizeWidget {
                 ),
                 Padding(
                   padding: const EdgeInsets.only(right: 12, left: 4),
-                  child: Material(
-                    color: Colors.transparent,
-                    child: InkWell(
-                      onTap: onProfileTap,
-                      customBorder: const CircleBorder(),
-                      child: CircleAvatar(
-                        radius: 19,
-                        backgroundColor: _isGreen
-                            ? Colors.white.withValues(alpha: 0.28)
-                            : const Color(0xFFE0F2F1),
-                        child: Icon(
-                          Icons.person_rounded,
-                          size: 24,
-                          color: _isGreen
-                              ? Colors.white
-                              : const Color(0xFF0FAA9A),
+                  child: showLoginButton
+                      ? SizedBox(
+                          height: 36,
+                          child: OutlinedButton(
+                            onPressed: onLoginTap,
+                            style: OutlinedButton.styleFrom(
+                              side: BorderSide(
+                                color: _isGreen
+                                    ? Colors.white
+                                    : const Color(0xFF0FAA9A),
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(18),
+                              ),
+                              padding: const EdgeInsets.symmetric(horizontal: 14),
+                            ),
+                            child: Text(
+                              'Login',
+                              style: TextStyle(
+                                color: _isGreen
+                                    ? Colors.white
+                                    : const Color(0xFF0FAA9A),
+                                fontWeight: FontWeight.w600,
+                                fontSize: 13,
+                              ),
+                            ),
+                          ),
+                        )
+                      : Material(
+                          color: Colors.transparent,
+                          child: InkWell(
+                            onTap: onProfileTap,
+                            customBorder: const CircleBorder(),
+                            child: CircleAvatar(
+                              radius: 19,
+                              backgroundColor: _isGreen
+                                  ? Colors.white.withValues(alpha: 0.28)
+                                  : const Color(0xFFE0F2F1),
+                              child: Icon(
+                                Icons.person_rounded,
+                                size: 24,
+                                color: _isGreen
+                                    ? Colors.white
+                                    : const Color(0xFF0FAA9A),
+                              ),
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
-                  ),
                 ),
               ],
             ),

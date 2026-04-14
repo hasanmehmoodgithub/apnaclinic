@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../core/constants/app_system_ui.dart';
+import '../../../../core/di/dependency_injection.dart';
+import '../../../../core/preference/app_pref.dart';
+import '../../../../core/router/app_routes.dart';
 import '../../../bookings/presentation/screens/bookings_dashboard_screen.dart';
 import '../../../customer_support/presentation/screens/customer_support_screen.dart';
 import '../../../free_doctor/presentation/screens/free_doctor_screen.dart';
@@ -19,6 +23,7 @@ class MainNavigationShell extends StatefulWidget {
 
 class _MainNavigationShellState extends State<MainNavigationShell> {
   static const int _homeIndex = 2;
+  static const int _bookingsIndex = 3;
 
   late final PageController _pageController;
   int _currentIndex = _homeIndex;
@@ -43,6 +48,11 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
   }
 
   void _onNavTap(int index) {
+    if (index == _bookingsIndex && !sl<AppPref>().getLoginStatus()) {
+      context.push(AppRoutes.path(AppRoutes.authLogin));
+      return;
+    }
+
     setState(() => _currentIndex = index);
     _applyStatusBar();
     _pageController.animateToPage(

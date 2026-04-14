@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lottie/lottie.dart';
 import 'dart:async';
-import 'dart:io';
 
+import '../../../../core/di/dependency_injection.dart';
+import '../../../../core/preference/app_pref.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/widgets/apna_clinic_app_bar.dart';
 import '../../../../generated/assets.dart';
@@ -21,8 +23,11 @@ class DashboardHomeScreen extends StatefulWidget {
 
 class _DashboardHomeScreenState extends State<DashboardHomeScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  bool _isLoggedIn = false;
   Timer? _promoDialogTimer;
+  Timer? _dashboardLoaderTimer;
   bool _isPromoDialogShown = false;
+  bool _showDashboardLoader = true;
 
   static const String _promoImagePath =
       'assets/img/banner.png';
@@ -62,12 +67,19 @@ class _DashboardHomeScreenState extends State<DashboardHomeScreen> {
   @override
   void initState() {
     super.initState();
+    _isLoggedIn = sl<AppPref>().getLoginStatus();
+    _dashboardLoaderTimer = Timer(const Duration(seconds: 2), () {
+      if (mounted) {
+        setState(() => _showDashboardLoader = false);
+      }
+    });
     _promoDialogTimer = Timer(const Duration(seconds: 2), _showPromoDialog);
   }
 
   @override
   void dispose() {
     _promoDialogTimer?.cancel();
+    _dashboardLoaderTimer?.cancel();
     super.dispose();
   }
 
@@ -119,8 +131,19 @@ class _DashboardHomeScreenState extends State<DashboardHomeScreen> {
     );
   }
 
+  String _resolveGreetingName() {
+    if (!_isLoggedIn) return 'Guest';
+    final appPref = sl<AppPref>();
+    final firstName = (appPref.getString('profile_first_name') ?? '').trim();
+    final lastName = (appPref.getString('profile_last_name') ?? '').trim();
+    final fullName = '$firstName $lastName'.trim();
+    return fullName.isEmpty ? 'Guest' : fullName;
+  }
+
   @override
   Widget build(BuildContext context) {
+    _isLoggedIn = sl<AppPref>().getLoginStatus();
+    final greetingName = _resolveGreetingName();
     final theme = Theme.of(context);
 
     return Scaffold(
@@ -139,6 +162,8 @@ class _DashboardHomeScreenState extends State<DashboardHomeScreen> {
                 onNotificationTap: () {
                   context.push(AppRoutes.path(AppRoutes.notifications));
                 },
+                showLoginButton: !_isLoggedIn,
+                onLoginTap: () => context.push(AppRoutes.path(AppRoutes.authLogin)),
                 onProfileTap: () {
                   // TODO: profile screen
                 },
@@ -146,6 +171,7 @@ class _DashboardHomeScreenState extends State<DashboardHomeScreen> {
             ),
           ),
           SearchHeader(
+            userName: greetingName,
             onSearchSubmitted: (_) {
               // TODO: global search
             },
@@ -157,54 +183,69 @@ class _DashboardHomeScreenState extends State<DashboardHomeScreen> {
             },
           ),
           Expanded(
-            child: CustomScrollView(
-              slivers: [
-                SliverPadding(
-                  padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
-                  sliver: SliverToBoxAdapter(
-                    child: Text(
-                      'Our Services',
-                      style: theme.textTheme.headlineSmall?.copyWith(
-                        fontWeight: FontWeight.w800,
-                        color: const Color(0xFF111827),
+            child: AnimatedSwitcher(
+              duration: const Duration(milliseconds: 300),
+              child: _showDashboardLoader
+                  ? Center(
+                      key: const ValueKey('dashboard_loader'),
+                      child: Lottie.asset(
+                        'assets/images/dashboard_loader.json',
+                        width: 150,
+                        height: 150,
+                        fit: BoxFit.contain,
+                        repeat: true,
                       ),
+                    )
+                  : CustomScrollView(
+                      key: const ValueKey('dashboard_content'),
+                      slivers: [
+                        SliverPadding(
+                          padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
+                          sliver: SliverToBoxAdapter(
+                            child: Text(
+                              'Our Services',
+                              style: theme.textTheme.headlineSmall?.copyWith(
+                                fontWeight: FontWeight.w800,
+                                color: const Color(0xFF111827),
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SliverPadding(padding: EdgeInsets.only(top: 14)),
+                        SliverPadding(
+                          padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+                          sliver: SliverList.separated(
+                            itemCount: _services.length,
+                            separatorBuilder: (context, index) =>
+                                const SizedBox(height: 10),
+                            itemBuilder: (context, index) {
+                              final s = _services[index];
+                              return ServiceCard(
+                                title: s.title,
+                                subtitle: s.subtitle,
+                                discountLabel: s.discountLabel,
+                                imageAsset: s.imageAsset,
+                                onTap: () {
+                                  if (s.route != null) {
+                                    context.push(AppRoutes.path(s.route!));
+                                  }
+                                },
+                              );
+                            },
+                          ),
+                        ),
+                        SliverPadding(
+                          padding: const EdgeInsets.fromLTRB(20, 24, 20, 32),
+                          sliver: SliverToBoxAdapter(
+                            child: FikrfreeHealthBanner(
+                              onTap: () {
+                                // TODO: FikrFree / insurance flow
+                              },
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                ),
-                const SliverPadding(padding: EdgeInsets.only(top: 14)),
-                SliverPadding(
-                  padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
-                  sliver: SliverList.separated(
-                    itemCount: _services.length,
-                    separatorBuilder: (context, index) =>
-                        const SizedBox(height: 10),
-                    itemBuilder: (context, index) {
-                      final s = _services[index];
-                      return ServiceCard(
-                        title: s.title,
-                        subtitle: s.subtitle,
-                        discountLabel: s.discountLabel,
-                        imageAsset: s.imageAsset,
-                        onTap: () {
-                          if (s.route != null) {
-                            context.push(AppRoutes.path(s.route!));
-                          }
-                        },
-                      );
-                    },
-                  ),
-                ),
-                SliverPadding(
-                  padding: const EdgeInsets.fromLTRB(20, 24, 20, 32),
-                  sliver: SliverToBoxAdapter(
-                    child: FikrfreeHealthBanner(
-                      onTap: () {
-                        // TODO: FikrFree / insurance flow
-                      },
-                    ),
-                  ),
-                ),
-              ],
             ),
           ),
         ],
