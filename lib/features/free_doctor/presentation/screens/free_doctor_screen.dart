@@ -1,5 +1,6 @@
 import 'package:apnaclinic/core/di/dependency_injection.dart';
 import 'package:apnaclinic/components/shimmer/app_shimmer.dart';
+import 'package:apnaclinic/components/widgets/app_button.dart';
 import 'package:apnaclinic/core/extensions/context_extensions.dart';
 import 'package:apnaclinic/generated/assets.dart';
 import 'package:flutter/material.dart';
@@ -68,21 +69,34 @@ class FreeDoctorScreen extends StatelessWidget {
                     ],
                   ),
                 ),
-                _OpenFikrfreeButton(
-                  isLoading: state.isOpeningApp,
-                  onPressed: () async {
-                    final opened =
-                        await context.read<FreeDoctorCubit>().openFikrfreeApp();
-                    if (!opened && context.mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content:
-                              Text('Could not open FikrFree right now.'),
-                          behavior: SnackBarBehavior.floating,
-                        ),
-                      );
-                    }
-                  },
+                SafeArea(
+                  top: false,
+                  minimum: const EdgeInsets.fromLTRB(20, 8, 20, 16),
+                  child: AppButton.primary(
+                    text: 'Open Fikrfree app',
+                    isLoading: state.isOpeningApp,
+                    onPressed: () async {
+                      final opened = await context
+                          .read<FreeDoctorCubit>()
+                          .openFikrfreeApp();
+                      if (!opened && context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content:
+                                Text('Could not open FikrFree right now.'),
+                            behavior: SnackBarBehavior.floating,
+                          ),
+                        );
+                      }
+                    },
+                    width: double.infinity,
+                    height: 52,
+                    borderRadius: 14,
+                    elevation: 0,
+                    backgroundColor: FreeDoctorScreen._primaryTeal,
+                    foregroundColor: Colors.white,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
               ],
             ),
@@ -251,7 +265,7 @@ class _ConsultationInfoCard extends StatelessWidget {
                             state.content?.title ??
                                 '24/7 Free Doctor Consultation',
                             style: theme.textTheme.titleMedium?.copyWith(
-                              fontWeight: FontWeight.w800,
+                              fontWeight: FontWeight.w600,
                               color: FreeDoctorScreen._titleNavy,
                               height: 1.25,
                             ),
@@ -345,56 +359,6 @@ class _Bullet extends StatelessWidget {
         const SizedBox(width: 12),
         Expanded(child: Text(text, style: style)),
       ],
-    );
-  }
-}
-
-class _OpenFikrfreeButton extends StatelessWidget {
-  const _OpenFikrfreeButton({
-    required this.onPressed,
-    required this.isLoading,
-  });
-
-  final VoidCallback onPressed;
-  final bool isLoading;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    return SafeArea(
-      top: false,
-      minimum: const EdgeInsets.fromLTRB(20, 8, 20, 16),
-      child: SizedBox(
-        width: double.infinity,
-        height: 52,
-        child: FilledButton(
-          style: FilledButton.styleFrom(
-            backgroundColor: FreeDoctorScreen._primaryTeal,
-            foregroundColor: Colors.white,
-            elevation: 0,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(14),
-            ),
-          ),
-          onPressed: isLoading ? null : onPressed,
-          child: isLoading
-              ? const SizedBox(
-                  width: 20,
-                  height: 20,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2.3,
-                    color: Colors.white,
-                  ),
-                )
-              : Text(
-                  'Open Fikrfree app',
-                  style: theme.textTheme.titleSmall?.copyWith(
-                    fontWeight: FontWeight.w700,
-                    color: Colors.white,
-                  ),
-                ),
-        ),
-      ),
     );
   }
 }
