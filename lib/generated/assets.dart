@@ -33,9 +33,11 @@ class Assets {
   static const String fontsSatoshiVariable = 'assets/fonts/satoshi/Satoshi_Complete/Fonts/WEB/fonts/Satoshi-Variable.eot';
   static const String fontsSatoshiVariableItalic = 'assets/fonts/satoshi/Satoshi_Complete/Fonts/WEB/fonts/Satoshi-VariableItalic.eot';
   static const String gifsPlaceholder = 'assets/gifs/placeholder.txt';
+  static const String iconsClose = 'assets/icons/close.svg';
   static const String iconsEmpty = 'assets/icons/empty.svg';
   static const String iconsPlaceholder = 'assets/icons/placeholder.txt';
   static const String imagesPlaceholder = 'assets/images/placeholder.txt';
+  static const String imgBanner = 'assets/img/banner.png';
   static const String imgFikarFree = 'assets/img/fikar_free.png';
   static const String imgFikrfreeLogo = 'assets/img/fikrfree_logo.png';
   static const String imgHeroFamily = 'assets/img/hero_family.webp';

@@ -1,5 +1,6 @@
 import 'package:apnaclinic/core/extensions/context_extensions.dart';
 import 'package:apnaclinic/generated/assets.dart';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -27,7 +28,6 @@ class CustomerSupportScreen extends StatelessWidget {
 
     return Scaffold(
       body: Column(
-
         children: [
           SizedBox(
             height: bannerHeight,
@@ -120,6 +120,9 @@ class _SupportTopHeader extends StatelessWidget {
 class _SupportBodyPanel extends StatelessWidget {
   const _SupportBodyPanel();
 
+  static const String _partnerLogoPath =
+      '/Users/hasan/.cursor/projects/Users-hasan-StudioProjects-apnaclinic/assets/Partner_s_Logo-84ec1d7f-14df-4811-b43b-db137d78c04c.png';
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -164,11 +167,85 @@ class _SupportBodyPanel extends StatelessWidget {
               const SizedBox(height: 24),
               _ApnaSupportCard(
                 onTap: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Apna Clinic Support — coming soon.'),
-                      behavior: SnackBarBehavior.floating,
-                    ),
+                  showDialog<void>(
+                    context: context,
+                    builder: (dialogContext) {
+                      final theme = Theme.of(dialogContext);
+                      return Dialog(
+                        backgroundColor: Colors.transparent,
+                        insetPadding: const EdgeInsets.symmetric(horizontal: 18),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFEFFAFE),
+                            borderRadius: BorderRadius.circular(4),
+                            border: Border.all(color: const Color(0xFFD6DEE6)),
+                          ),
+                          padding: const EdgeInsets.fromLTRB(16, 14, 16, 16),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Container(
+                                width: 62,
+                                height: 62,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                    color: const Color(0xFFD6D9DE),
+                                  ),
+                                ),
+                                child: ClipOval(
+                                  child: Image.file(
+                                    File(_partnerLogoPath),
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 16),
+                              Text(
+                                'Customer Support',
+                                style: theme.textTheme.headlineSmall?.copyWith(
+                                  color: const Color(0xFF0E2D55),
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 20,
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                'Or further support please contact us 24/7 on\n042-111-333-033.',
+                                textAlign: TextAlign.center,
+                                style: theme.textTheme.bodyLarge?.copyWith(
+                                  color: const Color(0xFF6C82A2),
+                                  height: 1.25,
+                                  fontSize: 13,
+                                ),
+                              ),
+                              const SizedBox(height: 14),
+                              SizedBox(
+                                width: double.infinity,
+                                height: 52,
+                                child: FilledButton(
+                                  style: FilledButton.styleFrom(
+                                    backgroundColor: const Color(0xFF40AFA2),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                  ),
+                                  onPressed: () => Navigator.of(dialogContext).pop(),
+                                  child: Text(
+                                    'Call Now',
+                                    style: theme.textTheme.titleMedium?.copyWith(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w700,
+                                      fontSize: 22 / 1.6,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
                   );
                 },
               ),
@@ -186,7 +263,6 @@ class _ApnaSupportCard extends StatelessWidget {
   final VoidCallback onTap;
 
   static const double _radius = 12;
-  static const Color _accentBlob = Color(0xFFF0F4FF);
 
   @override
   Widget build(BuildContext context) {
@@ -194,7 +270,7 @@ class _ApnaSupportCard extends StatelessWidget {
     const radius = BorderRadius.all(Radius.circular(_radius));
     final curveWidth = context.screenWidth * 0.7206; // Figma ratio
     final curveHeight = 281.37;
-    final curveLeft = context.screenWidth* 0.6290; //
+    final curveLeft = context.screenWidth * 0.6290;
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -226,9 +302,9 @@ class _ApnaSupportCard extends StatelessWidget {
                     child: Container(
                       width: curveWidth,
                       height: curveHeight,
-                      decoration:  BoxDecoration(
+                      decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: Color(0xFFDDE2EE).withValues(alpha: 0.6),
+                        color: const Color(0xFFDDE2EE).withValues(alpha: 0.6),
                       ),
                     ),
                   ),

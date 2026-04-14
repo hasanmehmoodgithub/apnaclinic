@@ -6,6 +6,7 @@ import 'dart:io';
 
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/widgets/apna_clinic_app_bar.dart';
+import '../../../../generated/assets.dart';
 import '../widgets/fikrfree_health_banner.dart';
 import '../widgets/search_header.dart';
 import '../widgets/service_card.dart';
@@ -24,9 +25,8 @@ class _DashboardHomeScreenState extends State<DashboardHomeScreen> {
   bool _isPromoDialogShown = false;
 
   static const String _promoImagePath =
-      '/Users/hasan/.cursor/projects/Users-hasan-StudioProjects-apnaclinic/assets/Broadway__1_-f6b22543-8696-4c1f-8f93-b1fb978e73e4.png';
-  static const String _closeIconSvgPath =
-      '/Users/hasan/Downloads/fi_1617543.svg';
+      'assets/img/banner.png';
+
 
   static const List<_ServiceItem> _services = [
     _ServiceItem(
@@ -83,44 +83,35 @@ class _DashboardHomeScreenState extends State<DashboardHomeScreen> {
         return Dialog(
           backgroundColor: Colors.transparent,
           insetPadding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Stack(
-            clipBehavior: Clip.none,
+          child: Column(
+
             children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(14),
-                child: Image.file(
-                  File(_promoImagePath),
-                  fit: BoxFit.cover,
-                ),
-              ),
-              Positioned(
-                top: 10,
-                right: 10,
-                child: Material(
-                  color: Colors.transparent,
-                  child: InkWell(
-                    onTap: () => Navigator.of(dialogContext).pop(),
-                    borderRadius: BorderRadius.circular(16),
-                    child: Container(
-                      width: 32,
-                      height: 32,
-                      padding: const EdgeInsets.all(7),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF0A8D84).withValues(alpha: 0.9),
-                        shape: BoxShape.circle,
-                        border: Border.all(color: Colors.white, width: 1.2),
-                      ),
-                      child: SvgPicture.file(
-                        File(_closeIconSvgPath),
-                        colorFilter: const ColorFilter.mode(
-                          Colors.white,
-                          BlendMode.srcIn,
-                        ),
+              Align(
+                alignment: Alignment.topRight,
+                child: InkWell(
+                  onTap: () => Navigator.of(dialogContext).pop(),
+                  borderRadius: BorderRadius.circular(16),
+                  child: Padding(
+                    padding: const EdgeInsets.all(4.0),
+                    child: SvgPicture.asset(
+                      Assets.iconsClose,
+                      colorFilter: const ColorFilter.mode(
+                        Colors.white,
+                        BlendMode.srcIn,
                       ),
                     ),
                   ),
                 ),
               ),
+
+              ClipRRect(
+                borderRadius: BorderRadius.circular(14),
+                child: Image.asset(
+                  _promoImagePath,
+                  fit: BoxFit.cover,
+                ),
+              ),
+
             ],
           ),
         );

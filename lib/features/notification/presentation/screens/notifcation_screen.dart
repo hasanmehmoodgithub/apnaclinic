@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class DashboardNotificationsScreen extends StatelessWidget {
-  const DashboardNotificationsScreen({super.key});
+class NotifcationScreen extends StatelessWidget {
+  const NotifcationScreen({super.key});
 
   static const List<_NotificationSection> _sections = [
     _NotificationSection(

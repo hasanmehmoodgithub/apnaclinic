@@ -3,11 +3,11 @@ import 'package:flutter/services.dart';
 
 import '../../../../core/constants/app_system_ui.dart';
 import '../../../bookings/presentation/screens/bookings_dashboard_screen.dart';
+import '../../../customer_support/presentation/screens/customer_support_screen.dart';
 import '../../../free_doctor/presentation/screens/free_doctor_screen.dart';
 import '../widgets/apna_bottom_navigation_bar.dart';
 import 'dashboard_home_screen.dart';
 import 'dashboard_profile_screen.dart';
-import 'customer_support_screen.dart';
 
 /// Root shell: [PageView] body + custom bottom navigation.
 class MainNavigationShell extends StatefulWidget {
