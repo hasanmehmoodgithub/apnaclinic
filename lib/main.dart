@@ -38,9 +38,7 @@ void main() {
 
         // Run app with security guard in release mode
         runApp(
-          kDebugMode
-              ? const ApnaClinicApp()
-              : SecurityGate(child: const ApnaClinicApp()),
+            ApnaClinicApp(),
         );
       } catch (e, stackTrace) {
         // Guard: Handle initialization errors gracefully
