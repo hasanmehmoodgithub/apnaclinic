@@ -59,7 +59,7 @@ class AuthShell extends StatelessWidget {
                       ),
                     ),
                     Align(
-                      alignment: const Alignment(0, 0.35),
+                      alignment: const Alignment(0, 0.8),
                       child: SvgPicture.asset(
                         Assets.svgBrandApnaClinic,
                         width: 230,

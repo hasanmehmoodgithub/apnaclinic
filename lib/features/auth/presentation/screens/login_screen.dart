@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:pinput/pinput.dart';
 
 import '../../../../components/widgets/app_button.dart';
 import '../../../../core/di/dependency_injection.dart';
@@ -32,37 +33,26 @@ class _LoginView extends StatefulWidget {
 
 class _LoginViewState extends State<_LoginView> {
   final _phoneController = TextEditingController();
+  final _otpController = TextEditingController();
+  final _otpFocusNode = FocusNode();
   final _formKey = GlobalKey<FormState>();
-  final List<TextEditingController> _otpControllers = List.generate(
-    4,
-    (_) => TextEditingController(),
-  );
-  final List<FocusNode> _otpFocusNodes = List.generate(4, (_) => FocusNode());
 
   String _formatPhoneInput(String input) {
-    final digits = input.replaceAll(RegExp(r'\D'), '');
-    if (digits.startsWith('92')) return '+$digits';
-    if (digits.startsWith('0')) return '+92${digits.substring(1)}';
+    var digits = input.replaceAll(RegExp(r'\D'), '');
+    if (digits.startsWith('0')) {
+      digits = digits.substring(1);
+    }
+    if (digits.startsWith('92') && digits.length > 10) {
+      digits = digits.substring(2);
+    }
     return '+92$digits';
   }
 
-  String get _otpCode =>
-      _otpControllers.map((controller) => controller.text).join();
+  String get _otpCode => _otpController.text;
 
   void _clearOtpInputs() {
-    for (final controller in _otpControllers) {
-      controller.clear();
-    }
-    _otpFocusNodes.first.requestFocus();
-  }
-
-  void _onOtpChanged(int index, String value) {
-    if (value.length == 1 && index < _otpFocusNodes.length - 1) {
-      _otpFocusNodes[index + 1].requestFocus();
-    }
-    if (value.isEmpty && index > 0) {
-      _otpFocusNodes[index - 1].requestFocus();
-    }
+    _otpController.clear();
+    _otpFocusNode.requestFocus();
   }
 
   void _handleBackTap(AuthState state) {
@@ -114,12 +104,8 @@ class _LoginViewState extends State<_LoginView> {
   @override
   void dispose() {
     _phoneController.dispose();
-    for (final controller in _otpControllers) {
-      controller.dispose();
-    }
-    for (final focusNode in _otpFocusNodes) {
-      focusNode.dispose();
-    }
+    _otpController.dispose();
+    _otpFocusNode.dispose();
     super.dispose();
   }
 
@@ -158,17 +144,22 @@ class _LoginViewState extends State<_LoginView> {
                   TextFormField(
                     controller: _phoneController,
                     keyboardType: TextInputType.phone,
-                    maxLength: 11,
+                    maxLength: 10,
                     inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                     style: theme.textTheme.bodyLarge?.copyWith(
                       color: Colors.black,
                       fontWeight: FontWeight.w500,
                     ),
                     decoration: InputDecoration(
-                      hintText: l10n.authPhoneHint,
+                      hintText: '3XXXXXXXXX',
                       hintStyle: theme.textTheme.bodyLarge?.copyWith(
                         color: const Color(0xFF667085),
                         fontWeight: FontWeight.w400,
+                      ),
+                      prefixText: '+92 ',
+                      prefixStyle: theme.textTheme.bodyLarge?.copyWith(
+                        color: const Color(0xFF061E40),
+                        fontWeight: FontWeight.w600,
                       ),
                       counterText: '',
                       filled: true,
@@ -246,57 +237,53 @@ class _LoginViewState extends State<_LoginView> {
                       ),
                     ),
                     const SizedBox(height: 8),
-                    Row(
-                      children: List.generate(4, (index) {
-                        return Expanded(
-                          child: Padding(
-                            padding:
-                            EdgeInsets.only(
-                              right: index == 3 ? 0 : 10,
-                            ),
-                            child: SizedBox(
-                              height: 68,
-                              child: TextField(
-                                controller: _otpControllers[index],
-                                focusNode: _otpFocusNodes[index],
-                                maxLength: 1,
-                                textAlign: TextAlign.center,
-                                keyboardType: TextInputType.number,
-                                inputFormatters: [
-                                  FilteringTextInputFormatter.digitsOnly,
-                                ],
-                                onChanged: (value) =>
-                                    _onOtpChanged(index, value),
-                                style: theme.textTheme.titleLarge?.copyWith(
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.w700,
-                                  color: const Color(0xFF4A555F),
-                                ),
-                                decoration: InputDecoration(
-                                  counterText: '',
-                                  filled: true,
-                                  fillColor: Colors.transparent,
-                                  contentPadding: EdgeInsets.zero,
-                                  enabledBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(9),
-                                    borderSide: const BorderSide(
-                                      color: Color(0xFF9BA6A7),
-                                      width: 0.3,
-                                    ),
-                                  ),
-                                  focusedBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(9),
-                                    borderSide: const BorderSide(
-                                      color: Color(0xFF0FAA9A),
-                                      width: 1.2,
-                                    ),
-                                  ),
-                                ),
-                              ),
+                    LayoutBuilder(
+                      builder: (context, constraints) {
+                        const itemSpacing = 10.0;
+                        final boxWidth = (constraints.maxWidth - 30) / 4;
+                        final defaultPinTheme = PinTheme(
+                          width: boxWidth,
+                          height: 78,
+                          textStyle: theme.textTheme.titleLarge?.copyWith(
+                            fontSize: 24,
+                            fontWeight: FontWeight.w700,
+                            color: const Color(0xFF4A555F),
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.transparent,
+                            borderRadius: BorderRadius.circular(9),
+                            border: Border.all(
+                              color: const Color(0xFF9BA6A7),
+                              width: 1,
                             ),
                           ),
                         );
-                      }),
+
+                        return Pinput(
+                          controller: _otpController,
+                          focusNode: _otpFocusNode,
+                          length: 4,
+                          keyboardType: TextInputType.number,
+                          inputFormatters: [
+                            FilteringTextInputFormatter.digitsOnly,
+                          ],
+                          defaultPinTheme: defaultPinTheme,
+                          separatorBuilder: (index) => index == 3
+                              ? const SizedBox.shrink()
+                              : const SizedBox(width: itemSpacing),
+                          focusedPinTheme: defaultPinTheme.copyWith(
+                            decoration: defaultPinTheme.decoration?.copyWith(
+                              border: Border.all(
+                                color: const Color(0xFF0FAA9A),
+                                width: 1.5,
+                              ),
+                            ),
+                          ),
+                          submittedPinTheme: defaultPinTheme,
+                          onChanged: (_) =>
+                              context.read<AuthCubit>().clearError(),
+                        );
+                      },
                     ),
                     const SizedBox(height: 8),
                     Align(
