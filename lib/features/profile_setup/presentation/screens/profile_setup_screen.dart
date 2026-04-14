@@ -1,6 +1,10 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../components/widgets/app_button.dart';
@@ -36,6 +40,43 @@ class _ProfileSetupViewState extends State<_ProfileSetupView> {
   final _lastNameController = TextEditingController();
   final _emailController = TextEditingController();
   final _addressController = TextEditingController();
+  final ImagePicker _imagePicker = ImagePicker();
+  File? _selectedProfileImage;
+
+  ImageProvider? get _avatarProvider {
+    if (_selectedProfileImage != null) {
+      return FileImage(_selectedProfileImage!);
+    }
+    return null;
+  }
+
+  Future<void> _pickProfileImage() async {
+    try {
+      final picked = await _imagePicker.pickImage(
+        source: ImageSource.gallery,
+        imageQuality: 85,
+        maxWidth: 1200,
+      );
+      if (picked == null || !mounted) return;
+      setState(() => _selectedProfileImage = File(picked.path));
+    } on PlatformException {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Image picker not ready yet. Please fully restart the app.',
+          ),
+        ),
+      );
+    } catch (_) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Could not pick image. Please try again.'),
+        ),
+      );
+    }
+  }
 
   Future<void> _pickDate(BuildContext context) async {
     final state = context.read<ProfileSetupCubit>().state;
@@ -128,6 +169,7 @@ class _ProfileSetupViewState extends State<_ProfileSetupView> {
               final dobLabel = state.dateOfBirth == null
                   ? l10n.profileDobHint
                   : DateFormat('dd/MM/yy').format(state.dateOfBirth!);
+              final avatarProvider = _avatarProvider;
               return Stack(
                 children: [
                   SizedBox(
@@ -208,23 +250,41 @@ class _ProfileSetupViewState extends State<_ProfileSetupView> {
                             backgroundColor: Colors.white.withValues(
                               alpha: 0.95,
                             ),
-                            backgroundImage: const AssetImage(
-                              'assets/img/profile_avatar.png',
-                            ),
+                            backgroundImage: avatarProvider,
+                            onBackgroundImageError: avatarProvider == null
+                                ? null
+                                : (_, _) {
+                                    if (!mounted) return;
+                                    setState(() => _selectedProfileImage = null);
+                                  },
+                            child: avatarProvider == null
+                                ? const Icon(
+                                    Icons.account_circle_rounded,
+                                    size: 56,
+                                    color: Color(0xFFBFD5D9),
+                                  )
+                                : null,
                           ),
                           Positioned(
                             right: 2,
                             bottom: 4,
-                            child: Container(
-                              padding: const EdgeInsets.all(6),
-                              decoration: const BoxDecoration(
-                                color: Color(0xFFDDF3EE),
-                                shape: BoxShape.circle,
-                              ),
-                              child: const Icon(
-                                Icons.camera_alt_outlined,
-                                size: 16,
-                                color: Color(0xFF0FAA9A),
+                            child: Material(
+                              color: Colors.transparent,
+                              child: InkWell(
+                                borderRadius: BorderRadius.circular(16),
+                                onTap: _pickProfileImage,
+                                child: Container(
+                                  padding: const EdgeInsets.all(6),
+                                  decoration: const BoxDecoration(
+                                    color: Color(0xFFDDF3EE),
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: const Icon(
+                                    Icons.camera_alt_outlined,
+                                    size: 16,
+                                    color: Color(0xFF0FAA9A),
+                                  ),
+                                ),
                               ),
                             ),
                           ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import '../../../../generated/assets.dart';
 
 class AuthShell extends StatelessWidget {
   const AuthShell({super.key, required this.child, this.onBackTap});
@@ -18,7 +19,7 @@ class AuthShell extends StatelessWidget {
             children: [
               Container(
                 width: double.infinity,
-                height: 95 + topInset,
+                height: 80 + topInset,
                 // clipBehavior: Clip.antiAlias,
                 decoration: const BoxDecoration(
                   color: Colors.white,
@@ -30,7 +31,7 @@ class AuthShell extends StatelessWidget {
                   children: [
                     Positioned.fill(
                       child: SvgPicture.asset(
-                        'assets/svg/frame_1171275326.svg',
+                        Assets.svgAppbarbackground,
                         fit: BoxFit.cover,
                         alignment: Alignment.topCenter,
                       ),
@@ -55,6 +56,14 @@ class AuthShell extends StatelessWidget {
                             ),
                           ),
                         ),
+                      ),
+                    ),
+                    Align(
+                      alignment: const Alignment(0, 0.35),
+                      child: SvgPicture.asset(
+                        Assets.svgBrandApnaClinic,
+                        width: 230,
+                        fit: BoxFit.contain,
                       ),
                     ),
                   ],

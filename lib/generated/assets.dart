@@ -3,35 +3,63 @@ class Assets {
   Assets._();
 
   static const String assetsImgSplash = 'assets/img/splash.webp';
-  static const String consultationAssistantIcon = 'assets/img/consultation/assistant_icon.svg';
-  static const String consultationBackArrow = 'assets/img/consultation/back_arrow.svg';
-  static const String consultationCardPattern = 'assets/img/consultation/card_pattern.svg';
-  static const String consultationCatBones = 'assets/img/consultation/cat_bones.svg';
-  static const String consultationCatGeneral = 'assets/img/consultation/cat_general.svg';
-  static const String consultationCatHeart = 'assets/img/consultation/cat_heart.svg';
-  static const String consultationCatMental = 'assets/img/consultation/cat_mental.svg';
-  static const String consultationCatPediatrics = 'assets/img/consultation/cat_pediatrics.svg';
-  static const String consultationCatSkin = 'assets/img/consultation/cat_skin.svg';
-  static const String consultationCatStomach = 'assets/img/consultation/cat_stomach.svg';
-  static const String consultationCatWomen = 'assets/img/consultation/cat_women.svg';
-  static const String consultationHeroDoctor = 'assets/img/consultation/hero_doctor.png';
-  static const String consultationHeroVector = 'assets/img/consultation/hero_vector.svg';
-  static const String consultationInfoIcon = 'assets/img/consultation/info_icon.svg';
-  static const String consultationSearchIcon = 'assets/img/consultation/search_icon.svg';
-  static const String cssSatoshi = 'assets/fonts/satoshi/Satoshi_Complete/Fonts/WEB/css/satoshi.css';
+  static const String consultationAssistantIcon =
+      'assets/img/consultation/assistant_icon.svg';
+  static const String consultationBackArrow =
+      'assets/img/consultation/back_arrow.svg';
+  static const String consultationCardPattern =
+      'assets/img/consultation/card_pattern.svg';
+  static const String consultationCatBones =
+      'assets/img/consultation/cat_bones.svg';
+  static const String consultationCatGeneral =
+      'assets/img/consultation/cat_general.svg';
+  static const String consultationCatHeart =
+      'assets/img/consultation/cat_heart.svg';
+  static const String consultationCatMental =
+      'assets/img/consultation/cat_mental.svg';
+  static const String consultationCatPediatrics =
+      'assets/img/consultation/cat_pediatrics.svg';
+  static const String consultationCatSkin =
+      'assets/img/consultation/cat_skin.svg';
+  static const String consultationCatStomach =
+      'assets/img/consultation/cat_stomach.svg';
+  static const String consultationCatWomen =
+      'assets/img/consultation/cat_women.svg';
+  static const String consultationHeroDoctor =
+      'assets/img/consultation/hero_doctor.png';
+  static const String consultationHeroVector =
+      'assets/img/consultation/hero_vector.svg';
+  static const String consultationInfoIcon =
+      'assets/img/consultation/info_icon.svg';
+  static const String consultationSearchIcon =
+      'assets/img/consultation/search_icon.svg';
+  static const String cssSatoshi =
+      'assets/fonts/satoshi/Satoshi_Complete/Fonts/WEB/css/satoshi.css';
   static const String fontsSatoshi = 'assets/fonts/satoshi.zip';
-  static const String fontsSatoshiBlack = 'assets/fonts/satoshi/Satoshi_Complete/Fonts/WEB/fonts/Satoshi-Black.eot';
-  static const String fontsSatoshiBlackItalic = 'assets/fonts/satoshi/Satoshi_Complete/Fonts/WEB/fonts/Satoshi-BlackItalic.eot';
-  static const String fontsSatoshiBold = 'assets/fonts/satoshi/Satoshi_Complete/Fonts/WEB/fonts/Satoshi-Bold.eot';
-  static const String fontsSatoshiBoldItalic = 'assets/fonts/satoshi/Satoshi_Complete/Fonts/WEB/fonts/Satoshi-BoldItalic.eot';
-  static const String fontsSatoshiItalic = 'assets/fonts/satoshi/Satoshi_Complete/Fonts/WEB/fonts/Satoshi-Italic.eot';
-  static const String fontsSatoshiLight = 'assets/fonts/satoshi/Satoshi_Complete/Fonts/WEB/fonts/Satoshi-Light.eot';
-  static const String fontsSatoshiLightItalic = 'assets/fonts/satoshi/Satoshi_Complete/Fonts/WEB/fonts/Satoshi-LightItalic.eot';
-  static const String fontsSatoshiMedium = 'assets/fonts/satoshi/Satoshi_Complete/Fonts/WEB/fonts/Satoshi-Medium.eot';
-  static const String fontsSatoshiMediumItalic = 'assets/fonts/satoshi/Satoshi_Complete/Fonts/WEB/fonts/Satoshi-MediumItalic.eot';
-  static const String fontsSatoshiRegular = 'assets/fonts/satoshi/Satoshi_Complete/Fonts/WEB/fonts/Satoshi-Regular.eot';
-  static const String fontsSatoshiVariable = 'assets/fonts/satoshi/Satoshi_Complete/Fonts/WEB/fonts/Satoshi-Variable.eot';
-  static const String fontsSatoshiVariableItalic = 'assets/fonts/satoshi/Satoshi_Complete/Fonts/WEB/fonts/Satoshi-VariableItalic.eot';
+  static const String fontsSatoshiBlack =
+      'assets/fonts/satoshi/Satoshi_Complete/Fonts/WEB/fonts/Satoshi-Black.eot';
+  static const String fontsSatoshiBlackItalic =
+      'assets/fonts/satoshi/Satoshi_Complete/Fonts/WEB/fonts/Satoshi-BlackItalic.eot';
+  static const String fontsSatoshiBold =
+      'assets/fonts/satoshi/Satoshi_Complete/Fonts/WEB/fonts/Satoshi-Bold.eot';
+  static const String fontsSatoshiBoldItalic =
+      'assets/fonts/satoshi/Satoshi_Complete/Fonts/WEB/fonts/Satoshi-BoldItalic.eot';
+  static const String fontsSatoshiItalic =
+      'assets/fonts/satoshi/Satoshi_Complete/Fonts/WEB/fonts/Satoshi-Italic.eot';
+  static const String fontsSatoshiLight =
+      'assets/fonts/satoshi/Satoshi_Complete/Fonts/WEB/fonts/Satoshi-Light.eot';
+  static const String fontsSatoshiLightItalic =
+      'assets/fonts/satoshi/Satoshi_Complete/Fonts/WEB/fonts/Satoshi-LightItalic.eot';
+  static const String fontsSatoshiMedium =
+      'assets/fonts/satoshi/Satoshi_Complete/Fonts/WEB/fonts/Satoshi-Medium.eot';
+  static const String fontsSatoshiMediumItalic =
+      'assets/fonts/satoshi/Satoshi_Complete/Fonts/WEB/fonts/Satoshi-MediumItalic.eot';
+  static const String fontsSatoshiRegular =
+      'assets/fonts/satoshi/Satoshi_Complete/Fonts/WEB/fonts/Satoshi-Regular.eot';
+  static const String fontsSatoshiVariable =
+      'assets/fonts/satoshi/Satoshi_Complete/Fonts/WEB/fonts/Satoshi-Variable.eot';
+  static const String fontsSatoshiVariableItalic =
+      'assets/fonts/satoshi/Satoshi_Complete/Fonts/WEB/fonts/Satoshi-VariableItalic.eot';
   static const String gifsPlaceholder = 'assets/gifs/placeholder.txt';
   static const String iconsEmpty = 'assets/icons/empty.svg';
   static const String iconsPlaceholder = 'assets/icons/placeholder.txt';
@@ -41,54 +69,89 @@ class Assets {
   static const String imgHeroFamily = 'assets/img/hero_family.webp';
   static const String imgProfileAvatar = 'assets/img/profile_avatar.png';
   static const String imgSplash = 'assets/img/splash.png';
-  static const String licenseFFL = 'assets/fonts/satoshi/Satoshi_Complete/License/FFL.txt';
-  static const String oTFSatoshiBlack = 'assets/fonts/satoshi/Satoshi_Complete/Fonts/OTF/Satoshi-Black.otf';
-  static const String oTFSatoshiBlackItalic = 'assets/fonts/satoshi/Satoshi_Complete/Fonts/OTF/Satoshi-BlackItalic.otf';
-  static const String oTFSatoshiBold = 'assets/fonts/satoshi/Satoshi_Complete/Fonts/OTF/Satoshi-Bold.otf';
-  static const String oTFSatoshiBoldItalic = 'assets/fonts/satoshi/Satoshi_Complete/Fonts/OTF/Satoshi-BoldItalic.otf';
-  static const String oTFSatoshiItalic = 'assets/fonts/satoshi/Satoshi_Complete/Fonts/OTF/Satoshi-Italic.otf';
-  static const String oTFSatoshiLight = 'assets/fonts/satoshi/Satoshi_Complete/Fonts/OTF/Satoshi-Light.otf';
-  static const String oTFSatoshiLightItalic = 'assets/fonts/satoshi/Satoshi_Complete/Fonts/OTF/Satoshi-LightItalic.otf';
-  static const String oTFSatoshiMedium = 'assets/fonts/satoshi/Satoshi_Complete/Fonts/OTF/Satoshi-Medium.otf';
-  static const String oTFSatoshiMediumItalic = 'assets/fonts/satoshi/Satoshi_Complete/Fonts/OTF/Satoshi-MediumItalic.otf';
-  static const String oTFSatoshiRegular = 'assets/fonts/satoshi/Satoshi_Complete/Fonts/OTF/Satoshi-Regular.otf';
-  static const String onboardingDoctorConsultation = 'assets/img/onboarding/doctor_consultation.webp';
-  static const String onboardingLaboratory = 'assets/img/onboarding/laboratory.webp';
-  static const String onboardingPharmacy = 'assets/img/onboarding/pharmacy.webp';
-  static const String onboardingSurgeryBooking = 'assets/img/onboarding/surgery_booking.webp';
+  static const String licenseFFL =
+      'assets/fonts/satoshi/Satoshi_Complete/License/FFL.txt';
+  static const String oTFSatoshiBlack =
+      'assets/fonts/satoshi/Satoshi_Complete/Fonts/OTF/Satoshi-Black.otf';
+  static const String oTFSatoshiBlackItalic =
+      'assets/fonts/satoshi/Satoshi_Complete/Fonts/OTF/Satoshi-BlackItalic.otf';
+  static const String oTFSatoshiBold =
+      'assets/fonts/satoshi/Satoshi_Complete/Fonts/OTF/Satoshi-Bold.otf';
+  static const String oTFSatoshiBoldItalic =
+      'assets/fonts/satoshi/Satoshi_Complete/Fonts/OTF/Satoshi-BoldItalic.otf';
+  static const String oTFSatoshiItalic =
+      'assets/fonts/satoshi/Satoshi_Complete/Fonts/OTF/Satoshi-Italic.otf';
+  static const String oTFSatoshiLight =
+      'assets/fonts/satoshi/Satoshi_Complete/Fonts/OTF/Satoshi-Light.otf';
+  static const String oTFSatoshiLightItalic =
+      'assets/fonts/satoshi/Satoshi_Complete/Fonts/OTF/Satoshi-LightItalic.otf';
+  static const String oTFSatoshiMedium =
+      'assets/fonts/satoshi/Satoshi_Complete/Fonts/OTF/Satoshi-Medium.otf';
+  static const String oTFSatoshiMediumItalic =
+      'assets/fonts/satoshi/Satoshi_Complete/Fonts/OTF/Satoshi-MediumItalic.otf';
+  static const String oTFSatoshiRegular =
+      'assets/fonts/satoshi/Satoshi_Complete/Fonts/OTF/Satoshi-Regular.otf';
+  static const String onboardingDoctorConsultation =
+      'assets/img/onboarding/doctor_consultation.webp';
+  static const String onboardingLaboratory =
+      'assets/img/onboarding/laboratory.webp';
+  static const String onboardingPharmacy =
+      'assets/img/onboarding/pharmacy.webp';
+  static const String onboardingSurgeryBooking =
+      'assets/img/onboarding/surgery_booking.webp';
   static const String servicesLaboratory = 'assets/img/services/laboratory.png';
-  static const String servicesOnlineConsultation = 'assets/img/services/online_consultation.png';
+  static const String servicesOnlineConsultation =
+      'assets/img/services/online_consultation.png';
   static const String servicesPharmacy = 'assets/img/services/pharmacy.png';
-  static const String servicesSurgeryBooking = 'assets/img/services/surgery_booking.png';
-  static const String supportSupportHero = 'assets/img/support/support_hero.png';
+  static const String servicesSurgeryBooking =
+      'assets/img/services/surgery_booking.png';
+  static const String supportSupportHero =
+      'assets/img/support/support_hero.png';
   static const String svgBrandApnaClinic = 'assets/svg/brand_apna_clinic.svg';
+  static const String svgAppbarbackground = 'assets/svg/appbarbackground.svg';
   static const String svgFrame1171275326 = 'assets/svg/frame_1171275326.svg';
   static const String svgIcMenu = 'assets/svg/ic_menu.svg';
   static const String svgIcNotification = 'assets/svg/ic_notification.svg';
   static const String svgIcSearchMic = 'assets/svg/ic_search_mic.svg';
-  static const String svgIcServiceCardArrow = 'assets/svg/ic_service_card_arrow.svg';
+  static const String svgIcServiceCardArrow =
+      'assets/svg/ic_service_card_arrow.svg';
   static const String svgIcServiceOffer = 'assets/svg/ic_service_offer.svg';
-  static const String svgIcSupportCardArrow = 'assets/svg/ic_support_card_arrow.svg';
+  static const String svgIcSupportCardArrow =
+      'assets/svg/ic_support_card_arrow.svg';
   static const String svgNavBookings = 'assets/svg/nav_bookings.svg';
   static const String svgNavFreeDoctor = 'assets/svg/nav_free_doctor.svg';
   static const String svgNavHomeLogo = 'assets/svg/nav_home_logo.svg';
   static const String svgNavProfile = 'assets/svg/nav_profile.svg';
   static const String svgNavSupport = 'assets/svg/nav_support.svg';
   static const String svgOnboardingBgTop = 'assets/svg/onboarding_bg_top.svg';
-  static const String tTFSatoshiVariable = 'assets/fonts/satoshi/Satoshi_Complete/Fonts/TTF/Satoshi-Variable.ttf';
-  static const String tTFSatoshiVariableItalic = 'assets/fonts/satoshi/Satoshi_Complete/Fonts/TTF/Satoshi-VariableItalic.ttf';
-  static const String wEBFontsSatoshiBlack = 'assets/fonts/satoshi/Satoshi_Complete/Fonts/WEB/fonts/Satoshi-Black.woff2';
-  static const String wEBFontsSatoshiBlackItalic = 'assets/fonts/satoshi/Satoshi_Complete/Fonts/WEB/fonts/Satoshi-BlackItalic.woff2';
-  static const String wEBFontsSatoshiBold = 'assets/fonts/satoshi/Satoshi_Complete/Fonts/WEB/fonts/Satoshi-Bold.woff2';
-  static const String wEBFontsSatoshiBoldItalic = 'assets/fonts/satoshi/Satoshi_Complete/Fonts/WEB/fonts/Satoshi-BoldItalic.woff2';
-  static const String wEBFontsSatoshiItalic = 'assets/fonts/satoshi/Satoshi_Complete/Fonts/WEB/fonts/Satoshi-Italic.woff2';
-  static const String wEBFontsSatoshiLight = 'assets/fonts/satoshi/Satoshi_Complete/Fonts/WEB/fonts/Satoshi-Light.woff2';
-  static const String wEBFontsSatoshiLightItalic = 'assets/fonts/satoshi/Satoshi_Complete/Fonts/WEB/fonts/Satoshi-LightItalic.woff2';
-  static const String wEBFontsSatoshiMedium = 'assets/fonts/satoshi/Satoshi_Complete/Fonts/WEB/fonts/Satoshi-Medium.woff2';
-  static const String wEBFontsSatoshiMediumItalic = 'assets/fonts/satoshi/Satoshi_Complete/Fonts/WEB/fonts/Satoshi-MediumItalic.woff2';
-  static const String wEBFontsSatoshiRegular = 'assets/fonts/satoshi/Satoshi_Complete/Fonts/WEB/fonts/Satoshi-Regular.woff2';
-  static const String wEBFontsSatoshiVariable = 'assets/fonts/satoshi/Satoshi_Complete/Fonts/WEB/fonts/Satoshi-Variable.woff2';
-  static const String wEBFontsSatoshiVariableItalic = 'assets/fonts/satoshi/Satoshi_Complete/Fonts/WEB/fonts/Satoshi-VariableItalic.woff2';
-  static const String wEBREADME = 'assets/fonts/satoshi/Satoshi_Complete/Fonts/WEB/README.md';
-
+  static const String tTFSatoshiVariable =
+      'assets/fonts/satoshi/Satoshi_Complete/Fonts/TTF/Satoshi-Variable.ttf';
+  static const String tTFSatoshiVariableItalic =
+      'assets/fonts/satoshi/Satoshi_Complete/Fonts/TTF/Satoshi-VariableItalic.ttf';
+  static const String wEBFontsSatoshiBlack =
+      'assets/fonts/satoshi/Satoshi_Complete/Fonts/WEB/fonts/Satoshi-Black.woff2';
+  static const String wEBFontsSatoshiBlackItalic =
+      'assets/fonts/satoshi/Satoshi_Complete/Fonts/WEB/fonts/Satoshi-BlackItalic.woff2';
+  static const String wEBFontsSatoshiBold =
+      'assets/fonts/satoshi/Satoshi_Complete/Fonts/WEB/fonts/Satoshi-Bold.woff2';
+  static const String wEBFontsSatoshiBoldItalic =
+      'assets/fonts/satoshi/Satoshi_Complete/Fonts/WEB/fonts/Satoshi-BoldItalic.woff2';
+  static const String wEBFontsSatoshiItalic =
+      'assets/fonts/satoshi/Satoshi_Complete/Fonts/WEB/fonts/Satoshi-Italic.woff2';
+  static const String wEBFontsSatoshiLight =
+      'assets/fonts/satoshi/Satoshi_Complete/Fonts/WEB/fonts/Satoshi-Light.woff2';
+  static const String wEBFontsSatoshiLightItalic =
+      'assets/fonts/satoshi/Satoshi_Complete/Fonts/WEB/fonts/Satoshi-LightItalic.woff2';
+  static const String wEBFontsSatoshiMedium =
+      'assets/fonts/satoshi/Satoshi_Complete/Fonts/WEB/fonts/Satoshi-Medium.woff2';
+  static const String wEBFontsSatoshiMediumItalic =
+      'assets/fonts/satoshi/Satoshi_Complete/Fonts/WEB/fonts/Satoshi-MediumItalic.woff2';
+  static const String wEBFontsSatoshiRegular =
+      'assets/fonts/satoshi/Satoshi_Complete/Fonts/WEB/fonts/Satoshi-Regular.woff2';
+  static const String wEBFontsSatoshiVariable =
+      'assets/fonts/satoshi/Satoshi_Complete/Fonts/WEB/fonts/Satoshi-Variable.woff2';
+  static const String wEBFontsSatoshiVariableItalic =
+      'assets/fonts/satoshi/Satoshi_Complete/Fonts/WEB/fonts/Satoshi-VariableItalic.woff2';
+  static const String wEBREADME =
+      'assets/fonts/satoshi/Satoshi_Complete/Fonts/WEB/README.md';
 }
