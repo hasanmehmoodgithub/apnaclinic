@@ -69,7 +69,10 @@ class AppLocalizationsUr extends AppLocalizations {
   String get authMobileNumberLabel => 'موبائل نمبر درج کریں';
 
   @override
-  String get authPhoneHint => '3045770007';
+  String get authLoginSubtitle => 'سائن اپ/لاگ اِن کے لیے آغاز کریں';
+
+  @override
+  String get authPhoneHint => '+92 3XXXXXXXXX';
 
   @override
   String get authOtpHint => 'اس نمبر پر OTP بھیجا جائے گا';

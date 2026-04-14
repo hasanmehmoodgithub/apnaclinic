@@ -4,7 +4,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../components/widgets/app_button.dart';
-import '../../../../components/widgets/app_text_field.dart';
 import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/router/app_routes.dart';
@@ -131,32 +130,71 @@ class _LoginViewState extends State<_LoginView> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Text(
-                    l10n.authVerifyPhoneTitle,
+                    l10n.authMobileNumberLabel,
                     style: theme.textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.w700,
                       color: const Color(0xFF061E40),
                     ),
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 2),
                   Text(
-                    l10n.authMobileNumberLabel,
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      color: const Color(0xFF090909),
-                      fontWeight: FontWeight.w500,
+                    l10n.authLoginSubtitle,
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: const Color(0xFF98A2B3),
+                      fontWeight: FontWeight.w400,
                     ),
                   ),
-                  const SizedBox(height: 10),
-                  AppTextField(
+                  const SizedBox(height: 12),
+                  TextFormField(
                     controller: _phoneController,
-                    hintText: l10n.authPhoneHint,
                     keyboardType: TextInputType.phone,
-                    maxLength: 12,
+                    maxLength: 11,
                     inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                    borderRadius: 8,
-                    borderColor: const Color(0xFF9BA6A7),
-                    contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 16,
+                    style: theme.textTheme.bodyLarge?.copyWith(
+                      color: Colors.black,
+                      fontWeight: FontWeight.w500,
+                    ),
+                    decoration: InputDecoration(
+                      hintText: l10n.authPhoneHint,
+                      hintStyle: theme.textTheme.bodyLarge?.copyWith(
+                        color: const Color(0xFF667085),
+                        fontWeight: FontWeight.w400,
+                      ),
+                      counterText: '',
+                      filled: true,
+                      fillColor: Colors.white,
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 15,
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: const BorderSide(
+                          color: Color(0xFF9BA6A7),
+                          width: 0.9,
+                        ),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: const BorderSide(
+                          color: Color(0xFF9BA6A7),
+                          width: 0.9,
+                        ),
+                      ),
+                      errorBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: const BorderSide(
+                          color: Color(0xFFE01F26),
+                          width: 0.9,
+                        ),
+                      ),
+                      focusedErrorBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: const BorderSide(
+                          color: Color(0xFFE01F26),
+                          width: 0.9,
+                        ),
+                      ),
                     ),
                     onChanged: (_) => context.read<AuthCubit>().clearError(),
                     validator: (value) {
@@ -174,7 +212,7 @@ class _LoginViewState extends State<_LoginView> {
                   Text(
                     l10n.authOtpHint,
                     style: theme.textTheme.bodySmall?.copyWith(
-                      color: const Color(0xFF667B99),
+                      color: const Color(0xFF98A2B3),
                     ),
                   ),
                   if (!state.otpRequested && state.errorMessage != null) ...[
@@ -296,8 +334,8 @@ class _LoginViewState extends State<_LoginView> {
                     l10n.authTermsAndPrivacy,
                     textAlign: TextAlign.center,
                     style: theme.textTheme.bodySmall?.copyWith(
-                      color: const Color(0xFF7E7E7E),
-                      height: 1.4,
+                      color: const Color(0xFF667085),
+                      height: 1.65,
                     ),
                   ),
                 ],
