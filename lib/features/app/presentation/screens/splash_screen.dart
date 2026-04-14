@@ -29,7 +29,7 @@ class _SplashScreenState extends State<SplashScreen> {
     final seenOnboarding = appPref.isOnboardingCompleted();
     final isLoggedIn = appPref.getLoginStatus();
     final isProfileCompleted = appPref.isProfileCompleted();
-    context.go(AppRoutes.path( AppRoutes.onboarding));
+    context.go(AppRoutes.path( AppRoutes.home));
     return;
     final nextRoute = !seenOnboarding
         ? AppRoutes.onboarding
