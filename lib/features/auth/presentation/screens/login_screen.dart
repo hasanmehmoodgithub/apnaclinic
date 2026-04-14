@@ -156,16 +156,25 @@ class _LoginViewState extends State<_LoginView> {
                         color: const Color(0xFF667085),
                         fontWeight: FontWeight.w400,
                       ),
-                      prefixText: '+92 ',
-                      prefixStyle: theme.textTheme.bodyLarge?.copyWith(
-                        color: const Color(0xFF061E40),
-                        fontWeight: FontWeight.w600,
+                      prefixIcon: Padding(
+                        padding: const EdgeInsets.only(left: 16, right: 6),
+                        child: Text(
+                          '+92',
+                          style: theme.textTheme.bodyLarge?.copyWith(
+                            color: const Color(0xFF061E40),
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                      prefixIconConstraints: const BoxConstraints(
+                        minWidth: 0,
+                        minHeight: 0,
                       ),
                       counterText: '',
                       filled: true,
                       fillColor: Colors.white,
                       contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 16,
+                        horizontal: 12,
                         vertical: 15,
                       ),
                       enabledBorder: OutlineInputBorder(
@@ -203,7 +212,10 @@ class _LoginViewState extends State<_LoginView> {
                         RegExp(r'\D'),
                         '',
                       );
-                      if (digits.length < 10) {
+                      final isValidPakMobile = RegExp(r'^3\d{9}$').hasMatch(
+                        digits,
+                      );
+                      if (!isValidPakMobile) {
                         return l10n.authPhoneValidationError;
                       }
                       return null;
@@ -240,10 +252,10 @@ class _LoginViewState extends State<_LoginView> {
                     LayoutBuilder(
                       builder: (context, constraints) {
                         const itemSpacing = 10.0;
-                        final boxWidth = (constraints.maxWidth - 30) / 4;
+                        final boxWidth = (constraints.maxWidth - 30) / 4.5;
                         final defaultPinTheme = PinTheme(
                           width: boxWidth,
-                          height: 78,
+                          height: 68,
                           textStyle: theme.textTheme.titleLarge?.copyWith(
                             fontSize: 24,
                             fontWeight: FontWeight.w700,
