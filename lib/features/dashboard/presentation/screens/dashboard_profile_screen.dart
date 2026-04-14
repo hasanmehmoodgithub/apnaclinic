@@ -58,13 +58,13 @@ class DashboardProfileScreen extends StatelessWidget {
                     ),
                     child: const DecoratedBox(
                       decoration: BoxDecoration(
-                        color: Color(0xFFD1DDFE),
+                        color: Colors.white,
                         shape: BoxShape.circle,
                       ),
                       child: Icon(
                         Icons.person_rounded,
                         size: 68,
-                        color: Color(0xFF0B77C5),
+                        color: Colors.grey
                       ),
                     ),
                   ),
