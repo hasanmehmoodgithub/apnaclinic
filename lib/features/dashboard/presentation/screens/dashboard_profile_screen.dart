@@ -220,73 +220,73 @@ class DashboardProfileScreen extends StatelessWidget {
                           ),
                         ],
                       )
-                    : Padding(
-                        padding: const EdgeInsets.fromLTRB(16, 18, 16, 0),
-                        child: Container(
-                          height: 100,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 10,
-                          ),
-                          decoration: BoxDecoration(
-                            color: Colors.transparent,
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(color: const Color(0xFFD2D8E0)),
-                          ),
-                          child: Row(
-                            children: [
-                              Container(
-                                width: 44,
-                                height: 44,
-                                decoration: const BoxDecoration(
-                                  color: Color(0xFFDDE5EF),
-                                  shape: BoxShape.circle,
-                                ),
-                                child: const Icon(
-                                  Icons.person_rounded,
-                                  color: Color(0xFF6B7280),
-                                ),
+                    : Column(
+                      children: [
+                        Padding(
+                            padding: const EdgeInsets.fromLTRB(16, 18, 16, 0),
+                            child: Container(
+                              height: 100,
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 10,
                               ),
-                              const SizedBox(width: 10),
-                              Expanded(
-                                child: Text(
-                                  'Guest User',
-                                  style: theme.textTheme.headlineSmall?.copyWith(
-                                    color: const Color(0xFF1A2A4A),
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: 16,
+
+                              child: Row(
+                                children: [
+                                  Container(
+                                    width: 44,
+                                    height: 44,
+                                    decoration: const BoxDecoration(
+                                      color: Color(0xFFDDE5EF),
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: const Icon(
+                                      Icons.person_rounded,
+                                      color: Color(0xFF6B7280),
+                                    ),
                                   ),
-                                ),
+                                  const SizedBox(width: 10),
+                                  Expanded(
+                                    child: Text(
+                                      'Guest User',
+                                      style: theme.textTheme.headlineSmall?.copyWith(
+                                        color: const Color(0xFF1A2A4A),
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                  ),
+                                  OutlinedButton(
+                                    onPressed: () => context.push(
+                                      AppRoutes.path(AppRoutes.authLogin),
+                                    ),
+                                    style: OutlinedButton.styleFrom(
+                                      minimumSize: const Size(0, 40),
+                                      side: const BorderSide(
+                                        color: Color(0xFF8C949C),
+                                      ),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(22),
+                                      ),
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 18,
+                                      ),
+                                    ),
+                                    child: Text(
+                                      'Sign Up / Login',
+                                      style: theme.textTheme.titleMedium?.copyWith(
+                                        color: const Color(0xFF3A4557),
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
-                              OutlinedButton(
-                                onPressed: () => context.push(
-                                  AppRoutes.path(AppRoutes.authLogin),
-                                ),
-                                style: OutlinedButton.styleFrom(
-                                  minimumSize: const Size(0, 40),
-                                  side: const BorderSide(
-                                    color: Color(0xFF8C949C),
-                                  ),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(22),
-                                  ),
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 18,
-                                  ),
-                                ),
-                                child: Text(
-                                  'Sign Up / Login',
-                                  style: theme.textTheme.titleMedium?.copyWith(
-                                    color: const Color(0xFF3A4557),
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: 14,
-                                  ),
-                                ),
-                              ),
-                            ],
+                            ),
                           ),
-                        ),
-                      ),
+                      ],
+                    ),
               ),
             ),
           ],
