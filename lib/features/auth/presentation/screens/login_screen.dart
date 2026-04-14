@@ -240,7 +240,8 @@ class _LoginViewState extends State<_LoginView> {
                       children: List.generate(4, (index) {
                         return Expanded(
                           child: Padding(
-                            padding: EdgeInsets.only(
+                            padding:
+                            EdgeInsets.only(
                               right: index == 3 ? 0 : 10,
                             ),
                             child: SizedBox(
