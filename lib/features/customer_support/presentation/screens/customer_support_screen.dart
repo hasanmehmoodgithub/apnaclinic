@@ -135,9 +135,6 @@ class _SupportTopHeader extends StatelessWidget {
 class _SupportBodyPanel extends StatelessWidget {
   const _SupportBodyPanel();
 
-  static const String _partnerLogoPath =
-      '/Users/hasan/.cursor/projects/Users-hasan-StudioProjects-apnaclinic/assets/Partner_s_Logo-84ec1d7f-14df-4811-b43b-db137d78c04c.png';
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -209,8 +206,8 @@ class _SupportBodyPanel extends StatelessWidget {
                                   ),
                                 ),
                                 child: ClipOval(
-                                  child: Image.file(
-                                    File(_partnerLogoPath),
+                                  child: Image.asset(
+                                    Assets.imgPartner,
                                     fit: BoxFit.cover,
                                   ),
                                 ),

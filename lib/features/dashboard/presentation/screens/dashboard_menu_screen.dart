@@ -105,7 +105,25 @@ class DashboardMenuScreen extends StatelessWidget {
                       child: SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
-                          onPressed: () {},
+                          onPressed: () async {
+                            if (!isLoggedIn) {
+                              context.push(AppRoutes.path(AppRoutes.authLogin));
+                              return;
+                            }
+                            await appPref.setLoginStatus(false);
+                            await appPref.setProfileCompleted(false);
+                            await appPref.setToken('');
+                            await appPref.setUserId('');
+                            await appPref.remove('profile_first_name');
+                            await appPref.remove('profile_last_name');
+                            await appPref.remove('profile_phone');
+                            await appPref.remove('profile_gender');
+                            await appPref.remove('profile_email');
+                            await appPref.remove('profile_address');
+                            await appPref.remove('profile_dob');
+                            if (!context.mounted) return;
+                            context.go(AppRoutes.path(AppRoutes.home));
+                          },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: const Color(0xFF40AFA2),
                             foregroundColor: Colors.white,
@@ -116,7 +134,7 @@ class DashboardMenuScreen extends StatelessWidget {
                             ),
                           ),
                           child: Text(
-                            'Logout',
+                            isLoggedIn ? 'Logout' : 'Login',
                             style: theme.textTheme.titleMedium?.copyWith(
                               fontWeight: FontWeight.w700,
                               color: Colors.white,
@@ -158,105 +176,116 @@ class _ProfileCard extends StatelessWidget {
       borderRadius: BorderRadius.circular(16),
       child: SizedBox(
         height: 96,
-        child: Stack(
-          children: [
-            const Positioned.fill(
-              child: ColoredBox(color: Color(0xFFECEDEF)),
-            ),
-            Positioned(
-              right: -94,
-              top: -29,
-              child: IgnorePointer(
-                child: Container(
-                  width: 294,
-                  height: 281,
-                  decoration: const BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Color(0xFFE8E7F1),
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final curveWidth = constraints.maxWidth * 0.7606;
+            final curveHeight = 281.37;
+            final curveLeft = constraints.maxWidth * 0.6493;
+
+            return Stack(
+              children: [
+                const Positioned.fill(
+                  child: ColoredBox(color: Colors.white),
+                ),
+                Positioned(
+                  left: curveLeft,
+                  top: -28.78,
+                  child: IgnorePointer(
+                    child: Container(
+                      width: curveWidth,
+                      height: curveHeight,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: const Color(0xFFEBDFFF).withValues(alpha: 0.6),
+                      ),
+                    ),
                   ),
                 ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(28, 25, 16, 24),
-              child: Row(
-                children: [
-                  Container(
-                    width: 46.08,
-                    height: 46.08,
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Color(0xFFD1DDFE),
-                    ),
-                    child: Icon(
-                      Icons.person_rounded,
-                      color: isLoggedIn
-                          ? const Color(0xFF0B77C5)
-                          : const Color(0xFF6B7280),
-                    ),
-                  ),
-                  const SizedBox(width: 7),
-                  Expanded(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          name,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: theme.textTheme.titleMedium?.copyWith(
-                            color: const Color(0xFF0E2D55),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(28, 25, 16, 24),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 46.08,
+                        height: 46.08,
+                        decoration: const BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Color(0xFFD1DDFE),
+                        ),
+                        child: Icon(
+                          Icons.person_rounded,
+                          color: isLoggedIn
+                              ? const Color(0xFF0B77C5)
+                              : const Color(0xFF6B7280),
+                        ),
+                      ),
+                      const SizedBox(width: 7),
+                      Expanded(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              name,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: theme.textTheme.titleMedium?.copyWith(
+                                color: const Color(0xFF0E2D55),
+                                fontWeight: FontWeight.w500,
+                                fontSize: 20,
+                                height: 1,
+                              ),
+                            ),
+                            const SizedBox(height: 7),
+                            Text(
+                              phone,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: theme.textTheme.bodyMedium?.copyWith(
+                                color: const Color(0xFF4A4A4A),
+                                fontWeight: FontWeight.w400,
+                                fontSize: 14,
+                                height: 1,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      OutlinedButton(
+                        onPressed: onActionTap,
+                        style: OutlinedButton.styleFrom(
+                          side: const BorderSide(
+                            color: Color(0xFF9BA6A7),
+                            width: 0.8,
+                          ),
+                          foregroundColor: const Color(0xFF0E2D55),
+                          minimumSize: const Size(72, 24),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10.5,
+                            vertical: 9,
+                          ),
+                          backgroundColor: Colors.transparent,
+                        ),
+                        child: Text(
+                          isLoggedIn ? 'Edit Profile' : 'Login / Signup',
+                          style: theme.textTheme.labelLarge?.copyWith(
                             fontWeight: FontWeight.w500,
-                            fontSize: 20,
-                            height: 1,
+                            fontSize: 9,
+                            color: const Color(0xFF0E2D55),
                           ),
                         ),
-                        const SizedBox(height: 7),
-                        Text(
-                          phone,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: theme.textTheme.bodyMedium?.copyWith(
-                            color: const Color(0xFF4A4A4A),
-                            fontWeight: FontWeight.w400,
-                            fontSize: 14,
-                            height: 1,
-                          ),
-                        ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(width: 8),
-                  OutlinedButton(
-                    onPressed: onActionTap,
-                    style: OutlinedButton.styleFrom(
-                      side: const BorderSide(color: Color(0xFF9BA6A7), width: 0.8),
-                      foregroundColor: const Color(0xFF0E2D55),
-                      minimumSize: const Size(92, 30),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(22),
-                      ),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16.5,
-                        vertical: 9,
-                      ),
-                      backgroundColor: Colors.transparent,
-                    ),
-                    child: Text(
-                      isLoggedIn ? 'Edit Profile' : 'Login / Signup',
-                      style: theme.textTheme.labelLarge?.copyWith(
-                        fontWeight: FontWeight.w500,
-                        fontSize: 12,
-                        color: const Color(0xFF0E2D55),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
+                ),
+              ],
+            );
+          },
         ),
       ),
     );

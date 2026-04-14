@@ -38,6 +38,7 @@ class AuthRepositoryImpl implements AuthRepository {
     // Placeholder for API-ready auth integration.
     await _appPref.setLoginStatus(true);
     await _appPref.setUserId(phoneNumber);
+    await _appPref.setString('profile_phone', phoneNumber);
     await _appPref.setToken('mock-token');
 
     return const AuthResult(success: true);

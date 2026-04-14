@@ -18,7 +18,7 @@ class ServiceCard extends StatelessWidget {
   final String imageAsset;
   final VoidCallback? onTap;
 
-  static const double _cardHeight = 105;
+  static const double _cardHeight = 100;
 
 
   @override

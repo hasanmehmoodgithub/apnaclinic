@@ -25,7 +25,7 @@ class FikrfreeHealthBanner extends StatelessWidget {
         const SizedBox(height: 12),
         DecoratedBox(
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(12),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withValues(alpha: 0.06),
@@ -68,10 +68,10 @@ class FikrfreeHealthBanner extends StatelessWidget {
                         ],
                       ),
                     ),
-                    const SizedBox(width: 8),
+                    const SizedBox(width: 12),
                     SizedBox(
-                      width: 112,
-                      height: 96,
+                      width: 102,
+                      height: 86,
                       child: Stack(
                         clipBehavior: Clip.none,
                         children: [

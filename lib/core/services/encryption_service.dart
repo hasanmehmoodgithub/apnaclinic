@@ -14,6 +14,7 @@ class EncryptionService {
 
   // Constants
   static const String _secretKeyName = 'app_random_secret_key';
+  static const String _fallbackNativeKeyName = 'app_fallback_native_key';
 
   // Dependencies
   final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
@@ -135,9 +136,34 @@ class EncryptionService {
           name: 'EncryptionService',
         );
       }
-      // Generate a fallback key when native is not available
-      // This allows the app to work during development without native setup
-      return _generateFallbackKey();
+      // Persisted fallback key for environments where native key is unavailable.
+      // If this changes between launches, obfuscated pref keys also change and
+      // persisted values (like login status) become unreadable.
+      final storedFallback = await _secureStorage.read(
+        key: _fallbackNativeKeyName,
+      );
+      if (storedFallback != null && storedFallback.isNotEmpty) {
+        if (kDebugMode) {
+          developer.log(
+            '🔑 Loaded persisted fallback native key.',
+            name: 'EncryptionService',
+          );
+        }
+        return storedFallback;
+      }
+
+      final generatedFallback = _generateFallbackKey();
+      await _secureStorage.write(
+        key: _fallbackNativeKeyName,
+        value: generatedFallback,
+      );
+      if (kDebugMode) {
+        developer.log(
+          '🔑 Generated and stored fallback native key.',
+          name: 'EncryptionService',
+        );
+      }
+      return generatedFallback;
     }
   }
 

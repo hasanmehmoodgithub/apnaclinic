@@ -131,20 +131,6 @@ flutter:
           weight: 700
         - asset: assets/fonts/satoshi/Satoshi_Complete/Fonts/WEB/fonts/Satoshi-Black.ttf
           weight: 900
-        - asset: assets/fonts/satoshi/Satoshi_Complete/Fonts/WEB/fonts/Satoshi-Italic.ttf
-          style: italic
-        - asset: assets/fonts/satoshi/Satoshi_Complete/Fonts/WEB/fonts/Satoshi-LightItalic.ttf
-          weight: 300
-          style: italic
-        - asset: assets/fonts/satoshi/Satoshi_Complete/Fonts/WEB/fonts/Satoshi-MediumItalic.ttf
-          weight: 500
-          style: italic
-        - asset: assets/fonts/satoshi/Satoshi_Complete/Fonts/WEB/fonts/Satoshi-BoldItalic.ttf
-          weight: 700
-          style: italic
-        - asset: assets/fonts/satoshi/Satoshi_Complete/Fonts/WEB/fonts/Satoshi-BlackItalic.ttf
-          weight: 900
-          style: italic
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package

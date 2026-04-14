@@ -19,6 +19,19 @@ class DashboardProfileScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isLoggedIn = sl<AppPref>().getLoginStatus();
+    final appPref = sl<AppPref>();
+    final firstName = (appPref.getString('profile_first_name') ?? '').trim();
+    final lastName = (appPref.getString('profile_last_name') ?? '').trim();
+    final fullName = '$firstName $lastName'.trim();
+    final phone = (appPref.getString('profile_phone') ?? '').trim();
+    final gender = (appPref.getString('profile_gender') ?? '').trim();
+    final email = (appPref.getString('profile_email') ?? '').trim();
+    final dobIso = (appPref.getString('profile_dob') ?? '').trim();
+    final dob = DateTime.tryParse(dobIso);
+    final dobLabel = dob == null
+        ? ''
+        : '${dob.day.toString().padLeft(2, '0')} '
+              '${_monthShort(dob.month)} ${dob.year}';
 
     return Scaffold(
       backgroundColor: const Color(0xFFC7EFEB),
@@ -117,7 +130,7 @@ class DashboardProfileScreen extends StatelessWidget {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      'Haseeb Qasim',
+                                      fullName.isEmpty ? 'User' : fullName,
                                       style: theme.textTheme.headlineSmall
                                           ?.copyWith(
                                         color: const Color(0xFF1A2A4A),
@@ -128,7 +141,7 @@ class DashboardProfileScreen extends StatelessWidget {
                                     ),
                                     const SizedBox(height: 2),
                                     Text(
-                                      '+92 3045770007',
+                                      phone.isEmpty ? '--' : phone,
                                       style:
                                           theme.textTheme.bodyMedium?.copyWith(
                                         color: const Color(0xFF7A8594),
@@ -179,7 +192,11 @@ class DashboardProfileScreen extends StatelessWidget {
                             ],
                           ),
                           const SizedBox(height: 12),
-                          const _InfoTilesRow(),
+                          _InfoTilesRow(
+                            gender: gender.isEmpty ? '--' : gender,
+                            dob: dobLabel.isEmpty ? '--' : dobLabel,
+                            email: email.isEmpty ? '--' : email,
+                          ),
                           const SizedBox(height: 14),
                           Text(
                             'Account Details',
@@ -194,7 +211,7 @@ class DashboardProfileScreen extends StatelessWidget {
                             height: 56,
                             padding: const EdgeInsets.symmetric(horizontal: 12),
                             decoration: BoxDecoration(
-                              color: Colors.white.withValues(alpha: 0.7),
+                              color: const Color(0xFFF3F3F3),
                               borderRadius: BorderRadius.circular(6),
                               border: Border.all(
                                 color: const Color(0xFFD4D9E1),
@@ -307,35 +324,52 @@ class DashboardProfileScreen extends StatelessWidget {
 }
 
 class _InfoTilesRow extends StatelessWidget {
-  const _InfoTilesRow();
+  const _InfoTilesRow({
+    required this.gender,
+    required this.dob,
+    required this.email,
+  });
+
+  final String gender;
+  final String dob;
+  final String email;
 
   @override
   Widget build(BuildContext context) {
     return Row(
-      children: const [
+      children: [
         Expanded(
-          child: _InfoTile(
-            title: 'Gender',
-            value: 'Male',
-          ),
+          child: _InfoTile(title: 'Gender', value: gender),
         ),
         SizedBox(width: 6),
         Expanded(
-          child: _InfoTile(
-            title: 'Date of Birth',
-            value: '27 Oct 1994',
-          ),
+          child: _InfoTile(title: 'Date of Birth', value: dob),
         ),
         SizedBox(width: 6),
         Expanded(
-          child: _InfoTile(
-            title: 'Email',
-            value: 'i.hash34@gmail.com',
-          ),
+          child: _InfoTile(title: 'Email', value: email),
         ),
       ],
     );
   }
+}
+
+String _monthShort(int month) {
+  const names = [
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
+  ];
+  return names[(month - 1).clamp(0, 11)];
 }
 
 class _InfoTile extends StatelessWidget {
