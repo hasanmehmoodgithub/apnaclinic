@@ -19,7 +19,7 @@ class AuthShell extends StatelessWidget {
             children: [
               Container(
                 width: double.infinity,
-                height: 80 + topInset,
+                height: 60 + topInset,
                 // clipBehavior: Clip.antiAlias,
                 decoration: const BoxDecoration(
                   color: Colors.white,
