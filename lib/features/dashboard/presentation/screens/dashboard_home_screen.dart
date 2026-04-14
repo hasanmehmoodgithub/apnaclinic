@@ -120,7 +120,7 @@ class _DashboardHomeScreenState extends State<DashboardHomeScreen> {
           backgroundColor: Colors.transparent,
           insetPadding: const EdgeInsets.symmetric(horizontal: 16),
           child: Column(
-
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Align(
                 alignment: Alignment.topRight,
