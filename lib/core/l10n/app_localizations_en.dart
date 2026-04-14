@@ -109,6 +109,18 @@ class AppLocalizationsEn extends AppLocalizations {
       'By Signing in, I agree to Terms & Conditions and Privacy Policy.';
 
   @override
+  String get authLegalPrefix => 'By Signing in, I agree to';
+
+  @override
+  String get authTermsLabel => 'Terms & Conditions';
+
+  @override
+  String get authLegalConnector => 'and';
+
+  @override
+  String get authPrivacyLabel => 'Privacy Policy.';
+
+  @override
   String get profileTitle => 'Profile Edit';
 
   @override

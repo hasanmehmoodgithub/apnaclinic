@@ -109,6 +109,18 @@ class AppLocalizationsUr extends AppLocalizations {
       'سائن ان کرکے میں شرائط و ضوابط اور پرائیویسی پالیسی سے اتفاق کرتا ہوں۔';
 
   @override
+  String get authLegalPrefix => 'سائن ان کرکے میں';
+
+  @override
+  String get authTermsLabel => 'شرائط و ضوابط';
+
+  @override
+  String get authLegalConnector => 'اور';
+
+  @override
+  String get authPrivacyLabel => 'پرائیویسی پالیسی';
+
+  @override
   String get profileTitle => 'پروفائل ایڈٹ';
 
   @override
