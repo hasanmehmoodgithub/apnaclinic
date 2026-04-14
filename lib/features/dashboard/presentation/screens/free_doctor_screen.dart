@@ -172,7 +172,7 @@ class _ConsultationInfoCard extends StatelessWidget {
               child: IgnorePointer(
                 child: Center(
                   child: Opacity(
-                    opacity: 0.09,
+                    opacity: 0.04,
                     child: Image.asset(
                       FreeDoctorScreen._watermarkAsset,
                       width: 260,
@@ -190,18 +190,11 @@ class _ConsultationInfoCard extends StatelessWidget {
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      DecoratedBox(
-                        decoration: BoxDecoration(
-                          color: FreeDoctorScreen._iconTileBg,
-                          borderRadius: BorderRadius.circular(14),
-                        ),
-                        child: const Padding(
-                          padding: EdgeInsets.all(10),
-                          child: Icon(
-                            Icons.medical_services_rounded,
-                            color: FreeDoctorScreen._primaryTeal,
-                            size: 28,
-                          ),
+                      Padding(
+                        padding: EdgeInsets.all(10),
+                        child: Image.asset(
+                          Assets.iconsNurse,
+                          height: 28,
                         ),
                       ),
                       const SizedBox(width: 14),

@@ -32,6 +32,7 @@ class Assets {
   static const String gifsPlaceholder = 'assets/gifs/placeholder.txt';
   static const String iconsClose = 'assets/icons/close.svg';
   static const String iconsEmpty = 'assets/icons/empty.svg';
+  static const String iconsNurse = 'assets/icons/nurse.png';
   static const String iconsPlaceholder = 'assets/icons/placeholder.txt';
   static const String imagesDashboardLoader = 'assets/images/dashboard_loader.json';
   static const String imagesPlaceholder = 'assets/images/placeholder.txt';
