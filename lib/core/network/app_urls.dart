@@ -34,6 +34,9 @@ class AppUrls {
   /// Products list endpoint - full URL
   static String get products => 'https://dummyjson.com/products';
 
+  /// Our services endpoint
+  static String get ourServices => '$baseUrl/dashboard/services';
+
 
   // ============================================
   // 3rd Party Integration Support (Full URLs)

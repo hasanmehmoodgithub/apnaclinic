@@ -1,3 +1,4 @@
+import 'package:apnaclinic/generated/assets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
@@ -6,7 +7,7 @@ import '../../../../core/extensions/screen_util_extensions.dart';
 class SearchHeader extends StatelessWidget {
   const SearchHeader({
     super.key,
-    this.userName = 'Hafiz Bilal',
+    required this.userName,
     this.onSearchSubmitted,
     this.onVoiceTap,
     this.onSearchButtonTap,
@@ -24,7 +25,7 @@ class SearchHeader extends StatelessWidget {
   static const Color _hintText = Color(0xFF1D4E89);
   static const Color _iconBlue = Color(0xFF024886);
   static const Color _fieldBg = Color(0xFFF3F4F6);
-  static const String _micAsset = 'assets/svg/ic_search_mic.svg';
+
 
   static const double _cornerRadius = 28;
   static const double _searchHeight = 54.0;
@@ -54,11 +55,13 @@ class SearchHeader extends StatelessWidget {
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                   'Hello, $userName',
                   style: theme.textTheme.titleLarge?.copyWith(
                     color: Colors.white,
-                    fontWeight: FontWeight.w500,
-                    fontSize: (42 / 1.4).sp,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 24.sp,
                     letterSpacing: 0.15,
                   ),
                 ),
@@ -91,7 +94,7 @@ class SearchHeader extends StatelessWidget {
                           hintStyle: theme.textTheme.bodyMedium?.copyWith(
                             color: _hintText,
                             fontWeight: FontWeight.w500,
-                            fontSize: (34 / 2.4).sp,
+                            fontSize: 14.sp,
                           ),
                           border: InputBorder.none,
                           contentPadding: EdgeInsets.symmetric(
@@ -108,7 +111,7 @@ class SearchHeader extends StatelessWidget {
                                 child: SizedBox(
                                   width: 17.w,
                                   height: 23.h,
-                                  child: SvgPicture.asset(_micAsset),
+                                  child: SvgPicture.asset(Assets.svgIcSearchMic),
                                 ),
                               ),
                             ),

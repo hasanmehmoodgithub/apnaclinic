@@ -25,6 +25,9 @@ class ServiceCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final ImageProvider serviceImageProvider = imageAsset.startsWith('http')
+        ? NetworkImage(imageAsset)
+        : AssetImage(imageAsset) as ImageProvider;
 
     return InkWell(
       onTap: onTap,
@@ -35,7 +38,7 @@ class ServiceCard extends StatelessWidget {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16.r),
           image: DecorationImage(
-            image: AssetImage(imageAsset),
+            image: serviceImageProvider,
             fit: BoxFit.cover, // better than contain for background
             alignment: Alignment.centerRight, // tweak based on design
           ),

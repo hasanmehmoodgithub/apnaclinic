@@ -5,6 +5,10 @@ class AppStrings {
   static const String appName = 'Your App Name';
   // Common
   static const String yourCustomStringText = 'yourCustomStringText';
+  static const String genericErrorMessage =
+      'An unexpected error occurred. Please try again.';
+  static const String ourServicesLoadError =
+      'Unable to load services right now. Please try again in a moment.';
   // Auth
 
 

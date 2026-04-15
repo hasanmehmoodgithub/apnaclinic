@@ -1,11 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-// TODO: Uncomment when feature screens are created
-// import '../../features/example_clean/presentation/screens/clean_structure_guide_page.dart';
-import '../../features/example/presentation/screens/examples_main_screen.dart';
-// import '../../features/example_mvvm/view/screens/mvvm_structure_guide_page.dart';
-// import '../../features/products/presentation/screens/products_page.dart';
 import '../../features/app/presentation/screens/splash_screen.dart';
 import '../../features/consultation/presentation/cubit/consultation_cubit.dart';
 import '../../features/consultation/presentation/screens/doctor_consultation_screen.dart';
@@ -82,11 +77,7 @@ class AppRouter {
           child: const DoctorConsultationScreen(),
         ),
       ),
-      GoRoute(
-        path: AppRoutes.path(AppRoutes.examples),
-        name: AppRoutes.examples,
-        builder: (context, state) => const ExamplesMainScreen(),
-      ),
+
     ],
     errorBuilder: (context, state) =>
         Scaffold(body: Center(child: Text('Page not found: ${state.uri}'))),

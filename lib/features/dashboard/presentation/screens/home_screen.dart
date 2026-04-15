@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lottie/lottie.dart';
@@ -10,9 +11,12 @@ import '../../../../core/preference/app_pref.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/widgets/apna_clinic_app_bar.dart';
 import '../../../../generated/assets.dart';
+import '../../domain/entities/our_service_entity.dart';
+import '../cubit/dashboard_services_cubit.dart';
+import '../cubit/dashboard_services_state.dart';
 import '../widgets/fikrfree_health_banner.dart';
+import '../widgets/our_services_widget.dart';
 import '../widgets/search_header.dart';
-import '../widgets/service_card.dart';
 
 /// Home dashboard with "Our Services" list.
 class HomeScreen extends StatefulWidget {
@@ -36,38 +40,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   static const String _promoImagePath =
       'assets/img/banner.png';
-
-
-  static const List<_ServiceItem> _services = [
-    _ServiceItem(
-      title: 'Online Consultation',
-      subtitle: 'PMDC certified doctors',
-      discountLabel: 'Up to 20% off',
-      imageAsset: 'assets/img/services/online_consultation.png',
-      route: AppRoutes.consultation,
-    ),
-    _ServiceItem(
-      title: 'Pharmacy',
-      subtitle: 'Authentic medicines at your doorstep',
-      discountLabel: 'Up to 10% off',
-      imageAsset: 'assets/img/services/pharmacy.png',
-      route: null,
-    ),
-    _ServiceItem(
-      title: 'Laboratory Testing',
-      subtitle: 'Reliable lab tests with accurate results',
-      discountLabel: 'Up to 40% off',
-      imageAsset: 'assets/img/services/laboratory.png',
-      route: null,
-    ),
-    _ServiceItem(
-      title: 'Surgery Booking',
-      subtitle: 'Hassle-free surgery scheduling',
-      discountLabel: 'Up to 40% off',
-      imageAsset: 'assets/img/services/surgery_booking.png',
-      route: null,
-    ),
-  ];
 
   @override
   void initState() {
@@ -178,113 +150,94 @@ class _HomeScreenState extends State<HomeScreen> {
     _isLoggedIn = sl<AppPref>().getLoginStatus();
     final greetingName = _resolveGreetingName();
     final theme = Theme.of(context);
-
-    return Scaffold(
-      key: _scaffoldKey,
-      backgroundColor:  Colors.white,
-      body: Column(
-        children: [
-          Container(
-            color: Color(0xFF52A898),
-            child: SafeArea(
-              child: ApnaClinicAppBar(
-                style: ApnaAppBarStyle.light,
-                systemOverlayStyle: ApnaClinicAppBar.lightBarColoredStatus,
-                onMenuTap: () =>
-                    context.push(AppRoutes.path(AppRoutes.dashboardMenu)),
-                onNotificationTap: () {
-                  context.push(AppRoutes.path(AppRoutes.notifications));
-                },
-                showLoginButton: !_isLoggedIn,
-                onLoginTap: () => context.push(AppRoutes.path(AppRoutes.authLogin)),
-                onProfileTap: () {
-                  // TODO: profile screen
-                },
-              ),
-            ),
-          ),
-          SearchHeader(
-            userName: greetingName,
-            onSearchSubmitted: (_) {
-              // TODO: global search
-            },
-            onVoiceTap: () {
-              // TODO: voice search
-            },
-            onSearchButtonTap: () {
-              // TODO: submit search
-            },
-          ),
-          Expanded(
-            child: CustomScrollView(
-              key: const ValueKey('dashboard_content'),
-              slivers: [
-                SliverPadding(
-                  padding: EdgeInsets.fromLTRB(20.w, 12.h, 20.w, 0),
-                  sliver: SliverToBoxAdapter(
-                    child: Text(
-                      'Our Services',
-                      style: theme.textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w600,
-                        color: const Color(0xFF111827),
-                      ),
-                    ),
-                  ),
-                ),
-                SliverPadding(padding: EdgeInsets.only(top: 14.h)),
-                SliverPadding(
-                  padding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 0),
-                  sliver: SliverList.separated(
-                    itemCount: _services.length,
-                    separatorBuilder: (context, index) =>
-                        SizedBox(height: 10.h),
-                    itemBuilder: (context, index) {
-                      final s = _services[index];
-                      return ServiceCard(
-                        title: s.title,
-                        subtitle: s.subtitle,
-                        discountLabel: s.discountLabel,
-                        imageAsset: s.imageAsset,
-                        onTap: () {
-                          if (s.route != null) {
-                            context.push(AppRoutes.path(s.route!));
-                          }
-                        },
-                      );
-                    },
-                  ),
-                ),
-                SliverPadding(
-                  padding: EdgeInsets.fromLTRB(20.w, 24.h, 20.w, 32.h),
-                  sliver: SliverToBoxAdapter(
-                    child: FikrfreeHealthBanner(
-                      onTap: () {
-                        // TODO: FikrFree / insurance flow
+    return BlocProvider(
+      create: (_) => sl<DashboardServicesCubit>(),
+      child: BlocBuilder<DashboardServicesCubit, DashboardServicesState>(
+        builder: (context, state) {
+          return Scaffold(
+            key: _scaffoldKey,
+            backgroundColor: Colors.white,
+            body: Column(
+              children: [
+                Container(
+                  color: const Color(0xFF52A898),
+                  child: SafeArea(
+                    child: ApnaClinicAppBar(
+                      style: ApnaAppBarStyle.light,
+                      systemOverlayStyle: ApnaClinicAppBar.lightBarColoredStatus,
+                      onMenuTap: () =>
+                          context.push(AppRoutes.path(AppRoutes.dashboardMenu)),
+                      onNotificationTap: () {
+                        context.push(AppRoutes.path(AppRoutes.notifications));
+                      },
+                      showLoginButton: !_isLoggedIn,
+                      onLoginTap: () =>
+                          context.push(AppRoutes.path(AppRoutes.authLogin)),
+                      onProfileTap: () {
+                        // TODO: profile screen
                       },
                     ),
                   ),
                 ),
+                SearchHeader(
+                  userName: greetingName,
+                  onSearchSubmitted: (_) {
+                    // TODO: global search
+                  },
+                  onVoiceTap: () {
+                    // TODO: voice search
+                  },
+                  onSearchButtonTap: () {
+                    // TODO: submit search
+                  },
+                ),
+                Expanded(
+                  child: CustomScrollView(
+                    key: const ValueKey('dashboard_content'),
+                    slivers: [
+                      SliverPadding(
+                        padding: EdgeInsets.fromLTRB(20.w, 12.h, 20.w, 0),
+                        sliver: SliverToBoxAdapter(
+                          child: Text(
+                            'Our Services',
+                            style: theme.textTheme.titleMedium?.copyWith(
+                              fontWeight: FontWeight.w600,
+                              color: const Color(0xFF111827),
+                            ),
+                          ),
+                        ),
+                      ),
+                      SliverPadding(padding: EdgeInsets.only(top: 14.h)),
+                      OurServicesWidget(
+                        state: state,
+                        onServiceTap: (service) =>
+                            _onServiceTap(context, service),
+                      ),
+                      SliverPadding(
+                        padding: EdgeInsets.fromLTRB(20.w, 24.h, 20.w, 32.h),
+                        sliver: SliverToBoxAdapter(
+                          child: FikrfreeHealthBanner(
+                            onTap: () {
+                              // TODO: FikrFree / insurance flow
+                            },
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ],
             ),
-          ),
-        ],
+          );
+        },
       ),
     );
   }
-}
 
-class _ServiceItem {
-  const _ServiceItem({
-    required this.title,
-    required this.subtitle,
-    required this.discountLabel,
-    required this.imageAsset,
-    required this.route,
-  });
+  void _onServiceTap(BuildContext context, OurServiceEntity service) {
+    final normalizedRoute = service.route.trim().replaceFirst(RegExp(r'^/'), '');
+    if (normalizedRoute.isEmpty) return;
 
-  final String title;
-  final String subtitle;
-  final String discountLabel;
-  final String imageAsset;
-  final String? route;
+    context.push(AppRoutes.path(normalizedRoute));
+  }
 }

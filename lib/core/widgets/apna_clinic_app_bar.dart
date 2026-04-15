@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import '../../generated/assets.dart';
 import '../extensions/screen_util_extensions.dart';
 
 import '../constants/app_system_ui.dart';
@@ -41,9 +42,7 @@ class ApnaClinicAppBar extends StatelessWidget implements PreferredSizeWidget {
   final bool showLoginButton;
   final PreferredSizeWidget? bottom;
 
-  static const String menuAsset = 'assets/svg/ic_menu.svg';
-  static const String notificationAsset = 'assets/svg/ic_notification.svg';
-  static const String brandAsset = 'assets/svg/brand_apna_clinic.svg';
+
 
   static const Color _green = Color(0xFF52A898);
 
@@ -85,9 +84,11 @@ class ApnaClinicAppBar extends StatelessWidget implements PreferredSizeWidget {
                           minWidth: 40.w,
                           minHeight: 40.h,
                         ),
+
                         onPressed: onMenuTap,
+
                         icon: SvgPicture.asset(
-                          menuAsset,
+                          Assets.svgIcMenu,
                           width: 23.w,
                           height: 16.h,
                           fit: BoxFit.contain,
@@ -103,7 +104,7 @@ class ApnaClinicAppBar extends StatelessWidget implements PreferredSizeWidget {
                     child: Padding(
                       padding: EdgeInsets.only(left: 4.w),
                       child: SvgPicture.asset(
-                        brandAsset,
+                        Assets.svgBrandApnaClinic,
                         height: 34.h,
                         fit: BoxFit.contain,
                         alignment: Alignment.centerLeft,
@@ -126,7 +127,7 @@ class ApnaClinicAppBar extends StatelessWidget implements PreferredSizeWidget {
                     alignment: Alignment.center,
                     children: [
                       SvgPicture.asset(
-                        notificationAsset,
+                        Assets.svgIcNotification,
                         width: 18.w,
                         height: 22.h,
                         fit: BoxFit.contain,
