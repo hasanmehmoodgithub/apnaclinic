@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import '../../../../core/extensions/screen_util_extensions.dart';
 
 /// White bar with four side tabs and a raised center Home button.
 class ApnaBottomNavigationBar extends StatelessWidget {
@@ -30,7 +31,7 @@ class ApnaBottomNavigationBar extends StatelessWidget {
       child: Padding(
         padding: EdgeInsets.only(bottom: bottomInset),
         child: SizedBox(
-          height: 108,
+          height: 108.h,
           child: Stack(
             clipBehavior: Clip.none,
             alignment: Alignment.bottomCenter,
@@ -39,15 +40,15 @@ class ApnaBottomNavigationBar extends StatelessWidget {
                 left: 0,
                 right: 0,
                 bottom: 0,
-                height: 66,
+                height: 66.h,
                 child: DecoratedBox(
                   decoration: BoxDecoration(
                     color: Colors.white,
                     boxShadow: [
                       BoxShadow(
                         color: Colors.black.withValues(alpha: 0.08),
-                        blurRadius: 16,
-                        offset: const Offset(0, -4),
+                        blurRadius: 16.r,
+                        offset: Offset(0, -4.h),
                       ),
                     ],
                   ),
@@ -70,7 +71,7 @@ class ApnaBottomNavigationBar extends StatelessWidget {
                           onTap: () => onTap(1),
                         ),
                       ),
-                      const SizedBox(width: 76),
+                      SizedBox(width: 76.w),
                       Expanded(
                         child: _SideTab(
                           label: 'My Bookings',
@@ -92,7 +93,7 @@ class ApnaBottomNavigationBar extends StatelessWidget {
                 ),
               ),
               Positioned(
-                bottom: 12,
+                bottom: 12.h,
                 child: _HomeCenterButton(
                   selected: currentIndex == 2,
                   onTap: () => onTap(2),
@@ -128,24 +129,24 @@ class _SideTab extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       child: Padding(
-        padding: const EdgeInsets.only(bottom: 10, top: 8),
+        padding: EdgeInsets.only(bottom: 10.h, top: 8.h),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             SvgPicture.asset(
               asset,
-              width: 24,
-              height: 24,
+              width: 24.r,
+              height: 24.r,
               colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
             ),
-            const SizedBox(height: 6),
+            SizedBox(height: 6.h),
             Text(
               label,
               textAlign: TextAlign.center,
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
-                fontSize: 11,
+                fontSize: 11.sp,
                 fontWeight: FontWeight.w400,
                 height: 1.1,
                 color: color,
@@ -182,18 +183,18 @@ class _HomeCenterButton extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             SizedBox(
-              width: 64,
-              height: 64,
+              width: 64.r,
+              height: 64.r,
               child: SvgPicture.asset(
                 ApnaBottomNavigationBar.homeLogo,
                 fit: BoxFit.contain,
               ),
             ),
-            const SizedBox(height: 4),
+            SizedBox(height: 4.h),
             Text(
               'Home',
               style: TextStyle(
-                fontSize: 11,
+                fontSize: 11.sp,
                 fontWeight: FontWeight.w700,
                 color: labelColor,
               ),

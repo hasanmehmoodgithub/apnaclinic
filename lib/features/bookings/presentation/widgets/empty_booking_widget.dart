@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import '../../../../core/extensions/screen_util_extensions.dart';
 
 class EmptyBookingWidget extends StatelessWidget {
   const EmptyBookingWidget({
@@ -26,20 +27,20 @@ class EmptyBookingWidget extends StatelessWidget {
 
         width: double.infinity,
 
-        padding: const EdgeInsets.fromLTRB(16, 12, 16, 14),
+        padding: EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 14.h),
         decoration: BoxDecoration(
           color:   Colors.white,
-          borderRadius: BorderRadius.circular(18),
+          borderRadius: BorderRadius.circular(18.r),
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Padding(
-              padding: const EdgeInsets.only(top: 2),
+              padding: EdgeInsets.only(top: 2.h),
               child: SvgPicture.asset(
                 iconPath,
-                width: 56,
-                height: 56,
+                width: 56.r,
+                height: 56.r,
               ),
             ),
             Text(
@@ -49,23 +50,23 @@ class EmptyBookingWidget extends StatelessWidget {
                 color: const Color(0xFFA1A7AE),
                 fontWeight: FontWeight.w500,
                 height: 1.2,
-                fontSize: 12,
+                fontSize: 12.sp,
               ),
             ),
             OutlinedButton(
               onPressed: onTap,
               style: OutlinedButton.styleFrom(
-                minimumSize: const Size(0, 30),
-                side: const BorderSide(color: Color(0xFFD4D8DD), width: 1.5),
+                minimumSize: Size(0, 30.h),
+                side: BorderSide(color: const Color(0xFFD4D8DD), width: 1.5.r),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius: BorderRadius.circular(10.r),
                 ),
               ),
               child: Text(
                 buttonText,
                 style: theme.textTheme.headlineSmall?.copyWith(
                   color: const Color(0xFF1D2A3A),
-                  fontSize: 12,
+                  fontSize: 12.sp,
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -82,7 +83,7 @@ class _DashedRoundedRectPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    const radius = Radius.circular(18);
+    final radius = Radius.circular(18.r);
     final rrect = RRect.fromRectAndRadius(Offset.zero & size, radius);
     final path = Path()..addRRect(rrect);
 

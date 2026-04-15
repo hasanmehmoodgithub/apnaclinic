@@ -5,6 +5,7 @@ import 'package:lottie/lottie.dart';
 import 'dart:async';
 
 import '../../../../core/di/dependency_injection.dart';
+import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/preference/app_pref.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/widgets/apna_clinic_app_bar.dart';
@@ -98,8 +99,8 @@ class _HomeScreenState extends State<HomeScreen> {
       builder: (_) => Center(
         child: Lottie.asset(
           'assets/images/dashboard_loader.json',
-          width: 250,
-          height: 250,
+          width: 250.w,
+          height: 250.h,
           fit: BoxFit.contain,
           repeat: true,
         ),
@@ -124,7 +125,7 @@ class _HomeScreenState extends State<HomeScreen> {
       builder: (dialogContext) {
         return Dialog(
           backgroundColor: Colors.transparent,
-          insetPadding: const EdgeInsets.symmetric(horizontal: 16),
+          insetPadding: EdgeInsets.symmetric(horizontal: 16.w),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
@@ -134,9 +135,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 alignment: Alignment.topRight,
                 child: InkWell(
                   onTap: () => Navigator.of(dialogContext).pop(),
-                  borderRadius: BorderRadius.circular(16),
+                  borderRadius: BorderRadius.circular(16.r),
                   child: Padding(
-                    padding: const EdgeInsets.all(4.0),
+                    padding: EdgeInsets.all(4.r),
                     child: SvgPicture.asset(
                       Assets.iconsClose,
                       colorFilter: const ColorFilter.mode(
@@ -149,7 +150,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
 
               ClipRRect(
-                borderRadius: BorderRadius.circular(14),
+                borderRadius: BorderRadius.circular(14.r),
                 child: Image.asset(
                   _promoImagePath,
                   fit: BoxFit.cover,
@@ -219,7 +220,7 @@ class _HomeScreenState extends State<HomeScreen> {
               key: const ValueKey('dashboard_content'),
               slivers: [
                 SliverPadding(
-                  padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
+                  padding: EdgeInsets.fromLTRB(20.w, 12.h, 20.w, 0),
                   sliver: SliverToBoxAdapter(
                     child: Text(
                       'Our Services',
@@ -230,13 +231,13 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                 ),
-                const SliverPadding(padding: EdgeInsets.only(top: 14)),
+                SliverPadding(padding: EdgeInsets.only(top: 14.h)),
                 SliverPadding(
-                  padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+                  padding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 0),
                   sliver: SliverList.separated(
                     itemCount: _services.length,
                     separatorBuilder: (context, index) =>
-                        const SizedBox(height: 10),
+                        SizedBox(height: 10.h),
                     itemBuilder: (context, index) {
                       final s = _services[index];
                       return ServiceCard(
@@ -254,7 +255,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
                 SliverPadding(
-                  padding: const EdgeInsets.fromLTRB(20, 24, 20, 32),
+                  padding: EdgeInsets.fromLTRB(20.w, 24.h, 20.w, 32.h),
                   sliver: SliverToBoxAdapter(
                     child: FikrfreeHealthBanner(
                       onTap: () {

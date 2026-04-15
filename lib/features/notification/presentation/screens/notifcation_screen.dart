@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../core/extensions/screen_util_extensions.dart';
 
 class NotifcationScreen extends StatelessWidget {
   const NotifcationScreen({super.key});
@@ -64,7 +65,7 @@ class NotifcationScreen extends StatelessWidget {
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.fromLTRB(8, 6, 14, 14),
+              padding: EdgeInsets.fromLTRB(8.w, 6.h, 14.w, 14.h),
               child: Row(
                 children: [
                   IconButton(
@@ -81,7 +82,7 @@ class NotifcationScreen extends StatelessWidget {
                       style: theme.textTheme.titleLarge?.copyWith(
                         color: const Color(0xFF0E2D55),
                         fontWeight: FontWeight.w700,
-                        fontSize: 31 / 1.6,
+                        fontSize: (31 / 1.6).sp,
                       ),
                     ),
                   ),
@@ -95,22 +96,22 @@ class NotifcationScreen extends StatelessWidget {
             Expanded(
               child: Container(
                 width: double.infinity,
-                decoration: const BoxDecoration(
+                decoration: BoxDecoration(
                   color: Color(0xFFF4F6F8),
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(42)),
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(42.r)),
                 ),
                 child: ListView(
-                  padding: const EdgeInsets.only(top: 10, bottom: 16),
+                  padding: EdgeInsets.only(top: 10.h, bottom: 16.h),
                   children: [
                     for (final section in _sections) ...[
                       Padding(
-                        padding: const EdgeInsets.fromLTRB(23, 16, 23, 8),
+                        padding: EdgeInsets.fromLTRB(23.w, 16.h, 23.w, 8.h),
                         child: Text(
                           section.title,
                           style: theme.textTheme.titleMedium?.copyWith(
                             color: const Color(0xFF0E2D55),
                             fontWeight: FontWeight.w700,
-                            fontSize: 30 / 1.6,
+                            fontSize: (30 / 1.6).sp,
                           ),
                         ),
                       ),
@@ -142,34 +143,34 @@ class _NotificationTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Container(
-      padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
+      padding: EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 12.h),
       decoration: BoxDecoration(
         border: Border(
           bottom: BorderSide(
             color: isLast ? Colors.transparent : const Color(0xFFDDE1E5),
-            width: 1,
+            width: 1.r,
           ),
         ),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Padding(
-            padding: EdgeInsets.only(top: 10),
-            child: Icon(Icons.circle, color: Color(0xFF0FAA9A), size: 7),
+          Padding(
+            padding: EdgeInsets.only(top: 10.h),
+            child: Icon(Icons.circle, color: Color(0xFF0FAA9A), size: 7.r),
           ),
-          const SizedBox(width: 8),
+          SizedBox(width: 8.w),
           Container(
-            width: 46,
-            height: 46,
+            width: 46.r,
+            height: 46.r,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               color: const Color(0xFFD8ECFE),
               border: Border.all(color: const Color(0xFFB4D3EE)),
             ),
-            child: Icon(item.icon, color: const Color(0xFF0B77C5), size: 22),
+            child: Icon(item.icon, color: const Color(0xFF0B77C5), size: 22.r),
           ),
-          const SizedBox(width: 10),
+          SizedBox(width: 10.w),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -179,24 +180,24 @@ class _NotificationTile extends StatelessWidget {
                   style: theme.textTheme.titleMedium?.copyWith(
                     color: const Color(0xFF0E2D55),
                     fontWeight: FontWeight.w700,
-                    fontSize: 30 / 1.6,
+                    fontSize: (30 / 1.6).sp,
                   ),
                 ),
-                const SizedBox(height: 2),
+                SizedBox(height: 2.h),
                 Text(
                   item.message,
                   style: theme.textTheme.bodyMedium?.copyWith(
                     color: const Color(0xFF454545),
-                    fontSize: 28 / 1.6,
+                    fontSize: (28 / 1.6).sp,
                     height: 1.25,
                   ),
                 ),
-                const SizedBox(height: 6),
+                SizedBox(height: 6.h),
                 Text(
                   item.time,
                   style: theme.textTheme.bodySmall?.copyWith(
                     color: const Color(0xFF111827),
-                    fontSize: 24 / 1.6,
+                    fontSize: (24 / 1.6).sp,
                     fontWeight: FontWeight.w500,
                   ),
                 ),

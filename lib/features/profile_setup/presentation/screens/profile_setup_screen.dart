@@ -9,6 +9,7 @@ import 'package:intl/intl.dart';
 
 import '../../../../components/widgets/app_button.dart';
 import '../../../../core/di/dependency_injection.dart';
+import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../domain/models/profile_setup_data.dart';
@@ -143,7 +144,7 @@ class _ProfileSetupViewState extends State<_ProfileSetupView> {
         context,
       ).textTheme.bodyMedium?.copyWith(color: const Color(0xFF667085)),
       isDense: true,
-      contentPadding: const EdgeInsets.only(bottom: 10),
+      contentPadding: EdgeInsets.only(bottom: 10.h),
       enabledBorder: const UnderlineInputBorder(
         borderSide: BorderSide(color: Color(0xFFD0D5DD)),
       ),
@@ -173,7 +174,7 @@ class _ProfileSetupViewState extends State<_ProfileSetupView> {
               return Stack(
                 children: [
                   SizedBox(
-                    height: 260,
+                    height: 260.h,
                     child: Stack(
                       fit: StackFit.expand,
                       children: [
@@ -192,15 +193,15 @@ class _ProfileSetupViewState extends State<_ProfileSetupView> {
                   Column(
                     children: [
                       SizedBox(
-                        height: topInset + 48,
+                        height: topInset + 48.h,
                         child: Padding(
-                          padding: EdgeInsets.only(top: topInset + 4),
+                          padding: EdgeInsets.only(top: topInset + 4.h),
                           child: Row(
                             children: [
                               Material(
                                 color: Colors.transparent,
                                 child: InkWell(
-                                  borderRadius: BorderRadius.circular(20),
+                                  borderRadius: BorderRadius.circular(20.r),
                                   onTap: () {
                                     if (context.canPop()) {
                                       context.pop();
@@ -210,14 +211,14 @@ class _ProfileSetupViewState extends State<_ProfileSetupView> {
                                       );
                                     }
                                   },
-                                  child: const SizedBox(
-                                    width: 40,
-                                    height: 40,
+                                  child: SizedBox(
+                                    width: 40.r,
+                                    height: 40.r,
                                     child: Center(
                                       child: Icon(
                                         Icons.arrow_back_rounded,
                                         color: Color(0xFF061E40),
-                                        size: 22,
+                                        size: 22.r,
                                       ),
                                     ),
                                   ),
@@ -226,7 +227,7 @@ class _ProfileSetupViewState extends State<_ProfileSetupView> {
                               Expanded(
                                 child: Center(
                                   child: Padding(
-                                    padding: const EdgeInsets.only(right: 40),
+                                    padding: EdgeInsets.only(right: 40.w),
                                     child: Text(
                                       l10n.profileTitle,
                                       style: theme.textTheme.titleLarge
@@ -242,11 +243,11 @@ class _ProfileSetupViewState extends State<_ProfileSetupView> {
                           ),
                         ),
                       ),
-                      const SizedBox(height: 8),
+                      SizedBox(height: 8.h),
                       Stack(
                         children: [
                           CircleAvatar(
-                            radius: 56,
+                            radius: 56.r,
                             backgroundColor: Colors.white.withValues(
                               alpha: 0.95,
                             ),
@@ -258,30 +259,30 @@ class _ProfileSetupViewState extends State<_ProfileSetupView> {
                                     setState(() => _selectedProfileImage = null);
                                   },
                             child: avatarProvider == null
-                                ? const Icon(
+                                ? Icon(
                                     Icons.account_circle_rounded,
-                                    size: 56,
+                                    size: 56.r,
                                     color: Color(0xFFBFD5D9),
                                   )
                                 : null,
                           ),
                           Positioned(
-                            right: 2,
-                            bottom: 4,
+                            right: 2.w,
+                            bottom: 4.h,
                             child: Material(
                               color: Colors.transparent,
                               child: InkWell(
-                                borderRadius: BorderRadius.circular(16),
+                                borderRadius: BorderRadius.circular(16.r),
                                 onTap: _pickProfileImage,
                                 child: Container(
-                                  padding: const EdgeInsets.all(6),
+                                  padding: EdgeInsets.all(6.r),
                                   decoration: const BoxDecoration(
                                     color: Color(0xFFDDF3EE),
                                     shape: BoxShape.circle,
                                   ),
-                                  child: const Icon(
+                                  child: Icon(
                                     Icons.camera_alt_outlined,
-                                    size: 16,
+                                    size: 16.r,
                                     color: Color(0xFF0FAA9A),
                                   ),
                                 ),
@@ -290,18 +291,18 @@ class _ProfileSetupViewState extends State<_ProfileSetupView> {
                           ),
                         ],
                       ),
-                      const SizedBox(height: 14),
+                      SizedBox(height: 14.h),
                       Expanded(
                         child: Container(
                           width: double.infinity,
-                          decoration: const BoxDecoration(
+                          decoration: BoxDecoration(
                             color: Colors.white,
                             borderRadius: BorderRadius.vertical(
-                              top: Radius.circular(24),
+                              top: Radius.circular(24.r),
                             ),
                           ),
                           child: SingleChildScrollView(
-                            padding: const EdgeInsets.fromLTRB(18, 20, 18, 24),
+                            padding: EdgeInsets.fromLTRB(18.w, 20.h, 18.w, 24.h),
                             child: Form(
                               key: _formKey,
                               child: Column(
@@ -315,14 +316,14 @@ class _ProfileSetupViewState extends State<_ProfileSetupView> {
                                           color: const Color(0xFF061E40),
                                         ),
                                   ),
-                                  const SizedBox(height: 4),
+                                  SizedBox(height: 4.h),
                                   Text(
                                     l10n.profileSetupSubtitle,
                                     style: theme.textTheme.bodySmall?.copyWith(
                                       color: const Color(0xFF98A2B3),
                                     ),
                                   ),
-                                  const SizedBox(height: 18),
+                                  SizedBox(height: 18.h),
                                   Text(
                                     l10n.profileFirstNameLabel,
                                     style: theme.textTheme.bodySmall?.copyWith(
@@ -342,7 +343,7 @@ class _ProfileSetupViewState extends State<_ProfileSetupView> {
                                       return null;
                                     },
                                   ),
-                                  const SizedBox(height: 22),
+                                  SizedBox(height: 22.h),
                                   Text(
                                     l10n.profileLastNameLabel,
                                     style: theme.textTheme.bodySmall?.copyWith(
@@ -362,7 +363,7 @@ class _ProfileSetupViewState extends State<_ProfileSetupView> {
                                       return null;
                                     },
                                   ),
-                                  const SizedBox(height: 22),
+                                  SizedBox(height: 22.h),
                                   Text(
                                     l10n.profileGenderLabel,
                                     style: theme.textTheme.bodySmall?.copyWith(
@@ -394,7 +395,7 @@ class _ProfileSetupViewState extends State<_ProfileSetupView> {
                                         .read<ProfileSetupCubit>()
                                         .setGender,
                                   ),
-                                  const SizedBox(height: 22),
+                                  SizedBox(height: 22.h),
                                   Text(
                                     l10n.profileEmailLabel,
                                     style: theme.textTheme.bodySmall?.copyWith(
@@ -417,7 +418,7 @@ class _ProfileSetupViewState extends State<_ProfileSetupView> {
                                       return null;
                                     },
                                   ),
-                                  const SizedBox(height: 22),
+                                  SizedBox(height: 22.h),
                                   Text(
                                     l10n.profileAddressLabel,
                                     style: theme.textTheme.bodySmall?.copyWith(
@@ -437,7 +438,7 @@ class _ProfileSetupViewState extends State<_ProfileSetupView> {
                                       return null;
                                     },
                                   ),
-                                  const SizedBox(height: 22),
+                                  SizedBox(height: 22.h),
                                   Text(
                                     l10n.profileDobLabel,
                                     style: theme.textTheme.bodySmall?.copyWith(
@@ -451,9 +452,9 @@ class _ProfileSetupViewState extends State<_ProfileSetupView> {
                                         decoration: _lineInputDecoration(
                                           context,
                                           hintText: dobLabel,
-                                          suffixIcon: const Icon(
+                                          suffixIcon: Icon(
                                             Icons.calendar_today_outlined,
-                                            size: 18,
+                                            size: 18.r,
                                             color: Color(0xFF98A2B3),
                                           ),
                                         ),
@@ -461,7 +462,7 @@ class _ProfileSetupViewState extends State<_ProfileSetupView> {
                                     ),
                                   ),
                                   if (state.errorMessage != null) ...[
-                                    const SizedBox(height: 12),
+                                    SizedBox(height: 12.h),
                                     Text(
                                       state.errorMessage!,
                                       style: theme.textTheme.bodySmall
@@ -470,7 +471,7 @@ class _ProfileSetupViewState extends State<_ProfileSetupView> {
                                           ),
                                     ),
                                   ],
-                                  const SizedBox(height: 26),
+                                  SizedBox(height: 26.h),
                                   AppButton.primary(
                                     text: l10n.profileSaveCta,
                                     onPressed: state.isSaving
@@ -479,8 +480,8 @@ class _ProfileSetupViewState extends State<_ProfileSetupView> {
                                     isLoading: state.isSaving,
                                     backgroundColor: const Color(0xFF0FAA9A),
                                     foregroundColor: Colors.white,
-                                    height: 52,
-                                    borderRadius: 12,
+                                    height: 52.h,
+                                    borderRadius: 12.r,
                                   ),
                                 ],
                               ),

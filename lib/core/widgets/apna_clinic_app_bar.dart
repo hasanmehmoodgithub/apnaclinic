@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import '../extensions/screen_util_extensions.dart';
 
 import '../constants/app_system_ui.dart';
 
@@ -72,23 +73,23 @@ class ApnaClinicAppBar extends StatelessWidget implements PreferredSizeWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 SizedBox(
-                  width: 52,
+                  width: 52.w,
                   child: Align(
                     alignment: Alignment.centerLeft,
                     child: Padding(
-                      padding: const EdgeInsets.only(left: 8),
+                      padding: EdgeInsets.only(left: 8.w),
                       child: IconButton(
-                        splashRadius: 24,
+                        splashRadius: 24.r,
                         padding: EdgeInsets.zero,
-                        constraints: const BoxConstraints(
-                          minWidth: 40,
-                          minHeight: 40,
+                        constraints: BoxConstraints(
+                          minWidth: 40.w,
+                          minHeight: 40.h,
                         ),
                         onPressed: onMenuTap,
                         icon: SvgPicture.asset(
                           menuAsset,
-                          width: 23,
-                          height: 16,
+                          width: 23.w,
+                          height: 16.h,
                           fit: BoxFit.contain,
                           colorFilter: svgFilter,
                         ),
@@ -100,10 +101,10 @@ class ApnaClinicAppBar extends StatelessWidget implements PreferredSizeWidget {
                   child: Align(
                     alignment: Alignment.centerLeft,
                     child: Padding(
-                      padding: const EdgeInsets.only(left: 4),
+                      padding: EdgeInsets.only(left: 4.w),
                       child: SvgPicture.asset(
                         brandAsset,
-                        height: 34,
+                        height: 34.h,
                         fit: BoxFit.contain,
                         alignment: Alignment.centerLeft,
                         colorFilter: svgFilter,
@@ -112,11 +113,11 @@ class ApnaClinicAppBar extends StatelessWidget implements PreferredSizeWidget {
                   ),
                 ),
                 IconButton(
-                  splashRadius: 24,
+                  splashRadius: 24.r,
                   padding: EdgeInsets.zero,
-                  constraints: const BoxConstraints(
-                    minWidth: 44,
-                    minHeight: 44,
+                  constraints: BoxConstraints(
+                    minWidth: 44.w,
+                    minHeight: 44.h,
                   ),
                   tooltip: 'Notifications',
                   onPressed: onNotificationTap,
@@ -126,8 +127,8 @@ class ApnaClinicAppBar extends StatelessWidget implements PreferredSizeWidget {
                     children: [
                       SvgPicture.asset(
                         notificationAsset,
-                        width: 18,
-                        height: 22,
+                        width: 18.w,
+                        height: 22.h,
                         fit: BoxFit.contain,
                         colorFilter: svgFilter,
                       ),
@@ -135,8 +136,8 @@ class ApnaClinicAppBar extends StatelessWidget implements PreferredSizeWidget {
                         right: -1,
                         top: -2,
                         child: Container(
-                          width: 8,
-                          height: 8,
+                          width: 8.r,
+                          height: 8.r,
                           decoration: const BoxDecoration(
                             color: Color(0xFFE53935),
                             shape: BoxShape.circle,
@@ -147,10 +148,10 @@ class ApnaClinicAppBar extends StatelessWidget implements PreferredSizeWidget {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(right: 12, left: 4),
+                  padding: EdgeInsets.only(right: 12.w, left: 4.w),
                   child: showLoginButton
                       ? SizedBox(
-                          height: 36,
+                          height: 36.h,
                           child: OutlinedButton(
                             onPressed: onLoginTap,
                             style: OutlinedButton.styleFrom(
@@ -160,9 +161,9 @@ class ApnaClinicAppBar extends StatelessWidget implements PreferredSizeWidget {
                                     : const Color(0xFF0FAA9A),
                               ),
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(18),
+                                borderRadius: BorderRadius.circular(18.r),
                               ),
-                              padding: const EdgeInsets.symmetric(horizontal: 14),
+                              padding: EdgeInsets.symmetric(horizontal: 14.w),
                             ),
                             child: Text(
                               'Login',
@@ -171,7 +172,7 @@ class ApnaClinicAppBar extends StatelessWidget implements PreferredSizeWidget {
                                     ? Colors.white
                                     : const Color(0xFF0FAA9A),
                                 fontWeight: FontWeight.w600,
-                                fontSize: 13,
+                                fontSize: 13.sp,
                               ),
                             ),
                           ),
@@ -182,13 +183,13 @@ class ApnaClinicAppBar extends StatelessWidget implements PreferredSizeWidget {
                             onTap: onProfileTap,
                             customBorder: const CircleBorder(),
                             child: CircleAvatar(
-                              radius: 19,
+                              radius: 19.r,
                               backgroundColor: _isGreen
                                   ? Colors.white.withValues(alpha: 0.28)
                                   : const Color(0xFFE0F2F1),
                               child: Icon(
                                 Icons.person_rounded,
-                                size: 24,
+                                size: 24.r,
                                 color: _isGreen
                                     ? Colors.white
                                     : const Color(0xFF0FAA9A),

@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-import '../../../../core/di/dependency_injection.dart';
-import '../../../../core/services/responsive_config_service.dart';
+import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../domain/entities/consultation_category_entity.dart';
 import '../constants/consultation_ui_config.dart';
 import '../cubit/consultation_cubit.dart';
@@ -15,7 +14,6 @@ class DoctorConsultationScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final responsive = sl<ResponsiveConfigService>();
     final textTheme = Theme.of(context).textTheme;
     return Scaffold(
       body: DecoratedBox(
@@ -35,10 +33,10 @@ class DoctorConsultationScreen extends StatelessWidget {
             children: [
               Padding(
                 padding: EdgeInsets.fromLTRB(
-                  responsive.w(context, 22),
-                  responsive.h(context, 8),
-                  responsive.w(context, 22),
-                  responsive.h(context, 8),
+                  22.w,
+                  8.h,
+                  22.w,
+                  8.h,
                 ),
                 child: Row(
                   children: [
@@ -46,13 +44,13 @@ class DoctorConsultationScreen extends StatelessWidget {
                       behavior: HitTestBehavior.opaque,
                       onTap: () => Navigator.of(context).pop(),
                       child: SizedBox(
-                        width: responsive.w(context, 24),
-                        height: responsive.h(context, 24),
+                        width: 24.w,
+                        height: 24.h,
                         child: Center(
                           child: SvgPicture.asset(
                             ConsultationUiConfig.backArrowAsset,
-                            width: responsive.w(context, 24),
-                            height: responsive.h(context, 24),
+                            width: 24.w,
+                            height: 24.h,
                             fit: BoxFit.contain,
                             colorFilter: const ColorFilter.mode(
                               ConsultationUiConfig.primaryText,
@@ -69,11 +67,11 @@ class DoctorConsultationScreen extends StatelessWidget {
                         style: textTheme.titleLarge?.copyWith(
                           color: ConsultationUiConfig.primaryText,
                           fontWeight: FontWeight.w700,
-                          fontSize: responsive.sp(context, 20),
+                          fontSize: 20.sp,
                         ),
                       ),
                     ),
-                    SizedBox(width: responsive.w(context, 24)),
+                    SizedBox(width: 24.w),
                   ],
                 ),
               ),
@@ -83,22 +81,22 @@ class DoctorConsultationScreen extends StatelessWidget {
                     return SingleChildScrollView(
                       child: Column(
                         children: [
-                          SizedBox(height: responsive.h(context, 2)),
+                          SizedBox(height: 2.h),
                           SizedBox(
-                            height: responsive.h(context, 178),
+                            height: 178.h,
                             child: Center(
                               child: SizedBox(
-                                width: responsive.w(context, 240),
-                                height: responsive.h(context, 178),
+                                width: 240.w,
+                                height: 178.h,
                                 child: Stack(
                                   alignment: Alignment.topCenter,
                                   children: [
                                     Positioned(
-                                      top: responsive.h(context, 2),
+                                      top: 2.h,
                                       child: SvgPicture.asset(
                                         ConsultationUiConfig.heroVectorAsset,
-                                        width: responsive.w(context, 238),
-                                        height: responsive.h(context, 172),
+                                        width: 238.w,
+                                        height: 172.h,
                                         fit: BoxFit.contain,
                                       ),
                                     ),
@@ -106,8 +104,8 @@ class DoctorConsultationScreen extends StatelessWidget {
                                       top: 0,
                                       child: Image.asset(
                                         ConsultationUiConfig.heroDoctorAsset,
-                                        width: responsive.w(context, 188),
-                                        height: responsive.h(context, 177),
+                                        width: 188.w,
+                                        height: 177.h,
                                         fit: BoxFit.cover,
                                       ),
                                     ),
@@ -118,43 +116,43 @@ class DoctorConsultationScreen extends StatelessWidget {
                           ),
                           Container(
                             width: double.infinity,
-                            decoration: const BoxDecoration(
+                            decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.vertical(
-                                top: Radius.circular(42),
+                                top: Radius.circular(42.r),
                               ),
                             ),
                             child: Padding(
-                              padding: const EdgeInsets.fromLTRB(
-                                24,
-                                22,
-                                24,
-                                22,
+                              padding: EdgeInsets.fromLTRB(
+                                24.w,
+                                22.h,
+                                24.w,
+                                22.h,
                               ),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   _AssistantCard(textTheme: textTheme),
-                                  SizedBox(height: responsive.h(context, 21)),
+                                  SizedBox(height: 21.h),
                                   Text(
                                     ConsultationUiConfig.chooseCategories,
                                     style: textTheme.titleMedium?.copyWith(
-                                      fontSize: responsive.sp(context, 16),
+                                      fontSize: 16.sp,
                                       fontWeight: FontWeight.w500,
                                       color: ConsultationUiConfig.primaryText,
                                     ),
                                   ),
-                                  SizedBox(height: responsive.h(context, 14)),
+                                  SizedBox(height: 14.h),
                                   _SearchField(
                                     onChanged: context
                                         .read<ConsultationCubit>()
                                         .onSearchChanged,
                                   ),
-                                  SizedBox(height: responsive.h(context, 14)),
+                                  SizedBox(height: 14.h),
                                   if (state.isLoading)
-                                    const Padding(
+                                    Padding(
                                       padding: EdgeInsets.symmetric(
-                                        vertical: 40,
+                                        vertical: 40.h,
                                       ),
                                       child: Center(
                                         child: CircularProgressIndicator(),
@@ -190,7 +188,7 @@ class DoctorConsultationScreen extends StatelessWidget {
                                     ),
                                   if ((state.errorMessage ?? '').isNotEmpty)
                                     Padding(
-                                      padding: const EdgeInsets.only(top: 12),
+                                      padding: EdgeInsets.only(top: 12.h),
                                       child: Text(
                                         state.errorMessage!,
                                         style: textTheme.bodySmall?.copyWith(
@@ -220,22 +218,21 @@ class DoctorConsultationScreen extends StatelessWidget {
     ConsultationCategoryEntity category,
     Offset position,
   ) {
-    final responsive = sl<ResponsiveConfigService>();
     final textTheme = Theme.of(context).textTheme;
     final screenSize = MediaQuery.sizeOf(context);
-    final tooltipWidth = responsive.w(context, 330);
-    final tooltipHeight = responsive.h(context, 118);
-    final left = (position.dx - tooltipWidth + responsive.w(context, 10)).clamp(
-      responsive.w(context, 16),
+    final tooltipWidth = 330.w;
+    final tooltipHeight = 118.h;
+    final left = (position.dx - tooltipWidth + 10.w).clamp(
+      16.w,
       screenSize.width - tooltipWidth - 16,
     );
-    final top = (position.dy - tooltipHeight - responsive.h(context, 10)).clamp(
-      responsive.h(context, 70),
+    final top = (position.dy - tooltipHeight - 10.h).clamp(
+      70.h,
       screenSize.height - 140,
     );
-    final arrowLeft = (position.dx - left - responsive.w(context, 8)).clamp(
-      responsive.w(context, 10),
-      tooltipWidth - responsive.w(context, 26),
+    final arrowLeft = (position.dx - left - 8.w).clamp(
+      10.w,
+      tooltipWidth - 26.w,
     );
 
     return showGeneralDialog<void>(
@@ -264,11 +261,11 @@ class DoctorConsultationScreen extends StatelessWidget {
                     children: [
                       Container(
                         width: tooltipWidth,
-                        padding: EdgeInsets.all(responsive.r(context, 18)),
+                        padding: EdgeInsets.all(18.r),
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(
-                            responsive.r(context, 8),
+                            8.r,
                           ),
                           boxShadow: const [
                             BoxShadow(
@@ -281,7 +278,7 @@ class DoctorConsultationScreen extends StatelessWidget {
                         child: Text(
                           category.description,
                           style: textTheme.bodyMedium?.copyWith(
-                            fontSize: responsive.sp(context, 14),
+                            fontSize: 14.sp,
                             height: 1.3,
                             color: ConsultationUiConfig.tertiaryText,
                           ),
@@ -291,8 +288,8 @@ class DoctorConsultationScreen extends StatelessWidget {
                         padding: EdgeInsets.only(left: arrowLeft),
                         child: CustomPaint(
                           size: Size(
-                            responsive.w(context, 16),
-                            responsive.h(context, 8),
+                            16.w,
+                            8.h,
                           ),
                           painter: _TooltipArrowPainter(),
                         ),
@@ -332,18 +329,17 @@ class _AssistantCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final responsive = sl<ResponsiveConfigService>();
     return Container(
       width: double.infinity,
       padding: EdgeInsets.fromLTRB(
-        responsive.w(context, 13),
-        responsive.h(context, 11),
-        responsive.w(context, 13),
-        responsive.h(context, 11),
+        13.w,
+        11.h,
+        13.w,
+        11.h,
       ),
       decoration: BoxDecoration(
         color: ConsultationUiConfig.cardBackground,
-        borderRadius: BorderRadius.circular(responsive.r(context, 10.7)),
+        borderRadius: BorderRadius.circular(10.7.r),
         border: Border.all(color: ConsultationUiConfig.borderColor),
       ),
       child: Column(
@@ -352,44 +348,44 @@ class _AssistantCard extends StatelessWidget {
           Row(
             children: [
               SizedBox(
-                width: responsive.w(context, 16),
-                height: responsive.h(context, 16),
+                width: 16.w,
+                height: 16.h,
                 child: SvgPicture.asset(
                   ConsultationUiConfig.assistantIconAsset,
                   fit: BoxFit.contain,
                 ),
               ),
-              SizedBox(width: responsive.w(context, 8)),
+              SizedBox(width: 8.w),
               Text(
                 ConsultationUiConfig.assistantTitle,
                 style: textTheme.titleMedium?.copyWith(
-                  fontSize: responsive.sp(context, 16),
+                  fontSize: 16.sp,
                   fontWeight: FontWeight.w500,
                   color: ConsultationUiConfig.primaryText,
                 ),
               ),
             ],
           ),
-          SizedBox(height: responsive.h(context, 9)),
+          SizedBox(height: 9.h),
           Text(
             ConsultationUiConfig.assistantDescription,
             style: textTheme.bodyMedium?.copyWith(
-              fontSize: responsive.sp(context, 13),
+              fontSize: 13.sp,
               height: 1.2,
               fontWeight: FontWeight.w500,
               color: ConsultationUiConfig.secondaryText,
             ),
           ),
-          SizedBox(height: responsive.h(context, 18)),
+          SizedBox(height: 18.h),
           SizedBox(
-            height: responsive.h(context, 32),
+            height: 32.h,
             width: double.infinity,
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
                 backgroundColor: ConsultationUiConfig.ctaColor,
                 elevation: 0,
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(responsive.r(context, 6)),
+                  borderRadius: BorderRadius.circular(6.r),
                 ),
               ),
               onPressed: () {},
@@ -397,7 +393,7 @@ class _AssistantCard extends StatelessWidget {
                 ConsultationUiConfig.startNow,
                 style: textTheme.labelLarge?.copyWith(
                   fontWeight: FontWeight.w700,
-                  fontSize: responsive.sp(context, 14),
+                  fontSize: 14.sp,
                   color: Colors.white,
                 ),
               ),
@@ -416,9 +412,8 @@ class _SearchField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final responsive = sl<ResponsiveConfigService>();
     return SizedBox(
-      height: responsive.h(context, 44.565),
+      height: 44.565.h,
       child: TextField(
         onChanged: onChanged,
         decoration: InputDecoration(
@@ -426,34 +421,34 @@ class _SearchField extends StatelessWidget {
           hintStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
             color: const Color(0xFF9E9E9E),
             fontWeight: FontWeight.w500,
-            fontSize: responsive.sp(context, 14),
+            fontSize: 14.sp,
           ),
           suffixIcon: Padding(
-            padding: EdgeInsets.all(responsive.r(context, 12)),
+            padding: EdgeInsets.all(12.r),
             child: SvgPicture.asset(
               ConsultationUiConfig.searchIconAsset,
-              width: responsive.w(context, 18.6),
-              height: responsive.h(context, 18.6),
+              width: 18.6.w,
+              height: 18.6.h,
             ),
           ),
           contentPadding: EdgeInsets.symmetric(
-            horizontal: responsive.w(context, 11),
-            vertical: responsive.h(context, 12),
+            horizontal: 11.w,
+            vertical: 12.h,
           ),
           border: OutlineInputBorder(
             borderSide: const BorderSide(color: Color(0xFF9BA6A7), width: 0.3),
-            borderRadius: BorderRadius.circular(responsive.r(context, 12)),
+            borderRadius: BorderRadius.circular(12.r),
           ),
           enabledBorder: OutlineInputBorder(
             borderSide: const BorderSide(color: Color(0xFF9BA6A7), width: 0.3),
-            borderRadius: BorderRadius.circular(responsive.r(context, 12)),
+            borderRadius: BorderRadius.circular(12.r),
           ),
           focusedBorder: OutlineInputBorder(
             borderSide: const BorderSide(
               color: ConsultationUiConfig.ctaColor,
               width: 1,
             ),
-            borderRadius: BorderRadius.circular(responsive.r(context, 12)),
+            borderRadius: BorderRadius.circular(12.r),
           ),
         ),
       ),

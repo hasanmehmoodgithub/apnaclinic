@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import '../../../../../core/extensions/screen_util_extensions.dart';
 
 class OnboardingHeader extends StatelessWidget {
   const OnboardingHeader({
@@ -16,29 +17,29 @@ class OnboardingHeader extends StatelessWidget {
     return Stack(
       children: [
         Positioned(
-          top: 58 * scale,
-          right: 26 * scale,
+          top: 58.h * scale,
+          right: 26.w * scale,
           child: TextButton(
             onPressed: onSkip,
             style: TextButton.styleFrom(
               foregroundColor: Colors.black,
               textStyle: TextStyle(
-                fontSize: 20 * scale,
+                fontSize: 20.sp * scale,
                 fontWeight: FontWeight.w400,
               ),
               padding: EdgeInsets.zero,
-              minimumSize: Size(37 * scale, 20 * scale),
+              minimumSize: Size(37.w * scale, 20.h * scale),
               tapTargetSize: MaterialTapTargetSize.shrinkWrap,
             ),
             child: const Text('Skip'),
           ),
         ),
         Positioned(
-          left: 103.71 * scale,
-          top: 119.84 * scale,
+          left: 103.71.w * scale,
+          top: 119.84.h * scale,
           child: SvgPicture.asset(
             'assets/svg/brand_apna_clinic.svg',
-            width: 222.58 * scale,
+            width: 222.58.w * scale,
           ),
         ),
       ],

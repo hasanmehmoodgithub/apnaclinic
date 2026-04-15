@@ -2,6 +2,7 @@ import 'package:apnaclinic/core/di/dependency_injection.dart';
 import 'package:apnaclinic/components/shimmer/app_shimmer.dart';
 import 'package:apnaclinic/components/widgets/app_button.dart';
 import 'package:apnaclinic/core/extensions/context_extensions.dart';
+import 'package:apnaclinic/core/extensions/screen_util_extensions.dart';
 import 'package:apnaclinic/generated/assets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -17,9 +18,7 @@ class FreeDoctorScreen extends StatelessWidget {
 
   static const String _watermarkAsset = Assets.imgPartner;
   static const Color _titleNavy = Color(0xFF0B2239);
-  static const Color _bodyText = Color(0xFF374151);
   static const Color _primaryTeal = Color(0xFF0FAA9A);
-  static const Color _iconTileBg = Color(0xFFE8F5F3);
   static const double _cardOverlap = 72;
   static const double _cardTopRadius = 32;
   static const double _topBannerFraction = 0.35;
@@ -67,7 +66,7 @@ class FreeDoctorScreen extends StatelessWidget {
                 ),
                 SafeArea(
                   top: false,
-                  minimum: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+                  minimum: EdgeInsets.fromLTRB(20.w, 0, 20.w, 0),
                   child: AppButton.primary(
                     text: 'Open Fikrfree app',
                     isLoading: state.isOpeningApp,
@@ -85,8 +84,8 @@ class FreeDoctorScreen extends StatelessWidget {
                       }
                     },
                     width: double.infinity,
-                    height: 52,
-                    borderRadius: 14,
+                    height: 52.h,
+                    borderRadius: 14.r,
                     elevation: 0,
                     backgroundColor: FreeDoctorScreen._primaryTeal,
                     foregroundColor: Colors.white,
@@ -129,7 +128,7 @@ class _FreeDoctorTopHeader extends StatelessWidget {
         child: Column(
           children: [
             SizedBox(
-              height: 50,
+              height: 50.h,
               child: Stack(
                 alignment: Alignment.center,
                 children: [
@@ -143,7 +142,7 @@ class _FreeDoctorTopHeader extends StatelessWidget {
                             icon: const Icon(Icons.arrow_back_rounded),
                             color: FreeDoctorScreen._titleNavy,
                           )
-                        : const SizedBox(width: 48),
+                        : SizedBox(width: 48.w),
                   ),
                   Text(
                     'Free Doctor',
@@ -164,7 +163,7 @@ class _FreeDoctorTopHeader extends StatelessWidget {
                   child: Image.asset(
                     Assets.imgHeroFamily,
                     fit: BoxFit.fitWidth,
-                    width: context.screenWidth - 80,
+                      width: context.screenWidth - 80.w,
                     alignment: Alignment.topCenter,
                   ),
                 ),
@@ -204,8 +203,8 @@ class _ConsultationInfoCard extends StatelessWidget {
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.07),
-            blurRadius: 24,
-            offset: const Offset(0, -6),
+            blurRadius: 24.r,
+            offset: Offset(0, -6.h),
           ),
         ],
       ),
@@ -220,7 +219,7 @@ class _ConsultationInfoCard extends StatelessWidget {
                     opacity: 0.08,
                     child: Image.asset(
                       FreeDoctorScreen._watermarkAsset,
-                      width: 260,
+                      width: 260.w,
                       fit: BoxFit.contain,
                     ),
                   ),
@@ -231,7 +230,7 @@ class _ConsultationInfoCard extends StatelessWidget {
               const _ConsultationInfoShimmer()
             else
               SingleChildScrollView(
-                padding: const EdgeInsets.fromLTRB(10, 28, 20, 24),
+                padding: EdgeInsets.fromLTRB(10.w, 28.h, 20.w, 24.h),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -241,9 +240,9 @@ class _ConsultationInfoCard extends StatelessWidget {
                         Image.asset(
                           Assets.iconsNurse,
                           color: Color(0xff0FAA9A),
-                          height: 16,
+                          height: 16.h,
                         ),
-                        SizedBox(width: 8.0),
+                        SizedBox(width: 8.w),
                         Expanded(
                           child: Text(
                             state.content?.title ??
@@ -257,7 +256,7 @@ class _ConsultationInfoCard extends StatelessWidget {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 15),
+                    SizedBox(height: 15.h),
                     for (int i = 0; i < points.length; i++) ...[
                       _Bullet(
                         text: points[i],
@@ -267,7 +266,7 @@ class _ConsultationInfoCard extends StatelessWidget {
                           fontWeight: FontWeight.w500,
                         ),
                       ),
-                      if (i != points.length - 1) const SizedBox(height: 12),
+                      if (i != points.length - 1) SizedBox(height: 12.h),
                     ],
                   ],
                 ),
@@ -285,29 +284,29 @@ class _ConsultationInfoShimmer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      padding: const EdgeInsets.fromLTRB(20, 28, 20, 24),
+      padding: EdgeInsets.fromLTRB(20.w, 28.h, 20.w, 24.h),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
-            children: const [
-              AppShimmerCircle(diameter: 48),
-              SizedBox(width: 14),
-              Expanded(child: AppShimmerText(height: 20, borderRadius: 8)),
+            children: [
+              AppShimmerCircle(diameter: 48.r),
+              SizedBox(width: 14.w),
+              Expanded(child: AppShimmerText(height: 20.h, borderRadius: 8.r)),
             ],
           ),
-          const SizedBox(height: 22),
-          const AppShimmerText(height: 14, borderRadius: 6),
-          const SizedBox(height: 8),
-          const AppShimmerText(height: 14, borderRadius: 6, width: 260),
-          const SizedBox(height: 18),
-          const AppShimmerText(height: 14, borderRadius: 6),
-          const SizedBox(height: 8),
-          const AppShimmerText(height: 14, borderRadius: 6, width: 240),
-          const SizedBox(height: 18),
-          const AppShimmerText(height: 14, borderRadius: 6),
-          const SizedBox(height: 8),
-          const AppShimmerText(height: 14, borderRadius: 6, width: 220),
+          SizedBox(height: 22.h),
+          AppShimmerText(height: 14.h, borderRadius: 6.r),
+          SizedBox(height: 8.h),
+          AppShimmerText(height: 14.h, borderRadius: 6.r, width: 260.w),
+          SizedBox(height: 18.h),
+          AppShimmerText(height: 14.h, borderRadius: 6.r),
+          SizedBox(height: 8.h),
+          AppShimmerText(height: 14.h, borderRadius: 6.r, width: 240.w),
+          SizedBox(height: 18.h),
+          AppShimmerText(height: 14.h, borderRadius: 6.r),
+          SizedBox(height: 8.h),
+          AppShimmerText(height: 14.h, borderRadius: 6.r, width: 220.w),
         ],
       ),
     );
@@ -326,17 +325,17 @@ class _Bullet extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.only(top: 7),
+          padding: EdgeInsets.only(top: 7.h),
           child: Container(
-            width: 5,
-            height: 5,
+            width: 5.r,
+            height: 5.r,
             decoration: const BoxDecoration(
               color: Color(0xFF111827),
               shape: BoxShape.circle,
             ),
           ),
         ),
-        const SizedBox(width: 12),
+        SizedBox(width: 12.w),
         Expanded(child: Text(text, style: style)),
       ],
     );

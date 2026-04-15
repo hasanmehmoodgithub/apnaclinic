@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/di/dependency_injection.dart';
+import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/preference/app_pref.dart';
 import '../../../../core/router/app_routes.dart';
 
@@ -39,7 +40,7 @@ class ProfileScreen extends StatelessWidget {
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.fromLTRB(8, 6, 16, 6),
+              padding: EdgeInsets.fromLTRB(8.w, 6.h, 16.w, 6.h),
               child: Row(
                 children: [
                   showBackButton
@@ -51,7 +52,7 @@ class ProfileScreen extends StatelessWidget {
                             color: Color(0xFF061E40),
                           ),
                         )
-                      : const SizedBox(width: 48),
+                      : SizedBox(width: 48.w),
                   Expanded(
                     child: Text(
                       'Profile',
@@ -59,11 +60,11 @@ class ProfileScreen extends StatelessWidget {
                       style: theme.textTheme.titleLarge?.copyWith(
                         color: const Color(0xFF061E40),
                         fontWeight: FontWeight.w700,
-                        fontSize: 20,
+                        fontSize: 20.sp,
                       ),
                     ),
                   ),
-                  const SizedBox(width: 48),
+                  SizedBox(width: 48.w),
                 ],
               ),
             ),
@@ -73,35 +74,35 @@ class ProfileScreen extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Container(
-                    width: 126,
-                    height: 126,
+                    width: 126.r,
+                    height: 126.r,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      border: Border.all(color: Colors.white, width: 3),
+                      border: Border.all(color: Colors.white, width: 3.r),
                     ),
-                    child: const DecoratedBox(
+                    child: DecoratedBox(
                       decoration: BoxDecoration(
                         color: Colors.white,
                         shape: BoxShape.circle,
                       ),
                       child: Icon(
                         Icons.person_rounded,
-                        size: 68,
+                        size: 68.r,
                         color: Colors.grey
                       ),
                     ),
                   ),
                   Container(
-                    margin: const EdgeInsets.only(top: 4),
-                    width: 122,
-                    height: 10,
+                    margin: EdgeInsets.only(top: 4.h),
+                    width: 122.w,
+                    height: 10.h,
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(99),
-                      boxShadow: const [
+                      borderRadius: BorderRadius.circular(99.r),
+                      boxShadow: [
                         BoxShadow(
                           color: Color.fromRGBO(79, 109, 138, 0.35),
-                          blurRadius: 10,
-                          spreadRadius: 1,
+                          blurRadius: 10.r,
+                          spreadRadius: 1.r,
                         ),
                       ],
                     ),
@@ -112,16 +113,16 @@ class ProfileScreen extends StatelessWidget {
             Expanded(
               child: Container(
                 width: double.infinity,
-                decoration: const BoxDecoration(
+                decoration: BoxDecoration(
                   color: Color(0xFFF4F6F8),
                   borderRadius:
-                      BorderRadius.vertical(top: Radius.circular(42)),
+                      BorderRadius.vertical(top: Radius.circular(42.r)),
                 ),
                 child: isLoggedIn
                     ? ListView(
-                        padding: const EdgeInsets.fromLTRB(18, 26, 18, 24),
+                        padding: EdgeInsets.fromLTRB(18.w, 26.h, 18.w, 24.h),
                         children: [
-                          const SizedBox(height: 28),
+                          SizedBox(height: 28.h),
                           Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -135,17 +136,17 @@ class ProfileScreen extends StatelessWidget {
                                           ?.copyWith(
                                         color: const Color(0xFF1A2A4A),
                                         fontWeight: FontWeight.w500,
-                                        fontSize: 38 / 1.6,
+                                        fontSize: (38 / 1.6).sp,
                                         height: 1,
                                       ),
                                     ),
-                                    const SizedBox(height: 2),
+                                    SizedBox(height: 2.h),
                                     Text(
                                       phone.isEmpty ? '--' : phone,
                                       style:
                                           theme.textTheme.bodyMedium?.copyWith(
                                         color: const Color(0xFF7A8594),
-                                        fontSize: 16,
+                                        fontSize: 16.sp,
                                         height: 1,
                                       ),
                                     ),
@@ -154,15 +155,14 @@ class ProfileScreen extends StatelessWidget {
                               ),
                               InkWell(
                                 onTap: () {},
-                                borderRadius: BorderRadius.circular(18),
+                                borderRadius: BorderRadius.circular(18.r),
                                 child: Padding(
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 2),
+                                  padding: EdgeInsets.symmetric(vertical: 2.h),
                                   child: Row(
                                     children: [
                                       Container(
-                                        width: 16,
-                                        height: 16,
+                                        width: 16.r,
+                                        height: 16.r,
                                         decoration: BoxDecoration(
                                           shape: BoxShape.circle,
                                           color: const Color(0xFFE4E7EB),
@@ -170,19 +170,19 @@ class ProfileScreen extends StatelessWidget {
                                             color: const Color(0xFFC2C9D2),
                                           ),
                                         ),
-                                        child: const Icon(
+                                        child: Icon(
                                           Icons.edit_rounded,
-                                          size: 10,
+                                          size: 10.r,
                                           color: Color(0xFF7B8794),
                                         ),
                                       ),
-                                      const SizedBox(width: 6),
+                                      SizedBox(width: 6.w),
                                       Text(
                                         'Edit',
                                         style: theme.textTheme.bodyMedium
                                             ?.copyWith(
                                           color: const Color(0xFF3D4C63),
-                                          fontSize: 22 / 1.6,
+                                          fontSize: (22 / 1.6).sp,
                                         ),
                                       ),
                                     ],
@@ -191,31 +191,31 @@ class ProfileScreen extends StatelessWidget {
                               ),
                             ],
                           ),
-                          const SizedBox(height: 12),
+                          SizedBox(height: 12.h),
                           _InfoTilesRow(
                             gender: gender.isEmpty ? '--' : gender,
                             dob: dobLabel.isEmpty ? '--' : dobLabel,
                             email: email.isEmpty ? '--' : email,
                           ),
-                          const SizedBox(height: 14),
+                          SizedBox(height: 14.h),
                           Text(
                             'Account Details',
                             style: theme.textTheme.titleMedium?.copyWith(
                               color: const Color(0xFF2D2D2D),
                               fontWeight: FontWeight.w500,
-                              fontSize: 16 / 1.05,
+                              fontSize: (16 / 1.05).sp,
                             ),
                           ),
-                          const SizedBox(height: 8),
+                          SizedBox(height: 8.h),
                           Container(
-                            height: 56,
-                            padding: const EdgeInsets.symmetric(horizontal: 12),
+                            height: 56.h,
+                            padding: EdgeInsets.symmetric(horizontal: 12.w),
                             decoration: BoxDecoration(
                               color: const Color(0xFFF3F3F3),
-                              borderRadius: BorderRadius.circular(6),
+                              borderRadius: BorderRadius.circular(6.r),
                               border: Border.all(
                                 color: const Color(0xFFD4D9E1),
-                                width: 0.6,
+                                width: 0.6.r,
                               ),
                             ),
                             child: Row(
@@ -229,8 +229,8 @@ class ProfileScreen extends StatelessWidget {
                                 ),
                                 const Spacer(),
                                 Container(
-                                  width: 40,
-                                  height: 40,
+                                  width: 40.r,
+                                  height: 40.r,
                                   decoration: BoxDecoration(
                                     shape: BoxShape.circle,
                                     border: Border.all(
@@ -250,19 +250,19 @@ class ProfileScreen extends StatelessWidget {
                     : Column(
                       children: [
                         Padding(
-                            padding: const EdgeInsets.fromLTRB(16, 18, 16, 0),
+                            padding: EdgeInsets.fromLTRB(16.w, 18.h, 16.w, 0),
                             child: Container(
-                              height: 100,
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 8,
-                                vertical: 10,
+                              height: 100.h,
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 8.w,
+                                vertical: 10.h,
                               ),
 
                               child: Row(
                                 children: [
                                   Container(
-                                    width: 44,
-                                    height: 44,
+                                    width: 44.r,
+                                    height: 44.r,
                                     decoration: const BoxDecoration(
                                       color: Color(0xFFDDE5EF),
                                       shape: BoxShape.circle,
@@ -272,14 +272,14 @@ class ProfileScreen extends StatelessWidget {
                                       color: Color(0xFF6B7280),
                                     ),
                                   ),
-                                  const SizedBox(width: 10),
+                                  SizedBox(width: 10.w),
                                   Expanded(
                                     child: Text(
                                       'Guest User',
                                       style: theme.textTheme.headlineSmall?.copyWith(
                                         color: const Color(0xFF1A2A4A),
                                         fontWeight: FontWeight.w500,
-                                        fontSize: 16,
+                                        fontSize: 16.sp,
                                       ),
                                     ),
                                   ),
@@ -288,15 +288,15 @@ class ProfileScreen extends StatelessWidget {
                                       AppRoutes.path(AppRoutes.authLogin),
                                     ),
                                     style: OutlinedButton.styleFrom(
-                                      minimumSize: const Size(0, 40),
+                                      minimumSize: Size(0, 40.h),
                                       side: const BorderSide(
                                         color: Color(0xFF8C949C),
                                       ),
                                       shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(22),
+                                        borderRadius: BorderRadius.circular(22.r),
                                       ),
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 18,
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: 18.w,
                                       ),
                                     ),
                                     child: Text(
@@ -304,7 +304,7 @@ class ProfileScreen extends StatelessWidget {
                                       style: theme.textTheme.titleMedium?.copyWith(
                                         color: const Color(0xFF3A4557),
                                         fontWeight: FontWeight.w500,
-                                        fontSize: 14,
+                                        fontSize: 14.sp,
                                       ),
                                     ),
                                   ),
@@ -341,11 +341,11 @@ class _InfoTilesRow extends StatelessWidget {
         Expanded(
           child: _InfoTile(title: 'Gender', value: gender),
         ),
-        SizedBox(width: 6),
+        SizedBox(width: 6.w),
         Expanded(
           child: _InfoTile(title: 'Date of Birth', value: dob),
         ),
-        SizedBox(width: 6),
+        SizedBox(width: 6.w),
         Expanded(
           child: _InfoTile(title: 'Email', value: email),
         ),
@@ -382,11 +382,11 @@ class _InfoTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Container(
-      constraints: const BoxConstraints(minHeight: 52),
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+      constraints: BoxConstraints(minHeight: 52.h),
+      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 8.h),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(4),
-        border: Border.all(color: const Color(0xFFC9CFD7), width: 0.8),
+        borderRadius: BorderRadius.circular(4.r),
+        border: Border.all(color: const Color(0xFFC9CFD7), width: 0.8.r),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -398,10 +398,10 @@ class _InfoTile extends StatelessWidget {
             overflow: TextOverflow.ellipsis,
             style: theme.textTheme.bodySmall?.copyWith(
               color: const Color(0xFF7A91AE),
-              fontSize: 12 / 1.05,
+              fontSize: (12 / 1.05).sp,
             ),
           ),
-          const SizedBox(height: 3),
+          SizedBox(height: 3.h),
           Text(
             value,
             maxLines: 1,
@@ -409,7 +409,7 @@ class _InfoTile extends StatelessWidget {
             style: theme.textTheme.titleMedium?.copyWith(
               color: const Color(0xFF2B2C58),
               fontWeight: FontWeight.w500,
-              fontSize: 26 / 1.6,
+              fontSize: (26 / 1.6).sp,
               height: 1,
             ),
           ),

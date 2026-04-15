@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../core/extensions/screen_util_extensions.dart';
 
 /// Section title + mint card promoting FikrFree (insurance / health).
 class FikrfreeHealthBanner extends StatelessWidget {
@@ -22,26 +23,26 @@ class FikrfreeHealthBanner extends StatelessWidget {
             color: const Color(0xFF111827),
           ),
         ),
-        const SizedBox(height: 12),
+        SizedBox(height: 12.h),
         DecoratedBox(
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(12.r),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withValues(alpha: 0.06),
-                blurRadius: 12,
-                offset: const Offset(0, 4),
+                blurRadius: 12.r,
+                offset: Offset(0, 4.h),
               ),
             ],
           ),
           child: Material(
             color: const Color(0xFFEAF6F1),
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(16.r),
             clipBehavior: Clip.antiAlias,
             child: InkWell(
               onTap: onTap,
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(16, 14, 12, 14),
+                padding: EdgeInsets.fromLTRB(16.w, 14.h, 12.w, 14.h),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -57,7 +58,7 @@ class FikrfreeHealthBanner extends StatelessWidget {
                               letterSpacing: -0.2,
                             ),
                           ),
-                          const SizedBox(height: 6),
+                          SizedBox(height: 6.h),
                           Text(
                             'Sehat aur insurance ab apke hath mei!',
                             style: theme.textTheme.bodySmall?.copyWith(
@@ -68,10 +69,10 @@ class FikrfreeHealthBanner extends StatelessWidget {
                         ],
                       ),
                     ),
-                    const SizedBox(width: 12),
+                    SizedBox(width: 12.w),
                     SizedBox(
-                      width: 102,
-                      height: 86,
+                      width: 102.w,
+                      height: 86.h,
                       child: Stack(
                         clipBehavior: Clip.none,
                         children: [
@@ -81,7 +82,7 @@ class FikrfreeHealthBanner extends StatelessWidget {
                             child: Icon(
                               Icons.chevron_right_rounded,
                               color: const Color(0xFF0D9488),
-                              size: 26,
+                              size: 26.r,
                             ),
                           ),
                           Positioned(
@@ -89,7 +90,7 @@ class FikrfreeHealthBanner extends StatelessWidget {
                             bottom: 0,
                             child: Image.asset(
                               _logoAsset,
-                              height:45,
+                              height: 45.h,
                               fit: BoxFit.contain,
                             ),
                           ),

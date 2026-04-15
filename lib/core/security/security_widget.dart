@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import '../extensions/screen_util_extensions.dart';
 import 'security_service.dart';
 
 /// Widget that blocks app access if device is compromised
@@ -111,68 +112,68 @@ class _SecurityGateState extends State<SecurityGate> {
         backgroundColor: Colors.red.shade50,
         body: Center(
           child: Padding(
-            padding: const EdgeInsets.all(24.0),
+            padding: EdgeInsets.all(24.r),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Icon(
+                Icon(
                   Icons.security,
-                  size: 80,
+                  size: 80.r,
                   color: Colors.red,
                 ),
-                const SizedBox(height: 32),
-                const Text(
+                SizedBox(height: 32.h),
+                Text(
                   'Access Denied',
                   style: TextStyle(
-                    fontSize: 28,
+                    fontSize: 28.sp,
                     fontWeight: FontWeight.bold,
                     color: Colors.red,
                   ),
                 ),
-                const SizedBox(height: 24),
+                SizedBox(height: 24.h),
                 Text(
                   _securityMessage ??
                       'Your device does not meet security requirements.',
                   textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    fontSize: 16,
+                  style: TextStyle(
+                    fontSize: 16.sp,
                     color: Colors.black87,
                   ),
                 ),
-                const SizedBox(height: 40),
+                SizedBox(height: 40.h),
                 // Countdown timer
                 Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 24,
-                    vertical: 16,
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 24.w,
+                    vertical: 16.h,
                   ),
                   decoration: BoxDecoration(
                     color: Colors.red.shade100,
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Colors.red, width: 2),
+                    borderRadius: BorderRadius.circular(12.r),
+                    border: Border.all(color: Colors.red, width: 2.r),
                   ),
                   child: Column(
                     children: [
-                      const Text(
+                      Text(
                         'Application will close in:',
                         style: TextStyle(
-                          fontSize: 14,
+                          fontSize: 14.sp,
                           color: Colors.black87,
                         ),
                       ),
-                      const SizedBox(height: 8),
+                      SizedBox(height: 8.h),
                       Text(
                         '$_countdown',
                         style: TextStyle(
-                          fontSize: 48,
+                          fontSize: 48.sp,
                           fontWeight: FontWeight.bold,
                           color: Colors.red.shade700,
                         ),
                       ),
-                      const Text(
+                      Text(
                         'seconds',
                         style: TextStyle(
-                          fontSize: 14,
+                          fontSize: 14.sp,
                           color: Colors.black87,
                         ),
                       ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../../core/extensions/screen_util_extensions.dart';
 
 import 'onboarding_page_data.dart';
 
@@ -28,18 +29,18 @@ class OnboardingPageView extends StatelessWidget {
       itemBuilder: (context, index) => Column(
         children: [
           SizedBox(
-            height: 395 * scale,
+            height: 395.h * scale,
             child: Stack(
               alignment: Alignment.topCenter,
               children: [
                 Positioned(
-                  top: 10 * scale,
+                  top: 10.h * scale,
                   child: Container(
-                    width: 360 * scale,
-                    height: 324 * scale,
+                    width: 360.w * scale,
+                    height: 324.h * scale,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      border: Border.all(color: _mint, width: 30 * scale),
+                      border: Border.all(color: _mint, width: 30.r * scale),
                     ),
                   ),
                 ),
@@ -50,28 +51,28 @@ class OnboardingPageView extends StatelessWidget {
                   child: Image.asset(
                     pages[index].imageAsset,
                     fit: BoxFit.contain,
-                    height: 395 * scale,
+                    height: 395.h * scale,
                   ),
                 ),
               ],
             ),
           ),
-          SizedBox(height: 64 * scale),
+          SizedBox(height: 64.h * scale),
           Text(
             pages[index].title,
             textAlign: TextAlign.center,
             style: TextStyle(
-              fontSize: 36 * scale,
+              fontSize: 36.sp * scale,
               fontWeight: FontWeight.w700,
               color: Colors.black,
             ),
           ),
-          SizedBox(height: 22 * scale),
+          SizedBox(height: 22.h * scale),
           Text(
             pages[index].subtitle,
             textAlign: TextAlign.center,
             style: TextStyle(
-              fontSize: 18 * scale,
+              fontSize: 18.sp * scale,
               fontWeight: FontWeight.w400,
               color: _subtitle,
             ),

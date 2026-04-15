@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/di/dependency_injection.dart';
+import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/preference/app_pref.dart';
 import '../../../../core/router/app_routes.dart';
 
@@ -38,7 +39,7 @@ class MenuScreen extends StatelessWidget {
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.fromLTRB(6, 6, 16, 12),
+              padding: EdgeInsets.fromLTRB(6.w, 6.h, 16.w, 12.h),
               child: Row(
                 children: [
                   IconButton(
@@ -55,26 +56,26 @@ class MenuScreen extends StatelessWidget {
                       style: theme.textTheme.titleLarge?.copyWith(
                         color: const Color(0xFF0E2D55),
                         fontWeight: FontWeight.w700,
-                        fontSize: 32 / 1.6,
+                        fontSize: (32 / 1.6).sp,
                       ),
                     ),
                   ),
-                  const SizedBox(width: 44),
+                  SizedBox(width: 44.w),
                 ],
               ),
             ),
             Expanded(
               child: Container(
                 width: double.infinity,
-                decoration: const BoxDecoration(
+                decoration: BoxDecoration(
                   color: Color(0xFFF4F6F8),
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(42)),
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(42.r)),
                 ),
                 child: Column(
                   children: [
                     Expanded(
                       child: ListView(
-                        padding: const EdgeInsets.fromLTRB(22, 22, 22, 18),
+                        padding: EdgeInsets.fromLTRB(22.w, 22.h, 22.w, 18.h),
                         children: [
                           _ProfileCard(
                             theme: theme,
@@ -91,17 +92,17 @@ class MenuScreen extends StatelessWidget {
                               // TODO: wire Edit Profile screen when available.
                             },
                           ),
-                          const SizedBox(height: 14),
+                          SizedBox(height: 14.h),
                           for (final item in _mainItems) ...[
                             _MenuTile(item: item, theme: theme, onTap: () {}),
-                            const SizedBox(height: 14),
+                            SizedBox(height: 14.h),
                           ],
                           _AboutCard(theme: theme, items: _aboutItems),
                         ],
                       ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.fromLTRB(29, 0, 29, 11),
+                      padding: EdgeInsets.fromLTRB(29.w, 0, 29.w, 11.h),
                       child: SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
@@ -128,9 +129,9 @@ class MenuScreen extends StatelessWidget {
                             backgroundColor: const Color(0xFF40AFA2),
                             foregroundColor: Colors.white,
                             elevation: 0,
-                            minimumSize: const Size.fromHeight(62),
+                            minimumSize: Size.fromHeight(62.h),
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(13),
+                              borderRadius: BorderRadius.circular(13.r),
                             ),
                           ),
                           child: Text(
@@ -138,7 +139,7 @@ class MenuScreen extends StatelessWidget {
                             style: theme.textTheme.titleMedium?.copyWith(
                               fontWeight: FontWeight.w700,
                               color: Colors.white,
-                              fontSize: 18,
+                              fontSize: 18.sp,
                             ),
                           ),
                         ),
@@ -173,13 +174,13 @@ class _ProfileCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ClipRRect(
-      borderRadius: BorderRadius.circular(16),
+      borderRadius: BorderRadius.circular(16.r),
       child: SizedBox(
-        height: 96,
+        height: 96.h,
         child: LayoutBuilder(
           builder: (context, constraints) {
             final curveWidth = constraints.maxWidth * 0.7606;
-            final curveHeight = 281.37;
+            final curveHeight = 281.37.h;
             final curveLeft = constraints.maxWidth * 0.6493;
 
             return Stack(
@@ -189,7 +190,7 @@ class _ProfileCard extends StatelessWidget {
                 ),
                 Positioned(
                   left: curveLeft,
-                  top: -28.78,
+                  top: -28.78.h,
                   child: IgnorePointer(
                     child: Container(
                       width: curveWidth,
@@ -202,12 +203,12 @@ class _ProfileCard extends StatelessWidget {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(28, 25, 16, 24),
+                  padding: EdgeInsets.fromLTRB(28.w, 25.h, 16.w, 24.h),
                   child: Row(
                     children: [
                       Container(
-                        width: 46.08,
-                        height: 46.08,
+                        width: 46.08.r,
+                        height: 46.08.r,
                         decoration: const BoxDecoration(
                           shape: BoxShape.circle,
                           color: Color(0xFFD1DDFE),
@@ -219,7 +220,7 @@ class _ProfileCard extends StatelessWidget {
                               : const Color(0xFF6B7280),
                         ),
                       ),
-                      const SizedBox(width: 7),
+                      SizedBox(width: 7.w),
                       Expanded(
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
@@ -233,11 +234,11 @@ class _ProfileCard extends StatelessWidget {
                               style: theme.textTheme.titleMedium?.copyWith(
                                 color: const Color(0xFF0E2D55),
                                 fontWeight: FontWeight.w500,
-                                fontSize: 20,
+                                fontSize: 20.sp,
                                 height: 1,
                               ),
                             ),
-                            const SizedBox(height: 7),
+                            SizedBox(height: 7.h),
                             Text(
                               phone,
                               maxLines: 1,
@@ -245,14 +246,14 @@ class _ProfileCard extends StatelessWidget {
                               style: theme.textTheme.bodyMedium?.copyWith(
                                 color: const Color(0xFF4A4A4A),
                                 fontWeight: FontWeight.w400,
-                                fontSize: 14,
+                                fontSize: 14.sp,
                                 height: 1,
                               ),
                             ),
                           ],
                         ),
                       ),
-                      const SizedBox(width: 8),
+                      SizedBox(width: 8.w),
                       OutlinedButton(
                         onPressed: onActionTap,
                         style: OutlinedButton.styleFrom(
@@ -261,13 +262,13 @@ class _ProfileCard extends StatelessWidget {
                             width: 0.8,
                           ),
                           foregroundColor: const Color(0xFF0E2D55),
-                          minimumSize: const Size(72, 24),
+                          minimumSize: Size(72.w, 24.h),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
+                            borderRadius: BorderRadius.circular(20.r),
                           ),
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 10.5,
-                            vertical: 9,
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 10.5.w,
+                            vertical: 9.h,
                           ),
                           backgroundColor: Colors.transparent,
                         ),
@@ -275,7 +276,7 @@ class _ProfileCard extends StatelessWidget {
                           isLoggedIn ? 'Edit Profile' : 'Login / Signup',
                           style: theme.textTheme.labelLarge?.copyWith(
                             fontWeight: FontWeight.w500,
-                            fontSize: 9,
+                            fontSize: 9.sp,
                             color: const Color(0xFF0E2D55),
                           ),
                         ),
@@ -306,13 +307,13 @@ class _MenuTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ClipRRect(
-      borderRadius: BorderRadius.circular(14),
+      borderRadius: BorderRadius.circular(14.r),
       child: SizedBox(
-        height: 96,
+        height: 96.h,
         child: LayoutBuilder(
           builder: (context, constraints) {
             final curveWidth = constraints.maxWidth * 0.7606; // Figma ratio
-            final curveHeight = 281.37;
+            final curveHeight = 281.37.h;
             final curveLeft = constraints.maxWidth * 0.6493; // Figma ratio
 
             return Stack(
@@ -322,7 +323,7 @@ class _MenuTile extends StatelessWidget {
                 ),
                 Positioned(
                   left: curveLeft,
-                  top: -28.78,
+                  top: -28.78.h,
                   child: IgnorePointer(
                     child: Container(
                       width: curveWidth,
@@ -335,53 +336,53 @@ class _MenuTile extends StatelessWidget {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(28, 25, 28, 25),
+                  padding: EdgeInsets.fromLTRB(28.w, 25.h, 28.w, 25.h),
                   child: Row(
                     children: [
                       Container(
-                        width: 46.07,
-                        height: 46.14,
+                        width: 46.07.r,
+                        height: 46.14.r,
                         decoration: BoxDecoration(
                           color: Colors.white,
                           shape: BoxShape.circle,
                           border: Border.all(
                             color: Colors.black.withValues(alpha: 0.21),
-                            width: 0.33,
+                            width: 0.33.r,
                           ),
                         ),
                         child: Icon(
                           item.icon,
-                          size: 24,
+                          size: 24.r,
                           color: const Color(0xFF303D4F),
                         ),
                       ),
-                      const SizedBox(width: 7),
+                      SizedBox(width: 7.w),
                       Expanded(
                         child: Text(
                           item.title,
                           style: theme.textTheme.titleMedium?.copyWith(
                             color: const Color(0xFF111827),
                             fontWeight: FontWeight.w700,
-                            fontSize: 16,
+                            fontSize: 16.sp,
                           ),
                         ),
                       ),
                       InkWell(
                         onTap: onTap,
-                        borderRadius: BorderRadius.circular(16),
+                        borderRadius: BorderRadius.circular(16.r),
                         child: Container(
-                          width: 25.66,
-                          height: 25.33,
+                          width: 25.66.r,
+                          height: 25.33.r,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             border: Border.all(
                               color: const Color(0xFF6E7A88),
-                              width: 0.8,
+                              width: 0.8.r,
                             ),
                           ),
-                          child: const Icon(
+                          child: Icon(
                             Icons.arrow_forward_ios_rounded,
-                            size: 12,
+                            size: 12.r,
                             color: Color(0xFF6E7A88),
                           ),
                         ),
@@ -409,12 +410,12 @@ class _AboutCard extends StatelessWidget {
     return DecoratedBox(
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(3),
-        boxShadow: const [
+        borderRadius: BorderRadius.circular(3.r),
+        boxShadow: [
           BoxShadow(
             color: Color.fromRGBO(5, 52, 83, 0.12),
-            blurRadius: 64.2,
-            offset: Offset(0, 14),
+            blurRadius: 64.2.r,
+            offset: Offset(0, 14.h),
           ),
         ],
       ),
@@ -422,20 +423,20 @@ class _AboutCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.fromLTRB(24, 18.6, 24, 18.6),
+            padding: EdgeInsets.fromLTRB(24.w, 18.6.h, 24.w, 18.6.h),
             child: Text(
               'About',
               style: theme.textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.w700,
                 color: const Color(0xFF111827),
-                fontSize: 16,
+                fontSize: 16.sp,
               ),
             ),
           ),
           for (int i = 0; i < items.length; i++) ...[
             const Divider(height: 1, color: Color(0xFF9BA6A7), thickness: 0.3),
             Padding(
-              padding: const EdgeInsets.fromLTRB(24, 14, 24, 14),
+              padding: EdgeInsets.fromLTRB(24.w, 14.h, 24.w, 14.h),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -444,16 +445,16 @@ class _AboutCard extends StatelessWidget {
                     style: theme.textTheme.titleSmall?.copyWith(
                       color: const Color(0xFF111827),
                       fontWeight: FontWeight.w500,
-                      fontSize: 14,
+                      fontSize: 14.sp,
                     ),
                   ),
                   if (items[i].subtitle != null) ...[
-                    const SizedBox(height: 7),
+                    SizedBox(height: 7.h),
                     Text(
                       items[i].subtitle!,
                       style: theme.textTheme.bodySmall?.copyWith(
                         color: const Color(0xFF454545),
-                        fontSize: 12,
+                        fontSize: 12.sp,
                       ),
                     ),
                   ],

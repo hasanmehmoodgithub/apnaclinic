@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../core/extensions/screen_util_extensions.dart';
 
 import '../widgets/empty_booking_widget.dart';
 
@@ -8,7 +9,7 @@ class DoctorConsultationBookingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(2, 18, 2, 8),
+      padding: EdgeInsets.fromLTRB(2.w, 18.h, 2.w, 8.h),
       child: Column(
         children: [
           EmptyBookingWidget(

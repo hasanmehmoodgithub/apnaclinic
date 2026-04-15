@@ -3,6 +3,7 @@ import 'dart:developer' as developer;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:apnaclinic/core/constants/app_system_ui.dart';
+import 'package:apnaclinic/core/extensions/screen_util_extensions.dart';
 import 'package:apnaclinic/core/flavor/flavor_config.dart';
 
 import 'core/di/dependency_injection.dart';
@@ -58,15 +59,15 @@ void main() {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Icon(Icons.error_outline, size: 64, color: Colors.red),
-                      const SizedBox(height: 16),
-                      const Text(
+                      Icon(Icons.error_outline, size: 64.r, color: Colors.red),
+                      SizedBox(height: 16.h),
+                      Text(
                         'Initialization Error',
-                        style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                        style: TextStyle(fontSize: 24.sp, fontWeight: FontWeight.bold),
                       ),
-                      const SizedBox(height: 8),
+                      SizedBox(height: 8.h),
                       Padding(
-                        padding: const EdgeInsets.all(16.0),
+                        padding: EdgeInsets.all(16.r),
                         child: Text(
                           e.toString(),
                           textAlign: TextAlign.center,
@@ -103,15 +104,15 @@ void main() {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(Icons.error_outline, size: 64, color: Colors.red),
-                    const SizedBox(height: 16),
-                    const Text(
+                    Icon(Icons.error_outline, size: 64.r, color: Colors.red),
+                    SizedBox(height: 16.h),
+                    Text(
                       'Unhandled Error',
-                      style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                      style: TextStyle(fontSize: 24.sp, fontWeight: FontWeight.bold),
                     ),
-                    const SizedBox(height: 8),
+                    SizedBox(height: 8.h),
                     Padding(
-                      padding: const EdgeInsets.all(16.0),
+                      padding: EdgeInsets.all(16.r),
                       child: Text(
                         error.toString(),
                         textAlign: TextAlign.center,

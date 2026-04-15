@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../core/extensions/screen_util_extensions.dart';
 
 import 'doctor_consultation_bookings_screen.dart';
 import 'lab_test_bookings_screen.dart';
@@ -33,7 +34,7 @@ class BookingsDashboardScreen extends StatelessWidget {
           child: Column(
             children: [
               Padding(
-                padding: const EdgeInsets.fromLTRB(8, 6, 16, 12),
+                padding: EdgeInsets.fromLTRB(8.w, 6.h, 16.w, 12.h),
                 child: Row(
                   children: [
                     showBackButton
@@ -45,7 +46,7 @@ class BookingsDashboardScreen extends StatelessWidget {
                               color: Color(0xFF061E40),
                             ),
                           )
-                        : const SizedBox(width: 48),
+                        : SizedBox(width: 48.w),
                     Expanded(
                       child: Text(
                         'My Bookings',
@@ -53,21 +54,21 @@ class BookingsDashboardScreen extends StatelessWidget {
                         style: theme.textTheme.titleLarge?.copyWith(
                           color: const Color(0xFF061E40),
                           fontWeight: FontWeight.w700,
-                          fontSize: 20,
+                          fontSize: 20.sp,
                         ),
                       ),
                     ),
-                    const SizedBox(width: 44),
+                    SizedBox(width: 44.w),
                   ],
                 ),
               ),
               Expanded(
                 child: Container(
                   width: double.infinity,
-                  padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
-                  decoration: const BoxDecoration(
+                  padding: EdgeInsets.fromLTRB(20.w, 10.h, 20.w, 0),
+                  decoration: BoxDecoration(
                     color: Colors.white,
-                    borderRadius: BorderRadius.vertical(top: Radius.circular(42)),
+                    borderRadius: BorderRadius.vertical(top: Radius.circular(42.r)),
                   ),
                   child: Column(
                     children: [
@@ -83,20 +84,20 @@ class BookingsDashboardScreen extends StatelessWidget {
                         child: TabBar(
                           isScrollable: true,
                           tabAlignment: TabAlignment.start,
-                          labelPadding: const EdgeInsets.symmetric(horizontal: 14),
+                          labelPadding: EdgeInsets.symmetric(horizontal: 14.w),
                           indicatorSize: TabBarIndicatorSize.label,
-                          indicatorWeight: 2,
+                          indicatorWeight: 2.r,
                           indicatorColor: const Color(0xFF061E40),
                           dividerColor: Colors.transparent,
                           labelColor: const Color(0xFF061E40),
                           unselectedLabelColor: const Color(0xFF667B99),
                           labelStyle: theme.textTheme.bodyMedium?.copyWith(
-                            fontSize: 14,
+                            fontSize: 14.sp,
                             fontWeight: FontWeight.w500,
                           ),
                           unselectedLabelStyle:
                               theme.textTheme.bodyMedium?.copyWith(
-                            fontSize: 14,
+                            fontSize: 14.sp,
                             fontWeight: FontWeight.w500,
                           ),
                           tabs: [for (final tab in _tabs) Tab(text: tab)],

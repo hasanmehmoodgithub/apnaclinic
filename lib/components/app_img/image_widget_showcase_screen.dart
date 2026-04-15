@@ -1,5 +1,6 @@
 import '../../../core/constants/app_colors.dart';
 import 'package:flutter/material.dart';
+import '../../../core/extensions/screen_util_extensions.dart';
 import 'app_image_widget.dart';
 
 class ImageWidgetShowcaseScreen extends StatelessWidget {
@@ -315,12 +316,12 @@ class ImageWidgetShowcaseScreen extends StatelessWidget {
                     borderRadius: 8,
                     errorWidget: Container(
                       color: Colors.grey[200],
-                      child: const Column(
+                      child:  Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Icon(Icons.broken_image, size: 48),
-                          SizedBox(height: 8),
-                          Text('Image Error', style: TextStyle(fontSize: 12)),
+                          SizedBox(height: 8.h),
+                          Text('Image Error', style: TextStyle(fontSize: 12.sp)),
                         ],
                       ),
                     ),
@@ -411,8 +412,8 @@ class ImageWidgetShowcaseScreen extends StatelessWidget {
         children: [
           Text(
             title,
-            style: const TextStyle(
-              fontSize: 20,
+            style: TextStyle(
+              fontSize: 20.sp,
               fontWeight: FontWeight.bold,
               color: AppColors.customColorName,
             ),
@@ -430,15 +431,15 @@ class ImageWidgetShowcaseScreen extends StatelessWidget {
         Container(
           decoration: BoxDecoration(
             border: Border.all(color: Colors.grey[300]!),
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(8.r),
           ),
-          padding: const EdgeInsets.all(8),
+          padding: EdgeInsets.all(8.r),
           child: widget,
         ),
-        const SizedBox(height: 8),
+        SizedBox(height: 8.h),
         Text(
           label,
-          style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+          style: TextStyle(fontSize: 12.sp, color: Colors.grey[600]),
           textAlign: TextAlign.center,
         ),
       ],

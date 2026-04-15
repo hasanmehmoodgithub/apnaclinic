@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import '../../../../core/extensions/screen_util_extensions.dart';
 
 /// Solid teal header with rounded bottom + search row overlapping into the body.
 class SearchHeader extends StatelessWidget {
@@ -49,7 +50,7 @@ class SearchHeader extends StatelessWidget {
                   bottomRight: Radius.circular(_cornerRadius),
                 ),
               ),
-              padding: const EdgeInsets.fromLTRB(32, 18, 20, 42),
+              padding: EdgeInsets.fromLTRB(32.w, 18.h, 20.w, 42.h),
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
@@ -57,25 +58,25 @@ class SearchHeader extends StatelessWidget {
                   style: theme.textTheme.titleLarge?.copyWith(
                     color: Colors.white,
                     fontWeight: FontWeight.w500,
-                    fontSize: 42 / 1.4,
+                    fontSize: (42 / 1.4).sp,
                     letterSpacing: 0.15,
                   ),
                 ),
               ),
             ),
             Positioned(
-              left: 24,
-              right: 24,
-              bottom: -_overlap,
+              left: 24.w,
+              right: 24.w,
+              bottom: -_overlap.h,
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Expanded(
                     child: Container(
-                      height: _searchHeight,
+                      height: _searchHeight.h,
                       decoration: BoxDecoration(
                         color: _fieldBg,
-                        borderRadius: BorderRadius.circular(10),
+                        borderRadius: BorderRadius.circular(10.r),
                       ),
                       alignment: Alignment.center,
                       child: TextField(
@@ -90,23 +91,23 @@ class SearchHeader extends StatelessWidget {
                           hintStyle: theme.textTheme.bodyMedium?.copyWith(
                             color: _hintText,
                             fontWeight: FontWeight.w500,
-                            fontSize: 34 / 2.4,
+                            fontSize: (34 / 2.4).sp,
                           ),
                           border: InputBorder.none,
-                          contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 20,
-                            vertical: 14,
+                          contentPadding: EdgeInsets.symmetric(
+                            horizontal: 20.w,
+                            vertical: 14.h,
                           ),
                           suffixIcon: Material(
                             color: Colors.transparent,
                             child: InkWell(
                               onTap: onVoiceTap,
-                              borderRadius: BorderRadius.circular(22),
+                              borderRadius: BorderRadius.circular(22.r),
                               child: Padding(
-                                padding: const EdgeInsets.all(12),
+                                padding: EdgeInsets.all(12.r),
                                 child: SizedBox(
-                                  width: 17,
-                                  height: 23,
+                                  width: 17.w,
+                                  height: 23.h,
                                   child: SvgPicture.asset(_micAsset),
                                 ),
                               ),
@@ -116,26 +117,26 @@ class SearchHeader extends StatelessWidget {
                       ),
                     ),
                   ),
-                  const SizedBox(width: 6),
+                  SizedBox(width: 6.w),
                   Container(
-                    width: _searchHeight,
-                    height: _searchHeight,
+                    width: _searchHeight.r,
+                    height: _searchHeight.r,
                     decoration: BoxDecoration(
                       color: _fieldBg,
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(12.r),
                     ),
                     child: Material(
                       color: Colors.transparent,
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(12.r),
                       clipBehavior: Clip.antiAlias,
                       child: InkWell(
                         onTap: onSearchButtonTap,
-                        borderRadius: BorderRadius.circular(12),
-                        child: const Center(
+                        borderRadius: BorderRadius.circular(12.r),
+                        child: Center(
                           child: Icon(
                             Icons.search_rounded,
                             color: _iconBlue,
-                            size: 34 / 1.35,
+                            size: (34 / 1.35).r,
                           ),
                         ),
                       ),
@@ -147,7 +148,7 @@ class SearchHeader extends StatelessWidget {
           ],
         ),
         // Space for the part of the search row that sits below the teal block
-        SizedBox(height: _overlap + 8),
+        SizedBox(height: (_overlap + 8).h),
       ],
     );
   }

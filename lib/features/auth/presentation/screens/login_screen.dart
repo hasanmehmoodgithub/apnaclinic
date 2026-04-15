@@ -6,6 +6,7 @@ import 'package:pinput/pinput.dart';
 
 import '../../../../components/widgets/app_button.dart';
 import '../../../../core/di/dependency_injection.dart';
+import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/router/app_routes.dart';
 import '../cubit/auth_cubit.dart';
@@ -119,7 +120,7 @@ class _LoginViewState extends State<_LoginView> {
         return AuthShell(
           onBackTap: () => _handleBackTap(state),
           child: Padding(
-            padding: const EdgeInsets.fromLTRB(30, 22, 30, 20),
+            padding: EdgeInsets.fromLTRB(30.w, 22.h, 30.w, 20.h),
             child: Form(
               key: _formKey,
               child: Column(
@@ -132,7 +133,7 @@ class _LoginViewState extends State<_LoginView> {
                       color: const Color(0xFF061E40),
                     ),
                   ),
-                  const SizedBox(height: 2),
+                  SizedBox(height: 2.h),
                   Text(
                     l10n.authLoginSubtitle,
                     style: theme.textTheme.bodySmall?.copyWith(
@@ -140,7 +141,7 @@ class _LoginViewState extends State<_LoginView> {
                       fontWeight: FontWeight.w400,
                     ),
                   ),
-                  const SizedBox(height: 12),
+                  SizedBox(height: 12.h),
                   TextFormField(
                     controller: _phoneController,
                     keyboardType: TextInputType.phone,
@@ -157,7 +158,7 @@ class _LoginViewState extends State<_LoginView> {
                         fontWeight: FontWeight.w400,
                       ),
                       prefixIcon: Padding(
-                        padding: const EdgeInsets.only(left: 16, right: 6),
+                        padding: EdgeInsets.only(left: 16.w, right: 6.w),
                         child: Text(
                           '+92',
                           style: theme.textTheme.bodyLarge?.copyWith(
@@ -173,33 +174,33 @@ class _LoginViewState extends State<_LoginView> {
                       counterText: '',
                       filled: true,
                       fillColor: Colors.white,
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 15,
+                      contentPadding: EdgeInsets.symmetric(
+                        horizontal: 12.w,
+                        vertical: 15.h,
                       ),
                       enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
+                        borderRadius: BorderRadius.circular(8.r),
                         borderSide: const BorderSide(
                           color: Color(0xFF9BA6A7),
                           width: 0.9,
                         ),
                       ),
                       focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
+                        borderRadius: BorderRadius.circular(8.r),
                         borderSide: const BorderSide(
                           color: Color(0xFF9BA6A7),
                           width: 0.9,
                         ),
                       ),
                       errorBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
+                        borderRadius: BorderRadius.circular(8.r),
                         borderSide: const BorderSide(
                           color: Color(0xFFE01F26),
                           width: 0.9,
                         ),
                       ),
                       focusedErrorBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
+                        borderRadius: BorderRadius.circular(8.r),
                         borderSide: const BorderSide(
                           color: Color(0xFFE01F26),
                           width: 0.9,
@@ -221,7 +222,7 @@ class _LoginViewState extends State<_LoginView> {
                       return null;
                     },
                   ),
-                  const SizedBox(height: 4),
+                  SizedBox(height: 4.h),
                   Text(
                     l10n.authOtpHint,
                     style: theme.textTheme.bodySmall?.copyWith(
@@ -229,7 +230,7 @@ class _LoginViewState extends State<_LoginView> {
                     ),
                   ),
                   if (!state.otpRequested && state.errorMessage != null) ...[
-                    const SizedBox(height: 6),
+                    SizedBox(height: 6.h),
                     Text(
                       state.errorMessage!,
                       style: theme.textTheme.bodySmall?.copyWith(
@@ -239,11 +240,11 @@ class _LoginViewState extends State<_LoginView> {
                     ),
                   ],
                   if (state.otpRequested) ...[
-                    const SizedBox(height: 18),
+                    SizedBox(height: 18.h),
                     Text(
                       l10n.authOtpVerificationTitle,
                       style: theme.textTheme.titleLarge?.copyWith(
-                        fontSize: 30 / 1.65,
+                        fontSize: (30 / 1.65).sp,
                         fontWeight: FontWeight.w700,
                         color: const Color(0xFF061E40),
                       ),
@@ -251,19 +252,19 @@ class _LoginViewState extends State<_LoginView> {
                     const SizedBox(height: 8),
                     LayoutBuilder(
                       builder: (context, constraints) {
-                        const itemSpacing = 10.0;
+                        final itemSpacing = 10.w;
                         final boxWidth = (constraints.maxWidth - 30) / 4.5;
                         final defaultPinTheme = PinTheme(
                           width: boxWidth,
-                          height: 68,
+                          height: 68.h,
                           textStyle: theme.textTheme.titleLarge?.copyWith(
-                            fontSize: 24,
+                            fontSize: 24.sp,
                             fontWeight: FontWeight.w700,
                             color: const Color(0xFF4A555F),
                           ),
                           decoration: BoxDecoration(
                             color: Colors.transparent,
-                            borderRadius: BorderRadius.circular(9),
+                            borderRadius: BorderRadius.circular(9.r),
                             border: Border.all(
                               color: const Color(0xFF9BA6A7),
                               width: 1,
@@ -282,7 +283,7 @@ class _LoginViewState extends State<_LoginView> {
                           defaultPinTheme: defaultPinTheme,
                           separatorBuilder: (index) => index == 3
                               ? const SizedBox.shrink()
-                              : const SizedBox(width: itemSpacing),
+                              : SizedBox(width: itemSpacing),
                           focusedPinTheme: defaultPinTheme.copyWith(
                             decoration: defaultPinTheme.decoration?.copyWith(
                               border: Border.all(
@@ -297,7 +298,7 @@ class _LoginViewState extends State<_LoginView> {
                         );
                       },
                     ),
-                    const SizedBox(height: 8),
+                    SizedBox(height: 8.h),
                     Align(
                       child: TextButton(
                         onPressed: state.canResendOtp
@@ -331,7 +332,7 @@ class _LoginViewState extends State<_LoginView> {
                       ),
                     ),
                     if (state.errorMessage != null) ...[
-                      const SizedBox(height: 6),
+                      SizedBox(height: 6.h),
                       Text(
                         state.errorMessage!,
                         style: theme.textTheme.bodySmall?.copyWith(
@@ -350,11 +351,11 @@ class _LoginViewState extends State<_LoginView> {
                     isLoading: state.isLoading,
                     backgroundColor: const Color(0xFF0FAA9A),
                     foregroundColor: Colors.white,
-                    height: 62,
-                    borderRadius: 20,
-                    fontSize: 30 / 1.65,
+                    height: 62.h,
+                    borderRadius: 20.r,
+                    fontSize: (30 / 1.65).sp,
                   ),
-                  const SizedBox(height: 20),
+                  SizedBox(height: 20.h),
                   Text.rich(
                     TextSpan(
                       children: [

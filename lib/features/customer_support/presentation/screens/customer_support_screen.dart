@@ -1,6 +1,6 @@
 import 'package:apnaclinic/core/extensions/context_extensions.dart';
+import 'package:apnaclinic/core/extensions/screen_util_extensions.dart';
 import 'package:apnaclinic/generated/assets.dart';
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -103,7 +103,7 @@ class _SupportTopHeader extends StatelessWidget {
                             icon: const Icon(Icons.arrow_back_rounded),
                             color: CustomerSupportScreen._titleNavy,
                           )
-                        : const SizedBox(width: 48),
+                        : SizedBox(width: 48.w),
                   ),
                   Text(
                     'Customer Support',
@@ -117,7 +117,7 @@ class _SupportTopHeader extends StatelessWidget {
             ),
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(0, 1, 0, 30),
+                padding: EdgeInsets.fromLTRB(0, 1.h, 0, 30.h),
                 child: Image.asset(
                   CustomerSupportScreen._heroAsset,
                   fit: BoxFit.fill,
@@ -149,15 +149,15 @@ class _SupportBodyPanel extends StatelessWidget {
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.07),
-            blurRadius: 24,
-            offset: const Offset(0, -6),
+            blurRadius: 24.r,
+            offset: Offset(0, -6.h),
           ),
         ],
       ),
       child: ClipRRect(
         borderRadius: radius,
         child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(20, 28, 20, 24),
+          padding: EdgeInsets.fromLTRB(20.w, 28.h, 20.w, 24.h),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -168,7 +168,7 @@ class _SupportBodyPanel extends StatelessWidget {
                   color: CustomerSupportScreen._headingDark,
                 ),
               ),
-              const SizedBox(height: 8),
+              SizedBox(height: 8.h),
               Text(
                 'Reach out to Apna Clinic for any support.',
                 style: theme.textTheme.bodyMedium?.copyWith(
@@ -176,7 +176,7 @@ class _SupportBodyPanel extends StatelessWidget {
                   height: 1.4,
                 ),
               ),
-              const SizedBox(height: 24),
+              SizedBox(height: 24.h),
               _ApnaSupportCard(
                 onTap: () {
                   showDialog<void>(
@@ -185,20 +185,20 @@ class _SupportBodyPanel extends StatelessWidget {
                       final theme = Theme.of(dialogContext);
                       return Dialog(
                         backgroundColor: Colors.transparent,
-                        insetPadding: const EdgeInsets.symmetric(horizontal: 18),
+                        insetPadding: EdgeInsets.symmetric(horizontal: 18.w),
                         child: Container(
                           decoration: BoxDecoration(
                             color: const Color(0xFFEFFAFE),
-                            borderRadius: BorderRadius.circular(4),
+                            borderRadius: BorderRadius.circular(4.r),
                             border: Border.all(color: const Color(0xFFD6DEE6)),
                           ),
-                          padding: const EdgeInsets.fromLTRB(16, 14, 16, 16),
+                          padding: EdgeInsets.fromLTRB(16.w, 14.h, 16.w, 16.h),
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Container(
-                                width: 62,
-                                height: 62,
+                                width: 62.r,
+                                height: 62.r,
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
                                   border: Border.all(
@@ -212,34 +212,34 @@ class _SupportBodyPanel extends StatelessWidget {
                                   ),
                                 ),
                               ),
-                              const SizedBox(height: 16),
+                              SizedBox(height: 16.h),
                               Text(
                                 'Customer Support',
                                 style: theme.textTheme.headlineSmall?.copyWith(
                                   color: const Color(0xFF0E2D55),
                                   fontWeight: FontWeight.w600,
-                                  fontSize: 20,
+                                  fontSize: 20.sp,
                                 ),
                               ),
-                              const SizedBox(height: 8),
+                              SizedBox(height: 8.h),
                               Text(
                                 'Or further support please contact us 24/7 on\n042-111-333-033.',
                                 textAlign: TextAlign.center,
                                 style: theme.textTheme.bodyLarge?.copyWith(
                                   color: const Color(0xFF6C82A2),
                                   height: 1.25,
-                                  fontSize: 13,
+                                  fontSize: 13.sp,
                                 ),
                               ),
-                              const SizedBox(height: 14),
+                              SizedBox(height: 14.h),
                               SizedBox(
                                 width: double.infinity,
-                                height: 52,
+                                height: 52.h,
                                 child: FilledButton(
                                   style: FilledButton.styleFrom(
                                     backgroundColor: const Color(0xFF40AFA2),
                                     shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(12),
+                                      borderRadius: BorderRadius.circular(12.r),
                                     ),
                                   ),
                                   onPressed: () => Navigator.of(dialogContext).pop(),
@@ -248,7 +248,7 @@ class _SupportBodyPanel extends StatelessWidget {
                                     style: theme.textTheme.titleMedium?.copyWith(
                                       color: Colors.white,
                                       fontWeight: FontWeight.w700,
-                                      fontSize: 22 / 1.6,
+                                      fontSize: (22 / 1.6).sp,
                                     ),
                                   ),
                                 ),
@@ -279,9 +279,9 @@ class _ApnaSupportCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    const radius = BorderRadius.all(Radius.circular(_radius));
+    final radius = BorderRadius.all(Radius.circular(_radius.r));
     final curveWidth = context.screenWidth * 0.7206; // Figma ratio
-    final curveHeight = 281.37;
+    final curveHeight = 281.37.h;
     final curveLeft = context.screenWidth * 0.6290;
     return Material(
       color: Colors.transparent,
@@ -296,8 +296,8 @@ class _ApnaSupportCard extends StatelessWidget {
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withValues(alpha: 0.04),
-                blurRadius: 10,
-                offset: const Offset(0, 2),
+                blurRadius: 10.r,
+                offset: Offset(0, 2.h),
               ),
             ],
           ),
@@ -309,7 +309,7 @@ class _ApnaSupportCard extends StatelessWidget {
               children: [
                 Positioned(
                   left: curveLeft,
-                  top: -48.78,
+                  top: -48.78.h,
                   child: IgnorePointer(
                     child: Container(
                       width: curveWidth,
@@ -322,16 +322,16 @@ class _ApnaSupportCard extends StatelessWidget {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 14,
-                    vertical: 12,
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 14.w,
+                    vertical: 12.h,
                   ),
                   child: Row(
                     children: [
                       Container(
-                        width: 48,
-                        height: 48,
-                        padding: const EdgeInsets.all(7),
+                        width: 48.r,
+                        height: 48.r,
+                        padding: EdgeInsets.all(7.r),
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           color: Colors.white,
@@ -342,7 +342,7 @@ class _ApnaSupportCard extends StatelessWidget {
                           fit: BoxFit.contain,
                         ),
                       ),
-                      const SizedBox(width: 12),
+                      SizedBox(width: 12.w),
                       Expanded(
                         child: Text(
                           'Apna Clinic Support',
@@ -353,8 +353,8 @@ class _ApnaSupportCard extends StatelessWidget {
                         ),
                       ),
                       SizedBox(
-                        width: 44,
-                        height: 46,
+                        width: 44.w,
+                        height: 46.h,
                         child: SvgPicture.asset(
                           CustomerSupportScreen._supportCardArrowSvg,
                           fit: BoxFit.contain,

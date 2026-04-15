@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../generated/assets.dart';
 
 class AuthShell extends StatelessWidget {
@@ -19,7 +20,7 @@ class AuthShell extends StatelessWidget {
             children: [
               Container(
                 width: double.infinity,
-                height: 60 + topInset,
+                height: 60.h + topInset,
                 // clipBehavior: Clip.antiAlias,
                 decoration: const BoxDecoration(
                   color: Colors.white,
@@ -37,21 +38,21 @@ class AuthShell extends StatelessWidget {
                       ),
                     ),
                     Positioned(
-                      top: topInset + 6,
-                      left: 12,
+                      top: topInset + 6.h,
+                      left: 12.w,
                       child: Material(
                         color: Colors.transparent,
                         child: InkWell(
-                          borderRadius: BorderRadius.circular(20),
+                          borderRadius: BorderRadius.circular(20.r),
                           onTap: onBackTap,
-                          child: const SizedBox(
-                            width: 40,
-                            height: 40,
+                          child: SizedBox(
+                            width: 40.r,
+                            height: 40.r,
                             child: Center(
                               child: Icon(
                                 Icons.arrow_back_rounded,
                                 color: Color(0xFF061E40),
-                                size: 22,
+                                size: 22.r,
                               ),
                             ),
                           ),
@@ -62,7 +63,7 @@ class AuthShell extends StatelessWidget {
                       alignment: const Alignment(0, 0.8),
                       child: SvgPicture.asset(
                         Assets.svgBrandApnaClinic,
-                        width: 230,
+                        width: 230.w,
                         fit: BoxFit.contain,
                       ),
                     ),
@@ -72,10 +73,10 @@ class AuthShell extends StatelessWidget {
               Expanded(
                 child: Container(
                   width: double.infinity,
-                  decoration: const BoxDecoration(
+                  decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.vertical(
-                      top: Radius.circular(30),
+                      top: Radius.circular(30.r),
                     ),
                   ),
                   child: child,
