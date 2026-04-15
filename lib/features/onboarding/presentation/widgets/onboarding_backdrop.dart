@@ -14,7 +14,7 @@ class OnboardingBackdrop extends StatelessWidget {
     return Stack(
       children: [
         Positioned(
-          top:-context.screenHeight/4,
+          top: -context.screenWidth/2,
           left: -context.screenWidth/2,
           right:0,
           child: SvgPicture.asset(

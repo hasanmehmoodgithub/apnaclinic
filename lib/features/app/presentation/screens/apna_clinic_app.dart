@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import '../../../../core/constants/app_system_ui.dart';
+import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/flavor/flavor_config.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/router/app_router.dart';
@@ -105,6 +106,10 @@ class _ApnaClinicAppState extends State<ApnaClinicApp> {
       title: FlavorConfig.appName,
       debugShowCheckedModeBanner: FlavorConfig.enableDebugFeatures,
       routerConfig: AppRouter.router,
+      builder: (context, child) {
+        ScreenUtilX.init(context);
+        return child ?? const SizedBox.shrink();
+      },
       theme: ThemeData(
         useMaterial3: true,
         fontFamily: 'Satoshi',

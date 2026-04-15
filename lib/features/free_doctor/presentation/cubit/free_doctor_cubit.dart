@@ -41,8 +41,24 @@ class FreeDoctorCubit extends Cubit<FreeDoctorState> {
     emit(state.copyWith(isOpeningApp: true));
     try {
       if (Platform.isAndroid) {
-        final appUri = Uri.parse('market://details?id=${content.fikrfreeAndroidPackage}');
-        if (await launchUrl(appUri, mode: LaunchMode.externalApplication)) {
+        final packageName = content.fikrfreeAndroidPackage.trim();
+        if (packageName.isNotEmpty) {
+          final directAppUri = Uri.parse('android-app://$packageName');
+          if (await launchUrl(
+            directAppUri,
+            mode: LaunchMode.externalNonBrowserApplication,
+          )) {
+            return true;
+          }
+        }
+
+        final appUri = Uri.parse(
+          'market://details?id=${content.fikrfreeAndroidPackage}',
+        );
+        if (await launchUrl(
+          appUri,
+          mode: LaunchMode.externalNonBrowserApplication,
+        )) {
           return true;
         }
       }

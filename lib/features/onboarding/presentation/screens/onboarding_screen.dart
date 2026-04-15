@@ -76,67 +76,70 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: LayoutBuilder(
-        builder: (context, constraints) {
-          final scale = math.min(
-            constraints.maxWidth / 430,
-            constraints.maxHeight / 932,
-          );
-          final canvasWidth = 430 * scale;
-          final canvasHeight = 932 * scale;
-          final left = (constraints.maxWidth - canvasWidth) / 2;
-          final top = (constraints.maxHeight - canvasHeight) / 2;
+      body: Padding(
+        padding: const EdgeInsets.all(0.0),
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final scale = math.min(
+              constraints.maxWidth / 430,
+              constraints.maxHeight / 932,
+            );
+            final canvasWidth = 430 * scale;
+            final canvasHeight = 932 * scale;
+            final left = (constraints.maxWidth - canvasWidth) / 2;
+            const top = 0.0;
 
-          return Stack(
-            children: [
-              Positioned(
-                left: left,
-                top: top,
-                width: canvasWidth,
-                height: canvasHeight,
-                child: ClipRect(
-                  child: Stack(
-                    children: [
-                      OnboardingBackdrop(scale: scale),
-                      OnboardingHeader(scale: scale, onSkip: _finishOnboarding),
-                      Positioned(
-                        left: 0,
-                        right: 0,
-                        top: 212 * scale,
-                        height: 560 * scale,
-                        child: OnboardingPageView(
-                          controller: _pageController,
-                          pages: _pages,
-                          scale: scale,
-                          onPageChanged: (value) =>
-                              setState(() => _currentIndex = value),
+            return Stack(
+              children: [
+                Positioned(
+                  left: left,
+                  top: top,
+                  width: canvasWidth,
+                  height: canvasHeight,
+                  child: ClipRect(
+                    child: Stack(
+                      children: [
+                        OnboardingBackdrop(scale: scale),
+                        OnboardingHeader(scale: scale, onSkip: _finishOnboarding),
+                        Positioned(
+                          left: 0,
+                          right: 0,
+                          top: 212 * scale,
+                          height: 560 * scale,
+                          child: OnboardingPageView(
+                            controller: _pageController,
+                            pages: _pages,
+                            scale: scale,
+                            onPageChanged: (value) =>
+                                setState(() => _currentIndex = value),
+                          ),
                         ),
-                      ),
-                      Positioned(
-                        top: 793 * scale,
-                        left: 0,
-                        right: 0,
-                        child: OnboardingPagerIndicator(
-                          count: _pages.length,
-                          activeIndex: _currentIndex,
-                          scale: scale,
+                        Positioned(
+                          top: 793 * scale,
+                          left: 0,
+                          right: 0,
+                          child: OnboardingPagerIndicator(
+                            count: _pages.length,
+                            activeIndex: _currentIndex,
+                            scale: scale,
+                          ),
                         ),
-                      ),
-                      Positioned(
-                        top: 818 * scale,
-                        left: (430 - 140.97) * 0.5 * scale,
-                        child: OnboardingNextButton(
-                          scale: scale,
-                          onTap: _onNext,
+                        Positioned(
+                          top: 818 * scale,
+                          left: (430 - 140.97) * 0.5 * scale,
+                          child: OnboardingNextButton(
+                            scale: scale,
+                            onTap: _onNext,
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            ],
-          );
-        },
+              ],
+            );
+          },
+        ),
       ),
     );
   }

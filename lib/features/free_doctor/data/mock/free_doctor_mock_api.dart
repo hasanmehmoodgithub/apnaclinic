@@ -8,7 +8,7 @@ class FreeDoctorMockApi {
         'Get 24/7 access to qualified doctors for general medical support and much more.',
         'To avail the service, subscribe to BIMA m-Health via FikrFree.',
       ],
-      'fikrfreeAndroidPackage': 'com.fikrfree.app',
+      'fikrfreeAndroidPackage': 'com.fikrfree.android',
       'fikrfreeIosAppStoreUrl':
           'https://apps.apple.com/pk/app/fikrfree/id6738691924',
       'fikrfreeWebUrl': 'https://www.fikrfree.com',

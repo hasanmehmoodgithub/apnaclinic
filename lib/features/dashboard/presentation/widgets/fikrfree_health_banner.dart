@@ -18,7 +18,7 @@ class FikrfreeHealthBanner extends StatelessWidget {
         Text(
           'Secure Your Health First',
           style: theme.textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.w800,
+            fontWeight: FontWeight.w600,
             color: const Color(0xFF111827),
           ),
         ),
@@ -51,8 +51,8 @@ class FikrfreeHealthBanner extends StatelessWidget {
                         children: [
                           Text(
                             'FikrFree',
-                            style: theme.textTheme.titleLarge?.copyWith(
-                              fontWeight: FontWeight.w800,
+                            style: theme.textTheme.titleMedium?.copyWith(
+                              fontWeight: FontWeight.w600,
                               color: const Color(0xFF111827),
                               letterSpacing: -0.2,
                             ),
@@ -60,7 +60,7 @@ class FikrfreeHealthBanner extends StatelessWidget {
                           const SizedBox(height: 6),
                           Text(
                             'Sehat aur insurance ab apke hath mei!',
-                            style: theme.textTheme.bodyMedium?.copyWith(
+                            style: theme.textTheme.bodySmall?.copyWith(
                               color: const Color(0xFF4B5563),
                               height: 1.35,
                             ),
@@ -89,7 +89,7 @@ class FikrfreeHealthBanner extends StatelessWidget {
                             bottom: 0,
                             child: Image.asset(
                               _logoAsset,
-                              height: 55,
+                              height:45,
                               fit: BoxFit.contain,
                             ),
                           ),

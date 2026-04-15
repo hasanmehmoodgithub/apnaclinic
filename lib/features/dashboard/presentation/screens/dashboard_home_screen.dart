@@ -223,8 +223,8 @@ class _DashboardHomeScreenState extends State<DashboardHomeScreen> {
                   sliver: SliverToBoxAdapter(
                     child: Text(
                       'Our Services',
-                      style: theme.textTheme.headlineSmall?.copyWith(
-                        fontWeight: FontWeight.w800,
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w600,
                         color: const Color(0xFF111827),
                       ),
                     ),
