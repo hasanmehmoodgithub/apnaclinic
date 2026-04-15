@@ -37,6 +37,8 @@ class AppUrls {
   /// Our services endpoint
   static String get ourServices => '$baseUrl/dashboard/services';
 
+  /// Free doctor screen content endpoint
+  static String get freeDoctor => '$baseUrl/dashboard/free-doctor';
 
   // ============================================
   // 3rd Party Integration Support (Full URLs)

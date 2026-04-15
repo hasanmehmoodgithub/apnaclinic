@@ -1,4 +1,5 @@
-import '../../../../core/failure/exceptions.dart';
+import 'dart:developer';
+
 import '../../../../core/functional/functional_export.dart';
 import '../../domain/entities/free_doctor_entity.dart';
 import '../../domain/repositories/free_doctor_repository.dart';
@@ -14,9 +15,12 @@ class FreeDoctorRepositoryImpl implements FreeDoctorRepository {
   Future<Either<ErrorMsg, FreeDoctorEntity>> getFreeDoctorContent() async {
     try {
       final model = await remoteDataSource.getFreeDoctorContent();
-      return Right(FreeDoctorMapper.toEntity(model));
+      final entity = FreeDoctorMapper.toEntity(model);
+      log('Mapped free doctor content: ${entity.title}');
+      return Right(entity);
     } catch (e) {
-      return Left('Failed to load free doctor content: ${e.toString()}');
+      log('getFreeDoctorContent repository error: $e');
+      return Left(e.toString());
     }
   }
 }
