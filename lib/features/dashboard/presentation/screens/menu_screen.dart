@@ -5,8 +5,8 @@ import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/preference/app_pref.dart';
 import '../../../../core/router/app_routes.dart';
 
-class DashboardMenuScreen extends StatelessWidget {
-  const DashboardMenuScreen({super.key});
+class MenuScreen extends StatelessWidget {
+  const MenuScreen({super.key});
 
   static const List<_MenuItem> _mainItems = [
     _MenuItem('My Bookings', Icons.calendar_month_outlined),

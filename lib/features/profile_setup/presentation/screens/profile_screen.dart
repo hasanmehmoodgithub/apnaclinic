@@ -5,8 +5,8 @@ import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/preference/app_pref.dart';
 import '../../../../core/router/app_routes.dart';
 
-class DashboardProfileScreen extends StatelessWidget {
-  const DashboardProfileScreen({
+class ProfileScreen extends StatelessWidget {
+  const ProfileScreen({
     super.key,
     this.showBackButton = true,
     this.onBack,

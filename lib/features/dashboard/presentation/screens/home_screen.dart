@@ -14,16 +14,16 @@ import '../widgets/search_header.dart';
 import '../widgets/service_card.dart';
 
 /// Home dashboard with "Our Services" list.
-class DashboardHomeScreen extends StatefulWidget {
-  const DashboardHomeScreen({super.key});
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
 
   @override
-  State<DashboardHomeScreen> createState() => _DashboardHomeScreenState();
+  State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _DashboardHomeScreenState extends State<DashboardHomeScreen> {
+class _HomeScreenState extends State<HomeScreen> {
   /// Only the first time the home tab is shown in this app session — avoids
-  /// repeating when [DashboardHomeScreen] is recreated (e.g. tab switches).
+  /// repeating when [HomeScreen] is recreated (e.g. tab switches).
   static bool _dashboardLoaderShownThisSession = false;
 
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();

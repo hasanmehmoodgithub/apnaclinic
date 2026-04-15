@@ -9,7 +9,7 @@ import '../../features/example/presentation/screens/examples_main_screen.dart';
 import '../../features/app/presentation/screens/splash_screen.dart';
 import '../../features/consultation/presentation/cubit/consultation_cubit.dart';
 import '../../features/consultation/presentation/screens/doctor_consultation_screen.dart';
-import '../../features/dashboard/presentation/screens/dashboard_menu_screen.dart';
+import '../../features/dashboard/presentation/screens/menu_screen.dart';
 import '../../features/notification/presentation/screens/notifcation_screen.dart';
 import '../../features/dashboard/presentation/screens/main_navigation_shell.dart';
 import '../../features/onboarding/presentation/screens/onboarding_screen.dart';
@@ -67,7 +67,7 @@ class AppRouter {
       GoRoute(
         path: AppRoutes.path(AppRoutes.dashboardMenu),
         name: AppRoutes.dashboardMenu,
-        builder: (context, state) => const DashboardMenuScreen(),
+        builder: (context, state) => const MenuScreen(),
       ),
       GoRoute(
         path: AppRoutes.path(AppRoutes.notifications),

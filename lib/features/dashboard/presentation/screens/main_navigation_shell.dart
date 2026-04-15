@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/constants/app_system_ui.dart';
@@ -10,8 +11,10 @@ import '../../../bookings/presentation/screens/bookings_dashboard_screen.dart';
 import '../../../customer_support/presentation/screens/customer_support_screen.dart';
 import '../../../free_doctor/presentation/screens/free_doctor_screen.dart';
 import '../widgets/apna_bottom_navigation_bar.dart';
-import 'dashboard_home_screen.dart';
-import 'dashboard_profile_screen.dart';
+import '../cubit/main_navigation_cubit.dart';
+import '../cubit/main_navigation_state.dart';
+import 'home_screen.dart';
+import '../../../profile_setup/presentation/screens/profile_screen.dart';
 
 /// Root shell: [PageView] body + custom bottom navigation.
 class MainNavigationShell extends StatefulWidget {
@@ -26,12 +29,13 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
   static const int _bookingsIndex = 3;
 
   late final PageController _pageController;
-  int _currentIndex = _homeIndex;
+  late final MainNavigationCubit _navigationCubit;
 
   @override
   void initState() {
     super.initState();
     _pageController = PageController(initialPage: _homeIndex);
+    _navigationCubit = MainNavigationCubit(initialIndex: _homeIndex);
     _applyStatusBar();
   }
 
@@ -39,6 +43,7 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
   void dispose() {
     AppSystemUi.apply();
     _pageController.dispose();
+    _navigationCubit.close();
     super.dispose();
   }
 
@@ -53,7 +58,7 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
       return;
     }
 
-    setState(() => _currentIndex = index);
+    _navigationCubit.setIndex(index);
     _applyStatusBar();
     _pageController.animateToPage(
       index,
@@ -63,32 +68,37 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
   }
 
   void _onPageChanged(int index) {
-    setState(() => _currentIndex = index);
+    _navigationCubit.setIndex(index);
     _applyStatusBar();
   }
 
   @override
   Widget build(BuildContext context) {
-    return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: AppSystemUi.overlayStyle,
-      child: Scaffold(
-        body: PageView(
-          controller: _pageController,
-          onPageChanged: _onPageChanged,
-          physics: const BouncingScrollPhysics(),
-          children: [
-            const FreeDoctorScreen(showBackButton: false),
-            const CustomerSupportScreen(showBackButton: false),
-            const DashboardHomeScreen(),
-            const BookingsDashboardScreen(showBackButton: false),
-            const DashboardProfileScreen(showBackButton: false),
-          ],
-        ),
-        bottomNavigationBar: ApnaBottomNavigationBar(
-          currentIndex: _currentIndex,
-          onTap: _onNavTap,
-        ),
-      ),
+    return BlocBuilder<MainNavigationCubit, MainNavigationState>(
+      bloc: _navigationCubit,
+      builder: (context, state) {
+        return AnnotatedRegion<SystemUiOverlayStyle>(
+          value: AppSystemUi.overlayStyle,
+          child: Scaffold(
+            body: PageView(
+              controller: _pageController,
+              onPageChanged: _onPageChanged,
+              physics: const BouncingScrollPhysics(),
+              children: [
+                const FreeDoctorScreen(showBackButton: false),
+                const CustomerSupportScreen(showBackButton: false),
+                const HomeScreen(),
+                const BookingsDashboardScreen(showBackButton: false),
+                const ProfileScreen(showBackButton: false),
+              ],
+            ),
+            bottomNavigationBar: ApnaBottomNavigationBar(
+              currentIndex: state.currentIndex,
+              onTap: _onNavTap,
+            ),
+          ),
+        );
+      },
     );
   }
 }
