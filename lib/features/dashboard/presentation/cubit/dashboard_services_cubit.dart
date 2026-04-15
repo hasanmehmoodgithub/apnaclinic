@@ -1,18 +1,24 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/enums/state_status.dart';
+import '../../domain/use_cases/promotional_banner_use_case.dart';
 import '../../domain/use_cases/get_dashboard_services_use_case.dart';
 import 'dashboard_services_state.dart';
 
-class DashboardServicesCubit extends Cubit<DashboardServicesState> {
-  DashboardServicesCubit({required this.getDashboardServicesUseCase})
+class DashboardCubit extends Cubit<DashboardServicesState> {
+  DashboardCubit({
+    required this.getOurServicesUseCase,
+    required this.getPromotionalBannerUseCase,
+  })
       : super(const DashboardServicesState()) {
-    loadServices();
+    loadOurServices();
+    loadPromotionalBanner();
   }
 
-  final GetOurServicesUseCase getDashboardServicesUseCase;
+  final GetOurServicesUseCase getOurServicesUseCase;
+  final GetPromotionalBannerUseCase getPromotionalBannerUseCase;
 
-  Future<void> loadServices() async {
+  Future<void> loadOurServices() async {
     emit(
       state.copyWith(
         ourServicesLoadingStateStatus: StateStatus.loading,
@@ -20,7 +26,7 @@ class DashboardServicesCubit extends Cubit<DashboardServicesState> {
       ),
     );
 
-    final result = await getDashboardServicesUseCase.call();
+    final result = await getOurServicesUseCase.call();
     result.fold(
       (error) => emit(
         state.copyWith(
@@ -35,6 +41,34 @@ class DashboardServicesCubit extends Cubit<DashboardServicesState> {
               : StateStatus.success,
           servicesList: data.where((e) => e.visibility).toList(),
           servicesErrorMessage: null,
+        ),
+      ),
+    );
+  }
+
+  Future<void> loadPromotionalBanner() async {
+    emit(
+      state.copyWith(
+        promotionalBannerLoadingStateStatus: StateStatus.loading,
+        promotionalBannerErrorMessage: null,
+      ),
+    );
+
+    final result = await getPromotionalBannerUseCase.call();
+    result.fold(
+      (error) => emit(
+        state.copyWith(
+          promotionalBannerLoadingStateStatus: StateStatus.error,
+          promotionalBannerErrorMessage: error,
+        ),
+      ),
+      (banner) => emit(
+        state.copyWith(
+          promotionalBannerLoadingStateStatus: banner.showBanner
+              ? StateStatus.success
+              : StateStatus.empty,
+          promotionalBanner: banner,
+          promotionalBannerErrorMessage: null,
         ),
       ),
     );

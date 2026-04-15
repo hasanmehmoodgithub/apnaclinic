@@ -1,0 +1,70 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
+
+import '../../../../core/extensions/screen_util_extensions.dart';
+import '../../../../core/router/app_routes.dart';
+import '../../../../generated/assets.dart';
+import '../../domain/entities/promotional_banner_entity.dart';
+
+Future<void> showPromotionalBannerDialog(
+  BuildContext context, {
+  required PromotionalBannerEntity banner,
+}) async {
+  await showDialog<void>(
+    context: context,
+    barrierDismissible: true,
+    barrierColor: Colors.black.withValues(alpha: 0.45),
+    builder: (dialogContext) {
+      return Dialog(
+        backgroundColor: Colors.transparent,
+        insetPadding: EdgeInsets.symmetric(horizontal: 16.w),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Align(
+              alignment: Alignment.topRight,
+              child: InkWell(
+                onTap: () => Navigator.of(dialogContext).pop(),
+                borderRadius: BorderRadius.circular(16.r),
+                child: Padding(
+                  padding: EdgeInsets.all(4.r),
+                  child: SvgPicture.asset(
+                    Assets.iconsClose,
+                    colorFilter: const ColorFilter.mode(
+                      Colors.white,
+                      BlendMode.srcIn,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(14.r),
+              child: InkWell(
+                onTap: () {
+                  final normalizedRoute = banner.route
+                      .trim()
+                      .replaceFirst(RegExp(r'^/'), '');
+                  Navigator.of(dialogContext).pop();
+                  if (normalizedRoute.isEmpty) return;
+                  context.push(AppRoutes.path(normalizedRoute));
+                },
+                child: Image.network(
+                  banner.url,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Image.asset(
+                      'assets/img/banner.png',
+                      fit: BoxFit.cover,
+                    );
+                  },
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    },
+  );
+}

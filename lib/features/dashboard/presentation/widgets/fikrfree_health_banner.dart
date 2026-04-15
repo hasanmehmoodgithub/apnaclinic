@@ -1,3 +1,5 @@
+import 'package:apnaclinic/core/constants/app_colors.dart';
+import 'package:apnaclinic/generated/assets.dart';
 import 'package:flutter/material.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 
@@ -7,7 +9,7 @@ class FikrfreeHealthBanner extends StatelessWidget {
 
   final VoidCallback? onTap;
 
-  static const String _logoAsset = 'assets/img/fikar_free.png';
+
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +21,8 @@ class FikrfreeHealthBanner extends StatelessWidget {
         Text(
           'Secure Your Health First',
           style: theme.textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.w600,
+            fontWeight: FontWeight.w700,
+            fontSize: 16.sp,
             color: const Color(0xFF111827),
           ),
         ),
@@ -42,7 +45,7 @@ class FikrfreeHealthBanner extends StatelessWidget {
             child: InkWell(
               onTap: onTap,
               child: Padding(
-                padding: EdgeInsets.fromLTRB(16.w, 14.h, 12.w, 14.h),
+                padding: EdgeInsets.fromLTRB(12.w, 12.h, 12.w, 12.h),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -53,47 +56,42 @@ class FikrfreeHealthBanner extends StatelessWidget {
                           Text(
                             'FikrFree',
                             style: theme.textTheme.titleMedium?.copyWith(
-                              fontWeight: FontWeight.w600,
-                              color: const Color(0xFF111827),
-                              letterSpacing: -0.2,
+                              fontWeight: FontWeight.w700,
+                              fontSize: 16.sp,
+                              color: AppColors.clr09,
                             ),
                           ),
                           SizedBox(height: 6.h),
                           Text(
                             'Sehat aur insurance ab apke hath mei!',
                             style: theme.textTheme.bodySmall?.copyWith(
-                              color: const Color(0xFF4B5563),
-                              height: 1.35,
+                              color: AppColors.clr43,
+                              fontWeight: FontWeight.w400,
+                              fontSize: 13.sp,
                             ),
                           ),
                         ],
                       ),
                     ),
-                    SizedBox(width: 12.w),
+                    SizedBox(width: 8.w),
                     SizedBox(
-                      width: 102.w,
-                      height: 86.h,
-                      child: Stack(
-                        clipBehavior: Clip.none,
+                      width: 76.w,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        mainAxisAlignment: MainAxisAlignment.end,
                         children: [
-                          Positioned(
-                            top: 0,
-                            right: 0,
-                            child: Icon(
-                              Icons.chevron_right_rounded,
-                              color: const Color(0xFF0D9488),
-                              size: 26.r,
-                            ),
+                          Icon(
+                            Icons.chevron_right_rounded,
+                            color: const Color(0xFF0D9488),
+                            size: 22.r,
                           ),
-                          Positioned(
-                            right: 0,
-                            bottom: 0,
-                            child: Image.asset(
-                              _logoAsset,
-                              height: 45.h,
-                              fit: BoxFit.contain,
-                            ),
+                          SizedBox(height: 12.h),
+                          Image.asset(
+                            Assets.imgFikarFree,
+                            height: 51.h,
+                            fit: BoxFit.contain,
                           ),
+                          SizedBox(height: 4.h),
                         ],
                       ),
                     ),

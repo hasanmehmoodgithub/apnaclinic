@@ -37,6 +37,9 @@ class AppUrls {
   /// Our services endpoint
   static String get ourServices => '$baseUrl/dashboard/services';
 
+  /// Promotional banner endpoint
+  static String get promotionalBanner => '$baseUrl/dashboard/promo-banner';
+
 
   // ============================================
   // 3rd Party Integration Support (Full URLs)

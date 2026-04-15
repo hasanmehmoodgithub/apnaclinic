@@ -55,6 +55,7 @@ class ApnaBottomNavigationBar extends StatelessWidget {
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
+                      SizedBox(width: 8.w,),
                       Expanded(
                         child: _SideTab(
                           label: 'Free Doctor',
@@ -71,7 +72,7 @@ class ApnaBottomNavigationBar extends StatelessWidget {
                           onTap: () => onTap(1),
                         ),
                       ),
-                      SizedBox(width: 76.w),
+                      SizedBox(width: 66.w),
                       Expanded(
                         child: _SideTab(
                           label: 'My Bookings',
@@ -88,6 +89,7 @@ class ApnaBottomNavigationBar extends StatelessWidget {
                           onTap: () => onTap(4),
                         ),
                       ),
+                      SizedBox(width: 8.w,),
                     ],
                   ),
                 ),

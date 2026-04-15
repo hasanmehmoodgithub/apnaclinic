@@ -15,8 +15,8 @@ T _$identity<T>(T value) => value;
 mixin _$DashboardServicesState {
 
 // Loading status
- StateStatus get ourServicesLoadingStateStatus;// Data
- List<OurServiceEntity> get servicesList; String? get servicesErrorMessage;
+ StateStatus get ourServicesLoadingStateStatus; StateStatus get promotionalBannerLoadingStateStatus;// Data
+ List<OurServiceEntity> get servicesList; String? get servicesErrorMessage; PromotionalBannerEntity? get promotionalBanner; String? get promotionalBannerErrorMessage;
 /// Create a copy of DashboardServicesState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -27,16 +27,16 @@ $DashboardServicesStateCopyWith<DashboardServicesState> get copyWith => _$Dashbo
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is DashboardServicesState&&(identical(other.ourServicesLoadingStateStatus, ourServicesLoadingStateStatus) || other.ourServicesLoadingStateStatus == ourServicesLoadingStateStatus)&&const DeepCollectionEquality().equals(other.servicesList, servicesList)&&(identical(other.servicesErrorMessage, servicesErrorMessage) || other.servicesErrorMessage == servicesErrorMessage));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is DashboardServicesState&&(identical(other.ourServicesLoadingStateStatus, ourServicesLoadingStateStatus) || other.ourServicesLoadingStateStatus == ourServicesLoadingStateStatus)&&(identical(other.promotionalBannerLoadingStateStatus, promotionalBannerLoadingStateStatus) || other.promotionalBannerLoadingStateStatus == promotionalBannerLoadingStateStatus)&&const DeepCollectionEquality().equals(other.servicesList, servicesList)&&(identical(other.servicesErrorMessage, servicesErrorMessage) || other.servicesErrorMessage == servicesErrorMessage)&&(identical(other.promotionalBanner, promotionalBanner) || other.promotionalBanner == promotionalBanner)&&(identical(other.promotionalBannerErrorMessage, promotionalBannerErrorMessage) || other.promotionalBannerErrorMessage == promotionalBannerErrorMessage));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,ourServicesLoadingStateStatus,const DeepCollectionEquality().hash(servicesList),servicesErrorMessage);
+int get hashCode => Object.hash(runtimeType,ourServicesLoadingStateStatus,promotionalBannerLoadingStateStatus,const DeepCollectionEquality().hash(servicesList),servicesErrorMessage,promotionalBanner,promotionalBannerErrorMessage);
 
 @override
 String toString() {
-  return 'DashboardServicesState(ourServicesLoadingStateStatus: $ourServicesLoadingStateStatus, servicesList: $servicesList, servicesErrorMessage: $servicesErrorMessage)';
+  return 'DashboardServicesState(ourServicesLoadingStateStatus: $ourServicesLoadingStateStatus, promotionalBannerLoadingStateStatus: $promotionalBannerLoadingStateStatus, servicesList: $servicesList, servicesErrorMessage: $servicesErrorMessage, promotionalBanner: $promotionalBanner, promotionalBannerErrorMessage: $promotionalBannerErrorMessage)';
 }
 
 
@@ -47,7 +47,7 @@ abstract mixin class $DashboardServicesStateCopyWith<$Res>  {
   factory $DashboardServicesStateCopyWith(DashboardServicesState value, $Res Function(DashboardServicesState) _then) = _$DashboardServicesStateCopyWithImpl;
 @useResult
 $Res call({
- StateStatus ourServicesLoadingStateStatus, List<OurServiceEntity> servicesList, String? servicesErrorMessage
+ StateStatus ourServicesLoadingStateStatus, StateStatus promotionalBannerLoadingStateStatus, List<OurServiceEntity> servicesList, String? servicesErrorMessage, PromotionalBannerEntity? promotionalBanner, String? promotionalBannerErrorMessage
 });
 
 
@@ -64,11 +64,14 @@ class _$DashboardServicesStateCopyWithImpl<$Res>
 
 /// Create a copy of DashboardServicesState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? ourServicesLoadingStateStatus = null,Object? servicesList = null,Object? servicesErrorMessage = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? ourServicesLoadingStateStatus = null,Object? promotionalBannerLoadingStateStatus = null,Object? servicesList = null,Object? servicesErrorMessage = freezed,Object? promotionalBanner = freezed,Object? promotionalBannerErrorMessage = freezed,}) {
   return _then(_self.copyWith(
 ourServicesLoadingStateStatus: null == ourServicesLoadingStateStatus ? _self.ourServicesLoadingStateStatus : ourServicesLoadingStateStatus // ignore: cast_nullable_to_non_nullable
+as StateStatus,promotionalBannerLoadingStateStatus: null == promotionalBannerLoadingStateStatus ? _self.promotionalBannerLoadingStateStatus : promotionalBannerLoadingStateStatus // ignore: cast_nullable_to_non_nullable
 as StateStatus,servicesList: null == servicesList ? _self.servicesList : servicesList // ignore: cast_nullable_to_non_nullable
 as List<OurServiceEntity>,servicesErrorMessage: freezed == servicesErrorMessage ? _self.servicesErrorMessage : servicesErrorMessage // ignore: cast_nullable_to_non_nullable
+as String?,promotionalBanner: freezed == promotionalBanner ? _self.promotionalBanner : promotionalBanner // ignore: cast_nullable_to_non_nullable
+as PromotionalBannerEntity?,promotionalBannerErrorMessage: freezed == promotionalBannerErrorMessage ? _self.promotionalBannerErrorMessage : promotionalBannerErrorMessage // ignore: cast_nullable_to_non_nullable
 as String?,
   ));
 }
@@ -154,10 +157,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( StateStatus ourServicesLoadingStateStatus,  List<OurServiceEntity> servicesList,  String? servicesErrorMessage)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( StateStatus ourServicesLoadingStateStatus,  StateStatus promotionalBannerLoadingStateStatus,  List<OurServiceEntity> servicesList,  String? servicesErrorMessage,  PromotionalBannerEntity? promotionalBanner,  String? promotionalBannerErrorMessage)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _DashboardServicesState() when $default != null:
-return $default(_that.ourServicesLoadingStateStatus,_that.servicesList,_that.servicesErrorMessage);case _:
+return $default(_that.ourServicesLoadingStateStatus,_that.promotionalBannerLoadingStateStatus,_that.servicesList,_that.servicesErrorMessage,_that.promotionalBanner,_that.promotionalBannerErrorMessage);case _:
   return orElse();
 
 }
@@ -175,10 +178,10 @@ return $default(_that.ourServicesLoadingStateStatus,_that.servicesList,_that.ser
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( StateStatus ourServicesLoadingStateStatus,  List<OurServiceEntity> servicesList,  String? servicesErrorMessage)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( StateStatus ourServicesLoadingStateStatus,  StateStatus promotionalBannerLoadingStateStatus,  List<OurServiceEntity> servicesList,  String? servicesErrorMessage,  PromotionalBannerEntity? promotionalBanner,  String? promotionalBannerErrorMessage)  $default,) {final _that = this;
 switch (_that) {
 case _DashboardServicesState():
-return $default(_that.ourServicesLoadingStateStatus,_that.servicesList,_that.servicesErrorMessage);case _:
+return $default(_that.ourServicesLoadingStateStatus,_that.promotionalBannerLoadingStateStatus,_that.servicesList,_that.servicesErrorMessage,_that.promotionalBanner,_that.promotionalBannerErrorMessage);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -195,10 +198,10 @@ return $default(_that.ourServicesLoadingStateStatus,_that.servicesList,_that.ser
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( StateStatus ourServicesLoadingStateStatus,  List<OurServiceEntity> servicesList,  String? servicesErrorMessage)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( StateStatus ourServicesLoadingStateStatus,  StateStatus promotionalBannerLoadingStateStatus,  List<OurServiceEntity> servicesList,  String? servicesErrorMessage,  PromotionalBannerEntity? promotionalBanner,  String? promotionalBannerErrorMessage)?  $default,) {final _that = this;
 switch (_that) {
 case _DashboardServicesState() when $default != null:
-return $default(_that.ourServicesLoadingStateStatus,_that.servicesList,_that.servicesErrorMessage);case _:
+return $default(_that.ourServicesLoadingStateStatus,_that.promotionalBannerLoadingStateStatus,_that.servicesList,_that.servicesErrorMessage,_that.promotionalBanner,_that.promotionalBannerErrorMessage);case _:
   return null;
 
 }
@@ -210,11 +213,12 @@ return $default(_that.ourServicesLoadingStateStatus,_that.servicesList,_that.ser
 
 
 class _DashboardServicesState implements DashboardServicesState {
-  const _DashboardServicesState({this.ourServicesLoadingStateStatus = StateStatus.idle, final  List<OurServiceEntity> servicesList = const [], this.servicesErrorMessage}): _servicesList = servicesList;
+  const _DashboardServicesState({this.ourServicesLoadingStateStatus = StateStatus.idle, this.promotionalBannerLoadingStateStatus = StateStatus.idle, final  List<OurServiceEntity> servicesList = const [], this.servicesErrorMessage, this.promotionalBanner, this.promotionalBannerErrorMessage}): _servicesList = servicesList;
   
 
 // Loading status
 @override@JsonKey() final  StateStatus ourServicesLoadingStateStatus;
+@override@JsonKey() final  StateStatus promotionalBannerLoadingStateStatus;
 // Data
  final  List<OurServiceEntity> _servicesList;
 // Data
@@ -225,6 +229,8 @@ class _DashboardServicesState implements DashboardServicesState {
 }
 
 @override final  String? servicesErrorMessage;
+@override final  PromotionalBannerEntity? promotionalBanner;
+@override final  String? promotionalBannerErrorMessage;
 
 /// Create a copy of DashboardServicesState
 /// with the given fields replaced by the non-null parameter values.
@@ -236,16 +242,16 @@ _$DashboardServicesStateCopyWith<_DashboardServicesState> get copyWith => __$Das
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _DashboardServicesState&&(identical(other.ourServicesLoadingStateStatus, ourServicesLoadingStateStatus) || other.ourServicesLoadingStateStatus == ourServicesLoadingStateStatus)&&const DeepCollectionEquality().equals(other._servicesList, _servicesList)&&(identical(other.servicesErrorMessage, servicesErrorMessage) || other.servicesErrorMessage == servicesErrorMessage));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _DashboardServicesState&&(identical(other.ourServicesLoadingStateStatus, ourServicesLoadingStateStatus) || other.ourServicesLoadingStateStatus == ourServicesLoadingStateStatus)&&(identical(other.promotionalBannerLoadingStateStatus, promotionalBannerLoadingStateStatus) || other.promotionalBannerLoadingStateStatus == promotionalBannerLoadingStateStatus)&&const DeepCollectionEquality().equals(other._servicesList, _servicesList)&&(identical(other.servicesErrorMessage, servicesErrorMessage) || other.servicesErrorMessage == servicesErrorMessage)&&(identical(other.promotionalBanner, promotionalBanner) || other.promotionalBanner == promotionalBanner)&&(identical(other.promotionalBannerErrorMessage, promotionalBannerErrorMessage) || other.promotionalBannerErrorMessage == promotionalBannerErrorMessage));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,ourServicesLoadingStateStatus,const DeepCollectionEquality().hash(_servicesList),servicesErrorMessage);
+int get hashCode => Object.hash(runtimeType,ourServicesLoadingStateStatus,promotionalBannerLoadingStateStatus,const DeepCollectionEquality().hash(_servicesList),servicesErrorMessage,promotionalBanner,promotionalBannerErrorMessage);
 
 @override
 String toString() {
-  return 'DashboardServicesState(ourServicesLoadingStateStatus: $ourServicesLoadingStateStatus, servicesList: $servicesList, servicesErrorMessage: $servicesErrorMessage)';
+  return 'DashboardServicesState(ourServicesLoadingStateStatus: $ourServicesLoadingStateStatus, promotionalBannerLoadingStateStatus: $promotionalBannerLoadingStateStatus, servicesList: $servicesList, servicesErrorMessage: $servicesErrorMessage, promotionalBanner: $promotionalBanner, promotionalBannerErrorMessage: $promotionalBannerErrorMessage)';
 }
 
 
@@ -256,7 +262,7 @@ abstract mixin class _$DashboardServicesStateCopyWith<$Res> implements $Dashboar
   factory _$DashboardServicesStateCopyWith(_DashboardServicesState value, $Res Function(_DashboardServicesState) _then) = __$DashboardServicesStateCopyWithImpl;
 @override @useResult
 $Res call({
- StateStatus ourServicesLoadingStateStatus, List<OurServiceEntity> servicesList, String? servicesErrorMessage
+ StateStatus ourServicesLoadingStateStatus, StateStatus promotionalBannerLoadingStateStatus, List<OurServiceEntity> servicesList, String? servicesErrorMessage, PromotionalBannerEntity? promotionalBanner, String? promotionalBannerErrorMessage
 });
 
 
@@ -273,11 +279,14 @@ class __$DashboardServicesStateCopyWithImpl<$Res>
 
 /// Create a copy of DashboardServicesState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? ourServicesLoadingStateStatus = null,Object? servicesList = null,Object? servicesErrorMessage = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? ourServicesLoadingStateStatus = null,Object? promotionalBannerLoadingStateStatus = null,Object? servicesList = null,Object? servicesErrorMessage = freezed,Object? promotionalBanner = freezed,Object? promotionalBannerErrorMessage = freezed,}) {
   return _then(_DashboardServicesState(
 ourServicesLoadingStateStatus: null == ourServicesLoadingStateStatus ? _self.ourServicesLoadingStateStatus : ourServicesLoadingStateStatus // ignore: cast_nullable_to_non_nullable
+as StateStatus,promotionalBannerLoadingStateStatus: null == promotionalBannerLoadingStateStatus ? _self.promotionalBannerLoadingStateStatus : promotionalBannerLoadingStateStatus // ignore: cast_nullable_to_non_nullable
 as StateStatus,servicesList: null == servicesList ? _self._servicesList : servicesList // ignore: cast_nullable_to_non_nullable
 as List<OurServiceEntity>,servicesErrorMessage: freezed == servicesErrorMessage ? _self.servicesErrorMessage : servicesErrorMessage // ignore: cast_nullable_to_non_nullable
+as String?,promotionalBanner: freezed == promotionalBanner ? _self.promotionalBanner : promotionalBanner // ignore: cast_nullable_to_non_nullable
+as PromotionalBannerEntity?,promotionalBannerErrorMessage: freezed == promotionalBannerErrorMessage ? _self.promotionalBannerErrorMessage : promotionalBannerErrorMessage // ignore: cast_nullable_to_non_nullable
 as String?,
   ));
 }

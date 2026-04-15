@@ -53,8 +53,8 @@ class _ApnaClinicAppState extends State<ApnaClinicApp> {
       builder: (context, child) {
         ScreenUtilX.init(
             context,
-            designHeight: 932,
-            designWidth:430,
+            designHeight: MediaQuery.sizeOf(context).height,
+            designWidth: MediaQuery.sizeOf(context).width,
             useScaleByDefault: true);
         return child ?? const SizedBox.shrink();
       },

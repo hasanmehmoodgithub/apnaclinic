@@ -1,10 +1,12 @@
+import 'package:apnaclinic/core/constants/app_colors.dart';
+import 'package:apnaclinic/generated/assets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 
 /// Service card: service image as the only background; text and offer on top.
-class ServiceCard extends StatelessWidget {
-  const ServiceCard({
+class OurServiceCardWidget extends StatelessWidget {
+  const OurServiceCardWidget({
     super.key,
     required this.title,
     required this.subtitle,
@@ -19,7 +21,7 @@ class ServiceCard extends StatelessWidget {
   final String imageAsset;
   final VoidCallback? onTap;
 
-  static const double _cardHeight = 100;
+  static  final double _cardHeight = 100.h;
 
 
   @override
@@ -45,7 +47,7 @@ class ServiceCard extends StatelessWidget {
         ),
         child: Container(
 
-          padding: EdgeInsets.fromLTRB(12.w, 11.h, 10.w, 10.h),
+          padding: EdgeInsets.fromLTRB(8.w, 8.h, 8.w, 8.h),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.start,
@@ -54,8 +56,7 @@ class ServiceCard extends StatelessWidget {
                 title,
                 style: theme.textTheme.titleSmall?.copyWith(
                   fontWeight: FontWeight.w700,
-                  color: const Color(0xFF1A1A1A),
-                  height: 1.2,
+                  color: AppColors.clr09,
                   fontSize: 16.sp,
                 ),
                 maxLines: 1,
@@ -65,10 +66,9 @@ class ServiceCard extends StatelessWidget {
               Text(
                 subtitle,
                 style: theme.textTheme.bodySmall?.copyWith(
-                  color: const Color(0xFF374151),
-                  height: 1.3,
-                  fontWeight: FontWeight.w500,
-                  fontSize: 11.sp,
+                  color: AppColors.clr43,
+                  fontWeight: FontWeight.w400,
+                  fontSize: 12.sp,
                 ),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
@@ -87,7 +87,7 @@ class ServiceCard extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     SvgPicture.asset(
-                      "assets/svg/ic_service_offer.svg",
+                      Assets.svgIcServiceOffer,
                       width: 14.r,
                       height: 14.r,
                     ),
@@ -95,9 +95,9 @@ class ServiceCard extends StatelessWidget {
                     Text(
                       discountLabel,
                       style: theme.textTheme.labelSmall?.copyWith(
-                        fontWeight: FontWeight.w700,
-                        fontSize: 12.sp,
-                        color: const Color(0xFF1A1A1A),
+                        fontWeight: FontWeight.w800,
+                        fontSize: 14.sp,
+                        color:  Colors.black,
                       ),
                     ),
                   ],

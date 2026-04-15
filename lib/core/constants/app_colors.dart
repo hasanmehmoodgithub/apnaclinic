@@ -8,5 +8,9 @@ class AppColors {
 
 
   static const Color customColorName = Color(0xFF7A0B0F);
+  static const Color clr09 = Color(0xFF090909);
+  static const Color clr43 = Color(0xFF434343);
+
+
 
 }

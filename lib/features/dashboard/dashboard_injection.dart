@@ -3,8 +3,10 @@ import '../../core/network/api_service.dart';
 import 'data/data_sources/dashboard_remote_data_source.dart';
 import 'data/data_sources/dashboard_remote_data_source_impl.dart';
 import 'data/mock/dashboard_services_mock_api.dart';
+import 'data/mock/promotional_banner_mock_api.dart';
 import 'data/repositories/dashboard_repository_impl.dart';
 import 'domain/repositories/dashboard_repository.dart';
+import 'domain/use_cases/promotional_banner_use_case.dart';
 import 'domain/use_cases/get_dashboard_services_use_case.dart';
 import 'presentation/cubit/dashboard_services_cubit.dart';
 
@@ -12,11 +14,15 @@ void initDashboardInjector() {
   sl.registerLazySingleton<DashboardServicesMockApi>(
     () => DashboardServicesMockApi(),
   );
+  sl.registerLazySingleton<PromotionalBannerMockApi>(
+    () => PromotionalBannerMockApi(),
+  );
 
   sl.registerLazySingleton<DashboardRemoteDataSource>(
     () => DashboardRemoteDataSourceImpl(
       apiService: sl<ApiService>(),
       mockApi: sl<DashboardServicesMockApi>(),
+      promotionalBannerMockApi: sl<PromotionalBannerMockApi>(),
     ),
   );
 
@@ -32,10 +38,18 @@ void initDashboardInjector() {
     ),
   );
 
-  sl.registerFactory<DashboardServicesCubit>(
-    () => DashboardServicesCubit(
-      getDashboardServicesUseCase: sl<GetOurServicesUseCase>(),
+  sl.registerFactory<DashboardCubit>(
+    () => DashboardCubit(
+      getOurServicesUseCase: sl<GetOurServicesUseCase>(),
+      getPromotionalBannerUseCase: sl<GetPromotionalBannerUseCase>(),
     ),
   );
+
+  sl.registerLazySingleton<GetPromotionalBannerUseCase>(
+    () => GetPromotionalBannerUseCase(
+      repository: sl<DashboardRepository>(),
+    ),
+  );
+
 }
 

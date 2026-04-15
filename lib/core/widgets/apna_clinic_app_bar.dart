@@ -102,10 +102,10 @@ class ApnaClinicAppBar extends StatelessWidget implements PreferredSizeWidget {
                   child: Align(
                     alignment: Alignment.centerLeft,
                     child: Padding(
-                      padding: EdgeInsets.only(left: 4.w),
+                      padding: EdgeInsets.only(left:6.w,top: 4.h),
                       child: SvgPicture.asset(
                         Assets.svgBrandApnaClinic,
-                        height: 34.h,
+                        height: 32.h,
                         fit: BoxFit.contain,
                         alignment: Alignment.centerLeft,
                         colorFilter: svgFilter,

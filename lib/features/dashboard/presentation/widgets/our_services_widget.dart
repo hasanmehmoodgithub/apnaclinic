@@ -6,7 +6,7 @@ import '../../../../core/enums/state_status.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../domain/entities/our_service_entity.dart';
 import '../cubit/dashboard_services_state.dart';
-import 'service_card.dart';
+import 'our_service_card.dart';
 
 class OurServicesWidget extends StatelessWidget {
   const OurServicesWidget({
@@ -57,7 +57,7 @@ class OurServicesWidget extends StatelessWidget {
         separatorBuilder: (context, index) => SizedBox(height: 10.h),
         itemBuilder: (context, index) {
           final service = state.servicesList[index];
-          return ServiceCard(
+          return OurServiceCardWidget(
             title: service.title,
             subtitle: service.subtitle,
             discountLabel: service.offerUpto,
