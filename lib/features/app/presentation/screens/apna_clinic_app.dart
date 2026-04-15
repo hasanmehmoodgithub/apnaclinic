@@ -107,7 +107,11 @@ class _ApnaClinicAppState extends State<ApnaClinicApp> {
       debugShowCheckedModeBanner: FlavorConfig.enableDebugFeatures,
       routerConfig: AppRouter.router,
       builder: (context, child) {
-        ScreenUtilX.init(context);
+        ScreenUtilX.init(
+            context,
+            designHeight: 932,
+            designWidth:430,
+            useScaleByDefault: true);
         return child ?? const SizedBox.shrink();
       },
       theme: ThemeData(
