@@ -10,11 +10,7 @@ import '../cubit/free_doctor_cubit.dart';
 import '../cubit/free_doctor_state.dart';
 
 class FreeDoctorScreen extends StatelessWidget {
-  const FreeDoctorScreen({
-    super.key,
-    this.showBackButton = true,
-    this.onBack,
-  });
+  const FreeDoctorScreen({super.key, this.showBackButton = true, this.onBack});
 
   final bool showBackButton;
   final VoidCallback? onBack;
@@ -24,7 +20,7 @@ class FreeDoctorScreen extends StatelessWidget {
   static const Color _bodyText = Color(0xFF374151);
   static const Color _primaryTeal = Color(0xFF0FAA9A);
   static const Color _iconTileBg = Color(0xFFE8F5F3);
-  static const double _cardOverlap = 32;
+  static const double _cardOverlap = 72;
   static const double _cardTopRadius = 32;
   static const double _topBannerFraction = 0.35;
 
@@ -36,9 +32,9 @@ class FreeDoctorScreen extends StatelessWidget {
       child: BlocConsumer<FreeDoctorCubit, FreeDoctorState>(
         listener: (context, state) {
           if (state.errorMessage != null && state.errorMessage!.isNotEmpty) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(state.errorMessage!)),
-            );
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text(state.errorMessage!)));
           }
         },
         builder: (context, state) {
@@ -71,7 +67,7 @@ class FreeDoctorScreen extends StatelessWidget {
                 ),
                 SafeArea(
                   top: false,
-                  minimum: const EdgeInsets.fromLTRB(20, 8, 20, 16),
+                  minimum: const EdgeInsets.fromLTRB(20, 0, 20, 0),
                   child: AppButton.primary(
                     text: 'Open Fikrfree app',
                     isLoading: state.isOpeningApp,
@@ -82,8 +78,7 @@ class FreeDoctorScreen extends StatelessWidget {
                       if (!opened && context.mounted) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
-                            content:
-                                Text('Could not open FikrFree right now.'),
+                            content: Text('Could not open FikrFree right now.'),
                             behavior: SnackBarBehavior.floating,
                           ),
                         );
@@ -125,11 +120,7 @@ class _FreeDoctorTopHeader extends StatelessWidget {
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: [
-            Color(0xFFB8EDE5),
-            Color(0xFFE8F8F5),
-            Color(0xFFF5FBFA),
-          ],
+          colors: [Color(0xFFB8EDE5), Color(0xFFE8F8F5), Color(0xFFF5FBFA)],
           stops: [0.0, 0.55, 1.0],
         ),
       ),
@@ -147,7 +138,8 @@ class _FreeDoctorTopHeader extends StatelessWidget {
                     child: showBackButton
                         ? IconButton(
                             onPressed:
-                                onBack ?? () => Navigator.of(context).maybePop(),
+                                onBack ??
+                                () => Navigator.of(context).maybePop(),
                             icon: const Icon(Icons.arrow_back_rounded),
                             color: FreeDoctorScreen._titleNavy,
                           )
@@ -172,7 +164,7 @@ class _FreeDoctorTopHeader extends StatelessWidget {
                   child: Image.asset(
                     Assets.imgHeroFamily,
                     fit: BoxFit.fitWidth,
-                    width:context.screenWidth-80,
+                    width: context.screenWidth - 80,
                     alignment: Alignment.topCenter,
                   ),
                 ),
@@ -197,7 +189,8 @@ class _ConsultationInfoCard extends StatelessWidget {
       top: Radius.circular(FreeDoctorScreen._cardTopRadius),
     );
 
-    final points = state.content?.descriptionPoints ??
+    final points =
+        state.content?.descriptionPoints ??
         const [
           'This service is available exclusively for Bima m-Health subscribers.',
           'Get 24/7 access to qualified doctors for general medical support and much more.',
@@ -224,7 +217,7 @@ class _ConsultationInfoCard extends StatelessWidget {
               child: IgnorePointer(
                 child: Center(
                   child: Opacity(
-                    opacity: 0.04,
+                    opacity: 0.08,
                     child: Image.asset(
                       FreeDoctorScreen._watermarkAsset,
                       width: 260,
@@ -238,22 +231,19 @@ class _ConsultationInfoCard extends StatelessWidget {
               const _ConsultationInfoShimmer()
             else
               SingleChildScrollView(
-                padding: const EdgeInsets.fromLTRB(20, 28, 20, 24),
+                padding: const EdgeInsets.fromLTRB(10, 28, 20, 24),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Padding(
-                          padding: EdgeInsets.all(10),
-                          child: Image.asset(
-                            Assets.iconsNurse,
-                            color: Color(0xff0FAA9A),
-                            height: 28,
-                          ),
+                        Image.asset(
+                          Assets.iconsNurse,
+                          color: Color(0xff0FAA9A),
+                          height: 16,
                         ),
-                        const SizedBox(width: 14),
+                        SizedBox(width: 8.0),
                         Expanded(
                           child: Text(
                             state.content?.title ??
@@ -267,14 +257,14 @@ class _ConsultationInfoCard extends StatelessWidget {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 22),
+                    const SizedBox(height: 15),
                     for (int i = 0; i < points.length; i++) ...[
                       _Bullet(
                         text: points[i],
                         style: theme.textTheme.bodyMedium?.copyWith(
                           color: Colors.black,
                           height: 1.45,
-                          fontWeight: FontWeight.w500
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
                       if (i != points.length - 1) const SizedBox(height: 12),
@@ -303,12 +293,7 @@ class _ConsultationInfoShimmer extends StatelessWidget {
             children: const [
               AppShimmerCircle(diameter: 48),
               SizedBox(width: 14),
-              Expanded(
-                child: AppShimmerText(
-                  height: 20,
-                  borderRadius: 8,
-                ),
-              ),
+              Expanded(child: AppShimmerText(height: 20, borderRadius: 8)),
             ],
           ),
           const SizedBox(height: 22),
@@ -343,8 +328,8 @@ class _Bullet extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.only(top: 7),
           child: Container(
-            width: 6,
-            height: 6,
+            width: 5,
+            height: 5,
             decoration: const BoxDecoration(
               color: Color(0xFF111827),
               shape: BoxShape.circle,
@@ -352,7 +337,7 @@ class _Bullet extends StatelessWidget {
           ),
         ),
         const SizedBox(width: 12),
-        Expanded(child: Text(text, style: style,)),
+        Expanded(child: Text(text, style: style)),
       ],
     );
   }
