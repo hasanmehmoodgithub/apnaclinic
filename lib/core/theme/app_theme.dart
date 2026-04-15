@@ -51,8 +51,6 @@ class AppTheme {
         AppThemeColors.dark,
       ],
       scaffoldBackgroundColor: AppThemeColors.dark.background,
-      textTheme: const TextTheme(
-      ),
     );
   }
 
