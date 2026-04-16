@@ -1,29 +1,16 @@
+import 'package:freezed_annotation/freezed_annotation.dart';
+
+import '../../../../core/enums/state_status.dart';
 import '../../domain/entities/free_doctor_entity.dart';
 
-class FreeDoctorState {
-  const FreeDoctorState({
-    this.content,
-    this.isLoading = false,
-    this.errorMessage,
-    this.isOpeningApp = false,
-  });
+part 'free_doctor_state.freezed.dart';
 
-  final FreeDoctorEntity? content;
-  final bool isLoading;
-  final String? errorMessage;
-  final bool isOpeningApp;
-
-  FreeDoctorState copyWith({
+@freezed
+abstract class FreeDoctorState with _$FreeDoctorState {
+  const factory FreeDoctorState({
+    @Default(StateStatus.idle) StateStatus loadingStateStatus,
     FreeDoctorEntity? content,
-    bool? isLoading,
     String? errorMessage,
-    bool? isOpeningApp,
-  }) {
-    return FreeDoctorState(
-      content: content ?? this.content,
-      isLoading: isLoading ?? this.isLoading,
-      errorMessage: errorMessage,
-      isOpeningApp: isOpeningApp ?? this.isOpeningApp,
-    );
-  }
+    @Default(false) bool isOpeningApp,
+  }) = _FreeDoctorState;
 }

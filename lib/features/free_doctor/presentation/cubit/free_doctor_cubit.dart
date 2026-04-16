@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../../../core/enums/state_status.dart';
 import '../../domain/use_cases/get_free_doctor_content_use_case.dart';
 import 'free_doctor_state.dart';
 
@@ -15,18 +16,25 @@ class FreeDoctorCubit extends Cubit<FreeDoctorState> {
   final GetFreeDoctorContentUseCase getContentUseCase;
 
   Future<void> loadContent() async {
-    emit(state.copyWith(isLoading: true, errorMessage: null));
+    emit(
+      state.copyWith(
+        loadingStateStatus: StateStatus.loading,
+        errorMessage: null,
+      ),
+    );
     final result = await getContentUseCase.call();
     result.fold(
       (error) => emit(
         state.copyWith(
-          isLoading: false,
+          loadingStateStatus: StateStatus.error,
           errorMessage: error,
         ),
       ),
       (content) => emit(
         state.copyWith(
-          isLoading: false,
+          loadingStateStatus: content.descriptionPoints.isEmpty
+              ? StateStatus.empty
+              : StateStatus.success,
           content: content,
           errorMessage: null,
         ),
