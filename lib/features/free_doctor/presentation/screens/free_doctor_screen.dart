@@ -1,6 +1,6 @@
-import 'package:apnaclinic/core/di/dependency_injection.dart';
 import 'package:apnaclinic/components/shimmer/app_shimmer.dart';
 import 'package:apnaclinic/components/widgets/app_button.dart';
+import 'package:apnaclinic/core/enums/state_status.dart';
 import 'package:apnaclinic/core/extensions/context_extensions.dart';
 import 'package:apnaclinic/core/extensions/screen_util_extensions.dart';
 import 'package:apnaclinic/generated/assets.dart';
@@ -26,77 +26,76 @@ class FreeDoctorScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bannerHeight = MediaQuery.sizeOf(context).height * _topBannerFraction;
-    return BlocProvider(
-      create: (_) => sl<FreeDoctorCubit>(),
-      child: BlocConsumer<FreeDoctorCubit, FreeDoctorState>(
-        listener: (context, state) {
-          if (state.errorMessage != null && state.errorMessage!.isNotEmpty) {
-            ScaffoldMessenger.of(
-              context,
-            ).showSnackBar(SnackBar(content: Text(state.errorMessage!)));
-          }
-        },
-        builder: (context, state) {
-          return ColoredBox(
-            color: const Color(0xFFF4F6F8),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                SizedBox(
-                  height: bannerHeight,
-                  child: _FreeDoctorTopHeader(
-                    showBackButton: showBackButton,
-                    onBack: onBack,
-                  ),
+    return BlocConsumer<FreeDoctorCubit, FreeDoctorState>(
+      listener: (context, state) {
+        if (state.loadingStateStatus == StateStatus.error &&
+            state.errorMessage != null &&
+            state.errorMessage!.isNotEmpty) {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(state.errorMessage!)));
+        }
+      },
+      builder: (context, state) {
+        return ColoredBox(
+          color: const Color(0xFFF4F6F8),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              SizedBox(
+                height: bannerHeight,
+                child: _FreeDoctorTopHeader(
+                  showBackButton: showBackButton,
+                  onBack: onBack,
                 ),
-                Expanded(
-                  child: Stack(
-                    clipBehavior: Clip.none,
-                    alignment: Alignment.topCenter,
-                    children: [
-                      Positioned(
-                        top: -_cardOverlap,
-                        left: 0,
-                        right: 0,
-                        bottom: 0,
-                        child: _ConsultationInfoCard(state: state),
-                      ),
-                    ],
-                  ),
+              ),
+              Expanded(
+                child: Stack(
+                  clipBehavior: Clip.none,
+                  alignment: Alignment.topCenter,
+                  children: [
+                    Positioned(
+                      top: -_cardOverlap,
+                      left: 0,
+                      right: 0,
+                      bottom: 0,
+                      child: _ConsultationInfoCard(state: state),
+                    ),
+                  ],
                 ),
-                SafeArea(
-                  top: false,
-                  minimum: EdgeInsets.fromLTRB(20.w, 0, 20.w, 0),
-                  child: AppButton.primary(
-                    text: 'Open Fikrfree app',
-                    isLoading: state.isOpeningApp,
-                    onPressed: () async {
-                      final opened = await context
-                          .read<FreeDoctorCubit>()
-                          .openFikrfreeApp();
-                      if (!opened && context.mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Could not open FikrFree right now.'),
-                            behavior: SnackBarBehavior.floating,
-                          ),
-                        );
-                      }
-                    },
-                    width: double.infinity,
-                    height: 52.h,
-                    borderRadius: 14.r,
-                    elevation: 0,
-                    backgroundColor: FreeDoctorScreen._primaryTeal,
-                    foregroundColor: Colors.white,
-                    fontWeight: FontWeight.w700,
-                  ),
+              ),
+              SafeArea(
+                top: false,
+                minimum: EdgeInsets.fromLTRB(20.w, 0, 20.w, 0),
+                child: AppButton.primary(
+                  text: 'Open Fikrfree app',
+                  isLoading: state.isOpeningApp,
+                  onPressed: () async {
+                    final opened = await context
+                        .read<FreeDoctorCubit>()
+                        .openFikrfreeApp();
+                    if (!opened && context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Could not open FikrFree right now.'),
+                          behavior: SnackBarBehavior.floating,
+                        ),
+                      );
+                    }
+                  },
+                  width: double.infinity,
+                  height: 52.h,
+                  borderRadius: 14.r,
+                  elevation: 0,
+                  backgroundColor: FreeDoctorScreen._primaryTeal,
+                  foregroundColor: Colors.white,
+                  fontWeight: FontWeight.w700,
                 ),
-              ],
-            ),
-          );
-        },
-      ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }
@@ -226,7 +225,7 @@ class _ConsultationInfoCard extends StatelessWidget {
                 ),
               ),
             ),
-            if (state.isLoading)
+            if (state.loadingStateStatus == StateStatus.loading)
               const _ConsultationInfoShimmer()
             else
               SingleChildScrollView(

@@ -7,6 +7,8 @@ import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/flavor/flavor_config.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/router/app_router.dart';
+import '../../../customer_support/presentation/cubit/customer_support_cubit.dart';
+import '../../../free_doctor/presentation/cubit/free_doctor_cubit.dart';
 import '../cubit/app_cubit.dart';
 
 class ApnaClinicApp extends StatefulWidget {
@@ -39,6 +41,8 @@ class _ApnaClinicAppState extends State<ApnaClinicApp> {
     return MultiBlocProvider(
       providers: [
         BlocProvider(create: (context) => sl<AppCubit>()),
+        BlocProvider(create: (context) => sl<FreeDoctorCubit>()),
+        BlocProvider(create: (context) => sl<CustomerSupportCubit>()),
       ],
       child: _buildMaterialApp(),
     );
