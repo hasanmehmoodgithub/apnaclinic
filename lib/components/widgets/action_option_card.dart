@@ -51,11 +51,11 @@ class ActionOptionCard extends StatelessWidget {
     final resolvedCurveHeight = curveHeight.h;
     final curveLeft = context.screenWidth * curveLeftFactor;
 
-    return Material(
-      borderRadius: BorderRadius.all(Radius.circular(radius)),
-      shadowColor: Colors.transparent,
+    return Card(
+elevation: 0.010,
+      shadowColor: Colors.white,
       child: SizedBox(
-        height: height ?? 96.h,
+        height: height ?? 92.h,
         width: double.infinity,
         child: InkWell(
           onTap: onTap,
