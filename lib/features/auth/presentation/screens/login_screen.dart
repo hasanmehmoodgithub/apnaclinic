@@ -159,7 +159,10 @@ class _LoginViewState extends State<_LoginView> {
           context,
         ).showSnackBar(SnackBar(content: Text(l10n.authOtpValidationError)));
         break;
-      case AuthSubmitResult.verified:
+      case AuthSubmitResult.verifiedGoHome:
+        context.go(AppRoutes.path(AppRoutes.home));
+        break;
+      case AuthSubmitResult.verifiedGoProfileSetup:
         context.go(AppRoutes.path(AppRoutes.profileSetup));
         break;
       case AuthSubmitResult.validationFailed:

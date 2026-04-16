@@ -84,14 +84,112 @@ class _ProfileSetupViewState extends State<_ProfileSetupView> {
     final now = DateTime.now();
     final initial =
         state.dateOfBirth ?? DateTime(now.year - 20, now.month, now.day);
+    final theme = Theme.of(context);
     final picked = await showDatePicker(
       context: context,
       initialDate: initial,
       firstDate: DateTime(1900),
       lastDate: now,
+      builder: (context, child) {
+        return Theme(
+          data: theme.copyWith(
+            colorScheme: theme.colorScheme.copyWith(
+              primary: const Color(0xFF0FAA9A),
+              onPrimary: Colors.white,
+              surface: Colors.white,
+              onSurface: const Color(0xFF061E40),
+            ),
+            datePickerTheme: DatePickerThemeData(
+              backgroundColor: Colors.white,
+              headerBackgroundColor: const Color(0xFF0FAA9A),
+              headerForegroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20.r),
+              ),
+              dayStyle: theme.textTheme.bodyMedium?.copyWith(
+                color: const Color(0xFF061E40),
+              ),
+              todayBorder: BorderSide(
+                color: const Color(0xFF0FAA9A),
+                width: 1.r,
+              ),
+            ),
+            textButtonTheme: TextButtonThemeData(
+              style: TextButton.styleFrom(
+                foregroundColor: const Color(0xFF0FAA9A),
+                textStyle: theme.textTheme.labelLarge?.copyWith(
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ),
+          ),
+          child: child ?? const SizedBox.shrink(),
+        );
+      },
     );
     if (picked == null || !context.mounted) return;
     context.read<ProfileSetupCubit>().setDateOfBirth(picked);
+  }
+
+  Future<void> _showGenderPicker(BuildContext context) async {
+    final l10n = AppLocalizations.of(context)!;
+    final selected = context.read<ProfileSetupCubit>().state.selectedGender;
+    final result = await showDialog<String>(
+      context: context,
+      builder: (dialogContext) {
+        return Dialog(
+          insetPadding: EdgeInsets.symmetric(horizontal: 30.w),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16.r),
+          ),
+          child: Padding(
+            padding: EdgeInsets.symmetric(vertical: 10.h),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ListTile(
+                  title: Text(l10n.profileGenderMale),
+                  trailing: selected == 'male'
+                      ? Icon(
+                          Icons.check_rounded,
+                          color: const Color(0xFF0FAA9A),
+                          size: 20.r,
+                        )
+                      : null,
+                  onTap: () => Navigator.of(dialogContext).pop('male'),
+                ),
+                ListTile(
+                  title: Text(l10n.profileGenderFemale),
+                  trailing: selected == 'female'
+                      ? Icon(
+                          Icons.check_rounded,
+                          color: const Color(0xFF0FAA9A),
+                          size: 20.r,
+                        )
+                      : null,
+                  onTap: () => Navigator.of(dialogContext).pop('female'),
+                ),
+                ListTile(
+                  title: Text(l10n.profileGenderOther),
+                  trailing: selected == 'other'
+                      ? Icon(
+                          Icons.check_rounded,
+                          color: const Color(0xFF0FAA9A),
+                          size: 20.r,
+                        )
+                      : null,
+                  onTap: () => Navigator.of(dialogContext).pop('other'),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+
+    if (result == null || !context.mounted) return;
+    context.read<ProfileSetupCubit>().setGender(result);
+    FocusScope.of(context).unfocus();
   }
 
   Future<void> _save(ProfileSetupState state) async {
@@ -370,30 +468,27 @@ class _ProfileSetupViewState extends State<_ProfileSetupView> {
                                       color: const Color(0xFF98A2B3),
                                     ),
                                   ),
-                                  DropdownButtonFormField<String>(
-                                    key: ValueKey(state.selectedGender),
-                                    initialValue: state.selectedGender,
-                                    decoration: _lineInputDecoration(
-                                      context,
-                                      hintText: l10n.profileGenderHint,
+                                  InkWell(
+                                    onTap: () => _showGenderPicker(context),
+                                    child: IgnorePointer(
+                                      child: TextFormField(
+                                        decoration: _lineInputDecoration(
+                                          context,
+                                          hintText: state.selectedGender == null
+                                              ? l10n.profileGenderHint
+                                              : state.selectedGender == 'male'
+                                              ? l10n.profileGenderMale
+                                              : state.selectedGender == 'female'
+                                              ? l10n.profileGenderFemale
+                                              : l10n.profileGenderOther,
+                                          suffixIcon: Icon(
+                                            Icons.keyboard_arrow_down_rounded,
+                                            color: const Color(0xFF0FAA9A),
+                                            size: 22.r,
+                                          ),
+                                        ),
+                                      ),
                                     ),
-                                    items: [
-                                      DropdownMenuItem(
-                                        value: 'male',
-                                        child: Text(l10n.profileGenderMale),
-                                      ),
-                                      DropdownMenuItem(
-                                        value: 'female',
-                                        child: Text(l10n.profileGenderFemale),
-                                      ),
-                                      DropdownMenuItem(
-                                        value: 'other',
-                                        child: Text(l10n.profileGenderOther),
-                                      ),
-                                    ],
-                                    onChanged: context
-                                        .read<ProfileSetupCubit>()
-                                        .setGender,
                                   ),
                                   SizedBox(height: 22.h),
                                   Text(

@@ -13,6 +13,7 @@ enum AuthSubmitResult {
   validationFailed,
   otpSent,
   invalidOtp,
-  verified,
+  verifiedGoHome,
+  verifiedGoProfileSetup,
   failed,
 }

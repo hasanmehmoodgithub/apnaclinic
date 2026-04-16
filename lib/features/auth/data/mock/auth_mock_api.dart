@@ -26,12 +26,22 @@ class AuthMockApi {
       };
     }
 
+    final isOnboardingCompleted = !phoneNumber.endsWith('0');
     return <String, dynamic>{
       'success': true,
       'message': 'Login successful.',
       'data': <String, dynamic>{
         'token': 'mock-token',
         'userId': phoneNumber,
+        'isOnboardingCompleted': false,
+        'user': <String, dynamic>{
+          'firstName': isOnboardingCompleted ? 'Hasan' : '',
+          'lastName': isOnboardingCompleted ? 'Ali' : '',
+          'gender': isOnboardingCompleted ? 'male' : '',
+          'email': isOnboardingCompleted ? 'hasan@example.com' : '',
+          'address': isOnboardingCompleted ? 'Lahore' : '',
+          'dateOfBirth': isOnboardingCompleted ? '1998-05-12' : '',
+        },
       },
     };
   }

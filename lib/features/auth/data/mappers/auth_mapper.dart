@@ -6,8 +6,15 @@ class AuthMapper {
     return AuthEntity(
       success: model.success,
       message: model.message,
+      isOnboardingCompleted: model.isOnboardingCompleted,
       token: model.token,
       userId: model.userId,
+      firstName: model.firstName,
+      lastName: model.lastName,
+      gender: model.gender,
+      email: model.email,
+      address: model.address,
+      dateOfBirth: model.dateOfBirth,
     );
   }
 }

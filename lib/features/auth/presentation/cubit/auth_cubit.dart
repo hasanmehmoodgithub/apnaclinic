@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/enums/app_enums.dart';
 import '../../../../core/enums/state_status.dart';
 import '../../../../core/preference/app_pref.dart';
+import '../../domain/entities/auth_entity.dart';
 import '../../domain/use_cases/request_otp_use_case.dart';
 import '../../domain/use_cases/verify_otp_use_case.dart';
 import 'auth_state.dart';
@@ -81,8 +82,11 @@ class AuthCubit extends Cubit<AuthState> {
 
     if (otpCode.length != 4) return AuthSubmitResult.invalidOtp;
 
-    final success = await verifyOtp(otpCode);
-    return success ? AuthSubmitResult.verified : AuthSubmitResult.failed;
+    final result = await verifyOtp(otpCode);
+    if (!result.isSuccess) return AuthSubmitResult.failed;
+    return result.goToHome
+        ? AuthSubmitResult.verifiedGoHome
+        : AuthSubmitResult.verifiedGoProfileSetup;
   }
 
   Future<bool> requestOtp(String phoneNumber) async {
@@ -115,7 +119,7 @@ class AuthCubit extends Cubit<AuthState> {
     });
   }
 
-  Future<bool> verifyOtp(String otp) async {
+  Future<_VerifyOtpOutcome> verifyOtp(String otp) async {
     _safeEmit(
       state.copyWith(
         isLoading: true,
@@ -130,7 +134,7 @@ class AuthCubit extends Cubit<AuthState> {
         otp: otp,
       ),
     );
-    if (isClosed) return false;
+    if (isClosed) return const _VerifyOtpOutcome(isSuccess: false, goToHome: false);
     return result.fold((error) {
       _safeEmit(
         state.copyWith(
@@ -139,10 +143,12 @@ class AuthCubit extends Cubit<AuthState> {
           errorMessage: error,
         ),
       );
-      return false;
+      return const _VerifyOtpOutcome(isSuccess: false, goToHome: false);
     }, (entity) async {
-      await _saveUserSession(entity.userId, entity.token);
-      if (isClosed) return false;
+      await _saveUserSession(entity: entity);
+      if (isClosed) {
+        return const _VerifyOtpOutcome(isSuccess: false, goToHome: false);
+      }
       _safeEmit(
         state.copyWith(
           isLoading: false,
@@ -150,7 +156,10 @@ class AuthCubit extends Cubit<AuthState> {
           errorMessage: null,
         ),
       );
-      return true;
+      return _VerifyOtpOutcome(
+        isSuccess: true,
+        goToHome: entity.isOnboardingCompleted,
+      );
     });
   }
 
@@ -192,11 +201,36 @@ class AuthCubit extends Cubit<AuthState> {
     );
   }
 
-  Future<void> _saveUserSession(String? userId, String? token) async {
+  Future<void> _saveUserSession({required AuthEntity entity}) async {
     await _appPref.setLoginStatus(true);
-    await _appPref.setUserId(userId ?? state.phoneNumber);
+    await _appPref.setUserId(entity.userId ?? state.phoneNumber);
     await _appPref.setString('profile_phone', state.phoneNumber);
-    await _appPref.setToken(token ?? '');
+    await _appPref.setToken(entity.token ?? '');
+    await _appPref.setOnboardingCompleted(entity.isOnboardingCompleted == true);
+
+    if (entity.isOnboardingCompleted == true) {
+      await _appPref.setProfileCompleted(true);
+      await _appPref.setString(
+        'profile_first_name',
+        entity.firstName ?? '',
+      );
+      await _appPref.setString(
+        'profile_last_name',
+        entity.lastName ?? '',
+      );
+      await _appPref.setString('profile_gender', entity.gender ?? '');
+      await _appPref.setString('profile_email', entity.email ?? '');
+      await _appPref.setString(
+        'profile_address',
+        entity.address ?? '',
+      );
+      await _appPref.setString(
+        'profile_dob',
+        entity.dateOfBirth ?? '',
+      );
+    } else {
+      await _appPref.setProfileCompleted(false);
+    }
   }
 
   void _startOtpTimer() {
@@ -218,4 +252,14 @@ class AuthCubit extends Cubit<AuthState> {
     _timer?.cancel();
     return super.close();
   }
+}
+
+class _VerifyOtpOutcome {
+  const _VerifyOtpOutcome({
+    required this.isSuccess,
+    required this.goToHome,
+  });
+
+  final bool isSuccess;
+  final bool goToHome;
 }
