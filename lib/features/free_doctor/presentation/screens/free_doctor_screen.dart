@@ -229,7 +229,7 @@ class _ConsultationInfoCard extends StatelessWidget {
               const _ConsultationInfoShimmer()
             else
               SingleChildScrollView(
-                padding: EdgeInsets.fromLTRB(10.w, 28.h, 20.w, 24.h),
+                padding: EdgeInsets.fromLTRB(18.w, 28.h, 20.w, 24.h),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [

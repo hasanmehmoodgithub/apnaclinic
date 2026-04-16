@@ -61,7 +61,7 @@ class MenuScreen extends StatelessWidget {
               child: Container(
                 width: double.infinity,
                 decoration: BoxDecoration(
-                  color: Color(0xFFF4F6F8),
+                  color: Colors.white,
                   borderRadius: BorderRadius.vertical(
                     top: Radius.circular(42.r),
                   ),

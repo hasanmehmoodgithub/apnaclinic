@@ -1,4 +1,3 @@
-import 'package:apnaclinic/core/extensions/context_extensions.dart';
 import 'package:apnaclinic/core/extensions/screen_util_extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -22,6 +21,8 @@ class ActionOptionCard extends StatelessWidget {
     this.height,
     this.titleSpacing = 7,
     this.radius = 4.0,
+    this.trailingOverlayWidth,
+    this.trailingOverlayHeight,
   });
 
   final String title;
@@ -40,6 +41,8 @@ class ActionOptionCard extends StatelessWidget {
   final double? height;
   final double titleSpacing;
   final double radius;
+  final double? trailingOverlayWidth;
+  final double? trailingOverlayHeight;
 
   static const String _arrowAsset = 'assets/svg/ic_support_card_arrow.svg';
   static const Color _headingDark = Color(0xFF111827);
@@ -47,74 +50,70 @@ class ActionOptionCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final curveWidth = context.screenWidth * curveWidthFactor;
-    final resolvedCurveHeight = curveHeight.h;
-    final curveLeft = context.screenWidth * curveLeftFactor;
+    final cardHeight = height ?? 92.h;
 
     return Card(
-elevation: 0.010,
+      elevation: 0.010,
       shadowColor: Colors.white,
       child: SizedBox(
-        height: height ?? 92.h,
+        height: cardHeight,
         width: double.infinity,
-        child: InkWell(
-          onTap: onTap,
-          borderRadius: BorderRadius.all(Radius.circular(radius)),
-          child: Ink(
-            decoration: BoxDecoration(
-              color: Colors.white,
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final cardWidth = constraints.maxWidth;
+            final curveWidth = cardWidth * curveWidthFactor;
+            final resolvedCurveHeight = curveHeight.h;
+            final curveLeft = cardWidth * curveLeftFactor;
+            final resolvedTrailingWidth = trailingOverlayWidth ?? 44.w;
+            final resolvedTrailingHeight = trailingOverlayHeight ?? 46.h;
+
+            // Center the trailing control within the visible curved area.
+            final visibleCurveStart = curveLeft.clamp(0.0, cardWidth);
+            final trailingLeft =
+                ((visibleCurveStart + cardWidth) / 2) -
+                (resolvedTrailingWidth / 2);
+
+            return InkWell(
+              onTap: onTap,
               borderRadius: BorderRadius.all(Radius.circular(radius)),
-              border: Border.all(color: const Color(0xFFF3F4F6)),
-            ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.all(Radius.circular(radius)),
-              clipBehavior: Clip.antiAlias,
-              child: Stack(
-                clipBehavior: Clip.hardEdge,
-                children: [
-                  Positioned(
-                    left: curveLeft,
-                    top: -48.78.h,
-                    child: IgnorePointer(
-                      child: Container(
-                        width: curveWidth,
-                        height: resolvedCurveHeight,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: curveOverlayColor,
+              child: Ink(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.all(Radius.circular(radius)),
+                  border: Border.all(color: const Color(0xFFF3F4F6)),
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.all(Radius.circular(radius)),
+                  clipBehavior: Clip.antiAlias,
+                  child: Stack(
+                    clipBehavior: Clip.hardEdge,
+                    children: [
+                      Positioned(
+                        left: curveLeft,
+                        top: -48.78.h,
+                        child: IgnorePointer(
+                          child: Container(
+                            width: curveWidth,
+                            height: resolvedCurveHeight,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: curveOverlayColor,
+                            ),
+                          ),
                         ),
                       ),
-                    ),
-                  ),
-                  Align(
-                    alignment: Alignment.center,
-                    child: Padding(
-                      padding: contentPadding,
-                      child: Row(
-                        children: [
-                          leading,
-                          SizedBox(width: 12.w),
-                          Expanded(
-                            child: subtitle == null
-                                ? Text(
-                                    title,
-                                    style:
-                                        titleStyle ??
-                                        theme.textTheme.titleSmall?.copyWith(
-                                          fontWeight: FontWeight.w700,
-                                          color: _headingDark,
-                                        ),
-                                  )
-                                : Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
+                      Align(
+                        alignment: Alignment.center,
+                        child: Padding(
+                          padding: contentPadding,
+                          child: Row(
+                            children: [
+                              leading,
+                              SizedBox(width: 12.w),
+                              Expanded(
+                                child: subtitle == null
+                                    ? Text(
                                         title,
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
                                         style:
                                             titleStyle ??
                                             theme.textTheme.titleSmall
@@ -122,50 +121,75 @@ elevation: 0.010,
                                                   fontWeight: FontWeight.w700,
                                                   color: _headingDark,
                                                 ),
+                                      )
+                                    : Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            title,
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                            style:
+                                                titleStyle ??
+                                                theme.textTheme.titleSmall
+                                                    ?.copyWith(
+                                                      fontWeight:
+                                                          FontWeight.w700,
+                                                      color: _headingDark,
+                                                    ),
+                                          ),
+                                          SizedBox(height: titleSpacing.h),
+                                          Text(
+                                            subtitle!,
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                            style:
+                                                subtitleStyle ??
+                                                theme.textTheme.bodyMedium
+                                                    ?.copyWith(
+                                                      color: const Color(
+                                                        0xFF4A4A4A,
+                                                      ),
+                                                    ),
+                                          ),
+                                        ],
                                       ),
-                                      SizedBox(height: titleSpacing.h),
-                                      Text(
-                                        subtitle!,
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                        style:
-                                            subtitleStyle ??
-                                            theme.textTheme.bodyMedium
-                                                ?.copyWith(
-                                                  color: const Color(
-                                                    0xFF4A4A4A,
-                                                  ),
-                                                ),
-                                      ),
-                                    ],
-                                  ),
-                          ),
-                          if (trailing != null) ...[
-                            SizedBox(width: 8.w),
-                            GestureDetector(
-                              onTap: onTrailingTap,
-                              behavior: HitTestBehavior.opaque,
-                              child: trailing!,
-                            ),
-                          ] else
-                            SizedBox(
-                              width: 44.w,
-                              height: 46.h,
-                              child: Center(
-                                child: SvgPicture.asset(
-                                  _arrowAsset,
-                                  fit: BoxFit.contain,
-                                ),
                               ),
-                            ),
-                        ],
+                              SizedBox(width: resolvedTrailingWidth),
+                            ],
+                          ),
+                        ),
                       ),
-                    ),
+                      Positioned(
+                        left: trailingLeft,
+                        top: (cardHeight - resolvedTrailingHeight) / 2,
+                        child: SizedBox(
+                          width: resolvedTrailingWidth,
+                          height: resolvedTrailingHeight,
+                          child: trailing != null
+                              ? GestureDetector(
+                                  onTap: onTrailingTap,
+                                  behavior: HitTestBehavior.opaque,
+                                  child: Center(child: trailing!),
+                                )
+                              : Center(
+                                  child: SvgPicture.asset(
+                                    _arrowAsset,
+                                    fit: BoxFit.contain,
+                                  ),
+                                ),
+                        ),
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
-            ),
-          ),
+            );
+          },
         ),
       ),
     );

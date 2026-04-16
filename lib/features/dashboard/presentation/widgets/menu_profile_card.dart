@@ -21,12 +21,13 @@ class MenuProfileCard extends StatelessWidget {
     final theme = Theme.of(context);
 
     return ActionOptionCard(
-      curveWidthFactor: 0.5,
       title: name,
       subtitle: phone,
       onTap: onActionTap,
       onTrailingTap: onActionTap,
       curveOverlayColor: const Color(0x99EBDFFF),
+      trailingOverlayWidth: 124.w,
+      trailingOverlayHeight: 40.h,
       contentPadding: EdgeInsets.fromLTRB(28.w, 25.h, 16.w, 24.h),
       titleSpacing: 7,
       titleStyle: theme.textTheme.titleMedium?.copyWith(
