@@ -183,19 +183,11 @@ class ApnaClinicAppBar extends StatelessWidget implements PreferredSizeWidget {
                           child: InkWell(
                             onTap: onProfileTap,
                             customBorder: const CircleBorder(),
-                            child: CircleAvatar(
-                              radius: 19.r,
-                              backgroundColor: _isGreen
-                                  ? Colors.white.withValues(alpha: 0.28)
-                                  : const Color(0xFFE0F2F1),
-                              child: Icon(
-                                Icons.person_rounded,
-                                size: 24.r,
-                                color: _isGreen
-                                    ? Colors.white
-                                    : const Color(0xFF0FAA9A),
-                              ),
+                            child: Padding(
+                              padding:  EdgeInsets.all(6.sp),
+                              child: Image.asset(Assets.imgPlaceHolderPerson),
                             ),
+
                           ),
                         ),
                 ),

@@ -1,4 +1,6 @@
+import 'package:apnaclinic/core/constants/app_colors.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../components/widgets/app_button.dart';
@@ -19,8 +21,9 @@ class AddAccountScreen extends StatefulWidget {
 class _AddAccountScreenState extends State<AddAccountScreen> {
   final _formKey = GlobalKey<FormState>();
   final _accountNumberController = TextEditingController();
-  final List<String> _banks = const ['Jazz Cash', 'EasyPaisa', 'Bank Transfer'];
-  String _selectedBank = 'Jazz Cash';
+  final List<String> _accountMethods = const ['JazzCash'];
+  static const String _accountMethodName = 'JazzCash';
+  String _selectedAccountMethod = _accountMethodName;
 
   @override
   void dispose() {
@@ -38,7 +41,7 @@ class _AddAccountScreenState extends State<AddAccountScreen> {
     final store = AccountLocalStore(pref);
     final newIndex = await store.addAccount(
       AccountMethod(
-        bankName: _selectedBank,
+        bankName: _selectedAccountMethod,
         accountHolderName: fullName.isEmpty ? 'Account Holder' : fullName,
         accountNumber: _accountNumberController.text.trim(),
       ),
@@ -70,7 +73,8 @@ class _AddAccountScreenState extends State<AddAccountScreen> {
         title: Text(
           'Add Account',
           style: theme.textTheme.titleMedium?.copyWith(
-            color: const Color(0xFF061E40),
+            color: AppColors.clr060,
+            fontSize:20.sp,
             fontWeight: FontWeight.w700,
           ),
         ),
@@ -91,56 +95,57 @@ class _AddAccountScreenState extends State<AddAccountScreen> {
                 Text(
                   'Enter Account Details',
                   style: theme.textTheme.bodyMedium?.copyWith(
-                    color: const Color(0xFF061E40),
+                    color: AppColors.clr060,fontSize: 16.sp,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
                 SizedBox(height: 18.h),
                 Text(
-                  'Bank',
+                  'Account Method',
                   style: theme.textTheme.bodySmall?.copyWith(
-                    color: const Color(0xFF061E40),
+                    fontWeight: FontWeight.w500,
+                      color: AppColors.clr060,
+                      fontSize: 16.sp
+
                   ),
                 ),
+                SizedBox(height: 4.h),
                 DropdownButtonFormField<String>(
-                  value: _selectedBank,
+                  value: _selectedAccountMethod,
                   decoration: _fieldDecoration(),
-                  items: _banks
+                  items: _accountMethods
                       .map(
-                        (bank) => DropdownMenuItem<String>(
-                          value: bank,
-                          child: Text(bank),
+                        (method) => DropdownMenuItem<String>(
+                          value: method,
+                          child: Text(method),
                         ),
                       )
                       .toList(),
                   onChanged: (value) {
                     if (value == null) return;
-                    setState(() => _selectedBank = value);
+                    setState(() => _selectedAccountMethod = value);
                   },
                 ),
                 SizedBox(height: 18.h),
                 Text(
                   'Account Number',
                   style: theme.textTheme.bodySmall?.copyWith(
-                    color: const Color(0xFF061E40),
+                    color: AppColors.clr060,
+                    fontWeight: FontWeight.w500,
+                    fontSize: 16.sp
                   ),
                 ),
+                SizedBox(height: 4.h),
                 TextFormField(
                   controller: _accountNumberController,
                   keyboardType: TextInputType.number,
+                  inputFormatters: [
+                    FilteringTextInputFormatter.digitsOnly,
+                    LengthLimitingTextInputFormatter(11),
+                  ],
                   decoration: _fieldDecoration(
-                    suffixIcon: Icon(
-                      Icons.arrow_circle_right_outlined,
-                      color: const Color(0xFFC0C5CC),
-                      size: 20.r,
-                    ),
                   ),
-                  validator: (value) {
-                    if ((value ?? '').trim().length < 8) {
-                      return 'Enter a valid account number';
-                    }
-                    return null;
-                  },
+                  validator: _validatePakistanAccountNumber,
                 ),
                 const Spacer(),
                 AppButton.primary(
@@ -164,19 +169,36 @@ class _AddAccountScreenState extends State<AddAccountScreen> {
       filled: true,
       fillColor: const Color(0xFFF8F8F8),
       contentPadding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 14.h),
+      counterText: '',
       suffixIcon: suffixIcon,
       border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(8.r),
-        borderSide: const BorderSide(color: Color(0xFFE5E7EB)),
+
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(8.r),
-        borderSide: const BorderSide(color: Color(0xFFE5E7EB)),
+        borderSide: const BorderSide(color: Colors.transparent),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(8.r),
-        borderSide: const BorderSide(color: Color(0xFF45B7AC)),
+        borderSide: const BorderSide(color: Colors.transparent),
       ),
     );
+  }
+
+  String? _validatePakistanAccountNumber(String? value) {
+    final input = (value ?? '').trim();
+    if (input.isEmpty) {
+      return 'Enter account number';
+    }
+    if (!RegExp(r'^\d+$').hasMatch(input)) {
+      return 'Only digits are allowed';
+    }
+    if (input.length != 11) {
+      return 'Enter 11 digit Pakistan number';
+    }
+    if (!input.startsWith('03')) {
+      return 'Enter valid Pakistan mobile number';
+    }
+    return null;
   }
 }

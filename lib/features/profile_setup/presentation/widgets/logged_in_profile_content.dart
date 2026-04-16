@@ -16,6 +16,7 @@ class LoggedInProfileContent extends StatelessWidget {
     required this.accounts,
     required this.onAccountTap,
     required this.onAddAccountTap,
+    required this.onDeleteAccountTap,
   });
 
   final String fullName;
@@ -26,6 +27,7 @@ class LoggedInProfileContent extends StatelessWidget {
   final List<AccountMethod> accounts;
   final VoidCallback onAccountTap;
   final VoidCallback onAddAccountTap;
+  final void Function(int index, AccountMethod account) onDeleteAccountTap;
 
   @override
   Widget build(BuildContext context) {
@@ -117,12 +119,15 @@ class LoggedInProfileContent extends StatelessWidget {
             ),
           ),
           SizedBox(height: 8.h),
-          ...accounts.map(
-            (account) => Padding(
+          ...accounts.asMap().entries.map(
+            (entry) => Padding(
               padding: EdgeInsets.only(bottom: 8.h),
               child: AccountTile(
-                account: account,
+                account: entry.value,
                 onTap: onAccountTap,
+                onDelete: entry.value.isDefault
+                    ? null
+                    : () => onDeleteAccountTap(entry.key, entry.value),
               ),
             ),
           ),

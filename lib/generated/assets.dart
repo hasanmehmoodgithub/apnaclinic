@@ -34,6 +34,7 @@ class Assets {
   static const String iconsEmpty = 'assets/icons/empty.svg';
   static const String iconsNurse = 'assets/icons/nurse.png';
   static const String iconsPlaceholder = 'assets/icons/placeholder.txt';
+  static const String iconsTick = 'assets/icons/tick.svg';
   static const String imagesDashboardLoader = 'assets/images/dashboard_loader.json';
   static const String imagesPlaceholder = 'assets/images/placeholder.txt';
   static const String imgBanner = 'assets/img/banner.png';
@@ -41,6 +42,7 @@ class Assets {
   static const String imgFikrfreeLogo = 'assets/img/fikrfree_logo.png';
   static const String imgHeroFamily = 'assets/img/hero_family.webp';
   static const String imgPartner = 'assets/img/partner.png';
+  static const String imgPlaceHolderPerson = 'assets/img/placeHolderPerson.webp';
   static const String imgProfileAvatar = 'assets/img/profile_avatar.png';
   static const String imgSplash = 'assets/img/splash.png';
   static const String licenseFFL = 'assets/fonts/satoshi/Satoshi_Complete/License/FFL.txt';
@@ -62,6 +64,7 @@ class Assets {
   static const String svgIcServiceCardArrow = 'assets/svg/ic_service_card_arrow.svg';
   static const String svgIcServiceOffer = 'assets/svg/ic_service_offer.svg';
   static const String svgIcSupportCardArrow = 'assets/svg/ic_support_card_arrow.svg';
+  static const String svgJazzCash = 'assets/svg/jazzCash.svg';
   static const String svgNavBookings = 'assets/svg/nav_bookings.svg';
   static const String svgNavFreeDoctor = 'assets/svg/nav_free_doctor.svg';
   static const String svgNavHomeLogo = 'assets/svg/nav_home_logo.svg';

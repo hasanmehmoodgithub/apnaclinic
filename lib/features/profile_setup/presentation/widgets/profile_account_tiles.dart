@@ -8,10 +8,12 @@ class AccountTile extends StatelessWidget {
     super.key,
     required this.account,
     required this.onTap,
+    this.onDelete,
   });
 
   final AccountMethod account;
   final VoidCallback onTap;
+  final VoidCallback? onDelete;
 
   @override
   Widget build(BuildContext context) {
@@ -71,6 +73,26 @@ class AccountTile extends StatelessWidget {
                   'Default',
                   style: theme.textTheme.labelSmall?.copyWith(
                     color: const Color(0xFF7B8794),
+                  ),
+                ),
+              ),
+            if (!account.isDefault && onDelete != null)
+              InkWell(
+                onTap: onDelete,
+                borderRadius: BorderRadius.circular(14.r),
+                child: Container(
+                  margin: EdgeInsets.only(left: 8.w, top: 2.h),
+                  width: 28.r,
+                  height: 28.r,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(color: const Color(0xFFD4D9E1)),
+                    color: Colors.white,
+                  ),
+                  child: Icon(
+                    Icons.delete_outline_rounded,
+                    color: const Color(0xFFC62828),
+                    size: 16.r,
                   ),
                 ),
               ),

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
+import '../../../../components/widgets/action_option_card.dart';
 import '../../../../components/widgets/app_button.dart';
 import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
@@ -23,6 +25,7 @@ class AccountDetailsScreen extends StatefulWidget {
 }
 
 class _AccountDetailsScreenState extends State<AccountDetailsScreen> {
+  static const String _jazzCashName = 'JazzCash';
   late List<AccountMethod> _accounts;
   bool _didShowInitialSuccessDialog = false;
 
@@ -67,57 +70,77 @@ class _AccountDetailsScreenState extends State<AccountDetailsScreen> {
   Future<void> _showSuccessDialog(AccountMethod account) async {
     await showDialog<void>(
       context: context,
-      barrierColor: Colors.black.withValues(alpha: 0.45),
+      barrierColor: Colors.black.withValues(alpha: 0.35),
       builder: (context) {
         final theme = Theme.of(context);
         return Dialog(
+          insetPadding: EdgeInsets.symmetric(horizontal: 14.w),
+          backgroundColor: Colors.white,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(18.r),
           ),
           child: Padding(
-            padding: EdgeInsets.fromLTRB(22.w, 24.h, 22.w, 18.h),
+            padding: EdgeInsets.fromLTRB(26.w, 22.h, 26.w, 24.h),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Container(
-                  width: 56.r,
-                  height: 56.r,
-                  decoration: const BoxDecoration(
-                    color: Color(0xFFE7F8EE),
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(
-                    Icons.check_rounded,
-                    color: const Color(0xFF6DD67C),
-                    size: 34.r,
-                  ),
-                ),
-                SizedBox(height: 16.h),
-                Text(
-                  'Payment Method Added Successfully',
-                  textAlign: TextAlign.center,
-                  style: theme.textTheme.titleMedium?.copyWith(
-                    color: const Color(0xFF25324B),
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-                SizedBox(height: 8.h),
-                Text(
-                  'Your ${account.bankName} account no. ${account.accountNumber} - ${account.accountHolderName} has success been linked',
-                  textAlign: TextAlign.center,
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: const Color(0xFF7B8794),
-                    height: 1.4,
+                SizedBox(
+                  width: 60.r,
+                  height: 60.r,
+                  child: SvgPicture.asset(
+                    'assets/icons/tick.svg',
+                    fit: BoxFit.contain,
                   ),
                 ),
                 SizedBox(height: 18.h),
-                AppButton.primary(
-                  text: 'Continue',
-                  onPressed: () => Navigator.of(context).pop(),
-                  backgroundColor: const Color(0xFF45B7AC),
-                  foregroundColor: Colors.white,
-                  height: 48.h,
-                  borderRadius: 10.r,
+                Text(
+                  'Payment Method Added Successfully',
+                  textAlign: TextAlign.center,
+                  style: theme.textTheme.titleLarge?.copyWith(
+                    color: const Color(0xFF102A56),
+                    fontWeight: FontWeight.w500,
+                    fontSize: 18.sp,
+                    height: 1.15,
+                  ),
+                ),
+                SizedBox(height: 10.h),
+                RichText(
+                  textAlign: TextAlign.center,
+                  text: TextSpan(
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: const Color(0xFF8A97B2),
+                      fontSize: 14.sp,
+                      height: 1.35,
+                    ),
+                    children: [
+                      TextSpan(
+                        text:
+                            'Your ${_displayBankName(account.bankName)} account no. ',
+                      ),
+                      TextSpan(
+                        text: account.accountNumber,
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: const Color(0xFF6B7C96),
+                          fontSize: 14.sp,
+                          height: 1.35,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      const TextSpan(text: ' has success been linked'),
+                    ],
+                  ),
+                ),
+                SizedBox(height: 22.h),
+                SizedBox(
+                  width: double.infinity,
+                  child: AppButton.primary(
+                    text: 'Continue',
+                    onPressed: () => Navigator.of(context).pop(),
+                    backgroundColor: const Color(0xFF40B3A7),
+                    foregroundColor: Colors.white,
+                    height: 60.h,
+                    borderRadius: 12.r,
+                  ),
                 ),
               ],
             ),
@@ -155,116 +178,80 @@ class _AccountDetailsScreenState extends State<AccountDetailsScreen> {
         separatorBuilder: (_, _) => SizedBox(height: 12.h),
         itemBuilder: (context, index) {
           final item = _accounts[index];
-          return Container(
-            padding: EdgeInsets.fromLTRB(12.w, 10.h, 10.w, 10.h),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(14.r),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.04),
-                  blurRadius: 14.r,
-                  offset: Offset(0, 4.h),
-                ),
-              ],
+          return ActionOptionCard(
+            title: _displayBankName(item.bankName),
+            subtitle: item.accountHolderName,
+            onTap: () {},
+            onTrailingTap: item.isDefault ? null : () => _deleteAccount(index),
+            height: 96.h,
+            radius: 6.r,
+            curveOverlayColor: const Color(0xFFE8F8FD),
+            contentPadding: EdgeInsets.fromLTRB(12.w, 10.h, 10.w, 10.h),
+            titleSpacing: 2,
+            trailingOverlayWidth: item.isDefault ? 78.w : 40.w,
+            trailingOverlayHeight: item.isDefault ? 34.h : 40.h,
+            leading: Container(
+              width:60.r,
+              height: 60.r,
+              padding: EdgeInsets.all(2.r),
+              child: SvgPicture.asset(
+                'assets/svg/jazzCash.svg',
+                fit: BoxFit.contain,
+              ),
             ),
-            child: Row(
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Container(
-                  width: 42.r,
-                  height: 42.r,
-                  decoration: const BoxDecoration(
-                    color: Color(0xFFFFF5D8),
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(
-                    Icons.account_balance_wallet_outlined,
-                    color: const Color(0xFFCA8A04),
-                    size: 22.r,
+                Text(
+                  _displayBankName(item.bankName),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: const Color(0xFF111827),
+                    fontWeight: FontWeight.w700,
+                    fontSize: 16.sp,
+                    height: 1.1,
                   ),
                 ),
-                SizedBox(width: 10.w),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        item.bankName,
-                        style: theme.textTheme.labelLarge?.copyWith(
-                          color: const Color(0xFF111827),
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                      SizedBox(height: 2.h),
-                      Text(
-                        item.accountHolderName,
-                        style: theme.textTheme.bodyMedium?.copyWith(
-                          color: const Color(0xFF374151),
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                      SizedBox(height: 2.h),
-                      Text(
-                        item.accountNumber,
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: const Color(0xFF9CA3AF),
-                        ),
-                      ),
-                    ],
+                SizedBox(height: 3.h),
+                Text(
+                  item.accountHolderName,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    color: const Color(0xFF25324B),
+                    fontWeight: FontWeight.w500,
+                    fontSize: 18.sp,
+                    height: 1.1,
                   ),
                 ),
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    if (item.isDefault) ...[
-                      Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 8.w,
-                          vertical: 6.h,
-                        ),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFF3F4F6),
-                          borderRadius: BorderRadius.circular(14.r),
-                          border: Border.all(
-                            color: const Color(0xFFD1D5DB),
-                          ),
-                        ),
-                        child: Text(
-                          'Default',
-                          style: theme.textTheme.labelSmall?.copyWith(
-                            color: const Color(0xFF6B7280),
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
-                      SizedBox(width: 8.w),
-                    ],
-                    InkWell(
-                      onTap: () => _deleteAccount(index),
-                      borderRadius: BorderRadius.circular(14.r),
-                      child: Container(
-                        width: 32.r,
-                        height: 32.r,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: const Color(0xFFD1D5DB),
-                          ),
-                        ),
-                        child: Icon(
-                          Icons.delete_outline_rounded,
-                          color: const Color(0xFF6B7280),
-                          size: 18.r,
-                        ),
-                      ),
-                    ),
-                  ],
+                SizedBox(height: 3.h),
+                Text(
+                  item.accountNumber,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: const Color(0xFF8A97A8),
+                    fontWeight: FontWeight.w400,
+                    fontSize: 14.sp,
+                    height: 1.1,
+                  ),
                 ),
               ],
             ),
+
           );
         },
       ),
     );
+  }
+
+  String _displayBankName(String bankName) {
+    if (bankName.trim().isEmpty) return _jazzCashName;
+    final normalized = bankName.replaceAll(' ', '').toLowerCase();
+    if (normalized == 'jazzcash') return _jazzCashName;
+    return bankName;
   }
 }

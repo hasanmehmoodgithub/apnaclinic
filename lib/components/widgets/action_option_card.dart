@@ -8,6 +8,7 @@ class ActionOptionCard extends StatelessWidget {
     required this.title,
     required this.onTap,
     required this.leading,
+    this.content,
     this.curveOverlayColor = const Color(0xFFE9F9FC),
     this.curveWidthFactor = 0.7206,
     this.curveHeight = 281.37,
@@ -28,6 +29,7 @@ class ActionOptionCard extends StatelessWidget {
   final String title;
   final VoidCallback onTap;
   final Widget leading;
+  final Widget? content;
   final Color curveOverlayColor;
   final double curveWidthFactor;
   final double curveHeight;
@@ -111,53 +113,7 @@ class ActionOptionCard extends StatelessWidget {
                               leading,
                               SizedBox(width: 12.w),
                               Expanded(
-                                child: subtitle == null
-                                    ? Text(
-                                        title,
-                                        style:
-                                            titleStyle ??
-                                            theme.textTheme.titleSmall
-                                                ?.copyWith(
-                                                  fontWeight: FontWeight.w700,
-                                                  color: _headingDark,
-                                                ),
-                                      )
-                                    : Column(
-                                        mainAxisSize: MainAxisSize.min,
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            title,
-                                            maxLines: 1,
-                                            overflow: TextOverflow.ellipsis,
-                                            style:
-                                                titleStyle ??
-                                                theme.textTheme.titleSmall
-                                                    ?.copyWith(
-                                                      fontWeight:
-                                                          FontWeight.w700,
-                                                      color: _headingDark,
-                                                    ),
-                                          ),
-                                          SizedBox(height: titleSpacing.h),
-                                          Text(
-                                            subtitle!,
-                                            maxLines: 1,
-                                            overflow: TextOverflow.ellipsis,
-                                            style:
-                                                subtitleStyle ??
-                                                theme.textTheme.bodyMedium
-                                                    ?.copyWith(
-                                                      color: const Color(
-                                                        0xFF4A4A4A,
-                                                      ),
-                                                    ),
-                                          ),
-                                        ],
-                                      ),
+                                child: content ?? _buildDefaultContent(theme),
                               ),
                               SizedBox(width: resolvedTrailingWidth),
                             ],
@@ -192,6 +148,47 @@ class ActionOptionCard extends StatelessWidget {
           },
         ),
       ),
+    );
+  }
+
+  Widget _buildDefaultContent(ThemeData theme) {
+    if (subtitle == null) {
+      return Text(
+        title,
+        style: titleStyle ??
+            theme.textTheme.titleSmall?.copyWith(
+              fontWeight: FontWeight.w700,
+              color: _headingDark,
+            ),
+      );
+    }
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: titleStyle ??
+              theme.textTheme.titleSmall?.copyWith(
+                fontWeight: FontWeight.w700,
+                color: _headingDark,
+              ),
+        ),
+        SizedBox(height: titleSpacing.h),
+        Text(
+          subtitle!,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: subtitleStyle ??
+              theme.textTheme.bodyMedium?.copyWith(
+                color: const Color(0xFF4A4A4A),
+              ),
+        ),
+      ],
     );
   }
 }
