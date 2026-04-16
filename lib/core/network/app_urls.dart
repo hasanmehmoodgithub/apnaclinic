@@ -40,6 +40,8 @@ class AppUrls {
   /// Promotional banner endpoint
   static String get promotionalBanner => '$baseUrl/dashboard/promo-banner';
 
+  /// Free doctor screen content endpoint
+  static String get freeDoctor => '$baseUrl/dashboard/free-doctor';
 
   // ============================================
   // 3rd Party Integration Support (Full URLs)
