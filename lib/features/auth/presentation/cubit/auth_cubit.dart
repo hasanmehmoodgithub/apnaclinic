@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../core/enums/app_enums.dart';
 import '../../../../core/enums/state_status.dart';
 import '../../../../core/preference/app_pref.dart';
 import '../../domain/use_cases/request_otp_use_case.dart';
@@ -23,20 +24,65 @@ class AuthCubit extends Cubit<AuthState> {
   final AppPref _appPref;
   Timer? _timer;
 
+  // ---------- UI helpers ----------
   void _safeEmit(AuthState newState) {
     if (isClosed) return;
     emit(newState);
   }
 
-  void setPhoneNumber(String phoneNumber) {
-    if (phoneNumber.isEmpty || phoneNumber == state.phoneNumber) return;
-    emit(
-      state.copyWith(
-        phoneNumber: phoneNumber,
-        otpRequested: false,
-        errorMessage: null,
-      ),
-    );
+  String formatPhoneInput(String input) {
+    var digits = input.replaceAll(RegExp(r'\D'), '');
+    if (digits.startsWith('0')) {
+      digits = digits.substring(1);
+    }
+    if (digits.startsWith('92') && digits.length > 10) {
+      digits = digits.substring(2);
+    }
+    return '+92$digits';
+  }
+
+  String _normalizeLocalPhone(String? value) {
+    final digits = (value ?? '').replaceAll(RegExp(r'\D'), '');
+    if (digits.startsWith('92') && digits.length > 10) {
+      return digits.substring(2);
+    }
+    if (digits.startsWith('0') && digits.length > 10) {
+      return digits.substring(1);
+    }
+    return digits;
+  }
+
+  // ---------- UI interactions ----------
+  bool onPhoneInputChanged(String value) {
+    clearError();
+    if (!state.otpRequested) return false;
+
+    final currentDraftPhone = _normalizeLocalPhone(value);
+    final requestedPhone = _normalizeLocalPhone(state.phoneNumber);
+    if (currentDraftPhone == requestedPhone) return false;
+
+    hideOtpSection();
+    return true;
+  }
+
+  // ---------- Login flow ----------
+  Future<AuthSubmitResult> submitLogin({
+    required bool isFormValid,
+    required String rawPhoneInput,
+    required String otpCode,
+  }) async {
+    if (!isFormValid) return AuthSubmitResult.validationFailed;
+    final phone = formatPhoneInput(rawPhoneInput.trim());
+
+    if (!state.otpRequested) {
+      final success = await requestOtp(phone);
+      return success ? AuthSubmitResult.otpSent : AuthSubmitResult.failed;
+    }
+
+    if (otpCode.length != 4) return AuthSubmitResult.invalidOtp;
+
+    final success = await verifyOtp(otpCode);
+    return success ? AuthSubmitResult.verified : AuthSubmitResult.failed;
   }
 
   Future<bool> requestOtp(String phoneNumber) async {
@@ -64,15 +110,7 @@ class AuthCubit extends Cubit<AuthState> {
       return false;
     }, (_) {
       _startOtpTimer();
-      _safeEmit(
-        state.copyWith(
-          isLoading: false,
-          requestOtpLoadingStateStatus: StateStatus.success,
-          otpSecondsRemaining: 30,
-          otpRequested: true,
-          errorMessage: null,
-        ),
-      );
+      _safeEmit(_otpRequestedSuccessState());
       return true;
     });
   }
@@ -103,10 +141,7 @@ class AuthCubit extends Cubit<AuthState> {
       );
       return false;
     }, (entity) async {
-      await _appPref.setLoginStatus(true);
-      await _appPref.setUserId(entity.userId ?? state.phoneNumber);
-      await _appPref.setString('profile_phone', state.phoneNumber);
-      await _appPref.setToken(entity.token ?? '');
+      await _saveUserSession(entity.userId, entity.token);
       if (isClosed) return false;
       _safeEmit(
         state.copyWith(
@@ -124,6 +159,17 @@ class AuthCubit extends Cubit<AuthState> {
     _safeEmit(state.copyWith(errorMessage: null));
   }
 
+  void setPhoneNumber(String phoneNumber) {
+    if (phoneNumber.isEmpty || phoneNumber == state.phoneNumber) return;
+    _safeEmit(
+      state.copyWith(
+        phoneNumber: phoneNumber,
+        otpRequested: false,
+        errorMessage: null,
+      ),
+    );
+  }
+
   void hideOtpSection() {
     _timer?.cancel();
     _safeEmit(
@@ -133,6 +179,24 @@ class AuthCubit extends Cubit<AuthState> {
         errorMessage: null,
       ),
     );
+  }
+
+  // ---------- Private helpers ----------
+  AuthState _otpRequestedSuccessState() {
+    return state.copyWith(
+      isLoading: false,
+      requestOtpLoadingStateStatus: StateStatus.success,
+      otpSecondsRemaining: 30,
+      otpRequested: true,
+      errorMessage: null,
+    );
+  }
+
+  Future<void> _saveUserSession(String? userId, String? token) async {
+    await _appPref.setLoginStatus(true);
+    await _appPref.setUserId(userId ?? state.phoneNumber);
+    await _appPref.setString('profile_phone', state.phoneNumber);
+    await _appPref.setToken(token ?? '');
   }
 
   void _startOtpTimer() {
@@ -148,6 +212,7 @@ class AuthCubit extends Cubit<AuthState> {
     });
   }
 
+  // ---------- Lifecycle ----------
   @override
   Future<void> close() {
     _timer?.cancel();

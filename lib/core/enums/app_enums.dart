@@ -8,3 +8,11 @@ enum CustomAppEnum {
   final String title;
   const CustomAppEnum(this.value, this.title);
 }
+
+enum AuthSubmitResult {
+  validationFailed,
+  otpSent,
+  invalidOtp,
+  verified,
+  failed,
+}

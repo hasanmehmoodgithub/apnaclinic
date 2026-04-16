@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../components/widgets/app_button.dart';
 import '../../../../core/di/dependency_injection.dart';
+import '../../../../core/enums/app_enums.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/router/app_routes.dart';
@@ -39,92 +40,9 @@ class _LoginViewState extends State<_LoginView> {
   final _otpFocusNode = FocusNode();
   final _formKey = GlobalKey<FormState>();
 
-  String _formatPhoneInput(String input) {
-    var digits = input.replaceAll(RegExp(r'\D'), '');
-    if (digits.startsWith('0')) {
-      digits = digits.substring(1);
-    }
-    if (digits.startsWith('92') && digits.length > 10) {
-      digits = digits.substring(2);
-    }
-    return '+92$digits';
-  }
-
   String get _otpCode => _otpController.text;
 
-  void _clearOtpInputs() {
-    _otpController.clear();
-    _otpFocusNode.requestFocus();
-  }
 
-  String _normalizeLocalPhone(String? value) {
-    final digits = (value ?? '').replaceAll(RegExp(r'\D'), '');
-    if (digits.startsWith('92') && digits.length > 10) {
-      return digits.substring(2);
-    }
-    if (digits.startsWith('0') && digits.length > 10) {
-      return digits.substring(1);
-    }
-    return digits;
-  }
-
-  void _handlePhoneChanged(AuthState state, String value) {
-    context.read<AuthCubit>().clearError();
-
-    if (!state.otpRequested) return;
-    final currentDraftPhone = _normalizeLocalPhone(value);
-    final requestedPhone = _normalizeLocalPhone(state.phoneNumber);
-
-    if (currentDraftPhone == requestedPhone) return;
-    context.read<AuthCubit>().hideOtpSection();
-    _clearOtpInputs();
-  }
-
-  void _handleBackTap(AuthState state) {
-    if (!mounted) return;
-
-    if (state.otpRequested) {
-      context.read<AuthCubit>().hideOtpSection();
-      return;
-    }
-
-    if (Navigator.of(context).canPop()) {
-      Navigator.of(context).pop();
-      return;
-    }
-
-    context.go(AppRoutes.path(AppRoutes.onboarding));
-  }
-
-  Future<void> _submit(AuthState state) async {
-    final l10n = AppLocalizations.of(context)!;
-    FocusScope.of(context).unfocus();
-    if (!_formKey.currentState!.validate()) return;
-
-    final cubit = context.read<AuthCubit>();
-    final phone = _formatPhoneInput(_phoneController.text.trim());
-
-    if (!state.otpRequested) {
-      final success = await cubit.requestOtp(phone);
-      if (!mounted || !success) return;
-      _clearOtpInputs();
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(l10n.authOtpSentMessage)));
-      return;
-    }
-
-    if (_otpCode.length != 4) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(l10n.authOtpValidationError)));
-      return;
-    }
-
-    final success = await cubit.verifyOtp(_otpCode);
-    if (!mounted || !success) return;
-    context.go(AppRoutes.path(AppRoutes.profileSetup));
-  }
 
   @override
   void dispose() {
@@ -151,7 +69,7 @@ class _LoginViewState extends State<_LoginView> {
                 children: [
                   LoginPhoneInputSection(
                     controller: _phoneController,
-                    onChanged: (value) => _handlePhoneChanged(state, value),
+                    onChanged: _handlePhoneChanged,
                     errorText: !state.otpRequested ? state.errorMessage : null,
                   ),
                   if (state.otpRequested) ...[
@@ -161,7 +79,9 @@ class _LoginViewState extends State<_LoginView> {
                       otpSecondsRemaining: state.otpSecondsRemaining,
                       canResendOtp: state.canResendOtp,
                       onResendTap: () => context.read<AuthCubit>().requestOtp(
-                            _formatPhoneInput(_phoneController.text.trim()),
+                            context.read<AuthCubit>().formatPhoneInput(
+                                  _phoneController.text.trim(),
+                                ),
                           ),
                       onOtpChanged: (_) => context.read<AuthCubit>().clearError(),
                       errorText: state.errorMessage,
@@ -189,5 +109,62 @@ class _LoginViewState extends State<_LoginView> {
         );
       },
     );
+  }
+  void _clearOtpInputs() {
+    _otpController.clear();
+    _otpFocusNode.requestFocus();
+  }
+
+  void _handlePhoneChanged(String value) {
+    final shouldClearOtp = context.read<AuthCubit>().onPhoneInputChanged(value);
+    if (shouldClearOtp) _clearOtpInputs();
+  }
+
+  void _handleBackTap(AuthState state) {
+    if (!mounted) return;
+
+    if (state.otpRequested) {
+      context.read<AuthCubit>().hideOtpSection();
+      return;
+    }
+
+    if (Navigator.of(context).canPop()) {
+      Navigator.of(context).pop();
+      return;
+    }
+
+    context.go(AppRoutes.path(AppRoutes.onboarding));
+  }
+
+  Future<void> _submit(AuthState state) async {
+    final l10n = AppLocalizations.of(context)!;
+    FocusScope.of(context).unfocus();
+    final cubit = context.read<AuthCubit>();
+    final result = await cubit.submitLogin(
+      isFormValid: _formKey.currentState!.validate(),
+      rawPhoneInput: _phoneController.text,
+      otpCode: _otpCode,
+    );
+    if (!mounted) return;
+
+    switch (result) {
+      case AuthSubmitResult.otpSent:
+        _clearOtpInputs();
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(l10n.authOtpSentMessage)));
+        break;
+      case AuthSubmitResult.invalidOtp:
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(l10n.authOtpValidationError)));
+        break;
+      case AuthSubmitResult.verified:
+        context.go(AppRoutes.path(AppRoutes.profileSetup));
+        break;
+      case AuthSubmitResult.validationFailed:
+      case AuthSubmitResult.failed:
+        break;
+    }
   }
 }
