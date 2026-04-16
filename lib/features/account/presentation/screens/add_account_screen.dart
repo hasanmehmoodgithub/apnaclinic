@@ -5,6 +5,7 @@ import '../../../../components/widgets/app_button.dart';
 import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/preference/app_pref.dart';
+import '../../../../core/router/app_routes.dart';
 import '../../data/account_local_store.dart';
 import '../../domain/models/account_method.dart';
 
@@ -35,7 +36,7 @@ class _AddAccountScreenState extends State<AddAccountScreen> {
     final fullName = '$firstName $lastName'.trim();
 
     final store = AccountLocalStore(pref);
-    await store.addAccount(
+    final newIndex = await store.addAccount(
       AccountMethod(
         bankName: _selectedBank,
         accountHolderName: fullName.isEmpty ? 'Account Holder' : fullName,
@@ -43,7 +44,13 @@ class _AddAccountScreenState extends State<AddAccountScreen> {
       ),
     );
     if (!mounted) return;
-    context.pop(true);
+    context.pushReplacement(
+      AppRoutes.path(AppRoutes.accountDetails),
+      extra: <String, dynamic>{
+        'accountIndex': newIndex,
+        'showSuccessDialog': true,
+      },
+    );
   }
 
   @override

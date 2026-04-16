@@ -69,7 +69,14 @@ class AppRouter {
       GoRoute(
         path: AppRoutes.path(AppRoutes.accountDetails),
         name: AppRoutes.accountDetails,
-        builder: (context, state) => const AccountDetailsScreen(),
+        builder: (context, state) {
+          final extra = state.extra;
+          final data = extra is Map ? Map<String, dynamic>.from(extra) : null;
+          return AccountDetailsScreen(
+            initialAccountIndex: data?['accountIndex'] as int?,
+            showSuccessDialog: data?['showSuccessDialog'] == true,
+          );
+        },
       ),
       GoRoute(
         path: AppRoutes.path(AppRoutes.consultation),

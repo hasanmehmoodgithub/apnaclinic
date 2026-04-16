@@ -9,7 +9,14 @@ import '../../data/account_local_store.dart';
 import '../../domain/models/account_method.dart';
 
 class AccountDetailsScreen extends StatefulWidget {
-  const AccountDetailsScreen({super.key});
+  const AccountDetailsScreen({
+    super.key,
+    this.initialAccountIndex,
+    this.showSuccessDialog = false,
+  });
+
+  final int? initialAccountIndex;
+  final bool showSuccessDialog;
 
   @override
   State<AccountDetailsScreen> createState() => _AccountDetailsScreenState();
@@ -17,21 +24,44 @@ class AccountDetailsScreen extends StatefulWidget {
 
 class _AccountDetailsScreenState extends State<AccountDetailsScreen> {
   late List<AccountMethod> _accounts;
+  bool _didShowInitialSuccessDialog = false;
 
   @override
   void initState() {
     super.initState();
-    _accounts = AccountLocalStore(sl<AppPref>()).getAccounts();
+    _reloadAccounts();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (!mounted ||
+          !widget.showSuccessDialog ||
+          _didShowInitialSuccessDialog ||
+          _accounts.isEmpty) {
+        return;
+      }
+      _didShowInitialSuccessDialog = true;
+      await _showSuccessDialog(_accounts.first);
+    });
   }
 
-  Future<void> _setDefault(int index) async {
+  void _reloadAccounts() {
+    final allAccounts = AccountLocalStore(sl<AppPref>()).getAccounts();
+    final index = widget.initialAccountIndex;
+    if (index != null && index >= 0 && index < allAccounts.length) {
+      _accounts = [allAccounts[index]];
+      return;
+    }
+    _accounts = allAccounts;
+  }
+
+  Future<void> _deleteAccount(int index) async {
     final store = AccountLocalStore(sl<AppPref>());
-    await store.setDefaultAccount(index);
+    final sourceIndex = widget.initialAccountIndex ?? index;
+    await store.deleteAccount(sourceIndex);
     if (!mounted) return;
-    setState(() {
-      _accounts = store.getAccounts();
-    });
-    await _showSuccessDialog(_accounts[index]);
+    if (widget.initialAccountIndex != null) {
+      context.pop();
+      return;
+    }
+    setState(_reloadAccounts);
   }
 
   Future<void> _showSuccessDialog(AccountMethod account) async {
@@ -183,27 +213,52 @@ class _AccountDetailsScreenState extends State<AccountDetailsScreen> {
                     ],
                   ),
                 ),
-                GestureDetector(
-                  onTap: () => _setDefault(index),
-                  child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 6.h),
-                    decoration: BoxDecoration(
-                      color: item.isDefault
-                          ? const Color(0xFFF3F4F6)
-                          : Colors.transparent,
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (item.isDefault) ...[
+                      Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 8.w,
+                          vertical: 6.h,
+                        ),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFF3F4F6),
+                          borderRadius: BorderRadius.circular(14.r),
+                          border: Border.all(
+                            color: const Color(0xFFD1D5DB),
+                          ),
+                        ),
+                        child: Text(
+                          'Default',
+                          style: theme.textTheme.labelSmall?.copyWith(
+                            color: const Color(0xFF6B7280),
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: 8.w),
+                    ],
+                    InkWell(
+                      onTap: () => _deleteAccount(index),
                       borderRadius: BorderRadius.circular(14.r),
-                      border: Border.all(
-                        color: const Color(0xFFD1D5DB),
+                      child: Container(
+                        width: 32.r,
+                        height: 32.r,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: const Color(0xFFD1D5DB),
+                          ),
+                        ),
+                        child: Icon(
+                          Icons.delete_outline_rounded,
+                          color: const Color(0xFF6B7280),
+                          size: 18.r,
+                        ),
                       ),
                     ),
-                    child: Text(
-                      item.isDefault ? 'Default' : 'Set Default',
-                      style: theme.textTheme.labelSmall?.copyWith(
-                        color: const Color(0xFF6B7280),
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
+                  ],
                 ),
               ],
             ),

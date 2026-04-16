@@ -20,22 +20,23 @@ class AccountLocalStore {
     );
   }
 
-  Future<void> addAccount(AccountMethod method) async {
+  Future<int> addAccount(AccountMethod method) async {
     final current = getAccounts();
     final updated = [
-      ...current.map((e) => e.copyWith(isDefault: false)),
+      ...current,
       method.copyWith(isDefault: current.isEmpty),
     ];
     await saveAccounts(updated);
+    return updated.length - 1;
   }
 
-  Future<void> setDefaultAccount(int index) async {
+  Future<void> deleteAccount(int index) async {
     final current = getAccounts();
     if (index < 0 || index >= current.length) return;
-    final updated = [
-      for (var i = 0; i < current.length; i++)
-        current[i].copyWith(isDefault: i == index),
-    ];
+    final updated = [...current]..removeAt(index);
+    if (updated.isNotEmpty && !updated.any((e) => e.isDefault)) {
+      updated[0] = updated[0].copyWith(isDefault: true);
+    }
     await saveAccounts(updated);
   }
 }
