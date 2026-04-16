@@ -12,6 +12,7 @@ class AppRoutes {
   static const String profileSetup = 'profile-setup';
   static const String home = 'home';
   static const String dashboardMenu = 'dashboard-menu';
+  static const String customerSupport = 'customer-support';
   static const String notifications = 'notifications';
   static const String consultation = 'consultation';
   static const String addAccount = 'add-account';

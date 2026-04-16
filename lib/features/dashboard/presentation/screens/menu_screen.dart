@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../components/widgets/app_button.dart';
 import '../../../../core/di/dependency_injection.dart';
@@ -9,6 +10,7 @@ import '../../../../core/router/app_routes.dart';
 import '../widgets/menu_about_card.dart';
 import '../widgets/menu_action_tile.dart';
 import '../widgets/menu_header.dart';
+import '../widgets/menu_logout_dialog.dart';
 import '../widgets/menu_profile_card.dart';
 
 class MenuScreen extends StatelessWidget {
@@ -32,10 +34,22 @@ class MenuScreen extends StatelessWidget {
     ),
   ];
 
-  static const List<MenuAboutItemData> _aboutItems = [
+  static final List<MenuAboutItemData> _aboutItems = [
     MenuAboutItemData('App Version', subtitle: '1.0'),
-    MenuAboutItemData('Terms & Condition'),
-    MenuAboutItemData('Privacy Policy'),
+    MenuAboutItemData(
+      'Terms & Conditions',
+      onTap: () => launchUrl(
+        Uri.parse('https://apnaclinic.ecnstg.com/terms'),
+        mode: LaunchMode.externalApplication,
+      ),
+    ),
+    MenuAboutItemData(
+      'Privacy Policy',
+      onTap: () => launchUrl(
+        Uri.parse('https://apnaclinic.ecnstg.com/privacy-policy'),
+        mode: LaunchMode.externalApplication,
+      ),
+    ),
   ];
 
   @override
@@ -85,20 +99,34 @@ class MenuScreen extends StatelessWidget {
                                 );
                                 return;
                               }
-                              // TODO: wire Edit Profile screen when available.
+                              context.push(
+                                AppRoutes.path(AppRoutes.profileSetup),
+                              );
                             },
                           ),
                           SizedBox(height: 14.h),
                           for (final item in _mainItems) ...[
                             MenuActionTile(
-                              onTap: () {},
+                              onTap: () {
+                                if (item.title == 'Customer Support') {
+                                  context.push(
+                                    AppRoutes.path(AppRoutes.customerSupport),
+                                  );
+                                }
+                              },
                               title: item.title,
                               icon: item.icon,
                               curveOverlayColor: item.curveOverlayColor,
                             ),
                             SizedBox(height: 14.h),
                           ],
-                          MenuAboutCard(items: _aboutItems),
+                          MenuAboutCard(
+                            items: _aboutItems,
+                            onAboutTap: () => launchUrl(
+                              Uri.parse('https://apnaclinic.ecnstg.com/'),
+                              mode: LaunchMode.externalApplication,
+                            ),
+                          ),
                         ],
                       ),
                     ),
@@ -113,6 +141,10 @@ class MenuScreen extends StatelessWidget {
                               context.push(AppRoutes.path(AppRoutes.authLogin));
                               return;
                             }
+                            final shouldLogout = await showMenuLogoutDialog(
+                              context,
+                            );
+                            if (!shouldLogout) return;
                             await appPref.setLoginStatus(false);
                             await appPref.setProfileCompleted(false);
                             await appPref.setToken('');
