@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:pinput/pinput.dart';
 
 import '../../../../components/widgets/app_button.dart';
 import '../../../../core/di/dependency_injection.dart';
@@ -12,6 +10,9 @@ import '../../../../core/router/app_routes.dart';
 import '../cubit/auth_cubit.dart';
 import '../cubit/auth_state.dart';
 import '../widgets/auth_shell.dart';
+import '../widgets/login_legal_text.dart';
+import '../widgets/login_otp_section.dart';
+import '../widgets/login_phone_input_section.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
@@ -54,6 +55,29 @@ class _LoginViewState extends State<_LoginView> {
   void _clearOtpInputs() {
     _otpController.clear();
     _otpFocusNode.requestFocus();
+  }
+
+  String _normalizeLocalPhone(String? value) {
+    final digits = (value ?? '').replaceAll(RegExp(r'\D'), '');
+    if (digits.startsWith('92') && digits.length > 10) {
+      return digits.substring(2);
+    }
+    if (digits.startsWith('0') && digits.length > 10) {
+      return digits.substring(1);
+    }
+    return digits;
+  }
+
+  void _handlePhoneChanged(AuthState state, String value) {
+    context.read<AuthCubit>().clearError();
+
+    if (!state.otpRequested) return;
+    final currentDraftPhone = _normalizeLocalPhone(value);
+    final requestedPhone = _normalizeLocalPhone(state.phoneNumber);
+
+    if (currentDraftPhone == requestedPhone) return;
+    context.read<AuthCubit>().hideOtpSection();
+    _clearOtpInputs();
   }
 
   void _handleBackTap(AuthState state) {
@@ -113,7 +137,6 @@ class _LoginViewState extends State<_LoginView> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final theme = Theme.of(context);
 
     return BlocBuilder<AuthCubit, AuthState>(
       builder: (context, state) {
@@ -126,226 +149,28 @@ class _LoginViewState extends State<_LoginView> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Text(
-                    l10n.authMobileNumberLabel,
-                    style: theme.textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.w700,
-                      color: const Color(0xFF061E40),
-                    ),
-                  ),
-                  SizedBox(height: 2.h),
-                  Text(
-                    l10n.authLoginSubtitle,
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: const Color(0xFF98A2B3),
-                      fontWeight: FontWeight.w400,
-                    ),
-                  ),
-                  SizedBox(height: 12.h),
-                  TextFormField(
+                  LoginPhoneInputSection(
                     controller: _phoneController,
-                    keyboardType: TextInputType.phone,
-                    maxLength: 10,
-                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                    style: theme.textTheme.bodyLarge?.copyWith(
-                      color: Colors.black,
-                      fontWeight: FontWeight.w500,
-                    ),
-                    decoration: InputDecoration(
-                      hintText: '3XXXXXXXXX',
-                      hintStyle: theme.textTheme.bodyLarge?.copyWith(
-                        color: const Color(0xFF667085),
-                        fontWeight: FontWeight.w400,
-                      ),
-                      prefixIcon: Padding(
-                        padding: EdgeInsets.only(left: 16.w, right: 6.w),
-                        child: Text(
-                          '+92',
-                          style: theme.textTheme.bodyLarge?.copyWith(
-                            color: const Color(0xFF061E40),
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
-                      prefixIconConstraints: const BoxConstraints(
-                        minWidth: 0,
-                        minHeight: 0,
-                      ),
-                      counterText: '',
-                      filled: true,
-                      fillColor: Colors.white,
-                      contentPadding: EdgeInsets.symmetric(
-                        horizontal: 12.w,
-                        vertical: 15.h,
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8.r),
-                        borderSide: const BorderSide(
-                          color: Color(0xFF9BA6A7),
-                          width: 0.9,
-                        ),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8.r),
-                        borderSide: const BorderSide(
-                          color: Color(0xFF9BA6A7),
-                          width: 0.9,
-                        ),
-                      ),
-                      errorBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8.r),
-                        borderSide: const BorderSide(
-                          color: Color(0xFFE01F26),
-                          width: 0.9,
-                        ),
-                      ),
-                      focusedErrorBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8.r),
-                        borderSide: const BorderSide(
-                          color: Color(0xFFE01F26),
-                          width: 0.9,
-                        ),
-                      ),
-                    ),
-                    onChanged: (_) => context.read<AuthCubit>().clearError(),
-                    validator: (value) {
-                      final digits = (value ?? '').replaceAll(
-                        RegExp(r'\D'),
-                        '',
-                      );
-                      final isValidPakMobile = RegExp(r'^3\d{9}$').hasMatch(
-                        digits,
-                      );
-                      if (!isValidPakMobile) {
-                        return l10n.authPhoneValidationError;
-                      }
-                      return null;
-                    },
+                    onChanged: (value) => _handlePhoneChanged(state, value),
+                    errorText: !state.otpRequested ? state.errorMessage : null,
                   ),
-                  SizedBox(height: 4.h),
-                  Text(
-                    l10n.authOtpHint,
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: const Color(0xFF98A2B3),
-                    ),
-                  ),
-                  if (!state.otpRequested && state.errorMessage != null) ...[
-                    SizedBox(height: 6.h),
-                    Text(
-                      state.errorMessage!,
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: const Color(0xFFE01F26),
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ],
                   if (state.otpRequested) ...[
-                    SizedBox(height: 18.h),
-                    Text(
-                      l10n.authOtpVerificationTitle,
-                      style: theme.textTheme.titleLarge?.copyWith(
-                        fontSize: (30 / 1.65).sp,
-                        fontWeight: FontWeight.w700,
-                        color: const Color(0xFF061E40),
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    LayoutBuilder(
-                      builder: (context, constraints) {
-                        final itemSpacing = 10.w;
-                        final boxWidth = (constraints.maxWidth - 30) / 4.5;
-                        final defaultPinTheme = PinTheme(
-                          width: boxWidth,
-                          height: 68.h,
-                          textStyle: theme.textTheme.titleLarge?.copyWith(
-                            fontSize: 24.sp,
-                            fontWeight: FontWeight.w700,
-                            color: const Color(0xFF4A555F),
+                    LoginOtpSection(
+                      controller: _otpController,
+                      focusNode: _otpFocusNode,
+                      otpSecondsRemaining: state.otpSecondsRemaining,
+                      canResendOtp: state.canResendOtp,
+                      onResendTap: () => context.read<AuthCubit>().requestOtp(
+                            _formatPhoneInput(_phoneController.text.trim()),
                           ),
-                          decoration: BoxDecoration(
-                            color: Colors.transparent,
-                            borderRadius: BorderRadius.circular(9.r),
-                            border: Border.all(
-                              color: const Color(0xFF9BA6A7),
-                              width: 1,
-                            ),
-                          ),
-                        );
-
-                        return Pinput(
-                          controller: _otpController,
-                          focusNode: _otpFocusNode,
-                          length: 4,
-                          keyboardType: TextInputType.number,
-                          inputFormatters: [
-                            FilteringTextInputFormatter.digitsOnly,
-                          ],
-                          defaultPinTheme: defaultPinTheme,
-                          separatorBuilder: (index) => index == 3
-                              ? const SizedBox.shrink()
-                              : SizedBox(width: itemSpacing),
-                          focusedPinTheme: defaultPinTheme.copyWith(
-                            decoration: defaultPinTheme.decoration?.copyWith(
-                              border: Border.all(
-                                color: const Color(0xFF0FAA9A),
-                                width: 1.5,
-                              ),
-                            ),
-                          ),
-                          submittedPinTheme: defaultPinTheme,
-                          onChanged: (_) =>
-                              context.read<AuthCubit>().clearError(),
-                        );
-                      },
+                      onOtpChanged: (_) => context.read<AuthCubit>().clearError(),
+                      errorText: state.errorMessage,
                     ),
-                    SizedBox(height: 8.h),
-                    Align(
-                      child: TextButton(
-                        onPressed: state.canResendOtp
-                            ? () => context.read<AuthCubit>().requestOtp(
-                                _formatPhoneInput(_phoneController.text.trim()),
-                              )
-                            : null,
-                        child: state.canResendOtp
-                            ? Text(
-                                l10n.authResendOtp,
-                                style: theme.textTheme.bodyMedium?.copyWith(
-                                  color: const Color(0xFF5D758F),
-                                ),
-                              )
-                            : Text.rich(
-                                TextSpan(
-                                  children: [
-                                    TextSpan(text: '${l10n.authResendOtp} '),
-                                    TextSpan(
-                                      text: '${state.otpSecondsRemaining} Sec',
-                                      style: const TextStyle(
-                                        fontWeight: FontWeight.w700,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                style: theme.textTheme.bodyMedium?.copyWith(
-                                  color: const Color(0xFF5D758F),
-                                ),
-                              ),
-                      ),
-                    ),
-                    if (state.errorMessage != null) ...[
-                      SizedBox(height: 6.h),
-                      Text(
-                        state.errorMessage!,
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: const Color(0xFFE01F26),
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ],
                   ],
                   const Spacer(),
                   AppButton.primary(
                     text: state.otpRequested
-                        ? l10n.authProceedCta
+                        ? 'Verify'
                         : l10n.authSendOtpCta,
                     onPressed: state.isLoading ? null : () => _submit(state),
                     isLoading: state.isLoading,
@@ -356,27 +181,7 @@ class _LoginViewState extends State<_LoginView> {
                     fontSize: (30 / 1.65).sp,
                   ),
                   SizedBox(height: 20.h),
-                  Text.rich(
-                    TextSpan(
-                      children: [
-                        TextSpan(text: '${l10n.authLegalPrefix} '),
-                        TextSpan(
-                          text: l10n.authTermsLabel,
-                          style: const TextStyle(fontWeight: FontWeight.w700),
-                        ),
-                        TextSpan(text: ' ${l10n.authLegalConnector} '),
-                        TextSpan(
-                          text: l10n.authPrivacyLabel,
-                          style: const TextStyle(fontWeight: FontWeight.w700),
-                        ),
-                      ],
-                    ),
-                    textAlign: TextAlign.center,
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: const Color(0xFF667085),
-                      height: 1.65,
-                    ),
-                  ),
+                  const LoginLegalText(),
                 ],
               ),
             ),

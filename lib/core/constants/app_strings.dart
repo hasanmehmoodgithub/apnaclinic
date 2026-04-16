@@ -12,7 +12,10 @@ class AppStrings {
   static const String freeDoctorLoadError =
       'Unable to load free doctor information right now. Please try again in a moment.';
   // Auth
-
+  static const String authRequestOtpError =
+      'Unable to send OTP right now. Please try again.';
+  static const String authVerifyOtpError =
+      'Unable to verify OTP right now. Please try again.';
 
 
 

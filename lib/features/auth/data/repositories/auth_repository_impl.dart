@@ -1,46 +1,36 @@
-import '../../../../core/preference/app_pref.dart';
-import '../../../auth/domain/models/auth_result.dart';
-import '../../../auth/domain/repositories/auth_repository.dart';
+import '../../../../core/failure/exceptions.dart';
+import '../../../../core/functional/functional_export.dart';
+import '../mappers/auth_mapper.dart';
+import '../../domain/entities/auth_entity.dart';
+import '../../domain/repositories/auth_repository.dart';
+import '../../domain/use_cases/request_otp_use_case.dart';
+import '../../domain/use_cases/verify_otp_use_case.dart';
+import '../data_sources/auth_remote_data_source.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
-  AuthRepositoryImpl({required AppPref appPref}) : _appPref = appPref;
+  AuthRepositoryImpl({
+    required AuthRemoteDataSource remoteDataSource,
+  }) : _remoteDataSource = remoteDataSource;
 
-  final AppPref _appPref;
+  final AuthRemoteDataSource _remoteDataSource;
 
   @override
-  Future<AuthResult> requestOtp({required String phoneNumber}) async {
-    await Future<void>.delayed(const Duration(milliseconds: 600));
-
-    if (phoneNumber.length < 10) {
-      return const AuthResult(
-        success: false,
-        message: 'Please enter a valid mobile number.',
-      );
+  Future<Either<ErrorMsg, AuthEntity>> requestOtp(RequestOtpParams params) async {
+    try {
+      final model = await _remoteDataSource.requestOtp(params);
+      return Right(AuthMapper.toEntity(model));
+    } catch (e) {
+      return Left(e.toString());
     }
-
-    return const AuthResult(success: true);
   }
 
   @override
-  Future<AuthResult> verifyOtp({
-    required String phoneNumber,
-    required String otp,
-  }) async {
-    await Future<void>.delayed(const Duration(milliseconds: 700));
-
-    if (otp.length != 4) {
-      return const AuthResult(
-        success: false,
-        message: 'Please enter a valid OTP code.',
-      );
+  Future<Either<ErrorMsg, AuthEntity>> verifyOtp(VerifyOtpParams params) async {
+    try {
+      final model = await _remoteDataSource.verifyOtp(params);
+      return Right(AuthMapper.toEntity(model));
+    } catch (e) {
+      return Left(e.toString());
     }
-
-    // Placeholder for API-ready auth integration.
-    await _appPref.setLoginStatus(true);
-    await _appPref.setUserId(phoneNumber);
-    await _appPref.setString('profile_phone', phoneNumber);
-    await _appPref.setToken('mock-token');
-
-    return const AuthResult(success: true);
   }
 }

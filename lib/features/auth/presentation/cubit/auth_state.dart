@@ -1,45 +1,22 @@
-import 'package:equatable/equatable.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-class AuthState extends Equatable {
-  const AuthState({
-    this.phoneNumber = '',
-    this.isLoading = false,
-    this.errorMessage,
-    this.otpSecondsRemaining = 30,
-    this.otpRequested = false,
-  });
+import '../../../../core/enums/state_status.dart';
 
-  final String phoneNumber;
-  final bool isLoading;
-  final String? errorMessage;
-  final int otpSecondsRemaining;
-  final bool otpRequested;
+part 'auth_state.freezed.dart';
 
-  bool get canResendOtp => otpSecondsRemaining <= 0;
-
-  AuthState copyWith({
-    String? phoneNumber,
-    bool? isLoading,
+@freezed
+abstract class AuthState with _$AuthState {
+  const factory AuthState({
+    @Default('') String phoneNumber,
+    @Default(false) bool isLoading,
     String? errorMessage,
-    int? otpSecondsRemaining,
-    bool? otpRequested,
-    bool clearError = false,
-  }) {
-    return AuthState(
-      phoneNumber: phoneNumber ?? this.phoneNumber,
-      isLoading: isLoading ?? this.isLoading,
-      errorMessage: clearError ? null : (errorMessage ?? this.errorMessage),
-      otpSecondsRemaining: otpSecondsRemaining ?? this.otpSecondsRemaining,
-      otpRequested: otpRequested ?? this.otpRequested,
-    );
-  }
+    @Default(30) int otpSecondsRemaining,
+    @Default(false) bool otpRequested,
+    @Default(StateStatus.idle) StateStatus requestOtpLoadingStateStatus,
+    @Default(StateStatus.idle) StateStatus verifyOtpLoadingStateStatus,
+  }) = _AuthState;
+}
 
-  @override
-  List<Object?> get props => [
-    phoneNumber,
-    isLoading,
-    errorMessage,
-    otpSecondsRemaining,
-    otpRequested,
-  ];
+extension AuthStateX on AuthState {
+  bool get canResendOtp => otpSecondsRemaining <= 0;
 }

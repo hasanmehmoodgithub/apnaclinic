@@ -1,10 +1,11 @@
-import '../models/auth_result.dart';
+import '../../../../core/failure/exceptions.dart';
+import '../../../../core/functional/functional_export.dart';
+import '../entities/auth_entity.dart';
+import '../use_cases/request_otp_use_case.dart';
+import '../use_cases/verify_otp_use_case.dart';
 
 abstract class AuthRepository {
-  Future<AuthResult> requestOtp({required String phoneNumber});
+  Future<Either<ErrorMsg, AuthEntity>> requestOtp(RequestOtpParams params);
 
-  Future<AuthResult> verifyOtp({
-    required String phoneNumber,
-    required String otp,
-  });
+  Future<Either<ErrorMsg, AuthEntity>> verifyOtp(VerifyOtpParams params);
 }

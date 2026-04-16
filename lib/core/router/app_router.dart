@@ -9,7 +9,6 @@ import '../../features/notification/presentation/screens/notifcation_screen.dart
 import '../../features/dashboard/presentation/screens/main_navigation_shell.dart';
 import '../../features/onboarding/presentation/screens/onboarding_screen.dart';
 import '../../features/auth/presentation/screens/login_screen.dart';
-import '../../features/auth/presentation/screens/otp_verification_screen.dart';
 import '../di/dependency_injection.dart';
 import '../../features/profile_setup/presentation/screens/profile_setup_screen.dart';
 import 'app_routes.dart';
@@ -39,15 +38,6 @@ class AppRouter {
         path: AppRoutes.path(AppRoutes.authLogin),
         name: AppRoutes.authLogin,
         builder: (context, state) => const LoginScreen(),
-      ),
-      GoRoute(
-        path: AppRoutes.path(AppRoutes.authOtp),
-        name: AppRoutes.authOtp,
-        builder: (context, state) {
-          final extra = state.extra;
-          final phoneNumber = extra is OtpRouteData ? extra.phoneNumber : '';
-          return OtpVerificationScreen(phoneNumber: phoneNumber);
-        },
       ),
       GoRoute(
         path: AppRoutes.path(AppRoutes.profileSetup),

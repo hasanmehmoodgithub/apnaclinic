@@ -7,7 +7,6 @@ import 'package:apnaclinic/core/extensions/screen_util_extensions.dart';
 import 'package:apnaclinic/core/flavor/flavor_config.dart';
 
 import 'core/di/dependency_injection.dart';
-import 'core/security/security_widget.dart';
 import 'features/app/presentation/screens/apna_clinic_app.dart';
 
 void main() {
@@ -94,39 +93,7 @@ void main() {
         error: error,
         stackTrace: stackTrace,
       );
-
-      // In debug mode, show error screen
-      if (kDebugMode) {
-        runApp(
-          MaterialApp(
-            home: Scaffold(
-              body: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.error_outline, size: 64.r, color: Colors.red),
-                    SizedBox(height: 16.h),
-                    Text(
-                      'Unhandled Error',
-                      style: TextStyle(fontSize: 24.sp, fontWeight: FontWeight.bold),
-                    ),
-                    SizedBox(height: 8.h),
-                    Padding(
-                      padding: EdgeInsets.all(16.r),
-                      child: Text(
-                        error.toString(),
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(color: Colors.red),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        );
-      }
-      // In release mode, errors are logged but app continues
+      // Avoid calling runApp here to prevent zone mismatch errors.
     },
   );
 }

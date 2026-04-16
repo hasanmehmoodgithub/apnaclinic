@@ -18,8 +18,13 @@ class DashboardCubit extends Cubit<DashboardServicesState> {
   final GetOurServicesUseCase getOurServicesUseCase;
   final GetPromotionalBannerUseCase getPromotionalBannerUseCase;
 
+  void _safeEmit(DashboardServicesState newState) {
+    if (isClosed) return;
+    emit(newState);
+  }
+
   Future<void> loadOurServices() async {
-    emit(
+    _safeEmit(
       state.copyWith(
         ourServicesLoadingStateStatus: StateStatus.loading,
         servicesErrorMessage: null,
@@ -27,14 +32,15 @@ class DashboardCubit extends Cubit<DashboardServicesState> {
     );
 
     final result = await getOurServicesUseCase.call();
+    if (isClosed) return;
     result.fold(
-      (error) => emit(
+      (error) => _safeEmit(
         state.copyWith(
           ourServicesLoadingStateStatus: StateStatus.error,
           servicesErrorMessage: error,
         ),
       ),
-      (data) => emit(
+      (data) => _safeEmit(
         state.copyWith(
           ourServicesLoadingStateStatus: data.isEmpty
               ? StateStatus.empty
@@ -47,7 +53,7 @@ class DashboardCubit extends Cubit<DashboardServicesState> {
   }
 
   Future<void> loadPromotionalBanner() async {
-    emit(
+    _safeEmit(
       state.copyWith(
         promotionalBannerLoadingStateStatus: StateStatus.loading,
         promotionalBannerErrorMessage: null,
@@ -55,14 +61,15 @@ class DashboardCubit extends Cubit<DashboardServicesState> {
     );
 
     final result = await getPromotionalBannerUseCase.call();
+    if (isClosed) return;
     result.fold(
-      (error) => emit(
+      (error) => _safeEmit(
         state.copyWith(
           promotionalBannerLoadingStateStatus: StateStatus.error,
           promotionalBannerErrorMessage: error,
         ),
       ),
-      (banner) => emit(
+      (banner) => _safeEmit(
         state.copyWith(
           promotionalBannerLoadingStateStatus: banner.showBanner
               ? StateStatus.success

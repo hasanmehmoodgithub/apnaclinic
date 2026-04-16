@@ -15,6 +15,9 @@ class AppUrls {
   /// Login endpoint - full URL using baseUrl from flavor
   static String get login => '$baseUrl/login';
 
+  /// Request OTP endpoint
+  static String get requestOtp => '$baseUrl/request-otp';
+
   /// Sign in endpoint - full URL with custom path
   static String get signIn => '$baseUrl/login_ww';
 
