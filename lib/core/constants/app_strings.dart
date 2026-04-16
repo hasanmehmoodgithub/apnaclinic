@@ -11,6 +11,8 @@ class AppStrings {
       'Unable to load services right now. Please try again in a moment.';
   static const String freeDoctorLoadError =
       'Unable to load free doctor information right now. Please try again in a moment.';
+  static const String customerSupportLoadError =
+      'Unable to load customer support right now. Please try again in a moment.';
   // Auth
 
 
