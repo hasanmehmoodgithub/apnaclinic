@@ -1,10 +1,11 @@
-import 'package:apnaclinic/components/widgets/apna_support_card.dart';
 import 'package:apnaclinic/components/widgets/app_button.dart';
+import 'package:apnaclinic/components/widgets/action_option_card.dart';
 import 'package:apnaclinic/core/enums/state_status.dart';
 import 'package:apnaclinic/core/extensions/screen_util_extensions.dart';
 import 'package:apnaclinic/generated/assets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../domain/entities/customer_support_entity.dart';
 import '../cubit/customer_support_cubit.dart';
@@ -19,6 +20,12 @@ class SupportBodyPanel extends StatelessWidget {
   static const Color _headingDark = Color(0xFF111827);
   static const Color _subtitleGrey = Color(0xFF6B7280);
   static const double _cardTopRadius = 32;
+  static const List<Color> _curveOverlayColors = [
+    Color(0xFFE9F9FC),
+    Color(0xFFEFF3FF),
+    Color(0xFFFFF1E8),
+    Color(0xFFF4EDFF),
+  ];
   static const List<CustomerSupportContactEntity> _fallbackContacts = [
     CustomerSupportContactEntity(
       cardTitle: 'Apna Clinic Support',
@@ -64,7 +71,7 @@ class SupportBodyPanel extends StatelessWidget {
         child: isLoading
             ? const SupportPanelShimmer()
             : SingleChildScrollView(
-                padding: EdgeInsets.fromLTRB(20.w, 28.h, 20.w, 24.h),
+                padding: EdgeInsets.fromLTRB(20.w, 15.h, 20.w, 24.h),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -83,8 +90,18 @@ class SupportBodyPanel extends StatelessWidget {
                     ),
                     SizedBox(height: 24.h),
                     for (int i = 0; i < contacts.length; i++) ...[
-                      ApnaSupportCard(
+                      ActionOptionCard(
                         title: contacts[i].cardTitle,
+                        curveOverlayColor:
+                            _curveOverlayColors[i % _curveOverlayColors.length],
+                        leading: SizedBox(
+                          width: 60.r,
+                          height: 60.r,
+                          child: SvgPicture.asset(
+                            Assets.svgNavHomeLogo,
+                            fit: BoxFit.contain,
+                          ),
+                        ),
                         onTap: () => _showSupportDialog(
                           context,
                           contacts[i],
