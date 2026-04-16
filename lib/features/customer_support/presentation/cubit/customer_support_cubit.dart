@@ -44,6 +44,11 @@ class CustomerSupportCubit extends Cubit<CustomerSupportState> {
     if (digits.isEmpty) return false;
     final uri = Uri.parse('tel:$digits');
     try {
+      if (await canLaunchUrl(uri)) {
+        // Prefer platform default so OS can route to the dialer app naturally.
+        final launched = await launchUrl(uri);
+        if (launched) return true;
+      }
       return await launchUrl(uri, mode: LaunchMode.externalApplication);
     } catch (_) {
       return false;
