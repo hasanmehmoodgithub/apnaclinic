@@ -5,6 +5,8 @@ import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/preference/app_pref.dart';
 import '../../../../core/router/app_routes.dart';
+import '../../../account/data/account_local_store.dart';
+import '../../../account/domain/models/account_method.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({
@@ -25,6 +27,7 @@ class ProfileScreen extends StatelessWidget {
     final lastName = (appPref.getString('profile_last_name') ?? '').trim();
     final fullName = '$firstName $lastName'.trim();
     final phone = (appPref.getString('profile_phone') ?? '').trim();
+    final accounts = AccountLocalStore(appPref).getAccounts();
     final gender = (appPref.getString('profile_gender') ?? '').trim();
     final email = (appPref.getString('profile_email') ?? '').trim();
     final dobIso = (appPref.getString('profile_dob') ?? '').trim();
@@ -207,43 +210,24 @@ class ProfileScreen extends StatelessWidget {
                             ),
                           ),
                           SizedBox(height: 8.h),
-                          Container(
-                            height: 56.h,
-                            padding: EdgeInsets.symmetric(horizontal: 12.w),
-                            decoration: BoxDecoration(
-                              color: const Color(0xFFF3F3F3),
-                              borderRadius: BorderRadius.circular(6.r),
-                              border: Border.all(
-                                color: const Color(0xFFD4D9E1),
-                                width: 0.6.r,
+                          ...accounts.map(
+                            (account) => Padding(
+                              padding: EdgeInsets.only(bottom: 8.h),
+                              child: _AccountTile(
+                                account: account,
+                                onTap: () => context.push(
+                                  AppRoutes.path(AppRoutes.accountDetails),
+                                ),
                               ),
                             ),
-                            child: Row(
-                              children: [
-                                Text(
-                                  'Add Account',
-                                  style: theme.textTheme.titleSmall?.copyWith(
-                                    color: const Color(0xFF2C2F5A),
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                                const Spacer(),
-                                Container(
-                                  width: 40.r,
-                                  height: 40.r,
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    border: Border.all(
-                                      color: const Color(0xFFC6CCD5),
-                                    ),
-                                  ),
-                                  child: const Icon(
-                                    Icons.add,
-                                    color: Color(0xFF2C2F5A),
-                                  ),
-                                ),
-                              ],
-                            ),
+                          ),
+                          _AddAccountTile(
+                            onTap: () async {
+                              await context.push(AppRoutes.path(AppRoutes.addAccount));
+                              if (context.mounted) {
+                                (context as Element).markNeedsBuild();
+                              }
+                            },
                           ),
                         ],
                       )
@@ -414,6 +398,145 @@ class _InfoTile extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _AccountTile extends StatelessWidget {
+  const _AccountTile({
+    required this.account,
+    required this.onTap,
+  });
+
+  final AccountMethod account;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(6.r),
+      child: Container(
+        height: 56.h,
+        padding: EdgeInsets.symmetric(horizontal: 12.w),
+        decoration: BoxDecoration(
+          color: const Color(0xFFF3F3F3),
+          borderRadius: BorderRadius.circular(6.r),
+          border: Border.all(
+            color: const Color(0xFFD4D9E1),
+            width: 0.6.r,
+          ),
+        ),
+        child: Row(
+          children: [
+            Expanded(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Mobile Bank/${account.bankName}',
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: const Color(0xFF7B8794),
+                    ),
+                  ),
+                  SizedBox(height: 2.h),
+                  Text(
+                    account.accountNumber,
+                    style: theme.textTheme.titleSmall?.copyWith(
+                      color: const Color(0xFF2C2F5A),
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            if (account.isDefault)
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12.r),
+                  border: Border.all(color: const Color(0xFFD4D9E1)),
+                ),
+                child: Text(
+                  'Default',
+                  style: theme.textTheme.labelSmall?.copyWith(
+                    color: const Color(0xFF7B8794),
+                  ),
+                ),
+              )
+            else
+              Container(
+                width: 28.r,
+                height: 28.r,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(color: const Color(0xFFC6CCD5)),
+                ),
+                child: Icon(
+                  Icons.content_copy_rounded,
+                  size: 14.r,
+                  color: const Color(0xFF2C2F5A),
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _AddAccountTile extends StatelessWidget {
+  const _AddAccountTile({required this.onTap});
+
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(6.r),
+      child: Container(
+        height: 56.h,
+        padding: EdgeInsets.symmetric(horizontal: 12.w),
+        decoration: BoxDecoration(
+          color: const Color(0xFFF3F3F3),
+          borderRadius: BorderRadius.circular(6.r),
+          border: Border.all(
+            color: const Color(0xFFD4D9E1),
+            width: 0.6.r,
+          ),
+        ),
+        child: Row(
+          children: [
+            Text(
+              'Add Account',
+              style: theme.textTheme.titleSmall?.copyWith(
+                color: const Color(0xFF2C2F5A),
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            const Spacer(),
+            Container(
+              width: 40.r,
+              height: 40.r,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: const Color(0xFFC6CCD5),
+                ),
+              ),
+              child: const Icon(
+                Icons.add,
+                color: Color(0xFF2C2F5A),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -7,6 +7,8 @@ import '../../features/consultation/presentation/screens/doctor_consultation_scr
 import '../../features/dashboard/presentation/screens/menu_screen.dart';
 import '../../features/notification/presentation/screens/notifcation_screen.dart';
 import '../../features/dashboard/presentation/screens/main_navigation_shell.dart';
+import '../../features/account/presentation/screens/account_details_screen.dart';
+import '../../features/account/presentation/screens/add_account_screen.dart';
 import '../../features/onboarding/presentation/screens/onboarding_screen.dart';
 import '../../features/auth/presentation/screens/login_screen.dart';
 import '../di/dependency_injection.dart';
@@ -58,6 +60,16 @@ class AppRouter {
         path: AppRoutes.path(AppRoutes.notifications),
         name: AppRoutes.notifications,
         builder: (context, state) => const NotifcationScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.path(AppRoutes.addAccount),
+        name: AppRoutes.addAccount,
+        builder: (context, state) => const AddAccountScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.path(AppRoutes.accountDetails),
+        name: AppRoutes.accountDetails,
+        builder: (context, state) => const AccountDetailsScreen(),
       ),
       GoRoute(
         path: AppRoutes.path(AppRoutes.consultation),
