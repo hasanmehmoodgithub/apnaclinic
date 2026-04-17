@@ -30,10 +30,15 @@ class Assets {
   static const String fontsSatoshiVariable = 'assets/fonts/satoshi/Satoshi_Complete/Fonts/WEB/fonts/Satoshi-Variable.eot';
   static const String fontsSatoshiVariableItalic = 'assets/fonts/satoshi/Satoshi_Complete/Fonts/WEB/fonts/Satoshi-VariableItalic.woff2';
   static const String gifsPlaceholder = 'assets/gifs/placeholder.txt';
+  static const String iconsBasket = 'assets/icons/basket.svg';
+  static const String iconsCalendar = 'assets/icons/calendar.svg';
   static const String iconsClose = 'assets/icons/close.svg';
   static const String iconsEmpty = 'assets/icons/empty.svg';
+  static const String iconsLab = 'assets/icons/lab.svg';
+  static const String iconsMedicine = 'assets/icons/medicine.svg';
   static const String iconsNurse = 'assets/icons/nurse.png';
   static const String iconsPlaceholder = 'assets/icons/placeholder.txt';
+  static const String iconsSurgery = 'assets/icons/surgery.svg';
   static const String iconsTick = 'assets/icons/tick.svg';
   static const String imagesDashboardLoader = 'assets/images/dashboard_loader.json';
   static const String imagesPlaceholder = 'assets/images/placeholder.txt';

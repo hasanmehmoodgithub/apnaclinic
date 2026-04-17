@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
+import '../../../../core/router/app_routes.dart';
 
 import '../widgets/empty_booking_widget.dart';
 
@@ -15,7 +17,7 @@ class PharmacyBookingsScreen extends StatelessWidget {
           EmptyBookingWidget(
             description: "No pharmacy orders or bookings yet.",
             buttonText: 'Order Medicines',
-            onTap: () {},
+            onTap: () => context.push(AppRoutes.path(AppRoutes.pharmacy)),
           ),
         ],
       ),

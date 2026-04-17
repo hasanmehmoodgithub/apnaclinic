@@ -49,6 +49,15 @@ class AppUrls {
   /// Customer support screen content endpoint
   static String get customerSupport => '$baseUrl/dashboard/customer-support';
 
+  /// Notifications endpoint
+  static String get notifications => '$baseUrl/notifications';
+
+  /// Pharmacy medicines endpoint
+  static String get pharmacyMedicines => '$baseUrl/pharmacy/medicines';
+
+  /// Search endpoint
+  static String get search => '$baseUrl/search';
+
   // ============================================
   // 3rd Party Integration Support (Full URLs)
   // ============================================

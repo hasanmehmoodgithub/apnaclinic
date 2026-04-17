@@ -3,6 +3,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../features/consultation/consultation_injection.dart';
 import '../../features/customer_support/customer_support_injection.dart';
 import '../../features/dashboard/dashboard_injection.dart';
+import '../../features/notification/notification_injection.dart';
+import '../../features/pharmacy/pharmacy_injection.dart';
+import '../../features/search/search_injection.dart';
 import '../../features/free_doctor/free_doctor_injection.dart';
 import '../../features/auth/auth_injection.dart';
 import '../../features/profile_setup/profile_setup_injection.dart';
@@ -24,6 +27,9 @@ Future<void> initDependencyInjection() async {
   initFreeDoctorInjector();
   initCustomerSupportInjector();
   initDashboardInjector();
+  initNotificationInjector();
+  initPharmacyInjector();
+  initSearchInjector();
 }
 
 Future<void> _initCore() async {

@@ -5,7 +5,12 @@ import '../../features/app/presentation/screens/splash_screen.dart';
 import '../../features/consultation/presentation/cubit/consultation_cubit.dart';
 import '../../features/consultation/presentation/screens/doctor_consultation_screen.dart';
 import '../../features/dashboard/presentation/screens/menu_screen.dart';
+import '../../features/notification/presentation/cubit/notification_cubit.dart';
 import '../../features/notification/presentation/screens/notifcation_screen.dart';
+import '../../features/pharmacy/presentation/cubit/pharmacy_cubit.dart';
+import '../../features/pharmacy/presentation/screens/pharmacy_screen.dart';
+import '../../features/search/presentation/cubit/search_cubit.dart';
+import '../../features/search/presentation/screens/search_screen.dart';
 import '../../features/dashboard/presentation/screens/main_navigation_shell.dart';
 import '../../features/account/presentation/screens/account_details_screen.dart';
 import '../../features/account/presentation/screens/add_account_screen.dart';
@@ -59,7 +64,10 @@ class AppRouter {
       GoRoute(
         path: AppRoutes.path(AppRoutes.notifications),
         name: AppRoutes.notifications,
-        builder: (context, state) => const NotifcationScreen(),
+        builder: (context, state) => BlocProvider<NotificationCubit>(
+          create: (_) => sl<NotificationCubit>(),
+          child: const NotificationScreen(),
+        ),
       ),
       GoRoute(
         path: AppRoutes.path(AppRoutes.addAccount),
@@ -84,6 +92,22 @@ class AppRouter {
         builder: (context, state) => BlocProvider<ConsultationCubit>(
           create: (_) => sl<ConsultationCubit>(),
           child: const DoctorConsultationScreen(),
+        ),
+      ),
+      GoRoute(
+        path: AppRoutes.path(AppRoutes.pharmacy),
+        name: AppRoutes.pharmacy,
+        builder: (context, state) => BlocProvider<PharmacyCubit>(
+          create: (_) => sl<PharmacyCubit>(),
+          child: const PharmacyScreen(),
+        ),
+      ),
+      GoRoute(
+        path: AppRoutes.path(AppRoutes.search),
+        name: AppRoutes.search,
+        builder: (context, state) => BlocProvider<SearchCubit>(
+          create: (_) => sl<SearchCubit>(),
+          child: const SearchScreen(),
         ),
       ),
 

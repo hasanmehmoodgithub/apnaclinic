@@ -8,6 +8,7 @@ import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/preference/app_pref.dart';
 import '../../../../core/router/app_routes.dart';
+import '../../../../core/widgets/app_scaffold_gradient.dart';
 import '../../data/account_local_store.dart';
 import '../../domain/models/account_method.dart';
 
@@ -60,8 +61,7 @@ class _AddAccountScreenState extends State<AddAccountScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    return Scaffold(
-      backgroundColor: Colors.white,
+    return AppScaffoldGradient(
       appBar: AppBar(
         backgroundColor: const Color(0xFFC7EFEB),
         surfaceTintColor: Colors.transparent,
@@ -80,7 +80,7 @@ class _AddAccountScreenState extends State<AddAccountScreen> {
         ),
         centerTitle: true,
       ),
-      body: Container(
+      child: Container(
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),

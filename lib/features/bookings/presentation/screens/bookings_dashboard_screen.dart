@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
+import '../../../../core/widgets/app_scaffold_gradient.dart';
 
 import 'doctor_consultation_bookings_screen.dart';
 import 'lab_test_bookings_screen.dart';
@@ -28,11 +29,9 @@ class BookingsDashboardScreen extends StatelessWidget {
     final theme = Theme.of(context);
     return DefaultTabController(
       length: _tabs.length,
-      child: Scaffold(
-        backgroundColor: const Color(0xFFD5FFFB),
-        body: SafeArea(
-          child: Column(
-            children: [
+      child: AppScaffoldGradient(
+        child: Column(
+          children: [
               Padding(
                 padding: EdgeInsets.fromLTRB(8.w, 6.h, 16.w, 12.h),
                 child: Row(
@@ -118,8 +117,7 @@ class BookingsDashboardScreen extends StatelessWidget {
                   ),
                 ),
               ),
-            ],
-          ),
+          ],
         ),
       ),
     );

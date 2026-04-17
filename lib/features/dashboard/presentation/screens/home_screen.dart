@@ -120,9 +120,11 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           SearchHeader(
             userName: greetingName,
-            onSearchSubmitted: (_) {},
+            onSearchSubmitted: (_) =>
+                context.push(AppRoutes.path(AppRoutes.search)),
             onVoiceTap: () {},
-            onSearchButtonTap: () {},
+            onSearchButtonTap: () =>
+                context.push(AppRoutes.path(AppRoutes.search)),
           ),
           Expanded(
             child: CustomScrollView(

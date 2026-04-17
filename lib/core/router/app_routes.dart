@@ -14,6 +14,8 @@ class AppRoutes {
   static const String dashboardMenu = 'dashboard-menu';
   static const String notifications = 'notifications';
   static const String consultation = 'consultation';
+  static const String pharmacy = 'pharmacy';
+  static const String search = 'search';
   static const String addAccount = 'add-account';
   static const String accountDetails = 'account-details';
   static const String examples = 'examples';

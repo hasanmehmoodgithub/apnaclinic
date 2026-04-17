@@ -6,6 +6,7 @@ import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/preference/app_pref.dart';
 import '../../../../core/router/app_routes.dart';
+import '../../../../core/widgets/app_scaffold_gradient.dart';
 import '../widgets/menu_about_card.dart';
 import '../widgets/menu_action_tile.dart';
 import '../widgets/menu_header.dart';
@@ -51,11 +52,12 @@ class MenuScreen extends StatelessWidget {
         ? 'Sign in to manage your account'
         : phone;
 
-    return Scaffold(
-      backgroundColor: const Color(0xFFC7EFEB),
-      body: SafeArea(
-        child: Column(
-          children: [
+    return AppScaffoldGradient(
+      colors: const [Color(0xFFD5FFFB), Color(0xFFE0E6FF)],
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+      child: Column(
+        children: [
             const MenuHeader(),
             Expanded(
               child: Container(
@@ -142,8 +144,7 @@ class MenuScreen extends StatelessWidget {
                 ),
               ),
             ),
-          ],
-        ),
+        ],
       ),
     );
   }
