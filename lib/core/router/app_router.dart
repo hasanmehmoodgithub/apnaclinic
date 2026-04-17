@@ -11,6 +11,8 @@ import '../../features/pharmacy/presentation/cubit/pharmacy_cubit.dart';
 import '../../features/pharmacy/presentation/screens/pharmacy_screen.dart';
 import '../../features/search/presentation/cubit/search_cubit.dart';
 import '../../features/search/presentation/screens/search_screen.dart';
+import '../../features/surgery/presentation/cubit/surgery_cubit.dart';
+import '../../features/surgery/presentation/screens/surgery_screen.dart';
 import '../../features/dashboard/presentation/screens/main_navigation_shell.dart';
 import '../../features/account/presentation/screens/account_details_screen.dart';
 import '../../features/account/presentation/screens/add_account_screen.dart';
@@ -108,6 +110,14 @@ class AppRouter {
         builder: (context, state) => BlocProvider<SearchCubit>(
           create: (_) => sl<SearchCubit>(),
           child: const SearchScreen(),
+        ),
+      ),
+      GoRoute(
+        path: AppRoutes.path(AppRoutes.surgery),
+        name: AppRoutes.surgery,
+        builder: (context, state) => BlocProvider<SurgeryCubit>(
+          create: (_) => sl<SurgeryCubit>(),
+          child: const SurgeryScreen(),
         ),
       ),
 

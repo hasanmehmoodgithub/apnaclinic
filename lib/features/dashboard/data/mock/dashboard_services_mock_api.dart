@@ -39,7 +39,7 @@ class DashboardServicesMockApi {
           'subtitle': 'Hassle-free surgery scheduling',
           'offerUpto': 'Up to 40% off',
           'thumb': 'assets/img/services/surgery_booking.png',
-          'route': '',
+          'route': 'surgery',
           'visibility': true,
         },
       ],

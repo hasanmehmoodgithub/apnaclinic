@@ -16,6 +16,7 @@ class AppRoutes {
   static const String consultation = 'consultation';
   static const String pharmacy = 'pharmacy';
   static const String search = 'search';
+  static const String surgery = 'surgery';
   static const String addAccount = 'add-account';
   static const String accountDetails = 'account-details';
   static const String examples = 'examples';

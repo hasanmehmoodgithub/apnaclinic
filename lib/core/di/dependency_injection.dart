@@ -6,6 +6,7 @@ import '../../features/dashboard/dashboard_injection.dart';
 import '../../features/notification/notification_injection.dart';
 import '../../features/pharmacy/pharmacy_injection.dart';
 import '../../features/search/search_injection.dart';
+import '../../features/surgery/surgery_injection.dart';
 import '../../features/free_doctor/free_doctor_injection.dart';
 import '../../features/auth/auth_injection.dart';
 import '../../features/profile_setup/profile_setup_injection.dart';
@@ -30,6 +31,7 @@ Future<void> initDependencyInjection() async {
   initNotificationInjector();
   initPharmacyInjector();
   initSearchInjector();
+  initSurgeryInjector();
 }
 
 Future<void> _initCore() async {

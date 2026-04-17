@@ -58,6 +58,9 @@ class AppUrls {
   /// Search endpoint
   static String get search => '$baseUrl/search';
 
+  /// Surgery procedures endpoint
+  static String get surgeryProcedures => '$baseUrl/surgery/procedures';
+
   // ============================================
   // 3rd Party Integration Support (Full URLs)
   // ============================================

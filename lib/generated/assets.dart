@@ -33,6 +33,8 @@ class Assets {
   static const String iconsBasket = 'assets/icons/basket.svg';
   static const String iconsCalendar = 'assets/icons/calendar.svg';
   static const String iconsClose = 'assets/icons/close.svg';
+  static const String iconsD1 = 'assets/icons/d1.svg';
+  static const String iconsD2 = 'assets/icons/d2.svg';
   static const String iconsEmpty = 'assets/icons/empty.svg';
   static const String iconsLab = 'assets/icons/lab.svg';
   static const String iconsMedicine = 'assets/icons/medicine.svg';
