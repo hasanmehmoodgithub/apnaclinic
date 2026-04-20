@@ -34,6 +34,7 @@ class ProfileSetupFormSection extends StatelessWidget {
   final InputDecoration Function({
     required String hintText,
     Widget? suffixIcon,
+    bool isValueText,
   }) inputDecorationBuilder;
 
   @override
@@ -115,6 +116,7 @@ class ProfileSetupFormSection extends StatelessWidget {
                           color: const Color(0xFF0FAA9A),
                           size: 22.r,
                         ),
+                        isValueText: state.selectedGender != null,
                       ),
                     ),
                   ),
@@ -162,6 +164,7 @@ class ProfileSetupFormSection extends StatelessWidget {
                           size: 18.r,
                           color: const Color(0xFF98A2B3),
                         ),
+                        isValueText: state.dateOfBirth != null,
                       ),
                     ),
                   ),

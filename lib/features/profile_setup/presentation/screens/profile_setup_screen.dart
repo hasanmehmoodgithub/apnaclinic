@@ -17,7 +17,6 @@ import '../cubit/profile_setup_state.dart';
 import '../widgets/profile_setup_avatar_picker.dart';
 import '../widgets/profile_setup_form_section.dart';
 import '../widgets/profile_setup_header_bar.dart';
-import '../widgets/profile_setup_top_background.dart';
 
 class ProfileSetupScreen extends StatefulWidget {
   const ProfileSetupScreen({super.key});
@@ -239,12 +238,15 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
     BuildContext context, {
     required String hintText,
     Widget? suffixIcon,
+    bool isValueText = false,
   }) {
     return InputDecoration(
       hintText: hintText,
       hintStyle: Theme.of(
         context,
-      ).textTheme.bodyMedium?.copyWith(color: const Color(0xFF667085)),
+      ).textTheme.bodyMedium?.copyWith(
+        color: isValueText ? const Color(0xFF101828) : const Color(0xFF667085),
+      ),
       isDense: true,
       contentPadding: EdgeInsets.only(bottom: 10.h),
       enabledBorder: const UnderlineInputBorder(
@@ -263,7 +265,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
     final topInset = MediaQuery.paddingOf(context).top;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF4F5F7),
+      backgroundColor: const Color(0xFFC7EFEB),
       body: LayoutBuilder(
         builder: (context, constraints) {
           return BlocConsumer<ProfileSetupCubit, ProfileSetupState>(
@@ -285,11 +287,10 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
               }
               final dobLabel = state.dateOfBirth == null
                   ? l10n.profileDobHint
-                  : DateFormat('dd/MM/yy').format(state.dateOfBirth!);
+                  : DateFormat('MMM dd yyyy').format(state.dateOfBirth!);
               final avatarProvider = _avatarProvider;
               return Stack(
                 children: [
-                  const ProfileSetupTopBackground(),
                   Column(
                     children: [
                       ProfileSetupHeaderBar(topInset: topInset),
@@ -317,11 +318,13 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                         inputDecorationBuilder: ({
                           required String hintText,
                           Widget? suffixIcon,
+                          bool isValueText = false,
                         }) {
                           return _lineInputDecoration(
                             context,
                             hintText: hintText,
                             suffixIcon: suffixIcon,
+                            isValueText: isValueText,
                           );
                         },
                       ),
