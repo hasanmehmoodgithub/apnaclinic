@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../features/app/presentation/screens/splash_screen.dart';
 import '../../features/consultation/presentation/cubit/consultation_cubit.dart';
 import '../../features/consultation/presentation/screens/doctor_consultation_screen.dart';
+import '../../features/customer_support/presentation/screens/customer_support_screen.dart';
 import '../../features/dashboard/presentation/screens/menu_screen.dart';
 import '../../features/notification/presentation/cubit/notification_cubit.dart';
 import '../../features/notification/presentation/screens/notifcation_screen.dart';
@@ -62,6 +63,11 @@ class AppRouter {
         path: AppRoutes.path(AppRoutes.dashboardMenu),
         name: AppRoutes.dashboardMenu,
         builder: (context, state) => const MenuScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.path(AppRoutes.customerSupport),
+        name: AppRoutes.customerSupport,
+        builder: (context, state) => const CustomerSupportScreen(),
       ),
       GoRoute(
         path: AppRoutes.path(AppRoutes.notifications),
