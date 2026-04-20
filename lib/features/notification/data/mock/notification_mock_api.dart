@@ -36,7 +36,7 @@ class NotificationMockApi {
           'time': '4:56 pm',
           'date': 'Yesterday, 15 April',
           'type': 'surgery',
-          'isRead': true,
+          'isRead': false,
         },
         {
           'id': 'n4',
@@ -46,7 +46,7 @@ class NotificationMockApi {
           'time': '4:56 pm',
           'date': 'Yesterday, 15 April',
           'type': 'lab',
-          'isRead': true,
+          'isRead': false,
         },
         {
           'id': 'n5',
@@ -55,7 +55,7 @@ class NotificationMockApi {
           'time': '4:56 pm',
           'date': '16 April',
           'type': 'consultation',
-          'isRead': true,
+          'isRead': false,
         },
       ],
     };
