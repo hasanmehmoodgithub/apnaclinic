@@ -114,6 +114,13 @@ class MenuScreen extends StatelessWidget {
                                   context.push(
                                     AppRoutes.path(AppRoutes.customerSupport),
                                   );
+                                  return;
+                                }
+                                if (item.title == "FAQ’s") {
+                                  launchUrl(
+                                    Uri.parse('https://apnaclinic.ecnstg.com/faq'),
+                                    mode: LaunchMode.externalApplication,
+                                  );
                                 }
                               },
                               title: item.title,
