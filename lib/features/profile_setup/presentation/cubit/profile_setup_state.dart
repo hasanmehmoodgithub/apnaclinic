@@ -1,38 +1,13 @@
-import 'package:equatable/equatable.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-class ProfileSetupState extends Equatable {
-  const ProfileSetupState({
-    this.isSaving = false,
-    this.errorMessage,
-    this.selectedGender,
-    this.dateOfBirth,
-  });
+part 'profile_setup_state.freezed.dart';
 
-  final bool isSaving;
-  final String? errorMessage;
-  final String? selectedGender;
-  final DateTime? dateOfBirth;
-
-  ProfileSetupState copyWith({
-    bool? isSaving,
+@freezed
+abstract class ProfileSetupState with _$ProfileSetupState {
+  const factory ProfileSetupState({
+    @Default(false) bool isSaving,
     String? errorMessage,
-    bool clearError = false,
     String? selectedGender,
     DateTime? dateOfBirth,
-  }) {
-    return ProfileSetupState(
-      isSaving: isSaving ?? this.isSaving,
-      errorMessage: clearError ? null : (errorMessage ?? this.errorMessage),
-      selectedGender: selectedGender ?? this.selectedGender,
-      dateOfBirth: dateOfBirth ?? this.dateOfBirth,
-    );
-  }
-
-  @override
-  List<Object?> get props => [
-    isSaving,
-    errorMessage,
-    selectedGender,
-    dateOfBirth,
-  ];
+  }) = _ProfileSetupState;
 }

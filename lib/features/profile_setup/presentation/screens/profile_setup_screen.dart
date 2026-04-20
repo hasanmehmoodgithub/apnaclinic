@@ -8,7 +8,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../components/widgets/app_button.dart';
-import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/router/app_routes.dart';
@@ -16,26 +15,14 @@ import '../../domain/models/profile_setup_data.dart';
 import '../cubit/profile_setup_cubit.dart';
 import '../cubit/profile_setup_state.dart';
 
-class ProfileSetupScreen extends StatelessWidget {
+class ProfileSetupScreen extends StatefulWidget {
   const ProfileSetupScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => sl<ProfileSetupCubit>(),
-      child: const _ProfileSetupView(),
-    );
-  }
+  State<ProfileSetupScreen> createState() => _ProfileSetupScreenState();
 }
 
-class _ProfileSetupView extends StatefulWidget {
-  const _ProfileSetupView();
-
-  @override
-  State<_ProfileSetupView> createState() => _ProfileSetupViewState();
-}
-
-class _ProfileSetupViewState extends State<_ProfileSetupView> {
+class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
   final _formKey = GlobalKey<FormState>();
   final _firstNameController = TextEditingController();
   final _lastNameController = TextEditingController();
