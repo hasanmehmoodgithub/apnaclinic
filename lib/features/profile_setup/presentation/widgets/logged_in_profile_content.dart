@@ -15,6 +15,7 @@ class LoggedInProfileContent extends StatelessWidget {
     required this.email,
     required this.accounts,
     required this.onAccountTap,
+    required this.onEditTap,
     required this.onAddAccountTap,
     required this.onDeleteAccountTap,
   });
@@ -26,6 +27,7 @@ class LoggedInProfileContent extends StatelessWidget {
   final String email;
   final List<AccountMethod> accounts;
   final VoidCallback onAccountTap;
+  final VoidCallback onEditTap;
   final VoidCallback onAddAccountTap;
   final void Function(int index, AccountMethod account) onDeleteAccountTap;
 
@@ -67,7 +69,7 @@ class LoggedInProfileContent extends StatelessWidget {
                 ),
               ),
               InkWell(
-                onTap: () {},
+                onTap: onEditTap,
                 borderRadius: BorderRadius.circular(18.r),
                 child: Padding(
                   padding: EdgeInsets.symmetric(vertical: 2.h),

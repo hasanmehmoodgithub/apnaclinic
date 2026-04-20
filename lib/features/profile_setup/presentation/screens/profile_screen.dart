@@ -40,14 +40,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     final isLoggedIn = _appPref.getLoginStatus();
-    final firstName = (_appPref.getString('profile_first_name') ?? '').trim();
-    final lastName = (_appPref.getString('profile_last_name') ?? '').trim();
+    final userLocal = _appPref.getUserLocalModel();
+    final firstName = userLocal?.firstName.trim() ?? '';
+    final lastName = userLocal?.lastName.trim() ?? '';
     final fullName = '$firstName $lastName'.trim();
-    final phone = (_appPref.getString('profile_phone') ?? '').trim();
+    final phone = userLocal?.phone.trim() ?? '';
     final accounts = _accountStore.getAccounts();
-    final gender = (_appPref.getString('profile_gender') ?? '').trim();
-    final email = (_appPref.getString('profile_email') ?? '').trim();
-    final dobIso = (_appPref.getString('profile_dob') ?? '').trim();
+    final gender = userLocal?.gender.trim() ?? '';
+    final email = userLocal?.email.trim() ?? '';
+    final dobIso = userLocal?.dateOfBirth.trim() ?? '';
     final dob = DateTime.tryParse(dobIso);
     final dobLabel = dob == null
         ? ''
@@ -83,6 +84,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         accounts: accounts,
                         onAccountTap: () =>
                             context.push(AppRoutes.path(AppRoutes.accountDetails)),
+                        onEditTap: () =>
+                            context.push(AppRoutes.path(AppRoutes.profileSetup)),
                         onAddAccountTap: () async {
                           await context.push(AppRoutes.path(AppRoutes.addAccount));
                           if (mounted) setState(() {});

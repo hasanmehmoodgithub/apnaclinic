@@ -1,16 +1,43 @@
 import '../../core/di/dependency_injection.dart';
+import '../../core/network/api_service.dart';
+import 'data/data_sources/profile_setup_remote_data_source.dart';
+import 'data/data_sources/profile_setup_remote_data_source_impl.dart';
+import 'data/mock/profile_setup_mock_api.dart';
 import 'data/repositories/profile_setup_repository_impl.dart';
 import 'domain/repositories/profile_setup_repository.dart';
+import 'domain/use_cases/get_profile_setup_content_use_case.dart';
+import 'domain/use_cases/save_profile_setup_use_case.dart';
 import 'presentation/cubit/profile_setup_cubit.dart';
 
 void initProfileSetupInjector() {
-  if (!sl.isRegistered<ProfileSetupRepository>()) {
-    sl.registerLazySingleton<ProfileSetupRepository>(
-      () => ProfileSetupRepositoryImpl(sl()),
-    );
-  }
+  sl.registerLazySingleton<ProfileSetupMockApi>(() => ProfileSetupMockApi());
 
-  if (!sl.isRegistered<ProfileSetupCubit>()) {
-    sl.registerFactory<ProfileSetupCubit>(() => ProfileSetupCubit(sl()));
-  }
+  sl.registerLazySingleton<ProfileSetupRemoteDataSource>(
+    () => ProfileSetupRemoteDataSourceImpl(
+      apiService: sl<ApiService>(),
+      mockApi: sl<ProfileSetupMockApi>(),
+    ),
+  );
+
+  sl.registerLazySingleton<ProfileSetupRepository>(
+    () => ProfileSetupRepositoryImpl(
+      remoteDataSource: sl<ProfileSetupRemoteDataSource>(),
+    ),
+  );
+
+  sl.registerLazySingleton<GetProfileSetupContentUseCase>(
+    () =>
+        GetProfileSetupContentUseCase(repository: sl<ProfileSetupRepository>()),
+  );
+
+  sl.registerLazySingleton<SaveProfileSetupUseCase>(
+    () => SaveProfileSetupUseCase(repository: sl<ProfileSetupRepository>()),
+  );
+
+  sl.registerFactory<ProfileSetupCubit>(
+    () => ProfileSetupCubit(
+      getProfileSetupContentUseCase: sl<GetProfileSetupContentUseCase>(),
+      saveProfileSetupUseCase: sl<SaveProfileSetupUseCase>(),
+    ),
+  );
 }

@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$ProfileSetupState {
 
- bool get isSaving; String? get errorMessage; String? get selectedGender; DateTime? get dateOfBirth;
+ StateStatus get loadingStateStatus; bool get isSaving; String? get errorMessage; ProfileSetupEntity? get profile; String? get selectedGender; DateTime? get dateOfBirth;
 /// Create a copy of ProfileSetupState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +25,16 @@ $ProfileSetupStateCopyWith<ProfileSetupState> get copyWith => _$ProfileSetupStat
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ProfileSetupState&&(identical(other.isSaving, isSaving) || other.isSaving == isSaving)&&(identical(other.errorMessage, errorMessage) || other.errorMessage == errorMessage)&&(identical(other.selectedGender, selectedGender) || other.selectedGender == selectedGender)&&(identical(other.dateOfBirth, dateOfBirth) || other.dateOfBirth == dateOfBirth));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ProfileSetupState&&(identical(other.loadingStateStatus, loadingStateStatus) || other.loadingStateStatus == loadingStateStatus)&&(identical(other.isSaving, isSaving) || other.isSaving == isSaving)&&(identical(other.errorMessage, errorMessage) || other.errorMessage == errorMessage)&&(identical(other.profile, profile) || other.profile == profile)&&(identical(other.selectedGender, selectedGender) || other.selectedGender == selectedGender)&&(identical(other.dateOfBirth, dateOfBirth) || other.dateOfBirth == dateOfBirth));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,isSaving,errorMessage,selectedGender,dateOfBirth);
+int get hashCode => Object.hash(runtimeType,loadingStateStatus,isSaving,errorMessage,profile,selectedGender,dateOfBirth);
 
 @override
 String toString() {
-  return 'ProfileSetupState(isSaving: $isSaving, errorMessage: $errorMessage, selectedGender: $selectedGender, dateOfBirth: $dateOfBirth)';
+  return 'ProfileSetupState(loadingStateStatus: $loadingStateStatus, isSaving: $isSaving, errorMessage: $errorMessage, profile: $profile, selectedGender: $selectedGender, dateOfBirth: $dateOfBirth)';
 }
 
 
@@ -45,7 +45,7 @@ abstract mixin class $ProfileSetupStateCopyWith<$Res>  {
   factory $ProfileSetupStateCopyWith(ProfileSetupState value, $Res Function(ProfileSetupState) _then) = _$ProfileSetupStateCopyWithImpl;
 @useResult
 $Res call({
- bool isSaving, String? errorMessage, String? selectedGender, DateTime? dateOfBirth
+ StateStatus loadingStateStatus, bool isSaving, String? errorMessage, ProfileSetupEntity? profile, String? selectedGender, DateTime? dateOfBirth
 });
 
 
@@ -62,11 +62,13 @@ class _$ProfileSetupStateCopyWithImpl<$Res>
 
 /// Create a copy of ProfileSetupState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? isSaving = null,Object? errorMessage = freezed,Object? selectedGender = freezed,Object? dateOfBirth = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? loadingStateStatus = null,Object? isSaving = null,Object? errorMessage = freezed,Object? profile = freezed,Object? selectedGender = freezed,Object? dateOfBirth = freezed,}) {
   return _then(_self.copyWith(
-isSaving: null == isSaving ? _self.isSaving : isSaving // ignore: cast_nullable_to_non_nullable
+loadingStateStatus: null == loadingStateStatus ? _self.loadingStateStatus : loadingStateStatus // ignore: cast_nullable_to_non_nullable
+as StateStatus,isSaving: null == isSaving ? _self.isSaving : isSaving // ignore: cast_nullable_to_non_nullable
 as bool,errorMessage: freezed == errorMessage ? _self.errorMessage : errorMessage // ignore: cast_nullable_to_non_nullable
-as String?,selectedGender: freezed == selectedGender ? _self.selectedGender : selectedGender // ignore: cast_nullable_to_non_nullable
+as String?,profile: freezed == profile ? _self.profile : profile // ignore: cast_nullable_to_non_nullable
+as ProfileSetupEntity?,selectedGender: freezed == selectedGender ? _self.selectedGender : selectedGender // ignore: cast_nullable_to_non_nullable
 as String?,dateOfBirth: freezed == dateOfBirth ? _self.dateOfBirth : dateOfBirth // ignore: cast_nullable_to_non_nullable
 as DateTime?,
   ));
@@ -153,10 +155,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( bool isSaving,  String? errorMessage,  String? selectedGender,  DateTime? dateOfBirth)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( StateStatus loadingStateStatus,  bool isSaving,  String? errorMessage,  ProfileSetupEntity? profile,  String? selectedGender,  DateTime? dateOfBirth)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _ProfileSetupState() when $default != null:
-return $default(_that.isSaving,_that.errorMessage,_that.selectedGender,_that.dateOfBirth);case _:
+return $default(_that.loadingStateStatus,_that.isSaving,_that.errorMessage,_that.profile,_that.selectedGender,_that.dateOfBirth);case _:
   return orElse();
 
 }
@@ -174,10 +176,10 @@ return $default(_that.isSaving,_that.errorMessage,_that.selectedGender,_that.dat
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool isSaving,  String? errorMessage,  String? selectedGender,  DateTime? dateOfBirth)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( StateStatus loadingStateStatus,  bool isSaving,  String? errorMessage,  ProfileSetupEntity? profile,  String? selectedGender,  DateTime? dateOfBirth)  $default,) {final _that = this;
 switch (_that) {
 case _ProfileSetupState():
-return $default(_that.isSaving,_that.errorMessage,_that.selectedGender,_that.dateOfBirth);case _:
+return $default(_that.loadingStateStatus,_that.isSaving,_that.errorMessage,_that.profile,_that.selectedGender,_that.dateOfBirth);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -194,10 +196,10 @@ return $default(_that.isSaving,_that.errorMessage,_that.selectedGender,_that.dat
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( bool isSaving,  String? errorMessage,  String? selectedGender,  DateTime? dateOfBirth)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( StateStatus loadingStateStatus,  bool isSaving,  String? errorMessage,  ProfileSetupEntity? profile,  String? selectedGender,  DateTime? dateOfBirth)?  $default,) {final _that = this;
 switch (_that) {
 case _ProfileSetupState() when $default != null:
-return $default(_that.isSaving,_that.errorMessage,_that.selectedGender,_that.dateOfBirth);case _:
+return $default(_that.loadingStateStatus,_that.isSaving,_that.errorMessage,_that.profile,_that.selectedGender,_that.dateOfBirth);case _:
   return null;
 
 }
@@ -209,11 +211,13 @@ return $default(_that.isSaving,_that.errorMessage,_that.selectedGender,_that.dat
 
 
 class _ProfileSetupState implements ProfileSetupState {
-  const _ProfileSetupState({this.isSaving = false, this.errorMessage, this.selectedGender, this.dateOfBirth});
+  const _ProfileSetupState({this.loadingStateStatus = StateStatus.idle, this.isSaving = false, this.errorMessage, this.profile, this.selectedGender, this.dateOfBirth});
   
 
+@override@JsonKey() final  StateStatus loadingStateStatus;
 @override@JsonKey() final  bool isSaving;
 @override final  String? errorMessage;
+@override final  ProfileSetupEntity? profile;
 @override final  String? selectedGender;
 @override final  DateTime? dateOfBirth;
 
@@ -227,16 +231,16 @@ _$ProfileSetupStateCopyWith<_ProfileSetupState> get copyWith => __$ProfileSetupS
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ProfileSetupState&&(identical(other.isSaving, isSaving) || other.isSaving == isSaving)&&(identical(other.errorMessage, errorMessage) || other.errorMessage == errorMessage)&&(identical(other.selectedGender, selectedGender) || other.selectedGender == selectedGender)&&(identical(other.dateOfBirth, dateOfBirth) || other.dateOfBirth == dateOfBirth));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ProfileSetupState&&(identical(other.loadingStateStatus, loadingStateStatus) || other.loadingStateStatus == loadingStateStatus)&&(identical(other.isSaving, isSaving) || other.isSaving == isSaving)&&(identical(other.errorMessage, errorMessage) || other.errorMessage == errorMessage)&&(identical(other.profile, profile) || other.profile == profile)&&(identical(other.selectedGender, selectedGender) || other.selectedGender == selectedGender)&&(identical(other.dateOfBirth, dateOfBirth) || other.dateOfBirth == dateOfBirth));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,isSaving,errorMessage,selectedGender,dateOfBirth);
+int get hashCode => Object.hash(runtimeType,loadingStateStatus,isSaving,errorMessage,profile,selectedGender,dateOfBirth);
 
 @override
 String toString() {
-  return 'ProfileSetupState(isSaving: $isSaving, errorMessage: $errorMessage, selectedGender: $selectedGender, dateOfBirth: $dateOfBirth)';
+  return 'ProfileSetupState(loadingStateStatus: $loadingStateStatus, isSaving: $isSaving, errorMessage: $errorMessage, profile: $profile, selectedGender: $selectedGender, dateOfBirth: $dateOfBirth)';
 }
 
 
@@ -247,7 +251,7 @@ abstract mixin class _$ProfileSetupStateCopyWith<$Res> implements $ProfileSetupS
   factory _$ProfileSetupStateCopyWith(_ProfileSetupState value, $Res Function(_ProfileSetupState) _then) = __$ProfileSetupStateCopyWithImpl;
 @override @useResult
 $Res call({
- bool isSaving, String? errorMessage, String? selectedGender, DateTime? dateOfBirth
+ StateStatus loadingStateStatus, bool isSaving, String? errorMessage, ProfileSetupEntity? profile, String? selectedGender, DateTime? dateOfBirth
 });
 
 
@@ -264,11 +268,13 @@ class __$ProfileSetupStateCopyWithImpl<$Res>
 
 /// Create a copy of ProfileSetupState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? isSaving = null,Object? errorMessage = freezed,Object? selectedGender = freezed,Object? dateOfBirth = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? loadingStateStatus = null,Object? isSaving = null,Object? errorMessage = freezed,Object? profile = freezed,Object? selectedGender = freezed,Object? dateOfBirth = freezed,}) {
   return _then(_ProfileSetupState(
-isSaving: null == isSaving ? _self.isSaving : isSaving // ignore: cast_nullable_to_non_nullable
+loadingStateStatus: null == loadingStateStatus ? _self.loadingStateStatus : loadingStateStatus // ignore: cast_nullable_to_non_nullable
+as StateStatus,isSaving: null == isSaving ? _self.isSaving : isSaving // ignore: cast_nullable_to_non_nullable
 as bool,errorMessage: freezed == errorMessage ? _self.errorMessage : errorMessage // ignore: cast_nullable_to_non_nullable
-as String?,selectedGender: freezed == selectedGender ? _self.selectedGender : selectedGender // ignore: cast_nullable_to_non_nullable
+as String?,profile: freezed == profile ? _self.profile : profile // ignore: cast_nullable_to_non_nullable
+as ProfileSetupEntity?,selectedGender: freezed == selectedGender ? _self.selectedGender : selectedGender // ignore: cast_nullable_to_non_nullable
 as String?,dateOfBirth: freezed == dateOfBirth ? _self.dateOfBirth : dateOfBirth // ignore: cast_nullable_to_non_nullable
 as DateTime?,
   ));

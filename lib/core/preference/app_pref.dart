@@ -1,3 +1,5 @@
+import 'user_local_model.dart';
+
 abstract class AppPref {
   // ==================== Authentication ====================
 
@@ -32,6 +34,9 @@ abstract class AppPref {
 
   Future<bool> setProfileCompleted(bool completed, {bool? defaultValue});
   bool isProfileCompleted(); // Default: false
+  Future<bool> setUserLocalModel(UserLocalModel model);
+  UserLocalModel? getUserLocalModel();
+  Future<bool> clearUserLocalModel();
 
   // ==================== Generic Methods ====================
 

@@ -49,6 +49,12 @@ class AppUrls {
   /// Customer support screen content endpoint
   static String get customerSupport => '$baseUrl/dashboard/customer-support';
 
+  /// Profile setup details endpoint
+  static String get profileSetup => '$baseUrl/profile/setup';
+
+  /// Save profile setup endpoint
+  static String get saveProfileSetup => '$baseUrl/profile/setup/save';
+
   /// Notifications endpoint
   static String get notifications => '$baseUrl/notifications';
 

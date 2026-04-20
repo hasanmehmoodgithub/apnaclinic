@@ -13,6 +13,10 @@ class AppStrings {
       'Unable to load free doctor information right now. Please try again in a moment.';
   static const String customerSupportLoadError =
       'Unable to load customer support right now. Please try again in a moment.';
+  static const String profileSetupLoadError =
+      'Unable to load profile details right now. Please try again in a moment.';
+  static const String profileSetupSaveError =
+      'Unable to save profile right now. Please try again.';
   static const String notificationsLoadError =
       'Unable to load notifications right now. Please try again in a moment.';
   static const String pharmacyLoadError =

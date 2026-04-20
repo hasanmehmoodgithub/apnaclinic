@@ -166,8 +166,9 @@ class _HomeScreenState extends State<HomeScreen> {
   String _resolveGreetingName() {
     if (!_isLoggedIn) return 'Guest';
     final appPref = sl<AppPref>();
-    final firstName = (appPref.getString('profile_first_name') ?? '').trim();
-    final lastName = (appPref.getString('profile_last_name') ?? '').trim();
+    final userLocal = appPref.getUserLocalModel();
+    final firstName = userLocal?.firstName.trim() ?? '';
+    final lastName = userLocal?.lastName.trim() ?? '';
     final fullName = '$firstName $lastName'.trim();
     return fullName.isEmpty ? 'Guest' : fullName;
   }

@@ -57,10 +57,11 @@ class MenuScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final appPref = sl<AppPref>();
     final isLoggedIn = appPref.getLoginStatus();
-    final firstName = (appPref.getString('profile_first_name') ?? '').trim();
-    final lastName = (appPref.getString('profile_last_name') ?? '').trim();
+    final userLocal = appPref.getUserLocalModel();
+    final firstName = userLocal?.firstName.trim() ?? '';
+    final lastName = userLocal?.lastName.trim() ?? '';
     final fullName = '$firstName $lastName'.trim();
-    final phone = (appPref.getString('profile_phone') ?? '').trim();
+    final phone = userLocal?.phone.trim() ?? '';
     final displayName = fullName.isEmpty ? 'Guest User' : fullName;
     final displayPhone = phone.isEmpty
         ? 'Sign in to manage your account'
@@ -158,13 +159,7 @@ class MenuScreen extends StatelessWidget {
                             await appPref.setProfileCompleted(false);
                             await appPref.setToken('');
                             await appPref.setUserId('');
-                            await appPref.remove('profile_first_name');
-                            await appPref.remove('profile_last_name');
-                            await appPref.remove('profile_phone');
-                            await appPref.remove('profile_gender');
-                            await appPref.remove('profile_email');
-                            await appPref.remove('profile_address');
-                            await appPref.remove('profile_dob');
+                            await appPref.clearUserLocalModel();
                             if (!context.mounted) return;
                             context.go(AppRoutes.path(AppRoutes.home));
                           },
