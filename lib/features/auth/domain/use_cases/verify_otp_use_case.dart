@@ -24,6 +24,7 @@ class VerifyOtpParams extends Equatable {
   });
 
   final String phoneNumber;
+
   final String otp;
 
   @override
