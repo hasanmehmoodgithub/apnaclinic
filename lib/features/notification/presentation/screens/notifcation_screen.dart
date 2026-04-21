@@ -7,6 +7,7 @@ import '../../../../core/constants/app_strings.dart';
 import '../../../../core/enums/state_status.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/widgets/app_scaffold_gradient.dart';
+import '../../../../generated/assets.dart';
 import '../../domain/entities/notification_entity.dart';
 import '../cubit/notification_cubit.dart';
 import '../cubit/notification_state.dart';
@@ -21,74 +22,74 @@ class NotificationScreen extends StatelessWidget {
     return AppScaffoldGradient(
       child: Column(
         children: [
-            Padding(
-              padding: EdgeInsets.fromLTRB(8.w, 6.h, 14.w, 14.h),
-              child: Row(
-                children: [
-                  IconButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    icon: const Icon(
-                      Icons.arrow_back_rounded,
-                      color: Color(0xFF08294D),
+          Padding(
+            padding: EdgeInsets.fromLTRB(8.w, 6.h, 14.w, 14.h),
+            child: Row(
+              children: [
+                IconButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  icon: const Icon(
+                    Icons.arrow_back_rounded,
+                    color: Color(0xFF08294D),
+                  ),
+                ),
+                Expanded(
+                  child: Text(
+                    'Notifications',
+                    textAlign: TextAlign.center,
+                    style: theme.textTheme.titleLarge?.copyWith(
+                      color: const Color(0xFF0E2D55),
+                      fontWeight: FontWeight.w700,
+                      fontSize: (31 / 1.6).sp,
                     ),
                   ),
-                  Expanded(
-                    child: Text(
-                      'Notifications',
-                      textAlign: TextAlign.center,
-                      style: theme.textTheme.titleLarge?.copyWith(
-                        color: const Color(0xFF0E2D55),
-                        fontWeight: FontWeight.w700,
-                        fontSize: (31 / 1.6).sp,
+                ),
+                IconButton(
+                  onPressed: () {},
+                  icon: const Icon(Icons.more_horiz, color: Color(0xFF08294D)),
+                ),
+              ],
+            ),
+          ),
+          Expanded(
+            child: Container(
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: Color(0xFFF4F6F8),
+                borderRadius: BorderRadius.vertical(top: Radius.circular(42.r)),
+              ),
+              child: BlocBuilder<NotificationCubit, NotificationState>(
+                builder: (context, state) {
+                  return switch (state.loadingStateStatus) {
+                    StateStatus.loading => const _NotificationLoadingShimmer(),
+                    StateStatus.error => _NotificationErrorState(
+                      message:
+                      state.errorMessage ?? AppStrings.notificationsLoadError,
+                      onRetry: () => context.read<NotificationCubit>().loadNotifications(),
+                    ),
+                    StateStatus.empty => const _NotificationEmptyState(),
+                    _ => RefreshIndicator(
+                      color: AppColors.clr09,
+                      onRefresh: () => context
+                          .read<NotificationCubit>()
+                          .loadNotifications(refresh: true),
+                      child: _NotificationList(
+                        groupedItems: _groupByDate(state.notifications),
                       ),
                     ),
-                  ),
-                  IconButton(
-                    onPressed: () {},
-                    icon: const Icon(Icons.more_horiz, color: Color(0xFF08294D)),
-                  ),
-                ],
+                  };
+                },
               ),
             ),
-            Expanded(
-              child: Container(
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: Color(0xFFF4F6F8),
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(42.r)),
-                ),
-                child: BlocBuilder<NotificationCubit, NotificationState>(
-                  builder: (context, state) {
-                    return switch (state.loadingStateStatus) {
-                      StateStatus.loading => const _NotificationLoadingShimmer(),
-                      StateStatus.error => _NotificationErrorState(
-                          message:
-                              state.errorMessage ?? AppStrings.notificationsLoadError,
-                          onRetry: () => context.read<NotificationCubit>().loadNotifications(),
-                        ),
-                      StateStatus.empty => const _NotificationEmptyState(),
-                      _ => RefreshIndicator(
-                        color: AppColors.clr09,
-                          onRefresh: () => context
-                              .read<NotificationCubit>()
-                              .loadNotifications(refresh: true),
-                          child: _NotificationList(
-                            groupedItems: _groupByDate(state.notifications),
-                          ),
-                        ),
-                    };
-                  },
-                ),
-              ),
-            ),
+          ),
         ],
       ),
     );
   }
 
   Map<String, List<NotificationEntity>> _groupByDate(
-    List<NotificationEntity> list,
-  ) {
+      List<NotificationEntity> list,
+      ) {
     final grouped = <String, List<NotificationEntity>>{};
     for (final item in list) {
       final date = item.dateLabel;
@@ -250,11 +251,22 @@ class _NotificationEmptyState extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Center(
-      child: Text(
-        'No notifications yet',
-        style: theme.textTheme.bodyMedium?.copyWith(
-          color: const Color(0xFF8A97A8),
-        ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Image.asset(
+            Assets.emptyBox,
+            width: 120.w,
+            fit: BoxFit.contain,
+          ),
+          SizedBox(height: 14.h),
+          Text(
+            'No Notifications Yet!',
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: const Color(0xFF8A97A8),
+            ),
+          ),
+        ],
       ),
     );
   }

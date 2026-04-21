@@ -51,16 +51,22 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    _isLoggedIn = sl<AppPref>().getLoginStatus();
-    final greetingName = _resolveGreetingName();
-    final theme = Theme.of(context);
-    return BlocProvider.value(
-      value: _dashboardCubit,
-      child: BlocConsumer<DashboardCubit, DashboardServicesState>(
-        listener: _onDashboardStateChanged,
-        builder: (context, state) =>
-            _buildHomeBody(context, state, greetingName, theme),
-      ),
+    final routerDelegate = GoRouter.of(context).routerDelegate;
+    return AnimatedBuilder(
+      animation: routerDelegate,
+      builder: (context, _) {
+        _isLoggedIn = sl<AppPref>().getLoginStatus();
+        final greetingName = _resolveGreetingName();
+        final theme = Theme.of(context);
+        return BlocProvider.value(
+          value: _dashboardCubit,
+          child: BlocConsumer<DashboardCubit, DashboardServicesState>(
+            listener: _onDashboardStateChanged,
+            builder: (context, state) =>
+                _buildHomeBody(context, state, greetingName, theme),
+          ),
+        );
+      },
     );
   }
 

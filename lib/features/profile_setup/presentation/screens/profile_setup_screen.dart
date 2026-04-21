@@ -11,6 +11,7 @@ import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/preference/app_pref.dart';
 import '../../../../core/router/app_routes.dart';
+import '../../../notification/presentation/widgets/profile_setup_loading_shimmer.dart';
 import '../../domain/models/profile_setup_data.dart';
 import '../cubit/profile_setup_cubit.dart';
 import '../cubit/profile_setup_state.dart';
@@ -154,10 +155,10 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                   title: Text(l10n.profileGenderMale),
                   trailing: selected == 'male'
                       ? Icon(
-                          Icons.check_rounded,
-                          color: const Color(0xFF0FAA9A),
-                          size: 20.r,
-                        )
+                    Icons.check_rounded,
+                    color: const Color(0xFF0FAA9A),
+                    size: 20.r,
+                  )
                       : null,
                   onTap: () => Navigator.of(dialogContext).pop('male'),
                 ),
@@ -165,10 +166,10 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                   title: Text(l10n.profileGenderFemale),
                   trailing: selected == 'female'
                       ? Icon(
-                          Icons.check_rounded,
-                          color: const Color(0xFF0FAA9A),
-                          size: 20.r,
-                        )
+                    Icons.check_rounded,
+                    color: const Color(0xFF0FAA9A),
+                    size: 20.r,
+                  )
                       : null,
                   onTap: () => Navigator.of(dialogContext).pop('female'),
                 ),
@@ -176,10 +177,10 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                   title: Text(l10n.profileGenderOther),
                   trailing: selected == 'other'
                       ? Icon(
-                          Icons.check_rounded,
-                          color: const Color(0xFF0FAA9A),
-                          size: 20.r,
-                        )
+                    Icons.check_rounded,
+                    color: const Color(0xFF0FAA9A),
+                    size: 20.r,
+                  )
                       : null,
                   onTap: () => Navigator.of(dialogContext).pop('other'),
                 ),
@@ -235,11 +236,11 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
   }
 
   InputDecoration _lineInputDecoration(
-    BuildContext context, {
-    required String hintText,
-    Widget? suffixIcon,
-    bool isValueText = false,
-  }) {
+      BuildContext context, {
+        required String hintText,
+        Widget? suffixIcon,
+        bool isValueText = false,
+      }) {
     return InputDecoration(
       hintText: hintText,
       hintStyle: Theme.of(
@@ -263,9 +264,16 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final topInset = MediaQuery.paddingOf(context).top;
+    final isInitialLoading = context.select(
+          (ProfileSetupCubit cubit) =>
+      cubit.state.loadingStateStatus == StateStatus.loading &&
+          !_hasAppliedInitialData,
+    );
 
     return Scaffold(
-      backgroundColor: const Color(0xFFC7EFEB),
+      backgroundColor: isInitialLoading
+          ? Colors.white
+          : const Color(0xFFC7EFEB),
       body: LayoutBuilder(
         builder: (context, constraints) {
           return BlocConsumer<ProfileSetupCubit, ProfileSetupState>(
@@ -279,11 +287,11 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
               _hasAppliedInitialData = true;
             },
             builder: (context, state) {
-              final isInitialLoading =
+              final showInitialLoading =
                   state.loadingStateStatus == StateStatus.loading &&
-                  !_hasAppliedInitialData;
-              if (isInitialLoading) {
-                return const Center(child: CircularProgressIndicator());
+                      !_hasAppliedInitialData;
+              if (showInitialLoading) {
+                return const ProfileSetupLoadingShimmer();
               }
               final dobLabel = state.dateOfBirth == null
                   ? l10n.profileDobHint
