@@ -166,7 +166,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   padding: EdgeInsets.fromLTRB(20.w, 24.h, 20.w, 32.h),
                   sliver: SliverToBoxAdapter(
                     child: FikrfreeHealthBanner(
-                      onTap: () {},
+                      onTap: () {
+
+                      },
                     ),
                   ),
                 ),
