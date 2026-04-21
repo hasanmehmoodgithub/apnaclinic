@@ -23,6 +23,7 @@ class ApnaClinicAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.systemOverlayStyle,
     this.onMenuTap,
     this.onNotificationTap,
+    this.notificationCount,
     this.onProfileTap,
     this.onLoginTap,
     this.showLoginButton = false,
@@ -37,6 +38,7 @@ class ApnaClinicAppBar extends StatelessWidget implements PreferredSizeWidget {
   final SystemUiOverlayStyle? systemOverlayStyle;
   final VoidCallback? onMenuTap;
   final VoidCallback? onNotificationTap;
+  final int? notificationCount;
   final VoidCallback? onProfileTap;
   final VoidCallback? onLoginTap;
   final bool showLoginButton;
@@ -133,18 +135,30 @@ class ApnaClinicAppBar extends StatelessWidget implements PreferredSizeWidget {
                         fit: BoxFit.contain,
                         colorFilter: svgFilter,
                       ),
-                      Positioned(
-                        right: -1,
-                        top: -2,
-                        child: Container(
-                          width: 8.r,
-                          height: 8.r,
-                          decoration: const BoxDecoration(
-                            color: Color(0xFFE53935),
-                            shape: BoxShape.circle,
+                      if ((notificationCount ?? 0) > 0)
+                        Positioned(
+                          right: -8.w,
+                          top: -4.h,
+                          child: Container(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 4.w,
+                              vertical: 1.h,
+                            ),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFE53935),
+                              borderRadius: BorderRadius.circular(8.r),
+                            ),
+                            child: Text(
+                              '${notificationCount!}',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 9.sp,
+                                fontWeight: FontWeight.w700,
+                                height: 1.0,
+                              ),
+                            ),
                           ),
                         ),
-                      ),
                     ],
                   ),
                 ),

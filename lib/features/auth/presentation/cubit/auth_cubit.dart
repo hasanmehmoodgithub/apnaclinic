@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/enums/app_enums.dart';
 import '../../../../core/enums/state_status.dart';
 import '../../../../core/preference/app_pref.dart';
+import '../../../../core/preference/user_local_model.dart';
 import '../../domain/entities/auth_entity.dart';
 import '../../domain/use_cases/request_otp_use_case.dart';
 import '../../domain/use_cases/verify_otp_use_case.dart';
@@ -204,32 +205,27 @@ class AuthCubit extends Cubit<AuthState> {
   Future<void> _saveUserSession({required AuthEntity entity}) async {
     await _appPref.setLoginStatus(true);
     await _appPref.setUserId(entity.userId ?? state.phoneNumber);
-    await _appPref.setString('profile_phone', state.phoneNumber);
     await _appPref.setToken(entity.token ?? '');
     await _appPref.setOnboardingCompleted(entity.isOnboardingCompleted == true);
 
     if (entity.isOnboardingCompleted == true) {
       await _appPref.setProfileCompleted(true);
-      await _appPref.setString(
-        'profile_first_name',
-        entity.firstName ?? '',
-      );
-      await _appPref.setString(
-        'profile_last_name',
-        entity.lastName ?? '',
-      );
-      await _appPref.setString('profile_gender', entity.gender ?? '');
-      await _appPref.setString('profile_email', entity.email ?? '');
-      await _appPref.setString(
-        'profile_address',
-        entity.address ?? '',
-      );
-      await _appPref.setString(
-        'profile_dob',
-        entity.dateOfBirth ?? '',
+      await _appPref.setUserLocalModel(
+        UserLocalModel(
+          firstName: entity.firstName ?? '',
+          lastName: entity.lastName ?? '',
+          phone: state.phoneNumber,
+          gender: entity.gender ?? '',
+          email: entity.email ?? '',
+          address: entity.address ?? '',
+          dateOfBirth: entity.dateOfBirth ?? '',
+        ),
       );
     } else {
       await _appPref.setProfileCompleted(false);
+      await _appPref.setUserLocalModel(
+        UserLocalModel(phone: state.phoneNumber),
+      );
     }
   }
 

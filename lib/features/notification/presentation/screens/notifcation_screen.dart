@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../components/shimmer/app_shimmer.dart';
+import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/enums/state_status.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
@@ -67,6 +68,7 @@ class NotificationScreen extends StatelessWidget {
                         ),
                       StateStatus.empty => const _NotificationEmptyState(),
                       _ => RefreshIndicator(
+                        color: AppColors.clr09,
                           onRefresh: () => context
                               .read<NotificationCubit>()
                               .loadNotifications(refresh: true),
@@ -191,6 +193,9 @@ class _NotificationList extends StatelessWidget {
             NotificationTile(
               item: entry.value[i],
               isLast: i == entry.value.length - 1,
+              onTap: () => context.read<NotificationCubit>().markAsRead(
+                entry.value[i].id,
+              ),
             ),
           ],
         ],

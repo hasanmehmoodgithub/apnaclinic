@@ -17,6 +17,8 @@ import '../widgets/our_services_widget.dart';
 import '../widgets/promotional_banner_dialog.dart';
 import '../widgets/search_header.dart';
 import '../../../profile_setup/presentation/screens/profile_screen.dart';
+import '../../../notification/presentation/cubit/notification_cubit.dart';
+import '../../../notification/presentation/cubit/notification_state.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -30,17 +32,20 @@ class _HomeScreenState extends State<HomeScreen> {
   bool _isLoggedIn = false;
   bool _isPromoDialogShown = false;
   late final DashboardCubit _dashboardCubit;
+  late final NotificationCubit _notificationCubit;
 
   @override
   void initState() {
     super.initState();
     _isLoggedIn = sl<AppPref>().getLoginStatus();
     _dashboardCubit = sl<DashboardCubit>();
+    _notificationCubit = sl<NotificationCubit>();
   }
 
   @override
   void dispose() {
     _dashboardCubit.close();
+    _notificationCubit.close();
     super.dispose();
   }
 
@@ -97,22 +102,32 @@ class _HomeScreenState extends State<HomeScreen> {
           Container(
             color: const Color(0xFF52A898),
             child: SafeArea(
-              child: ApnaClinicAppBar(
-                style: ApnaAppBarStyle.light,
-                systemOverlayStyle: ApnaClinicAppBar.lightBarColoredStatus,
-                onMenuTap: () =>
-                    context.push(AppRoutes.path(AppRoutes.dashboardMenu)),
-                onNotificationTap: () {
-                  context.push(AppRoutes.path(AppRoutes.notifications));
-                },
-                showLoginButton: !_isLoggedIn,
-                onLoginTap: () =>
-                    context.push(AppRoutes.path(AppRoutes.authLogin)),
-                onProfileTap: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute<void>(
-                      builder: (_) => const ProfileScreen(showBackButton: true),
-                    ),
+              child: BlocBuilder<NotificationCubit, NotificationState>(
+                bloc: _notificationCubit,
+                builder: (context, notificationState) {
+                  final unreadCount = notificationState.notifications
+                      .where((item) => !item.isRead)
+                      .length;
+                  return ApnaClinicAppBar(
+                    style: ApnaAppBarStyle.light,
+                    systemOverlayStyle: ApnaClinicAppBar.lightBarColoredStatus,
+                    onMenuTap: () =>
+                        context.push(AppRoutes.path(AppRoutes.dashboardMenu)),
+                    onNotificationTap: () {
+                      context.push(AppRoutes.path(AppRoutes.notifications));
+                    },
+                    notificationCount: unreadCount,
+                    showLoginButton: !_isLoggedIn,
+                    onLoginTap: () =>
+                        context.push(AppRoutes.path(AppRoutes.authLogin)),
+                    onProfileTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute<void>(
+                          builder: (_) =>
+                              const ProfileScreen(showBackButton: true),
+                        ),
+                      );
+                    },
                   );
                 },
               ),
@@ -166,8 +181,9 @@ class _HomeScreenState extends State<HomeScreen> {
   String _resolveGreetingName() {
     if (!_isLoggedIn) return 'Guest';
     final appPref = sl<AppPref>();
-    final firstName = (appPref.getString('profile_first_name') ?? '').trim();
-    final lastName = (appPref.getString('profile_last_name') ?? '').trim();
+    final userLocal = appPref.getUserLocalModel();
+    final firstName = userLocal?.firstName.trim() ?? '';
+    final lastName = userLocal?.lastName.trim() ?? '';
     final fullName = '$firstName $lastName'.trim();
     return fullName.isEmpty ? 'Guest' : fullName;
   }

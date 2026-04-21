@@ -35,8 +35,9 @@ class _AddAccountScreenState extends State<AddAccountScreen> {
   Future<void> _saveAccount() async {
     if (!_formKey.currentState!.validate()) return;
     final pref = sl<AppPref>();
-    final firstName = (pref.getString('profile_first_name') ?? '').trim();
-    final lastName = (pref.getString('profile_last_name') ?? '').trim();
+    final userLocal = pref.getUserLocalModel();
+    final firstName = userLocal?.firstName.trim() ?? '';
+    final lastName = userLocal?.lastName.trim() ?? '';
     final fullName = '$firstName $lastName'.trim();
 
     final store = AccountLocalStore(pref);

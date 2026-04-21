@@ -1,48 +1,51 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-
-import '../../../../components/widgets/app_button.dart';
 import '../../../../core/di/dependency_injection.dart';
+import '../../../../core/enums/state_status.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
+import '../../../../core/preference/app_pref.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../domain/models/profile_setup_data.dart';
 import '../cubit/profile_setup_cubit.dart';
 import '../cubit/profile_setup_state.dart';
+import '../widgets/profile_setup_avatar_picker.dart';
+import '../widgets/profile_setup_form_section.dart';
+import '../widgets/profile_setup_header_bar.dart';
 
-class ProfileSetupScreen extends StatelessWidget {
+class ProfileSetupScreen extends StatefulWidget {
   const ProfileSetupScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => sl<ProfileSetupCubit>(),
-      child: const _ProfileSetupView(),
-    );
-  }
+  State<ProfileSetupScreen> createState() => _ProfileSetupScreenState();
 }
 
-class _ProfileSetupView extends StatefulWidget {
-  const _ProfileSetupView();
-
-  @override
-  State<_ProfileSetupView> createState() => _ProfileSetupViewState();
-}
-
-class _ProfileSetupViewState extends State<_ProfileSetupView> {
+class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
   final _formKey = GlobalKey<FormState>();
   final _firstNameController = TextEditingController();
   final _lastNameController = TextEditingController();
   final _emailController = TextEditingController();
   final _addressController = TextEditingController();
   final ImagePicker _imagePicker = ImagePicker();
+  final appPref = sl<AppPref>();
   File? _selectedProfileImage;
+  bool _hasAppliedInitialData = false;
+
+  @override
+  void initState() {
+    super.initState();
+    final userLocal = appPref.getUserLocalModel();
+    _firstNameController.text = userLocal?.firstName.trim() ?? '';
+    _lastNameController.text = userLocal?.lastName.trim() ?? '';
+    _emailController.text = userLocal?.email.trim() ?? '';
+    _addressController.text = userLocal?.address.trim() ?? '';
+    context.read<ProfileSetupCubit>().loadProfile();
+  }
 
   ImageProvider? get _avatarProvider {
     if (_selectedProfileImage != null) {
@@ -235,12 +238,15 @@ class _ProfileSetupViewState extends State<_ProfileSetupView> {
     BuildContext context, {
     required String hintText,
     Widget? suffixIcon,
+    bool isValueText = false,
   }) {
     return InputDecoration(
       hintText: hintText,
       hintStyle: Theme.of(
         context,
-      ).textTheme.bodyMedium?.copyWith(color: const Color(0xFF667085)),
+      ).textTheme.bodyMedium?.copyWith(
+        color: isValueText ? const Color(0xFF101828) : const Color(0xFF667085),
+      ),
       isDense: true,
       contentPadding: EdgeInsets.only(bottom: 10.h),
       enabledBorder: const UnderlineInputBorder(
@@ -256,333 +262,71 @@ class _ProfileSetupViewState extends State<_ProfileSetupView> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final theme = Theme.of(context);
     final topInset = MediaQuery.paddingOf(context).top;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF4F5F7),
+      backgroundColor: const Color(0xFFC7EFEB),
       body: LayoutBuilder(
         builder: (context, constraints) {
-          return BlocBuilder<ProfileSetupCubit, ProfileSetupState>(
+          return BlocConsumer<ProfileSetupCubit, ProfileSetupState>(
+            listener: (context, state) {
+              final profile = state.profile;
+              if (profile == null || _hasAppliedInitialData) return;
+              _firstNameController.text = profile.firstName;
+              _lastNameController.text = profile.lastName;
+              _emailController.text = profile.email;
+              _addressController.text = profile.address;
+              _hasAppliedInitialData = true;
+            },
             builder: (context, state) {
+              final isInitialLoading =
+                  state.loadingStateStatus == StateStatus.loading &&
+                  !_hasAppliedInitialData;
+              if (isInitialLoading) {
+                return const Center(child: CircularProgressIndicator());
+              }
               final dobLabel = state.dateOfBirth == null
                   ? l10n.profileDobHint
-                  : DateFormat('dd/MM/yy').format(state.dateOfBirth!);
+                  : DateFormat('MMM dd yyyy').format(state.dateOfBirth!);
               final avatarProvider = _avatarProvider;
               return Stack(
                 children: [
-                  SizedBox(
-                    height: 260.h,
-                    child: Stack(
-                      fit: StackFit.expand,
-                      children: [
-                        const DecoratedBox(
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter,
-                              colors: [Color(0xFF87DDD3), Color(0xFFF4F5F7)],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
                   Column(
                     children: [
-                      SizedBox(
-                        height: topInset + 48.h,
-                        child: Padding(
-                          padding: EdgeInsets.only(top: topInset + 4.h),
-                          child: Row(
-                            children: [
-                              Material(
-                                color: Colors.transparent,
-                                child: InkWell(
-                                  borderRadius: BorderRadius.circular(20.r),
-                                  onTap: () {
-                                    if (context.canPop()) {
-                                      context.pop();
-                                    } else {
-                                      context.go(
-                                        AppRoutes.path(AppRoutes.authLogin),
-                                      );
-                                    }
-                                  },
-                                  child: SizedBox(
-                                    width: 40.r,
-                                    height: 40.r,
-                                    child: Center(
-                                      child: Icon(
-                                        Icons.arrow_back_rounded,
-                                        color: Color(0xFF061E40),
-                                        size: 22.r,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              Expanded(
-                                child: Center(
-                                  child: Padding(
-                                    padding: EdgeInsets.only(right: 40.w),
-                                    child: Text(
-                                      l10n.profileTitle,
-                                      style: theme.textTheme.titleLarge
-                                          ?.copyWith(
-                                            fontWeight: FontWeight.w700,
-                                            color: const Color(0xFF061E40),
-                                          ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
+                      ProfileSetupHeaderBar(topInset: topInset),
                       SizedBox(height: 8.h),
-                      Stack(
-                        children: [
-                          CircleAvatar(
-                            radius: 56.r,
-                            backgroundColor: Colors.white.withValues(
-                              alpha: 0.95,
-                            ),
-                            backgroundImage: avatarProvider,
-                            onBackgroundImageError: avatarProvider == null
-                                ? null
-                                : (_, _) {
-                                    if (!mounted) return;
-                                    setState(() => _selectedProfileImage = null);
-                                  },
-                            child: avatarProvider == null
-                                ? Icon(
-                                    Icons.account_circle_rounded,
-                                    size: 56.r,
-                                    color: Color(0xFFBFD5D9),
-                                  )
-                                : null,
-                          ),
-                          Positioned(
-                            right: 2.w,
-                            bottom: 4.h,
-                            child: Material(
-                              color: Colors.transparent,
-                              child: InkWell(
-                                borderRadius: BorderRadius.circular(16.r),
-                                onTap: _pickProfileImage,
-                                child: Container(
-                                  padding: EdgeInsets.all(6.r),
-                                  decoration: const BoxDecoration(
-                                    color: Color(0xFFDDF3EE),
-                                    shape: BoxShape.circle,
-                                  ),
-                                  child: Icon(
-                                    Icons.camera_alt_outlined,
-                                    size: 16.r,
-                                    color: Color(0xFF0FAA9A),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
+                      ProfileSetupAvatarPicker(
+                        avatarProvider: avatarProvider,
+                        onPickImage: _pickProfileImage,
+                        onImageError: () {
+                          if (!mounted) return;
+                          setState(() => _selectedProfileImage = null);
+                        },
                       ),
                       SizedBox(height: 14.h),
-                      Expanded(
-                        child: Container(
-                          width: double.infinity,
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.vertical(
-                              top: Radius.circular(24.r),
-                            ),
-                          ),
-                          child: SingleChildScrollView(
-                            padding: EdgeInsets.fromLTRB(18.w, 20.h, 18.w, 24.h),
-                            child: Form(
-                              key: _formKey,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.stretch,
-                                children: [
-                                  Text(
-                                    l10n.profileSetupTitle,
-                                    style: theme.textTheme.titleMedium
-                                        ?.copyWith(
-                                          fontWeight: FontWeight.w700,
-                                          color: const Color(0xFF061E40),
-                                        ),
-                                  ),
-                                  SizedBox(height: 4.h),
-                                  Text(
-                                    l10n.profileSetupSubtitle,
-                                    style: theme.textTheme.bodySmall?.copyWith(
-                                      color: const Color(0xFF98A2B3),
-                                    ),
-                                  ),
-                                  SizedBox(height: 18.h),
-                                  Text(
-                                    l10n.profileFirstNameLabel,
-                                    style: theme.textTheme.bodySmall?.copyWith(
-                                      color: const Color(0xFF98A2B3),
-                                    ),
-                                  ),
-                                  TextFormField(
-                                    controller: _firstNameController,
-                                    decoration: _lineInputDecoration(
-                                      context,
-                                      hintText: l10n.profileFirstNameHint,
-                                    ),
-                                    validator: (value) {
-                                      if ((value ?? '').trim().isEmpty) {
-                                        return l10n.profileFirstNameRequired;
-                                      }
-                                      return null;
-                                    },
-                                  ),
-                                  SizedBox(height: 22.h),
-                                  Text(
-                                    l10n.profileLastNameLabel,
-                                    style: theme.textTheme.bodySmall?.copyWith(
-                                      color: const Color(0xFF98A2B3),
-                                    ),
-                                  ),
-                                  TextFormField(
-                                    controller: _lastNameController,
-                                    decoration: _lineInputDecoration(
-                                      context,
-                                      hintText: l10n.profileLastNameHint,
-                                    ),
-                                    validator: (value) {
-                                      if ((value ?? '').trim().isEmpty) {
-                                        return l10n.profileLastNameRequired;
-                                      }
-                                      return null;
-                                    },
-                                  ),
-                                  SizedBox(height: 22.h),
-                                  Text(
-                                    l10n.profileGenderLabel,
-                                    style: theme.textTheme.bodySmall?.copyWith(
-                                      color: const Color(0xFF98A2B3),
-                                    ),
-                                  ),
-                                  InkWell(
-                                    onTap: () => _showGenderPicker(context),
-                                    child: IgnorePointer(
-                                      child: TextFormField(
-                                        decoration: _lineInputDecoration(
-                                          context,
-                                          hintText: state.selectedGender == null
-                                              ? l10n.profileGenderHint
-                                              : state.selectedGender == 'male'
-                                              ? l10n.profileGenderMale
-                                              : state.selectedGender == 'female'
-                                              ? l10n.profileGenderFemale
-                                              : l10n.profileGenderOther,
-                                          suffixIcon: Icon(
-                                            Icons.keyboard_arrow_down_rounded,
-                                            color: const Color(0xFF0FAA9A),
-                                            size: 22.r,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(height: 22.h),
-                                  Text(
-                                    l10n.profileEmailLabel,
-                                    style: theme.textTheme.bodySmall?.copyWith(
-                                      color: const Color(0xFF98A2B3),
-                                    ),
-                                  ),
-                                  TextFormField(
-                                    controller: _emailController,
-                                    keyboardType: TextInputType.emailAddress,
-                                    decoration: _lineInputDecoration(
-                                      context,
-                                      hintText: l10n.profileEmailHint,
-                                    ),
-                                    validator: (value) {
-                                      final email = (value ?? '').trim();
-                                      if (email.isEmpty ||
-                                          !email.contains('@')) {
-                                        return l10n.profileEmailRequired;
-                                      }
-                                      return null;
-                                    },
-                                  ),
-                                  SizedBox(height: 22.h),
-                                  Text(
-                                    l10n.profileAddressLabel,
-                                    style: theme.textTheme.bodySmall?.copyWith(
-                                      color: const Color(0xFF98A2B3),
-                                    ),
-                                  ),
-                                  TextFormField(
-                                    controller: _addressController,
-                                    decoration: _lineInputDecoration(
-                                      context,
-                                      hintText: l10n.profileAddressHint,
-                                    ),
-                                    validator: (value) {
-                                      if ((value ?? '').trim().isEmpty) {
-                                        return l10n.profileAddressRequired;
-                                      }
-                                      return null;
-                                    },
-                                  ),
-                                  SizedBox(height: 22.h),
-                                  Text(
-                                    l10n.profileDobLabel,
-                                    style: theme.textTheme.bodySmall?.copyWith(
-                                      color: const Color(0xFF98A2B3),
-                                    ),
-                                  ),
-                                  InkWell(
-                                    onTap: () => _pickDate(context),
-                                    child: IgnorePointer(
-                                      child: TextFormField(
-                                        decoration: _lineInputDecoration(
-                                          context,
-                                          hintText: dobLabel,
-                                          suffixIcon: Icon(
-                                            Icons.calendar_today_outlined,
-                                            size: 18.r,
-                                            color: Color(0xFF98A2B3),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  if (state.errorMessage != null) ...[
-                                    SizedBox(height: 12.h),
-                                    Text(
-                                      state.errorMessage!,
-                                      style: theme.textTheme.bodySmall
-                                          ?.copyWith(
-                                            color: const Color(0xFFE01F26),
-                                          ),
-                                    ),
-                                  ],
-                                  SizedBox(height: 26.h),
-                                  AppButton.primary(
-                                    text: l10n.profileSaveCta,
-                                    onPressed: state.isSaving
-                                        ? null
-                                        : () => _save(state),
-                                    isLoading: state.isSaving,
-                                    backgroundColor: const Color(0xFF0FAA9A),
-                                    foregroundColor: Colors.white,
-                                    height: 52.h,
-                                    borderRadius: 12.r,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
+                      ProfileSetupFormSection(
+                        formKey: _formKey,
+                        firstNameController: _firstNameController,
+                        lastNameController: _lastNameController,
+                        emailController: _emailController,
+                        addressController: _addressController,
+                        state: state,
+                        dobLabel: dobLabel,
+                        onPickGender: () => _showGenderPicker(context),
+                        onPickDate: () => _pickDate(context),
+                        onSave: () => _save(state),
+                        inputDecorationBuilder: ({
+                          required String hintText,
+                          Widget? suffixIcon,
+                          bool isValueText = false,
+                        }) {
+                          return _lineInputDecoration(
+                            context,
+                            hintText: hintText,
+                            suffixIcon: suffixIcon,
+                            isValueText: isValueText,
+                          );
+                        },
                       ),
                     ],
                   ),
