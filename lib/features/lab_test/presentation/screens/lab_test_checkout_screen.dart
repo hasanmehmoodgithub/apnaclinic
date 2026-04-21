@@ -432,56 +432,57 @@ class _SummaryCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Stack(
-                    clipBehavior: Clip.none,
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            args.testTitle.split('\n').first,
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                            style: theme.textTheme.titleMedium?.copyWith(
-                              color: const Color(0xFF061E40),
-                              fontSize: 16.sp,
-                              height: 1,
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              args.testTitle.split('\n').first,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: theme.textTheme.titleMedium?.copyWith(
+                                color: const Color(0xFF061E40),
+                                fontSize: 16.sp,
+                                height: 1,
+                              ),
                             ),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            args.labDisplayName,
-                            style: theme.textTheme.bodySmall?.copyWith(
-                              color: const Color(0xFF667B99),
-                              fontSize: 12.sp,
-                              height: 1.2,
+                            const SizedBox(height: 4),
+                            Text(
+                              args.labDisplayName,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: theme.textTheme.bodySmall?.copyWith(
+                                color: const Color(0xFF667B99),
+                                fontSize: 12.sp,
+                                height: 1.2,
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                      Positioned(
-                        right: -180,
-                        top: 1,
-                        child: Container(
-                          width: 40,
-                          height: 40,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(40),
-                            color: Colors.white,
-                            border: Border.all(
-                              color: const Color(0x352F2F2F),
-                              width: 1.0,
-                            ),
+                      const SizedBox(width: 8),
+                      Container(
+                        width: 40,
+                        height: 40,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.white,
+                          border: Border.all(
+                            color: const Color(0x352F2F2F),
+                            width: 1.0,
                           ),
-                          alignment: Alignment.center,
-                          child: Padding(
-                            padding: const EdgeInsets.all(5),
-                            child: LabTestFigmaImage(
-                              url: args.partnerLogoUrl,
-                              width: 40,
-                              height: 40,
-                              fit: BoxFit.contain,
-                            ),
+                        ),
+                        alignment: Alignment.center,
+                        child: Padding(
+                          padding: const EdgeInsets.all(5),
+                          child: LabTestFigmaImage(
+                            url: args.partnerLogoUrl,
+                            width: 30,
+                            height: 30,
+                            fit: BoxFit.contain,
                           ),
                         ),
                       ),
