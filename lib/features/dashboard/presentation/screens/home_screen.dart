@@ -120,9 +120,13 @@ class _HomeScreenState extends State<HomeScreen> {
                     onMenuTap: () =>
                         context.push(AppRoutes.path(AppRoutes.dashboardMenu)),
                     onNotificationTap: () {
+                      if (!_isLoggedIn) {
+                        context.push(AppRoutes.path(AppRoutes.authLogin));
+                        return;
+                      }
                       context.push(AppRoutes.path(AppRoutes.notifications));
                     },
-                    notificationCount: unreadCount,
+                    notificationCount: _isLoggedIn ? unreadCount : 0,
                     showLoginButton: !_isLoggedIn,
                     onLoginTap: () =>
                         context.push(AppRoutes.path(AppRoutes.authLogin)),
