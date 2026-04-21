@@ -312,10 +312,10 @@ class _LocationRow extends StatelessWidget {
     final theme = Theme.of(context);
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 14.h),
+      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(5.32.r),
+        borderRadius: BorderRadius.circular(6.r),
         border: Border.all(color: const Color(0xFF9BA6A7), width: 0.3),
       ),
       child: Row(
@@ -331,7 +331,7 @@ class _LocationRow extends StatelessWidget {
                     fontSize: 10.sp,
                   ),
                 ),
-                SizedBox(height: 4.h),
+                SizedBox(height: 2.h),
                 Text(
                   city,
                   style: theme.textTheme.titleSmall?.copyWith(
@@ -401,7 +401,7 @@ class _SearchField extends StatelessWidget {
                 color: const Color(0xFF9E9E9E),
                 fontWeight: FontWeight.w500,
               ),
-          contentPadding: EdgeInsets.symmetric(horizontal: 11.w, vertical: 13.h),
+          contentPadding: EdgeInsets.symmetric(horizontal: 11.w, vertical: 15.h),
           suffixIcon: Icon(
             Icons.search_rounded,
             size: 18.r,
@@ -443,7 +443,7 @@ class _FilterButton extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.filter_alt_outlined, size: 14.r, color: const Color(0xFF667B99)),
+            Icon(Icons.filter_list_outlined, size: 14.r, color: const Color(0xFF667B99)),
             SizedBox(width: 6.w),
             Text(
               'Filter',
@@ -638,7 +638,21 @@ class _FilterRow extends StatelessWidget {
                     ),
               ),
             ),
-            Icon(Icons.keyboard_arrow_down_rounded, color: const Color(0xFF9BA6A7), size: 18.r),
+            Container(
+        width: 20.r,
+        height: 20.r,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          shape: BoxShape.circle,
+          border: Border.all(
+            color: Colors.black.withValues(alpha: 0.21),
+            width: 1,
+          ),
+        ),
+        clipBehavior: Clip.antiAlias,
+        child: Icon(Icons.keyboard_arrow_down_rounded, color: const Color(0xFF9BA6A7), size: 18.r),
+      ),
+
           ],
         ),
       ),
@@ -834,45 +848,45 @@ class _DoctorCard extends StatelessWidget {
                       style: theme.textTheme.titleMedium?.copyWith(
                         color: const Color(0xFF061E40),
                         fontWeight: FontWeight.w500,
-                        fontSize: 18.sp,
+                        fontSize: 16.sp,
                       ),
                     ),
-                    SizedBox(height: 4.h),
                     Text(
                       data.speciality,
                       style: theme.textTheme.bodyMedium?.copyWith(
                         color: const Color(0xFFA6A6A6),
-                        fontSize: 14.sp,
+                        fontSize: 13.sp,
                       ),
                     ),
-                    SizedBox(height: 4.h),
                     Text(
                       '${data.experience}  ${data.qualifications}',
                       style: theme.textTheme.bodyMedium?.copyWith(
                         color: const Color(0xFFA6A6A6),
-                        fontSize: 14.sp,
+                        fontSize: 13.sp,
                       ),
                     ),
                   ],
                 ),
               ),
               Container(
-                width: 30.r,
-                height: 30.r,
+                width: 35.r,
+                height: 35.r,
                 decoration: BoxDecoration(
                   color: Colors.white,
                   shape: BoxShape.circle,
                   border: Border.all(
                     color: Colors.black.withValues(alpha: 0.21),
-                    width: 0.2,
+                    width: 1,
                   ),
                 ),
                 clipBehavior: Clip.antiAlias,
-                child: Image.network(
-                  data.partnerLogoUrl,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) =>
-                      const SizedBox.shrink(),
+                child: ClipOval(
+                  child: Image.network(
+                    data.partnerLogoUrl,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) =>
+                        const SizedBox.shrink(),
+                  ),
                 ),
               ),
             ],
@@ -922,7 +936,6 @@ class _DoctorCard extends StatelessWidget {
                         fontSize: 12.sp,
                       ),
                     ),
-                    SizedBox(height: 3.h),
                     Text(
                       data.price,
                       style: theme.textTheme.titleMedium?.copyWith(
@@ -931,7 +944,7 @@ class _DoctorCard extends StatelessWidget {
                         fontSize: 16.sp,
                       ),
                     ),
-                    SizedBox(height: 2.h),
+                    SizedBox(height: 1.h),
                     Text(
                       data.oldPrice,
                       style: theme.textTheme.bodyMedium?.copyWith(
@@ -954,7 +967,7 @@ class _DoctorCard extends StatelessWidget {
                 backgroundColor: const Color(0xFF0FAA9A),
                 minimumSize: Size.fromHeight(40.h),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8.1.r),
+                  borderRadius: BorderRadius.circular(8.5.r),
                 ),
               ),
               child: Text(

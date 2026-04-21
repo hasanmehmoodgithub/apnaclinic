@@ -395,7 +395,7 @@ class _SearchFieldState extends State<_SearchField> {
                 color: const Color(0xFF9E9E9E),
                 fontWeight: FontWeight.w500,
               ),
-          contentPadding: EdgeInsets.symmetric(horizontal: 11.w, vertical: 13.h),
+          contentPadding: EdgeInsets.symmetric(horizontal: 11.w, vertical: 15.h),
           suffixIcon: Icon(
             Icons.search_rounded,
             size: 18.r,
@@ -456,7 +456,7 @@ class _ProcedureTile extends StatelessWidget {
                   style: Theme.of(context).textTheme.titleSmall?.copyWith(
                         color: const Color(0xFF061E40),
                         fontWeight: FontWeight.w500,
-                        fontSize: 16.sp,
+                        fontSize: 14.sp,
                         height: 1,
                       ),
                 ),
@@ -468,13 +468,13 @@ class _ProcedureTile extends StatelessWidget {
                   width: 26.7.r,
                   height: 26.7.r,
                   decoration: const BoxDecoration(
-                    color: Color(0xFFD3D5D8),
+                    color: Colors.white,
                     shape: BoxShape.circle,
                   ),
                   child: Icon(
                     Icons.chevron_right_rounded,
-                    size: 16.r,
-                    color: const Color(0xFF5D758F),
+                    size: 20.r,
+                    color: const Color(0xFFD3D5D8),
                   ),
                 ),
               ),
@@ -491,7 +491,7 @@ class _ProcedureTile extends StatelessWidget {
                       shape: BoxShape.circle,
                       border: Border.all(
                         color: const Color(0xFF7A7A7A),
-                        width: 0.9,
+                        width: 1,
                       ),
                     ),
                     alignment: Alignment.center,
