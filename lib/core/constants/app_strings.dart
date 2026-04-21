@@ -21,22 +21,11 @@ class AppStrings {
       'Unable to load notifications right now. Please try again in a moment.';
   static const String pharmacyLoadError =
       'Unable to load medicines right now. Please try again in a moment.';
+  static const String surgeryLoadError =
+      'Unable to load surgery content right now. Please try again in a moment.';
   // Auth
   static const String authRequestOtpError =
       'Unable to send OTP right now. Please try again.';
   static const String authVerifyOtpError =
       'Unable to verify OTP right now. Please try again.';
-
-
-
-
-
-
-
-
-
-
-
-
-
 }

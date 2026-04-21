@@ -3,8 +3,6 @@ import '../flavor/flavor_config.dart';
 /// Centralized API endpoints for the application
 /// Supports both full URLs (with baseUrl from flavor) and 3rd party full URLs
 class AppUrls {
-
-
   AppUrls._();
 
   /// Get base URL from flavor configuration
@@ -74,6 +72,7 @@ class AppUrls {
 
   /// Surgery procedures endpoint
   static String get surgeryProcedures => '$baseUrl/surgery/procedures';
+  static String get surgeryBooking => '$baseUrl/surgery/booking';
   static String get labTestCatalog => '$baseUrl/lab/test';
 
   // ============================================
@@ -89,8 +88,4 @@ class AppUrls {
 
   /// Facebook API endpoint - full 3rd party URL
   static String get facebookApi => 'https://graph.facebook.com';
-
-
-
-
 }

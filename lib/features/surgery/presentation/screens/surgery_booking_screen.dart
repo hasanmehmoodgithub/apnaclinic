@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/widgets/app_scaffold_gradient.dart';
+import '../cubit/surgery_cubit.dart';
 import 'surgery_patient_details_screen.dart';
 
 class SurgeryBookingScreen extends StatefulWidget {
@@ -35,8 +37,10 @@ class _SurgeryBookingScreenState extends State<SurgeryBookingScreen> {
       procedureName: 'Refractive Lens Exchange',
       price: 'Rs. 65,000/-',
       oldPrice: 'Rs. 100,000/-',
-      imageUrl: 'https://www.figma.com/api/mcp/asset/ffc43bb2-89d9-4625-9d3a-8181a8770661',
-      partnerLogoUrl: 'https://www.figma.com/api/mcp/asset/5e669d2b-dc77-4e06-86d2-9ead92b99252',
+      imageUrl:
+          'https://www.figma.com/api/mcp/asset/ffc43bb2-89d9-4625-9d3a-8181a8770661',
+      partnerLogoUrl:
+          'https://www.figma.com/api/mcp/asset/5e669d2b-dc77-4e06-86d2-9ead92b99252',
     ),
     _SurgeryDoctorCardData(
       doctorName: 'Dr. Ayesha',
@@ -47,8 +51,10 @@ class _SurgeryBookingScreenState extends State<SurgeryBookingScreen> {
       procedureName: 'Corneal Transplant (Keratoplasty)',
       price: 'Rs. 65,000/-',
       oldPrice: 'Rs. 100,000/-',
-      imageUrl: 'https://www.figma.com/api/mcp/asset/53a7b334-8ba8-496f-93bb-8e8d6774aacd',
-      partnerLogoUrl: 'https://www.figma.com/api/mcp/asset/5e669d2b-dc77-4e06-86d2-9ead92b99252',
+      imageUrl:
+          'https://www.figma.com/api/mcp/asset/53a7b334-8ba8-496f-93bb-8e8d6774aacd',
+      partnerLogoUrl:
+          'https://www.figma.com/api/mcp/asset/5e669d2b-dc77-4e06-86d2-9ead92b99252',
     ),
     _SurgeryDoctorCardData(
       doctorName: 'Dr. Raheel Khan',
@@ -59,8 +65,10 @@ class _SurgeryBookingScreenState extends State<SurgeryBookingScreen> {
       procedureName: 'Photorefractive keratectomy Surgery',
       price: 'Rs. 50,000/-',
       oldPrice: 'Rs. 80,000/-',
-      imageUrl: 'https://www.figma.com/api/mcp/asset/b58142b3-b9db-44d0-87b2-6d84da0d6968',
-      partnerLogoUrl: 'https://www.figma.com/api/mcp/asset/5e669d2b-dc77-4e06-86d2-9ead92b99252',
+      imageUrl:
+          'https://www.figma.com/api/mcp/asset/b58142b3-b9db-44d0-87b2-6d84da0d6968',
+      partnerLogoUrl:
+          'https://www.figma.com/api/mcp/asset/5e669d2b-dc77-4e06-86d2-9ead92b99252',
     ),
   ];
 
@@ -153,7 +161,8 @@ class _SurgeryBookingScreenState extends State<SurgeryBookingScreen> {
                       SizedBox(width: 8.w),
                       _FilterButton(
                         isActive:
-                            _selectedHospitalFilter != null || _selectedSpecialtyFilter != null,
+                            _selectedHospitalFilter != null ||
+                            _selectedSpecialtyFilter != null,
                         onTap: _showFilterSheet,
                       ),
                     ],
@@ -226,9 +235,9 @@ class _SurgeryBookingScreenState extends State<SurgeryBookingScreen> {
                 Text(
                   'Select a city',
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        color: const Color(0xFF061E40),
-                        fontWeight: FontWeight.w600,
-                      ),
+                    color: const Color(0xFF061E40),
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
                 SizedBox(height: 10.h),
                 ...widget.cities.map(
@@ -256,19 +265,23 @@ class _SurgeryBookingScreenState extends State<SurgeryBookingScreen> {
   }
 
   void _openPatientDetails(_SurgeryDoctorCardData card) {
+    final surgeryCubit = context.read<SurgeryCubit>();
     Navigator.of(context).push(
       MaterialPageRoute<void>(
-        builder: (_) => SurgeryPatientDetailsScreen(
-          doctorName: card.doctorName,
-          speciality: card.speciality,
-          experience: card.experience,
-          qualifications: card.qualifications,
-          hospitalName: card.hospitalName,
-          procedureName: card.procedureName,
-          price: card.price,
-          oldPrice: card.oldPrice,
-          imageUrl: card.imageUrl,
-          partnerLogoUrl: card.partnerLogoUrl,
+        builder: (_) => BlocProvider.value(
+          value: surgeryCubit,
+          child: SurgeryPatientDetailsScreen(
+            doctorName: card.doctorName,
+            speciality: card.speciality,
+            experience: card.experience,
+            qualifications: card.qualifications,
+            hospitalName: card.hospitalName,
+            procedureName: card.procedureName,
+            price: card.price,
+            oldPrice: card.oldPrice,
+            imageUrl: card.imageUrl,
+            partnerLogoUrl: card.partnerLogoUrl,
+          ),
         ),
       ),
     );
@@ -299,10 +312,7 @@ class _SurgeryBookingScreenState extends State<SurgeryBookingScreen> {
 }
 
 class _LocationRow extends StatelessWidget {
-  const _LocationRow({
-    required this.city,
-    required this.onChangeTap,
-  });
+  const _LocationRow({required this.city, required this.onChangeTap});
 
   final String city;
   final VoidCallback onChangeTap;
@@ -312,10 +322,10 @@ class _LocationRow extends StatelessWidget {
     final theme = Theme.of(context);
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 14.h),
+      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(5.32.r),
+        borderRadius: BorderRadius.circular(6.r),
         border: Border.all(color: const Color(0xFF9BA6A7), width: 0.3),
       ),
       child: Row(
@@ -331,7 +341,7 @@ class _LocationRow extends StatelessWidget {
                     fontSize: 10.sp,
                   ),
                 ),
-                SizedBox(height: 4.h),
+                SizedBox(height: 2.h),
                 Text(
                   city,
                   style: theme.textTheme.titleSmall?.copyWith(
@@ -374,10 +384,7 @@ class _LocationRow extends StatelessWidget {
 }
 
 class _SearchField extends StatelessWidget {
-  const _SearchField({
-    required this.controller,
-    required this.onChanged,
-  });
+  const _SearchField({required this.controller, required this.onChanged});
 
   final TextEditingController controller;
   final ValueChanged<String> onChanged;
@@ -398,10 +405,13 @@ class _SearchField extends StatelessWidget {
           border: InputBorder.none,
           hintText: 'Search name..',
           hintStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: const Color(0xFF9E9E9E),
-                fontWeight: FontWeight.w500,
-              ),
-          contentPadding: EdgeInsets.symmetric(horizontal: 11.w, vertical: 13.h),
+            color: const Color(0xFF9E9E9E),
+            fontWeight: FontWeight.w500,
+          ),
+          contentPadding: EdgeInsets.symmetric(
+            horizontal: 11.w,
+            vertical: 15.h,
+          ),
           suffixIcon: Icon(
             Icons.search_rounded,
             size: 18.r,
@@ -414,10 +424,7 @@ class _SearchField extends StatelessWidget {
 }
 
 class _FilterButton extends StatelessWidget {
-  const _FilterButton({
-    required this.onTap,
-    required this.isActive,
-  });
+  const _FilterButton({required this.onTap, required this.isActive});
 
   final VoidCallback onTap;
   final bool isActive;
@@ -443,7 +450,11 @@ class _FilterButton extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.filter_alt_outlined, size: 14.r, color: const Color(0xFF667B99)),
+            Icon(
+              Icons.filter_list_outlined,
+              size: 14.r,
+              color: const Color(0xFF667B99),
+            ),
             SizedBox(width: 6.w),
             Text(
               'Filter',
@@ -556,7 +567,9 @@ class _FilterSheetState extends State<_FilterSheet> {
                 style: FilledButton.styleFrom(
                   backgroundColor: const Color(0xFF0FAA9A),
                   minimumSize: Size.fromHeight(54.h),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.909.r)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12.909.r),
+                  ),
                 ),
                 child: Text(
                   'Proceed',
@@ -606,10 +619,7 @@ class _FilterSelection {
 }
 
 class _FilterRow extends StatelessWidget {
-  const _FilterRow({
-    required this.label,
-    required this.onTap,
-  });
+  const _FilterRow({required this.label, required this.onTap});
 
   final String label;
   final VoidCallback onTap;
@@ -632,13 +642,30 @@ class _FilterRow extends StatelessWidget {
               child: Text(
                 label,
                 style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                      color: const Color(0xFF061E40),
-                      fontWeight: FontWeight.w500,
-                      fontSize: 14.sp,
-                    ),
+                  color: const Color(0xFF061E40),
+                  fontWeight: FontWeight.w500,
+                  fontSize: 14.sp,
+                ),
               ),
             ),
-            Icon(Icons.keyboard_arrow_down_rounded, color: const Color(0xFF9BA6A7), size: 18.r),
+            Container(
+              width: 20.r,
+              height: 20.r,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: Colors.black.withValues(alpha: 0.21),
+                  width: 1,
+                ),
+              ),
+              clipBehavior: Clip.antiAlias,
+              child: Icon(
+                Icons.keyboard_arrow_down_rounded,
+                color: const Color(0xFF9BA6A7),
+                size: 18.r,
+              ),
+            ),
           ],
         ),
       ),
@@ -693,22 +720,24 @@ class _FilterSelectionSheetState extends State<_FilterSelectionSheet> {
               child: Text(
                 'Filter',
                 style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                      fontWeight: FontWeight.w700,
-                      fontSize: 14.sp,
-                      color: Colors.black,
-                    ),
+                  fontWeight: FontWeight.w700,
+                  fontSize: 14.sp,
+                  color: Colors.black,
+                ),
               ),
             ),
             SizedBox(height: 16.h),
-            _FilterRow(
-              label: selected ?? widget.title,
-              onTap: () {},
-            ),
+            _FilterRow(label: selected ?? widget.title, onTap: () {}),
             Container(
               constraints: BoxConstraints(maxHeight: 352.h),
               decoration: BoxDecoration(
-                border: Border.all(color: const Color(0xFFD0D0D0), width: 0.253),
-                borderRadius: BorderRadius.vertical(bottom: Radius.circular(4.r)),
+                border: Border.all(
+                  color: const Color(0xFFD0D0D0),
+                  width: 0.253,
+                ),
+                borderRadius: BorderRadius.vertical(
+                  bottom: Radius.circular(4.r),
+                ),
                 boxShadow: const [
                   BoxShadow(
                     color: Color.fromRGBO(0, 0, 0, 0.35),
@@ -730,19 +759,24 @@ class _FilterSelectionSheetState extends State<_FilterSelectionSheet> {
                       height: 44.h,
                       padding: EdgeInsets.symmetric(horizontal: 12.w),
                       decoration: BoxDecoration(
-                        color: isSelected ? const Color(0xFFF1F1F1) : Colors.white,
+                        color: isSelected
+                            ? const Color(0xFFF1F1F1)
+                            : Colors.white,
                         border: const Border(
-                          bottom: BorderSide(color: Color(0xFFD0D0D0), width: 0.253),
+                          bottom: BorderSide(
+                            color: Color(0xFFD0D0D0),
+                            width: 0.253,
+                          ),
                         ),
                       ),
                       alignment: Alignment.centerLeft,
                       child: Text(
                         option,
                         style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                              color: const Color(0xFF061E40),
-                              fontSize: 14.sp,
-                              fontWeight: FontWeight.w500,
-                            ),
+                          color: const Color(0xFF061E40),
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
                     ),
                   );
@@ -757,15 +791,17 @@ class _FilterSelectionSheetState extends State<_FilterSelectionSheet> {
                 style: FilledButton.styleFrom(
                   backgroundColor: const Color(0xFF0FAA9A),
                   minimumSize: Size.fromHeight(57.h),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.9.r)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12.9.r),
+                  ),
                 ),
                 child: Text(
                   'Proceed',
                   style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                        color: Colors.white,
-                        fontSize: 12.9.sp,
-                        fontWeight: FontWeight.w700,
-                      ),
+                    color: Colors.white,
+                    fontSize: 12.9.sp,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
               ),
             ),
@@ -777,10 +813,7 @@ class _FilterSelectionSheetState extends State<_FilterSelectionSheet> {
 }
 
 class _DoctorCard extends StatelessWidget {
-  const _DoctorCard({
-    required this.data,
-    required this.onBookNowTap,
-  });
+  const _DoctorCard({required this.data, required this.onBookNowTap});
 
   final _SurgeryDoctorCardData data;
   final VoidCallback onBookNowTap;
@@ -834,45 +867,45 @@ class _DoctorCard extends StatelessWidget {
                       style: theme.textTheme.titleMedium?.copyWith(
                         color: const Color(0xFF061E40),
                         fontWeight: FontWeight.w500,
-                        fontSize: 18.sp,
+                        fontSize: 16.sp,
                       ),
                     ),
-                    SizedBox(height: 4.h),
                     Text(
                       data.speciality,
                       style: theme.textTheme.bodyMedium?.copyWith(
                         color: const Color(0xFFA6A6A6),
-                        fontSize: 14.sp,
+                        fontSize: 13.sp,
                       ),
                     ),
-                    SizedBox(height: 4.h),
                     Text(
                       '${data.experience}  ${data.qualifications}',
                       style: theme.textTheme.bodyMedium?.copyWith(
                         color: const Color(0xFFA6A6A6),
-                        fontSize: 14.sp,
+                        fontSize: 13.sp,
                       ),
                     ),
                   ],
                 ),
               ),
               Container(
-                width: 30.r,
-                height: 30.r,
+                width: 35.r,
+                height: 35.r,
                 decoration: BoxDecoration(
                   color: Colors.white,
                   shape: BoxShape.circle,
                   border: Border.all(
                     color: Colors.black.withValues(alpha: 0.21),
-                    width: 0.2,
+                    width: 1,
                   ),
                 ),
                 clipBehavior: Clip.antiAlias,
-                child: Image.network(
-                  data.partnerLogoUrl,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) =>
-                      const SizedBox.shrink(),
+                child: ClipOval(
+                  child: Image.network(
+                    data.partnerLogoUrl,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) =>
+                        const SizedBox.shrink(),
+                  ),
                 ),
               ),
             ],
@@ -922,7 +955,6 @@ class _DoctorCard extends StatelessWidget {
                         fontSize: 12.sp,
                       ),
                     ),
-                    SizedBox(height: 3.h),
                     Text(
                       data.price,
                       style: theme.textTheme.titleMedium?.copyWith(
@@ -931,7 +963,7 @@ class _DoctorCard extends StatelessWidget {
                         fontSize: 16.sp,
                       ),
                     ),
-                    SizedBox(height: 2.h),
+                    SizedBox(height: 1.h),
                     Text(
                       data.oldPrice,
                       style: theme.textTheme.bodyMedium?.copyWith(
@@ -954,7 +986,7 @@ class _DoctorCard extends StatelessWidget {
                 backgroundColor: const Color(0xFF0FAA9A),
                 minimumSize: Size.fromHeight(40.h),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8.1.r),
+                  borderRadius: BorderRadius.circular(8.5.r),
                 ),
               ),
               child: Text(
