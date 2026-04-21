@@ -31,7 +31,7 @@ class DashboardServicesMockApi {
           'subtitle': 'Reliable lab tests with accurate results',
           'offerUpto': 'Up to 40% off',
           'thumb': 'assets/img/services/laboratory.png',
-          'route': '',
+          'route': 'labTest',
           'visibility': true,
         },
         {

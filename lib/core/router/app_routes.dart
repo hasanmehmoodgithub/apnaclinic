@@ -22,6 +22,12 @@ class AppRoutes {
   static const String accountDetails = 'account-details';
   static const String examples = 'examples';
 
+  static String labTestCheckout='labTestCheckout';
+
+  static String labTestBooking='labTestBooking';
+
+  static String labTest="labTest";
+
   /// Get route path with leading "/"
   static String path(String route) {
     return route.isEmpty ? '/' : '/$route';

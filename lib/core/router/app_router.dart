@@ -6,6 +6,11 @@ import '../../features/consultation/presentation/cubit/consultation_cubit.dart';
 import '../../features/consultation/presentation/screens/doctor_consultation_screen.dart';
 import '../../features/customer_support/presentation/screens/customer_support_screen.dart';
 import '../../features/dashboard/presentation/screens/menu_screen.dart';
+import '../../features/lab_test/presentation/cubit/lab_test_cubit.dart';
+import '../../features/lab_test/presentation/lab_test_route_args.dart';
+import '../../features/lab_test/presentation/screens/lab_test_booking_screen.dart';
+import '../../features/lab_test/presentation/screens/lab_test_checkout_screen.dart';
+import '../../features/lab_test/presentation/screens/lab_test_screen.dart';
 import '../../features/notification/presentation/cubit/notification_cubit.dart';
 import '../../features/notification/presentation/screens/notifcation_screen.dart';
 import '../../features/pharmacy/presentation/cubit/pharmacy_cubit.dart';
@@ -125,6 +130,36 @@ class AppRouter {
           create: (_) => sl<SurgeryCubit>(),
           child: const SurgeryScreen(),
         ),
+      ),
+      GoRoute(
+        path: AppRoutes.path(AppRoutes.labTest),
+        name: AppRoutes.labTest,
+        builder: (context, state) => BlocProvider<LabTestCubit>(
+          create: (_) => sl<LabTestCubit>(),
+          child: const LabTestScreen(),
+        ),
+      ),
+      GoRoute(
+        path: AppRoutes.path(AppRoutes.labTestBooking),
+        name: AppRoutes.labTestBooking,
+        builder: (context, state) {
+          final extra = state.extra;
+          if (extra is! LabTestBookingArgs) {
+            return const LabTestScreen();
+          }
+          return LabTestBookingScreen(args: extra);
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.path(AppRoutes.labTestCheckout),
+        name: AppRoutes.labTestCheckout,
+        builder: (context, state) {
+          final extra = state.extra;
+          if (extra is! LabTestCheckoutArgs) {
+            return const LabTestScreen();
+          }
+          return LabTestCheckoutScreen(args: extra);
+        },
       ),
 
     ],

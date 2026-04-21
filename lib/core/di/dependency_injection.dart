@@ -3,6 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../features/consultation/consultation_injection.dart';
 import '../../features/customer_support/customer_support_injection.dart';
 import '../../features/dashboard/dashboard_injection.dart';
+import '../../features/lab_test/lab_test_injection.dart';
 import '../../features/notification/notification_injection.dart';
 import '../../features/pharmacy/pharmacy_injection.dart';
 import '../../features/search/search_injection.dart';
@@ -32,6 +33,7 @@ Future<void> initDependencyInjection() async {
   initPharmacyInjector();
   initSearchInjector();
   initSurgeryInjector();
+  initLabTestInjector();
 }
 
 Future<void> _initCore() async {
