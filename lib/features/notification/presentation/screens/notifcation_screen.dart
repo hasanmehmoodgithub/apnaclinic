@@ -255,7 +255,7 @@ class _NotificationEmptyState extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Image.asset(
-            Assets.emptyBox,
+            Assets.imgEmtyBox,
             width: 120.w,
             fit: BoxFit.contain,
           ),

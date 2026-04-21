@@ -45,6 +45,7 @@ class Assets {
   static const String imagesDashboardLoader = 'assets/images/dashboard_loader.json';
   static const String imagesPlaceholder = 'assets/images/placeholder.txt';
   static const String imgBanner = 'assets/img/banner.png';
+  static const String imgEmtyBox = 'assets/img/emtyBox.png';
   static const String imgFikarFree = 'assets/img/fikar_free.png';
   static const String imgFikrfreeLogo = 'assets/img/fikrfree_logo.png';
   static const String imgHeroFamily = 'assets/img/hero_family.webp';
