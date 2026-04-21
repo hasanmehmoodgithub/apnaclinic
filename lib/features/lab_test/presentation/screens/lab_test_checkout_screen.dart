@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/di/dependency_injection.dart';
+import '../../../../core/extensions/screen_util_extensions.dart';
+import '../../../../core/preference/app_pref.dart';
 import '../../../../core/router/app_routes.dart';
 import '../lab_test_figma_assets.dart';
 import '../lab_test_route_args.dart';
@@ -22,10 +25,21 @@ class _LabTestCheckoutScreenState extends State<LabTestCheckoutScreen> {
   final _ageController = TextEditingController();
   final _emergencyController = TextEditingController();
   final _addressController = TextEditingController();
+  final AppPref _appPref = sl<AppPref>();
   String _gender = 'male';
+  bool _isEditingPatientDetails = false;
+  String? _checkoutErrorMessage;
+
+  @override
+  void initState() {
+    super.initState();
+    _prefillPatientDetailsFromSavedProfile();
+    _emergencyController.addListener(_onEmergencyChanged);
+  }
 
   @override
   void dispose() {
+    _emergencyController.removeListener(_onEmergencyChanged);
     _nameController.dispose();
     _phoneController.dispose();
     _ageController.dispose();
@@ -34,7 +48,77 @@ class _LabTestCheckoutScreenState extends State<LabTestCheckoutScreen> {
     super.dispose();
   }
 
+  void _onEmergencyChanged() {
+    if (_checkoutErrorMessage != null &&
+        _emergencyController.text.trim().isNotEmpty) {
+      setState(() => _checkoutErrorMessage = null);
+    }
+  }
+
+  void _prefillPatientDetailsFromSavedProfile() {
+    if (!_appPref.getLoginStatus()) return;
+    final user = _appPref.getUserLocalModel();
+    if (user == null) return;
+
+    final fullName = '${user.firstName} ${user.lastName}'.trim();
+    if (fullName.isNotEmpty) {
+      _nameController.text = fullName;
+    }
+
+    final phone = user.phone.trim();
+    if (phone.isNotEmpty) {
+      _phoneController.text = phone;
+      // Use the saved phone as default emergency contact.
+      _emergencyController.text = phone;
+    }
+
+    final address = user.address.trim();
+    if (address.isNotEmpty) {
+      _addressController.text = address;
+    }
+
+    final normalizedGender = _normalizeGender(user.gender);
+    if (normalizedGender != null) {
+      _gender = normalizedGender;
+    }
+
+    final age = _ageFromDateOfBirth(user.dateOfBirth);
+    if (age != null && age > 0) {
+      _ageController.text = age.toString();
+    }
+  }
+
+  String? _normalizeGender(String rawGender) {
+    final value = rawGender.trim().toLowerCase();
+    if (value.isEmpty) return null;
+    if (value == 'female' || value == 'f') return 'female';
+    if (value == 'male' || value == 'm') return 'male';
+    return null;
+  }
+
+  int? _ageFromDateOfBirth(String rawDob) {
+    final value = rawDob.trim();
+    if (value.isEmpty) return null;
+    final dob = DateTime.tryParse(value);
+    if (dob == null) return null;
+    final now = DateTime.now();
+    var age = now.year - dob.year;
+    final hasHadBirthday =
+        now.month > dob.month ||
+        (now.month == dob.month && now.day >= dob.day);
+    if (!hasHadBirthday) age -= 1;
+    return age;
+  }
+
   void _onProceed() {
+    if (_emergencyController.text.trim().isEmpty) {
+      setState(() => _checkoutErrorMessage = 'Please fill all the required fields');
+      return;
+    }
+    if (_checkoutErrorMessage != null) {
+      setState(() => _checkoutErrorMessage = null);
+    }
+
     final code = widget.args.discountCode;
     showDialog<void>(
       context: context,
@@ -69,7 +153,7 @@ class _LabTestCheckoutScreenState extends State<LabTestCheckoutScreen> {
                         style: Theme.of(context).textTheme.titleMedium?.copyWith(
                           color: const Color(0xFF0E2650),
                           fontWeight: FontWeight.w500,
-                          fontSize: 21,
+                          fontSize: 21.sp,
                           height: 1.1,
                         ),
                       ),
@@ -81,7 +165,7 @@ class _LabTestCheckoutScreenState extends State<LabTestCheckoutScreen> {
                         textAlign: TextAlign.center,
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           color: const Color(0xFF5676A8),
-                          fontSize: 15,
+                          fontSize: 15.sp,
                           height: 1.45,
                         ),
                       ),
@@ -92,7 +176,7 @@ class _LabTestCheckoutScreenState extends State<LabTestCheckoutScreen> {
                         style: Theme.of(context).textTheme.titleSmall?.copyWith(
                           color: const Color(0xFF0D1218),
                           fontWeight: FontWeight.w700,
-                          fontSize: 19,
+                          fontSize: 19.sp,
                           height: 1.2,
                         ),
                       ),
@@ -122,7 +206,7 @@ class _LabTestCheckoutScreenState extends State<LabTestCheckoutScreen> {
                                     ?.copyWith(
                                       color: const Color(0xFF0D1218),
                                       fontWeight: FontWeight.w700,
-                                      fontSize: 18,
+                                      fontSize: 18.sp,
                                     ),
                               ),
                             ),
@@ -132,7 +216,7 @@ class _LabTestCheckoutScreenState extends State<LabTestCheckoutScreen> {
                                   ?.copyWith(
                                     fontWeight: FontWeight.w700,
                                     color: const Color(0xFF22185F),
-                                    fontSize: 18,
+                                    fontSize: 18.sp,
                                   ),
                             ),
                           ],
@@ -149,9 +233,9 @@ class _LabTestCheckoutScreenState extends State<LabTestCheckoutScreen> {
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(22),
                             ),
-                            textStyle: const TextStyle(
+                            textStyle: TextStyle(
                               fontWeight: FontWeight.w700,
-                              fontSize: 18,
+                              fontSize: 18.sp,
                             ),
                           ),
                           onPressed: () {
@@ -184,50 +268,55 @@ class _LabTestCheckoutScreenState extends State<LabTestCheckoutScreen> {
           _CheckoutHeader(),
           Expanded(
             child: Center(
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 430),
-                child: Container(
-                  width: double.infinity,
-                  decoration: const BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.vertical(
-                      top: Radius.circular(42),
-                    ),
+              child: Container(
+                width: double.infinity,
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.vertical(
+                    top: Radius.circular(42),
                   ),
-                  child: Column(
-                    children: [
-                      Expanded(
-                        child: SingleChildScrollView(
-                          padding: const EdgeInsets.fromLTRB(24, 30, 24, 24),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
-                              _SummaryCard(args: a),
-                              const SizedBox(height: 8),
-                              _RequirementsCheckoutCard(
-                                lines: a.requirementLines,
-                                fastingLabel: a.requirementLabel,
+                ),
+                child: Column(
+                  children: [
+                    Expanded(
+                      child: SingleChildScrollView(
+                        padding: const EdgeInsets.fromLTRB(24, 30, 24, 24),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            _SummaryCard(args: a),
+                            const SizedBox(height: 8),
+                            _RequirementsCheckoutCard(
+                              lines: a.requirementLines,
+                              fastingLabel: a.requirementLabel,
+                            ),
+                            const SizedBox(height: 8),
+                            _PaymentBreakdownCard(args: a),
+                            const SizedBox(height: 6),
+                            _PatientFormSection(
+                              theme: theme,
+                              nameController: _nameController,
+                              phoneController: _phoneController,
+                              ageController: _ageController,
+                              emergencyController: _emergencyController,
+                              addressController: _addressController,
+                              gender: _gender,
+                              onGender: (g) => setState(() => _gender = g),
+                              isEditingPatientDetails: _isEditingPatientDetails,
+                              onToggleEdit: () => setState(
+                                () => _isEditingPatientDetails =
+                                    !_isEditingPatientDetails,
                               ),
-                              const SizedBox(height: 8),
-                              _PaymentBreakdownCard(args: a),
-                              const SizedBox(height: 6),
-                              _PatientFormSection(
-                                theme: theme,
-                                nameController: _nameController,
-                                phoneController: _phoneController,
-                                ageController: _ageController,
-                                emergencyController: _emergencyController,
-                                addressController: _addressController,
-                                gender: _gender,
-                                onGender: (g) => setState(() => _gender = g),
-                              ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
                       ),
-                      _CheckoutBottomBar(onProceed: _onProceed),
-                    ],
-                  ),
+                    ),
+                    _CheckoutBottomBar(
+                      onProceed: _onProceed,
+                      errorMessage: _checkoutErrorMessage,
+                    ),
+                  ],
                 ),
               ),
             ),
@@ -281,7 +370,7 @@ class _CheckoutHeader extends StatelessWidget {
                   style: theme.textTheme.titleLarge?.copyWith(
                     color: const Color(0xFF061E40),
                     fontWeight: FontWeight.w700,
-                    fontSize: 20,
+                    fontSize: 20.sp,
                     height: 30.9 / 20,
                   ),
                 ),
@@ -337,62 +426,63 @@ class _SummaryCard extends StatelessWidget {
                 ),
               ),
             ),
-            const SizedBox(width: 12),
+            const SizedBox(width: 10),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Stack(
-                    clipBehavior: Clip.none,
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            args.testTitle.split('\n').first,
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                            style: theme.textTheme.titleMedium?.copyWith(
-                              color: const Color(0xFF061E40),
-                              fontSize: 18,
-                              height: 1,
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              args.testTitle.split('\n').first,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: theme.textTheme.titleMedium?.copyWith(
+                                color: const Color(0xFF061E40),
+                                fontSize: 16.sp,
+                                height: 1,
+                              ),
                             ),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            args.labDisplayName,
-                            style: theme.textTheme.bodySmall?.copyWith(
-                              color: const Color(0xFF667B99),
-                              fontSize: 12,
-                              height: 1.2,
+                            const SizedBox(height: 4),
+                            Text(
+                              args.labDisplayName,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: theme.textTheme.bodySmall?.copyWith(
+                                color: const Color(0xFF667B99),
+                                fontSize: 12.sp,
+                                height: 1.2,
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                      Positioned(
-                        right: 0,
-                        top: -4,
-                        child: Container(
-                          width: 40,
-                          height: 40,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8),
-                            color: Colors.white,
-                            border: Border.all(
-                              color: const Color(0x352F2F2F),
-                              width: 1.0,
-                            ),
+                      const SizedBox(width: 8),
+                      Container(
+                        width: 40,
+                        height: 40,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.white,
+                          border: Border.all(
+                            color: const Color(0x352F2F2F),
+                            width: 1.0,
                           ),
-                          alignment: Alignment.center,
-                          child: Padding(
-                            padding: const EdgeInsets.all(5),
-                            child: LabTestFigmaImage(
-                              url: args.partnerLogoUrl,
-                              width: 30,
-                              height: 30,
-                              fit: BoxFit.contain,
-                            ),
+                        ),
+                        alignment: Alignment.center,
+                        child: Padding(
+                          padding: const EdgeInsets.all(5),
+                          child: LabTestFigmaImage(
+                            url: args.partnerLogoUrl,
+                            width: 30,
+                            height: 30,
+                            fit: BoxFit.contain,
                           ),
                         ),
                       ),
@@ -415,7 +505,7 @@ class _SummaryCard extends StatelessWidget {
                           'Sample Type',
                           style: theme.textTheme.bodySmall?.copyWith(
                             color: const Color(0xFF667B99),
-                            fontSize: 12,
+                            fontSize: 12.sp,
                           ),
                         ),
                         const SizedBox(width: 4),
@@ -435,7 +525,7 @@ class _SummaryCard extends StatelessWidget {
                             args.sampleType,
                             style: theme.textTheme.bodySmall?.copyWith(
                               color: const Color(0xFF667B99),
-                              fontSize: 12,
+                              fontSize: 12.sp,
                             ),
                           ),
                         ),
@@ -452,7 +542,7 @@ class _SummaryCard extends StatelessWidget {
                             'Fee',
                             style: theme.textTheme.bodySmall?.copyWith(
                               color: const Color(0xFF667B99),
-                              fontSize: 12,
+                              fontSize: 12.sp,
                               height: 1.2,
                             ),
                           ),
@@ -465,7 +555,7 @@ class _SummaryCard extends StatelessWidget {
                                 style: theme.textTheme.bodyMedium?.copyWith(
                                   color: const Color(0xFF110844),
                                   fontWeight: FontWeight.w500,
-                                  fontSize: 14,
+                                  fontSize: 14.sp,
                                 ),
                               ),
                               const SizedBox(width: 5),
@@ -474,7 +564,7 @@ class _SummaryCard extends StatelessWidget {
                                 style: theme.textTheme.bodySmall?.copyWith(
                                   decoration: TextDecoration.lineThrough,
                                   color: const Color(0xFF979797),
-                                  fontSize: 12,
+                                  fontSize: 12.sp,
                                   height: 1.2,
                                 ),
                               ),
@@ -528,7 +618,7 @@ class _RequirementsCheckoutCard extends StatelessWidget {
                   style: theme.textTheme.titleMedium?.copyWith(
                     color: const Color(0xFF061E40),
                     fontWeight: FontWeight.w500,
-                    fontSize: 16,
+                    fontSize: 16.sp,
                   ),
                 ),
                 if (fastingLabel != null)
@@ -546,7 +636,7 @@ class _RequirementsCheckoutCard extends StatelessWidget {
                       style: theme.textTheme.bodySmall?.copyWith(
                         fontFamily: 'Afacad',
                         color: const Color(0xFF198733),
-                        fontSize: 14,
+                        fontSize: 14.sp,
                       ),
                     ),
                   ),
@@ -568,7 +658,7 @@ class _RequirementsCheckoutCard extends StatelessWidget {
                       '${i + 1}. ${lines[i]}',
                       style: theme.textTheme.bodyMedium?.copyWith(
                         fontFamily: 'Afacad',
-                        fontSize: 16,
+                        fontSize: 16.sp,
                         height: 1.2,
                         color: Colors.black,
                       ),
@@ -614,7 +704,7 @@ class _PaymentBreakdownCard extends StatelessWidget {
               style: theme.textTheme.titleMedium?.copyWith(
                 color: const Color(0xFF061E40),
                 fontWeight: FontWeight.w500,
-                fontSize: 16,
+                fontSize: 16.sp,
               ),
             ),
           ),
@@ -654,7 +744,7 @@ class _PaymentBreakdownCard extends StatelessWidget {
                               'Discount Code',
                               style: theme.textTheme.titleSmall?.copyWith(
                                 fontWeight: FontWeight.w700,
-                                fontSize: 16,
+                                fontSize: 16.sp,
                               ),
                             ),
                             const Spacer(),
@@ -663,7 +753,7 @@ class _PaymentBreakdownCard extends StatelessWidget {
                               style: theme.textTheme.titleSmall?.copyWith(
                                 fontWeight: FontWeight.w700,
                                 color: const Color(0xFF110844),
-                                fontSize: 16,
+                                fontSize: 16.sp,
                               ),
                             ),
                           ],
@@ -673,7 +763,7 @@ class _PaymentBreakdownCard extends StatelessWidget {
                           'Show this code to the lab representative',
                           style: theme.textTheme.bodySmall?.copyWith(
                             color: const Color(0xFF110844),
-                            fontSize: 12,
+                            fontSize: 12.sp,
                           ),
                         ),
                       ],
@@ -694,7 +784,7 @@ class _PaymentBreakdownCard extends StatelessWidget {
                   style: theme.textTheme.titleMedium?.copyWith(
                     color: const Color(0xFF061E40),
                     fontWeight: FontWeight.w500,
-                    fontSize: 16,
+                    fontSize: 16.sp,
                   ),
                 ),
                 Row(
@@ -704,7 +794,7 @@ class _PaymentBreakdownCard extends StatelessWidget {
                       'Rs.',
                       style: theme.textTheme.bodySmall?.copyWith(
                         color: const Color(0xFF667B99),
-                        fontSize: 12,
+                        fontSize: 12.sp,
                         height: 1.1,
                       ),
                     ),
@@ -713,7 +803,7 @@ class _PaymentBreakdownCard extends StatelessWidget {
                       style: theme.textTheme.titleMedium?.copyWith(
                         color: const Color(0xFF110844),
                         fontWeight: FontWeight.w500,
-                        fontSize: 16,
+                        fontSize: 16.sp,
                       ),
                     ),
                   ],
@@ -742,7 +832,7 @@ class _PaymentBreakdownCard extends StatelessWidget {
             style: theme.textTheme.bodyMedium?.copyWith(
               color: const Color(0xFF667B99),
               fontWeight: FontWeight.w500,
-              fontSize: 14,
+              fontSize: 14.sp,
             ),
           ),
           Row(
@@ -752,7 +842,7 @@ class _PaymentBreakdownCard extends StatelessWidget {
                 'Rs.',
                 style: theme.textTheme.bodySmall?.copyWith(
                   color: const Color(0xFF667B99),
-                  fontSize: 12,
+                  fontSize: 12.sp,
                   height: 1.1,
                 ),
               ),
@@ -760,7 +850,7 @@ class _PaymentBreakdownCard extends StatelessWidget {
                 amountDigits,
                 style: theme.textTheme.bodyMedium?.copyWith(
                   color: const Color(0xFF110844),
-                  fontSize: 14,
+                  fontSize: 14.sp,
                 ),
               ),
             ],
@@ -781,6 +871,8 @@ class _PatientFormSection extends StatelessWidget {
     required this.addressController,
     required this.gender,
     required this.onGender,
+    required this.isEditingPatientDetails,
+    required this.onToggleEdit,
   });
 
   final ThemeData theme;
@@ -791,97 +883,23 @@ class _PatientFormSection extends StatelessWidget {
   final TextEditingController addressController;
   final String gender;
   final ValueChanged<String> onGender;
+  final bool isEditingPatientDetails;
+  final VoidCallback onToggleEdit;
 
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        _sectionHeader('Patient Details', trailing: 'Edit'),
-        const SizedBox(height: 6),
-        _formCard(
-          children: [
-            _fieldLabel('Patient Name'),
-            _greyField(controller: nameController, hint: 'Full name'),
-            const SizedBox(height: 19),
-            _fieldLabel('Contact Number'),
-            _greyField(
-              controller: phoneController,
-              hint: 'Type or select from phonebook',
-              suffix: LabTestFigmaImage(
-                url: LabTestFigmaAssets.checkoutAddressBook,
-                width: 16,
-                height: 16,
-              ),
-            ),
-            const SizedBox(height: 19),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      _fieldLabel('Gender'),
-                      const SizedBox(height: 3),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: _genderChip(
-                              label: 'Male',
-                              selected: gender == 'male',
-                              onTap: () => onGender('male'),
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            child: _genderChip(
-                              label: 'Female',
-                              selected: gender == 'female',
-                              onTap: () => onGender('female'),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(width: 19),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      _fieldLabel('Age'),
-                      const SizedBox(height: 3),
-                      Container(
-                        height: 30,
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFF2F2F2),
-                          borderRadius: BorderRadius.circular(2),
-                        ),
-                        alignment: Alignment.centerLeft,
-                        padding: const EdgeInsets.symmetric(horizontal: 8),
-                        child: TextField(
-                          controller: ageController,
-                          keyboardType: TextInputType.number,
-                          style: theme.textTheme.bodySmall?.copyWith(
-                            color: const Color(0xFF061E40),
-                            fontSize: 12,
-                          ),
-                          decoration: const InputDecoration(
-                            isDense: true,
-                            border: InputBorder.none,
-                            contentPadding: EdgeInsets.zero,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ],
+        _sectionHeader(
+          'Patient Details',
+          trailing: isEditingPatientDetails ? 'Done' : 'Edit',
+          onTrailingTap: onToggleEdit,
         ),
+        const SizedBox(height: 6),
+        isEditingPatientDetails
+            ? _buildEditablePatientDetailsCard()
+            : _buildPatientDetailsSummaryCard(),
         const SizedBox(height: 6),
         _sectionHeader('Emergency Contact'),
         const SizedBox(height: 6),
@@ -891,7 +909,7 @@ class _PatientFormSection extends StatelessWidget {
               'Please provide an emergency contact number, incase you are unavailable.',
               style: theme.textTheme.bodySmall?.copyWith(
                 color: const Color(0xFF667B99),
-                fontSize: 12,
+                fontSize: 12.sp,
                 height: 1.2,
               ),
             ),
@@ -902,32 +920,216 @@ class _PatientFormSection extends StatelessWidget {
             ),
           ],
         ),
-        const SizedBox(height: 6),
-        _sectionHeader('Address'),
-        const SizedBox(height: 6),
-        _formCard(
+      ],
+    );
+  }
+
+  Widget _buildPatientDetailsSummaryCard() {
+    final dividerColor = const Color(0xFFCDD5DF);
+    return Container(
+      padding: const EdgeInsets.fromLTRB(16, 10, 16, 12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(14),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0x33085283),
+            blurRadius: 27,
+            offset: const Offset(0, 14),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          _summaryRow(
+            label: 'Patient Name',
+            value: _fallback(nameController.text),
+            dividerColor: dividerColor,
+          ),
+          _summaryRow(
+            label: 'Gender',
+            value: _displayGender(gender),
+            dividerColor: dividerColor,
+          ),
+          _summaryRow(
+            label: 'Age',
+            value: _fallback(ageController.text),
+            dividerColor: dividerColor,
+          ),
+          _summaryRow(
+            label: 'Contact Number',
+            value: _fallback(phoneController.text),
+            dividerColor: dividerColor,
+          ),
+          _summaryRow(
+            label: 'Address',
+            value: _fallback(addressController.text),
+            dividerColor: dividerColor,
+            isLast: true,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEditablePatientDetailsCard() {
+    return _formCard(
+      children: [
+        _fieldLabel('Patient Name'),
+        _greyField(controller: nameController, hint: 'Full name'),
+        const SizedBox(height: 14),
+        _fieldLabel('Contact Number'),
+        _greyField(
+          controller: phoneController,
+          hint: 'Type or select from phonebook',
+          suffix: LabTestFigmaImage(
+            url: LabTestFigmaAssets.checkoutAddressBook,
+            width: 16,
+            height: 16,
+          ),
+        ),
+        const SizedBox(height: 14),
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'This address will be used for sample collection only.',
-              style: theme.textTheme.bodySmall?.copyWith(
-                color: const Color(0xFF667B99),
-                fontSize: 12,
-                height: 1.2,
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  _fieldLabel('Gender'),
+                  const SizedBox(height: 3),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _genderChip(
+                          label: 'Male',
+                          selected: gender == 'male',
+                          onTap: () => onGender('male'),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: _genderChip(
+                          label: 'Female',
+                          selected: gender == 'female',
+                          onTap: () => onGender('female'),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ),
-            const SizedBox(height: 8),
-            _greyField(
-              controller: addressController,
-              hint: 'Type address here...',
-              minLines: 2,
+            const SizedBox(width: 19),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  _fieldLabel('Age'),
+                  const SizedBox(height: 3),
+                  Container(
+                    height: 30,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFF2F2F2),
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                    alignment: Alignment.centerLeft,
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                    child: TextField(
+                      controller: ageController,
+                      keyboardType: TextInputType.number,
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: const Color(0xFF061E40),
+                        fontSize: 12.sp,
+                      ),
+                      decoration: const InputDecoration(
+                        isDense: true,
+                        border: InputBorder.none,
+                        contentPadding: EdgeInsets.zero,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ],
+        ),
+        const SizedBox(height: 14),
+        _fieldLabel('Address'),
+        _greyField(
+          controller: addressController,
+          hint: 'Type address here...',
+          minLines: 2,
         ),
       ],
     );
   }
 
-  Widget _sectionHeader(String title, {String? trailing}) {
+  Widget _summaryRow({
+    required String label,
+    required String value,
+    required Color dividerColor,
+    bool isLast = false,
+  }) {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      decoration: isLast
+          ? null
+          : BoxDecoration(
+              border: Border(
+                bottom: BorderSide(color: dividerColor, width: 1),
+              ),
+            ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            child: Text(
+              label,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: const Color(0xFF587194),
+                fontSize: 13.sp,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+          const SizedBox(width: 12),
+          Flexible(
+            child: Text(
+              value,
+              maxLines: label == 'Address' ? 2 : 1,
+              overflow: TextOverflow.ellipsis,
+              textAlign: TextAlign.right,
+              style: theme.textTheme.bodyLarge?.copyWith(
+                color: const Color(0xFF4E5E6F),
+                fontSize: 13.sp,
+                fontWeight: FontWeight.w500,
+                height: 1.15,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _fallback(String value) {
+    final trimmed = value.trim();
+    return trimmed.isEmpty ? '--' : trimmed;
+  }
+
+  String _displayGender(String rawGender) {
+    final normalized = rawGender.trim().toLowerCase();
+    if (normalized == 'male') return 'Male';
+    if (normalized == 'female') return 'Female';
+    return '--';
+  }
+
+  Widget _sectionHeader(
+    String title, {
+    String? trailing,
+    VoidCallback? onTrailingTap,
+  }) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: Row(
@@ -938,15 +1140,23 @@ class _PatientFormSection extends StatelessWidget {
             style: theme.textTheme.titleMedium?.copyWith(
               color: const Color(0xFF061E40),
               fontWeight: FontWeight.w500,
-              fontSize: 16,
+              fontSize: 16.sp,
             ),
           ),
           if (trailing != null)
-            Text(
-              trailing,
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: const Color(0xFF024886),
-                fontSize: 14,
+            InkWell(
+              onTap: onTrailingTap,
+              borderRadius: BorderRadius.circular(4),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                child: Text(
+                  trailing,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: const Color(0xFF024886),
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
               ),
             ),
         ],
@@ -983,7 +1193,7 @@ class _PatientFormSection extends StatelessWidget {
         style: theme.textTheme.titleMedium?.copyWith(
           color: const Color(0xFF061E40),
           fontWeight: FontWeight.w500,
-          fontSize: 16,
+          fontSize: 16.sp,
         ),
       ),
     );
@@ -1010,7 +1220,7 @@ class _PatientFormSection extends StatelessWidget {
               maxLines: minLines > 1 ? 4 : 1,
               style: theme.textTheme.bodySmall?.copyWith(
                 color: const Color(0xFF667B99),
-                fontSize: 12,
+                fontSize: 12.sp,
               ),
               decoration: InputDecoration(
                 isDense: true,
@@ -1018,7 +1228,7 @@ class _PatientFormSection extends StatelessWidget {
                 hintText: hint,
                 hintStyle: theme.textTheme.bodySmall?.copyWith(
                   color: const Color(0xFF667B99),
-                  fontSize: 12,
+                  fontSize: 12.sp,
                 ),
               ),
             ),
@@ -1088,7 +1298,7 @@ class _PatientFormSection extends StatelessWidget {
                         ? const Color(0xFF061E40)
                         : const Color(0xFF667B99),
                     fontWeight: selected ? FontWeight.w500 : FontWeight.w400,
-                    fontSize: 12,
+                    fontSize: 12.sp,
                   ),
                 ),
               ],
@@ -1101,9 +1311,10 @@ class _PatientFormSection extends StatelessWidget {
 }
 
 class _CheckoutBottomBar extends StatelessWidget {
-  const _CheckoutBottomBar({required this.onProceed});
+  const _CheckoutBottomBar({required this.onProceed, this.errorMessage});
 
   final VoidCallback onProceed;
+  final String? errorMessage;
 
   @override
   Widget build(BuildContext context) {
@@ -1125,6 +1336,40 @@ class _CheckoutBottomBar extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
+            if (errorMessage != null) ...[
+              Container(
+                width: double.infinity,
+                margin: const EdgeInsets.only(bottom: 10),
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 13),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFFFF6F6),
+                  border: Border.all(color: const Color(0xFFF6DADA)),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(
+                      Icons.info_outline,
+                      color: Color(0xFFD72222),
+                      size: 22,
+                    ),
+                    const SizedBox(width: 8),
+                    Flexible(
+                      child: Text(
+                        errorMessage!,
+                        textAlign: TextAlign.center,
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: const Color(0xFFD72222),
+                          fontSize: 15.sp,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
             SizedBox(
               width: double.infinity,
               height: 57,
@@ -1135,9 +1380,9 @@ class _CheckoutBottomBar extends StatelessWidget {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12.909),
                   ),
-                  textStyle: const TextStyle(
+                  textStyle: TextStyle(
                     fontWeight: FontWeight.w700,
-                    fontSize: 16,
+                    fontSize: 16.sp,
                   ),
                 ),
                 onPressed: onProceed,
