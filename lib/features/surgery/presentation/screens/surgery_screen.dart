@@ -53,7 +53,9 @@ class SurgeryScreen extends StatelessWidget {
                   width: double.infinity,
                   decoration: BoxDecoration(
                     color: Colors.white,
-                    borderRadius: BorderRadius.vertical(top: Radius.circular(42.r)),
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(42.r),
+                    ),
                   ),
                   child: _buildBody(context, state),
                 ),
@@ -79,6 +81,15 @@ class SurgeryScreen extends StatelessWidget {
       );
     }
 
+    if (state.loadingStateStatus == StateStatus.empty) {
+      return const Center(
+        child: Text(
+          'No surgery procedures available right now.',
+          textAlign: TextAlign.center,
+        ),
+      );
+    }
+
     return _SurgeryContentView(state: state);
   }
 }
@@ -96,15 +107,18 @@ class _SurgeryContentViewState extends State<_SurgeryContentView> {
   static const Map<String, String> _procedureInfo = {
     'acl':
         'Anterior cruciate ligament (ACL) is in the middle of the knee. It prevents the shin bone from sliding out in front of the thigh bone. Posterior cruciate ligament (PCL) works with the ACL. It prevents the shin bone from sliding backward under the femur.',
-    'cataract-eye': 'Cataract surgery removes the cloudy lens and improves vision.',
+    'cataract-eye':
+        'Cataract surgery removes the cloudy lens and improves vision.',
     'c-section': 'C-section is a surgical procedure to deliver a baby.',
     'fistula': 'Fistula surgery treats abnormal connections between organs.',
     'lasik-eye': 'LASIK reshapes corneal tissue to correct refractive errors.',
-    'liposuction': 'Liposuction removes excess fat deposits from selected areas.',
+    'liposuction':
+        'Liposuction removes excess fat deposits from selected areas.',
     'cataract-surgery': 'Cataract surgery replaces the cloudy eye lens.',
     'stent-procedure': 'Stent procedure opens blocked blood vessels.',
     'gallbladder-removal': 'Gallbladder removal treats stones or inflammation.',
-    'breast-surgery': 'Breast surgery includes therapeutic and corrective procedures.',
+    'breast-surgery':
+        'Breast surgery includes therapeutic and corrective procedures.',
   };
 
   @override
@@ -126,10 +140,10 @@ class _SurgeryContentViewState extends State<_SurgeryContentView> {
               Text(
                 'Select for Surgery',
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      color: const Color(0xFF061E40),
-                      fontWeight: FontWeight.w500,
-                      fontSize: 14.sp,
-                    ),
+                  color: const Color(0xFF061E40),
+                  fontWeight: FontWeight.w500,
+                  fontSize: 14.sp,
+                ),
               ),
               SizedBox(height: 12.h),
               _SearchField(
@@ -153,7 +167,8 @@ class _SurgeryContentViewState extends State<_SurgeryContentView> {
                     name: item.name,
                     index: index,
                     onTap: () => _openSurgeryBooking(context, item.name, state),
-                    onInfoTap: () => _showProcedureInfo(context, item.id, item.name),
+                    onInfoTap: () =>
+                        _showProcedureInfo(context, item.id, item.name),
                   );
                 },
               ),
@@ -183,12 +198,16 @@ class _SurgeryContentViewState extends State<_SurgeryContentView> {
     String procedureName,
     SurgeryState state,
   ) {
+    final surgeryCubit = context.read<SurgeryCubit>();
     Navigator.of(context).push(
       MaterialPageRoute<void>(
-        builder: (_) => SurgeryBookingScreen(
-          procedureName: procedureName,
-          city: state.selectedCity,
-          cities: state.content.cities,
+        builder: (_) => BlocProvider.value(
+          value: surgeryCubit,
+          child: SurgeryBookingScreen(
+            procedureName: procedureName,
+            city: state.selectedCity,
+            cities: state.content.cities,
+          ),
         ),
       ),
     );
@@ -199,7 +218,8 @@ class _SurgeryContentViewState extends State<_SurgeryContentView> {
     String procedureId,
     String title,
   ) async {
-    final description = _procedureInfo[procedureId] ??
+    final description =
+        _procedureInfo[procedureId] ??
         'Detailed information for this procedure will be shared by our representative.';
 
     await showGeneralDialog<void>(
@@ -263,10 +283,7 @@ class _SurgeryContentViewState extends State<_SurgeryContentView> {
 }
 
 class _LocationRow extends StatelessWidget {
-  const _LocationRow({
-    required this.city,
-    required this.onChangeTap,
-  });
+  const _LocationRow({required this.city, required this.onChangeTap});
 
   final String city;
   final VoidCallback onChangeTap;
@@ -338,10 +355,7 @@ class _LocationRow extends StatelessWidget {
 }
 
 class _SearchField extends StatefulWidget {
-  const _SearchField({
-    required this.query,
-    required this.onChanged,
-  });
+  const _SearchField({required this.query, required this.onChanged});
 
   final String query;
   final ValueChanged<String> onChanged;
@@ -392,10 +406,13 @@ class _SearchFieldState extends State<_SearchField> {
           border: InputBorder.none,
           hintText: 'Search name..',
           hintStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: const Color(0xFF9E9E9E),
-                fontWeight: FontWeight.w500,
-              ),
-          contentPadding: EdgeInsets.symmetric(horizontal: 11.w, vertical: 15.h),
+            color: const Color(0xFF9E9E9E),
+            fontWeight: FontWeight.w500,
+          ),
+          contentPadding: EdgeInsets.symmetric(
+            horizontal: 11.w,
+            vertical: 15.h,
+          ),
           suffixIcon: Icon(
             Icons.search_rounded,
             size: 18.r,
@@ -454,11 +471,11 @@ class _ProcedureTile extends StatelessWidget {
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                        color: const Color(0xFF061E40),
-                        fontWeight: FontWeight.w500,
-                        fontSize: 14.sp,
-                        height: 1,
-                      ),
+                    color: const Color(0xFF061E40),
+                    fontWeight: FontWeight.w500,
+                    fontSize: 14.sp,
+                    height: 1,
+                  ),
                 ),
               ),
               Positioned(
@@ -498,11 +515,11 @@ class _ProcedureTile extends StatelessWidget {
                     child: Text(
                       '!',
                       style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                            color: const Color(0xFF7A7A7A),
-                            fontWeight: FontWeight.w700,
-                            fontSize: 10.sp,
-                            height: 1,
-                          ),
+                        color: const Color(0xFF7A7A7A),
+                        fontWeight: FontWeight.w700,
+                        fontSize: 10.sp,
+                        height: 1,
+                      ),
                     ),
                   ),
                 ),
@@ -556,10 +573,7 @@ class _CardPatternD2 extends StatelessWidget {
 }
 
 class _LinesPatternPainter extends CustomPainter {
-  _LinesPatternPainter({
-    required this.color,
-    required this.reverse,
-  });
+  _LinesPatternPainter({required this.color, required this.reverse});
 
   final Color color;
   final bool reverse;
@@ -669,10 +683,10 @@ class _CityBottomSheetState extends State<_CityBottomSheet> {
             Text(
               'Select a city',
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    color: const Color(0xFF061E40),
-                    fontWeight: FontWeight.w500,
-                    fontSize: 28.sp / 2,
-                  ),
+                color: const Color(0xFF061E40),
+                fontWeight: FontWeight.w500,
+                fontSize: 28.sp / 2,
+              ),
             ),
             SizedBox(height: 14.h),
             Container(
@@ -687,8 +701,8 @@ class _CityBottomSheetState extends State<_CityBottomSheet> {
                   border: InputBorder.none,
                   hintText: 'Search by name',
                   hintStyle: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: const Color(0xFF7F96B0),
-                      ),
+                    color: const Color(0xFF7F96B0),
+                  ),
                   contentPadding: EdgeInsets.symmetric(
                     horizontal: 12.w,
                     vertical: 14.h,
@@ -715,16 +729,20 @@ class _CityBottomSheetState extends State<_CityBottomSheet> {
                   return InkWell(
                     onTap: () => setState(() => selectedCity = city),
                     child: Container(
-                      color: selected ? const Color(0xFFF1F1F1) : Colors.transparent,
-                      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 13.h),
+                      color: selected
+                          ? const Color(0xFFF1F1F1)
+                          : Colors.transparent,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 10.w,
+                        vertical: 13.h,
+                      ),
                       child: Row(
                         children: [
                           Expanded(
                             child: Text(
                               city,
-                              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                    color: const Color(0xFF5D758F),
-                                  ),
+                              style: Theme.of(context).textTheme.bodyMedium
+                                  ?.copyWith(color: const Color(0xFF5D758F)),
                             ),
                           ),
                           Container(

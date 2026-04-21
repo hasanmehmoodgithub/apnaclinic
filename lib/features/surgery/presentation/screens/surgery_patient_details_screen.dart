@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
 import '../../../../core/extensions/screen_util_extensions.dart';
+import '../cubit/surgery_cubit.dart';
 
 class SurgeryPatientDetailsScreen extends StatefulWidget {
   const SurgeryPatientDetailsScreen({
@@ -40,6 +43,7 @@ class _SurgeryPatientDetailsScreenState
   bool showSurgeryOptions = true;
   String selectedSurgery = 'Corneal transplant.';
   bool showEmergencyError = false;
+  bool isSubmittingBooking = false;
 
   late final TextEditingController patientNameController;
   late final TextEditingController ageController;
@@ -179,7 +183,7 @@ class _SurgeryPatientDetailsScreenState
                           // ---------- Surgery dropdown header ----------
                           InkWell(
                             onTap: () => setState(
-                                  () => showSurgeryOptions = !showSurgeryOptions,
+                              () => showSurgeryOptions = !showSurgeryOptions,
                             ),
                             child: Container(
                               padding: EdgeInsets.symmetric(
@@ -187,7 +191,9 @@ class _SurgeryPatientDetailsScreenState
                                 vertical: 14.h,
                               ),
                               decoration: BoxDecoration(
-                                borderRadius: BorderRadius.all(Radius.circular(10)),
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(10),
+                                ),
                                 color: const Color(0xFFF1F1F1),
                               ),
 
@@ -198,9 +204,9 @@ class _SurgeryPatientDetailsScreenState
                                       'Refractive Surgery',
                                       style: theme.textTheme.bodyLarge
                                           ?.copyWith(
-                                        color: const Color(0xFF9AA4B0),
-                                        fontSize: 15.sp,
-                                      ),
+                                            color: const Color(0xFF9AA4B0),
+                                            fontSize: 15.sp,
+                                          ),
                                     ),
                                   ),
                                   Text(
@@ -220,7 +226,7 @@ class _SurgeryPatientDetailsScreenState
                                       color: const Color(0xFFB6BDC8),
                                       size: 17.r,
                                     ),
-                                  )
+                                  ),
                                 ],
                               ),
                             ),
@@ -240,14 +246,16 @@ class _SurgeryPatientDetailsScreenState
                                   final isLast = i == options.length - 1;
                                   return InkWell(
                                     onTap: () => setState(
-                                          () => selectedSurgery = option.name,
+                                      () => selectedSurgery = option.name,
                                     ),
                                     child: Container(
                                       decoration: BoxDecoration(
                                         color: selected
                                             ? const Color(0xFFF1F1F1)
                                             : Colors.white,
-                                        borderRadius: BorderRadius.all(Radius.circular(10)),
+                                        borderRadius: BorderRadius.all(
+                                          Radius.circular(10),
+                                        ),
                                         border: Border(
                                           bottom: BorderSide(
                                             color: isLast
@@ -268,17 +276,17 @@ class _SurgeryPatientDetailsScreenState
                                               option.name,
                                               style: theme.textTheme.titleSmall
                                                   ?.copyWith(
-                                                color: const Color(
-                                                  0xFF061E40,
-                                                ),
-                                                fontSize: 15.sp,
-                                                fontWeight: FontWeight.w500,
-                                              ),
+                                                    color: const Color(
+                                                      0xFF061E40,
+                                                    ),
+                                                    fontSize: 15.sp,
+                                                    fontWeight: FontWeight.w500,
+                                                  ),
                                             ),
                                           ),
                                           Column(
                                             crossAxisAlignment:
-                                            CrossAxisAlignment.end,
+                                                CrossAxisAlignment.end,
                                             children: [
                                               Text(
                                                 option.price,
@@ -286,13 +294,13 @@ class _SurgeryPatientDetailsScreenState
                                                     .textTheme
                                                     .titleSmall
                                                     ?.copyWith(
-                                                  color: const Color(
-                                                    0xFF061E40,
-                                                  ),
-                                                  fontSize: 15.sp,
-                                                  fontWeight:
-                                                  FontWeight.w500,
-                                                ),
+                                                      color: const Color(
+                                                        0xFF061E40,
+                                                      ),
+                                                      fontSize: 15.sp,
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                    ),
                                               ),
                                               Text(
                                                 option.oldPrice,
@@ -300,13 +308,13 @@ class _SurgeryPatientDetailsScreenState
                                                     .textTheme
                                                     .bodyMedium
                                                     ?.copyWith(
-                                                  color: const Color(
-                                                    0xFFB4B4B4,
-                                                  ),
-                                                  fontSize: 12.sp,
-                                                  decoration: TextDecoration
-                                                      .lineThrough,
-                                                ),
+                                                      color: const Color(
+                                                        0xFFB4B4B4,
+                                                      ),
+                                                      fontSize: 12.sp,
+                                                      decoration: TextDecoration
+                                                          .lineThrough,
+                                                    ),
                                               ),
                                             ],
                                           ),
@@ -339,17 +347,9 @@ class _SurgeryPatientDetailsScreenState
                       child: SizedBox(
                         width: double.infinity,
                         child: FilledButton(
-                          onPressed: () {
-                            final emergency = emergencyContactController.text
-                                .trim();
-                            if (emergency.isEmpty) {
-                              setState(() => showEmergencyError = true);
-                              _showEmergencyContactSnackbar();
-                              return;
-                            }
-                            setState(() => showEmergencyError = false);
-                            _showBookingSubmittedDialog();
-                          },
+                          onPressed: isSubmittingBooking
+                              ? null
+                              : _onProceedCheckoutPressed,
                           style: FilledButton.styleFrom(
                             backgroundColor: const Color(0xFF0FAA9A),
                             minimumSize: Size.fromHeight(54.h),
@@ -357,14 +357,25 @@ class _SurgeryPatientDetailsScreenState
                               borderRadius: BorderRadius.circular(10.r),
                             ),
                           ),
-                          child: Text(
-                            'Proceed Checkout',
-                            style: theme.textTheme.titleMedium?.copyWith(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w700,
-                              fontSize: 17.sp,
-                            ),
-                          ),
+                          child: isSubmittingBooking
+                              ? SizedBox(
+                                  width: 22.r,
+                                  height: 22.r,
+                                  child: const CircularProgressIndicator(
+                                    strokeWidth: 2.4,
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                      Colors.white,
+                                    ),
+                                  ),
+                                )
+                              : Text(
+                                  'Proceed Checkout',
+                                  style: theme.textTheme.titleMedium?.copyWith(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w700,
+                                    fontSize: 17.sp,
+                                  ),
+                                ),
                         ),
                       ),
                     ),
@@ -376,6 +387,45 @@ class _SurgeryPatientDetailsScreenState
         ),
       ),
     );
+  }
+
+  Future<void> _onProceedCheckoutPressed() async {
+    final emergency = emergencyContactController.text.trim();
+    if (emergency.isEmpty) {
+      setState(() => showEmergencyError = true);
+      _showEmergencyContactSnackbar();
+      return;
+    }
+
+    setState(() {
+      showEmergencyError = false;
+      isSubmittingBooking = true;
+    });
+
+    try {
+      final result = await context.read<SurgeryCubit>().submitSurgeryBooking(
+        patientName: patientNameController.text.trim(),
+        age: ageController.text.trim(),
+        contactNumber: contactNumberController.text.trim(),
+        emergencyContact: emergency,
+        surgeryName: selectedSurgery,
+        doctorName: widget.doctorName,
+        hospitalName: widget.hospitalName,
+      );
+
+      if (!mounted) return;
+      result.fold(
+        (_) => _showSubmitFailedSnackbar(),
+        (_) => _showBookingSubmittedDialog(),
+      );
+    } catch (_) {
+      if (!mounted) return;
+      _showSubmitFailedSnackbar();
+    } finally {
+      if (mounted) {
+        setState(() => isSubmittingBooking = false);
+      }
+    }
   }
 
   Future<void> _showBookingSubmittedDialog() async {
@@ -396,7 +446,12 @@ class _SurgeryPatientDetailsScreenState
               gradient: const LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
-                colors: [Colors.white, Colors.white, Colors.white,Color.fromRGBO(1, 205, 222, 0.08),],
+                colors: [
+                  Colors.white,
+                  Colors.white,
+                  Colors.white,
+                  Color.fromRGBO(1, 205, 222, 0.08),
+                ],
               ),
             ),
             child: Column(
@@ -425,8 +480,8 @@ class _SurgeryPatientDetailsScreenState
                 SizedBox(height: 12.h),
                 Text(
                   'Your surgery request has been received. Our representative '
-                      'will contact you within 24 hours to gather your medical '
-                      'history and relevant details for confirmation.',
+                  'will contact you within 24 hours to gather your medical '
+                  'history and relevant details for confirmation.',
                   textAlign: TextAlign.center,
                   style: theme.textTheme.bodyLarge?.copyWith(
                     color: const Color(0xFF667B99),
@@ -505,6 +560,16 @@ class _SurgeryPatientDetailsScreenState
         ),
       );
   }
+
+  void _showSubmitFailedSnackbar() {
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        const SnackBar(
+          content: Text('Unable to submit booking request. Please try again.'),
+        ),
+      );
+  }
 }
 
 // ======================= Doctor Summary Card =======================
@@ -533,10 +598,7 @@ class _DoctorSummary extends StatelessWidget {
                   fit: BoxFit.cover,
                   errorBuilder: (context, error, stackTrace) => Container(
                     color: const Color(0xFFEFEFEF),
-                    child: const Icon(
-                      Icons.person,
-                      color: Color(0xFFBDBDBD),
-                    ),
+                    child: const Icon(Icons.person, color: Color(0xFFBDBDBD)),
                   ),
                 ),
               ),
@@ -589,7 +651,7 @@ class _DoctorSummary extends StatelessWidget {
                   widget.partnerLogoUrl,
                   fit: BoxFit.cover,
                   errorBuilder: (context, error, stackTrace) =>
-                  const SizedBox.shrink(),
+                      const SizedBox.shrink(),
                 ),
               ),
             ),
@@ -725,15 +787,11 @@ class _TextInputField extends StatelessWidget {
           height: 48.h,
           padding: EdgeInsets.only(left: 12.w, right: 8.w),
           decoration: BoxDecoration(
-            color: hasError
-                ? const Color(0xFFFFF8F8)
-                : const Color(0xFFF1F1F1),
+            color: hasError ? const Color(0xFFFFF8F8) : const Color(0xFFF1F1F1),
             borderRadius: BorderRadius.all(Radius.circular(10)),
             border: Border(
               bottom: BorderSide(
-                color: hasError
-                    ? const Color(0xFF852221)
-                    : Colors.transparent,
+                color: hasError ? const Color(0xFF852221) : Colors.transparent,
                 width: 0.6,
               ),
             ),

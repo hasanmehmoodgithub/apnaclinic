@@ -34,19 +34,37 @@ class SurgeryContentModel {
   final List<SurgeryProcedureModel> procedures;
 
   factory SurgeryContentModel.fromJson(Map<String, dynamic> json) {
-    final rawCities = json['cities'];
-    final rawProcedures = json['procedures'];
+    final payload = _contentMap(json);
+    final rawCities = payload['cities'];
+    final rawProcedures = payload['procedures'];
     return SurgeryContentModel(
       success: json['success'] == true,
       message: (json['message'] ?? '').toString(),
       cities: (rawCities is List ? rawCities : const <dynamic>[])
           .map((e) => e.toString())
           .toList(),
-      defaultCity: (json['defaultCity'] ?? '').toString(),
+      defaultCity: (payload['defaultCity'] ?? '').toString(),
       procedures: (rawProcedures is List ? rawProcedures : const <dynamic>[])
           .whereType<Map<String, dynamic>>()
           .map(SurgeryProcedureModel.fromJson)
           .toList(),
     );
+  }
+
+  static Map<String, dynamic> _contentMap(Map<String, dynamic> json) {
+    final data = json['data'];
+    if (data is Map<String, dynamic>) {
+      return data;
+    }
+
+    final content = json['content'];
+    if (content is Map<String, dynamic>) {
+      return content;
+    }
+
+    final copy = Map<String, dynamic>.from(json)
+      ..remove('success')
+      ..remove('message');
+    return copy;
   }
 }
