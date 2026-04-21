@@ -14,100 +14,89 @@ class PharmacyMockApi {
       'medicines': [
         {
           'id': 'm1',
-          'name': 'Insulin Glargine Injection (Lantus)',
+          'name': 'Bio-Col Tablets (Vitamin B12 + Folic Acid)',
           'description':
-              'Long-acting insulin used to control blood sugar levels.',
+          'Combination of Vitamin B12 (500mcg) and Folic Acid (400mcg) used for blood formation, energy boost, and prevention of anemia.',
           'imageUrl':
-              'https://images.unsplash.com/photo-1584017911766-d451b3d0e843?auto=format&fit=crop&w=800&q=80',
-          'companyUrl': _companyUrl,
-          'price': 3200.0,
-          'oldPrice': 3500.0,
-          'type': 'Injection',
-          'category': 'Diabetes',
-        },
-        {
-          'id': 'm2',
-          'name': 'Metformin 500mg Tablets',
-          'description': 'Used for type 2 diabetes management.',
-          'imageUrl':
-              'https://images.unsplash.com/photo-1584362917165-526a968579e8?auto=format&fit=crop&w=800&q=80',
+          'https://bio-labs.net/wp-content/uploads/2022/10/12-Bio-Col-Tabs.webp',
           'companyUrl': _companyUrl,
           'price': 450.0,
-          'oldPrice': 600.0,
-          'type': 'Tablet',
-          'category': 'Diabetes',
-        },
-        {
-          'id': 'm3',
-          'name': 'Insulin Injection Pen',
-          'description': 'Rapid acting insulin for sugar control.',
-          'imageUrl':
-              'https://images.unsplash.com/photo-1585435557343-3b092031a831?auto=format&fit=crop&w=800&q=80',
-          'companyUrl': _companyUrl,
-          'price': 2900.0,
-          'oldPrice': 3200.0,
-          'type': 'Injection',
-          'category': 'Diabetes',
-        },
-        {
-          'id': 'm4',
-          'name': 'Amlodipine 5mg Tablets',
-          'description': 'Used for high blood pressure.',
-          'imageUrl':
-              'https://images.unsplash.com/photo-1587854692152-cbe660dbde88?auto=format&fit=crop&w=800&q=80',
-          'companyUrl': _companyUrl,
-          'price': 300.0,
-          'oldPrice': 400.0,
-          'type': 'Tablet',
-          'category': 'Blood Pressure',
-        },
-        {
-          'id': 'm5',
-          'name': 'Losartan 50mg Tablets',
-          'description': 'Controls blood pressure and protects kidneys.',
-          'imageUrl':
-              'https://images.unsplash.com/photo-1587854692142-3b7d0b9c6f4c?auto=format&fit=crop&w=800&q=80',
-          'companyUrl': _companyUrl,
-          'price': 550.0,
-          'oldPrice': 700.0,
-          'type': 'Tablet',
-          'category': 'Blood Pressure',
-        },
-        {
-          'id': 'm6',
-          'name': 'Medical Injection Vial',
-          'description': 'Injection used in hospital treatment.',
-          'imageUrl':
-              'https://images.unsplash.com/photo-1611691542636-9b0c9b4d5c2f?auto=format&fit=crop&w=800&q=80',
-          'companyUrl': _companyUrl,
-          'price': 1200.0,
-          'oldPrice': 1500.0,
-          'type': 'Injection',
-          'category': 'Blood Pressure',
-        },
-        {
-          'id': 'm7',
-          'name': 'Glimepiride Tablets',
-          'description': 'Helps control blood sugar levels.',
-          'imageUrl':
-              'https://images.unsplash.com/photo-1587854692152-cbe660dbde88?auto=format&fit=crop&w=800&q=80',
-          'companyUrl': _companyUrl,
-          'price': 400.0,
           'oldPrice': 550.0,
           'type': 'Tablet',
+          'category': 'Nutraceutical',
+          'packSize': '30 Tablets',
+          'composition': 'Vitamin B12 500mcg + Folic Acid 400mcg',
+          'usage': '1-2 tablets daily after meal or as prescribed',
+        },
+
+        {
+          'id': 'm2',
+          'name': 'Bio-D3 Ampoule',
+          'description':
+          'Vitamin D3 injection used for bone health and deficiency treatment.',
+          'imageUrl':
+          'https://bio-labs.net/wp-content/uploads/2019/12/13-Bio-D3-Inj_.webp',
+          'companyUrl': _companyUrl,
+          'price': 900.0,
+          'oldPrice': 1100.0,
+          'type': 'Injection',
+          'category': 'Supplements',
+        },
+
+        {
+          'id': 'm3',
+          'name': 'BIORIS Tablets 2mg',
+          'description':
+          'Used for managing blood sugar levels in diabetes patients.',
+          'imageUrl':
+          'https://bio-labs.net/wp-content/uploads/2019/12/19-Bioris-2mg-Tabs-.webp',
+          'companyUrl': _companyUrl,
+          'price': 600.0,
+          'oldPrice': 750.0,
+          'type': 'Tablet',
           'category': 'Diabetes',
         },
+
         {
-          'id': 'm8',
-          'name': 'Enalapril Injection',
-          'description': 'Used for emergency blood pressure control.',
+          'id': 'm4',
+          'name': 'Nextone Injection (Ceftriaxone)',
+          'description':
+          'Broad-spectrum antibiotic injection used for severe infections.',
           'imageUrl':
-              'https://images.unsplash.com/photo-1584017911715-5b5f4f0c9f07?auto=format&fit=crop&w=800&q=80',
+          'https://bio-labs.net/wp-content/uploads/2024/01/75-72-74-mockup.webp',
           'companyUrl': _companyUrl,
-          'price': 1350.0,
-          'oldPrice': 1600.0,
+          'price': 1200.0,
+          'oldPrice': 1400.0,
           'type': 'Injection',
-          'category': 'Blood Pressure',
+          'category': 'Antibiotic',
+        },
+
+        {
+          'id': 'm5',
+          'name': 'O-ZEETINE Capsules 6/25MG',
+          'description':
+          'Used for gastric and acidity-related conditions.',
+          'imageUrl':
+          'https://bio-labs.net/wp-content/uploads/2024/01/75-72-74-mockup.webp',
+          'companyUrl': _companyUrl,
+          'price': 800.0,
+          'oldPrice': 950.0,
+          'type': 'Capsule',
+          'category': 'Gastro',
+        },
+
+        {
+          'id': 'm6',
+          'name': 'Vemtix Injection',
+          'description':
+          'Used in treatment of nausea, vomiting, and chemotherapy side effects.',
+          'imageUrl':
+          'https://bio-labs.net/wp-content/uploads/2024/11/Vemtix-8mg-Inj.png',
+          'companyUrl': _companyUrl,
+          'price': 1500.0,
+          'oldPrice': 1800.0,
+          'type': 'Injection',
+          'category': 'General',
         },
       ],
     };
@@ -121,14 +110,15 @@ class PharmacyMockApi {
       'message': 'Cart fetched successfully',
       'cart': [
         {
+
           'id': 'm2',
-          'name': 'Metformin 500mg Tablets',
-          'description': 'Used for type 2 diabetes management.',
+          'name': 'Bio-D3 Ampoule',
+          'description': 'Vitamin D3 injection used for bone health and deficiency treatment.',
           'imageUrl':
-              'https://images.unsplash.com/photo-1584362917165-526a968579e8?auto=format&fit=crop&w=800&q=80',
+              'https://bio-labs.net/wp-content/uploads/2019/12/13-Bio-D3-Inj_.webp',
           'companyUrl': _companyUrl,
-          'price': 450.0,
-          'oldPrice': 600.0,
+          'price': 900.0,
+          'oldPrice': 1100.0,
           'quantity': 1,
         },
       ],
