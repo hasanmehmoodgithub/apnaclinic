@@ -1,3 +1,4 @@
+import 'package:apnaclinic/features/pharmacy/presentation/screens/pharmacy_main_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -14,6 +15,7 @@ import '../../features/lab_test/presentation/screens/lab_test_screen.dart';
 import '../../features/notification/presentation/cubit/notification_cubit.dart';
 import '../../features/notification/presentation/screens/notifcation_screen.dart';
 import '../../features/pharmacy/presentation/cubit/pharmacy_cubit.dart';
+import '../../features/pharmacy/domain/entities/pharmacy_medicine_entity.dart';
 import '../../features/pharmacy/presentation/screens/pharmacy_screen.dart';
 import '../../features/search/presentation/cubit/search_cubit.dart';
 import '../../features/search/presentation/screens/search_screen.dart';
@@ -110,9 +112,32 @@ class AppRouter {
       GoRoute(
         path: AppRoutes.path(AppRoutes.pharmacy),
         name: AppRoutes.pharmacy,
+        builder: (context, state) {
+          final extra = state.extra;
+          final data = extra is Map ? Map<String, dynamic>.from(extra) : null;
+          final selectedMedicine =
+              data?['selectedMedicine'] as PharmacyMedicineEntity?;
+          final existingCubit = data?['pharmacyCubit'];
+
+          if (existingCubit is PharmacyCubit) {
+            return BlocProvider.value(
+              value: existingCubit,
+              child: PharmacyScreen(initialFeaturedMedicine: selectedMedicine),
+            );
+          }
+
+          return BlocProvider<PharmacyCubit>(
+            create: (_) => sl<PharmacyCubit>(),
+            child: PharmacyScreen(initialFeaturedMedicine: selectedMedicine),
+          );
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.path(AppRoutes.pharmacyMain),
+        name: AppRoutes.pharmacyMain,
         builder: (context, state) => BlocProvider<PharmacyCubit>(
           create: (_) => sl<PharmacyCubit>(),
-          child: const PharmacyScreen(),
+          child: const PharmacyMainScreen(),
         ),
       ),
       GoRoute(

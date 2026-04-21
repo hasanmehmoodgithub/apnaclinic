@@ -63,6 +63,12 @@ class AppUrls {
   /// Pharmacy medicines endpoint
   static String get pharmacyMedicines => '$baseUrl/pharmacy/medicines';
 
+  /// Pharmacy cart endpoint
+  static String get pharmacyCart => '$baseUrl/pharmacy/cart';
+
+  /// Pharmacy add-to-cart endpoint
+  static String get pharmacyAddToCart => '$baseUrl/pharmacy/cart/add';
+
   /// Search endpoint
   static String get search => '$baseUrl/search';
 

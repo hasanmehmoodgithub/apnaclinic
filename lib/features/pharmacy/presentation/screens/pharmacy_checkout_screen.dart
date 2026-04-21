@@ -79,7 +79,7 @@ class _PharmacyCheckoutScreenState extends State<PharmacyCheckoutScreen> {
                 child: Container(
                   width: double.infinity,
                   decoration: BoxDecoration(
-                    color: const Color(0xFFF3F3F3),
+                    color: Colors.white,
                     borderRadius: BorderRadius.vertical(top: Radius.circular(42.r)),
                   ),
                   child: Stack(

@@ -1,0 +1,211 @@
+import 'dart:convert';
+
+import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+
+import '../../../../core/extensions/screen_util_extensions.dart';
+import '../../../../generated/assets.dart';
+import '../../domain/entities/pharmacy_medicine_entity.dart';
+import 'pharmacy_medicine_card.dart';
+
+class PharmacyMedicineContentSection extends StatelessWidget {
+  const PharmacyMedicineContentSection({
+    super.key,
+    required this.medicines,
+    required this.featuredMedicine,
+    required this.onAddToCart,
+    required this.onMedicineTap,
+  });
+
+  final List<PharmacyMedicineEntity> medicines;
+  final PharmacyMedicineEntity featuredMedicine;
+  final ValueChanged<PharmacyMedicineEntity> onAddToCart;
+  final ValueChanged<PharmacyMedicineEntity> onMedicineTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final featured = featuredMedicine;
+    return ListView(
+      padding: EdgeInsets.fromLTRB(18.w, 16.h, 18.w, 24.h),
+      children: [
+        _selectedPharmacyCard(context, featured),
+
+        Divider(height: 30.h, color: const Color(0xFFD8D8D8)),
+        Text(
+          'More Like',
+          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                color: const Color(0xFF061E40),
+                fontWeight: FontWeight.w500,
+                fontSize: 22.sp / 1.6,
+              ),
+        ),
+        SizedBox(height: 10.h),
+        GridView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: medicines.length,
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            mainAxisSpacing: 16.h,
+            crossAxisSpacing: 6.w,
+            childAspectRatio: 0.76,
+          ),
+          itemBuilder: (context, index) {
+            final item = medicines[index];
+            return PharmacyMedicineCard(
+              medicine: item,
+              onTap: () => onMedicineTap(item),
+              onAddToCart: () => onAddToCart(item),
+            );
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget _selectedPharmacyCard(
+    BuildContext context,
+    PharmacyMedicineEntity featured,
+  ) {
+    return Column(children: [
+      Container(
+        height: 260.h,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(26.r),
+          color: const Color(0xFFE6EDF1),
+        ),
+        clipBehavior: Clip.antiAlias,
+        child: Image.network(
+          featured.imageUrl,
+          width: double.infinity,
+          fit: BoxFit.cover,
+          loadingBuilder: (context, child, loadingProgress) {
+            if (loadingProgress == null) {
+              return child;
+            }
+            return const Center(child: CircularProgressIndicator(strokeWidth: 2));
+          },
+          errorBuilder: (context, error, stackTrace) {
+            return Container(
+              color: const Color(0xFFE9EEF3),
+              alignment: Alignment.center,
+              child: const Icon(
+                Icons.medication_rounded,
+                size: 52,
+                color: Color(0xFF8091A8),
+              ),
+            );
+          },
+        ),
+      ),
+      SizedBox(height: 16.h),
+      Row(
+        children: [
+          Expanded(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                _CompanyLogo(companyUrl: featured.companyUrl),
+                SizedBox(width: 9.w),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+
+                      SizedBox(height: 4.h),
+                      Text(
+                        featured.name,
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          color: const Color(0xFF061E40),
+                          fontWeight: FontWeight.w700,
+                          fontSize:12.sp,
+                        ),
+                      ),
+                      Align(
+                        alignment: Alignment.topLeft,
+                        child: Text(
+                          'Rs ${featured.price.toStringAsFixed(0)} /-',
+                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                            color: const Color(0xFF4D5A70),
+                            fontSize: 13.sp,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          OutlinedButton.icon(
+            onPressed: () => onAddToCart(featured),
+            icon: SvgPicture.asset(
+              Assets.iconsBasket,
+              width: 15.r,
+              height: 15.r,
+              color: const Color(0xFF667B99),
+            ),
+            label: const Text('Add to cart'),
+            style: OutlinedButton.styleFrom(
+              side: const BorderSide(color: Color(0xFF9BA6A7), width: 0.8),
+              foregroundColor: const Color(0xFF061E40),
+              minimumSize: Size(0, 20.r),
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              visualDensity: VisualDensity.compact,
+              padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 12.h),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(36.r),
+              ),
+            ),
+          ),
+        ],
+      ),
+
+      SizedBox(height: 8.h),
+      Text(
+        featured.description,
+        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+          color: const Color(0xFF4A4A4A),
+          height: 1.2,
+          fontSize: 14.sp,
+        ),
+      ),
+    ]);
+  }
+}
+
+class _CompanyLogo extends StatelessWidget {
+  const _CompanyLogo({required this.companyUrl});
+
+  final String companyUrl;
+
+  @override
+  Widget build(BuildContext context) {
+    if (companyUrl.isEmpty || !companyUrl.startsWith('data:image')) {
+      return const SizedBox.shrink();
+    }
+
+    final commaIndex = companyUrl.indexOf(',');
+    if (commaIndex == -1 || commaIndex + 1 >= companyUrl.length) {
+      return const SizedBox.shrink();
+    }
+
+    try {
+      final bytes = base64Decode(companyUrl.substring(commaIndex + 1));
+      return Container(
+        width: 28,
+        height: 28,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(8),
+        ),
+        clipBehavior: Clip.antiAlias,
+        child: Image.memory(bytes, fit: BoxFit.contain),
+      );
+    } catch (_) {
+      return const SizedBox.shrink();
+    }
+  }
+}

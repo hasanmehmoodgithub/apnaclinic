@@ -48,7 +48,7 @@ class PharmacyCartScreen extends StatelessWidget {
                 child: Container(
                   width: double.infinity,
                   decoration: BoxDecoration(
-                    color: const Color(0xFFF3F3F3),
+                    color: Colors.white,
                     borderRadius: BorderRadius.vertical(top: Radius.circular(42.r)),
                   ),
                   child: Stack(
@@ -83,10 +83,12 @@ class PharmacyCartScreen extends StatelessWidget {
                             onPressed: state.cartItems.isEmpty
                                 ? null
                                 : () {
-                                    Navigator.of(context).push(
+                                    final navigator = Navigator.of(context);
+                                    final pharmacyCubit = context.read<PharmacyCubit>();
+                                    navigator.push(
                                       MaterialPageRoute<void>(
                                         builder: (_) => BlocProvider.value(
-                                          value: context.read<PharmacyCubit>(),
+                                          value: pharmacyCubit,
                                           child: const PharmacyCheckoutScreen(),
                                         ),
                                       ),

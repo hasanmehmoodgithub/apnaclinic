@@ -50,6 +50,7 @@ class Assets {
   static const String imgFikrfreeLogo = 'assets/img/fikrfree_logo.png';
   static const String imgHeroFamily = 'assets/img/hero_family.webp';
   static const String imgPartner = 'assets/img/partner.png';
+  static const String imgPharmacyBanner = 'assets/img/pharmacyBanner.webp';
   static const String imgPlaceHolderPerson = 'assets/img/placeHolderPerson.webp';
   static const String imgProfileAvatar = 'assets/img/profile_avatar.png';
   static const String imgSplash = 'assets/img/splash.png';
