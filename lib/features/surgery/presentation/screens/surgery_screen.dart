@@ -9,6 +9,7 @@ import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/widgets/app_scaffold_gradient.dart';
 import '../cubit/surgery_cubit.dart';
 import '../cubit/surgery_state.dart';
+import '../widgets/city_bottom_sheet.dart';
 import 'surgery_booking_screen.dart';
 
 class SurgeryScreen extends StatelessWidget {
@@ -181,17 +182,7 @@ class _SurgeryContentViewState extends State<_SurgeryContentView> {
   }
 
   Future<void> _showCityBottomSheet(BuildContext context, SurgeryState state) {
-    return showModalBottomSheet<void>(
-      context: context,
-      backgroundColor: Colors.white,
-      isScrollControlled: true,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(8.r)),
-      ),
-      builder: (sheetContext) {
-        return _CityBottomSheet(state: state);
-      },
-    );
+    return showCityPickerSheet(context);
   }
 
   void _openSurgeryBooking(
@@ -294,7 +285,7 @@ class _LocationRow extends StatelessWidget {
     final theme = Theme.of(context);
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 14.h),
+      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 12.h),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(5.32.r),
@@ -313,7 +304,7 @@ class _LocationRow extends StatelessWidget {
                     fontSize: 10.sp,
                   ),
                 ),
-                SizedBox(height: 4.h),
+                SizedBox(height: 2.h),
                 Text(
                   city,
                   style: theme.textTheme.titleSmall?.copyWith(
@@ -637,166 +628,4 @@ class _SurgeryShimmerView extends StatelessWidget {
   }
 }
 
-class _CityBottomSheet extends StatefulWidget {
-  const _CityBottomSheet({required this.state});
 
-  final SurgeryState state;
-
-  @override
-  State<_CityBottomSheet> createState() => _CityBottomSheetState();
-}
-
-class _CityBottomSheetState extends State<_CityBottomSheet> {
-  late String selectedCity;
-  String query = '';
-
-  @override
-  void initState() {
-    super.initState();
-    selectedCity = widget.state.selectedCity;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final cities = widget.state.content.cities
-        .where((city) => city.toLowerCase().contains(query.toLowerCase()))
-        .toList();
-
-    return SafeArea(
-      top: false,
-      child: Padding(
-        padding: EdgeInsets.fromLTRB(24.w, 10.h, 24.w, 18.h),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Center(
-              child: Container(
-                width: 40.w,
-                height: 4.h,
-                decoration: BoxDecoration(
-                  color: const Color(0xFFCACACA),
-                  borderRadius: BorderRadius.circular(100.r),
-                ),
-              ),
-            ),
-            SizedBox(height: 16.h),
-            Text(
-              'Select a city',
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                color: const Color(0xFF061E40),
-                fontWeight: FontWeight.w500,
-                fontSize: 28.sp / 2,
-              ),
-            ),
-            SizedBox(height: 14.h),
-            Container(
-              height: 44.7.h,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(4.r),
-                border: Border.all(color: const Color(0xFFD5D5D5), width: 0.8),
-              ),
-              child: TextField(
-                onChanged: (value) => setState(() => query = value),
-                decoration: InputDecoration(
-                  border: InputBorder.none,
-                  hintText: 'Search by name',
-                  hintStyle: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: const Color(0xFF7F96B0),
-                  ),
-                  contentPadding: EdgeInsets.symmetric(
-                    horizontal: 12.w,
-                    vertical: 14.h,
-                  ),
-                  suffixIcon: Icon(
-                    Icons.search_rounded,
-                    color: const Color(0xFF7F96B0),
-                    size: 18.r,
-                  ),
-                ),
-              ),
-            ),
-            SizedBox(height: 8.h),
-            ConstrainedBox(
-              constraints: BoxConstraints(maxHeight: 230.h),
-              child: ListView.separated(
-                shrinkWrap: true,
-                itemCount: cities.length,
-                separatorBuilder: (_, index) =>
-                    Divider(height: 1, color: const Color(0xFFDCDCDC)),
-                itemBuilder: (context, index) {
-                  final city = cities[index];
-                  final selected = city == selectedCity;
-                  return InkWell(
-                    onTap: () => setState(() => selectedCity = city),
-                    child: Container(
-                      color: selected
-                          ? const Color(0xFFF1F1F1)
-                          : Colors.transparent,
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 10.w,
-                        vertical: 13.h,
-                      ),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Text(
-                              city,
-                              style: Theme.of(context).textTheme.bodyMedium
-                                  ?.copyWith(color: const Color(0xFF5D758F)),
-                            ),
-                          ),
-                          Container(
-                            width: 14.r,
-                            height: 14.r,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              border: Border.all(
-                                color: const Color(0xFF7F96B0),
-                                width: 1,
-                              ),
-                            ),
-                            child: selected
-                                ? Center(
-                                    child: Container(
-                                      width: 6.r,
-                                      height: 6.r,
-                                      decoration: const BoxDecoration(
-                                        color: Color(0xFF061E40),
-                                        shape: BoxShape.circle,
-                                      ),
-                                    ),
-                                  )
-                                : null,
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ),
-            SizedBox(height: 14.h),
-            SizedBox(
-              width: double.infinity,
-              child: FilledButton(
-                onPressed: () {
-                  context.read<SurgeryCubit>().changeCity(selectedCity);
-                  Navigator.of(context).pop();
-                },
-                style: FilledButton.styleFrom(
-                  backgroundColor: const Color(0xFF0FAFA0),
-                  minimumSize: Size.fromHeight(57.h),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12.r),
-                  ),
-                ),
-                child: const Text('Proceed'),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
