@@ -143,8 +143,8 @@ class _LabTestCheckoutScreenState extends State<LabTestCheckoutScreen> {
                     children: [
                       LabTestFigmaImage(
                         url: LabTestFigmaAssets.successCheckmark,
-                        width: 140,
-                        height: 140,
+                        width: 60,
+                        height: 60,
                       ),
                       const SizedBox(height: 6),
                       Text(

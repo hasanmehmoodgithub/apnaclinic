@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../components/shimmer/app_shimmer.dart';
 import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/enums/state_status.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
@@ -342,7 +343,7 @@ class _LabTestScreenState extends State<LabTestScreen> {
   Widget _testsSection(LabTestState state) {
     if (state.catalogLoadingStateStatus == StateStatus.loading ||
         state.catalogLoadingStateStatus == StateStatus.refreshing) {
-      return const Center(child: CircularProgressIndicator(strokeWidth: 2));
+      return const _LabTestBrowseShimmerView();
     }
 
     if (state.catalogLoadingStateStatus == StateStatus.error) {
@@ -372,6 +373,25 @@ class _LabTestScreenState extends State<LabTestScreen> {
           onTap: () => _onTestTap(item, state),
         );
       },
+    );
+  }
+}
+
+class _LabTestBrowseShimmerView extends StatelessWidget {
+  const _LabTestBrowseShimmerView();
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView(
+      padding: EdgeInsets.zero,
+      children: [
+        SizedBox(height: 10.h),
+        AppShimmerCard(height: 126.h, borderRadius: 14.r),
+        SizedBox(height: 14.h),
+        AppShimmerCard(height: 126.h, borderRadius: 14.r),
+        SizedBox(height: 14.h),
+        AppShimmerCard(height: 126.h, borderRadius: 14.r),
+      ],
     );
   }
 }
