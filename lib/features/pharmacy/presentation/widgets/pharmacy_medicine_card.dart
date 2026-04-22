@@ -1,8 +1,10 @@
 import 'dart:convert';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
+import '../../../../components/shimmer/app_shimmer.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../generated/assets.dart';
 import '../../domain/entities/pharmacy_medicine_entity.dart';
@@ -27,17 +29,6 @@ class PharmacyMedicineCard extends StatelessWidget {
       borderRadius: BorderRadius.circular(18.r),
       child: Container(
         padding: EdgeInsets.only(bottom: 6.h),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(18.r),
-          boxShadow: [
-            BoxShadow(
-              color: const Color(0xFF00153A).withValues(alpha: 0.06),
-              blurRadius: 12,
-              offset: const Offset(0, 6),
-            ),
-          ],
-        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -48,19 +39,16 @@ class PharmacyMedicineCard extends StatelessWidget {
                   child: SizedBox(
                     height: 132.h,
                     width: double.infinity,
-                    child: Image.network(
-                      medicine.imageUrl,
+                    child: CachedNetworkImage(
+                      imageUrl: medicine.imageUrl,
                       fit: BoxFit.fill,
-                      loadingBuilder: (context, child, loadingProgress) {
-                        if (loadingProgress == null) {
-                          return child;
-                        }
-                        return const ColoredBox(
-                          color: Color(0xFFF0F4F8),
-                          child: Center(child: CircularProgressIndicator(strokeWidth: 2)),
-                        );
-                      },
-                      errorBuilder: (context, error, stackTrace) {
+                      placeholder: (context, url) => AppShimmer(
+                        width: double.infinity,
+                        height: 132.h,
+                        borderRadius: 18.r,
+                        shape: ShimmerShape.roundedRectangle,
+                      ),
+                      errorWidget: (context, url, error) {
                         return const ColoredBox(
                           color: Color(0xFFF0F4F8),
                           child: Center(
@@ -72,23 +60,20 @@ class PharmacyMedicineCard extends StatelessWidget {
                   ),
                 ),
                 Positioned(
-                  right: 4.w,
-                  top: 4.h,
-                  child: Material(
-                    color: Colors.transparent,
-                    child: IconButton(
-                      onPressed: onAddToCart,
-                      icon: SvgPicture.asset(
-                        Assets.iconsBasket,
-                        color: const Color(0xFF667B99),
-                      ),
-                      style: IconButton.styleFrom(
-                        backgroundColor: Colors.white,
-                        side: const BorderSide(color: Color(0xFF9BA6A7), width: 0.8),
-                        minimumSize: Size(34.r, 34.r),
-                        maximumSize: Size(34.r, 34.r),
-                        padding: const EdgeInsets.all(8),
-                      ),
+                  right: 0,
+                  top: 0,
+                  child: IconButton(
+                    onPressed: onAddToCart,
+                    icon: SvgPicture.asset(
+                      Assets.iconsBasket,
+                      color: const Color(0xFF061E40),
+                    ),
+                    style: IconButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      side: const BorderSide(color: Color(0xFF9BA6A7), width: 0.8),
+                      minimumSize: Size(32.r, 32.r),
+                      maximumSize: Size(32.r, 32.r),
+                      padding:  EdgeInsets.all(8.r),
                     ),
                   ),
                 ),

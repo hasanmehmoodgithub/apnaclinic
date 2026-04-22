@@ -4,6 +4,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/widgets/app_scaffold_gradient.dart';
 import '../cubit/surgery_cubit.dart';
+import '../cubit/surgery_state.dart';
+import '../widgets/city_bottom_sheet.dart';
 import 'surgery_patient_details_screen.dart';
 
 class SurgeryBookingScreen extends StatefulWidget {
@@ -136,9 +138,15 @@ class _SurgeryBookingScreenState extends State<SurgeryBookingScreen> {
                     ),
                   ),
                   SizedBox(height: 12.h),
-                  _LocationRow(
-                    city: _selectedCity,
-                    onChangeTap: _showCityBottomSheet,
+                  BlocBuilder<SurgeryCubit, SurgeryState>(
+                    buildWhen: (prev, curr) =>
+                    prev.selectedCity != curr.selectedCity,
+                    builder: (context, state) {
+                      return _LocationRow(
+                        city: state.selectedCity,
+                        onChangeTap: () => showCityPickerSheet(context),
+                      );
+                    },
                   ),
                   SizedBox(height: 12.h),
                   Text(
@@ -205,64 +213,22 @@ class _SurgeryBookingScreenState extends State<SurgeryBookingScreen> {
     return specialtyFiltered.toList();
   }
 
-  Future<void> _showCityBottomSheet() async {
-    final selected = await showModalBottomSheet<String>(
-      context: context,
-      backgroundColor: Colors.white,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(14.r)),
-      ),
-      builder: (context) {
-        return SafeArea(
-          top: false,
-          child: Padding(
-            padding: EdgeInsets.fromLTRB(24.w, 12.h, 24.w, 18.h),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Center(
-                  child: Container(
-                    width: 40.w,
-                    height: 4.h,
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFCACACA),
-                      borderRadius: BorderRadius.circular(100.r),
-                    ),
-                  ),
-                ),
-                SizedBox(height: 14.h),
-                Text(
-                  'Select a city',
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    color: const Color(0xFF061E40),
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                SizedBox(height: 10.h),
-                ...widget.cities.map(
-                  (city) => ListTile(
-                    contentPadding: EdgeInsets.zero,
-                    title: Text(city),
-                    trailing: Icon(
-                      city == _selectedCity
-                          ? Icons.radio_button_checked_rounded
-                          : Icons.radio_button_off_rounded,
-                      color: const Color(0xFF5D758F),
-                    ),
-                    onTap: () => Navigator.of(context).pop(city),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
+  // Future<void> _showCityBottomSheet() async {
+  //   final selected = await showModalBottomSheet<String>(
+  //     context: context,
+  //     backgroundColor: Colors.white,
+  //     shape: RoundedRectangleBorder(
+  //       borderRadius: BorderRadius.vertical(top: Radius.circular(14.r)),
+  //     ),
+  //     builder: (_) => BlocProvider.value(
+  //       value: context.read<SurgeryCubit>(), // pass the existing cubit
+  //       child: CityBottomSheet(state: context.read<SurgeryCubit>().state),
+  //     ),
+  //   );
 
-    if (!mounted || selected == null) return;
-    setState(() => _selectedCity = selected);
-  }
+  //   if (!mounted || selected == null) return;
+  //   setState(() => _selectedCity = selected);
+  // }
 
   void _openPatientDetails(_SurgeryDoctorCardData card) {
     final surgeryCubit = context.read<SurgeryCubit>();

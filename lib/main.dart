@@ -13,6 +13,7 @@ void main() {
   // Run app in a zone with error handling
   runZonedGuarded(
     () async {
+
       // Guard: Ensure Flutter binding is initialized first
       WidgetsFlutterBinding.ensureInitialized();
       AppSystemUi.apply();

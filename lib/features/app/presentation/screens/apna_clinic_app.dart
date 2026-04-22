@@ -9,6 +9,7 @@ import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/router/app_router.dart';
 import '../../../customer_support/presentation/cubit/customer_support_cubit.dart';
 import '../../../free_doctor/presentation/cubit/free_doctor_cubit.dart';
+import '../../../pharmacy/presentation/cubit/pharmacy_cubit.dart';
 import '../../../profile_setup/presentation/cubit/profile_setup_cubit.dart';
 import '../cubit/app_cubit.dart';
 
@@ -45,6 +46,7 @@ class _ApnaClinicAppState extends State<ApnaClinicApp> {
         BlocProvider(create: (context) => sl<FreeDoctorCubit>()),
         BlocProvider(create: (context) => sl<CustomerSupportCubit>()),
         BlocProvider(create: (context) => sl<ProfileSetupCubit>()),
+        BlocProvider(create: (context) => sl<PharmacyCubit>()),
       ],
       child: _buildMaterialApp(),
     );
@@ -54,7 +56,7 @@ class _ApnaClinicAppState extends State<ApnaClinicApp> {
     return MaterialApp.router(
       key: _navigatorKey,
       title: FlavorConfig.appName,
-      debugShowCheckedModeBanner: FlavorConfig.enableDebugFeatures,
+      debugShowCheckedModeBanner: false,
       routerConfig: AppRouter.router,
       builder: (context, child) {
         ScreenUtilX.init(

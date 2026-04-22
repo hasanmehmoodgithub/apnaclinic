@@ -1,8 +1,9 @@
+import 'package:apnaclinic/core/extensions/context_extensions.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../generated/assets.dart';
+import 'pharmacy_cart_icon_with_count.dart';
 
 class PharmacyMainTopHeader extends StatelessWidget {
   const PharmacyMainTopHeader({
@@ -52,62 +53,22 @@ class PharmacyMainTopHeader extends StatelessWidget {
                       ),
                     ),
                   ),
-                  Stack(
-                    clipBehavior: Clip.none,
-                    children: [
-                      IconButton.filledTonal(
-                        onPressed: onCartTap,
-                        icon: SvgPicture.asset(
-                          Assets.iconsBasket,
-                          width: 16.r,
-                          height: 16.r,
-                          color: const Color(0xFF667B99),
-                        ),
-                        style: IconButton.styleFrom(
-                          backgroundColor: Colors.white,
-                          foregroundColor: const Color(0xFF667B99),
-                        ),
-                      ),
-                      if (cartCount > 0)
-                        Positioned(
-                          right: 2,
-                          top: 2,
-                          child: Container(
-                            padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 1.h),
-                            decoration: BoxDecoration(
-                              color: const Color(0xFF0FAA9A),
-                              borderRadius: BorderRadius.circular(10.r),
-                            ),
-                            child: Text(
-                              '$cartCount',
-                              style: theme.textTheme.labelSmall?.copyWith(
-                                color: Colors.white,
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
-                          ),
-                        ),
-                    ],
+                  PharmacyCartIconWithCount(
+                    cartCount: cartCount,
+                    onTap: onCartTap,
+                    iconContainerSize:35.r,
+                    badgeRightOffset: 2,
+                    badgeTopOffset: 2,
                   ),
-                  SizedBox(width: 6.w),
+                  SizedBox(width:8.w),
                 ],
               ),
             ),
             Expanded(
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 120.w),
-                child: ClipRect(
-                  child: Align(
-                    alignment: const Alignment(0, 0.3),
-                    heightFactor: 0.82,
-                    child: Image.asset(
-                      Assets.imgPharmacyBanner,
-                      fit: BoxFit.fitWidth,
-                      width: double.infinity,
-                      alignment: Alignment.topCenter,
-                    ),
-                  ),
-                ),
+              child: Image.asset(
+                Assets.imgPharmacyBanner,
+                fit: BoxFit.fitWidth,
+                width:context.screenWidth/2.2,
               ),
             ),
           ],
