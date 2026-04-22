@@ -318,7 +318,7 @@ class _CartPricePill extends StatelessWidget {
             ),
           ),
           Transform.translate(
-            offset: const Offset(-6, 0),
+            offset: const Offset(0, 0),
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
               decoration: BoxDecoration(
@@ -329,7 +329,7 @@ class _CartPricePill extends StatelessWidget {
                 discountedFee,
                 style: theme.textTheme.bodyMedium?.copyWith(
                   color: Colors.white,
-                  fontSize: 14.sp,
+                  fontSize: 12.sp,
                   fontWeight: FontWeight.w500,
                 ),
               ),

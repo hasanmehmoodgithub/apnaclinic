@@ -338,17 +338,17 @@ class _LabTestScreenState extends State<LabTestScreen> {
                           ),
                         ),
                         Expanded(child: _testsSection(state)),
-                        Center(
-                          child: Container(
-                            width: 135,
-                            height: 5,
-                            margin: const EdgeInsets.only(top: 8),
-                            decoration: BoxDecoration(
-                              color: const Color(0xFFB9C0C9),
-                              borderRadius: BorderRadius.circular(100),
-                            ),
-                          ),
-                        ),
+                        // Center(
+                        //   child: Container(
+                        //     width: 130,
+                        //     height: 5,
+                        //     margin: const EdgeInsets.only(top: 8),
+                        //     decoration: BoxDecoration(
+                        //       color: const Color(0xFFB9C0C9),
+                        //       borderRadius: BorderRadius.circular(100),
+                        //     ),
+                        //   ),
+                        // ),
                       ],
                     ),
                   ),
@@ -558,7 +558,12 @@ class _LabTestBrowseCard extends StatelessWidget {
               ),
               Container(
                 width: double.infinity,
-                color: Colors.white,
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.vertical(
+                    bottom: Radius.circular(14), // 👈 important
+                  ),
+                ),
                 padding: const EdgeInsets.fromLTRB(14, 13, 14, 13),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -705,7 +710,7 @@ class _PricePill extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Padding(
-            padding: const EdgeInsets.fromLTRB(16, 8, 14, 8),
+            padding: const EdgeInsets.fromLTRB(14, 8, 14, 8),
             child: Text(
               originalFee!,
               style: theme.textTheme.bodySmall?.copyWith(
@@ -718,7 +723,7 @@ class _PricePill extends StatelessWidget {
             ),
           ),
           Transform.translate(
-            offset: const Offset(-8, 0),
+            offset: const Offset(0, 0),
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               decoration: BoxDecoration(
@@ -729,7 +734,7 @@ class _PricePill extends StatelessWidget {
                 discountedFee,
                 style: theme.textTheme.bodyMedium?.copyWith(
                   color: Colors.white,
-                  fontSize: 14.sp,
+                  fontSize: 12.sp,
                   fontWeight: FontWeight.w500,
                 ),
               ),
