@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
 
 import '../../../../components/shimmer/app_shimmer.dart';
 import '../../../../core/constants/app_strings.dart';
@@ -452,13 +453,17 @@ class _ProcedureTile extends StatelessWidget {
           ),
           child: Stack(
             children: [
-              Positioned.fill(
+              Positioned(
+                top: 0,
+                right: 0,
                 child: IgnorePointer(
                   child: Opacity(
-                    opacity: 0.55,
-                    child: index.isEven
-                        ? const _CardPatternD1()
-                        : const _CardPatternD2(),
+                    opacity: 0.9,
+                    child: SizedBox(// how far the pattern extends down
+                      child: index.isEven
+                          ? const _CardPatternD2()
+                          : const _CardPatternD1(),
+                    ),
                   ),
                 ),
               ),
@@ -549,11 +554,9 @@ class _CardPatternD1 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CustomPaint(
-      painter: _LinesPatternPainter(
-        color: const Color(0xFFF3F3F3),
-        reverse: false,
-      ),
+    return SvgPicture.asset(
+      'assets/icons/d1.svg',
+      fit: BoxFit.contain,
     );
   }
 }
@@ -563,11 +566,9 @@ class _CardPatternD2 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CustomPaint(
-      painter: _LinesPatternPainter(
-        color: const Color(0xFFEDEDED),
-        reverse: true,
-      ),
+    return SvgPicture.asset(
+      'assets/icons/d2.svg',
+      fit: BoxFit.contain,
     );
   }
 }
