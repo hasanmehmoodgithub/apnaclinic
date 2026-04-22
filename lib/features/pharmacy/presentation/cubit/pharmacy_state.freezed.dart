@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$PharmacyState {
 
- StateStatus get medicinesLoadingStateStatus; List<PharmacyMedicineEntity> get medicines; String? get medicinesErrorMessage; List<PharmacyCartItemEntity> get cartItems; PharmacyPaymentMethod get selectedPaymentMethod;
+ StateStatus get medicinesLoadingStateStatus; List<PharmacyMedicineEntity> get medicines; String? get medicinesErrorMessage; String get searchQuery; String get selectedCity; List<PharmacyCartItemEntity> get cartItems; PharmacyPaymentMethod get selectedPaymentMethod;
 /// Create a copy of PharmacyState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +25,16 @@ $PharmacyStateCopyWith<PharmacyState> get copyWith => _$PharmacyStateCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is PharmacyState&&(identical(other.medicinesLoadingStateStatus, medicinesLoadingStateStatus) || other.medicinesLoadingStateStatus == medicinesLoadingStateStatus)&&const DeepCollectionEquality().equals(other.medicines, medicines)&&(identical(other.medicinesErrorMessage, medicinesErrorMessage) || other.medicinesErrorMessage == medicinesErrorMessage)&&const DeepCollectionEquality().equals(other.cartItems, cartItems)&&(identical(other.selectedPaymentMethod, selectedPaymentMethod) || other.selectedPaymentMethod == selectedPaymentMethod));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is PharmacyState&&(identical(other.medicinesLoadingStateStatus, medicinesLoadingStateStatus) || other.medicinesLoadingStateStatus == medicinesLoadingStateStatus)&&const DeepCollectionEquality().equals(other.medicines, medicines)&&(identical(other.medicinesErrorMessage, medicinesErrorMessage) || other.medicinesErrorMessage == medicinesErrorMessage)&&(identical(other.searchQuery, searchQuery) || other.searchQuery == searchQuery)&&(identical(other.selectedCity, selectedCity) || other.selectedCity == selectedCity)&&const DeepCollectionEquality().equals(other.cartItems, cartItems)&&(identical(other.selectedPaymentMethod, selectedPaymentMethod) || other.selectedPaymentMethod == selectedPaymentMethod));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,medicinesLoadingStateStatus,const DeepCollectionEquality().hash(medicines),medicinesErrorMessage,const DeepCollectionEquality().hash(cartItems),selectedPaymentMethod);
+int get hashCode => Object.hash(runtimeType,medicinesLoadingStateStatus,const DeepCollectionEquality().hash(medicines),medicinesErrorMessage,searchQuery,selectedCity,const DeepCollectionEquality().hash(cartItems),selectedPaymentMethod);
 
 @override
 String toString() {
-  return 'PharmacyState(medicinesLoadingStateStatus: $medicinesLoadingStateStatus, medicines: $medicines, medicinesErrorMessage: $medicinesErrorMessage, cartItems: $cartItems, selectedPaymentMethod: $selectedPaymentMethod)';
+  return 'PharmacyState(medicinesLoadingStateStatus: $medicinesLoadingStateStatus, medicines: $medicines, medicinesErrorMessage: $medicinesErrorMessage, searchQuery: $searchQuery, selectedCity: $selectedCity, cartItems: $cartItems, selectedPaymentMethod: $selectedPaymentMethod)';
 }
 
 
@@ -45,7 +45,7 @@ abstract mixin class $PharmacyStateCopyWith<$Res>  {
   factory $PharmacyStateCopyWith(PharmacyState value, $Res Function(PharmacyState) _then) = _$PharmacyStateCopyWithImpl;
 @useResult
 $Res call({
- StateStatus medicinesLoadingStateStatus, List<PharmacyMedicineEntity> medicines, String? medicinesErrorMessage, List<PharmacyCartItemEntity> cartItems, PharmacyPaymentMethod selectedPaymentMethod
+ StateStatus medicinesLoadingStateStatus, List<PharmacyMedicineEntity> medicines, String? medicinesErrorMessage, String searchQuery, String selectedCity, List<PharmacyCartItemEntity> cartItems, PharmacyPaymentMethod selectedPaymentMethod
 });
 
 
@@ -62,12 +62,14 @@ class _$PharmacyStateCopyWithImpl<$Res>
 
 /// Create a copy of PharmacyState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? medicinesLoadingStateStatus = null,Object? medicines = null,Object? medicinesErrorMessage = freezed,Object? cartItems = null,Object? selectedPaymentMethod = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? medicinesLoadingStateStatus = null,Object? medicines = null,Object? medicinesErrorMessage = freezed,Object? searchQuery = null,Object? selectedCity = null,Object? cartItems = null,Object? selectedPaymentMethod = null,}) {
   return _then(_self.copyWith(
 medicinesLoadingStateStatus: null == medicinesLoadingStateStatus ? _self.medicinesLoadingStateStatus : medicinesLoadingStateStatus // ignore: cast_nullable_to_non_nullable
 as StateStatus,medicines: null == medicines ? _self.medicines : medicines // ignore: cast_nullable_to_non_nullable
 as List<PharmacyMedicineEntity>,medicinesErrorMessage: freezed == medicinesErrorMessage ? _self.medicinesErrorMessage : medicinesErrorMessage // ignore: cast_nullable_to_non_nullable
-as String?,cartItems: null == cartItems ? _self.cartItems : cartItems // ignore: cast_nullable_to_non_nullable
+as String?,searchQuery: null == searchQuery ? _self.searchQuery : searchQuery // ignore: cast_nullable_to_non_nullable
+as String,selectedCity: null == selectedCity ? _self.selectedCity : selectedCity // ignore: cast_nullable_to_non_nullable
+as String,cartItems: null == cartItems ? _self.cartItems : cartItems // ignore: cast_nullable_to_non_nullable
 as List<PharmacyCartItemEntity>,selectedPaymentMethod: null == selectedPaymentMethod ? _self.selectedPaymentMethod : selectedPaymentMethod // ignore: cast_nullable_to_non_nullable
 as PharmacyPaymentMethod,
   ));
@@ -154,10 +156,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( StateStatus medicinesLoadingStateStatus,  List<PharmacyMedicineEntity> medicines,  String? medicinesErrorMessage,  List<PharmacyCartItemEntity> cartItems,  PharmacyPaymentMethod selectedPaymentMethod)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( StateStatus medicinesLoadingStateStatus,  List<PharmacyMedicineEntity> medicines,  String? medicinesErrorMessage,  String searchQuery,  String selectedCity,  List<PharmacyCartItemEntity> cartItems,  PharmacyPaymentMethod selectedPaymentMethod)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _PharmacyState() when $default != null:
-return $default(_that.medicinesLoadingStateStatus,_that.medicines,_that.medicinesErrorMessage,_that.cartItems,_that.selectedPaymentMethod);case _:
+return $default(_that.medicinesLoadingStateStatus,_that.medicines,_that.medicinesErrorMessage,_that.searchQuery,_that.selectedCity,_that.cartItems,_that.selectedPaymentMethod);case _:
   return orElse();
 
 }
@@ -175,10 +177,10 @@ return $default(_that.medicinesLoadingStateStatus,_that.medicines,_that.medicine
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( StateStatus medicinesLoadingStateStatus,  List<PharmacyMedicineEntity> medicines,  String? medicinesErrorMessage,  List<PharmacyCartItemEntity> cartItems,  PharmacyPaymentMethod selectedPaymentMethod)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( StateStatus medicinesLoadingStateStatus,  List<PharmacyMedicineEntity> medicines,  String? medicinesErrorMessage,  String searchQuery,  String selectedCity,  List<PharmacyCartItemEntity> cartItems,  PharmacyPaymentMethod selectedPaymentMethod)  $default,) {final _that = this;
 switch (_that) {
 case _PharmacyState():
-return $default(_that.medicinesLoadingStateStatus,_that.medicines,_that.medicinesErrorMessage,_that.cartItems,_that.selectedPaymentMethod);case _:
+return $default(_that.medicinesLoadingStateStatus,_that.medicines,_that.medicinesErrorMessage,_that.searchQuery,_that.selectedCity,_that.cartItems,_that.selectedPaymentMethod);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -195,10 +197,10 @@ return $default(_that.medicinesLoadingStateStatus,_that.medicines,_that.medicine
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( StateStatus medicinesLoadingStateStatus,  List<PharmacyMedicineEntity> medicines,  String? medicinesErrorMessage,  List<PharmacyCartItemEntity> cartItems,  PharmacyPaymentMethod selectedPaymentMethod)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( StateStatus medicinesLoadingStateStatus,  List<PharmacyMedicineEntity> medicines,  String? medicinesErrorMessage,  String searchQuery,  String selectedCity,  List<PharmacyCartItemEntity> cartItems,  PharmacyPaymentMethod selectedPaymentMethod)?  $default,) {final _that = this;
 switch (_that) {
 case _PharmacyState() when $default != null:
-return $default(_that.medicinesLoadingStateStatus,_that.medicines,_that.medicinesErrorMessage,_that.cartItems,_that.selectedPaymentMethod);case _:
+return $default(_that.medicinesLoadingStateStatus,_that.medicines,_that.medicinesErrorMessage,_that.searchQuery,_that.selectedCity,_that.cartItems,_that.selectedPaymentMethod);case _:
   return null;
 
 }
@@ -210,7 +212,7 @@ return $default(_that.medicinesLoadingStateStatus,_that.medicines,_that.medicine
 
 
 class _PharmacyState implements PharmacyState {
-  const _PharmacyState({this.medicinesLoadingStateStatus = StateStatus.idle, final  List<PharmacyMedicineEntity> medicines = const [], this.medicinesErrorMessage, final  List<PharmacyCartItemEntity> cartItems = const [], this.selectedPaymentMethod = PharmacyPaymentMethod.jazzCash}): _medicines = medicines,_cartItems = cartItems;
+  const _PharmacyState({this.medicinesLoadingStateStatus = StateStatus.idle, final  List<PharmacyMedicineEntity> medicines = const [], this.medicinesErrorMessage, this.searchQuery = '', this.selectedCity = 'Islamabad', final  List<PharmacyCartItemEntity> cartItems = const [], this.selectedPaymentMethod = PharmacyPaymentMethod.jazzCash}): _medicines = medicines,_cartItems = cartItems;
   
 
 @override@JsonKey() final  StateStatus medicinesLoadingStateStatus;
@@ -222,6 +224,8 @@ class _PharmacyState implements PharmacyState {
 }
 
 @override final  String? medicinesErrorMessage;
+@override@JsonKey() final  String searchQuery;
+@override@JsonKey() final  String selectedCity;
  final  List<PharmacyCartItemEntity> _cartItems;
 @override@JsonKey() List<PharmacyCartItemEntity> get cartItems {
   if (_cartItems is EqualUnmodifiableListView) return _cartItems;
@@ -241,16 +245,16 @@ _$PharmacyStateCopyWith<_PharmacyState> get copyWith => __$PharmacyStateCopyWith
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _PharmacyState&&(identical(other.medicinesLoadingStateStatus, medicinesLoadingStateStatus) || other.medicinesLoadingStateStatus == medicinesLoadingStateStatus)&&const DeepCollectionEquality().equals(other._medicines, _medicines)&&(identical(other.medicinesErrorMessage, medicinesErrorMessage) || other.medicinesErrorMessage == medicinesErrorMessage)&&const DeepCollectionEquality().equals(other._cartItems, _cartItems)&&(identical(other.selectedPaymentMethod, selectedPaymentMethod) || other.selectedPaymentMethod == selectedPaymentMethod));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _PharmacyState&&(identical(other.medicinesLoadingStateStatus, medicinesLoadingStateStatus) || other.medicinesLoadingStateStatus == medicinesLoadingStateStatus)&&const DeepCollectionEquality().equals(other._medicines, _medicines)&&(identical(other.medicinesErrorMessage, medicinesErrorMessage) || other.medicinesErrorMessage == medicinesErrorMessage)&&(identical(other.searchQuery, searchQuery) || other.searchQuery == searchQuery)&&(identical(other.selectedCity, selectedCity) || other.selectedCity == selectedCity)&&const DeepCollectionEquality().equals(other._cartItems, _cartItems)&&(identical(other.selectedPaymentMethod, selectedPaymentMethod) || other.selectedPaymentMethod == selectedPaymentMethod));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,medicinesLoadingStateStatus,const DeepCollectionEquality().hash(_medicines),medicinesErrorMessage,const DeepCollectionEquality().hash(_cartItems),selectedPaymentMethod);
+int get hashCode => Object.hash(runtimeType,medicinesLoadingStateStatus,const DeepCollectionEquality().hash(_medicines),medicinesErrorMessage,searchQuery,selectedCity,const DeepCollectionEquality().hash(_cartItems),selectedPaymentMethod);
 
 @override
 String toString() {
-  return 'PharmacyState(medicinesLoadingStateStatus: $medicinesLoadingStateStatus, medicines: $medicines, medicinesErrorMessage: $medicinesErrorMessage, cartItems: $cartItems, selectedPaymentMethod: $selectedPaymentMethod)';
+  return 'PharmacyState(medicinesLoadingStateStatus: $medicinesLoadingStateStatus, medicines: $medicines, medicinesErrorMessage: $medicinesErrorMessage, searchQuery: $searchQuery, selectedCity: $selectedCity, cartItems: $cartItems, selectedPaymentMethod: $selectedPaymentMethod)';
 }
 
 
@@ -261,7 +265,7 @@ abstract mixin class _$PharmacyStateCopyWith<$Res> implements $PharmacyStateCopy
   factory _$PharmacyStateCopyWith(_PharmacyState value, $Res Function(_PharmacyState) _then) = __$PharmacyStateCopyWithImpl;
 @override @useResult
 $Res call({
- StateStatus medicinesLoadingStateStatus, List<PharmacyMedicineEntity> medicines, String? medicinesErrorMessage, List<PharmacyCartItemEntity> cartItems, PharmacyPaymentMethod selectedPaymentMethod
+ StateStatus medicinesLoadingStateStatus, List<PharmacyMedicineEntity> medicines, String? medicinesErrorMessage, String searchQuery, String selectedCity, List<PharmacyCartItemEntity> cartItems, PharmacyPaymentMethod selectedPaymentMethod
 });
 
 
@@ -278,12 +282,14 @@ class __$PharmacyStateCopyWithImpl<$Res>
 
 /// Create a copy of PharmacyState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? medicinesLoadingStateStatus = null,Object? medicines = null,Object? medicinesErrorMessage = freezed,Object? cartItems = null,Object? selectedPaymentMethod = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? medicinesLoadingStateStatus = null,Object? medicines = null,Object? medicinesErrorMessage = freezed,Object? searchQuery = null,Object? selectedCity = null,Object? cartItems = null,Object? selectedPaymentMethod = null,}) {
   return _then(_PharmacyState(
 medicinesLoadingStateStatus: null == medicinesLoadingStateStatus ? _self.medicinesLoadingStateStatus : medicinesLoadingStateStatus // ignore: cast_nullable_to_non_nullable
 as StateStatus,medicines: null == medicines ? _self._medicines : medicines // ignore: cast_nullable_to_non_nullable
 as List<PharmacyMedicineEntity>,medicinesErrorMessage: freezed == medicinesErrorMessage ? _self.medicinesErrorMessage : medicinesErrorMessage // ignore: cast_nullable_to_non_nullable
-as String?,cartItems: null == cartItems ? _self._cartItems : cartItems // ignore: cast_nullable_to_non_nullable
+as String?,searchQuery: null == searchQuery ? _self.searchQuery : searchQuery // ignore: cast_nullable_to_non_nullable
+as String,selectedCity: null == selectedCity ? _self.selectedCity : selectedCity // ignore: cast_nullable_to_non_nullable
+as String,cartItems: null == cartItems ? _self._cartItems : cartItems // ignore: cast_nullable_to_non_nullable
 as List<PharmacyCartItemEntity>,selectedPaymentMethod: null == selectedPaymentMethod ? _self.selectedPaymentMethod : selectedPaymentMethod // ignore: cast_nullable_to_non_nullable
 as PharmacyPaymentMethod,
   ));

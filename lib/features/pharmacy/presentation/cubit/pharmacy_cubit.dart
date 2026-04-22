@@ -120,6 +120,14 @@ class PharmacyCubit extends Cubit<PharmacyState> {
     emit(state.copyWith(selectedPaymentMethod: method));
   }
 
+  void updateSearchQuery(String query) {
+    emit(state.copyWith(searchQuery: query));
+  }
+
+  void selectCheckoutCity(String city) {
+    emit(state.copyWith(selectedCity: city));
+  }
+
   void clearCart() {
     emit(state.copyWith(cartItems: []));
   }
