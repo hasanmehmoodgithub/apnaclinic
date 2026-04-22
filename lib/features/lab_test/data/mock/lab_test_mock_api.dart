@@ -12,21 +12,42 @@ class LabTestMockApi {
       'items': [
         {
           'id': 'cbc_dengue',
-          'title': 'Complete Blood Count (CBC) C/E for dengue',
+          'title': 'Complete Blood Count (CBC)',
           'sampleType': 'Blood',
-          'requirement': 'Fasting',
+          'labsSummary':
+              'Chughtai Lab, Naya labs, Excel Lab, Islamabad Diagnostic Center (IDC)',
+          'requirement': null,
+          'discountedFee': 'Rs. 640/-',
+          'originalFee': 'Rs. 800/-',
         },
         {
           'id': 'lft',
-          'title': 'LFT Test',
+          'title': 'Liver Function Test (LFT)',
           'sampleType': 'Blood',
-          'requirement': 'Fasting',
+          'labsSummary':
+              'Nayab labs, Chughtai Lab, Islamabad Diagnostic Center (IDC), Excel Lab',
+          'requirement': null,
+          'discountedFee': 'Rs. 1,850/-',
+          'originalFee': '4000',
         },
         {
           'id': 'lipid_profile',
-          'title': 'Lipid Profile Test',
+          'title': 'Lipid Profile',
           'sampleType': 'Blood',
+          'labsSummary': 'Chughtai Lab',
+          'requirement': 'Fasting',
+          'discountedFee': 'Rs. 1,920/-',
+          'originalFee': 'Rs. 2,400/-',
+        },
+        {
+          'id': 'rft',
+          'title': 'Renal Function Test (RFT)',
+          'sampleType': 'Blood',
+          'labsSummary':
+              'Nayab labs, Chughtai Lab, Islamabad Diagnostic Center (IDC)',
           'requirement': null,
+          'discountedFee': 'Rs. 2,150/-',
+          'originalFee': '3000',
         },
       ],
       'requirementLines': [

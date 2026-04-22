@@ -22,7 +22,10 @@ class LabTestCatalogMapper {
       id: model.id,
       title: model.title,
       sampleType: model.sampleType,
+      labsSummary: model.labsSummary,
       requirement: model.requirement,
+      discountedFee: model.discountedFee,
+      originalFee: model.originalFee,
     );
   }
 

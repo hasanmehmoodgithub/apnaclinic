@@ -31,6 +31,8 @@ class AppRoutes {
 
   static String labTest="labTest";
 
+  static String labTestCart = 'labTestCart';
+
   /// Get route path with leading "/"
   static String path(String route) {
     return route.isEmpty ? '/' : '/$route';

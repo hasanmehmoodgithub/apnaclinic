@@ -3,20 +3,29 @@ class LabTestItemModel {
     required this.id,
     required this.title,
     required this.sampleType,
+    this.labsSummary,
     this.requirement,
+    this.discountedFee,
+    this.originalFee,
   });
 
   final String id;
   final String title;
   final String sampleType;
+  final String? labsSummary;
   final String? requirement;
+  final String? discountedFee;
+  final String? originalFee;
 
   factory LabTestItemModel.fromJson(Map<String, dynamic> json) {
     return LabTestItemModel(
       id: (json['id'] ?? '').toString(),
       title: (json['title'] ?? '').toString(),
       sampleType: (json['sampleType'] ?? '').toString(),
+      labsSummary: json['labsSummary']?.toString(),
       requirement: json['requirement']?.toString(),
+      discountedFee: json['discountedFee']?.toString(),
+      originalFee: json['originalFee']?.toString(),
     );
   }
 }
