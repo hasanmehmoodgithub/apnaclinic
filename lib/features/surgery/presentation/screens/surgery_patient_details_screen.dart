@@ -61,10 +61,10 @@ class _SurgeryPatientDetailsScreenState
   @override
   void initState() {
     super.initState();
-    patientNameController = TextEditingController();
-    ageController = TextEditingController();
-    contactNumberController = TextEditingController();
-    emergencyContactController = TextEditingController();
+patientNameController=TextEditingController(text: "Haseeb Qasim");
+  ageController=TextEditingController(text: "24");
+    contactNumberController=TextEditingController(text: "0341-2211221");
+emergencyContactController=TextEditingController(text: "0341-2211221");
   }
 
   @override
@@ -140,28 +140,28 @@ class _SurgeryPatientDetailsScreenState
 
                         _TextInputField(
                           title: 'Patient Name',
-                          hintText: 'Haseeb Qasim',
+                          hintText: 'Patient Name',
                           controller: patientNameController,
                           keyboardType: TextInputType.name,
                         ),
                         SizedBox(height: 14.h),
                         _TextInputField(
                           title: 'Age',
-                          hintText: '24',
+                          hintText: 'Patient Age',
                           controller: ageController,
                           keyboardType: TextInputType.number,
                         ),
                         SizedBox(height: 14.h),
                         _TextInputField(
                           title: 'Contact Number',
-                          hintText: '0341-1234567',
+                          hintText: 'Patient Contact Number',
                           controller: contactNumberController,
                           keyboardType: TextInputType.phone,
                         ),
                         SizedBox(height: 14.h),
                         _TextInputField(
                           title: 'Emergency Contact',
-                          hintText: '0341-1234567',
+                          hintText: 'Patient Emergency Contact',
                           controller: emergencyContactController,
                           keyboardType: TextInputType.phone,
                           hasError: showEmergencyError,
@@ -715,30 +715,6 @@ class _DoctorSummary extends StatelessWidget {
           ],
         ),
 
-        SizedBox(height: 14.h),
-
-        // Book Now button
-        SizedBox(
-          width: double.infinity,
-          child: FilledButton(
-            onPressed: () {},
-            style: FilledButton.styleFrom(
-              backgroundColor: const Color(0xFF0FAA9A),
-              minimumSize: Size.fromHeight(44.h),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8.r),
-              ),
-            ),
-            child: Text(
-              'Book Now',
-              style: theme.textTheme.titleSmall?.copyWith(
-                color: Colors.white,
-                fontWeight: FontWeight.w700,
-                fontSize: 16.sp,
-              ),
-            ),
-          ),
-        ),
       ],
     );
   }
