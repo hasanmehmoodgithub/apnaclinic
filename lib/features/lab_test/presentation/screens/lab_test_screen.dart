@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../components/shimmer/app_shimmer.dart';
@@ -8,6 +11,8 @@ import '../../../../core/enums/state_status.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/preference/app_pref.dart';
 import '../../../../core/router/app_routes.dart';
+import '../../../../core/widgets/app_scaffold_gradient.dart';
+import '../../../../generated/assets.dart';
 import '../../domain/entities/lab_test_item_entity.dart';
 import '../cubit/lab_test_cubit.dart';
 import '../cubit/lab_test_state.dart';
@@ -26,6 +31,7 @@ class _LabTestScreenState extends State<LabTestScreen> {
   final _searchController = TextEditingController();
   final AppPref _appPref = sl<AppPref>();
   static const String _cityPrefKey = 'lab_test_selected_city';
+  static const String _cartPrefKey = 'lab_test_cart_items';
   bool _hasResolvedInitialCity = false;
   bool _hasPromptedCitySelection = false;
   bool _isCitySheetOpen = false;
@@ -139,8 +145,8 @@ class _LabTestScreenState extends State<LabTestScreen> {
               ),
             )
             .toList(growable: false),
-        discountedFee: pricing.discountedFee,
-        originalFee: pricing.originalFee,
+        discountedFee: item.discountedFee ?? pricing.discountedFee,
+        originalFee: item.originalFee ?? pricing.originalFee,
         discountPercent: pricing.discountPercent,
         discountAmount: pricing.discountAmount,
         discountCode: pricing.discountCode,
@@ -149,21 +155,36 @@ class _LabTestScreenState extends State<LabTestScreen> {
     );
   }
 
+  int _cartCount() {
+    final raw = _appPref.getString(_cartPrefKey)?.trim();
+    if (raw == null || raw.isEmpty) return 0;
+    try {
+      final decoded = jsonDecode(raw);
+      if (decoded is List) return decoded.length;
+      return 0;
+    } catch (_) {
+      return 0;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final state = context.watch<LabTestCubit>().state;
     final cubit = context.read<LabTestCubit>();
     final theme = Theme.of(context);
+    final cartCount = _cartCount();
 
     return BlocListener<LabTestCubit, LabTestState>(
       listener: (context, currentState) => _resolveInitialCitySelection(
         currentState,
       ),
-      child: Scaffold(
-        backgroundColor: const Color(0xFFD5FFFB),
-        body: Column(
+      child: AppScaffoldGradient(
+        child: Column(
           children: [
-            _BrowseHeader(),
+            _BrowseHeader(
+              cartCount: cartCount,
+              onCartTap: () => context.push(AppRoutes.path(AppRoutes.labTestCart)),
+            ),
             Expanded(
               child: Center(
                 child: Container(
@@ -363,7 +384,7 @@ class _LabTestScreenState extends State<LabTestScreen> {
     }
 
     return ListView.separated(
-      padding: EdgeInsets.symmetric(vertical: 20),
+      padding: EdgeInsets.symmetric(vertical: 10.h),
       itemCount: state.filteredItems.length,
       separatorBuilder: (context, index) => const SizedBox(height: 14),
       itemBuilder: (context, index) {
@@ -397,52 +418,97 @@ class _LabTestBrowseShimmerView extends StatelessWidget {
 }
 
 class _BrowseHeader extends StatelessWidget {
+  const _BrowseHeader({required this.cartCount, required this.onCartTap});
+
+  final int cartCount;
+  final VoidCallback onCartTap;
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return Container(
-      width: double.infinity,
-      decoration: const BoxDecoration(
-        color: Color(0x8087DDD3)
-      ),
-      child: SafeArea(
-        bottom: false,
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(8, 4, 16, 18),
-          child: Row(
-            children: [
-              Material(
-                color: Colors.transparent,
-                child: InkWell(
-                  borderRadius: BorderRadius.circular(20),
-                  onTap: () => context.pop(),
-                  child: const SizedBox(
-                    width: 60,
-                    height: 40,
-                    child: Icon(
-                      Icons.arrow_back_rounded,
-                      color: Color(0xFF061E40),
-                      size: 24,
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(12, 4, 16, 18),
+      child: Row(
+        children: [
+          Material(
+            color: Colors.transparent,
+            child: InkWell(
+              borderRadius: BorderRadius.circular(20),
+              onTap: () => context.pop(),
+              child: const SizedBox(
+                width: 40,
+                height: 40,
+                child: Icon(
+                  Icons.arrow_back_rounded,
+                  color: Color(0xFF061E40),
+                  size: 24,
+                ),
+              ),
+            ),
+          ),
+          Expanded(
+            child: Text(
+              'Lab Test',
+              textAlign: TextAlign.center,
+              style: theme.textTheme.titleLarge?.copyWith(
+                color: const Color(0xFF061E40),
+                fontWeight: FontWeight.w700,
+                fontSize: 20.sp,
+                height: 30.9 / 20,
+              ),
+            ),
+          ),
+          InkWell(
+            onTap: onCartTap,
+            borderRadius: BorderRadius.circular(20),
+            child: Stack(
+              clipBehavior: Clip.none,
+              children: [
+                Container(
+                  width: 38,
+                  height: 38,
+                  decoration: const BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.white,
+                  ),
+                  alignment: Alignment.center,
+                  child: SvgPicture.asset(
+                    Assets.iconsBasket,
+                    width: 16.r,
+                    height: 16.r,
+                    colorFilter: const ColorFilter.mode(
+                      Color(0xFF667B99),
+                      BlendMode.srcIn,
                     ),
                   ),
                 ),
-              ),
-              Expanded(
-                child: Text(
-                  'Lab Test',
-                  textAlign: TextAlign.center,
-                  style: theme.textTheme.titleLarge?.copyWith(
-                    color: const Color(0xFF061E40),
-                    fontWeight: FontWeight.w700,
-                    fontSize: 20.sp,
-                    height: 30.9 / 20,
+                if (cartCount > 0)
+                  Positioned(
+                    right: 2,
+                    top: 2,
+                    child: Container(
+                      width: 12,
+                      height: 12,
+                      decoration: const BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Color(0xFFE43131),
+                      ),
+                      alignment: Alignment.center,
+                      child: Text(
+                        cartCount > 9 ? '9+' : '$cartCount',
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: Colors.white,
+                          fontSize: 8.sp,
+                          fontWeight: FontWeight.w700,
+                          height: 1,
+                        ),
+                      ),
+                    ),
                   ),
-                ),
-              ),
-              const SizedBox(width: 40),
-            ],
+              ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }
@@ -457,6 +523,8 @@ class _LabTestBrowseCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final discountedFee = item.discountedFee ?? 'Rs. 15,000/-';
+    final originalFee = item.originalFee;
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -472,9 +540,9 @@ class _LabTestBrowseCard extends StatelessWidget {
             children: [
               Container(
                 width: double.infinity,
-                padding: const EdgeInsets.fromLTRB(14, 15, 14, 12),
+                padding: const EdgeInsets.fromLTRB(14, 13, 14, 13),
                 decoration: const BoxDecoration(
-                  color: Color(0xFFF1F1F1),
+                  color: Color(0xFFF5F5F5),
                   borderRadius: BorderRadius.vertical(top: Radius.circular(14)),
                 ),
                 child: Text(
@@ -492,17 +560,71 @@ class _LabTestBrowseCard extends StatelessWidget {
                 width: double.infinity,
                 color: Colors.white,
                 padding: const EdgeInsets.fromLTRB(14, 13, 14, 13),
-                child: Wrap(
-                  spacing: 24,
-                  runSpacing: 8,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _TagRow(label: 'Sample Type', value: item.sampleType),
-                    if (item.requirement != null)
-                      _TagRow(
-                        label: 'Requirement',
-                        value: item.requirement!,
-                        highlight: true,
+                    Text(
+                      item.labsSummary ?? '',
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: const Color(0xFF4B5B72),
+                        fontSize: 13.sp,
+                        height: 1.15,
                       ),
+                    ),
+                    const SizedBox(height: 10),
+                    if (item.requirement != null && item.requirement!.isNotEmpty) ...[
+                      Row(
+                        children: [
+                          Text(
+                            'Requirement',
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              color: const Color(0xFF2F3E54),
+                              fontSize: 13.sp,
+                            ),
+                          ),
+                          const SizedBox(width: 6),
+                          _InfoPill(value: item.requirement!, highlight: true),
+                        ],
+                      ),
+                      const SizedBox(height: 10),
+                    ],
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Expanded(
+                          child: Wrap(
+                            spacing: 6,
+                            runSpacing: 6,
+                            crossAxisAlignment: WrapCrossAlignment.center,
+                            children: [
+                              Text(
+                                'Sample Type',
+                                style: theme.textTheme.bodyMedium?.copyWith(
+                                  color: const Color(0xFF2F3E54),
+                                  fontSize: 13.sp,
+                                ),
+                              ),
+                              _InfoPill(value: item.sampleType),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Flexible(
+                          child: Align(
+                            alignment: Alignment.centerRight,
+                            child: FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: _PricePill(
+                                originalFee: originalFee,
+                                discountedFee: discountedFee,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ],
                 ),
               ),
@@ -514,53 +636,107 @@ class _LabTestBrowseCard extends StatelessWidget {
   }
 }
 
-class _TagRow extends StatelessWidget {
-  const _TagRow({
-    required this.label,
-    required this.value,
-    this.highlight = false,
-  });
+class _InfoPill extends StatelessWidget {
+  const _InfoPill({required this.value, this.highlight = false});
 
-  final String label;
   final String value;
   final bool highlight;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Text(
-          label,
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+      decoration: BoxDecoration(
+        color: highlight ? const Color(0xFFB7EAC3) : Colors.white,
+        borderRadius: BorderRadius.circular(59),
+        border: highlight
+            ? null
+            : Border.all(color: const Color(0xFFE7E7E7), width: 1.0),
+      ),
+      child: Text(
+        value,
+        style: theme.textTheme.bodySmall?.copyWith(
+          color: highlight ? const Color(0xFF198733) : const Color(0xFF9A9A9A),
+          fontSize: 13.sp,
+          height: 1.1,
+        ),
+      ),
+    );
+  }
+}
+
+class _PricePill extends StatelessWidget {
+  const _PricePill({required this.originalFee, required this.discountedFee});
+
+  final String? originalFee;
+  final String discountedFee;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final hasOriginal = originalFee != null && originalFee!.trim().isNotEmpty;
+
+    if (!hasOriginal) {
+      return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        decoration: BoxDecoration(
+          color: const Color(0xFF11B2A4),
+          borderRadius: BorderRadius.circular(24),
+        ),
+        child: Text(
+          discountedFee,
           style: theme.textTheme.bodyMedium?.copyWith(
-            fontFamily: 'Afacad',
-            color: const Color(0xFF2B2B2B),
+            color: Colors.white,
             fontSize: 14.sp,
+            fontWeight: FontWeight.w500,
           ),
         ),
-        const SizedBox(width: 4),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-          decoration: BoxDecoration(
-            color: highlight ? const Color(0xFFB7EAC3) : Colors.white,
-            borderRadius: BorderRadius.circular(59),
-            border: highlight
-                ? null
-                : Border.all(color: const Color(0xFFE7E7E7), width: 1.0),
-          ),
-          child: Text(
-            value,
-            style: theme.textTheme.bodySmall?.copyWith(
-              fontFamily: 'Afacad',
-              color: highlight
-                  ? const Color(0xFF198733)
-                  : const Color(0xFF959595),
-              fontSize: 14.sp,
+      );
+    }
+
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(30),
+        border: Border.all(color: const Color(0xFFE0E3E8), width: 1),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 8, 14, 8),
+            child: Text(
+              originalFee!,
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: const Color(0xFFA5A5A5),
+                decoration: TextDecoration.lineThrough,
+                decorationThickness: 1.5,
+                fontSize: 12.sp,
+                fontWeight: FontWeight.w500,
+              ),
             ),
           ),
-        ),
-      ],
+          Transform.translate(
+            offset: const Offset(-8, 0),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              decoration: BoxDecoration(
+                color: const Color(0xFF11B2A4),
+                borderRadius: BorderRadius.circular(30),
+              ),
+              child: Text(
+                discountedFee,
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: Colors.white,
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

@@ -10,6 +10,7 @@ import '../../features/dashboard/presentation/screens/menu_screen.dart';
 import '../../features/lab_test/presentation/cubit/lab_test_cubit.dart';
 import '../../features/lab_test/presentation/lab_test_route_args.dart';
 import '../../features/lab_test/presentation/screens/lab_test_booking_screen.dart';
+import '../../features/lab_test/presentation/screens/lab_test_cart_screen.dart';
 import '../../features/lab_test/presentation/screens/lab_test_checkout_screen.dart';
 import '../../features/lab_test/presentation/screens/lab_test_screen.dart';
 import '../../features/notification/presentation/cubit/notification_cubit.dart';
@@ -185,6 +186,11 @@ class AppRouter {
           }
           return LabTestCheckoutScreen(args: extra);
         },
+      ),
+      GoRoute(
+        path: AppRoutes.path(AppRoutes.labTestCart),
+        name: AppRoutes.labTestCart,
+        builder: (context, state) => const LabTestCartScreen(),
       ),
 
     ],

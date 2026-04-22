@@ -26,8 +26,8 @@ abstract final class LabTestFigmaAssets {
   // Booking / lab selection (node 2303:67674)
   static const String bookingMediqLogo = '$_base/MedIQ_Logo.svg';
   static const String bookingOladocLogo = '$_base/oladoc_ogo.svg';
-  static const String bookingLabTestMethodIcon = '$_base/method_lab_test.svg';
-  static const String bookingHomeSampleIcon = '$_base/method_home_sample.svg';
+  static const String bookingLabTestMethodIcon = '$_base/walkin.svg';
+  static const String bookingHomeSampleIcon = '$_base/home_sample.svg';
   static const String bookingIdcLogo = '$_base/IDC_logo.svg';
   static const String bookingNayaLabLogo = '$_base/naya_lab_logo.svg';
   static const String bookingChughtaiLogo = '$_base/chughtai_lab_logo.svg';

@@ -5,6 +5,7 @@ import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/preference/app_pref.dart';
 import '../../../../core/router/app_routes.dart';
+import '../../../../core/widgets/app_scaffold_gradient.dart';
 import '../lab_test_figma_assets.dart';
 import '../lab_test_route_args.dart';
 import '../widgets/lab_test_figma_image.dart';
@@ -153,7 +154,7 @@ class _LabTestCheckoutScreenState extends State<LabTestCheckoutScreen> {
                         style: Theme.of(context).textTheme.titleMedium?.copyWith(
                           color: const Color(0xFF0E2650),
                           fontWeight: FontWeight.w500,
-                          fontSize: 21.sp,
+                          fontSize: 16.sp,
                           height: 1.1,
                         ),
                       ),
@@ -261,9 +262,8 @@ class _LabTestCheckoutScreenState extends State<LabTestCheckoutScreen> {
     final theme = Theme.of(context);
     final a = widget.args;
 
-    return Scaffold(
-      backgroundColor: const Color(0xFFD5FFFB),
-      body: Column(
+    return AppScaffoldGradient(
+      child: Column(
         children: [
           _CheckoutHeader(),
           Expanded(
@@ -286,10 +286,10 @@ class _LabTestCheckoutScreenState extends State<LabTestCheckoutScreen> {
                           children: [
                             _SummaryCard(args: a),
                             const SizedBox(height: 8),
-                            _RequirementsCheckoutCard(
-                              lines: a.requirementLines,
-                              fastingLabel: a.requirementLabel,
-                            ),
+                            // _RequirementsCheckoutCard(
+                            //   lines: a.requirementLines,
+                            //   fastingLabel: a.requirementLabel,
+                            // ),
                             const SizedBox(height: 8),
                             _PaymentBreakdownCard(args: a),
                             const SizedBox(height: 6),
@@ -331,54 +331,41 @@ class _CheckoutHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return Container(
-      width: double.infinity,
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [Color(0x8087DDD3), Color(0x3387DDD3)],
-          stops: [0, 0.34],
-        ),
-      ),
-      child: SafeArea(
-        bottom: false,
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(8, 4, 16, 18),
-          child: Row(
-            children: [
-              Material(
-                color: Colors.transparent,
-                child: InkWell(
-                  borderRadius: BorderRadius.circular(20),
-                  onTap: () => context.pop(),
-                  child: const SizedBox(
-                    width: 40,
-                    height: 40,
-                    child: Icon(
-                      Icons.arrow_back_rounded,
-                      color: Color(0xFF061E40),
-                      size: 24,
-                    ),
-                  ),
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(8, 4, 16, 18),
+      child: Row(
+        children: [
+          Material(
+            color: Colors.transparent,
+            child: InkWell(
+              borderRadius: BorderRadius.circular(20),
+              onTap: () => context.pop(),
+              child: const SizedBox(
+                width: 40,
+                height: 40,
+                child: Icon(
+                  Icons.arrow_back_rounded,
+                  color: Color(0xFF061E40),
+                  size: 24,
                 ),
               ),
-              Expanded(
-                child: Text(
-                  'Payment Details',
-                  textAlign: TextAlign.center,
-                  style: theme.textTheme.titleLarge?.copyWith(
-                    color: const Color(0xFF061E40),
-                    fontWeight: FontWeight.w700,
-                    fontSize: 20.sp,
-                    height: 30.9 / 20,
-                  ),
-                ),
-              ),
-              const SizedBox(width: 40),
-            ],
+            ),
           ),
-        ),
+          Expanded(
+            child: Text(
+              'Payment Details',
+              textAlign: TextAlign.center,
+              style: theme.textTheme.titleLarge?.copyWith(
+                color: const Color(0xFF061E40),
+                fontWeight: FontWeight.w700,
+                fontSize: 20.sp,
+                height: 30.9 / 20,
+              ),
+            ),
+          ),
+          const SizedBox(width: 40),
+        ],
       ),
     );
   }
@@ -405,12 +392,12 @@ class _SummaryCard extends StatelessWidget {
           ),
         ],
       ),
-      child: IntrinsicHeight(
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            AspectRatio(
-              aspectRatio: 1,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+            SizedBox(
+              width: 112,
+              height: 112,
               child: Container(
                 decoration: BoxDecoration(
                   color: const Color(0xFFF4F4F4),
@@ -430,7 +417,6 @@ class _SummaryCard extends StatelessWidget {
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -488,6 +474,7 @@ class _SummaryCard extends StatelessWidget {
                       ),
                     ],
                   ),
+                  const SizedBox(height: 6),
                   Container(
                     padding: const EdgeInsets.symmetric(vertical: 7),
                     decoration: const BoxDecoration(
@@ -529,9 +516,33 @@ class _SummaryCard extends StatelessWidget {
                             ),
                           ),
                         ),
+                        const Spacer(),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 4,
+                          ),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(13),
+                            border: Border.all(
+                              color: const Color(0xFFE7E7E7),
+                              width: 1.0,
+                            ),
+                          ),
+                          child: Text(
+                            args.bookingMethodIsHomeSample
+                                ? 'Home Sample'
+                                : 'Walk In',
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              color: const Color(0xFF667B99),
+                              fontSize: 12.sp,
+                            ),
+                          ),
+                        ),
                       ],
                     ),
                   ),
+                  const SizedBox(height: 6),
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
@@ -578,7 +589,6 @@ class _SummaryCard extends StatelessWidget {
               ),
             ),
           ],
-        ),
       ),
     );
   }
@@ -682,6 +692,30 @@ class _PaymentBreakdownCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final discounted = _parseMoney(args.discountedFee);
+    final original = _parseMoney(args.originalFee);
+    final discountAmount = (discounted != null && original != null)
+        ? (original - discounted > 0 ? (original - discounted) : 0.0)
+        : null;
+    final discountPercent = (discountAmount != null && original != null && original > 0)
+        ? ((discountAmount / original) * 100).round()
+        : args.discountPercent;
+
+    final hasDiscount = discountAmount != null && discountAmount > 0;
+    final feeValue = original != null
+        ? _formatMoney(original)
+        : _stripCurrency(args.originalFee);
+    final discountValue = discountAmount != null
+        ? _formatMoney(discountAmount)
+        : _stripCurrency(args.discountAmount);
+    final totalValue = hasDiscount
+        ? (discounted != null
+              ? _formatMoney(discounted)
+              : _stripCurrency(args.discountedFee))
+        : (original != null
+              ? _formatMoney(original)
+              : _stripCurrency(args.originalFee));
+
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -712,67 +746,68 @@ class _PaymentBreakdownCard extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Column(
               children: [
-                _moneyRow(theme, 'Fee', '80,000'),
+                _moneyRow(theme, 'Fee', feeValue),
                 _moneyRow(
                   theme,
-                  'Discount (${args.discountPercent}%)',
-                  args.discountAmount,
+                  'Discount ($discountPercent%)',
+                  discountValue,
                 ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8),
-                  child: Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.fromLTRB(12, 9, 12, 7),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFFFEFBA),
-                      borderRadius: BorderRadius.circular(6),
-                    ),
-                    child: Column(
-                      children: [
-                        Row(
-                          children: [
-                            Transform.rotate(
-                              angle: 3.14159,
-                              child: LabTestFigmaImage(
-                                url: LabTestFigmaAssets.checkoutDiscountIcon,
-                                width: 15.394,
-                                height: 16,
-                              ),
-                            ),
-                            const SizedBox(width: 4),
-                            Text(
-                              'Discount Code',
-                              style: theme.textTheme.titleSmall?.copyWith(
-                                fontWeight: FontWeight.w700,
-                                fontSize: 16.sp,
-                              ),
-                            ),
-                            const Spacer(),
-                            Text(
-                              args.discountCode,
-                              style: theme.textTheme.titleSmall?.copyWith(
-                                fontWeight: FontWeight.w700,
-                                color: const Color(0xFF110844),
-                                fontSize: 16.sp,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const Divider(height: 16, color: Color(0x14000000)),
-                        Text(
-                          'Show this code to the lab representative',
-                          style: theme.textTheme.bodySmall?.copyWith(
-                            color: const Color(0xFF110844),
-                            fontSize: 12.sp,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
+                // Padding(
+                //   padding: const EdgeInsets.symmetric(vertical: 8),
+                //   child: Container(
+                //     width: double.infinity,
+                //     padding: const EdgeInsets.fromLTRB(12, 9, 12, 7),
+                //     decoration: BoxDecoration(
+                //       color: const Color(0xFFFFEFBA),
+                //       borderRadius: BorderRadius.circular(6),
+                //     ),
+                //     child: Column(
+                //       children: [
+                //         Row(
+                //           children: [
+                //             Transform.rotate(
+                //               angle: 3.14159,
+                //               child: LabTestFigmaImage(
+                //                 url: LabTestFigmaAssets.checkoutDiscountIcon,
+                //                 width: 15.394,
+                //                 height: 16,
+                //               ),
+                //             ),
+                //             const SizedBox(width: 4),
+                //             Text(
+                //               'Discount Code',
+                //               style: theme.textTheme.titleSmall?.copyWith(
+                //                 fontWeight: FontWeight.w700,
+                //                 fontSize: 16.sp,
+                //               ),
+                //             ),
+                //             const Spacer(),
+                //             Text(
+                //               args.discountCode,
+                //               style: theme.textTheme.titleSmall?.copyWith(
+                //                 fontWeight: FontWeight.w700,
+                //                 color: const Color(0xFF110844),
+                //                 fontSize: 16.sp,
+                //               ),
+                //             ),
+                //           ],
+                //         ),
+                //         const Divider(height: 16, color: Color(0x14000000)),
+                //         Text(
+                //           'Show this code to the lab representative',
+                //           style: theme.textTheme.bodySmall?.copyWith(
+                //             color: const Color(0xFF110844),
+                //             fontSize: 12.sp,
+                //           ),
+                //         ),
+                //       ],
+                //     ),
+                //   ),
+                // ),
               ],
             ),
           ),
+          SizedBox(height: 10,),
           Container(
             color: const Color(0xFFEBECEE),
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 9),
@@ -799,7 +834,7 @@ class _PaymentBreakdownCard extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      args.totalAmount,
+                      totalValue,
                       style: theme.textTheme.titleMedium?.copyWith(
                         color: const Color(0xFF110844),
                         fontWeight: FontWeight.w500,
@@ -858,6 +893,27 @@ class _PaymentBreakdownCard extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  static double? _parseMoney(String raw) {
+    final normalized = raw.replaceAll(',', '');
+    final match = RegExp(r'\d+(?:\.\d+)?').firstMatch(normalized);
+    if (match == null) return null;
+    return double.tryParse(match.group(0)!);
+  }
+
+  static String _stripCurrency(String raw) {
+    return raw.replaceAll(RegExp(r'^[Rr][Ss]\.?\s*'), '').trim();
+  }
+
+  static String _formatMoney(double value) {
+    final rounded = value.round();
+    final digits = rounded.abs().toString();
+    final withCommas = digits.replaceAllMapped(
+      RegExp(r'\B(?=(\d{3})+(?!\d))'),
+      (_) => ',',
+    );
+    return rounded < 0 ? '-$withCommas' : withCommas;
   }
 }
 
@@ -961,12 +1017,12 @@ class _PatientFormSection extends StatelessWidget {
             value: _fallback(phoneController.text),
             dividerColor: dividerColor,
           ),
-          _summaryRow(
-            label: 'Address',
-            value: _fallback(addressController.text),
-            dividerColor: dividerColor,
-            isLast: true,
-          ),
+          // _summaryRow(
+          //   label: 'Address',
+          //   value: _fallback(addressController.text),
+          //   dividerColor: dividerColor,
+          //   isLast: true,
+          // ),
         ],
       ),
     );
@@ -1094,17 +1150,20 @@ class _PatientFormSection extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 12),
-          Flexible(
-            child: Text(
-              value,
-              maxLines: label == 'Address' ? 2 : 1,
-              overflow: TextOverflow.ellipsis,
-              textAlign: TextAlign.right,
-              style: theme.textTheme.bodyLarge?.copyWith(
-                color: const Color(0xFF4E5E6F),
-                fontSize: 13.sp,
-                fontWeight: FontWeight.w500,
-                height: 1.15,
+          Expanded(
+            child: Align(
+              alignment: Alignment.centerRight,
+              child: Text(
+                value,
+                maxLines: label == 'Address' ? 2 : 1,
+                overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.right,
+                style: theme.textTheme.bodyLarge?.copyWith(
+                  color: const Color(0xFF4E5E6F),
+                  fontSize: 13.sp,
+                  fontWeight: FontWeight.w500,
+                  height: 1.15,
+                ),
               ),
             ),
           ),
@@ -1386,7 +1445,7 @@ class _CheckoutBottomBar extends StatelessWidget {
                   ),
                 ),
                 onPressed: onProceed,
-                child: const Text('Proceed Checkout'),
+                child: const Text('Book Lab Test'),
               ),
             ),
             const SizedBox(height: 8),

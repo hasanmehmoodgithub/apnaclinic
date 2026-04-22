@@ -1,8 +1,15 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
+import '../../../../core/preference/app_pref.dart';
 import '../../../../core/router/app_routes.dart';
+import '../../../../core/widgets/app_scaffold_gradient.dart';
+import '../../../../generated/assets.dart';
 import '../lab_test_figma_assets.dart';
 import '../lab_test_route_args.dart';
 import '../widgets/lab_test_figma_image.dart';
@@ -18,14 +25,99 @@ class LabTestBookingScreen extends StatefulWidget {
 }
 
 class _LabTestBookingScreenState extends State<LabTestBookingScreen> {
+  static const String _cartPrefKey = 'lab_test_cart_items';
+  final AppPref _appPref = sl<AppPref>();
   bool _labVisit = true;
   int _partnerTab = 0;
   int _selectedVendorIndex = 0;
 
+  List<LabTestCartItem> _readCartItems() {
+    final raw = _appPref.getString(_cartPrefKey)?.trim();
+    if (raw == null || raw.isEmpty) return <LabTestCartItem>[];
+    try {
+      final decoded = jsonDecode(raw);
+      if (decoded is! List) return <LabTestCartItem>[];
+      return decoded
+          .whereType<Map<String, dynamic>>()
+          .map(LabTestCartItem.fromJson)
+          .toList(growable: false);
+    } catch (_) {
+      return <LabTestCartItem>[];
+    }
+  }
+
+  Future<void> _writeCartItems(List<LabTestCartItem> items) async {
+    final payload = items.map((e) => e.toJson()).toList(growable: false);
+    await _appPref.setString(_cartPrefKey, jsonEncode(payload));
+  }
+
+  bool _containsCurrentSelection({
+    required List<LabTestCartItem> items,
+    required LabTestBookingVendorOption selectedVendor,
+    required LabTestBookingPartnerOption selectedPartner,
+  }) {
+    return items.any(
+      (e) =>
+          e.testTitle == widget.args.testTitle &&
+          e.labId == selectedVendor.id &&
+          e.partnerId == selectedPartner.id,
+    );
+  }
+
+  LabTestCartItem _toCartItem({
+    required LabTestBookingVendorOption selectedVendor,
+    required LabTestBookingPartnerOption selectedPartner,
+  }) {
+    return LabTestCartItem(
+      testTitle: widget.args.testTitle,
+      city: widget.args.city,
+      labId: selectedVendor.id,
+      labDisplayName: selectedVendor.name,
+      labLogoUrl: selectedVendor.logoUrl,
+      partnerId: selectedPartner.id,
+      partnerLogoUrl: selectedPartner.logoUrl,
+      sampleType: widget.args.sampleType,
+      requirementLabel: widget.args.requirementLabel,
+      requirementLines: widget.args.requirementLines,
+      discountedFee: widget.args.discountedFee,
+      originalFee: widget.args.originalFee,
+      discountPercent: widget.args.discountPercent,
+      discountAmount: widget.args.discountAmount,
+      discountCode: widget.args.discountCode,
+      totalAmount: widget.args.totalAmount,
+      bookingMethodIsHomeSample: !_labVisit,
+    );
+  }
+
+  Future<void> _guardSelectionChange({
+    required List<LabTestCartItem> cartItems,
+    required VoidCallback applyChange,
+  }) async {
+    if (cartItems.isEmpty) {
+      setState(applyChange);
+      return;
+    }
+
+    final action = await showDialog<_CartChangeDialogAction>(
+      context: context,
+      barrierDismissible: false,
+      builder: (dialogContext) => const _CartChangeWarningDialog(),
+    );
+    if (!mounted || action == null) return;
+
+    if (action == _CartChangeDialogAction.viewCart) {
+      context.push(AppRoutes.path(AppRoutes.labTestCart));
+      return;
+    }
+
+    await _writeCartItems(const <LabTestCartItem>[]);
+    if (!mounted) return;
+    setState(applyChange);
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final maxW = MediaQuery.sizeOf(context).width;
     final partners = widget.args.partners;
     final vendors = widget.args.vendors;
     final selectedPartnerIndex =
@@ -35,12 +127,28 @@ class _LabTestBookingScreenState extends State<LabTestBookingScreen> {
     final selectedVendor = vendors.isEmpty
         ? null
         : vendors[selectedVendorIndex];
+    final cartItems = _readCartItems();
+    final cartCount = cartItems.length;
+    final selectedPartner = partners.isEmpty ? null : partners[selectedPartnerIndex];
+    final isCurrentSelectionInCart =
+        selectedVendor != null && selectedPartner != null
+        ? _containsCurrentSelection(
+            items: cartItems,
+            selectedVendor: selectedVendor,
+            selectedPartner: selectedPartner,
+          )
+        : false;
 
-    return Scaffold(
-      backgroundColor: const Color(0xFFD5FFFB),
-      body: Column(
+    return AppScaffoldGradient(
+      child: Column(
         children: [
-          const _LabTestHeader(title: 'Lab Test'),
+          _LabTestHeader(
+            title: 'Lab Test',
+            cartCount: cartCount,
+            onCartTap: cartCount > 0
+                ? () => context.push(AppRoutes.path(AppRoutes.labTestCart))
+                : null,
+          ),
           Expanded(
             child: Center(
               child: Container(
@@ -75,12 +183,16 @@ class _LabTestBookingScreenState extends State<LabTestBookingScreen> {
                               children: [
                                 Expanded(
                                   child: _MethodTile(
-                                    title: 'Lab Test',
+                                    title: 'Walk In',
                                     iconUrl: LabTestFigmaAssets
                                         .bookingLabTestMethodIcon,
                                     selected: _labVisit,
-                                    onTap: () =>
-                                        setState(() => _labVisit = true),
+                                    onTap: _labVisit
+                                        ? () {}
+                                        : () => _guardSelectionChange(
+                                            cartItems: cartItems,
+                                            applyChange: () => _labVisit = true,
+                                          ),
                                   ),
                                 ),
                                 const SizedBox(width: 12),
@@ -90,8 +202,12 @@ class _LabTestBookingScreenState extends State<LabTestBookingScreen> {
                                     iconUrl: LabTestFigmaAssets
                                         .bookingHomeSampleIcon,
                                     selected: !_labVisit,
-                                    onTap: () =>
-                                        setState(() => _labVisit = false),
+                                    onTap: !_labVisit
+                                        ? () {}
+                                        : () => _guardSelectionChange(
+                                            cartItems: cartItems,
+                                            applyChange: () => _labVisit = false,
+                                          ),
                                   ),
                                 ),
                               ],
@@ -106,30 +222,44 @@ class _LabTestBookingScreenState extends State<LabTestBookingScreen> {
                               originalFee: widget.args.originalFee,
                             ),
                             const SizedBox(height: 16),
-                            _RequirementsCard(
-                              lines: widget.args.requirementLines,
-                            ),
-                            const SizedBox(height: 16),
+                            // _RequirementsCard(
+                            //   lines: widget.args.requirementLines,
+                            // ),
+                            // const SizedBox(height: 16),
                             _PartnerTabs(
                               partners: partners,
                               selectedIndex: selectedPartnerIndex,
-                              onChanged: (i) =>
-                                  setState(() => _partnerTab = i),
+                              onChanged: (i) {
+                                if (i == _partnerTab) return;
+                                _guardSelectionChange(
+                                  cartItems: cartItems,
+                                  applyChange: () => _partnerTab = i,
+                                );
+                              },
                             ),
                             const SizedBox(height: 12),
                             _LabVendorGrid(
                               vendors: vendors,
                               selectedIndex: selectedVendorIndex,
-                              onSelect: (i) =>
-                                  setState(() => _selectedVendorIndex = i),
+                              onSelect: (i) {
+                                if (i == _selectedVendorIndex) return;
+                                _guardSelectionChange(
+                                  cartItems: cartItems,
+                                  applyChange: () => _selectedVendorIndex = i,
+                                );
+                              },
                             ),
                           ],
                         ),
                       ),
                     ),
                     _BottomCheckoutBar(
-                      onProceed: () {
-                        if (selectedVendor == null || partners.isEmpty) {
+                      buttonText: isCurrentSelectionInCart
+                          ? 'View Your Cart'
+                          : 'Add to Cart',
+                      cartCount: cartCount,
+                      onProceed: () async {
+                        if (selectedVendor == null || selectedPartner == null) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
                               content: Text('Lab test data unavailable'),
@@ -137,28 +267,21 @@ class _LabTestBookingScreenState extends State<LabTestBookingScreen> {
                           );
                           return;
                         }
-                        final selectedPartner =
-                            partners[selectedPartnerIndex];
-                        context.push(
-                          AppRoutes.path(AppRoutes.labTestCheckout),
-                          extra: LabTestCheckoutArgs(
-                            city: widget.args.city,
-                            testTitle: widget.args.testTitle,
-                            labDisplayName: selectedVendor.name,
-                            labLogoUrl: selectedVendor.logoUrl,
-                            partnerLogoUrl: selectedPartner.logoUrl,
-                            sampleType: widget.args.sampleType,
-                            requirementLabel: widget.args.requirementLabel,
-                            discountedFee: widget.args.discountedFee,
-                            originalFee: widget.args.originalFee,
-                            discountPercent: widget.args.discountPercent,
-                            discountAmount: widget.args.discountAmount,
-                            discountCode: widget.args.discountCode,
-                            totalAmount: widget.args.totalAmount,
-                            bookingMethodIsHomeSample: !_labVisit,
-                            requirementLines: widget.args.requirementLines,
+                        if (isCurrentSelectionInCart) {
+                          context.push(AppRoutes.path(AppRoutes.labTestCart));
+                          return;
+                        }
+
+                        final updated = <LabTestCartItem>[
+                          ...cartItems,
+                          _toCartItem(
+                            selectedVendor: selectedVendor,
+                            selectedPartner: selectedPartner,
                           ),
-                        );
+                        ];
+                        await _writeCartItems(updated);
+                        if (!mounted) return;
+                        setState(() {});
                       },
                     ),
                   ],
@@ -173,61 +296,102 @@ class _LabTestBookingScreenState extends State<LabTestBookingScreen> {
 }
 
 class _LabTestHeader extends StatelessWidget {
-  const _LabTestHeader({required this.title});
+  const _LabTestHeader({
+    required this.title,
+    required this.cartCount,
+    this.onCartTap,
+  });
 
   final String title;
+  final int cartCount;
+  final VoidCallback? onCartTap;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return Container(
-      width: double.infinity,
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [Color(0x8087DDD3), Color(0x3387DDD3)],
-          stops: [0, 0.34],
-        ),
-      ),
-      child: SafeArea(
-        bottom: false,
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(8, 4, 16, 18),
-          child: Row(
-            children: [
-              Material(
-                color: Colors.transparent,
-                child: InkWell(
-                  borderRadius: BorderRadius.circular(20),
-                  onTap: () => context.pop(),
-                  child: const SizedBox(
-                    width: 40,
-                    height: 40,
-                    child: Icon(
-                      Icons.arrow_back_rounded,
-                      color: Color(0xFF061E40),
-                      size: 24,
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(8, 4, 16, 18),
+      child: Row(
+        children: [
+          Material(
+            color: Colors.transparent,
+            child: InkWell(
+              borderRadius: BorderRadius.circular(20),
+              onTap: () => context.pop(),
+              child: const SizedBox(
+                width: 40,
+                height: 40,
+                child: Icon(
+                  Icons.arrow_back_rounded,
+                  color: Color(0xFF061E40),
+                  size: 24,
+                ),
+              ),
+            ),
+          ),
+          Expanded(
+            child: Text(
+              title,
+              textAlign: TextAlign.center,
+              style: theme.textTheme.titleLarge?.copyWith(
+                color: const Color(0xFF061E40),
+                fontWeight: FontWeight.w700,
+                fontSize: 20.sp,
+                height: 30.9 / 20,
+              ),
+            ),
+          ),
+          InkWell(
+            onTap: onCartTap,
+            borderRadius: BorderRadius.circular(20),
+            child: Stack(
+              clipBehavior: Clip.none,
+              children: [
+                Container(
+                  width: 38,
+                  height: 38,
+                  decoration: const BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.white,
+                  ),
+                  alignment: Alignment.center,
+                  child: SvgPicture.asset(
+                    Assets.iconsBasket,
+                    width: 16.r,
+                    height: 16.r,
+                    colorFilter: const ColorFilter.mode(
+                      Color(0xFF667B99),
+                      BlendMode.srcIn,
                     ),
                   ),
                 ),
-              ),
-              Expanded(
-                child: Text(
-                  title,
-                  textAlign: TextAlign.center,
-                  style: theme.textTheme.titleLarge?.copyWith(
-                    color: const Color(0xFF061E40),
-                    fontWeight: FontWeight.w700,
-                    fontSize: 20.sp,
-                    height: 30.9 / 20,
+                if (cartCount > 0)
+                  Positioned(
+                    right: 2,
+                    top: 2,
+                    child: Container(
+                      width: 12,
+                      height: 12,
+                      decoration: const BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Color(0xFFE43131),
+                      ),
+                      alignment: Alignment.center,
+                      child: Text(
+                        cartCount > 9 ? '9+' : '$cartCount',
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: Colors.white,
+                          fontSize: 7.sp,
+                          fontWeight: FontWeight.w700,
+                          height: 1,
+                        ),
+                      ),
+                    ),
                   ),
-                ),
-              ),
-              const SizedBox(width: 40),
-            ],
+              ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }
@@ -386,7 +550,7 @@ class _TestSummaryCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.fromLTRB(14, 15, 14, 0),
+            padding: const EdgeInsets.fromLTRB(14, 15, 14, 15),
             child: Text(
               title,
               style: theme.textTheme.titleMedium?.copyWith(
@@ -590,7 +754,7 @@ class _RequirementsCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.fromLTRB(14, 15, 14, 0),
+            padding: const EdgeInsets.fromLTRB(14, 15, 14, 15),
             child: Text(
               'Requirements',
               style: theme.textTheme.titleMedium?.copyWith(
@@ -849,9 +1013,15 @@ class _VendorLogo extends StatelessWidget {
 }
 
 class _BottomCheckoutBar extends StatelessWidget {
-  const _BottomCheckoutBar({required this.onProceed});
+  const _BottomCheckoutBar({
+    required this.onProceed,
+    required this.buttonText,
+    required this.cartCount,
+  });
 
   final VoidCallback onProceed;
+  final String buttonText;
+  final int cartCount;
 
   @override
   Widget build(BuildContext context) {
@@ -889,7 +1059,37 @@ class _BottomCheckoutBar extends StatelessWidget {
                   ),
                 ),
                 onPressed: onProceed,
-                child: const Text('Proceed Checkout'),
+                child: Stack(
+                  children: [
+                    Center(child: Text(buttonText)),
+                    if (buttonText == 'View Your Cart' && cartCount > 0)
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 12),
+                          child: Container(
+                            width: 28,
+                            height: 28,
+                            decoration: const BoxDecoration(
+                              color: Color(0xFFF2F7F6),
+                              shape: BoxShape.circle,
+                            ),
+                            alignment: Alignment.center,
+                            child: Text(
+                              cartCount > 99 ? '99+' : '$cartCount',
+                              style: Theme.of(context).textTheme.titleSmall
+                                  ?.copyWith(
+                                    color: const Color(0xFF0FAA9A),
+                                    fontWeight: FontWeight.w700,
+                                    fontSize: 14.sp,
+                                    height: 1,
+                                  ),
+                            ),
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
               ),
             ),
             const SizedBox(height: 8),
@@ -902,6 +1102,115 @@ class _BottomCheckoutBar extends StatelessWidget {
                   borderRadius: BorderRadius.circular(100),
                 ),
               ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+enum _CartChangeDialogAction { viewCart, continueChange }
+
+class _CartChangeWarningDialog extends StatelessWidget {
+  const _CartChangeWarningDialog();
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Dialog(
+      insetPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 24),
+      backgroundColor: Colors.transparent,
+      child: Container(
+        padding: const EdgeInsets.fromLTRB(16, 20, 16, 18),
+        decoration: BoxDecoration(
+          color: const Color(0xFFF6FDFF),
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 66,
+              height: 66,
+              decoration: const BoxDecoration(
+                color: Color(0xFFF8DE63),
+                shape: BoxShape.circle,
+              ),
+              alignment: Alignment.center,
+              child: Text(
+                '!',
+                style: theme.textTheme.headlineMedium?.copyWith(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w700,
+                  height: 1,
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'Warning!',
+              style: theme.textTheme.headlineSmall?.copyWith(
+                color: const Color(0xFF1E2A3A),
+                fontWeight: FontWeight.w700,
+                fontSize: 36.sp / 2,
+              ),
+            ),
+            const SizedBox(height: 10),
+            Text(
+              'Changing the City, Service Provider or\nLab will remove all items from your cart.\nDo you want to proceed?',
+              textAlign: TextAlign.center,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: const Color(0xFF2F3E54),
+                fontSize: 14.sp,
+                height: 1.35,
+              ),
+            ),
+            const SizedBox(height: 20),
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton(
+                    onPressed: () => Navigator.of(
+                      context,
+                    ).pop(_CartChangeDialogAction.viewCart),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: const Color(0xFF2F3E54),
+                      side: const BorderSide(color: Color(0xFF9FB8BF), width: 1),
+                      minimumSize: const Size.fromHeight(50),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      textStyle: TextStyle(
+                        fontWeight: FontWeight.w700,
+                        fontSize: 16.sp,
+                      ),
+                    ),
+                    child: const Text('View Cart'),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: FilledButton(
+                    onPressed: () => Navigator.of(
+                      context,
+                    ).pop(_CartChangeDialogAction.continueChange),
+                    style: FilledButton.styleFrom(
+                      backgroundColor: const Color(0xFF0FAA9A),
+                      foregroundColor: Colors.white,
+                      minimumSize: const Size.fromHeight(50),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      textStyle: TextStyle(
+                        fontWeight: FontWeight.w700,
+                        fontSize: 16.sp,
+                      ),
+                    ),
+                    child: const Text('Continue'),
+                  ),
+                ),
+              ],
             ),
           ],
         ),
