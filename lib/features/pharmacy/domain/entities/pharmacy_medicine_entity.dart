@@ -4,6 +4,7 @@ class PharmacyMedicineEntity {
     required this.name,
     required this.description,
     required this.imageUrl,
+    required this.companyUrl,
     required this.price,
     required this.oldPrice,
   });
@@ -12,6 +13,7 @@ class PharmacyMedicineEntity {
   final String name;
   final String description;
   final String imageUrl;
+  final String companyUrl;
   final double price;
   final double oldPrice;
 }

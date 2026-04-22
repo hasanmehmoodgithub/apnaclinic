@@ -1,3 +1,4 @@
+import 'package:apnaclinic/features/pharmacy/presentation/screens/pharmacy_main_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -13,7 +14,9 @@ import '../../features/lab_test/presentation/screens/lab_test_checkout_screen.da
 import '../../features/lab_test/presentation/screens/lab_test_screen.dart';
 import '../../features/notification/presentation/cubit/notification_cubit.dart';
 import '../../features/notification/presentation/screens/notifcation_screen.dart';
-import '../../features/pharmacy/presentation/cubit/pharmacy_cubit.dart';
+import '../../features/pharmacy/domain/entities/pharmacy_medicine_entity.dart';
+import '../../features/pharmacy/presentation/screens/pharmacy_cart_screen.dart';
+import '../../features/pharmacy/presentation/screens/pharmacy_checkout_screen.dart';
 import '../../features/pharmacy/presentation/screens/pharmacy_screen.dart';
 import '../../features/search/presentation/cubit/search_cubit.dart';
 import '../../features/search/presentation/screens/search_screen.dart';
@@ -110,10 +113,28 @@ class AppRouter {
       GoRoute(
         path: AppRoutes.path(AppRoutes.pharmacy),
         name: AppRoutes.pharmacy,
-        builder: (context, state) => BlocProvider<PharmacyCubit>(
-          create: (_) => sl<PharmacyCubit>(),
-          child: const PharmacyScreen(),
-        ),
+        builder: (context, state) {
+          final extra = state.extra;
+          final data = extra is Map ? Map<String, dynamic>.from(extra) : null;
+          final selectedMedicine =
+              data?['selectedMedicine'] as PharmacyMedicineEntity?;
+          return PharmacyScreen(initialFeaturedMedicine: selectedMedicine);
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.path(AppRoutes.pharmacyMain),
+        name: AppRoutes.pharmacyMain,
+        builder: (context, state) => const PharmacyMainScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.path(AppRoutes.pharmacyCart),
+        name: AppRoutes.pharmacyCart,
+        builder: (context, state) => const PharmacyCartScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.path(AppRoutes.pharmacyCheckout),
+        name: AppRoutes.pharmacyCheckout,
+        builder: (context, state) => const PharmacyCheckoutScreen(),
       ),
       GoRoute(
         path: AppRoutes.path(AppRoutes.search),

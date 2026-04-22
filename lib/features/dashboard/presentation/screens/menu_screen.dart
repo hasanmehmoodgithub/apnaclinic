@@ -14,8 +14,23 @@ import '../widgets/menu_header.dart';
 import '../widgets/menu_logout_dialog.dart';
 import '../widgets/menu_profile_card.dart';
 
-class MenuScreen extends StatelessWidget {
+class MenuScreen extends StatefulWidget {
   const MenuScreen({super.key});
+
+  @override
+  State<MenuScreen> createState() => _MenuScreenState();
+}
+
+class _MenuScreenState extends State<MenuScreen> {
+  late final AppPref _appPref;
+  bool _isLoggedIn = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _appPref = sl<AppPref>();
+    _isLoggedIn = _appPref.getLoginStatus();
+  }
 
   static final List<_MenuItem> _mainItems = [
     // _MenuItem(
@@ -55,9 +70,7 @@ class MenuScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final appPref = sl<AppPref>();
-    final isLoggedIn = appPref.getLoginStatus();
-    final userLocal = appPref.getUserLocalModel();
+    final userLocal = _appPref.getUserLocalModel();
     final firstName = userLocal?.firstName.trim() ?? '';
     final lastName = userLocal?.lastName.trim() ?? '';
     final fullName = '$firstName $lastName'.trim();
@@ -90,13 +103,13 @@ class MenuScreen extends StatelessWidget {
                         padding: EdgeInsets.fromLTRB(22.w, 22.h, 22.w, 18.h),
                         children: [
                           MenuProfileCard(
-                            isLoggedIn: isLoggedIn,
-                            name: isLoggedIn ? displayName : 'Guest User',
-                            phone: isLoggedIn
+                            isLoggedIn: _isLoggedIn,
+                            name: _isLoggedIn ? displayName : 'Guest User',
+                            phone: _isLoggedIn
                                 ? displayPhone
                                 : 'Sign in to continue',
                             onActionTap: () {
-                              if (!isLoggedIn) {
+                              if (!_isLoggedIn) {
                                 context.push(
                                   AppRoutes.path(AppRoutes.authLogin),
                                 );
@@ -140,40 +153,39 @@ class MenuScreen extends StatelessWidget {
                         ],
                       ),
                     ),
-                    Padding(
-                      padding: EdgeInsets.fromLTRB(29.w, 0, 29.w, 11.h),
-                      child: SizedBox(
-                        width: double.infinity,
-                        child: AppButton.primary(
-                          text: isLoggedIn ? 'Logout' : 'Login',
-                          onPressed: () async {
-                            if (!isLoggedIn) {
-                              context.push(AppRoutes.path(AppRoutes.authLogin));
-                              return;
-                            }
-                            final shouldLogout = await showMenuLogoutDialog(
-                              context,
-                            );
-                            if (!shouldLogout) return;
-                            await appPref.setLoginStatus(false);
-                            await appPref.setProfileCompleted(false);
-                            await appPref.setToken('');
-                            await appPref.setUserId('');
-                            await appPref.clearUserLocalModel();
-                            if (!context.mounted) return;
-                            context.go(AppRoutes.path(AppRoutes.home));
-                          },
-                          backgroundColor: const Color(0xFF40AFA2),
-                          foregroundColor: Colors.white,
-                          elevation: 0,
-                          height: 62.h,
-                          borderRadius: 13.r,
-                          fontWeight: FontWeight.w700,
-                          fontSize: 18.sp,
+                    if (_isLoggedIn)
+                      Padding(
+                        padding: EdgeInsets.fromLTRB(29.w, 0, 29.w, 11.h),
+                        child: SizedBox(
                           width: double.infinity,
+                          child: AppButton.primary(
+                            text: 'Logout',
+                            onPressed: () async {
+                              final shouldLogout = await showMenuLogoutDialog(
+                                context,
+                              );
+                              if (!shouldLogout) return;
+                              await _appPref.setLoginStatus(false);
+                              await _appPref.setProfileCompleted(false);
+                              await _appPref.setToken('');
+                              await _appPref.setUserId('');
+                              await _appPref.clearUserLocalModel();
+                              if (!context.mounted) return;
+                              setState(() {
+                                _isLoggedIn = false;
+                              });
+                            },
+                            backgroundColor: const Color(0xFF40AFA2),
+                            foregroundColor: Colors.white,
+                            elevation: 0,
+                            height: 62.h,
+                            borderRadius: 13.r,
+                            fontWeight: FontWeight.w700,
+                            fontSize: 18.sp,
+                            width: double.infinity,
+                          ),
                         ),
                       ),
-                    ),
                   ],
                 ),
               ),

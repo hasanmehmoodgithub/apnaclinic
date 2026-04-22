@@ -14,6 +14,8 @@ abstract class PharmacyState with _$PharmacyState {
     @Default(StateStatus.idle) StateStatus medicinesLoadingStateStatus,
     @Default([]) List<PharmacyMedicineEntity> medicines,
     String? medicinesErrorMessage,
+    @Default('') String searchQuery,
+    @Default('Islamabad') String selectedCity,
     @Default([]) List<PharmacyCartItemEntity> cartItems,
     @Default(PharmacyPaymentMethod.jazzCash)
     PharmacyPaymentMethod selectedPaymentMethod,

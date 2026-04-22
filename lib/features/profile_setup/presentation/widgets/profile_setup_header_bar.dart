@@ -3,7 +3,9 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
+import '../../../../core/preference/app_pref.dart';
 import '../../../../core/router/app_routes.dart';
+import '../../../../core/di/dependency_injection.dart';
 
 class ProfileSetupHeaderBar extends StatelessWidget {
   const ProfileSetupHeaderBar({super.key, required this.topInset});
@@ -14,6 +16,8 @@ class ProfileSetupHeaderBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
+    final isProfileCompleted = sl<AppPref>().isProfileCompleted();
+    final title = isProfileCompleted ? l10n.profileTitle : 'Profile Setup';
     return SizedBox(
       height: topInset + 48.h,
       child: Padding(
@@ -49,7 +53,7 @@ class ProfileSetupHeaderBar extends StatelessWidget {
                 child: Padding(
                   padding: EdgeInsets.only(right: 40.w),
                   child: Text(
-                    l10n.profileTitle,
+                    title,
                     style: theme.textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.w700,
                       color: const Color(0xFF061E40),

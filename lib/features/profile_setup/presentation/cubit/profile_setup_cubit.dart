@@ -18,6 +18,10 @@ class ProfileSetupCubit extends Cubit<ProfileSetupState> {
   final GetProfileSetupContentUseCase _getProfileSetupContentUseCase;
   final SaveProfileSetupUseCase _saveProfileSetupUseCase;
 
+  void resetState() {
+    emit(const ProfileSetupState());
+  }
+
   Future<void> loadProfile() async {
     emit(
       state.copyWith(

@@ -23,7 +23,7 @@ class DashboardServicesMockApi {
           'subtitle': 'Authentic medicines at your doorstep',
           'offerUpto': 'Up to 10% off',
           'thumb': 'assets/img/services/pharmacy.png',
-          'route': 'pharmacy',
+          'route': 'pharmacyMain',
           'visibility': true,
         },
         {

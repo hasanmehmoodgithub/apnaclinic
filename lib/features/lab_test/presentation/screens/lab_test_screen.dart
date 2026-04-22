@@ -2,7 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../components/shimmer/app_shimmer.dart';
+import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/enums/state_status.dart';
+import '../../../../core/extensions/screen_util_extensions.dart';
+import '../../../../core/preference/app_pref.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../domain/entities/lab_test_item_entity.dart';
 import '../cubit/lab_test_cubit.dart';
@@ -20,6 +24,21 @@ class LabTestScreen extends StatefulWidget {
 
 class _LabTestScreenState extends State<LabTestScreen> {
   final _searchController = TextEditingController();
+  final AppPref _appPref = sl<AppPref>();
+  static const String _cityPrefKey = 'lab_test_selected_city';
+  bool _hasResolvedInitialCity = false;
+  bool _hasPromptedCitySelection = false;
+  bool _isCitySheetOpen = false;
+  String? _savedCity;
+
+  @override
+  void initState() {
+    super.initState();
+    final rawSavedCity = _appPref.getString(_cityPrefKey)?.trim();
+    _savedCity = (rawSavedCity == null || rawSavedCity.isEmpty)
+        ? null
+        : rawSavedCity;
+  }
 
   @override
   void dispose() {
@@ -28,6 +47,8 @@ class _LabTestScreenState extends State<LabTestScreen> {
   }
 
   Future<void> _openCitySheet(List<String> cities) async {
+    if (_isCitySheetOpen) return;
+    _isCitySheetOpen = true;
     final picked = await showModalBottomSheet<String>(
       context: context,
       isScrollControlled: true,
@@ -37,8 +58,41 @@ class _LabTestScreenState extends State<LabTestScreen> {
         child: _SelectCitySheet(cities: cities),
       ),
     );
+    _isCitySheetOpen = false;
     if (picked != null && mounted) {
       context.read<LabTestCubit>().selectCity(picked);
+      _savedCity = picked;
+      await _appPref.setString(_cityPrefKey, picked);
+    }
+  }
+
+  void _resolveInitialCitySelection(LabTestState state) {
+    if (_hasResolvedInitialCity) return;
+    if (state.catalogLoadingStateStatus == StateStatus.loading ||
+        state.catalogLoadingStateStatus == StateStatus.refreshing) {
+      return;
+    }
+    if (state.cities.isEmpty) return;
+
+    if (state.selectedCity != null && state.selectedCity!.isNotEmpty) {
+      _hasResolvedInitialCity = true;
+      return;
+    }
+
+    final savedCity = _savedCity;
+    if (savedCity != null && state.cities.contains(savedCity)) {
+      context.read<LabTestCubit>().selectCity(savedCity);
+      _hasResolvedInitialCity = true;
+      return;
+    }
+
+    _hasResolvedInitialCity = true;
+    if (!_hasPromptedCitySelection) {
+      _hasPromptedCitySelection = true;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        _openCitySheet(state.cities);
+      });
     }
   }
 
@@ -100,23 +154,23 @@ class _LabTestScreenState extends State<LabTestScreen> {
     final state = context.watch<LabTestCubit>().state;
     final cubit = context.read<LabTestCubit>();
     final theme = Theme.of(context);
-    final maxW = MediaQuery.sizeOf(context).width;
 
-    return Scaffold(
-      backgroundColor: const Color(0xFFD5FFFB),
-      body: Column(
-        children: [
-          _BrowseHeader(),
-          Expanded(
-            child: Center(
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 430),
+    return BlocListener<LabTestCubit, LabTestState>(
+      listener: (context, currentState) => _resolveInitialCitySelection(
+        currentState,
+      ),
+      child: Scaffold(
+        backgroundColor: const Color(0xFFD5FFFB),
+        body: Column(
+          children: [
+            _BrowseHeader(),
+            Expanded(
+              child: Center(
                 child: Container(
-                  width: maxW > 430 ? 430 : double.infinity,
                   decoration: const BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.vertical(
-                      top: Radius.circular(42),
+                      top: Radius.circular(40),
                     ),
                   ),
                   child: Padding(
@@ -154,7 +208,7 @@ class _LabTestScreenState extends State<LabTestScreen> {
                                                     0xFF061E40,
                                                   ),
                                                   fontWeight: FontWeight.w500,
-                                                  fontSize: 14,
+                                                  fontSize: 14.sp,
                                                 ),
                                           )
                                         : Column(
@@ -170,7 +224,7 @@ class _LabTestScreenState extends State<LabTestScreen> {
                                                       color: const Color(
                                                         0xFF667B99,
                                                       ),
-                                                      fontSize: 12,
+                                                      fontSize: 12.sp,
                                                       height: 1,
                                                     ),
                                               ),
@@ -185,7 +239,7 @@ class _LabTestScreenState extends State<LabTestScreen> {
                                                       ),
                                                       fontWeight:
                                                           FontWeight.w500,
-                                                      fontSize: 14,
+                                                      fontSize: 14.sp,
                                                       height: 1,
                                                     ),
                                               ),
@@ -196,7 +250,7 @@ class _LabTestScreenState extends State<LabTestScreen> {
                                     'Change',
                                     style: theme.textTheme.bodySmall?.copyWith(
                                       color: const Color(0xFF667B99),
-                                      fontSize: 12,
+                                      fontSize: 12.sp,
                                       height: 1,
                                     ),
                                   ),
@@ -217,7 +271,7 @@ class _LabTestScreenState extends State<LabTestScreen> {
                           style: theme.textTheme.titleMedium?.copyWith(
                             color: const Color(0xFF061E40),
                             fontWeight: FontWeight.w500,
-                            fontSize: 16,
+                            fontSize: 16.sp,
                           ),
                         ),
                         const SizedBox(height: 12),
@@ -240,7 +294,7 @@ class _LabTestScreenState extends State<LabTestScreen> {
                                   onChanged: cubit.onSearchChanged,
                                   style: theme.textTheme.bodyMedium?.copyWith(
                                     color: const Color(0xFF061E40),
-                                    fontSize: 14,
+                                    fontSize: 14.sp,
                                   ),
                                   decoration: InputDecoration(
                                     isDense: true,
@@ -249,7 +303,7 @@ class _LabTestScreenState extends State<LabTestScreen> {
                                     hintStyle: theme.textTheme.bodyMedium
                                         ?.copyWith(
                                           color: const Color(0xFF667B99),
-                                          fontSize: 14,
+                                          fontSize: 14.sp,
                                         ),
                                   ),
                                 ),
@@ -262,7 +316,6 @@ class _LabTestScreenState extends State<LabTestScreen> {
                             ],
                           ),
                         ),
-                        const SizedBox(height: 14),
                         Expanded(child: _testsSection(state)),
                         Center(
                           child: Container(
@@ -281,8 +334,8 @@ class _LabTestScreenState extends State<LabTestScreen> {
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -290,7 +343,7 @@ class _LabTestScreenState extends State<LabTestScreen> {
   Widget _testsSection(LabTestState state) {
     if (state.catalogLoadingStateStatus == StateStatus.loading ||
         state.catalogLoadingStateStatus == StateStatus.refreshing) {
-      return const Center(child: CircularProgressIndicator(strokeWidth: 2));
+      return const _LabTestBrowseShimmerView();
     }
 
     if (state.catalogLoadingStateStatus == StateStatus.error) {
@@ -310,6 +363,7 @@ class _LabTestScreenState extends State<LabTestScreen> {
     }
 
     return ListView.separated(
+      padding: EdgeInsets.symmetric(vertical: 20),
       itemCount: state.filteredItems.length,
       separatorBuilder: (context, index) => const SizedBox(height: 14),
       itemBuilder: (context, index) {
@@ -323,6 +377,25 @@ class _LabTestScreenState extends State<LabTestScreen> {
   }
 }
 
+class _LabTestBrowseShimmerView extends StatelessWidget {
+  const _LabTestBrowseShimmerView();
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView(
+      padding: EdgeInsets.zero,
+      children: [
+        SizedBox(height: 10.h),
+        AppShimmerCard(height: 126.h, borderRadius: 14.r),
+        SizedBox(height: 14.h),
+        AppShimmerCard(height: 126.h, borderRadius: 14.r),
+        SizedBox(height: 14.h),
+        AppShimmerCard(height: 126.h, borderRadius: 14.r),
+      ],
+    );
+  }
+}
+
 class _BrowseHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -330,12 +403,7 @@ class _BrowseHeader extends StatelessWidget {
     return Container(
       width: double.infinity,
       decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [Color(0x8087DDD3), Color(0x3387DDD3)],
-          stops: [0, 0.33937],
-        ),
+        color: Color(0x8087DDD3)
       ),
       child: SafeArea(
         bottom: false,
@@ -349,7 +417,7 @@ class _BrowseHeader extends StatelessWidget {
                   borderRadius: BorderRadius.circular(20),
                   onTap: () => context.pop(),
                   child: const SizedBox(
-                    width: 40,
+                    width: 60,
                     height: 40,
                     child: Icon(
                       Icons.arrow_back_rounded,
@@ -366,7 +434,7 @@ class _BrowseHeader extends StatelessWidget {
                   style: theme.textTheme.titleLarge?.copyWith(
                     color: const Color(0xFF061E40),
                     fontWeight: FontWeight.w700,
-                    fontSize: 20,
+                    fontSize: 20.sp,
                     height: 30.9 / 20,
                   ),
                 ),
@@ -415,7 +483,7 @@ class _LabTestBrowseCard extends StatelessWidget {
                     fontFamily: 'Afacad',
                     color: Colors.black,
                     fontWeight: FontWeight.w500,
-                    fontSize: 18,
+                    fontSize: 18.sp,
                     height: 1.2,
                   ),
                 ),
@@ -468,7 +536,7 @@ class _TagRow extends StatelessWidget {
           style: theme.textTheme.bodyMedium?.copyWith(
             fontFamily: 'Afacad',
             color: const Color(0xFF2B2B2B),
-            fontSize: 14,
+            fontSize: 14.sp,
           ),
         ),
         const SizedBox(width: 4),
@@ -488,7 +556,7 @@ class _TagRow extends StatelessWidget {
               color: highlight
                   ? const Color(0xFF198733)
                   : const Color(0xFF959595),
-              fontSize: 14,
+              fontSize: 14.sp,
             ),
           ),
         ),
@@ -548,7 +616,7 @@ class _SelectCitySheetState extends State<_SelectCitySheet> {
                   style: theme.textTheme.titleMedium?.copyWith(
                     color: const Color(0xFF061E40),
                     fontWeight: FontWeight.w700,
-                    fontSize: 16.437,
+                    fontSize: 16.437.sp,
                   ),
                 ),
               ),
@@ -577,7 +645,7 @@ class _SelectCitySheetState extends State<_SelectCitySheet> {
                         onChanged: (_) => setState(() {}),
                         style: theme.textTheme.bodyMedium?.copyWith(
                           color: const Color(0xFF061E40),
-                          fontSize: 14,
+                          fontSize: 14.sp,
                         ),
                         decoration: InputDecoration(
                           border: InputBorder.none,
@@ -586,7 +654,7 @@ class _SelectCitySheetState extends State<_SelectCitySheet> {
                           hintStyle: theme.textTheme.bodyMedium?.copyWith(
                             color: const Color(0xFF9E9E9E),
                             fontWeight: FontWeight.w500,
-                            fontSize: 14,
+                            fontSize: 14.sp,
                           ),
                         ),
                       ),
@@ -627,7 +695,7 @@ class _SelectCitySheetState extends State<_SelectCitySheet> {
                             style: theme.textTheme.bodyMedium?.copyWith(
                               color: const Color(0xFF061E40),
                               fontWeight: FontWeight.w500,
-                              fontSize: 14,
+                              fontSize: 14.sp,
                             ),
                           ),
                         ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/router/app_routes.dart';
 import '../lab_test_figma_assets.dart';
 import '../lab_test_route_args.dart';
@@ -42,128 +43,125 @@ class _LabTestBookingScreenState extends State<LabTestBookingScreen> {
           const _LabTestHeader(title: 'Lab Test'),
           Expanded(
             child: Center(
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 430),
-                child: Container(
-                  width: maxW > 430 ? 430 : double.infinity,
-                  decoration: const BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.vertical(
-                      top: Radius.circular(42),
-                    ),
+              child: Container(
+                width: double.infinity,
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.vertical(
+                    top: Radius.circular(42),
                   ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Expanded(
-                        child: SingleChildScrollView(
-                          padding: const EdgeInsets.fromLTRB(24, 29, 24, 24),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
-                              _CityBox(city: widget.args.city),
-                              const SizedBox(height: 16),
-                              Text(
-                                'Choose a Booking Method',
-                                style: theme.textTheme.titleMedium?.copyWith(
-                                  color: const Color(0xFF061E40),
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 16,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Expanded(
+                      child: SingleChildScrollView(
+                        padding: const EdgeInsets.fromLTRB(24, 29, 24, 24),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            _CityBox(city: widget.args.city),
+                            const SizedBox(height: 16),
+                            Text(
+                              'Choose a Booking Method',
+                              style: theme.textTheme.titleMedium?.copyWith(
+                                color: const Color(0xFF061E40),
+                                fontWeight: FontWeight.w500,
+                                fontSize: 16.sp,
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: _MethodTile(
+                                    title: 'Lab Test',
+                                    iconUrl: LabTestFigmaAssets
+                                        .bookingLabTestMethodIcon,
+                                    selected: _labVisit,
+                                    onTap: () =>
+                                        setState(() => _labVisit = true),
+                                  ),
                                 ),
-                              ),
-                              const SizedBox(height: 12),
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: _MethodTile(
-                                      title: 'Lab Test',
-                                      iconUrl: LabTestFigmaAssets
-                                          .bookingLabTestMethodIcon,
-                                      selected: _labVisit,
-                                      onTap: () =>
-                                          setState(() => _labVisit = true),
-                                    ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: _MethodTile(
+                                    title: 'Home Sample',
+                                    iconUrl: LabTestFigmaAssets
+                                        .bookingHomeSampleIcon,
+                                    selected: !_labVisit,
+                                    onTap: () =>
+                                        setState(() => _labVisit = false),
                                   ),
-                                  const SizedBox(width: 12),
-                                  Expanded(
-                                    child: _MethodTile(
-                                      title: 'Home Sample',
-                                      iconUrl: LabTestFigmaAssets
-                                          .bookingHomeSampleIcon,
-                                      selected: !_labVisit,
-                                      onTap: () =>
-                                          setState(() => _labVisit = false),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 16),
-                              _TestSummaryCard(
-                                title: widget.args.testTitle,
-                                labName: selectedVendor?.name ?? '',
-                                requirement: widget.args.requirementLabel,
-                                sampleType: widget.args.sampleType,
-                                discountedFee: widget.args.discountedFee,
-                                originalFee: widget.args.originalFee,
-                              ),
-                              const SizedBox(height: 16),
-                              _RequirementsCard(
-                                lines: widget.args.requirementLines,
-                              ),
-                              const SizedBox(height: 16),
-                              _PartnerTabs(
-                                partners: partners,
-                                selectedIndex: selectedPartnerIndex,
-                                onChanged: (i) =>
-                                    setState(() => _partnerTab = i),
-                              ),
-                              const SizedBox(height: 12),
-                              _LabVendorGrid(
-                                vendors: vendors,
-                                selectedIndex: selectedVendorIndex,
-                                onSelect: (i) =>
-                                    setState(() => _selectedVendorIndex = i),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      _BottomCheckoutBar(
-                        onProceed: () {
-                          if (selectedVendor == null || partners.isEmpty) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Lab test data unavailable'),
-                              ),
-                            );
-                            return;
-                          }
-                          final selectedPartner =
-                              partners[selectedPartnerIndex];
-                          context.push(
-                            AppRoutes.path(AppRoutes.labTestCheckout),
-                            extra: LabTestCheckoutArgs(
-                              city: widget.args.city,
-                              testTitle: widget.args.testTitle,
-                              labDisplayName: selectedVendor.name,
-                              labLogoUrl: selectedVendor.logoUrl,
-                              partnerLogoUrl: selectedPartner.logoUrl,
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 16),
+                            _TestSummaryCard(
+                              title: widget.args.testTitle,
+                              labName: selectedVendor?.name ?? '',
+                              requirement: widget.args.requirementLabel,
                               sampleType: widget.args.sampleType,
-                              requirementLabel: widget.args.requirementLabel,
                               discountedFee: widget.args.discountedFee,
                               originalFee: widget.args.originalFee,
-                              discountPercent: widget.args.discountPercent,
-                              discountAmount: widget.args.discountAmount,
-                              discountCode: widget.args.discountCode,
-                              totalAmount: widget.args.totalAmount,
-                              bookingMethodIsHomeSample: !_labVisit,
-                              requirementLines: widget.args.requirementLines,
+                            ),
+                            const SizedBox(height: 16),
+                            _RequirementsCard(
+                              lines: widget.args.requirementLines,
+                            ),
+                            const SizedBox(height: 16),
+                            _PartnerTabs(
+                              partners: partners,
+                              selectedIndex: selectedPartnerIndex,
+                              onChanged: (i) =>
+                                  setState(() => _partnerTab = i),
+                            ),
+                            const SizedBox(height: 12),
+                            _LabVendorGrid(
+                              vendors: vendors,
+                              selectedIndex: selectedVendorIndex,
+                              onSelect: (i) =>
+                                  setState(() => _selectedVendorIndex = i),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    _BottomCheckoutBar(
+                      onProceed: () {
+                        if (selectedVendor == null || partners.isEmpty) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Lab test data unavailable'),
                             ),
                           );
-                        },
-                      ),
-                    ],
-                  ),
+                          return;
+                        }
+                        final selectedPartner =
+                            partners[selectedPartnerIndex];
+                        context.push(
+                          AppRoutes.path(AppRoutes.labTestCheckout),
+                          extra: LabTestCheckoutArgs(
+                            city: widget.args.city,
+                            testTitle: widget.args.testTitle,
+                            labDisplayName: selectedVendor.name,
+                            labLogoUrl: selectedVendor.logoUrl,
+                            partnerLogoUrl: selectedPartner.logoUrl,
+                            sampleType: widget.args.sampleType,
+                            requirementLabel: widget.args.requirementLabel,
+                            discountedFee: widget.args.discountedFee,
+                            originalFee: widget.args.originalFee,
+                            discountPercent: widget.args.discountPercent,
+                            discountAmount: widget.args.discountAmount,
+                            discountCode: widget.args.discountCode,
+                            totalAmount: widget.args.totalAmount,
+                            bookingMethodIsHomeSample: !_labVisit,
+                            requirementLines: widget.args.requirementLines,
+                          ),
+                        );
+                      },
+                    ),
+                  ],
                 ),
               ),
             ),
@@ -221,7 +219,7 @@ class _LabTestHeader extends StatelessWidget {
                   style: theme.textTheme.titleLarge?.copyWith(
                     color: const Color(0xFF061E40),
                     fontWeight: FontWeight.w700,
-                    fontSize: 20,
+                    fontSize: 20.sp,
                     height: 30.9 / 20,
                   ),
                 ),
@@ -258,7 +256,7 @@ class _CityBox extends StatelessWidget {
             'City',
             style: theme.textTheme.bodySmall?.copyWith(
               color: const Color(0xFF667B99),
-              fontSize: 12,
+              fontSize: 12.sp,
               height: 1,
             ),
           ),
@@ -267,7 +265,7 @@ class _CityBox extends StatelessWidget {
             style: theme.textTheme.bodyMedium?.copyWith(
               color: const Color(0xFF061E40),
               fontWeight: FontWeight.w500,
-              fontSize: 14,
+              fontSize: 14.sp,
               height: 1,
             ),
           ),
@@ -321,7 +319,7 @@ class _MethodTile extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                       style: theme.textTheme.bodyLarge?.copyWith(
                         color: const Color(0xFF110844),
-                        fontSize: 14,
+                        fontSize: 14.sp,
                         height: 1,
                       ),
                     ),
@@ -394,7 +392,7 @@ class _TestSummaryCard extends StatelessWidget {
               style: theme.textTheme.titleMedium?.copyWith(
                 fontFamily: 'Afacad',
                 fontWeight: FontWeight.w500,
-                fontSize: 18,
+                fontSize: 18.sp,
                 height: 1.2,
                 color: Colors.black,
               ),
@@ -411,7 +409,7 @@ class _TestSummaryCard extends StatelessWidget {
                   labName,
                   style: theme.textTheme.bodyMedium?.copyWith(
                     fontFamily: 'Afacad',
-                    fontSize: 14,
+                    fontSize: 14.sp,
                     height: 1.2,
                     color: Colors.black,
                   ),
@@ -435,39 +433,42 @@ class _TestSummaryCard extends StatelessWidget {
                                 ),
                               ),
                               padding: const EdgeInsets.symmetric(vertical: 7),
-                              child: Wrap(
-                                spacing: 4,
-                                runSpacing: 6,
-                                crossAxisAlignment: WrapCrossAlignment.center,
+                              child: Row(
                                 children: [
                                   Text(
                                     'Requirement',
                                     style: theme.textTheme.bodyMedium?.copyWith(
                                       fontFamily: 'Afacad',
                                       color: const Color(0xFF2B2B2B),
-                                      fontSize: 14,
+                                      fontSize: 14.sp,
                                     ),
                                   ),
-                                  const SizedBox(width: 4),
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 8,
-                                      vertical: 4,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: const Color(0xFFB7EAC3),
-                                      borderRadius: BorderRadius.circular(59),
-                                    ),
-                                    child: Text(
-                                      requirement!,
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: theme.textTheme.bodySmall
-                                          ?.copyWith(
-                                            fontFamily: 'Afacad',
-                                            color: const Color(0xFF198733),
-                                            fontSize: 14,
-                                          ),
+                                  const SizedBox(width: 6),
+                                  Flexible(
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 8,
+                                        vertical: 4,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: const Color(0xFFB7EAC3),
+                                        borderRadius: BorderRadius.circular(59),
+                                      ),
+                                      child: FittedBox(
+                                        fit: BoxFit.scaleDown,
+                                        alignment: Alignment.centerLeft,
+                                        child: Text(
+                                          requirement!,
+                                          maxLines: 1,
+                                          softWrap: false,
+                                          style: theme.textTheme.bodySmall
+                                              ?.copyWith(
+                                                fontFamily: 'Afacad',
+                                                color: const Color(0xFF198733),
+                                                fontSize: 14.sp,
+                                              ),
+                                        ),
+                                      ),
                                     ),
                                   ),
                                 ],
@@ -476,17 +477,19 @@ class _TestSummaryCard extends StatelessWidget {
                           ],
                           Padding(
                             padding: const EdgeInsets.symmetric(vertical: 7),
-                            child: Row(
+                            child: Wrap(
+                              spacing: 4,
+                              runSpacing: 6,
+                              crossAxisAlignment: WrapCrossAlignment.center,
                               children: [
                                 Text(
                                   'Sample Type',
                                   style: theme.textTheme.bodyMedium?.copyWith(
                                     fontFamily: 'Afacad',
                                     color: const Color(0xFF2B2B2B),
-                                    fontSize: 14,
+                                    fontSize: 14.sp,
                                   ),
                                 ),
-                                const SizedBox(width: 4),
                                 Container(
                                   padding: const EdgeInsets.symmetric(
                                     horizontal: 8,
@@ -504,7 +507,7 @@ class _TestSummaryCard extends StatelessWidget {
                                     style: theme.textTheme.bodySmall?.copyWith(
                                       fontFamily: 'Afacad',
                                       color: const Color(0xFF959595),
-                                      fontSize: 14,
+                                      fontSize: 14.sp,
                                     ),
                                   ),
                                 ),
@@ -534,7 +537,7 @@ class _TestSummaryCard extends StatelessWidget {
                                 fontFamily: 'Afacad',
                                 decoration: TextDecoration.lineThrough,
                                 color: const Color(0xFF979797),
-                                fontSize: 14,
+                                fontSize: 14.sp,
                                 height: 1.3,
                               ),
                             ),
@@ -550,7 +553,7 @@ class _TestSummaryCard extends StatelessWidget {
                               style: theme.textTheme.bodyMedium?.copyWith(
                                 fontFamily: 'Afacad',
                                 color: Colors.white,
-                                fontSize: 16,
+                                fontSize: 16.sp,
                                 height: 1.3,
                               ),
                             ),
@@ -593,7 +596,7 @@ class _RequirementsCard extends StatelessWidget {
               style: theme.textTheme.titleMedium?.copyWith(
                 fontFamily: 'Afacad',
                 fontWeight: FontWeight.w500,
-                fontSize: 18,
+                fontSize: 18.sp,
                 height: 16 / 18,
                 color: Colors.black,
               ),
@@ -616,7 +619,7 @@ class _RequirementsCard extends StatelessWidget {
                       '${i + 1}. ${lines[i]}',
                       style: theme.textTheme.bodyMedium?.copyWith(
                         fontFamily: 'Afacad',
-                        fontSize: 14,
+                        fontSize: 14.sp,
                         height: 1.2,
                         color: Colors.black,
                       ),
@@ -712,7 +715,7 @@ class _PartnerTabs extends StatelessWidget {
                                 fontWeight: selected
                                     ? FontWeight.w700
                                     : FontWeight.w500,
-                                fontSize: 16,
+                                fontSize: 16.sp,
                               ),
                             ),
                           ],
@@ -788,7 +791,7 @@ class _LabVendorGrid extends StatelessWidget {
                         textAlign: TextAlign.center,
                         style: theme.textTheme.bodyMedium?.copyWith(
                           color: const Color(0xFF110844),
-                          fontSize: 14,
+                          fontSize: 14.sp,
                           height: 1,
                         ),
                       ),
@@ -880,9 +883,9 @@ class _BottomCheckoutBar extends StatelessWidget {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12.909),
                   ),
-                  textStyle: const TextStyle(
+                  textStyle: TextStyle(
                     fontWeight: FontWeight.w700,
-                    fontSize: 16,
+                    fontSize: 16.sp,
                   ),
                 ),
                 onPressed: onProceed,

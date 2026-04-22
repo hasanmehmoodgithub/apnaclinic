@@ -3,16 +3,25 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/enums/state_status.dart';
 import '../../domain/entities/pharmacy_cart_item_entity.dart';
 import '../../domain/entities/pharmacy_medicine_entity.dart';
+import '../../domain/use_cases/add_to_cart_use_case.dart';
+import '../../domain/use_cases/get_pharmacy_cart_use_case.dart';
 import '../../domain/use_cases/get_pharmacy_medicines_use_case.dart';
 import 'pharmacy_state.dart';
 
 class PharmacyCubit extends Cubit<PharmacyState> {
-  PharmacyCubit({required this.getPharmacyMedicinesUseCase})
+  PharmacyCubit({
+    required this.getPharmacyMedicinesUseCase,
+    required this.getPharmacyCartUseCase,
+    required this.addToCartUseCase,
+  })
       : super(const PharmacyState()) {
     loadMedicines();
+    loadCart();
   }
 
   final GetPharmacyMedicinesUseCase getPharmacyMedicinesUseCase;
+  final GetPharmacyCartUseCase getPharmacyCartUseCase;
+  final AddToCartUseCase addToCartUseCase;
 
   Future<void> loadMedicines({bool refresh = false}) async {
     emit(
@@ -46,6 +55,16 @@ class PharmacyCubit extends Cubit<PharmacyState> {
     );
   }
 
+  Future<void> loadCart() async {
+    final result = await getPharmacyCartUseCase(const GetPharmacyCartParams());
+    if (isClosed) return;
+
+    result.fold(
+      (_) {},
+      (items) => emit(state.copyWith(cartItems: items)),
+    );
+  }
+
   void addToCart(PharmacyMedicineEntity medicine, {int quantity = 1}) {
     final existingIndex =
         state.cartItems.indexWhere((item) => item.medicine.id == medicine.id);
@@ -59,6 +78,25 @@ class PharmacyCubit extends Cubit<PharmacyState> {
       items.add(PharmacyCartItemEntity(medicine: medicine, quantity: quantity));
     }
     emit(state.copyWith(cartItems: items));
+  }
+
+  Future<bool> addToCartApi(PharmacyMedicineEntity medicine, {int quantity = 1}) async {
+    final result = await addToCartUseCase(
+      AddToCartParams(medicineId: medicine.id, quantity: quantity),
+    );
+    if (isClosed) return false;
+
+    return result.fold(
+      (_) {
+        // Keep cart UX responsive even if API is temporarily unavailable.
+        addToCart(medicine, quantity: quantity);
+        return true;
+      },
+      (_) {
+        addToCart(medicine, quantity: quantity);
+        return true;
+      },
+    );
   }
 
   void increaseQuantity(String medicineId) {
@@ -80,6 +118,14 @@ class PharmacyCubit extends Cubit<PharmacyState> {
 
   void selectPaymentMethod(PharmacyPaymentMethod method) {
     emit(state.copyWith(selectedPaymentMethod: method));
+  }
+
+  void updateSearchQuery(String query) {
+    emit(state.copyWith(searchQuery: query));
+  }
+
+  void selectCheckoutCity(String city) {
+    emit(state.copyWith(selectedCity: city));
   }
 
   void clearCart() {

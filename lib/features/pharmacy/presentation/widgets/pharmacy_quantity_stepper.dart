@@ -11,20 +11,39 @@ class PharmacyQuantityStepper extends StatelessWidget {
     required this.onAdd,
     required this.onRemove,
     this.showBasketIcon = false,
+    this.height,
+    this.horizontalPadding,
+    this.itemSpacing,
+    this.quantityFontSize,
+    this.actionFontSize,
+    this.borderRadius,
   });
 
   final int quantity;
   final VoidCallback onAdd;
   final VoidCallback onRemove;
   final bool showBasketIcon;
+  final double? height;
+  final double? horizontalPadding;
+  final double? itemSpacing;
+  final double? quantityFontSize;
+  final double? actionFontSize;
+  final double? borderRadius;
 
   @override
   Widget build(BuildContext context) {
+    final containerHeight = height ?? 32.h;
+    final containerPadding = horizontalPadding ?? 8.w;
+    final spacing = itemSpacing ?? 14.w;
+    final qtyFont = quantityFontSize ?? 16.sp;
+    final actionFont = actionFontSize ?? 13.sp;
+    final radius = borderRadius ?? 36.r;
+
     return Container(
-      height: 32.h,
-      padding: EdgeInsets.symmetric(horizontal: 8.w),
+      height: containerHeight,
+      padding: EdgeInsets.symmetric(horizontal: containerPadding),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(36.r),
+        borderRadius: BorderRadius.circular(radius),
         border: Border.all(color: const Color(0xFFCBD3DC), width: 0.8),
         color: Colors.white,
       ),
@@ -36,22 +55,21 @@ class PharmacyQuantityStepper extends StatelessWidget {
               Assets.iconsBasket,
               width: 14.r,
               height: 14.r,
-              color: const Color(0xFF667B99),
             ),
-            SizedBox(width: 10.w),
+            SizedBox(width: spacing),
           ],
-          _ActionIconButton(label: '-', onTap: onRemove),
-          SizedBox(width: 14.w),
+          _ActionIconButton(label: '-', onTap: onRemove, fontSize: actionFont),
+          SizedBox(width: spacing),
           Text(
             '$quantity',
             style: Theme.of(context).textTheme.titleSmall?.copyWith(
                   color: const Color(0xFF667B99),
                   fontWeight: FontWeight.w400,
-                  fontSize: 16.sp,
+                  fontSize: qtyFont,
                 ),
           ),
-          SizedBox(width: 14.w),
-          _ActionIconButton(label: '+', onTap: onAdd),
+          SizedBox(width: spacing),
+          _ActionIconButton(label: '+', onTap: onAdd, fontSize: actionFont),
         ],
       ),
     );
@@ -62,10 +80,12 @@ class _ActionIconButton extends StatelessWidget {
   const _ActionIconButton({
     required this.label,
     required this.onTap,
+    required this.fontSize,
   });
 
   final String label;
   final VoidCallback onTap;
+  final double fontSize;
 
   @override
   Widget build(BuildContext context) {
@@ -77,7 +97,7 @@ class _ActionIconButton extends StatelessWidget {
         style: Theme.of(context).textTheme.titleSmall?.copyWith(
               color: const Color(0xFF667B99),
               fontWeight: FontWeight.w700,
-              fontSize: 13.sp,
+              fontSize: fontSize,
             ),
       ),
     );

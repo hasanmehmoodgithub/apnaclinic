@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../core/extensions/screen_util_extensions.dart';
+import '../../../../core/router/app_routes.dart';
+import '../../../../core/widgets/app_button_widget.dart';
 import '../../../../core/widgets/app_scaffold_gradient.dart';
 import '../cubit/pharmacy_cubit.dart';
 import '../cubit/pharmacy_state.dart';
 import '../widgets/pharmacy_cart_item_tile.dart';
-import 'pharmacy_checkout_screen.dart';
 
 class PharmacyCartScreen extends StatelessWidget {
   const PharmacyCartScreen({super.key});
@@ -48,7 +50,7 @@ class PharmacyCartScreen extends StatelessWidget {
                 child: Container(
                   width: double.infinity,
                   decoration: BoxDecoration(
-                    color: const Color(0xFFF3F3F3),
+                    color: Colors.white,
                     borderRadius: BorderRadius.vertical(top: Radius.circular(42.r)),
                   ),
                   child: Stack(
@@ -79,37 +81,13 @@ class PharmacyCartScreen extends StatelessWidget {
                         bottom: 22.h,
                         child: SafeArea(
                           top: false,
-                          child: FilledButton(
-                            onPressed: state.cartItems.isEmpty
+                          child: AppButtonWidget(
+                            title: 'Check Out',
+                            onTap: state.cartItems.isEmpty
                                 ? null
                                 : () {
-                                    Navigator.of(context).push(
-                                      MaterialPageRoute<void>(
-                                        builder: (_) => BlocProvider.value(
-                                          value: context.read<PharmacyCubit>(),
-                                          child: const PharmacyCheckoutScreen(),
-                                        ),
-                                      ),
-                                    );
+                                    context.pushNamed(AppRoutes.pharmacyCheckout);
                                   },
-                            style: FilledButton.styleFrom(
-                              backgroundColor: const Color(0xFF1FAFA3),
-                              minimumSize: Size.fromHeight(62.h),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(20.r),
-                              ),
-                            ),
-                            child: Text(
-                              'Check Out',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .titleMedium
-                                  ?.copyWith(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w700,
-                                    fontSize: 18.sp,
-                                  ),
-                            ),
                           ),
                         ),
                       ),
