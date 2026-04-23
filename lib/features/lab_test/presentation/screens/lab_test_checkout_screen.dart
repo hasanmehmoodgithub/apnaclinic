@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/di/dependency_injection.dart';
@@ -154,7 +155,7 @@ class _LabTestCheckoutScreenState extends State<LabTestCheckoutScreen> {
                         style: Theme.of(context).textTheme.titleMedium?.copyWith(
                           color: const Color(0xFF0E2650),
                           fontWeight: FontWeight.w500,
-                          fontSize: 16.sp,
+                          fontSize: 20.sp,
                           height: 1.1,
                         ),
                       ),
@@ -166,7 +167,7 @@ class _LabTestCheckoutScreenState extends State<LabTestCheckoutScreen> {
                         textAlign: TextAlign.center,
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           color: const Color(0xFF5676A8),
-                          fontSize: 15.sp,
+                          fontSize: 14.sp,
                           height: 1.45,
                         ),
                       ),
@@ -177,7 +178,7 @@ class _LabTestCheckoutScreenState extends State<LabTestCheckoutScreen> {
                         style: Theme.of(context).textTheme.titleSmall?.copyWith(
                           color: const Color(0xFF0D1218),
                           fontWeight: FontWeight.w700,
-                          fontSize: 19.sp,
+                          fontSize: 16.sp,
                           height: 1.2,
                         ),
                       ),
@@ -194,10 +195,14 @@ class _LabTestCheckoutScreenState extends State<LabTestCheckoutScreen> {
                         ),
                         child: Row(
                           children: [
-                            const Icon(
-                              Icons.discount_rounded,
-                              color: Color(0xFF0D1218),
-                              size: 24,
+                            SvgPicture.asset(
+                              LabTestFigmaAssets.checkoutDiscountIcon,
+                              width: 16,
+                              height: 16,
+                              colorFilter: const ColorFilter.mode(
+                                Color(0xFF0D1218),
+                                BlendMode.srcIn,
+                              ),
                             ),
                             const SizedBox(width: 8),
                             Expanded(
@@ -207,7 +212,7 @@ class _LabTestCheckoutScreenState extends State<LabTestCheckoutScreen> {
                                     ?.copyWith(
                                       color: const Color(0xFF0D1218),
                                       fontWeight: FontWeight.w700,
-                                      fontSize: 18.sp,
+                                      fontSize: 16.sp,
                                     ),
                               ),
                             ),
@@ -217,7 +222,7 @@ class _LabTestCheckoutScreenState extends State<LabTestCheckoutScreen> {
                                   ?.copyWith(
                                     fontWeight: FontWeight.w700,
                                     color: const Color(0xFF22185F),
-                                    fontSize: 18.sp,
+                                    fontSize: 16.sp,
                                   ),
                             ),
                           ],
