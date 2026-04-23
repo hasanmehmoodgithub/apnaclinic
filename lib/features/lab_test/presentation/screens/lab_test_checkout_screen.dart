@@ -389,11 +389,13 @@ class _SummaryCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: const Color(0xFFDDE3EA), width: 1),
         boxShadow: [
           BoxShadow(
-            color: const Color(0x3308619C),
-            blurRadius: 27,
-            offset: const Offset(0, 18),
+            color: const Color(0x54565C67),
+            blurRadius: 8,
+            spreadRadius: 1.1,
+            offset: Offset.zero,
           ),
         ],
       ),
@@ -612,11 +614,13 @@ class _RequirementsCheckoutCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: const Color(0xFFDDE3EA), width: 1),
         boxShadow: [
           BoxShadow(
-            color: const Color(0x33085283),
-            blurRadius: 27,
-            offset: const Offset(0, 14),
+            color: const Color(0x54565C67),
+            blurRadius: 8,
+            spreadRadius: 1.1,
+            offset: Offset.zero,
           ),
         ],
       ),
@@ -725,11 +729,13 @@ class _PaymentBreakdownCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: const Color(0xFFDDE3EA), width: 1),
         boxShadow: [
           BoxShadow(
-            color: const Color(0x4208619C),
-            blurRadius: 27,
-            offset: const Offset(0, 4),
+            color: const Color(0x54565C67),
+            blurRadius: 8,
+            spreadRadius: 1.1,
+            offset: Offset.zero,
           ),
         ],
       ),
@@ -992,11 +998,13 @@ class _PatientFormSection extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: const Color(0xFFDDE3EA), width: 1),
         boxShadow: [
           BoxShadow(
-            color: const Color(0x33085283),
-            blurRadius: 27,
-            offset: const Offset(0, 14),
+            color: const Color(0x54565C67),
+            blurRadius: 8,
+            spreadRadius: 1.1,
+            offset: Offset.zero,
           ),
         ],
       ),
@@ -1234,11 +1242,13 @@ class _PatientFormSection extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: const Color(0xFFDDE3EA), width: 1),
         boxShadow: [
           BoxShadow(
-            color: const Color(0x33085283),
-            blurRadius: 27,
-            offset: const Offset(0, 14),
+            color: const Color(0x54565C67),
+            blurRadius: 8,
+            spreadRadius: 1.1,
+            offset: Offset.zero,
           ),
         ],
       ),

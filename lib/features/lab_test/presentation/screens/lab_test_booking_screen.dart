@@ -13,6 +13,7 @@ import '../../../../generated/assets.dart';
 import '../lab_test_figma_assets.dart';
 import '../lab_test_route_args.dart';
 import '../widgets/lab_test_figma_image.dart';
+import '../widgets/lab_test_price_pill.dart';
 
 /// Lab selection + booking method (Figma node `2303:67674`).
 class LabTestBookingScreen extends StatefulWidget {
@@ -564,8 +565,12 @@ class _TestSummaryCard extends StatelessWidget {
           ),
           Container(
             width: double.infinity,
-            color: Colors.white,
-            padding: const EdgeInsets.fromLTRB(14, 13, 14, 13),
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.vertical(
+                bottom: Radius.circular(14),
+              ),
+            ),            padding: const EdgeInsets.fromLTRB(14, 13, 14, 13),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -682,47 +687,25 @@ class _TestSummaryCard extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(width: 8),
-                    Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(26),
-                        border: Border.all(
-                          color: const Color(0xFFF1F1F1),
-                          width: 1.0,
-                        ),
+                    LabTestPricePill(
+                      originalFee: originalFee,
+                      discountedFee: discountedFee,
+                      borderColor: const Color(0xFFF1F1F1),
+                      outerBorderRadius: 26,
+                      discountedBorderRadius: 24.444,
+                      originalPadding: const EdgeInsets.all(6.984),
+                      discountedPadding: const EdgeInsets.all(6.984),
+                      discountedBackgroundColor: const Color(0xFF0FAA9A),
+                      originalTextColor: const Color(0xFF979797),
+                      originalTextStyle: theme.textTheme.bodySmall?.copyWith(
+                        fontFamily: 'Afacad',
+                        fontSize: 12.sp,
+                        height: 1.3,
                       ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.all(6.984),
-                            child: Text(
-                              originalFee,
-                              style: theme.textTheme.bodySmall?.copyWith(
-                                fontFamily: 'Afacad',
-                                decoration: TextDecoration.lineThrough,
-                                color: const Color(0xFF979797),
-                                fontSize: 14.sp,
-                                height: 1.3,
-                              ),
-                            ),
-                          ),
-                          Container(
-                            padding: const EdgeInsets.all(6.984),
-                            decoration: BoxDecoration(
-                              color: const Color(0xFF0FAA9A),
-                              borderRadius: BorderRadius.circular(24.444),
-                            ),
-                            child: Text(
-                              discountedFee,
-                              style: theme.textTheme.bodyMedium?.copyWith(
-                                fontFamily: 'Afacad',
-                                color: Colors.white,
-                                fontSize: 16.sp,
-                                height: 1.3,
-                              ),
-                            ),
-                          ),
-                        ],
+                      discountedTextStyle: theme.textTheme.bodyMedium?.copyWith(
+                        fontFamily: 'Afacad',
+                        fontSize: 12.sp,
+                        height: 1.3,
                       ),
                     ),
                   ],
