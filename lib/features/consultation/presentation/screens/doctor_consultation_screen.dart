@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../../core/extensions/screen_util_extensions.dart';
+import '../../../../core/router/app_routes.dart';
 import '../../domain/entities/consultation_category_entity.dart';
 import '../constants/consultation_ui_config.dart';
 import '../cubit/consultation_cubit.dart';
@@ -177,6 +179,10 @@ class DoctorConsultationScreen extends StatelessWidget {
                                             state.filteredCategories[index];
                                         return ConsultationCategoryCard(
                                           category: category,
+                                          onTap: () => context.pushNamed(
+                                            AppRoutes.consultationDoctors,
+                                            extra: {'category': category.title},
+                                          ),
                                           onInfoTap: (position) =>
                                               _showTooltipMenu(
                                                 context,

@@ -9,87 +9,96 @@ import '../constants/consultation_ui_config.dart';
 class ConsultationCategoryCard extends StatelessWidget {
   final ConsultationCategoryEntity category;
   final ValueChanged<Offset> onInfoTap;
+  final VoidCallback onTap;
 
   const ConsultationCategoryCard({
     super.key,
     required this.category,
     required this.onInfoTap,
+    required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
     final responsive = sl<ResponsiveConfigService>();
     final textTheme = Theme.of(context).textTheme;
-    return Container(
-      height: responsive.h(context, 81.7),
-      decoration: BoxDecoration(
-        color: ConsultationUiConfig.cardBackground,
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
         borderRadius: BorderRadius.circular(responsive.r(context, 10.7)),
-      ),
-      child: Stack(
-        children: [
-          Positioned.fill(
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(responsive.r(context, 10.7)),
-              child: Align(
-                alignment: Alignment.topRight,
-                child: Opacity(
-                  opacity: 0.32,
-                  child: SvgPicture.asset(
-                    ConsultationUiConfig.cardPatternAsset,
-                    width: responsive.w(context, 112),
-                    height: responsive.h(context, 68),
-                    fit: BoxFit.contain,
+        onTap: onTap,
+        child: Container(
+          height: responsive.h(context, 81.7),
+          decoration: BoxDecoration(
+            color: ConsultationUiConfig.cardBackground,
+            borderRadius: BorderRadius.circular(responsive.r(context, 10.7)),
+          ),
+          child: Stack(
+            children: [
+              Positioned.fill(
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(responsive.r(context, 10.7)),
+                  child: Align(
+                    alignment: Alignment.topRight,
+                    child: Opacity(
+                      opacity: 0.32,
+                      child: SvgPicture.asset(
+                        ConsultationUiConfig.cardPatternAsset,
+                        width: responsive.w(context, 112),
+                        height: responsive.h(context, 68),
+                        fit: BoxFit.contain,
+                      ),
+                    ),
                   ),
                 ),
               ),
-            ),
-          ),
-          Positioned(
-            left: responsive.w(context, 14),
-            top: responsive.h(context, 16),
-            right: responsive.w(context, 70),
-            child: Text(
-              category.title,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              style: textTheme.titleMedium?.copyWith(
-                fontSize: responsive.sp(context, 15.3),
-                height: 1.0,
-                fontWeight: FontWeight.w500,
-                color: ConsultationUiConfig.primaryText,
+              Positioned(
+                left: responsive.w(context, 14),
+                top: responsive.h(context, 16),
+                right: responsive.w(context, 70),
+                child: Text(
+                  category.title,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: textTheme.titleMedium?.copyWith(
+                    fontSize: responsive.sp(context, 15.3),
+                    height: 1.0,
+                    fontWeight: FontWeight.w500,
+                    color: ConsultationUiConfig.primaryText,
+                  ),
+                ),
               ),
-            ),
-          ),
-          Positioned(
-            right: responsive.w(context, 10),
-            bottom: responsive.h(context, 8),
-            child: SizedBox(
-              width: responsive.w(context, 50),
-              height: responsive.h(context, 50),
-              child: SvgPicture.asset(category.iconUrl, fit: BoxFit.contain),
-            ),
-          ),
-          Positioned(
-            top: responsive.h(context, 3),
-            right: responsive.w(context, 3),
-            child: GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              onTapDown: (details) => onInfoTap(details.globalPosition),
-              child: SizedBox(
-                width: responsive.w(context, 22),
-                height: responsive.h(context, 22),
-                child: Center(
+              Positioned(
+                right: responsive.w(context, 10),
+                bottom: responsive.h(context, 8),
+                child: SizedBox(
+                  width: responsive.w(context, 50),
+                  height: responsive.h(context, 50),
+                  child: SvgPicture.asset(category.iconUrl, fit: BoxFit.contain),
+                ),
+              ),
+              Positioned(
+                top: responsive.h(context, 3),
+                right: responsive.w(context, 3),
+                child: GestureDetector(
+                  behavior: HitTestBehavior.opaque,
+                  onTapDown: (details) => onInfoTap(details.globalPosition),
                   child: SizedBox(
-                    width: responsive.w(context, 16),
-                    height: responsive.h(context, 16),
-                    child: _InfoIcon(responsive: responsive),
+                    width: responsive.w(context, 22),
+                    height: responsive.h(context, 22),
+                    child: Center(
+                      child: SizedBox(
+                        width: responsive.w(context, 16),
+                        height: responsive.h(context, 16),
+                        child: _InfoIcon(responsive: responsive),
+                      ),
+                    ),
                   ),
                 ),
               ),
-            ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }

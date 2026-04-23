@@ -4,6 +4,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import '../../features/app/presentation/screens/splash_screen.dart';
 import '../../features/consultation/presentation/cubit/consultation_cubit.dart';
+import '../../features/consultation/presentation/screens/doctor_consultation_book_doctor_screen.dart';
+import '../../features/consultation/presentation/screens/doctor_consultation_results_screen.dart';
 import '../../features/consultation/presentation/screens/doctor_consultation_screen.dart';
 import '../../features/customer_support/presentation/screens/customer_support_screen.dart';
 import '../../features/dashboard/presentation/screens/menu_screen.dart';
@@ -110,6 +112,34 @@ class AppRouter {
           create: (_) => sl<ConsultationCubit>(),
           child: const DoctorConsultationScreen(),
         ),
+      ),
+      GoRoute(
+        path: AppRoutes.path(AppRoutes.consultationDoctors),
+        name: AppRoutes.consultationDoctors,
+        builder: (context, state) {
+          final extra = state.extra;
+          final data = extra is Map ? Map<String, dynamic>.from(extra) : null;
+          final selectedCategory = (data?['category'] as String?)?.trim();
+          return DoctorConsultationResultsScreen(
+            selectedCategory: (selectedCategory?.isNotEmpty ?? false)
+                ? selectedCategory!
+                : 'Neurologist',
+          );
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.path(AppRoutes.consultationBookDoctor),
+        name: AppRoutes.consultationBookDoctor,
+        builder: (context, state) {
+          final extra = state.extra;
+          final data = extra is Map ? Map<String, dynamic>.from(extra) : null;
+          return DoctorConsultationBookDoctorScreen(
+            doctorName: (data?['doctorName'] as String?) ?? 'Dr. Sumbal Shahid',
+            specialty: (data?['specialty'] as String?) ?? 'Neurologist',
+            fee: (data?['fee'] as String?) ?? 'Rs. 15,000/-',
+            imageUrl: (data?['imageUrl'] as String?) ?? '',
+          );
+        },
       ),
       GoRoute(
         path: AppRoutes.path(AppRoutes.pharmacy),
