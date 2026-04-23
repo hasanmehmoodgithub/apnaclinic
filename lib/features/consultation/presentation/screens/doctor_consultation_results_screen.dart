@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/router/app_routes.dart';
+import '../../../../generated/assets.dart';
+import '../../../lab_test/presentation/widgets/lab_test_figma_image.dart';
 import '../constants/consultation_ui_config.dart';
 
 class DoctorConsultationResultsScreen extends StatefulWidget {
@@ -25,34 +27,37 @@ class _DoctorConsultationResultsScreenState
 
   static const List<_DoctorItem> _allDoctors = [
     _DoctorItem(
-      name: 'Dr. Sumbal Shahid',
-      specialty: 'Neurologist',
-      experience: '6 years Experience',
-      qualification: 'MMBS, FCPS',
-      fee: 'Rs. 15,000/-',
-      oldFee: 'Rs. 80,000/-',
-      partner: 'oladoc',
-      imageUrl: '',
-    ),
-    _DoctorItem(
-      name: 'Dr. Kainat Shahid',
-      specialty: 'Neurologist',
-      experience: '6 years Experience',
-      qualification: 'MMBS, FCPS',
-      fee: 'Rs. 15,000/-',
-      oldFee: 'Rs. 80,000/-',
+      name: 'Dr. Saadiya Akhtar Janjua',
+      specialty: 'General Practitioner',
+      experience: '2 years Experience',
+      qualification: 'MBBS',
+      fee: 'Rs. 350/-',
+      oldFee: 'Rs. 500/-',
       partner: 'MedIQ',
+      rating: '4.5 / 5',
       imageUrl: '',
     ),
     _DoctorItem(
-      name: 'Dr. Raheel Khan',
-      specialty: 'Neurologist',
-      experience: '6 years Experience',
-      qualification: 'MMBS, FCPS',
-      fee: 'Rs. 15,000/-',
-      oldFee: 'Rs. 80,000/-',
-      partner: 'oladoc',
+      name: 'Dr. Abdul Hafeez',
+      specialty: 'Family Physician',
+      experience: '12 years Experience',
+      qualification: 'MBBS, DFM',
+      fee: 'Rs. 560/-',
+      oldFee: 'Rs. 800/-',
+      partner: 'MedIQ',
+      rating: '4.6 / 5',
       imageUrl: '',
+    ),
+    _DoctorItem(
+      name: 'Dr Sarmad Hafeez',
+      specialty: 'General Practitioner',
+      experience: '5 years Experience',
+      qualification: 'MBBS, RMP',
+      fee: 'Rs. 350/-',
+      oldFee: 'Rs. 500/-',
+      partner: 'MedIQ',
+      rating: '4.5 / 5',
+      imageUrl: ConsultationUiConfig.heroDoctorAsset,
     ),
   ];
 
@@ -118,7 +123,7 @@ class _DoctorConsultationResultsScreenState
                     ),
                     Expanded(
                       child: Text(
-                        ConsultationUiConfig.screenTitle,
+                        'Specialist',
                         textAlign: TextAlign.center,
                         style: textTheme.titleLarge?.copyWith(
                           color: ConsultationUiConfig.primaryText,
@@ -173,7 +178,7 @@ class _DoctorConsultationResultsScreenState
                     ),
                   ),
                   child: Padding(
-                    padding: EdgeInsets.fromLTRB(24.w, 22.h, 24.w, 16.h),
+                    padding: EdgeInsets.fromLTRB(18.w, 18.h, 18.w, 12.h),
                     child: Column(
                       children: [
                         Row(
@@ -183,17 +188,17 @@ class _DoctorConsultationResultsScreenState
                             _FilterButton(textTheme: textTheme),
                           ],
                         ),
-                        SizedBox(height: 12.h),
+                        SizedBox(height: 14.h),
                         _CategoryCard(
                           category: widget.selectedCategory,
                           textTheme: textTheme,
                         ),
-                        SizedBox(height: 12.h),
+                        SizedBox(height: 14.h),
                         Expanded(
                           child: ListView.separated(
                             padding: EdgeInsets.zero,
                             itemCount: doctors.length,
-                            separatorBuilder: (_, __) => SizedBox(height: 12.h),
+                            separatorBuilder: (_, _) => SizedBox(height: 10.h),
                             itemBuilder: (context, index) {
                               return _DoctorCard(
                                 doctor: doctors[index],
@@ -216,7 +221,7 @@ class _DoctorConsultationResultsScreenState
 
   Widget _buildSearchField(BuildContext context) {
     return SizedBox(
-      height: 44.6.h,
+      height: 48.h,
       child: TextField(
         controller: _searchController,
         onChanged: (value) => setState(() => _query = value),
@@ -224,32 +229,34 @@ class _DoctorConsultationResultsScreenState
           hintText: 'Search for Doctor',
           hintStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
             color: const Color(0xFF9E9E9E),
-            fontWeight: FontWeight.w500,
-            fontSize: 14.sp,
+            fontWeight: FontWeight.w400,
+            fontSize: 13.sp,
           ),
-          prefixIcon: Padding(
+          suffixIcon: Padding(
             padding: EdgeInsets.all(12.r),
             child: SvgPicture.asset(
               ConsultationUiConfig.searchIconAsset,
-              width: 18.6.w,
-              height: 18.6.h,
+              width: 18.w,
+              height: 18.h,
             ),
           ),
-          contentPadding: EdgeInsets.symmetric(horizontal: 11.w, vertical: 12.h),
+          contentPadding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
+          filled: true,
+          fillColor: Colors.white,
           border: OutlineInputBorder(
-            borderSide: const BorderSide(color: Color(0xFF9BA6A7), width: 0.3),
-            borderRadius: BorderRadius.circular(12.r),
+            borderSide: const BorderSide(color: Color(0xFFD9DEE4), width: 1),
+            borderRadius: BorderRadius.circular(11.r),
           ),
           enabledBorder: OutlineInputBorder(
-            borderSide: const BorderSide(color: Color(0xFF9BA6A7), width: 0.3),
-            borderRadius: BorderRadius.circular(12.r),
+            borderSide: const BorderSide(color: Color(0xFFD9DEE4), width: 1),
+            borderRadius: BorderRadius.circular(11.r),
           ),
           focusedBorder: OutlineInputBorder(
             borderSide: const BorderSide(
               color: ConsultationUiConfig.ctaColor,
               width: 1,
             ),
-            borderRadius: BorderRadius.circular(12.r),
+            borderRadius: BorderRadius.circular(11.r),
           ),
         ),
       ),
@@ -265,21 +272,22 @@ class _FilterButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 44.6.h,
-      padding: EdgeInsets.symmetric(horizontal: 12.w),
+      height: 48.h,
+      padding: EdgeInsets.symmetric(horizontal: 14.w),
       decoration: BoxDecoration(
-        border: Border.all(color: const Color(0xFF9BA6A7), width: 0.3),
-        borderRadius: BorderRadius.circular(12.r),
+        border: Border.all(color: const Color(0xFFD9DEE4), width: 1),
+        borderRadius: BorderRadius.circular(11.r),
+        color: Colors.white,
       ),
       child: Row(
         children: [
-          const Icon(Icons.filter_list_rounded, color: Color(0xFF667B99), size: 16),
+          const Icon(Icons.filter_alt_outlined, color: Color(0xFF96A1AE), size: 16),
           SizedBox(width: 8.w),
           Text(
             'Filter',
             style: textTheme.bodyMedium?.copyWith(
               color: const Color(0xFF667B99),
-              fontSize: 12.sp,
+              fontSize: 13.sp,
             ),
           ),
         ],
@@ -297,16 +305,18 @@ class _CategoryCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 61.6.h,
-      padding: EdgeInsets.symmetric(horizontal: 13.w, vertical: 12.h),
+      constraints: BoxConstraints(minHeight: 62.h),
+      padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 10.h),
       decoration: BoxDecoration(
-        border: Border.all(color: const Color(0xFF9BA6A7), width: 0.3),
-        borderRadius: BorderRadius.circular(5.3.r),
+        border: Border.all(color: const Color(0xFFD9DEE4), width: 1),
+        borderRadius: BorderRadius.circular(11.r),
+        color: Colors.white,
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Column(
+            mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -314,14 +324,14 @@ class _CategoryCard extends StatelessWidget {
                 'Doctor’s Category',
                 style: textTheme.bodySmall?.copyWith(
                   color: ConsultationUiConfig.tertiaryText,
-                  fontSize: 14.sp,
+                  fontSize: 12.sp,
                 ),
               ),
-              SizedBox(height: 6.h),
+              const SizedBox(height: 2),
               Text(
                 category,
                 style: textTheme.titleMedium?.copyWith(
-                  color: const Color(0xFF110844),
+                  color: const Color(0xFF1A2533),
                   fontSize: 16.sp,
                   fontWeight: FontWeight.w500,
                 ),
@@ -365,30 +375,31 @@ class _DoctorCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(8.r),
+      padding: EdgeInsets.all(10.r),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16.r),
+        borderRadius: BorderRadius.circular(12.r),
+        border: Border.all(color: const Color(0xFFE8ECF0), width: 1),
         boxShadow: const [
           BoxShadow(
-            color: Color(0x3308619C),
-            blurRadius: 59,
-            offset: Offset(0, 18),
-            spreadRadius: -27,
+            color: Color(0x14565C67),
+            blurRadius: 8,
+            spreadRadius: 0.6,
+            offset: Offset.zero,
           ),
         ],
       ),
       child: Row(
         children: [
           ClipRRect(
-            borderRadius: BorderRadius.circular(9.r),
+            borderRadius: BorderRadius.circular(10.r),
             child: SizedBox(
-              width: 97.4.w,
-              height: 97.4.h,
+              width: 74.w,
+              height: 74.h,
               child: _DoctorThumb(imageUrl: doctor.imageUrl),
             ),
           ),
-          SizedBox(width: 8.w),
+          SizedBox(width: 10.w),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -405,26 +416,29 @@ class _DoctorCard extends StatelessWidget {
                               Expanded(
                                 child: Text(
                                   doctor.name,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
                                   style: textTheme.titleMedium?.copyWith(
-                                    fontSize: 16.sp,
+                                    fontSize: 15.sp,
                                     color: ConsultationUiConfig.primaryText,
                                     fontWeight: FontWeight.w500,
                                   ),
                                 ),
                               ),
-                              _RatingBadge(textTheme: textTheme),
+                              _RatingBadge(textTheme: textTheme, rating: doctor.rating),
                             ],
                           ),
+                          SizedBox(height: 2.h),
                           Text(
                             doctor.specialty,
                             style: textTheme.bodyMedium?.copyWith(
-                              fontSize: 14.sp,
+                              fontSize: 13.sp,
                               color: ConsultationUiConfig.tertiaryText,
                             ),
                           ),
-                          SizedBox(height: 8.h),
+                          SizedBox(height: 2.h),
                           Text(
-                            '${doctor.experience}  •  ${doctor.qualification}',
+                            '${doctor.experience} | ${doctor.qualification}',
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: textTheme.bodySmall?.copyWith(
@@ -435,57 +449,53 @@ class _DoctorCard extends StatelessWidget {
                         ],
                       ),
                     ),
-                    SizedBox(width: 6.w),
-                    _PartnerAvatar(partner: doctor.partner, textTheme: textTheme),
+                    SizedBox(width: 4.w),
+                    _PartnerBadge(partner: doctor.partner, textTheme: textTheme),
                   ],
                 ),
-                SizedBox(height: 10.h),
+                SizedBox(height: 8.h),
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Expanded(
                       child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Fee',
-                          style: textTheme.bodySmall?.copyWith(
-                            color: ConsultationUiConfig.tertiaryText,
-                            fontSize: 12.sp,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Fee',
+                            style: textTheme.bodySmall?.copyWith(
+                              color: ConsultationUiConfig.tertiaryText,
+                              fontSize: 11.sp,
+                            ),
                           ),
-                        ),
-                        Row(
-                          children: [
-                            Text(
-                              doctor.fee,
-                              style: textTheme.bodyMedium?.copyWith(
-                                fontSize: 14.sp,
-                                color: const Color(0xFF110844),
-                                fontWeight: FontWeight.w600,
-                              ),
+                          SizedBox(height: 1.h),
+                          Text(
+                            doctor.fee,
+                            style: textTheme.bodyMedium?.copyWith(
+                              fontSize: 14.sp,
+                              height: 1,
+                              color: const Color(0xFF1A2533),
+                              fontWeight: FontWeight.w500,
                             ),
-                            SizedBox(width: 2.w),
-                            Expanded(
-                              child: Text(
-                                doctor.oldFee,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: textTheme.bodySmall?.copyWith(
-                                  color: const Color(0xFF979797),
-                                  fontSize: 12.sp,
-                                  decoration: TextDecoration.lineThrough,
-                                ),
-                              ),
+                          ),
+                          Text(
+                            doctor.oldFee,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: textTheme.bodySmall?.copyWith(
+                              color: const Color(0xFF979797),
+                              fontSize: 14.sp,
+                              decoration: TextDecoration.lineThrough,
+                              height: 1,
                             ),
-                          ],
-                        ),
-                      ],
-                    ),
+                          ),
+                        ],
+                      ),
                     ),
                     SizedBox(width: 8.w),
                     SizedBox(
-                      height: 34.h,
-                      width: 97.w,
+                      height: 40.h,
+                      width: 114.w,
                       child: ElevatedButton(
                         onPressed: () => context.pushNamed(
                           AppRoutes.consultationBookDoctor,
@@ -500,7 +510,7 @@ class _DoctorCard extends StatelessWidget {
                           elevation: 0,
                           backgroundColor: ConsultationUiConfig.ctaColor,
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8.1.r),
+                            borderRadius: BorderRadius.circular(8.r),
                           ),
                           padding: EdgeInsets.symmetric(horizontal: 8.w),
                         ),
@@ -509,7 +519,7 @@ class _DoctorCard extends StatelessWidget {
                           style: textTheme.labelLarge?.copyWith(
                             color: Colors.white,
                             fontSize: 14.sp,
-                            fontWeight: FontWeight.w500,
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
                       ),
@@ -527,70 +537,59 @@ class _DoctorCard extends StatelessWidget {
 
 class _RatingBadge extends StatelessWidget {
   final TextTheme textTheme;
+  final String rating;
 
-  const _RatingBadge({required this.textTheme});
+  const _RatingBadge({required this.textTheme, required this.rating});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 4.h),
+      padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 2.h),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(5.9.r),
-        border: Border.all(color: const Color(0xFF98E089), width: 1),
+        color: const Color(0xFFF5FBEF),
+        borderRadius: BorderRadius.circular(3.r),
+        border: Border.all(color: const Color(0xFFDAEFCF), width: 1),
       ),
-      child: Text.rich(
-        TextSpan(
-          children: [
-            TextSpan(
-              text: '4',
-              style: textTheme.bodySmall?.copyWith(
-                color: const Color(0xFF98E089),
-                fontSize: 8.sp,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-            TextSpan(
-              text: ' / 5',
-              style: textTheme.bodySmall?.copyWith(
-                color: ConsultationUiConfig.tertiaryText,
-                fontSize: 8.sp,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          ],
+      child: Text(
+        rating,
+        style: textTheme.bodySmall?.copyWith(
+          color: const Color(0xFF87B074),
+          fontSize: 9.sp,
+          fontWeight: FontWeight.w600,
+          height: 1,
         ),
       ),
     );
   }
 }
 
-class _PartnerAvatar extends StatelessWidget {
+class _PartnerBadge extends StatelessWidget {
   final String partner;
   final TextTheme textTheme;
 
-  const _PartnerAvatar({required this.partner, required this.textTheme});
+  const _PartnerBadge({required this.partner, required this.textTheme});
 
   @override
   Widget build(BuildContext context) {
+    final isMediq = partner.trim().toLowerCase() == 'mediq';
     return Container(
-      width: 40.w,
-      height: 40.h,
-      alignment: Alignment.center,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        shape: BoxShape.circle,
-        border: Border.all(color: const Color(0x36000000), width: 0.3),
-      ),
-      child: Text(
-        partner,
-        style: textTheme.bodySmall?.copyWith(
-          color: partner.toLowerCase() == 'oladoc'
-              ? const Color(0xFFF39A2E)
-              : const Color(0xFF6D49B9),
-          fontSize: 10.sp,
-          fontWeight: FontWeight.w700,
-        ),
-      ),
+      alignment: Alignment.topRight,
+      padding: EdgeInsets.only(top: 1.h),
+      child: isMediq
+          ? LabTestFigmaImage(
+              url: Assets.labTestMedIQLogo,
+              width: 48.w,
+              height: 16.h,
+              fit: BoxFit.contain,
+            )
+          : Text(
+              partner,
+              style: textTheme.bodySmall?.copyWith(
+                color: const Color(0xFF6D49B9),
+                fontSize: 10.sp,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
     );
   }
 }
@@ -602,24 +601,24 @@ class _DoctorThumb extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (imageUrl.isEmpty) {
-      return _placeholder();
+    if (imageUrl.isNotEmpty) {
+      return Image.asset(
+        imageUrl,
+        fit: BoxFit.cover,
+        errorBuilder: (_, _, _) => _placeholder(),
+      );
     }
-    return Image.network(
-      imageUrl,
-      fit: BoxFit.cover,
-      errorBuilder: (_, __, ___) => _placeholder(),
-    );
+    return _placeholder();
   }
 
   Widget _placeholder() {
     return Container(
-      color: const Color(0xFFF2F2F2),
+      color: const Color(0xFFEAF1FA),
       alignment: Alignment.center,
-      child: const Icon(
-        Icons.person_outline_rounded,
-        color: Color(0xFFB3B3B3),
-        size: 38,
+      child: Icon(
+        Icons.person_rounded,
+        color: const Color(0xFF99A9BC),
+        size: 38.r,
       ),
     );
   }
@@ -633,6 +632,7 @@ class _DoctorItem {
   final String fee;
   final String oldFee;
   final String partner;
+  final String rating;
   final String imageUrl;
 
   const _DoctorItem({
@@ -643,6 +643,7 @@ class _DoctorItem {
     required this.fee,
     required this.oldFee,
     required this.partner,
+    required this.rating,
     required this.imageUrl,
   });
 }
