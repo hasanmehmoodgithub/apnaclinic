@@ -1006,7 +1006,7 @@ class _VendorLogo extends StatelessWidget {
     return LabTestFigmaImage(
       url: vendor.logoUrl,
       width: size * 0.85,
-      height: size * 0.55,
+      height: size * 0.80,
       fit: BoxFit.contain,
     );
   }
