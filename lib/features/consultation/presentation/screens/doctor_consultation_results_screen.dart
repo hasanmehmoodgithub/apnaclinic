@@ -24,6 +24,19 @@ class DoctorConsultationResultsScreen extends StatefulWidget {
 class _DoctorConsultationResultsScreenState
     extends State<DoctorConsultationResultsScreen> {
   final TextEditingController _searchController = TextEditingController();
+  static const List<String> _categoryOptions = [
+    'General & Internal Medicine',
+    'General Surgery',
+    "Children's Health (Pediatrics)",
+    "Women's Health",
+    'Mental Health & Counseling',
+    'Skin, Hair & Aesthetics',
+    'Bones, Muscles & Movement',
+    'Heart & Lungs',
+    'Stomach, Liver & Kidneys',
+    'Neurology & Brain',
+    'Teeth & Mouth',
+  ];
 
   static const List<_DoctorItem> _allDoctors = [
     _DoctorItem(
@@ -62,6 +75,26 @@ class _DoctorConsultationResultsScreenState
   ];
 
   String _query = '';
+  late String _selectedCategory;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedCategory = widget.selectedCategory;
+  }
+
+  Future<void> _openSelectCategoryDialog() async {
+    final category = await showDialog<String>(
+      context: context,
+      barrierColor: Colors.black.withValues(alpha: 0.28),
+      builder: (context) => _SelectCategoriesDialog(
+        selectedCategory: _selectedCategory,
+        categories: _categoryOptions,
+      ),
+    );
+    if (category == null || category == _selectedCategory) return;
+    setState(() => _selectedCategory = category);
+  }
 
   @override
   void dispose() {
@@ -110,8 +143,8 @@ class _DoctorConsultationResultsScreenState
                         child: Center(
                           child: SvgPicture.asset(
                             ConsultationUiConfig.backArrowAsset,
-                            width: 24.w,
-                            height: 24.h,
+                            width: 18.w,
+                            height: 18.h,
                             fit: BoxFit.contain,
                             colorFilter: const ColorFilter.mode(
                               ConsultationUiConfig.primaryText,
@@ -190,8 +223,9 @@ class _DoctorConsultationResultsScreenState
                         ),
                         SizedBox(height: 14.h),
                         _CategoryCard(
-                          category: widget.selectedCategory,
+                          category: _selectedCategory,
                           textTheme: textTheme,
+                          onChangeTap: _openSelectCategoryDialog,
                         ),
                         SizedBox(height: 14.h),
                         Expanded(
@@ -299,8 +333,13 @@ class _FilterButton extends StatelessWidget {
 class _CategoryCard extends StatelessWidget {
   final String category;
   final TextTheme textTheme;
+  final VoidCallback onChangeTap;
 
-  const _CategoryCard({required this.category, required this.textTheme});
+  const _CategoryCard({
+    required this.category,
+    required this.textTheme,
+    required this.onChangeTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -339,7 +378,7 @@ class _CategoryCard extends StatelessWidget {
             ],
           ),
           TextButton.icon(
-            onPressed: () => Navigator.of(context).pop(),
+            onPressed: onChangeTap,
             iconAlignment: IconAlignment.end,
             style: TextButton.styleFrom(
               foregroundColor: ConsultationUiConfig.tertiaryText,
@@ -361,6 +400,112 @@ class _CategoryCard extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _SelectCategoriesDialog extends StatelessWidget {
+  const _SelectCategoriesDialog({
+    required this.selectedCategory,
+    required this.categories,
+  });
+
+  final String selectedCategory;
+  final List<String> categories;
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+    return Dialog(
+      insetPadding: EdgeInsets.symmetric(horizontal: 22.w, vertical: 44.h),
+      backgroundColor: Colors.white,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.r)),
+      child: SizedBox(
+        width: double.infinity,
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(16.w, 14.h, 16.w, 14.h),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      'Select Categories',
+                      style: textTheme.titleMedium?.copyWith(
+                        color: const Color(0xFF2A3441),
+                        fontSize: 15.sp,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                  InkWell(
+                    borderRadius: BorderRadius.circular(14.r),
+                    onTap: () => Navigator.of(context).pop(selectedCategory),
+                    child: Padding(
+                      padding: EdgeInsets.all(2.r),
+                      child: Icon(
+                        Icons.close_rounded,
+                        color: const Color(0xFF7E8898),
+                        size: 21.r,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 10.h),
+              Divider(height: 1, thickness: 1, color: const Color(0xFFF0F1F3)),
+              SizedBox(height: 6.h),
+              Flexible(
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: categories.map((category) {
+                      final isSelected = category == selectedCategory;
+                      return InkWell(
+                        onTap: () => Navigator.of(context).pop(category),
+                        borderRadius: BorderRadius.circular(7.r),
+                        child: Container(
+                          height: 42.h,
+                          padding: EdgeInsets.symmetric(horizontal: 10.w),
+                          decoration: BoxDecoration(
+                            color: isSelected
+                                ? const Color(0xFFF4F5F7)
+                                : Colors.transparent,
+                            borderRadius: BorderRadius.circular(7.r),
+                          ),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  category,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: textTheme.bodyMedium?.copyWith(
+                                    color: const Color(0xFF3B4756),
+                                    fontSize: 12.8.sp,
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                ),
+                              ),
+                              Icon(
+                                isSelected
+                                    ? Icons.radio_button_checked_rounded
+                                    : Icons.radio_button_unchecked_rounded,
+                                color: const Color(0xFF5D6777),
+                                size: 18.r,
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    }).toList(growable: false),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
