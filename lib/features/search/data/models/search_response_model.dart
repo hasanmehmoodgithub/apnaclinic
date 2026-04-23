@@ -1,5 +1,6 @@
 import '../../domain/entities/search_entity.dart';
 
+
 class SearchRecentModel {
   const SearchRecentModel({
     required this.title,
@@ -51,6 +52,11 @@ class SearchResultModel {
     this.sampleType,
     this.providerLabel,
     this.primaryActionLabel,
+    // New fields needed for the updated UI
+    this.date,
+    this.time,
+    this.providerLogo,
+    this.labLogo,
   });
 
   final String id;
@@ -66,6 +72,22 @@ class SearchResultModel {
   final String? providerLabel;
   final String? primaryActionLabel;
 
+  /// Appointment/availability date shown as a pill on doctor cards
+  /// (e.g. "10/09/24").
+  final String? date;
+
+  /// Appointment/availability time shown as a pill on doctor cards
+  /// (e.g. "1pm - 2pm").
+  final String? time;
+
+  /// Small circular provider logo shown in the top-right of doctor / lab
+  /// cards (e.g. MediQ, Oladoc). Asset path or remote URL.
+  final String? providerLogo;
+
+  /// Lab logo shown inside the grey image tile on laboratory-test cards
+  /// (e.g. IDC). Separate from [providerLogo] so both can render at once.
+  final String? labLogo;
+
   factory SearchResultModel.fromJson(Map<String, dynamic> json) {
     return SearchResultModel(
       id: (json['id'] ?? '').toString(),
@@ -80,6 +102,10 @@ class SearchResultModel {
       sampleType: json['sampleType']?.toString(),
       providerLabel: json['providerLabel']?.toString(),
       primaryActionLabel: json['primaryActionLabel']?.toString(),
+      date: json['date']?.toString(),
+      time: json['time']?.toString(),
+      providerLogo: json['providerLogo']?.toString(),
+      labLogo: json['labLogo']?.toString(),
     );
   }
 }

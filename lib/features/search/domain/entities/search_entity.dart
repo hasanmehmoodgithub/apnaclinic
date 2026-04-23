@@ -1,3 +1,4 @@
+
 enum SearchSectionType {
   doctorConsultation,
   pharmacy,
@@ -41,6 +42,10 @@ class SearchResultEntity {
     this.sampleType,
     this.providerLabel,
     this.primaryActionLabel,
+    this.date,
+    this.time,
+    this.providerLogo,
+    this.labLogo,
   });
 
   final String id;
@@ -55,6 +60,24 @@ class SearchResultEntity {
   final String? sampleType;
   final String? providerLabel;
   final String? primaryActionLabel;
+
+  /// Appointment/availability date shown as a pill on doctor cards
+  /// (e.g. "10/09/24").
+  final String? date;
+
+  /// Appointment/availability time shown as a pill on doctor cards
+  /// (e.g. "1pm - 2pm").
+  final String? time;
+
+  /// Small circular provider logo shown in the top-right of doctor / lab
+  /// cards (e.g. "MediQ", "Oladoc"). Asset path or remote URL — pick one
+  /// convention and use it consistently.
+  final String? providerLogo;
+
+  /// Lab logo shown inside the grey image tile on laboratory-test cards
+  /// (e.g. "IDC Islamabad"). Separate from providerLogo so you can render
+  /// both at once.
+  final String? labLogo;
 }
 
 class SearchSectionEntity {
