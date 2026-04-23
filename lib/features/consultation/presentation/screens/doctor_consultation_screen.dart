@@ -13,6 +13,21 @@ import '../cubit/consultation_cubit.dart';
 import '../cubit/consultation_state.dart';
 import '../widgets/consultation_category_card.dart';
 
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import '../../../../components/shimmer/app_shimmer.dart';
+
+import '../../../../core/extensions/screen_util_extensions.dart';
+import '../../../../core/router/app_routes.dart';
+import '../../domain/entities/consultation_category_entity.dart';
+import '../constants/consultation_ui_config.dart';
+import '../cubit/consultation_cubit.dart';
+import '../cubit/consultation_state.dart';
+import '../widgets/consultation_category_card.dart';
+import 'ai_consultation_screen.dart';
+
 class DoctorConsultationScreen extends StatefulWidget {
   const DoctorConsultationScreen({super.key});
 
@@ -54,6 +69,7 @@ class _DoctorConsultationScreenState extends State<DoctorConsultationScreen> {
         child: SafeArea(
           child: Column(
             children: [
+              // ───── App bar (fixed) ─────
               Padding(
                 padding: EdgeInsets.fromLTRB(22.w, 8.h, 22.w, 8.h),
                 child: Row(
@@ -62,13 +78,13 @@ class _DoctorConsultationScreenState extends State<DoctorConsultationScreen> {
                       behavior: HitTestBehavior.opaque,
                       onTap: () => Navigator.of(context).pop(),
                       child: SizedBox(
-                        width: 24.w,
-                        height: 24.h,
+                        width: 15.w,
+                        height: 15.h,
                         child: Center(
                           child: SvgPicture.asset(
                             ConsultationUiConfig.backArrowAsset,
-                            width: 24.w,
-                            height: 24.h,
+                            width: 15.w,
+                            height: 15.h,
                             fit: BoxFit.contain,
                             colorFilter: const ColorFilter.mode(
                               ConsultationUiConfig.primaryText,
@@ -93,148 +109,91 @@ class _DoctorConsultationScreenState extends State<DoctorConsultationScreen> {
                   ],
                 ),
               ),
+
+              // ───── Hero illustration (fixed) ─────
+              SizedBox(height: 2.h),
+              SizedBox(
+                height: 178.h,
+                child: Center(
+                  child: SizedBox(
+                    width: 240.w,
+                    height: 178.h,
+                    child: Stack(
+                      alignment: Alignment.topCenter,
+                      children: [
+                        Positioned(
+                          top: 2.h,
+                          child: SvgPicture.asset(
+                            ConsultationUiConfig.heroVectorAsset,
+                            width: 238.w,
+                            height: 172.h,
+                            fit: BoxFit.contain,
+                          ),
+                        ),
+                        Positioned(
+                          top: 0,
+                          child: Image.asset(
+                            ConsultationUiConfig.heroDoctorAsset,
+                            width: 188.w,
+                            height: 177.h,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+
+              // ───── White sheet: fixed header + scrollable grid ─────
               Expanded(
-                child: BlocBuilder<ConsultationCubit, ConsultationState>(
-                  builder: (context, state) {
-                    return SingleChildScrollView(
-                      child: Column(
-                        children: [
-                          SizedBox(height: 2.h),
-                          SizedBox(
-                            height: 178.h,
-                            child: Center(
-                              child: SizedBox(
-                                width: 240.w,
-                                height: 178.h,
-                                child: Stack(
-                                  alignment: Alignment.topCenter,
-                                  children: [
-                                    Positioned(
-                                      top: 2.h,
-                                      child: SvgPicture.asset(
-                                        ConsultationUiConfig.heroVectorAsset,
-                                        width: 238.w,
-                                        height: 172.h,
-                                        fit: BoxFit.contain,
-                                      ),
-                                    ),
-                                    Positioned(
-                                      top: 0,
-                                      child: Image.asset(
-                                        ConsultationUiConfig.heroDoctorAsset,
-                                        width: 188.w,
-                                        height: 177.h,
-                                        fit: BoxFit.cover,
-                                      ),
-                                    ),
-                                  ],
-                                ),
+                child: Container(
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(42.r),
+                    ),
+                  ),
+                  child: BlocBuilder<ConsultationCubit, ConsultationState>(
+                    builder: (context, state) {
+                      return Padding(
+                        padding: EdgeInsets.fromLTRB(24.w, 22.h, 24.w, 0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // Assistant card (fixed)
+                            _AssistantCard(textTheme: textTheme),
+                            SizedBox(height: 21.h),
+
+                            // Section title (fixed)
+                            Text(
+                              ConsultationUiConfig.chooseCategories,
+                              style: textTheme.titleMedium?.copyWith(
+                                fontSize: 16.sp,
+                                fontWeight: FontWeight.w500,
+                                color: ConsultationUiConfig.primaryText,
                               ),
                             ),
-                          ),
-                          Container(
-                            width: double.infinity,
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.vertical(
-                                top: Radius.circular(42.r),
-                              ),
+                            SizedBox(height: 14.h),
+
+                            // Search field (fixed)
+                            _SearchField(
+                              onChanged: context
+                                  .read<ConsultationCubit>()
+                                  .onSearchChanged,
                             ),
-                            child: Padding(
-                              padding: EdgeInsets.fromLTRB(
-                                24.w,
-                                22.h,
-                                24.w,
-                                22.h,
-                              ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  _AssistantCard(textTheme: textTheme),
-                                  SizedBox(height: 21.h),
-                                  Text(
-                                    ConsultationUiConfig.chooseCategories,
-                                    style: textTheme.titleMedium?.copyWith(
-                                      fontSize: 16.sp,
-                                      fontWeight: FontWeight.w500,
-                                      color: ConsultationUiConfig.primaryText,
-                                    ),
-                                  ),
-                                  SizedBox(height: 14.h),
-                                  _SearchField(
-                                    onChanged: context
-                                        .read<ConsultationCubit>()
-                                        .onSearchChanged,
-                                  ),
-                                  SizedBox(height: 14.h),
-                                  if (state.isLoading)
-                                    AppShimmerGrid(
-                                      itemCount: 8,
-                                      crossAxisCount: 2,
-                                      mainAxisSpacing: 8.h,
-                                      crossAxisSpacing: 6.w,
-                                      childAspectRatio: 189.4 / 81.7,
-                                      borderRadius: 10.7.r,
-                                    )
-                                  else
-                                    GridView.builder(
-                                      itemCount:
-                                          state.filteredCategories.length,
-                                      shrinkWrap: true,
-                                      physics:
-                                          const NeverScrollableScrollPhysics(),
-                                      gridDelegate:
-                                          const SliverGridDelegateWithFixedCrossAxisCount(
-                                            crossAxisCount: 2,
-                                            mainAxisSpacing: 8,
-                                            crossAxisSpacing: 6,
-                                            childAspectRatio: 189.4 / 81.7,
-                                          ),
-                                      itemBuilder: (context, index) {
-                                        final category =
-                                            state.filteredCategories[index];
-                                        return Builder(
-                                          builder: (tileContext) {
-                                            return ConsultationCategoryCard(
-                                              category: category,
-                                              onTap: () => context.pushNamed(
-                                                AppRoutes.consultationDoctors,
-                                                extra: {
-                                                  'category': category.title,
-                                                },
-                                              ),
-                                              // Now we ignore the old Offset
-                                              // and instead use the tile's
-                                              // own context for precise
-                                              // positioning + highlighting.
-                                              onInfoTap: (_) =>
-                                                  _showProcedureInfo(
-                                                    tileContext,
-                                                    category,
-                                                  ),
-                                            );
-                                          },
-                                        );
-                                      },
-                                    ),
-                                  if ((state.errorMessage ?? '').isNotEmpty)
-                                    Padding(
-                                      padding: EdgeInsets.only(top: 12.h),
-                                      child: Text(
-                                        state.errorMessage!,
-                                        style: textTheme.bodySmall?.copyWith(
-                                          color: Colors.red,
-                                        ),
-                                      ),
-                                    ),
-                                ],
-                              ),
+                            SizedBox(height: 14.h),
+
+                            // Only the grid scrolls
+                            Expanded(
+                              child: _buildGridContent(context, state),
                             ),
-                          ),
-                        ],
-                      ),
-                    );
-                  },
+                          ],
+                        ),
+                      );
+                    },
+                  ),
                 ),
               ),
             ],
@@ -244,16 +203,67 @@ class _DoctorConsultationScreenState extends State<DoctorConsultationScreen> {
     );
   }
 
+  Widget _buildGridContent(BuildContext context, ConsultationState state) {
+    final textTheme = Theme.of(context).textTheme;
+
+    if (state.isLoading) {
+      return SingleChildScrollView(
+        padding: EdgeInsets.only(bottom: 22.h),
+        child: AppShimmerGrid(
+          itemCount: 8,
+          crossAxisCount: 2,
+          mainAxisSpacing: 8.h,
+          crossAxisSpacing: 6.w,
+          childAspectRatio: 189.4 / 81.7,
+          borderRadius: 10.7.r,
+        ),
+      );
+    }
+
+    if ((state.errorMessage ?? '').isNotEmpty) {
+      return Center(
+        child: Text(
+          state.errorMessage!,
+          style: textTheme.bodySmall?.copyWith(color: Colors.red),
+        ),
+      );
+    }
+
+    return GridView.builder(
+      padding: EdgeInsets.only(bottom: 22.h),
+      itemCount: state.filteredCategories.length,
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        mainAxisSpacing: 8,
+        crossAxisSpacing: 6,
+        childAspectRatio: 189.4 / 81.7,
+      ),
+      itemBuilder: (context, index) {
+        final category = state.filteredCategories[index];
+        return Builder(
+          builder: (tileContext) {
+            return ConsultationCategoryCard(
+              category: category,
+              onTap: () => context.pushNamed(
+                AppRoutes.consultationDoctors,
+                extra: {'category': category.title},
+              ),
+              onInfoTap: (_) => _showProcedureInfo(tileContext, category),
+            );
+          },
+        );
+      },
+    );
+  }
+
   /// Shows the tooltip positioned exactly above the tapped tile,
   /// dims the rest of the screen, and keeps the tapped tile highlighted.
   void _showProcedureInfo(
-    BuildContext tileContext,
-    ConsultationCategoryEntity category,
-  ) {
-    // If another tooltip is open, close it first.
+      BuildContext tileContext,
+      ConsultationCategoryEntity category,
+      ) {
     _removeTooltip();
 
-    // Find the tile's global position & size.
     final renderBox = tileContext.findRenderObject() as RenderBox?;
     if (renderBox == null || !renderBox.attached) return;
     final tileOffset = renderBox.localToGlobal(Offset.zero);
@@ -277,10 +287,7 @@ class _DoctorConsultationScreenState extends State<DoctorConsultationScreen> {
   }
 }
 
-/// Full-screen overlay that:
-/// - Dims the background with a tap-to-dismiss barrier
-/// - Cuts out a "hole" around the tapped tile so it stays highlighted
-/// - Draws the speech-bubble tooltip above that tile with a downward tail
+/// Full-screen overlay with dim barrier, tile cut-out, and speech-bubble tooltip.
 class _CategoryInfoTooltip extends StatelessWidget {
   const _CategoryInfoTooltip({
     required this.title,
@@ -301,21 +308,17 @@ class _CategoryInfoTooltip extends StatelessWidget {
     final mediaQuery = MediaQuery.of(context);
     final screenSize = mediaQuery.size;
 
-    // Horizontal padding of the tooltip from screen edges.
     final horizontalPadding = 16.w;
     final bubbleMaxWidth = screenSize.width - (horizontalPadding * 2);
 
-    // Align bubble's left edge with the tapped tile (but keep within screen).
     double bubbleLeft = tileOffset.dx;
     if (bubbleLeft + bubbleMaxWidth > screenSize.width - horizontalPadding) {
       bubbleLeft = screenSize.width - horizontalPadding - bubbleMaxWidth;
     }
     if (bubbleLeft < horizontalPadding) bubbleLeft = horizontalPadding;
 
-    // Tail pointer X position (relative to bubble's left edge),
-    // pointing to the horizontal center of the tapped tile.
     final tileCenterX = tileOffset.dx + (tileSize.width / 2);
-    double tailX = tileCenterX - bubbleLeft - 9.w; // center tail (18w wide)
+    double tailX = tileCenterX - bubbleLeft - 9.w;
     final tailInset = 20.w;
     if (tailX < tailInset) tailX = tailInset;
     if (tailX > bubbleMaxWidth - tailInset - 18.w) {
@@ -323,11 +326,10 @@ class _CategoryInfoTooltip extends StatelessWidget {
     }
 
     const tailHeight = 10.0;
-    const gapBelowBubble = 6.0; // gap between tail tip and tile
+    const gapBelowBubble = 6.0;
 
     return Stack(
       children: [
-        // 1) Dim background with a "cut-out" around the highlighted tile.
         Positioned.fill(
           child: GestureDetector(
             onTap: onDismiss,
@@ -346,13 +348,11 @@ class _CategoryInfoTooltip extends StatelessWidget {
             ),
           ),
         ),
-
-        // 2) The tooltip bubble positioned right above the tile.
         Positioned(
           left: bubbleLeft,
           top: null,
           bottom:
-              screenSize.height - tileOffset.dy + gapBelowBubble - tailHeight,
+          screenSize.height - tileOffset.dy + gapBelowBubble - tailHeight,
           width: bubbleMaxWidth,
           child: Material(
             color: Colors.transparent,
@@ -369,7 +369,6 @@ class _CategoryInfoTooltip extends StatelessWidget {
   }
 }
 
-/// The white speech-bubble card with a downward-pointing tail.
 class _TooltipBubble extends StatelessWidget {
   const _TooltipBubble({
     required this.title,
@@ -388,7 +387,6 @@ class _TooltipBubble extends StatelessWidget {
     final theme = Theme.of(context);
 
     return CustomPaint(
-      // Paints the downward tail underneath the card.
       painter: _DownwardTailPainter(
         bubbleColor: Colors.white,
         tailOffsetFromLeft: tailX,
@@ -439,7 +437,6 @@ class _TooltipBubble extends StatelessWidget {
   }
 }
 
-/// Paints the downward-pointing tail below the bubble.
 class _DownwardTailPainter extends CustomPainter {
   _DownwardTailPainter({
     required this.bubbleColor,
@@ -475,13 +472,11 @@ class _DownwardTailPainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant _DownwardTailPainter oldDelegate) =>
       oldDelegate.bubbleColor != bubbleColor ||
-      oldDelegate.tailOffsetFromLeft != tailOffsetFromLeft ||
-      oldDelegate.tailWidth != tailWidth ||
-      oldDelegate.tailHeight != tailHeight;
+          oldDelegate.tailOffsetFromLeft != tailOffsetFromLeft ||
+          oldDelegate.tailWidth != tailWidth ||
+          oldDelegate.tailHeight != tailHeight;
 }
 
-/// Paints a dim overlay across the whole screen but leaves a transparent
-/// rounded-rect "hole" around the highlighted tile.
 class _BarrierWithHolePainter extends CustomPainter {
   _BarrierWithHolePainter({
     required this.holeRect,
@@ -516,8 +511,8 @@ class _BarrierWithHolePainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant _BarrierWithHolePainter oldDelegate) =>
       oldDelegate.holeRect != holeRect ||
-      oldDelegate.holeRadius != holeRadius ||
-      oldDelegate.barrierColor != barrierColor;
+          oldDelegate.holeRadius != holeRadius ||
+          oldDelegate.barrierColor != barrierColor;
 }
 
 class _AssistantCard extends StatelessWidget {
@@ -581,7 +576,7 @@ class _AssistantCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(6.r),
                 ),
               ),
-              onPressed: () => _launchApnaClinic(context),
+              onPressed: () => _openAiScreening(context),
               child: Text(
                 ConsultationUiConfig.startNow,
                 style: textTheme.labelLarge?.copyWith(
@@ -597,26 +592,8 @@ class _AssistantCard extends StatelessWidget {
     );
   }
 
-  Future<void> _launchApnaClinic(BuildContext context) async {
-    final uri = Uri.parse('https://apnaclinic.ecnstg.com/');
-    try {
-      final launched = await launchUrl(
-        uri,
-        mode: LaunchMode
-            .externalApplication, // opens in browser / Chrome Custom Tabs
-      );
-      if (!launched && context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Could not open the link')),
-        );
-      }
-    } catch (e) {
-      if (context.mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Error: $e')));
-      }
-    }
+  void _openAiScreening(BuildContext context) {
+    context.pushNamed(AppRoutes.aiScreening);
   }
 }
 

@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import '../../features/app/presentation/screens/splash_screen.dart';
 import '../../features/consultation/presentation/cubit/consultation_cubit.dart';
+import '../../features/consultation/presentation/screens/ai_consultation_screen.dart';
 import '../../features/consultation/presentation/screens/doctor_consultation_book_doctor_screen.dart';
 import '../../features/consultation/presentation/screens/doctor_consultation_results_screen.dart';
 import '../../features/consultation/presentation/screens/doctor_consultation_screen.dart';
@@ -112,6 +113,11 @@ class AppRouter {
           create: (_) => sl<ConsultationCubit>(),
           child: const DoctorConsultationScreen(),
         ),
+      ),
+      GoRoute(
+        path:AppRoutes.path(AppRoutes.aiScreening),
+        name: AppRoutes.aiScreening,
+        builder: (context, state) => const AiScreeningScreen(),
       ),
       GoRoute(
         path: AppRoutes.path(AppRoutes.consultationDoctors),
