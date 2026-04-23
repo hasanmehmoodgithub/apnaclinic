@@ -19,6 +19,7 @@ import '../cubit/lab_test_state.dart';
 import '../lab_test_figma_assets.dart';
 import '../lab_test_route_args.dart';
 import '../widgets/lab_test_figma_image.dart';
+import '../widgets/lab_test_price_pill.dart';
 
 class LabTestScreen extends StatefulWidget {
   const LabTestScreen({super.key});
@@ -621,9 +622,19 @@ class _LabTestBrowseCard extends StatelessWidget {
                             alignment: Alignment.centerRight,
                             child: FittedBox(
                               fit: BoxFit.scaleDown,
-                              child: _PricePill(
+                              child: LabTestPricePill(
                                 originalFee: originalFee,
                                 discountedFee: discountedFee,
+                                originalTextStyle: theme.textTheme.bodySmall
+                                    ?.copyWith(
+                                      fontSize: 11.sp,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                discountedTextStyle: theme.textTheme.bodyMedium
+                                    ?.copyWith(
+                                      fontSize: 11.sp,
+                                      fontWeight: FontWeight.w500,
+                                    ),
                               ),
                             ),
                           ),
@@ -666,81 +677,6 @@ class _InfoPill extends StatelessWidget {
           fontSize: 13.sp,
           height: 1.1,
         ),
-      ),
-    );
-  }
-}
-
-class _PricePill extends StatelessWidget {
-  const _PricePill({required this.originalFee, required this.discountedFee});
-
-  final String? originalFee;
-  final String discountedFee;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final hasOriginal = originalFee != null && originalFee!.trim().isNotEmpty;
-
-    if (!hasOriginal) {
-      return Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        decoration: BoxDecoration(
-          color: const Color(0xFF11B2A4),
-          borderRadius: BorderRadius.circular(24),
-        ),
-        child: Text(
-          discountedFee,
-          style: theme.textTheme.bodyMedium?.copyWith(
-            color: Colors.white,
-            fontSize: 14.sp,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-      );
-    }
-
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(30),
-        border: Border.all(color: const Color(0xFFE0E3E8), width: 1),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(14, 8, 14, 8),
-            child: Text(
-              originalFee!,
-              style: theme.textTheme.bodySmall?.copyWith(
-                color: const Color(0xFFA5A5A5),
-                decoration: TextDecoration.lineThrough,
-                decorationThickness: 1.5,
-                fontSize: 12.sp,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ),
-          Transform.translate(
-            offset: const Offset(0, 0),
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              decoration: BoxDecoration(
-                color: const Color(0xFF11B2A4),
-                borderRadius: BorderRadius.circular(30),
-              ),
-              child: Text(
-                discountedFee,
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: Colors.white,
-                  fontSize: 12.sp,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ),
-          ),
-        ],
       ),
     );
   }

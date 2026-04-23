@@ -9,6 +9,7 @@ import '../../../../core/preference/app_pref.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/widgets/app_scaffold_gradient.dart';
 import '../lab_test_route_args.dart';
+import '../widgets/lab_test_price_pill.dart';
 
 class LabTestCartScreen extends StatefulWidget {
   const LabTestCartScreen({super.key});
@@ -247,9 +248,22 @@ class _CartItemCard extends StatelessWidget {
                     const SizedBox(width: 6),
                     _CartInfoPill(value: item.sampleType),
                     const Spacer(),
-                    _CartPricePill(
+                    LabTestPricePill(
                       originalFee: item.originalFee,
                       discountedFee: item.discountedFee,
+                      originalPadding: const EdgeInsets.fromLTRB(12, 7, 12, 7),
+                      discountedPadding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 7,
+                      ),
+                      originalTextStyle: theme.textTheme.bodySmall?.copyWith(
+                        fontSize: 12.sp,
+                        fontWeight: FontWeight.w500,
+                      ),
+                      discountedTextStyle: theme.textTheme.bodyMedium?.copyWith(
+                        fontSize: 12.sp,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
                   ],
                 ),
@@ -282,60 +296,6 @@ class _CartInfoPill extends StatelessWidget {
           fontSize: 13.sp,
           height: 1.1,
         ),
-      ),
-    );
-  }
-}
-
-class _CartPricePill extends StatelessWidget {
-  const _CartPricePill({required this.originalFee, required this.discountedFee});
-  final String originalFee;
-  final String discountedFee;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(30),
-        border: Border.all(color: const Color(0xFFE0E3E8), width: 1),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(12, 7, 12, 7),
-            child: Text(
-              originalFee,
-              style: theme.textTheme.bodySmall?.copyWith(
-                color: const Color(0xFFA5A5A5),
-                decoration: TextDecoration.lineThrough,
-                decorationThickness: 1.5,
-                fontSize: 12.sp,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ),
-          Transform.translate(
-            offset: const Offset(0, 0),
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
-              decoration: BoxDecoration(
-                color: const Color(0xFF11B2A4),
-                borderRadius: BorderRadius.circular(30),
-              ),
-              child: Text(
-                discountedFee,
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: Colors.white,
-                  fontSize: 12.sp,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ),
-          ),
-        ],
       ),
     );
   }
