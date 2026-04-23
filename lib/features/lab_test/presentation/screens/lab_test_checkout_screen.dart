@@ -394,7 +394,7 @@ class _SummaryCard extends StatelessWidget {
           BoxShadow(
             color: const Color(0x54565C67),
             blurRadius: 8,
-            spreadRadius: 1.1,
+            spreadRadius: 1,
             offset: Offset.zero,
           ),
         ],
