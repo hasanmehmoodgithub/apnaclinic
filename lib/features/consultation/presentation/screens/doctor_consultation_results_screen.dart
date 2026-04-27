@@ -48,7 +48,7 @@ class _DoctorConsultationResultsScreenState
       oldFee: 'Rs. 500/-',
       partner: 'MedIQ',
       rating: '4.5 / 5',
-      imageUrl: '',
+      imageUrl: 'https://static.vecteezy.com/system/resources/previews/046/680/074/non_2x/an-pakistani-female-doctor-on-isolated-transparent-background-png.png',
     ),
     _DoctorItem(
       name: 'Dr. Abdul Hafeez',
@@ -59,7 +59,7 @@ class _DoctorConsultationResultsScreenState
       oldFee: 'Rs. 800/-',
       partner: 'MedIQ',
       rating: '4.6 / 5',
-      imageUrl: '',
+      imageUrl: 'https://www.shutterstock.com/image-photo/indian-doctor-stethoscope-around-neck-600nw-1625058334.jpg',
     ),
     _DoctorItem(
       name: 'Dr Sarmad Hafeez',
@@ -70,7 +70,7 @@ class _DoctorConsultationResultsScreenState
       oldFee: 'Rs. 500/-',
       partner: 'MedIQ',
       rating: '4.5 / 5',
-      imageUrl: ConsultationUiConfig.heroDoctorAsset,
+      imageUrl:"https://static.vecteezy.com/system/resources/previews/002/853/524/large_2x/handsome-pakistani-doctor-and-stethoscope-looking-confident-with-smile-on-face-pointing-oneself-with-fingers-proud-and-happy-photo.jpg",
     ),
   ];
 
@@ -748,7 +748,7 @@ class _DoctorThumb extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (imageUrl.isNotEmpty) {
-      return Image.asset(
+      return Image.network(
         imageUrl,
         fit: BoxFit.cover,
         errorBuilder: (_, _, _) => _placeholder(),
