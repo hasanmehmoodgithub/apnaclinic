@@ -535,12 +535,13 @@ class _DoctorCard extends StatelessWidget {
         ],
       ),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(10.r),
             child: SizedBox(
               width: 74.w,
-              height: 74.h,
+              height: 84.h,
               child: _DoctorThumb(imageUrl: doctor.imageUrl),
             ),
           ),
@@ -723,8 +724,8 @@ class _PartnerBadge extends StatelessWidget {
       child: isMediq
           ? LabTestFigmaImage(
               url: Assets.labTestMedIQLogo,
-              width: 48.w,
-              height: 16.h,
+              width: 60.w,
+              height: 30.h,
               fit: BoxFit.contain,
             )
           : Text(
