@@ -18,12 +18,21 @@ class InfoTilesRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return IntrinsicHeight(
       child: Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Expanded(child: InfoTile(title: 'Gender', value: gender)),
-        SizedBox(width: 6.w),
-        Expanded(child: InfoTile(title: 'Date of Birth', value: dob)),
-        SizedBox(width: 6.w),
-        Expanded(child: InfoTile(title: 'Email', value: email)),
+        SizedBox(
+          width: 94.w,
+          child: InfoTile(title: 'Gender', value: gender, minWidth: 94.w),
+        ),
+        SizedBox(width: 8.w),
+        SizedBox(
+          width: 146.w,
+          child: InfoTile(title: 'Date of Birth', value: dob, minWidth: 146.w),
+        ),
+        SizedBox(width: 8.w),
+        Expanded(
+          child: InfoTile(title: 'Email', value: email, minWidth: 0),
+        ),
       ],
       ),
     );
@@ -31,23 +40,30 @@ class InfoTilesRow extends StatelessWidget {
 }
 
 class InfoTile extends StatelessWidget {
-  const InfoTile({super.key, required this.title, required this.value});
+  const InfoTile({
+    super.key,
+    required this.title,
+    required this.value,
+    required this.minWidth,
+  });
 
   final String title;
   final String value;
+  final double minWidth;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 8.h),
+      constraints: BoxConstraints(minWidth: minWidth, minHeight: 68.h),
+      padding: EdgeInsets.fromLTRB(12.w, 8.h, 12.w, 8.h),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(4.r),
-        border: Border.all(color: const Color(0xFFC9CFD7), width: 0.8.r),
+        borderRadius: BorderRadius.circular(10.r),
+        border: Border.all(color: const Color(0xFFC9CFD7), width: 1),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
             title,
@@ -55,19 +71,21 @@ class InfoTile extends StatelessWidget {
             overflow: TextOverflow.ellipsis,
             style: theme.textTheme.bodySmall?.copyWith(
               color: const Color(0xFF7A91AE),
-              fontSize: (12 / 1.05).sp,
+              fontSize: 11.sp,
+              fontWeight: FontWeight.w500,
+              height: 1,
             ),
           ),
-          SizedBox(height: 3.h),
+          SizedBox(height: 5.h),
           Text(
             value,
-            maxLines: 2,
-            overflow: TextOverflow.visible,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
             style: theme.textTheme.titleMedium?.copyWith(
               color: const Color(0xFF2B2C58),
               fontWeight: FontWeight.w500,
-              fontSize: (26 / 1.6).sp,
-              height: 1.15,
+              fontSize: 16.sp,
+              height: 1,
             ),
           ),
         ],

@@ -66,6 +66,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
             SizedBox(height: 10.h),
             const ProfileAvatarSection(),
+            SizedBox(height: 20.h),
+
             Expanded(
               child: Container(
                 width: double.infinity,
