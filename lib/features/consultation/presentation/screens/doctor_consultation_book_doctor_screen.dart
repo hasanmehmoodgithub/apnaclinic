@@ -1,10 +1,16 @@
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:path/path.dart' as p;
 
 import '../../../../core/extensions/screen_util_extensions.dart';
+import '../../../../generated/assets.dart';
+import '../../../lab_test/presentation/widgets/lab_test_figma_image.dart';
 import '../constants/consultation_ui_config.dart';
 
-class DoctorConsultationBookDoctorScreen extends StatelessWidget {
+class DoctorConsultationBookDoctorScreen extends StatefulWidget {
   final String doctorName;
   final String specialty;
   final String fee;
@@ -17,6 +23,16 @@ class DoctorConsultationBookDoctorScreen extends StatelessWidget {
     required this.fee,
     required this.imageUrl,
   });
+
+  @override
+  State<DoctorConsultationBookDoctorScreen> createState() =>
+      _DoctorConsultationBookDoctorScreenState();
+}
+
+class _DoctorConsultationBookDoctorScreenState
+    extends State<DoctorConsultationBookDoctorScreen> {
+  final ImagePicker _imagePicker = ImagePicker();
+  String? _attachedMediaName;
 
   @override
   Widget build(BuildContext context) {
@@ -126,9 +142,9 @@ class DoctorConsultationBookDoctorScreen extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               _DoctorProfileSection(
-                                doctorName: doctorName,
-                                specialty: specialty,
-                                imageUrl: imageUrl,
+                                doctorName: widget.doctorName,
+                                specialty: widget.specialty,
+                                imageUrl: widget.imageUrl,
                                 textTheme: textTheme,
                               ),
                               SizedBox(height: 16.h),
@@ -136,10 +152,11 @@ class DoctorConsultationBookDoctorScreen extends StatelessWidget {
                               SizedBox(height: 14.h),
                               Row(
                                 children: [
-                                  const Icon(
-                                    Icons.videocam_rounded,
-                                    color: Color(0xFF1E2D3F),
-                                    size: 16,
+                                  SvgPicture.asset(
+                                    'assets/img/consultation/video.svg',
+                                    width: 16.w,
+                                    height: 16.h,
+                                    fit: BoxFit.contain,
                                   ),
                                   SizedBox(width: 6.w),
                                   Text(
@@ -159,7 +176,17 @@ class DoctorConsultationBookDoctorScreen extends StatelessWidget {
                               SizedBox(height: 18.h),
                               _PatientSection(textTheme: textTheme),
                               SizedBox(height: 18.h),
-                              _DocumentsSection(textTheme: textTheme),
+                              _DocumentsSection(
+                                textTheme: textTheme,
+                                onBrowseTap: _openUploadDocumentSheet,
+                                attachedMediaName: _attachedMediaName,
+                              ),
+                              SizedBox(height: 16.h),
+                              const Divider(
+                                color: Color(0xFFE4E8ED),
+                                thickness: 1,
+                              ),
+                              SizedBox(height: 16.h),
                             ],
                           ),
                         ),
@@ -218,7 +245,7 @@ class DoctorConsultationBookDoctorScreen extends StatelessWidget {
             ),
           ),
           content: Text(
-            'Your consultation has been booked with $doctorName. You can join the call from Appointments.',
+            'Your consultation has been booked with ${widget.doctorName}. You can join the call from Appointments.',
             style: textTheme.bodyMedium?.copyWith(
               color: ConsultationUiConfig.tertiaryText,
               fontSize: 14.sp,
@@ -233,6 +260,125 @@ class DoctorConsultationBookDoctorScreen extends StatelessWidget {
         );
       },
     );
+  }
+
+  Future<void> _openUploadDocumentSheet() async {
+    FocusScope.of(context).unfocus();
+    await showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
+      ),
+      builder: (sheetContext) {
+        return SafeArea(
+          child: Padding(
+            padding: EdgeInsets.fromLTRB(20.w, 8.h, 20.w, 16.h),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 46.w,
+                  height: 5.h,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFD5D9DE),
+                    borderRadius: BorderRadius.circular(99.r),
+                  ),
+                ),
+                SizedBox(height: 18.h),
+                Text(
+                  'Upload Document',
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    color: const Color(0xFF061E40),
+                    fontSize: 30.sp,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                SizedBox(height: 14.h),
+                _UploadOptionTile(
+                  icon: Icons.camera_alt_outlined,
+                  label: 'Use camera',
+                  onTap: () {
+                    Navigator.of(sheetContext).pop();
+                    _pickFromCamera();
+                  },
+                ),
+                _UploadOptionTile(
+                  icon: Icons.photo_library_outlined,
+                  label: 'Upload from gallery',
+                  onTap: () {
+                    Navigator.of(sheetContext).pop();
+                    _pickFromGallery();
+                  },
+                ),
+                _UploadOptionTile(
+                  icon: Icons.folder_open_outlined,
+                  label: 'Upload from File',
+                  onTap: () {
+                    Navigator.of(sheetContext).pop();
+                    _pickFromFile();
+                  },
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _pickFromCamera() async {
+    try {
+      final picked = await _imagePicker.pickImage(
+        source: ImageSource.camera,
+        imageQuality: 85,
+      );
+      if (picked == null || !mounted) return;
+      setState(() {
+        _attachedMediaName = p.basename(picked.path);
+      });
+    } on PlatformException {
+      _showSnackBar('Camera access is unavailable right now.');
+    } catch (_) {
+      _showSnackBar('Could not capture media. Please try again.');
+    }
+  }
+
+  Future<void> _pickFromGallery() async {
+    try {
+      final picked = await _imagePicker.pickImage(
+        source: ImageSource.gallery,
+        imageQuality: 85,
+      );
+      if (picked == null || !mounted) return;
+      setState(() {
+        _attachedMediaName = p.basename(picked.path);
+      });
+    } on PlatformException {
+      _showSnackBar('Gallery access is unavailable right now.');
+    } catch (_) {
+      _showSnackBar('Could not pick media from gallery.');
+    }
+  }
+
+  Future<void> _pickFromFile() async {
+    try {
+      final result = await FilePicker.pickFiles();
+      if (result == null || result.files.isEmpty || !mounted) return;
+      final selected = result.files.first;
+      setState(() {
+        _attachedMediaName = selected.name;
+      });
+    } catch (_) {
+      _showSnackBar('Could not pick file. Please try again.');
+    }
+  }
+
+  void _showSnackBar(String message) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(SnackBar(content: Text(message)));
   }
 }
 
@@ -277,22 +423,38 @@ class _DoctorProfileSection extends StatelessWidget {
                     border: Border.all(color: const Color(0xFFE1E5EA)),
                     borderRadius: BorderRadius.circular(10.r),
                   ),
-                  child: Row(
+                  child: Column(
                     mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Icon(
-                        Icons.verified_rounded,
-                        color: ConsultationUiConfig.ctaColor,
-                        size: 16,
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          SvgPicture.asset(
+                            'assets/img/consultation/verified.svg',
+                            width: 17.w,
+                            height: 17.h,
+                            fit: BoxFit.contain,
+                          ),
+                          SizedBox(width: 4.w),
+                          Text(
+                            'PMC',
+                            style: textTheme.bodySmall?.copyWith(
+                              color: const Color(0xFF2E3A4B),
+                              fontSize: 14.sp,
+                              height: 1.05,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
                       ),
-                      SizedBox(width: 4.w),
+                      SizedBox(height: 2.h),
                       Text(
-                        'PMC\nVerified',
-                        textAlign: TextAlign.center,
+                        'Verified',
                         style: textTheme.bodySmall?.copyWith(
                           color: const Color(0xFF2E3A4B),
                           fontSize: 14.sp,
-                          height: 1.2,
+                          height: 1.05,
                           fontWeight: FontWeight.w500,
                         ),
                       ),
@@ -300,20 +462,13 @@ class _DoctorProfileSection extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: 8.h),
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8.r),
-                    border: Border.all(color: const Color(0xFFDAEFCF), width: 1),
-                    color: const Color(0xFFF5FBEF),
-                  ),
-                  child: Text(
-                    '4.5  /  5',
-                    style: textTheme.bodySmall?.copyWith(
-                      color: const Color(0xFF87B074),
-                      fontSize: 12.sp,
-                      fontWeight: FontWeight.w700,
-                    ),
+                SizedBox(
+                  width: 72.w,
+                  height: 30.h,
+                  child: _RatingProgressBadge(
+                    rating: 4.5,
+                    maxRating: 5,
+                    textTheme: textTheme,
                   ),
                 ),
               ],
@@ -337,32 +492,35 @@ class _DoctorProfileSection extends StatelessWidget {
           ),
         ),
         SizedBox(height: 14.h),
-        Row(
-          children: [
-            Expanded(
-              child: _StatCard(
-                title: 'Verified Patients\nCount',
-                value: '35',
-                textTheme: textTheme,
+        IntrinsicHeight(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Expanded(
+                child: _StatCard(
+                  title: 'Verified Patients\nCount',
+                  value: '35',
+                  textTheme: textTheme,
+                ),
               ),
-            ),
-            SizedBox(width: 8.w),
-            Expanded(
-              child: _StatCard(
-                title: 'Experience',
-                value: '2 Years',
-                textTheme: textTheme,
+              SizedBox(width: 8.w),
+              Expanded(
+                child: _StatCard(
+                  title: 'Experience',
+                  value: '2 Years',
+                  textTheme: textTheme,
+                ),
               ),
-            ),
-            SizedBox(width: 8.w),
-            Expanded(
-              child: _StatCard(
-                title: 'Satisfied',
-                value: '4% (35)',
-                textTheme: textTheme,
+              SizedBox(width: 8.w),
+              Expanded(
+                child: _StatCard(
+                  title: 'Satisfied',
+                  value: '4% (35)',
+                  textTheme: textTheme,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
         SizedBox(height: 10.h),
         Container(
@@ -375,20 +533,18 @@ class _DoctorProfileSection extends StatelessWidget {
           child: Row(
             children: [
               Container(
-                width: 26.w,
-                height: 26.h,
+                width: 34.w,
+                height: 34.h,
                 decoration: BoxDecoration(
+                  shape: BoxShape.circle,
                   border: Border.all(color: const Color(0xFFE2E6EB), width: 1),
-                  borderRadius: BorderRadius.circular(20.r),
                 ),
                 alignment: Alignment.center,
-                child: Text(
-                  'Med',
-                  style: textTheme.bodySmall?.copyWith(
-                    color: const Color(0xFF6D49B9),
-                    fontSize: 7.sp,
-                    fontWeight: FontWeight.w700,
-                  ),
+                child: LabTestFigmaImage(
+                  url: Assets.labTestMedIQLogo,
+                  width: 24.w,
+                  height: 24.h,
+                  fit: BoxFit.contain,
                 ),
               ),
               SizedBox(width: 8.w),
@@ -534,6 +690,94 @@ class _StatCard extends StatelessWidget {
   }
 }
 
+class _RatingProgressBadge extends StatelessWidget {
+  const _RatingProgressBadge({
+    required this.rating,
+    required this.maxRating,
+    required this.textTheme,
+  });
+
+  final double rating;
+  final double maxRating;
+  final TextTheme textTheme;
+
+  @override
+  Widget build(BuildContext context) {
+    final progress = (rating / maxRating).clamp(0.0, 1.0);
+    return CustomPaint(
+      painter: _RatingBorderPainter(progress: progress),
+      child: Center(
+        child: RichText(
+          text: TextSpan(
+            children: [
+              TextSpan(
+                text: rating.toStringAsFixed(1),
+                style: textTheme.titleMedium?.copyWith(
+                  color: const Color(0xFF87D47A),
+                  fontSize: 15.sp,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              TextSpan(
+                text: ' / ',
+                style: textTheme.titleMedium?.copyWith(
+                  color: const Color(0xFF6E84A5),
+                  fontSize: 15.sp,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              TextSpan(
+                text: maxRating.toStringAsFixed(0),
+                style: textTheme.titleMedium?.copyWith(
+                  color: const Color(0xFF6E84A5),
+                  fontSize: 15.sp,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _RatingBorderPainter extends CustomPainter {
+  const _RatingBorderPainter({required this.progress});
+
+  final double progress;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final borderRect = Rect.fromLTWH(1, 1, size.width - 2, size.height - 2);
+    final borderRRect = RRect.fromRectAndRadius(borderRect, Radius.circular(6.r));
+    final borderPath = Path()..addRRect(borderRRect);
+
+    final trackPaint = Paint()
+      ..color = const Color(0xFF60789C)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2
+      ..strokeCap = StrokeCap.round;
+
+    final progressPaint = Paint()
+      ..color = const Color(0xFF8DD97E)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2
+      ..strokeCap = StrokeCap.round;
+
+    canvas.drawPath(borderPath, trackPaint);
+    for (final metric in borderPath.computeMetrics()) {
+      final progressPath = metric.extractPath(0, metric.length * progress);
+      canvas.drawPath(progressPath, progressPaint);
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant _RatingBorderPainter oldDelegate) {
+    return oldDelegate.progress != progress;
+  }
+}
+
 class _AvailabilitySection extends StatefulWidget {
   final TextTheme textTheme;
 
@@ -545,6 +789,7 @@ class _AvailabilitySection extends StatefulWidget {
 
 class _AvailabilitySectionState extends State<_AvailabilitySection> {
   int? _selectedDateIndex;
+  int? _selectedTimeSlotIndex;
 
   static const List<_AvailabilityDay> _days = [
     _AvailabilityDay(
@@ -631,7 +876,10 @@ class _AvailabilitySectionState extends State<_AvailabilitySection> {
               final selected = _selectedDateIndex == index;
               return InkWell(
                 borderRadius: BorderRadius.circular(10.r),
-                onTap: () => setState(() => _selectedDateIndex = index),
+                onTap: () => setState(() {
+                  _selectedDateIndex = index;
+                  _selectedTimeSlotIndex = null;
+                }),
                 child: Container(
                   width: 56.w,
                   decoration: BoxDecoration(
@@ -679,6 +927,8 @@ class _AvailabilitySectionState extends State<_AvailabilitySection> {
               itemBuilder: (context, index) => _TimeSlotChip(
                 textTheme: widget.textTheme,
                 text: selectedDay.timeSlots[index],
+                isSelected: _selectedTimeSlotIndex == index,
+                onTap: () => setState(() => _selectedTimeSlotIndex = index),
               ),
             ),
           ),
@@ -701,25 +951,46 @@ class _AvailabilityDay {
 }
 
 class _TimeSlotChip extends StatelessWidget {
-  const _TimeSlotChip({required this.textTheme, required this.text});
+  const _TimeSlotChip({
+    required this.textTheme,
+    required this.text,
+    required this.isSelected,
+    required this.onTap,
+  });
 
   final TextTheme textTheme;
   final String text;
+  final bool isSelected;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 5.h),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16.r),
-        border: Border.all(color: const Color(0xFFE1E5EA), width: 1),
-        color: Colors.white,
-      ),
-      child: Text(
-        text,
-        style: textTheme.bodySmall?.copyWith(
-          color: const Color(0xFF5F6C7C),
-          fontSize: 12.sp,
+    return InkWell(
+      borderRadius: BorderRadius.circular(16.r),
+      onTap: onTap,
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 5.h),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16.r),
+          border: Border.all(
+            color: isSelected
+                ? ConsultationUiConfig.ctaColor
+                : const Color(0xFFE1E5EA),
+            width: 1,
+          ),
+          color: isSelected
+              ? ConsultationUiConfig.ctaColor.withValues(alpha: 0.12)
+              : Colors.white,
+        ),
+        child: Text(
+          text,
+          style: textTheme.bodySmall?.copyWith(
+            color: isSelected
+                ? ConsultationUiConfig.ctaColor
+                : const Color(0xFF5F6C7C),
+            fontSize: 12.sp,
+            fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+          ),
         ),
       ),
     );
@@ -748,16 +1019,26 @@ class _IssueSection extends StatelessWidget {
         Container(
           width: double.infinity,
           height: 116.h,
-          padding: EdgeInsets.fromLTRB(12.w, 12.h, 12.w, 12.h),
           decoration: BoxDecoration(
             color: const Color(0xFFF3F5F7),
             borderRadius: BorderRadius.circular(10.r),
           ),
-          child: Text(
-            'Explain How are You Feeling..',
+          child: TextField(
+            maxLines: null,
+            expands: true,
+            textAlignVertical: TextAlignVertical.top,
             style: textTheme.bodyMedium?.copyWith(
-              color: const Color(0xFF727F90),
+              color: const Color(0xFF3C4858),
               fontSize: 13.sp,
+            ),
+            decoration: InputDecoration(
+              hintText: 'Explain How are You Feeling..',
+              hintStyle: textTheme.bodyMedium?.copyWith(
+                color: const Color(0xFF727F90),
+                fontSize: 13.sp,
+              ),
+              border: InputBorder.none,
+              contentPadding: EdgeInsets.fromLTRB(12.w, 12.h, 12.w, 12.h),
             ),
           ),
         ),
@@ -808,9 +1089,15 @@ class _PatientSection extends StatelessWidget {
 }
 
 class _DocumentsSection extends StatelessWidget {
-  const _DocumentsSection({required this.textTheme});
+  const _DocumentsSection({
+    required this.textTheme,
+    required this.onBrowseTap,
+    required this.attachedMediaName,
+  });
 
   final TextTheme textTheme;
+  final VoidCallback onBrowseTap;
+  final String? attachedMediaName;
 
   @override
   Widget build(BuildContext context) {
@@ -833,38 +1120,137 @@ class _DocumentsSection extends StatelessWidget {
             border: Border.all(color: const Color(0xFFE2E6EB), width: 1),
             borderRadius: BorderRadius.circular(8.r),
           ),
-          child: Container(
+          child: SizedBox(
             height: 46.h,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(6.r),
-              border: Border.all(
+            child: CustomPaint(
+              painter: _DashedRoundedBorderPainter(
                 color: const Color(0xFFD7DDE5),
-                width: 1,
-                style: BorderStyle.solid,
+                strokeWidth: 1,
+                radius: 6,
+                dashWidth: 3,
+                dashSpace: 3,
               ),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Icon(
-                  Icons.cloud_upload_outlined,
-                  color: Color(0xFF627084),
-                  size: 18,
+              child: InkWell(
+                onTap: onBrowseTap,
+                borderRadius: BorderRadius.circular(6.r),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SvgPicture.asset(
+                      'assets/img/consultation/upload.svg',
+                      width: 19.w,
+                      height: 16.h,
+                      fit: BoxFit.contain,
+                    ),
+                    SizedBox(width: 8.w),
+                    Text(
+                      'Browse',
+                      style: textTheme.bodyLarge?.copyWith(
+                        color: const Color(0xFF3C4858),
+                        fontSize: 14.sp,
+                      ),
+                    ),
+                  ],
                 ),
-                SizedBox(width: 8.w),
-                Text(
-                  'Browse',
-                  style: textTheme.bodyLarge?.copyWith(
-                    color: const Color(0xFF3C4858),
-                    fontSize: 14.sp,
-                  ),
-                ),
-              ],
+              ),
             ),
           ),
         ),
+        if ((attachedMediaName ?? '').isNotEmpty) ...[
+          SizedBox(height: 8.h),
+          Text(
+            'Attached: $attachedMediaName',
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: textTheme.bodySmall?.copyWith(
+              color: const Color(0xFF5F6C7C),
+              fontSize: 12.sp,
+            ),
+          ),
+        ],
       ],
     );
+  }
+}
+
+class _UploadOptionTile extends StatelessWidget {
+  const _UploadOptionTile({
+    required this.icon,
+    required this.label,
+    required this.onTap,
+  });
+
+  final IconData icon;
+  final String label;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      contentPadding: EdgeInsets.symmetric(horizontal: 2.w, vertical: 0),
+      dense: true,
+      minLeadingWidth: 28.w,
+      leading: Icon(icon, color: const Color(0xFF4D5869), size: 22.r),
+      title: Text(
+        label,
+        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+          color: const Color(0xFF2E3A4B),
+          fontSize: 14.sp,
+        ),
+      ),
+      onTap: onTap,
+    );
+  }
+}
+
+class _DashedRoundedBorderPainter extends CustomPainter {
+  const _DashedRoundedBorderPainter({
+    required this.color,
+    required this.strokeWidth,
+    required this.radius,
+    required this.dashWidth,
+    required this.dashSpace,
+  });
+
+  final Color color;
+  final double strokeWidth;
+  final double radius;
+  final double dashWidth;
+  final double dashSpace;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final rect = Rect.fromLTWH(
+      strokeWidth / 2,
+      strokeWidth / 2,
+      size.width - strokeWidth,
+      size.height - strokeWidth,
+    );
+    final rRect = RRect.fromRectAndRadius(rect, Radius.circular(radius.r));
+    final path = Path()..addRRect(rRect);
+
+    final paint = Paint()
+      ..color = color
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = strokeWidth;
+
+    for (final metric in path.computeMetrics()) {
+      double distance = 0;
+      while (distance < metric.length) {
+        final end = (distance + dashWidth).clamp(0.0, metric.length).toDouble();
+        canvas.drawPath(metric.extractPath(distance, end), paint);
+        distance += dashWidth + dashSpace;
+      }
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant _DashedRoundedBorderPainter oldDelegate) {
+    return oldDelegate.color != color ||
+        oldDelegate.strokeWidth != strokeWidth ||
+        oldDelegate.radius != radius ||
+        oldDelegate.dashWidth != dashWidth ||
+        oldDelegate.dashSpace != dashSpace;
   }
 }
 
