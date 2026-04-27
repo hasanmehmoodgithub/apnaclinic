@@ -55,8 +55,37 @@ import '../cubit/search_state.dart';
 // Typography: relies on your app theme. All sizes are specified explicitly
 // using .sp so the hierarchy is consistent.
 
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+
+import '../../../../core/enums/state_status.dart';
+import '../../../../core/extensions/screen_util_extensions.dart';
+import '../../../../components/shimmer/app_shimmer.dart';
+import '../../../../core/widgets/app_scaffold_gradient.dart';
+import '../../../../generated/assets.dart';
+import '../../domain/entities/search_entity.dart';
+import '../cubit/search_cubit.dart';
+import '../cubit/search_state.dart';
+
+
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+
+import '../../../../core/enums/state_status.dart';
+import '../../../../core/extensions/screen_util_extensions.dart';
+import '../../../../components/shimmer/app_shimmer.dart';
+import '../../../../core/widgets/app_scaffold_gradient.dart';
+import '../../../../generated/assets.dart';
+import '../../domain/entities/search_entity.dart';
+import '../cubit/search_cubit.dart';
+import '../cubit/search_state.dart';
+
 class SearchScreen extends StatefulWidget {
-  const SearchScreen({super.key});
+  const SearchScreen({super.key, this.initialQuery});
+
+  final String? initialQuery;
 
   @override
   State<SearchScreen> createState() => _SearchScreenState();
@@ -64,6 +93,23 @@ class SearchScreen extends StatefulWidget {
 
 class _SearchScreenState extends State<SearchScreen> {
   final TextEditingController _controller = TextEditingController();
+  bool _didSubmitInitialQuery = false;
+
+  @override
+  void initState() {
+    super.initState();
+    final seed = widget.initialQuery?.trim() ?? '';
+    if (seed.isNotEmpty) {
+      _controller.text = seed;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        _didSubmitInitialQuery = true;
+        context.read<SearchCubit>().submitSearch(seed);
+      });
+    } else {
+      _didSubmitInitialQuery = true;
+    }
+  }
 
   @override
   void dispose() {
@@ -75,8 +121,7 @@ class _SearchScreenState extends State<SearchScreen> {
   Widget build(BuildContext context) {
     return BlocBuilder<SearchCubit, SearchState>(
       builder: (context, state) {
-        // Keep the external text field in sync with the cubit's query.
-        if (_controller.text != state.query) {
+        if (_didSubmitInitialQuery && _controller.text != state.query) {
           _controller.value = TextEditingValue(
             text: state.query,
             selection: TextSelection.collapsed(offset: state.query.length),
@@ -86,36 +131,27 @@ class _SearchScreenState extends State<SearchScreen> {
         return AppScaffoldGradient(
           child: Column(
             children: [
-              // ─── Mint header ─────────────────────────────────────────────
               Padding(
                 padding: EdgeInsets.fromLTRB(8.w, 8.h, 8.w, 18.h),
                 child: Row(
                   children: [
                     IconButton(
                       onPressed: () => Navigator.of(context).maybePop(),
-                      icon: Icon(
-                        Icons.arrow_back_rounded,
-                        color: const Color(0xFF061E40),
-                        size: 26.r,
-                      ),
+                      icon: Icon(Icons.arrow_back_rounded,
+                          color: const Color(0xFF061E40), size: 26.r),
                     ),
                     Expanded(
-                      child: Text(
-                        'Search',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: const Color(0xFF061E40),
-                          fontWeight: FontWeight.w700,
-                          fontSize: 20.sp,
-                        ),
-                      ),
+                      child: Text('Search',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              color: const Color(0xFF061E40),
+                              fontWeight: FontWeight.w700,
+                              fontSize: 20.sp)),
                     ),
-                    SizedBox(width: 44.w), // balances the back button
+                    SizedBox(width: 44.w),
                   ],
                 ),
               ),
-
-              // ─── White rounded content panel ─────────────────────────────
               Expanded(
                 child: Container(
                   width: double.infinity,
@@ -162,7 +198,6 @@ class _SearchScreenState extends State<SearchScreen> {
     );
   }
 
-  // ─── Body switcher ───────────────────────────────────────────────────────
   Widget _buildBody(BuildContext context, SearchState state) {
     final query = state.query.trim();
     final hasSections = state.content.sections.isNotEmpty;
@@ -180,9 +215,7 @@ class _SearchScreenState extends State<SearchScreen> {
     }
     if (state.isSubmitted && hasSections) {
       return _SearchResultsSections(
-        sections: state.content.sections,
-        query: query,
-      );
+          sections: state.content.sections, query: query);
     }
     if (hasSuggestions) {
       return _SearchSuggestionsList(
@@ -194,6 +227,7 @@ class _SearchScreenState extends State<SearchScreen> {
     return _SearchInitialContent(
       recent: state.content.recentSearches,
       popular: state.content.popularSearches,
+      onRecentTap: (t) => context.read<SearchCubit>().submitSearch(t),
       onRemoveRecent: (t) =>
           context.read<SearchCubit>().removeRecentSearch(t),
       onPopularTap: (v) => context.read<SearchCubit>().submitSearch(v),
@@ -201,9 +235,6 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 }
 
-// ═══════════════════════════════════════════════════════════════════════════
-// SEARCH INPUT (text field + adjacent search button)
-// ═══════════════════════════════════════════════════════════════════════════
 class _SearchInputRow extends StatelessWidget {
   const _SearchInputRow({
     required this.controller,
@@ -226,10 +257,8 @@ class _SearchInputRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final hasText = controller.text.trim().isNotEmpty;
-
     return Row(
       children: [
-        // Text field
         Expanded(
           child: Container(
             height: 56.h,
@@ -246,12 +275,12 @@ class _SearchInputRow extends StatelessWidget {
                     controller: controller,
                     onChanged: onChanged,
                     onSubmitted: onSubmit,
+                    textInputAction: TextInputAction.search,
                     cursorColor: const Color(0xFF061E40),
                     style: TextStyle(
-                      color: Colors.black,
-                      fontWeight: FontWeight.w700,
-                      fontSize: 15.sp,
-                    ),
+                        color: Colors.black,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 15.sp),
                     decoration: InputDecoration(
                       isCollapsed: true,
                       border: InputBorder.none,
@@ -259,10 +288,9 @@ class _SearchInputRow extends StatelessWidget {
                           ? 'Listening...'
                           : 'Search Medicine, Doctor, Test...',
                       hintStyle: TextStyle(
-                        color: const Color(0xFFA1A1A1),
-                        fontSize: 15.sp,
-                        fontWeight: FontWeight.w500,
-                      ),
+                          color: const Color(0xFFA1A1A1),
+                          fontSize: 15.sp,
+                          fontWeight: FontWeight.w500),
                     ),
                   ),
                 ),
@@ -272,11 +300,8 @@ class _SearchInputRow extends StatelessWidget {
                     borderRadius: BorderRadius.circular(20.r),
                     child: Padding(
                       padding: EdgeInsets.all(2.r),
-                      child: Icon(
-                        Icons.cancel_outlined,
-                        size: 22.r,
-                        color: const Color(0xFF061E40),
-                      ),
+                      child: Icon(Icons.cancel_outlined,
+                          size: 22.r, color: const Color(0xFF061E40)),
                     ),
                   )
                 else
@@ -285,11 +310,8 @@ class _SearchInputRow extends StatelessWidget {
                     borderRadius: BorderRadius.circular(20.r),
                     child: Padding(
                       padding: EdgeInsets.all(2.r),
-                      child: SvgPicture.asset(
-                        Assets.svgIcSearchMic,
-                        width: 20.r,
-                        height: 20.r,
-                      ),
+                      child: SvgPicture.asset(Assets.svgIcSearchMic,
+                          width: 20.r, height: 20.r),
                     ),
                   ),
               ],
@@ -297,8 +319,6 @@ class _SearchInputRow extends StatelessWidget {
           ),
         ),
         SizedBox(width: 8.w),
-
-        // Square search button
         InkWell(
           onTap: onSearchTap,
           borderRadius: BorderRadius.circular(10.r),
@@ -310,11 +330,8 @@ class _SearchInputRow extends StatelessWidget {
               borderRadius: BorderRadius.circular(10.r),
               border: Border.all(color: const Color(0xFFE3E3E3)),
             ),
-            child: Icon(
-              Icons.search,
-              color: const Color(0xFF061E40),
-              size: 22.r,
-            ),
+            child: Icon(Icons.search,
+                color: const Color(0xFF061E40), size: 22.r),
           ),
         ),
       ],
@@ -322,19 +339,18 @@ class _SearchInputRow extends StatelessWidget {
   }
 }
 
-// ═══════════════════════════════════════════════════════════════════════════
-// INITIAL STATE  (Recent + Popular)
-// ═══════════════════════════════════════════════════════════════════════════
 class _SearchInitialContent extends StatelessWidget {
   const _SearchInitialContent({
     required this.recent,
     required this.popular,
+    required this.onRecentTap,
     required this.onRemoveRecent,
     required this.onPopularTap,
   });
 
   final List<SearchRecentEntity> recent;
   final List<String> popular;
+  final ValueChanged<String> onRecentTap;
   final ValueChanged<String> onRemoveRecent;
   final ValueChanged<String> onPopularTap;
 
@@ -343,74 +359,63 @@ class _SearchInitialContent extends StatelessWidget {
     return ListView(
       padding: EdgeInsets.fromLTRB(16.w, 22.h, 16.w, 24.h),
       children: [
-        Text(
-          'Recent Searches',
-          style: TextStyle(
-            color: Colors.black,
-            fontSize: 18.sp,
-            fontWeight: FontWeight.w800,
-          ),
-        ),
-        SizedBox(height: 10.h),
-        ...recent.map(
-              (item) => Padding(
-            padding: EdgeInsets.symmetric(vertical: 10.h),
-            child: Row(
-              children: [
-                Icon(
-                  Icons.history_rounded,
-                  color: const Color(0xFF5D758F),
-                  size: 22.r,
-                ),
-                SizedBox(width: 16.w),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        item.title,
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 15.sp,
-                          fontWeight: FontWeight.w800,
-                        ),
+        if (recent.isNotEmpty) ...[
+          Text('Recent Searches',
+              style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 18.sp,
+                  fontWeight: FontWeight.w800)),
+          SizedBox(height: 10.h),
+          ...recent.map(
+                (item) => InkWell(
+              onTap: () => onRecentTap(item.title),
+              child: Padding(
+                padding: EdgeInsets.symmetric(vertical: 10.h),
+                child: Row(
+                  children: [
+                    Icon(Icons.history_rounded,
+                        color: const Color(0xFF5D758F), size: 22.r),
+                    SizedBox(width: 16.w),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(item.title,
+                              style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 15.sp,
+                                  fontWeight: FontWeight.w800)),
+                          if (item.subtitle.isNotEmpty) ...[
+                            SizedBox(height: 2.h),
+                            Text(item.subtitle,
+                                style: TextStyle(
+                                    color: const Color(0xFF7B7979),
+                                    fontSize: 13.sp)),
+                          ],
+                        ],
                       ),
-                      SizedBox(height: 2.h),
-                      Text(
-                        item.subtitle,
-                        style: TextStyle(
-                          color: const Color(0xFF7B7979),
-                          fontSize: 13.sp,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                InkWell(
-                  onTap: () => onRemoveRecent(item.title),
-                  borderRadius: BorderRadius.circular(20.r),
-                  child: Padding(
-                    padding: EdgeInsets.all(4.r),
-                    child: Icon(
-                      Icons.close,
-                      color: const Color(0xFF5D758F),
-                      size: 18.r,
                     ),
-                  ),
+                    InkWell(
+                      onTap: () => onRemoveRecent(item.title),
+                      borderRadius: BorderRadius.circular(20.r),
+                      child: Padding(
+                        padding: EdgeInsets.all(4.r),
+                        child: Icon(Icons.close,
+                            color: const Color(0xFF5D758F), size: 18.r),
+                      ),
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
           ),
-        ),
-        SizedBox(height: 18.h),
-        Text(
-          'Popular Searches',
-          style: TextStyle(
-            color: Colors.black,
-            fontSize: 18.sp,
-            fontWeight: FontWeight.w800,
-          ),
-        ),
+          SizedBox(height: 18.h),
+        ],
+        Text('Popular Searches',
+            style: TextStyle(
+                color: Colors.black,
+                fontSize: 18.sp,
+                fontWeight: FontWeight.w800)),
         SizedBox(height: 12.h),
         Wrap(
           spacing: 8.w,
@@ -422,22 +427,17 @@ class _SearchInitialContent extends StatelessWidget {
               borderRadius: BorderRadius.circular(100.r),
               child: Container(
                 padding: EdgeInsets.symmetric(
-                  horizontal: 16.w,
-                  vertical: 10.h,
-                ),
+                    horizontal: 16.w, vertical: 10.h),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(100.r),
                   border: Border.all(color: const Color(0xFFE4E4E4)),
                 ),
-                child: Text(
-                  item,
-                  style: TextStyle(
-                    color: const Color(0xFF3D3D3D),
-                    fontSize: 14.sp,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
+                child: Text(item,
+                    style: TextStyle(
+                        color: const Color(0xFF3D3D3D),
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.w500)),
               ),
             ),
           )
@@ -448,9 +448,6 @@ class _SearchInitialContent extends StatelessWidget {
   }
 }
 
-// ═══════════════════════════════════════════════════════════════════════════
-// SUGGESTIONS (as you type)
-// ═══════════════════════════════════════════════════════════════════════════
 class _SearchSuggestionsList extends StatelessWidget {
   const _SearchSuggestionsList({
     required this.query,
@@ -470,27 +467,21 @@ class _SearchSuggestionsList extends StatelessWidget {
           child: ListView(
             padding: EdgeInsets.fromLTRB(16.w, 18.h, 16.w, 10.h),
             children: [
-              Text(
-                'Search for “$query”',
-                style: TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.w800,
-                  fontSize: 19.sp,
-                ),
-              ),
+              Text('Search for "$query"',
+                  style: TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.w800,
+                      fontSize: 19.sp)),
               SizedBox(height: 10.h),
               ...suggestions.map(
                     (item) => InkWell(
                   onTap: () => onSuggestionTap(item.title),
                   child: Container(
                     padding: EdgeInsets.symmetric(
-                      horizontal: 4.w,
-                      vertical: 12.h,
-                    ),
+                        horizontal: 4.w, vertical: 12.h),
                     decoration: const BoxDecoration(
                       border: Border(
-                        bottom: BorderSide(color: Color(0xFFE3E3E3)),
-                      ),
+                          bottom: BorderSide(color: Color(0xFFE3E3E3))),
                     ),
                     child: Row(
                       children: [
@@ -498,9 +489,8 @@ class _SearchSuggestionsList extends StatelessWidget {
                           width: 40.r,
                           height: 40.r,
                           decoration: BoxDecoration(
-                            border: Border.all(
-                              color: const Color(0xFFE3E3E3),
-                            ),
+                            border:
+                            Border.all(color: const Color(0xFFE3E3E3)),
                             shape: BoxShape.circle,
                           ),
                           child: Center(
@@ -509,9 +499,7 @@ class _SearchSuggestionsList extends StatelessWidget {
                               width: 22.r,
                               height: 22.r,
                               colorFilter: const ColorFilter.mode(
-                                Color(0xFF061E40),
-                                BlendMode.srcIn,
-                              ),
+                                  Color(0xFF061E40), BlendMode.srcIn),
                             ),
                           ),
                         ),
@@ -521,25 +509,17 @@ class _SearchSuggestionsList extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               _HighlightedText(
-                                text: item.title,
-                                highlight: query,
-                              ),
+                                  text: item.title, highlight: query),
                               SizedBox(height: 2.h),
-                              Text(
-                                item.subtitle,
-                                style: TextStyle(
-                                  color: const Color(0xFF7B7979),
-                                  fontSize: 13.sp,
-                                ),
-                              ),
+                              Text(item.subtitle,
+                                  style: TextStyle(
+                                      color: const Color(0xFF7B7979),
+                                      fontSize: 13.sp)),
                             ],
                           ),
                         ),
-                        Icon(
-                          Icons.north_west_rounded,
-                          color: const Color(0xFF5D758F),
-                          size: 20.r,
-                        ),
+                        Icon(Icons.north_west_rounded,
+                            color: const Color(0xFF5D758F), size: 20.r),
                       ],
                     ),
                   ),
@@ -558,17 +538,13 @@ class _SearchSuggestionsList extends StatelessWidget {
                 backgroundColor: const Color(0xFF0FAFA0),
                 minimumSize: Size.fromHeight(56.h),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(22.r),
-                ),
+                    borderRadius: BorderRadius.circular(22.r)),
               ),
-              child: Text(
-                'Search',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w700,
-                  fontSize: 16.sp,
-                ),
-              ),
+              child: Text('Search',
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 16.sp)),
             ),
           ),
         ),
@@ -577,41 +553,30 @@ class _SearchSuggestionsList extends StatelessWidget {
   }
 }
 
-/// Bolds the matched prefix of a suggestion (the "Al" in "Allergy Test" etc.)
 class _HighlightedText extends StatelessWidget {
   const _HighlightedText({required this.text, required this.highlight});
-
   final String text;
   final String highlight;
 
   @override
   Widget build(BuildContext context) {
     final base = TextStyle(
-      color: Colors.black,
-      fontSize: 15.sp,
-      fontWeight: FontWeight.w500,
-    );
+        color: Colors.black,
+        fontSize: 15.sp,
+        fontWeight: FontWeight.w500);
     final bold = base.copyWith(fontWeight: FontWeight.w800);
-
-    if (highlight.isEmpty) {
-      return Text(text, style: bold);
-    }
-
+    if (highlight.isEmpty) return Text(text, style: bold);
     final lower = text.toLowerCase();
     final needle = highlight.toLowerCase();
     final idx = lower.indexOf(needle);
-    if (idx == -1) {
-      return Text(text, style: bold);
-    }
-
+    if (idx == -1) return Text(text, style: bold);
     return RichText(
       text: TextSpan(
         children: [
           TextSpan(text: text.substring(0, idx), style: bold),
           TextSpan(
-            text: text.substring(idx, idx + highlight.length),
-            style: base, // matched portion is de-emphasised (as per screenshot)
-          ),
+              text: text.substring(idx, idx + highlight.length),
+              style: base),
           TextSpan(text: text.substring(idx + highlight.length), style: bold),
         ],
       ),
@@ -619,15 +584,9 @@ class _HighlightedText extends StatelessWidget {
   }
 }
 
-// ═══════════════════════════════════════════════════════════════════════════
-// RESULTS (all sections)
-// ═══════════════════════════════════════════════════════════════════════════
 class _SearchResultsSections extends StatelessWidget {
-  const _SearchResultsSections({
-    required this.sections,
-    required this.query,
-  });
-
+  const _SearchResultsSections(
+      {required this.sections, required this.query});
   final List<SearchSectionEntity> sections;
   final String query;
 
@@ -644,7 +603,6 @@ class _SearchResultsSections extends StatelessWidget {
 
 class _SectionBlock extends StatelessWidget {
   const _SectionBlock({required this.section, required this.query});
-
   final SearchSectionEntity section;
   final String query;
 
@@ -655,67 +613,16 @@ class _SectionBlock extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // Section pill header
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
-            decoration: BoxDecoration(
-              color: const Color(0xFFF7F7F7),
-              borderRadius: BorderRadius.circular(12.r),
-            ),
-            child: Row(
-              children: [
-                Container(
-                  width: 32.r,
-                  height: 32.r,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    border: Border.all(color: const Color(0xFFE3E3E3)),
-                    shape: BoxShape.circle,
-                  ),
-                  child: Center(
-                    child: SvgPicture.asset(
-                      _sectionIconAsset(section.type),
-                      width: 20.r,
-                      height: 20.r,
-                      colorFilter: const ColorFilter.mode(
-                        Color(0xFF061E40),
-                        BlendMode.srcIn,
-                      ),
-                    ),
-                  ),
-                ),
-                SizedBox(width: 10.w),
-                Expanded(
-                  child: Text(
-                    section.title,
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontWeight: FontWeight.w800,
-                      fontSize: 16.sp,
-                    ),
-                  ),
-                ),
-                Text(
-                  'See All',
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 13.sp,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          SizedBox(height: 10.h),
+          _SectionHeaderPill(
+              title: section.title,
+              iconAsset: _sectionIconAsset(section.type)),
+          SizedBox(height: 12.h),
           ...section.results.map(
                 (item) => switch (section.type) {
-              SearchSectionType.doctorConsultation ||
+              SearchSectionType.doctorConsultation =>
+                  _DoctorResultCard(item: item, showHospital: false),
               SearchSectionType.surgeryBooking =>
-                  _DoctorResultCard(
-                    item: item,
-                    showHospital:
-                    section.type == SearchSectionType.surgeryBooking,
-                  ),
+                  _DoctorResultCard(item: item, showHospital: true),
               SearchSectionType.pharmacy => _PharmacyResultCard(item: item),
               SearchSectionType.laboratoryTests => _LabResultCard(item: item),
             },
@@ -726,30 +633,77 @@ class _SectionBlock extends StatelessWidget {
   }
 }
 
-// ───────────────────── DOCTOR / SURGERY CARD ─────────────────────────────
-class _DoctorResultCard extends StatelessWidget {
-  const _DoctorResultCard({
-    required this.item,
-    required this.showHospital,
-  });
+class _SectionHeaderPill extends StatelessWidget {
+  const _SectionHeaderPill({required this.title, required this.iconAsset});
+  final String title;
+  final String iconAsset;
 
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF7F7F7),
+        borderRadius: BorderRadius.circular(14.r),
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 30.r,
+            height: 30.r,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              border: Border.all(color: const Color(0xFFE3E3E3)),
+              shape: BoxShape.circle,
+            ),
+            child: Center(
+              child: SvgPicture.asset(
+                iconAsset,
+                width: 18.r,
+                height: 18.r,
+                colorFilter: const ColorFilter.mode(
+                    Color(0xFF061E40), BlendMode.srcIn),
+              ),
+            ),
+          ),
+          SizedBox(width: 10.w),
+          Expanded(
+            child: Text(title,
+                style: TextStyle(
+                    color: const Color(0xFF061E40),
+                    fontWeight: FontWeight.w800,
+                    fontSize: 16.sp)),
+          ),
+          Text('See All',
+              style: TextStyle(
+                  color: const Color(0xFF3D3D3D),
+                  fontSize: 13.sp,
+                  fontWeight: FontWeight.w500)),
+        ],
+      ),
+    );
+  }
+}
+
+class _DoctorResultCard extends StatelessWidget {
+  const _DoctorResultCard(
+      {required this.item, required this.showHospital});
   final SearchResultEntity item;
   final bool showHospital;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.only(bottom: 10.h),
+      margin: EdgeInsets.only(bottom: 12.h),
       padding: EdgeInsets.all(10.r),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16.r),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
-            blurRadius: 12,
-            offset: const Offset(0, 2),
-          ),
+              color: Colors.black.withValues(alpha: 0.05),
+              blurRadius: 14,
+              offset: const Offset(0, 2)),
         ],
       ),
       child: Row(
@@ -757,19 +711,14 @@ class _DoctorResultCard extends StatelessWidget {
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(10.r),
-            child: Image.asset(
-              Assets.imgPlaceHolderPerson,
-              width: 96.r,
-              height: 132.r,
-              fit: BoxFit.cover,
-            ),
+            child: Image.asset(Assets.imgPlaceHolderPerson,
+                width: 96.r, height: 132.r, fit: BoxFit.cover),
           ),
-          SizedBox(width: 10.w),
+          SizedBox(width: 12.w),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Name + rating badge + provider logo
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -778,15 +727,17 @@ class _DoctorResultCard extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               Flexible(
                                 child: Text(
                                   item.title,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
                                   style: TextStyle(
-                                    color: const Color(0xFF061E40),
-                                    fontSize: 15.sp,
-                                    fontWeight: FontWeight.w700,
-                                  ),
+                                      color: const Color(0xFF061E40),
+                                      fontSize: 15.sp,
+                                      fontWeight: FontWeight.w700),
                                 ),
                               ),
                               SizedBox(width: 6.w),
@@ -794,24 +745,23 @@ class _DoctorResultCard extends StatelessWidget {
                             ],
                           ),
                           SizedBox(height: 2.h),
-                          Text(
-                            item.subtitle,
-                            style: TextStyle(
-                              color: const Color(0xFF667B99),
-                              fontSize: 13.sp,
-                            ),
-                          ),
+                          Text(item.subtitle,
+                              style: TextStyle(
+                                  color: const Color(0xFF667B99),
+                                  fontSize: 13.sp,
+                                  fontWeight: FontWeight.w500)),
                         ],
                       ),
                     ),
-                    // Provider logo (MediQ / Oladoc)
                     if (item.providerLogo != null)
                       Container(
                         width: 38.r,
                         height: 38.r,
+                        margin: EdgeInsets.only(left: 6.w),
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          border: Border.all(color: const Color(0xFFE3E3E3)),
+                          border:
+                          Border.all(color: const Color(0xFFE3E3E3)),
                         ),
                         clipBehavior: Clip.antiAlias,
                         child: Image.asset(item.providerLogo!,
@@ -820,15 +770,10 @@ class _DoctorResultCard extends StatelessWidget {
                   ],
                 ),
                 SizedBox(height: 6.h),
-                Text(
-                  item.description ?? '6 years Experience   MMBS, FCPS',
-                  style: TextStyle(
-                    color: const Color(0xFF667B99),
-                    fontSize: 12.sp,
-                  ),
-                ),
+                Text(item.description ?? '6 years Experience   MMBS, FCPS',
+                    style: TextStyle(
+                        color: const Color(0xFF667B99), fontSize: 12.sp)),
                 SizedBox(height: 8.h),
-                // Date + Time pills (only if no hospital row shown)
                 if (!showHospital)
                   Row(
                     children: [
@@ -836,20 +781,17 @@ class _DoctorResultCard extends StatelessWidget {
                       SizedBox(width: 6.w),
                       _OutlinePill(text: item.time ?? '1pm - 2pm'),
                     ],
-                  ),
-                if (showHospital && (item.hospital?.isNotEmpty ?? false))
+                  )
+                else if (item.hospital?.isNotEmpty ?? false)
                   Padding(
-                    padding: EdgeInsets.only(top: 2.h, bottom: 4.h),
-                    child: Text(
-                      item.hospital!,
-                      style: TextStyle(
-                        color: const Color(0xFF667B99),
-                        fontSize: 12.sp,
-                      ),
-                    ),
+                    padding: EdgeInsets.only(top: 2.h, bottom: 2.h),
+                    child: Text(item.hospital!,
+                        style: TextStyle(
+                            color: const Color(0xFF667B99),
+                            fontSize: 12.sp,
+                            fontWeight: FontWeight.w500)),
                   ),
                 SizedBox(height: 10.h),
-                // Fee + Book Now
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
@@ -857,22 +799,16 @@ class _DoctorResultCard extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            'Fee',
-                            style: TextStyle(
-                              color: const Color(0xFF667B99),
-                              fontSize: 12.sp,
-                            ),
-                          ),
+                          Text('Fee',
+                              style: TextStyle(
+                                  color: const Color(0xFF667B99),
+                                  fontSize: 12.sp)),
                           SizedBox(height: 2.h),
-                          Text(
-                            item.fee ?? 'Rs. 800/-',
-                            style: TextStyle(
-                              color: const Color(0xFF110844),
-                              fontSize: 15.sp,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
+                          Text(item.fee ?? 'Rs. 800/-',
+                              style: TextStyle(
+                                  color: const Color(0xFF110844),
+                                  fontSize: 15.sp,
+                                  fontWeight: FontWeight.w700)),
                         ],
                       ),
                     ),
@@ -880,21 +816,16 @@ class _DoctorResultCard extends StatelessWidget {
                       onPressed: () {},
                       style: FilledButton.styleFrom(
                         backgroundColor: const Color(0xFF0FAFA0),
-                        minimumSize: Size(104.w, 42.h),
-                        padding:
-                        EdgeInsets.symmetric(horizontal: 18.w),
+                        minimumSize: Size(80.w, 35.h),
+                        padding: EdgeInsets.symmetric(horizontal: 18.w),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10.r),
-                        ),
+                            borderRadius: BorderRadius.circular(10.r)),
                       ),
-                      child: Text(
-                        item.primaryActionLabel ?? 'Book Now',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 14.sp,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
+                      child: Text(item.primaryActionLabel ?? 'Book Now',
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 14.sp,
+                              fontWeight: FontWeight.w700)),
                     ),
                   ],
                 ),
@@ -907,50 +838,46 @@ class _DoctorResultCard extends StatelessWidget {
   }
 }
 
-// ───────────────────── PHARMACY CARD ─────────────────────────────────────
 class _PharmacyResultCard extends StatelessWidget {
   const _PharmacyResultCard({required this.item});
-
   final SearchResultEntity item;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.only(bottom: 10.h),
+      padding: EdgeInsets.only(bottom: 14.h),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.baseline,
+        textBaseline: TextBaseline.alphabetic,
         children: [
           Container(
             width: 128.r,
             height: 90.r,
             decoration: BoxDecoration(
               color: const Color(0xFFE8F0F5),
-              borderRadius: BorderRadius.circular(10.r),
+              borderRadius: BorderRadius.circular(12.r),
             ),
             clipBehavior: Clip.antiAlias,
-            child: Image.asset(Assets.servicesPharmacy, fit: BoxFit.cover),
+            alignment: Alignment.center,
+            child: Image.asset(Assets.servicesPharmacy, fit: BoxFit.contain),
           ),
-          SizedBox(width: 12.w),
+          SizedBox(width: 16.w),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
               children: [
-                Text(
-                  item.title,
-                  style: TextStyle(
-                    color: const Color(0xFF061E40),
-                    fontSize: 18.sp,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
+                Text(item.title,
+                    style: TextStyle(
+                        color: const Color(0xFF061E40),
+                        fontSize: 18.sp,
+                        fontWeight: FontWeight.w700)),
                 SizedBox(height: 4.h),
-                Text(
-                  item.price ?? item.subtitle,
-                  style: TextStyle(
-                    color: const Color(0xFF061E40),
-                    fontSize: 15.sp,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
+                Text(item.price ?? item.subtitle,
+                    style: TextStyle(
+                        color: const Color(0xFF061E40),
+                        fontSize: 15.sp,
+                        fontWeight: FontWeight.w500)),
               ],
             ),
           ),
@@ -960,26 +887,23 @@ class _PharmacyResultCard extends StatelessWidget {
   }
 }
 
-// ───────────────────── LABORATORY CARD ───────────────────────────────────
 class _LabResultCard extends StatelessWidget {
   const _LabResultCard({required this.item});
-
   final SearchResultEntity item;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.only(bottom: 10.h),
+      margin: EdgeInsets.only(bottom: 12.h),
       padding: EdgeInsets.all(10.r),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16.r),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
-            blurRadius: 12,
-            offset: const Offset(0, 2),
-          ),
+              color: Colors.black.withValues(alpha: 0.05),
+              blurRadius: 14,
+              offset: const Offset(0, 2)),
         ],
       ),
       child: Row(
@@ -995,11 +919,8 @@ class _LabResultCard extends StatelessWidget {
             alignment: Alignment.center,
             child: item.labLogo != null
                 ? Image.asset(item.labLogo!, width: 72.r, fit: BoxFit.contain)
-                : Icon(
-              Icons.biotech_outlined,
-              size: 44.r,
-              color: const Color(0xFF5D758F),
-            ),
+                : Icon(Icons.biotech_outlined,
+                size: 44.r, color: const Color(0xFF5D758F)),
           ),
           SizedBox(width: 12.w),
           Expanded(
@@ -1010,19 +931,16 @@ class _LabResultCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Expanded(
-                      child: Text(
-                        item.title,
-                        style: TextStyle(
-                          color: const Color(0xFF061E40),
-                          fontSize: 16.sp,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
+                      child: Text(item.title,
+                          style: TextStyle(
+                              color: const Color(0xFF061E40),
+                              fontSize: 16.sp,
+                              fontWeight: FontWeight.w700)),
                     ),
                     if (item.providerLogo != null)
                       SizedBox(
-                        width: 40.r,
-                        height: 16.r,
+                        width: 46.r,
+                        height: 18.r,
                         child: Image.asset(item.providerLogo!,
                             fit: BoxFit.contain),
                       ),
@@ -1030,57 +948,43 @@ class _LabResultCard extends StatelessWidget {
                 ),
                 if (item.subtitle.isNotEmpty) ...[
                   SizedBox(height: 2.h),
-                  Text(
-                    item.subtitle,
-                    style: TextStyle(
-                      color: const Color(0xFF667B99),
-                      fontSize: 12.sp,
-                    ),
-                  ),
+                  Text(item.subtitle,
+                      style: TextStyle(
+                          color: const Color(0xFF667B99), fontSize: 12.sp)),
                 ],
                 if ((item.description ?? '').isNotEmpty)
-                  Text(
-                    item.description!,
-                    style: TextStyle(
-                      color: const Color(0xFF667B99),
-                      fontSize: 12.sp,
-                    ),
+                  Padding(
+                    padding: EdgeInsets.only(top: 1.h),
+                    child: Text(item.description!,
+                        style: TextStyle(
+                            color: const Color(0xFF667B99),
+                            fontSize: 12.sp)),
                   ),
                 SizedBox(height: 10.h),
                 Row(
                   children: [
-                    Text(
-                      'Sample Type',
-                      style: TextStyle(
-                        color: const Color(0xFF667B99),
-                        fontSize: 12.sp,
-                      ),
-                    ),
+                    Text('Sample Type',
+                        style: TextStyle(
+                            color: const Color(0xFF667B99),
+                            fontSize: 12.sp)),
                     SizedBox(width: 6.w),
                     Container(
                       padding: EdgeInsets.symmetric(
-                        horizontal: 10.w,
-                        vertical: 4.h,
-                      ),
+                          horizontal: 12.w, vertical: 4.h),
                       decoration: BoxDecoration(
                         border:
                         Border.all(color: const Color(0xFFE7E7E7)),
                         borderRadius: BorderRadius.circular(14.r),
                       ),
-                      child: Text(
-                        item.sampleType ?? 'Blood',
-                        style: TextStyle(
-                          color: const Color(0xFF667B99),
-                          fontSize: 12.sp,
-                        ),
-                      ),
+                      child: Text(item.sampleType ?? 'Blood',
+                          style: TextStyle(
+                              color: const Color(0xFF3D3D3D),
+                              fontSize: 12.sp,
+                              fontWeight: FontWeight.w500)),
                     ),
                     const Spacer(),
-                    Icon(
-                      Icons.check_box_outline_blank_rounded,
-                      size: 18.r,
-                      color: const Color(0xFFB5B5B5),
-                    ),
+                    Icon(Icons.check_box_outline_blank_rounded,
+                        size: 18.r, color: const Color(0xFFB5B5B5)),
                   ],
                 ),
                 SizedBox(height: 10.h),
@@ -1091,42 +995,31 @@ class _LabResultCard extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            'Fee',
-                            style: TextStyle(
-                              color: const Color(0xFF667B99),
-                              fontSize: 12.sp,
-                            ),
-                          ),
+                          Text('Fee',
+                              style: TextStyle(
+                                  color: const Color(0xFF667B99),
+                                  fontSize: 12.sp)),
                           SizedBox(height: 2.h),
-                          Text(
-                            item.fee ?? 'Rs. 15,000/-',
-                            style: TextStyle(
-                              color: const Color(0xFF110844),
-                              fontSize: 14.sp,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
+                          Text(item.fee ?? 'Rs. 15,000/-',
+                              style: TextStyle(
+                                  color: const Color(0xFF110844),
+                                  fontSize: 14.sp,
+                                  fontWeight: FontWeight.w700)),
                         ],
                       ),
                     ),
                     Container(
                       padding: EdgeInsets.symmetric(
-                        horizontal: 10.w,
-                        vertical: 5.h,
-                      ),
+                          horizontal: 10.w, vertical: 5.h),
                       decoration: BoxDecoration(
                         color: const Color(0xFFDEF8FB),
                         borderRadius: BorderRadius.circular(14.r),
                       ),
-                      child: Text(
-                        item.providerLabel ?? 'Provided By Oladoc',
-                        style: TextStyle(
-                          color: const Color(0xFF0590A0),
-                          fontSize: 11.sp,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
+                      child: Text(item.providerLabel ?? 'Provided By Oladoc',
+                          style: TextStyle(
+                              color: const Color(0xFF0590A0),
+                              fontSize: 11.sp,
+                              fontWeight: FontWeight.w600)),
                     ),
                   ],
                 ),
@@ -1139,9 +1032,6 @@ class _LabResultCard extends StatelessWidget {
   }
 }
 
-// ═══════════════════════════════════════════════════════════════════════════
-// SMALL SHARED WIDGETS
-// ═══════════════════════════════════════════════════════════════════════════
 class _RatingBadge extends StatelessWidget {
   const _RatingBadge({required this.rating});
   final String rating;
@@ -1155,14 +1045,11 @@ class _RatingBadge extends StatelessWidget {
         border: Border.all(color: const Color(0xFF0FAFA0)),
         borderRadius: BorderRadius.circular(6.r),
       ),
-      child: Text(
-        rating,
-        style: TextStyle(
-          color: const Color(0xFF0FAFA0),
-          fontSize: 11.sp,
-          fontWeight: FontWeight.w600,
-        ),
-      ),
+      child: Text(rating,
+          style: TextStyle(
+              color: const Color(0xFF0FAFA0),
+              fontSize: 11.sp,
+              fontWeight: FontWeight.w600)),
     );
   }
 }
@@ -1179,24 +1066,17 @@ class _OutlinePill extends StatelessWidget {
         border: Border.all(color: const Color(0xFFE3E3E3)),
         borderRadius: BorderRadius.circular(16.r),
       ),
-      child: Text(
-        text,
-        style: TextStyle(
-          color: const Color(0xFF667B99),
-          fontSize: 12.sp,
-          fontWeight: FontWeight.w500,
-        ),
-      ),
+      child: Text(text,
+          style: TextStyle(
+              color: const Color(0xFF667B99),
+              fontSize: 12.sp,
+              fontWeight: FontWeight.w500)),
     );
   }
 }
 
-// ═══════════════════════════════════════════════════════════════════════════
-// SHIMMER
-// ═══════════════════════════════════════════════════════════════════════════
 class _SearchShimmerView extends StatelessWidget {
   const _SearchShimmerView({required this.showResultsStyle});
-
   final bool showResultsStyle;
 
   @override
@@ -1221,16 +1101,10 @@ class _SearchShimmerView extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       AppShimmerText(
-                        height: 16.h,
-                        width: 110.w,
-                        borderRadius: 5.r,
-                      ),
+                          height: 16.h, width: 110.w, borderRadius: 5.r),
                       SizedBox(height: 6.h),
                       AppShimmerText(
-                        height: 14.h,
-                        width: 160.w,
-                        borderRadius: 5.r,
-                      ),
+                          height: 14.h, width: 160.w, borderRadius: 5.r),
                     ],
                   ),
                 ),
@@ -1247,10 +1121,7 @@ class _SearchShimmerView extends StatelessWidget {
             children: List.generate(
               4,
                   (_) => AppShimmerCard(
-                width: 96.w,
-                height: 38.h,
-                borderRadius: 100.r,
-              ),
+                  width: 96.w, height: 38.h, borderRadius: 100.r),
             ),
           ),
         ] else ...[
@@ -1273,9 +1144,6 @@ class _SearchShimmerView extends StatelessWidget {
   }
 }
 
-// ═══════════════════════════════════════════════════════════════════════════
-// Section SVG asset helper
-// ═══════════════════════════════════════════════════════════════════════════
 String _sectionIconAsset(SearchSectionType type) {
   switch (type) {
     case SearchSectionType.doctorConsultation:

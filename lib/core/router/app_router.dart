@@ -170,10 +170,13 @@ class AppRouter {
       GoRoute(
         path: AppRoutes.path(AppRoutes.search),
         name: AppRoutes.search,
-        builder: (context, state) => BlocProvider<SearchCubit>(
-          create: (_) => sl<SearchCubit>(),
-          child: const SearchScreen(),
-        ),
+        builder: (context, state) {
+          final initialQuery = state.extra is String ? state.extra as String : null;
+          return BlocProvider<SearchCubit>(
+            create: (_) => sl<SearchCubit>(),
+            child: SearchScreen(initialQuery: initialQuery),
+          );
+        },
       ),
       GoRoute(
         path: AppRoutes.path(AppRoutes.surgery),
