@@ -4,7 +4,13 @@ import 'package:flutter_svg/flutter_svg.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 
 /// Solid teal header with rounded bottom + search row overlapping into the body.
-class SearchHeader extends StatelessWidget {
+import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+
+import '../../../../core/extensions/screen_util_extensions.dart';
+import '../../../../generated/assets.dart';
+
+class SearchHeader extends StatefulWidget {
   const SearchHeader({
     super.key,
     required this.userName,
@@ -14,22 +20,69 @@ class SearchHeader extends StatelessWidget {
   });
 
   final String userName;
+
+  /// Called with whatever the user typed when they either:
+  ///  - press enter / submit on the keyboard, OR
+  ///  - tap the adjacent square search button.
+  ///
+  /// Navigate to the Search screen inside this callback and pass the
+  /// [query] as the initial query (see [HomeScreen]).
   final ValueChanged<String>? onSearchSubmitted;
+
   final VoidCallback? onVoiceTap;
+
+  /// Called when the search button is tapped with an empty field.
+  /// Use this to just open the search screen without a preset query.
   final VoidCallback? onSearchButtonTap;
 
-  /// Design teal (header panel).
   static const Color _headerTeal = Color(0xFF52A898);
-
-  /// Placeholder / icons — muted blue-grey & dark blue.
   static const Color _hintText = Color(0xFF1D4E89);
   static const Color _iconBlue = Color(0xFF024886);
   static const Color _fieldBg = Color(0xFFF3F4F6);
 
-
   static const double _cornerRadius = 28;
   static const double _searchHeight = 54.0;
   static const double _overlap = 24;
+
+  @override
+  State<SearchHeader> createState() => _SearchHeaderState();
+}
+
+class _SearchHeaderState extends State<SearchHeader> {
+  late final TextEditingController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _handleSearchTap() {
+    final text = _controller.text.trim();
+    if (text.isEmpty) {
+      widget.onSearchButtonTap?.call();
+    } else {
+      widget.onSearchSubmitted?.call(text);
+      // Clear the home field so it doesn't stay stale when the user returns.
+      _controller.clear();
+    }
+  }
+
+  void _handleSubmitted(String value) {
+    final text = value.trim();
+    if (text.isEmpty) {
+      widget.onSearchButtonTap?.call();
+    } else {
+      widget.onSearchSubmitted?.call(text);
+      _controller.clear();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,10 +98,10 @@ class SearchHeader extends StatelessWidget {
             Container(
               width: double.infinity,
               decoration: const BoxDecoration(
-                color: _headerTeal,
+                color: SearchHeader._headerTeal,
                 borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(_cornerRadius),
-                  bottomRight: Radius.circular(_cornerRadius),
+                  bottomLeft: Radius.circular(SearchHeader._cornerRadius),
+                  bottomRight: Radius.circular(SearchHeader._cornerRadius),
                 ),
               ),
               padding: EdgeInsets.fromLTRB(32.w, 18.h, 20.w, 42.h),
@@ -57,7 +110,7 @@ class SearchHeader extends StatelessWidget {
                 child: Text(
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  'Hello, $userName',
+                  'Hello, ${widget.userName}',
                   style: theme.textTheme.titleLarge?.copyWith(
                     color: Colors.white,
                     fontWeight: FontWeight.w600,
@@ -70,20 +123,21 @@ class SearchHeader extends StatelessWidget {
             Positioned(
               left: 24.w,
               right: 24.w,
-              bottom: -_overlap.h,
+              bottom: -SearchHeader._overlap.h,
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Expanded(
                     child: Container(
-                      height: _searchHeight.h,
+                      height: SearchHeader._searchHeight.h,
                       decoration: BoxDecoration(
-                        color: _fieldBg,
+                        color: SearchHeader._fieldBg,
                         borderRadius: BorderRadius.circular(10.r),
                       ),
                       alignment: Alignment.center,
                       child: TextField(
-                        onSubmitted: onSearchSubmitted,
+                        controller: _controller,
+                        onSubmitted: _handleSubmitted,
                         textInputAction: TextInputAction.search,
                         style: theme.textTheme.bodyMedium?.copyWith(
                           color: const Color(0xFF111827),
@@ -92,7 +146,7 @@ class SearchHeader extends StatelessWidget {
                           isDense: true,
                           hintText: 'Search Medicine, Doctor, Test....',
                           hintStyle: theme.textTheme.bodyMedium?.copyWith(
-                            color: _hintText,
+                            color: SearchHeader._hintText,
                             fontWeight: FontWeight.w500,
                             fontSize: 14.sp,
                           ),
@@ -104,14 +158,16 @@ class SearchHeader extends StatelessWidget {
                           suffixIcon: Material(
                             color: Colors.transparent,
                             child: InkWell(
-                              onTap: onVoiceTap,
+                              onTap: widget.onVoiceTap,
                               borderRadius: BorderRadius.circular(22.r),
                               child: Padding(
                                 padding: EdgeInsets.all(12.r),
                                 child: SizedBox(
                                   width: 17.w,
                                   height: 23.h,
-                                  child: SvgPicture.asset(Assets.svgIcSearchMic),
+                                  child: SvgPicture.asset(
+                                    Assets.svgIcSearchMic,
+                                  ),
                                 ),
                               ),
                             ),
@@ -122,10 +178,10 @@ class SearchHeader extends StatelessWidget {
                   ),
                   SizedBox(width: 6.w),
                   Container(
-                    width: _searchHeight.r,
-                    height: _searchHeight.r,
+                    width: SearchHeader._searchHeight.r,
+                    height: SearchHeader._searchHeight.r,
                     decoration: BoxDecoration(
-                      color: _fieldBg,
+                      color: SearchHeader._fieldBg,
                       borderRadius: BorderRadius.circular(12.r),
                     ),
                     child: Material(
@@ -133,12 +189,12 @@ class SearchHeader extends StatelessWidget {
                       borderRadius: BorderRadius.circular(12.r),
                       clipBehavior: Clip.antiAlias,
                       child: InkWell(
-                        onTap: onSearchButtonTap,
+                        onTap: _handleSearchTap,
                         borderRadius: BorderRadius.circular(12.r),
                         child: Center(
                           child: Icon(
                             Icons.search_rounded,
-                            color: _iconBlue,
+                            color: SearchHeader._iconBlue,
                             size: (34 / 1.35).r,
                           ),
                         ),
@@ -150,8 +206,7 @@ class SearchHeader extends StatelessWidget {
             ),
           ],
         ),
-        // Space for the part of the search row that sits below the teal block
-        SizedBox(height: (_overlap + 8).h),
+        SizedBox(height: (SearchHeader._overlap + 8).h),
       ],
     );
   }

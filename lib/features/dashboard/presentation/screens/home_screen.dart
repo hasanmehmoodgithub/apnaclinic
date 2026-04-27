@@ -20,6 +20,28 @@ import '../../../profile_setup/presentation/screens/profile_screen.dart';
 import '../../../notification/presentation/cubit/notification_cubit.dart';
 import '../../../notification/presentation/cubit/notification_state.dart';
 
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+
+import '../../../../core/di/dependency_injection.dart';
+import '../../../../core/enums/state_status.dart';
+import '../../../../core/extensions/screen_util_extensions.dart';
+import '../../../../core/preference/app_pref.dart';
+import '../../../../core/router/app_routes.dart';
+import '../../../../core/widgets/apna_clinic_app_bar.dart';
+import '../../../../core/widgets/heart_loader_widget.dart';
+import '../../domain/entities/our_service_entity.dart';
+import '../cubit/dashboard_services_cubit.dart';
+import '../cubit/dashboard_services_state.dart';
+import '../widgets/fikrfree_health_banner.dart';
+import '../widgets/our_services_widget.dart';
+import '../widgets/promotional_banner_dialog.dart';
+import '../widgets/search_header.dart';
+import '../../../profile_setup/presentation/screens/profile_screen.dart';
+import '../../../notification/presentation/cubit/notification_cubit.dart';
+import '../../../notification/presentation/cubit/notification_state.dart';
+
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -71,9 +93,9 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _onDashboardStateChanged(
-    BuildContext context,
-    DashboardServicesState state,
-  ) {
+      BuildContext context,
+      DashboardServicesState state,
+      ) {
     if (state.promotionalBannerLoadingStateStatus == StateStatus.loading) {
       if (!HeartLoaderDialogController.isOpen(_bannerLoaderId)) {
         showHeartLoaderDialog(context, id: _bannerLoaderId);
@@ -95,12 +117,22 @@ class _HomeScreenState extends State<HomeScreen> {
     showPromotionalBannerDialog(context, banner: banner);
   }
 
+  /// Pushes to the search screen, optionally carrying an initial query.
+  /// The query is passed via go_router `extra` so the search screen can
+  /// auto-populate its text field and submit on open.
+  void _openSearch(BuildContext context, {String? query}) {
+    context.push(
+      AppRoutes.path(AppRoutes.search),
+      extra: (query == null || query.trim().isEmpty) ? null : query.trim(),
+    );
+  }
+
   Widget _buildHomeBody(
-    BuildContext context,
-    DashboardServicesState state,
-    String greetingName,
-    ThemeData theme,
-  ) {
+      BuildContext context,
+      DashboardServicesState state,
+      String greetingName,
+      ThemeData theme,
+      ) {
     return Scaffold(
       backgroundColor: Colors.white,
       body: Column(
@@ -134,7 +166,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       Navigator.of(context).push(
                         MaterialPageRoute<void>(
                           builder: (_) =>
-                              const ProfileScreen(showBackButton: true),
+                          const ProfileScreen(showBackButton: true),
                         ),
                       );
                     },
@@ -145,11 +177,9 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           SearchHeader(
             userName: greetingName,
-            onSearchSubmitted: (_) =>
-                context.push(AppRoutes.path(AppRoutes.search)),
+            onSearchSubmitted: (query) => _openSearch(context, query: query),
             onVoiceTap: () {},
-            onSearchButtonTap: () =>
-                context.push(AppRoutes.path(AppRoutes.search)),
+            onSearchButtonTap: () => _openSearch(context),
           ),
           Expanded(
             child: CustomScrollView(
@@ -176,9 +206,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   padding: EdgeInsets.fromLTRB(20.w, 24.h, 20.w, 32.h),
                   sliver: SliverToBoxAdapter(
                     child: FikrfreeHealthBanner(
-                      onTap: () {
-
-                      },
+                      onTap: () {},
                     ),
                   ),
                 ),
