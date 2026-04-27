@@ -40,22 +40,39 @@ class PharmacyMedicineContentSection extends StatelessWidget {
               ),
         ),
         SizedBox(height: 10.h),
-        GridView.builder(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          itemCount: medicines.length,
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            mainAxisSpacing: 16.h,
-            crossAxisSpacing: 6.w,
-            childAspectRatio: 0.76,
-          ),
-          itemBuilder: (context, index) {
-            final item = medicines[index];
-            return PharmacyMedicineCard(
-              medicine: item,
-              onTap: () => onMedicineTap(item),
-              onAddToCart: () => onAddToCart(item),
+        LayoutBuilder(
+          builder: (context, constraints) {
+            final width = constraints.maxWidth;
+            final crossAxisCount = width >= 900
+                ? 4
+                : width >= 640
+                    ? 3
+                    : 2;
+            final crossSpacing = 6.w;
+            final mainSpacing = 16.h;
+            final itemWidth =
+                (width - (crossAxisCount - 1) * crossSpacing) / crossAxisCount;
+            final itemHeight = width >= 640 ? 242.h : 220.h;
+            final childAspectRatio = itemWidth / itemHeight;
+
+            return GridView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: medicines.length,
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: crossAxisCount,
+                mainAxisSpacing: mainSpacing,
+                crossAxisSpacing: crossSpacing,
+                childAspectRatio: childAspectRatio,
+              ),
+              itemBuilder: (context, index) {
+                final item = medicines[index];
+                return PharmacyMedicineCard(
+                  medicine: item,
+                  onTap: () => onMedicineTap(item),
+                  onAddToCart: () => onAddToCart(item),
+                );
+              },
             );
           },
         ),
