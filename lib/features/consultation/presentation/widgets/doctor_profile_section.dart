@@ -11,6 +11,12 @@ class DoctorProfileSection extends StatelessWidget {
   final String doctorName;
   final String specialty;
   final String imageUrl;
+  final String qualification;
+  final String verifiedPatientsCount;
+  final String experience;
+  final String satisfiedText;
+  final double rating;
+  final String description;
   final TextTheme textTheme;
 
   const DoctorProfileSection({
@@ -18,6 +24,12 @@ class DoctorProfileSection extends StatelessWidget {
     required this.doctorName,
     required this.specialty,
     required this.imageUrl,
+    required this.qualification,
+    required this.verifiedPatientsCount,
+    required this.experience,
+    required this.satisfiedText,
+    required this.rating,
+    required this.description,
     required this.textTheme,
   });
 
@@ -52,7 +64,7 @@ class DoctorProfileSection extends StatelessWidget {
                   ),
                   SizedBox(height: 1.h),
                   Text(
-                    'MBBS',
+                    qualification,
                     style: textTheme.bodyMedium?.copyWith(
                       color: ConsultationUiConfig.tertiaryText,
                       fontSize: 14.sp,
@@ -116,7 +128,7 @@ class DoctorProfileSection extends StatelessWidget {
                   width: 72.w,
                   height: 30.h,
                   child: RatingProgressBadge(
-                    rating: 4.5,
+                    rating: rating,
                     maxRating: 5,
                     textTheme: textTheme,
                   ),
@@ -133,7 +145,7 @@ class DoctorProfileSection extends StatelessWidget {
               Expanded(
                 child: _StatCard(
                   title: 'Verified Patients\nCount',
-                  value: '35',
+                  value: verifiedPatientsCount,
                   textTheme: textTheme,
                 ),
               ),
@@ -141,7 +153,7 @@ class DoctorProfileSection extends StatelessWidget {
               Expanded(
                 child: _StatCard(
                   title: 'Experience',
-                  value: '2 Years',
+                  value: experience,
                   textTheme: textTheme,
                 ),
               ),
@@ -149,7 +161,7 @@ class DoctorProfileSection extends StatelessWidget {
               Expanded(
                 child: _StatCard(
                   title: 'Satisfied',
-                  value: '4% (35)',
+                  value: satisfiedText,
                   textTheme: textTheme,
                 ),
               ),
@@ -213,7 +225,10 @@ class DoctorProfileSection extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 6.h),
-              _DoctorDescription(textTheme: textTheme),
+              _DoctorDescription(
+                textTheme: textTheme,
+                fullDescription: description,
+              ),
             ],
           ),
         ),
@@ -223,28 +238,19 @@ class DoctorProfileSection extends StatelessWidget {
 }
 
 class _DoctorDescription extends StatefulWidget {
-  const _DoctorDescription({required this.textTheme});
+  const _DoctorDescription({
+    required this.textTheme,
+    required this.fullDescription,
+  });
 
   final TextTheme textTheme;
+  final String fullDescription;
 
   @override
   State<_DoctorDescription> createState() => _DoctorDescriptionState();
 }
 
 class _DoctorDescriptionState extends State<_DoctorDescription> {
-  static const String _fullDescription =
-      'Dr. Saadiya, a graduate of Fauji Foundation Medical College, has gained '
-      'extensive clinical experience through roles at FFH Rawalpindi, Asia '
-      'General Hospital, and Fatima Medicare. She currently serves as a '
-      'post-graduate trainee in the Department of Medicine at Fauji Foundation '
-      'Hospital Rawalpindi, demonstrating a commitment to continuous learning '
-      'and excellence in patient care. She is known for conducting thorough '
-      'evaluations, offering accurate diagnoses, and ensuring effective '
-      'treatment tailored to each patient\'s needs. Her patient-centered '
-      'approach emphasizes clear communication, empathy, and personalized '
-      'attention. Dedicated to providing modern healthcare solutions, she '
-      'ensures that patients receive safe, reliable, and holistic care.';
-
   bool _expanded = false;
 
   @override
@@ -253,7 +259,7 @@ class _DoctorDescriptionState extends State<_DoctorDescription> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          _fullDescription,
+          widget.fullDescription,
           maxLines: _expanded ? null : 3,
           overflow: _expanded ? TextOverflow.visible : TextOverflow.ellipsis,
           style: widget.textTheme.bodyMedium?.copyWith(

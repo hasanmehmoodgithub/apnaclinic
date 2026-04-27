@@ -1,12 +1,17 @@
 import 'package:file_picker/file_picker.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart' as p;
+import '../../../../components/shimmer/app_shimmer.dart';
+import '../../../../core/di/dependency_injection.dart';
 
 import '../../../../core/extensions/screen_util_extensions.dart';
+import '../../data/mock/consultation_doctors_mock_api.dart';
 import '../constants/consultation_ui_config.dart';
+import '../widgets/results_doctor_item.dart';
 import '../widgets/availability_section.dart';
 import '../widgets/doctor_profile_section.dart';
 import '../widgets/documents_section.dart';
@@ -15,6 +20,7 @@ import '../widgets/patient_section.dart';
 import '../widgets/upload_option_tile.dart';
 
 class DoctorConsultationBookDoctorScreen extends StatefulWidget {
+  final String? doctorId;
   final String doctorName;
   final String specialty;
   final String fee;
@@ -22,6 +28,7 @@ class DoctorConsultationBookDoctorScreen extends StatefulWidget {
 
   const DoctorConsultationBookDoctorScreen({
     super.key,
+    this.doctorId,
     required this.doctorName,
     required this.specialty,
     required this.fee,
@@ -35,12 +42,58 @@ class DoctorConsultationBookDoctorScreen extends StatefulWidget {
 
 class _DoctorConsultationBookDoctorScreenState
     extends State<DoctorConsultationBookDoctorScreen> {
+  final ConsultationDoctorsMockApi _doctorsApi = sl<ConsultationDoctorsMockApi>();
   final ImagePicker _imagePicker = ImagePicker();
+  ResultsDoctorItem? _doctorDetail;
+  bool _isLoading = true;
   String? _attachedMediaName;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadDoctorDetail();
+  }
+
+  Future<void> _loadDoctorDetail() async {
+    final doctorId = widget.doctorId;
+    if (doctorId == null || doctorId.isEmpty) {
+      setState(() => _isLoading = false);
+      return;
+    }
+    try {
+      final response = await _doctorsApi.getDoctorDetailResponse(doctorId);
+      final rawDoctor = response['doctor'];
+      if (rawDoctor is Map<String, dynamic> && mounted) {
+        setState(() {
+          _doctorDetail = ResultsDoctorItem.fromMap(rawDoctor);
+          _isLoading = false;
+        });
+      } else if (mounted) {
+        setState(() => _isLoading = false);
+      }
+    } catch (_) {
+      if (!mounted) return;
+      setState(() => _isLoading = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
+    final doctorName = _doctorDetail?.name ?? widget.doctorName;
+    final specialty = _doctorDetail?.specialty ?? widget.specialty;
+    final fee = _doctorDetail?.fee ?? widget.fee;
+    final imageUrl = _doctorDetail?.imageUrl ?? widget.imageUrl;
+    final qualification = _doctorDetail?.qualification ?? 'MBBS';
+    final verifiedPatientsCount = _doctorDetail?.verifiedPatientsCount ?? '35';
+    final experience = _doctorDetail?.experience ?? '2 Years';
+    final satisfiedText = _doctorDetail?.satisfiedText ?? '4% (35)';
+    final description = (_doctorDetail?.description ?? '').isNotEmpty
+        ? _doctorDetail!.description
+        : 'Doctor details are currently unavailable.';
+    final ratingValue =
+        double.tryParse((_doctorDetail?.rating ?? '4.5').split('/').first.trim()) ??
+            4.5;
     return Scaffold(
       body: DecoratedBox(
         decoration: const BoxDecoration(
@@ -116,12 +169,7 @@ class _DoctorConsultationBookDoctorScreenState
                         ),
                         Positioned(
                           top: 0,
-                          child: Image.asset(
-                            ConsultationUiConfig.heroDoctorAsset,
-                            width: 188.w,
-                            height: 177.h,
-                            fit: BoxFit.cover,
-                          ),
+                          child: _buildDoctorHeroImage(imageUrl),
                         ),
                       ],
                     ),
@@ -145,12 +193,24 @@ class _DoctorConsultationBookDoctorScreenState
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              DoctorProfileSection(
-                                doctorName: widget.doctorName,
-                                specialty: widget.specialty,
-                                imageUrl: widget.imageUrl,
-                                textTheme: textTheme,
-                              ),
+                              if (_isLoading)
+                                AppShimmerCard(
+                                  height: 300.h,
+                                  borderRadius: 12.r,
+                                )
+                              else
+                                DoctorProfileSection(
+                                  doctorName: doctorName,
+                                  specialty: specialty,
+                                  imageUrl: imageUrl,
+                                  qualification: qualification,
+                                  verifiedPatientsCount: verifiedPatientsCount,
+                                  experience: experience,
+                                  satisfiedText: satisfiedText,
+                                  rating: ratingValue,
+                                  description: description,
+                                  textTheme: textTheme,
+                                ),
                               SizedBox(height: 16.h),
                               const Divider(color: Color(0xFFE4E8ED), thickness: 1),
                               SizedBox(height: 14.h),
@@ -210,7 +270,7 @@ class _DoctorConsultationBookDoctorScreenState
                               ),
                             ),
                             child: Text(
-                              'Get Appointment',
+                              'Get Appointment  $fee',
                               style: textTheme.titleMedium?.copyWith(
                                 color: Colors.white,
                                 fontSize: 18.sp,
@@ -232,6 +292,7 @@ class _DoctorConsultationBookDoctorScreenState
   }
 
   void _showConfirmation(BuildContext context) {
+    final doctorName = _doctorDetail?.name ?? widget.doctorName;
     showDialog<void>(
       context: context,
       builder: (context) {
@@ -249,7 +310,7 @@ class _DoctorConsultationBookDoctorScreenState
             ),
           ),
           content: Text(
-            'Your consultation has been booked with ${widget.doctorName}. You can join the call from Appointments.',
+            'Your consultation has been booked with $doctorName. You can join the call from Appointments.',
             style: textTheme.bodyMedium?.copyWith(
               color: ConsultationUiConfig.tertiaryText,
               fontSize: 14.sp,
@@ -383,5 +444,47 @@ class _DoctorConsultationBookDoctorScreenState
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
       ..showSnackBar(SnackBar(content: Text(message)));
+  }
+
+  Widget _buildDoctorHeroImage(String imageUrl) {
+    final width = 188.w;
+    final height = 177.h;
+    final trimmed = imageUrl.trim();
+    if (trimmed.isEmpty) {
+      return Image.asset(
+        ConsultationUiConfig.heroDoctorAsset,
+        width: width,
+        height: height,
+        fit: BoxFit.cover,
+      );
+    }
+    final isNetwork =
+        trimmed.startsWith('http://') || trimmed.startsWith('https://');
+    if (isNetwork) {
+      return CachedNetworkImage(
+        imageUrl: trimmed,
+        width: width,
+        height: height,
+        fit: BoxFit.cover,
+        placeholder: (_, __) => _heroFallback(width, height),
+        errorWidget: (_, __, ___) => _heroFallback(width, height),
+      );
+    }
+    return Image.asset(
+      trimmed,
+      width: width,
+      height: height,
+      fit: BoxFit.cover,
+      errorBuilder: (_, _, _) => _heroFallback(width, height),
+    );
+  }
+
+  Widget _heroFallback(double width, double height) {
+    return Image.asset(
+      ConsultationUiConfig.heroDoctorAsset,
+      width: width,
+      height: height,
+      fit: BoxFit.cover,
+    );
   }
 }

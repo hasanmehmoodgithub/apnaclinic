@@ -140,6 +140,7 @@ class AppRouter {
           final extra = state.extra;
           final data = extra is Map ? Map<String, dynamic>.from(extra) : null;
           return DoctorConsultationBookDoctorScreen(
+            doctorId: (data?['doctorId'] as String?),
             doctorName: (data?['doctorName'] as String?) ?? 'Dr. Sumbal Shahid',
             specialty: (data?['specialty'] as String?) ?? 'Neurologist',
             fee: (data?['fee'] as String?) ?? 'Rs. 15,000/-',
