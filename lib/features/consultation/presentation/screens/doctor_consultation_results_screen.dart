@@ -113,6 +113,10 @@ class _DoctorConsultationResultsScreenState
 
   @override
   Widget build(BuildContext context) {
+    if (_isLoading) {
+      return _buildFullScreenShimmer(context);
+    }
+
     final textTheme = Theme.of(context).textTheme;
     final doctors = _allDoctors.where((doctor) {
       final query = _query.toLowerCase().trim();
@@ -271,6 +275,106 @@ class _DoctorConsultationResultsScreenState
                                     );
                                   },
                                 ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFullScreenShimmer(BuildContext context) {
+    return Scaffold(
+      body: DecoratedBox(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              ConsultationUiConfig.pageTopGradient,
+              ConsultationUiConfig.pageBottomGradient,
+            ],
+            stops: [0.09, 0.36],
+          ),
+        ),
+        child: SafeArea(
+          child: Column(
+            children: [
+              Padding(
+                padding: EdgeInsets.fromLTRB(22.w, 8.h, 22.w, 8.h),
+                child: Row(
+                  children: [
+                    AppShimmerCircle(diameter: 24.r),
+                    SizedBox(width: 12.w),
+                    Expanded(child: AppShimmerText(height: 22.h, borderRadius: 8.r)),
+                    SizedBox(width: 36.w),
+                  ],
+                ),
+              ),
+              SizedBox(height: 8.h),
+              AppShimmerCard(
+                width: 240.w,
+                height: 178.h,
+                borderRadius: 14.r,
+              ),
+              SizedBox(height: 10.h),
+              Expanded(
+                child: Container(
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(42.r),
+                    ),
+                  ),
+                  child: Padding(
+                    padding: EdgeInsets.fromLTRB(18.w, 18.h, 18.w, 12.h),
+                    child: Column(
+                      children: [
+                        Row(
+                          children: [
+                            Expanded(
+                              child: AppShimmerCard(
+                                height: 48.h,
+                                borderRadius: 11.r,
+                              ),
+                            ),
+                            SizedBox(width: 8.w),
+                            AppShimmerCard(
+                              width: 94.w,
+                              height: 48.h,
+                              borderRadius: 11.r,
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 14.h),
+                        AppShimmerCard(
+                          height: 62.h,
+                          borderRadius: 11.r,
+                        ),
+                        SizedBox(height: 14.h),
+                        Expanded(
+                          child: SingleChildScrollView(
+                            child: Column(
+                              children: List.generate(
+                                4,
+                                (index) => Padding(
+                                  padding: EdgeInsets.only(
+                                    bottom: index < 3 ? 10.h : 0,
+                                  ),
+                                  child: AppShimmerCard(
+                                    height: 104.h,
+                                    borderRadius: 12.r,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
                         ),
                       ],
                     ),

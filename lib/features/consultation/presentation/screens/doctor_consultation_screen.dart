@@ -163,26 +163,42 @@ class _DoctorConsultationScreenState extends State<DoctorConsultationScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             // Assistant card (fixed)
-                            _AssistantCard(textTheme: textTheme),
+                            state.isLoading
+                                ? AppShimmerCard(
+                                    height: 150.h,
+                                    borderRadius: 10.7.r,
+                                  )
+                                : _AssistantCard(textTheme: textTheme),
                             SizedBox(height: 21.h),
 
                             // Section title (fixed)
-                            Text(
-                              ConsultationUiConfig.chooseCategories,
-                              style: textTheme.titleMedium?.copyWith(
-                                fontSize: 16.sp,
-                                fontWeight: FontWeight.w500,
-                                color: ConsultationUiConfig.primaryText,
-                              ),
-                            ),
+                            state.isLoading
+                                ? AppShimmerText(
+                                    width: 180.w,
+                                    height: 18.h,
+                                    borderRadius: 6.r,
+                                  )
+                                : Text(
+                                    ConsultationUiConfig.chooseCategories,
+                                    style: textTheme.titleMedium?.copyWith(
+                                      fontSize: 16.sp,
+                                      fontWeight: FontWeight.w500,
+                                      color: ConsultationUiConfig.primaryText,
+                                    ),
+                                  ),
                             SizedBox(height: 14.h),
 
                             // Search field (fixed)
-                            _SearchField(
-                              onChanged: context
-                                  .read<ConsultationCubit>()
-                                  .onSearchChanged,
-                            ),
+                            state.isLoading
+                                ? AppShimmerCard(
+                                    height: 44.565.h,
+                                    borderRadius: 12.r,
+                                  )
+                                : _SearchField(
+                                    onChanged: context
+                                        .read<ConsultationCubit>()
+                                        .onSearchChanged,
+                                  ),
                             SizedBox(height: 14.h),
 
                             // Only the grid scrolls

@@ -104,6 +104,8 @@ class PharmacyMedicineCard extends StatelessWidget {
                         SizedBox(height: 4.h),
                         Text(
                           'Rs ${medicine.price.toStringAsFixed(0)}',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                           style: theme.textTheme.titleSmall?.copyWith(
                             color: const Color(0xFF203A59),
                             fontWeight: FontWeight.w700,
@@ -113,6 +115,8 @@ class PharmacyMedicineCard extends StatelessWidget {
                         if (medicine.oldPrice > medicine.price)
                           Text(
                             'Rs ${medicine.oldPrice.toStringAsFixed(0)}',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                             style: theme.textTheme.bodySmall?.copyWith(
                               color: const Color(0xFF7C8EA5),
                               decoration: TextDecoration.lineThrough,
