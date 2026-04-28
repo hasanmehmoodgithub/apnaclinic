@@ -711,7 +711,7 @@ class _DoctorResultCard extends StatelessWidget {
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(10.r),
-            child: Image.asset(Assets.imgPlaceHolderPerson,
+            child: Image.network('https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?auto=format&fit=crop&w=800&q=80',
                 width: 96.r, height: 132.r, fit: BoxFit.cover),
           ),
           SizedBox(width: 12.w),
