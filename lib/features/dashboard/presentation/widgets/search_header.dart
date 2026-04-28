@@ -10,6 +10,12 @@ import 'package:flutter_svg/flutter_svg.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../generated/assets.dart';
 
+import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+
+import '../../../../core/extensions/screen_util_extensions.dart';
+import '../../../../generated/assets.dart';
+
 class SearchHeader extends StatefulWidget {
   const SearchHeader({
     super.key,
@@ -20,19 +26,8 @@ class SearchHeader extends StatefulWidget {
   });
 
   final String userName;
-
-  /// Called with whatever the user typed when they either:
-  ///  - press enter / submit on the keyboard, OR
-  ///  - tap the adjacent square search button.
-  ///
-  /// Navigate to the Search screen inside this callback and pass the
-  /// [query] as the initial query (see [HomeScreen]).
   final ValueChanged<String>? onSearchSubmitted;
-
   final VoidCallback? onVoiceTap;
-
-  /// Called when the search button is tapped with an empty field.
-  /// Use this to just open the search screen without a preset query.
   final VoidCallback? onSearchButtonTap;
 
   static const Color _headerTeal = Color(0xFF52A898);
@@ -50,32 +45,42 @@ class SearchHeader extends StatefulWidget {
 
 class _SearchHeaderState extends State<SearchHeader> {
   late final TextEditingController _controller;
+  late final FocusNode _focusNode;
 
   @override
   void initState() {
     super.initState();
     _controller = TextEditingController();
+    _focusNode = FocusNode();
   }
 
   @override
   void dispose() {
     _controller.dispose();
+    _focusNode.dispose();
     super.dispose();
+  }
+
+  /// Drops focus + closes the keyboard before we hand off to the next screen.
+  void _dismissKeyboard() {
+    _focusNode.unfocus();
+    FocusManager.instance.primaryFocus?.unfocus();
   }
 
   void _handleSearchTap() {
     final text = _controller.text.trim();
+    _dismissKeyboard();
     if (text.isEmpty) {
       widget.onSearchButtonTap?.call();
     } else {
       widget.onSearchSubmitted?.call(text);
-      // Clear the home field so it doesn't stay stale when the user returns.
       _controller.clear();
     }
   }
 
   void _handleSubmitted(String value) {
     final text = value.trim();
+    _dismissKeyboard();
     if (text.isEmpty) {
       widget.onSearchButtonTap?.call();
     } else {
@@ -137,6 +142,7 @@ class _SearchHeaderState extends State<SearchHeader> {
                       alignment: Alignment.center,
                       child: TextField(
                         controller: _controller,
+                        focusNode: _focusNode,
                         onSubmitted: _handleSubmitted,
                         textInputAction: TextInputAction.search,
                         style: theme.textTheme.bodyMedium?.copyWith(
@@ -158,7 +164,10 @@ class _SearchHeaderState extends State<SearchHeader> {
                           suffixIcon: Material(
                             color: Colors.transparent,
                             child: InkWell(
-                              onTap: widget.onVoiceTap,
+                              onTap: () {
+                                _dismissKeyboard();
+                                widget.onVoiceTap?.call();
+                              },
                               borderRadius: BorderRadius.circular(22.r),
                               child: Padding(
                                 padding: EdgeInsets.all(12.r),

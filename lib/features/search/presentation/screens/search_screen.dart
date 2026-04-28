@@ -652,7 +652,7 @@ class _SectionHeaderPill extends StatelessWidget {
             width: 30.r,
             height: 30.r,
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: Colors.grey.shade50,
               border: Border.all(color: const Color(0xFFE3E3E3)),
               shape: BoxShape.circle,
             ),
