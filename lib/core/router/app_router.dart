@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import '../../features/app/presentation/screens/splash_screen.dart';
 import '../../features/consultation/presentation/cubit/consultation_cubit.dart';
+import '../../features/consultation/presentation/screens/ai_consultation_screen.dart';
 import '../../features/consultation/presentation/screens/doctor_consultation_book_doctor_screen.dart';
 import '../../features/consultation/presentation/screens/doctor_consultation_results_screen.dart';
 import '../../features/consultation/presentation/screens/doctor_consultation_screen.dart';
@@ -114,6 +115,11 @@ class AppRouter {
         ),
       ),
       GoRoute(
+        path:AppRoutes.path(AppRoutes.aiScreening),
+        name: AppRoutes.aiScreening,
+        builder: (context, state) => const AiScreeningScreen(),
+      ),
+      GoRoute(
         path: AppRoutes.path(AppRoutes.consultationDoctors),
         name: AppRoutes.consultationDoctors,
         builder: (context, state) {
@@ -134,6 +140,7 @@ class AppRouter {
           final extra = state.extra;
           final data = extra is Map ? Map<String, dynamic>.from(extra) : null;
           return DoctorConsultationBookDoctorScreen(
+            doctorId: (data?['doctorId'] as String?),
             doctorName: (data?['doctorName'] as String?) ?? 'Dr. Sumbal Shahid',
             specialty: (data?['specialty'] as String?) ?? 'Neurologist',
             fee: (data?['fee'] as String?) ?? 'Rs. 15,000/-',

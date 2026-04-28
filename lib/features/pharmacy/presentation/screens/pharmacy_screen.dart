@@ -100,7 +100,7 @@ class PharmacyScreen extends StatelessWidget {
   }
 
   void _openPharmacyScreen(BuildContext context, PharmacyMedicineEntity medicine) {
-    context.goNamed(
+    context.pushReplacementNamed(
       AppRoutes.pharmacy,
       extra: {
         'selectedMedicine': medicine,

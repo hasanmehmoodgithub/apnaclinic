@@ -25,6 +25,8 @@ class AppRoutes {
   static const String surgery = 'surgery';
   static const String addAccount = 'add-account';
   static const String accountDetails = 'account-details';
+  static const String aiScreening = 'ai-screening';
+
   static const String examples = 'examples';
 
   static String labTestCheckout='labTestCheckout';
@@ -34,6 +36,7 @@ class AppRoutes {
   static String labTest="labTest";
 
   static String labTestCart = 'labTestCart';
+
 
   /// Get route path with leading "/"
   static String path(String route) {

@@ -361,16 +361,7 @@ class _SurgeryPatientDetailsScreenState
             padding: EdgeInsets.fromLTRB(32.w, 24.h, 32.w, 24.h),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(15.r),
-              gradient: const LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  Colors.white,
-                  Colors.white,
-                  Colors.white,
-                  Color.fromRGBO(1, 205, 222, 0.08),
-                ],
-              ),
+              color: Colors.white,
             ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -613,143 +604,157 @@ class _DoctorSummary extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // Doctor row — NO card background, sits directly on white
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(8.r),
-              child: SizedBox(
-                width: 56.r,
-                height: 56.r,
-                child: Image.network(
-                  widget.imageUrl,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) => Container(
-                    color: const Color(0xFFEFEFEF),
-                    child: const Icon(Icons.person, color: Color(0xFFBDBDBD)),
+    return Container(
+      padding: EdgeInsets.all(12.w),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12.r),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 8,
+            offset: Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Doctor row — NO card background, sits directly on white
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(8.r),
+                child: SizedBox(
+                  width: 56.r,
+                  height: 56.r,
+                  child: Image.network(
+                    widget.imageUrl,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) => Container(
+                      color: const Color(0xFFEFEFEF),
+                      child: const Icon(Icons.person, color: Color(0xFFBDBDBD)),
+                    ),
                   ),
                 ),
               ),
-            ),
-            SizedBox(width: 12.w),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              SizedBox(width: 12.w),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      widget.doctorName,
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        color: const Color(0xFF061E40),
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    Text(
+                      widget.speciality,
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: const Color(0xFFA6A6A6),
+                        fontSize: 13.sp,
+                      ),
+                    ),
+                    Text(
+                      '${widget.experience}  ${widget.qualifications}',
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: const Color(0xFFA6A6A6),
+                        fontSize: 13.sp,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              // Partner logo (oladoc)
+              Container(
+                width: 30.r,
+                height: 30.r,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: Colors.black.withValues(alpha: 0.21),
+                    width: 1,
+                  ),
+                ),
+                clipBehavior: Clip.antiAlias,
+                child: ClipOval(
+                  child: Image.network(
+                    widget.partnerLogoUrl,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) =>
+                    const SizedBox.shrink(),
+                  ),
+                ),
+              ),
+            ],
+          ),
+
+          SizedBox(height: 14.h),
+
+          // Hospital + price row
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      widget.hospitalName,
+                      style: theme.textTheme.titleSmall?.copyWith(
+                        color: const Color(0xFF061E40),
+                        fontWeight: FontWeight.w700,
+                        fontSize: 16.sp,
+                      ),
+                    ),
+                    SizedBox(height: 2.h),
+                    Text(
+                      widget.procedureName,
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: const Color(0xFF061E40),
+                        fontSize: 14.sp,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Text(
-                    widget.doctorName,
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      color: const Color(0xFF061E40),
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.w600,
+                    'Stating from',
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: const Color(0xFF777272),
+                      fontSize: 12.sp,
                     ),
                   ),
                   Text(
-                    widget.speciality,
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      color: const Color(0xFFA6A6A6),
-                      fontSize: 13.sp,
-                    ),
-                  ),
-                  Text(
-                    '${widget.experience}  ${widget.qualifications}',
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      color: const Color(0xFFA6A6A6),
-                      fontSize: 13.sp,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            // Partner logo (oladoc)
-            Container(
-              width: 30.r,
-              height: 30.r,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                shape: BoxShape.circle,
-                border: Border.all(
-                  color: Colors.black.withValues(alpha: 0.21),
-                  width: 1,
-                ),
-              ),
-              clipBehavior: Clip.antiAlias,
-              child: ClipOval(
-                child: Image.network(
-                  widget.partnerLogoUrl,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) =>
-                  const SizedBox.shrink(),
-                ),
-              ),
-            ),
-          ],
-        ),
-
-        SizedBox(height: 14.h),
-
-        // Hospital + price row
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    widget.hospitalName,
+                    widget.price,
                     style: theme.textTheme.titleSmall?.copyWith(
                       color: const Color(0xFF061E40),
-                      fontWeight: FontWeight.w700,
+                      fontWeight: FontWeight.w600,
                       fontSize: 16.sp,
                     ),
                   ),
-                  SizedBox(height: 2.h),
                   Text(
-                    widget.procedureName,
+                    widget.oldPrice,
                     style: theme.textTheme.bodyMedium?.copyWith(
-                      color: const Color(0xFF061E40),
-                      fontSize: 14.sp,
+                      color: const Color(0xFFB4B4B4),
+                      fontSize: 13.sp,
+                      decoration: TextDecoration.lineThrough,
                     ),
                   ),
                 ],
               ),
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Text(
-                  'Stating from',
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: const Color(0xFF777272),
-                    fontSize: 12.sp,
-                  ),
-                ),
-                Text(
-                  widget.price,
-                  style: theme.textTheme.titleSmall?.copyWith(
-                    color: const Color(0xFF061E40),
-                    fontWeight: FontWeight.w600,
-                    fontSize: 16.sp,
-                  ),
-                ),
-                Text(
-                  widget.oldPrice,
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    color: const Color(0xFFB4B4B4),
-                    fontSize: 13.sp,
-                    decoration: TextDecoration.lineThrough,
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ],
+            ],
+          ),
+        ],
+      ),
     );
   }
 }

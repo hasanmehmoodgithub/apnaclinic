@@ -1,10 +1,26 @@
+import 'package:file_picker/file_picker.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:path/path.dart' as p;
+import '../../../../components/shimmer/app_shimmer.dart';
+import '../../../../core/di/dependency_injection.dart';
 
 import '../../../../core/extensions/screen_util_extensions.dart';
+import '../../data/mock/consultation_doctors_mock_api.dart';
 import '../constants/consultation_ui_config.dart';
+import '../widgets/results_doctor_item.dart';
+import '../widgets/availability_section.dart';
+import '../widgets/doctor_profile_section.dart';
+import '../widgets/documents_section.dart';
+import '../widgets/issue_section.dart';
+import '../widgets/patient_section.dart';
+import '../widgets/upload_option_tile.dart';
 
-class DoctorConsultationBookDoctorScreen extends StatelessWidget {
+class DoctorConsultationBookDoctorScreen extends StatefulWidget {
+  final String? doctorId;
   final String doctorName;
   final String specialty;
   final String fee;
@@ -12,6 +28,7 @@ class DoctorConsultationBookDoctorScreen extends StatelessWidget {
 
   const DoctorConsultationBookDoctorScreen({
     super.key,
+    this.doctorId,
     required this.doctorName,
     required this.specialty,
     required this.fee,
@@ -19,8 +36,64 @@ class DoctorConsultationBookDoctorScreen extends StatelessWidget {
   });
 
   @override
+  State<DoctorConsultationBookDoctorScreen> createState() =>
+      _DoctorConsultationBookDoctorScreenState();
+}
+
+class _DoctorConsultationBookDoctorScreenState
+    extends State<DoctorConsultationBookDoctorScreen> {
+  final ConsultationDoctorsMockApi _doctorsApi = sl<ConsultationDoctorsMockApi>();
+  final ImagePicker _imagePicker = ImagePicker();
+  ResultsDoctorItem? _doctorDetail;
+  bool _isLoading = true;
+  String? _attachedMediaName;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadDoctorDetail();
+  }
+
+  Future<void> _loadDoctorDetail() async {
+    final doctorId = widget.doctorId;
+    if (doctorId == null || doctorId.isEmpty) {
+      setState(() => _isLoading = false);
+      return;
+    }
+    try {
+      final response = await _doctorsApi.getDoctorDetailResponse(doctorId);
+      final rawDoctor = response['doctor'];
+      if (rawDoctor is Map<String, dynamic> && mounted) {
+        setState(() {
+          _doctorDetail = ResultsDoctorItem.fromMap(rawDoctor);
+          _isLoading = false;
+        });
+      } else if (mounted) {
+        setState(() => _isLoading = false);
+      }
+    } catch (_) {
+      if (!mounted) return;
+      setState(() => _isLoading = false);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
+    final doctorName = _doctorDetail?.name ?? widget.doctorName;
+    final specialty = _doctorDetail?.specialty ?? widget.specialty;
+    final fee = _doctorDetail?.fee ?? widget.fee;
+    final imageUrl = _doctorDetail?.imageUrl ?? widget.imageUrl;
+    final qualification = _doctorDetail?.qualification ?? 'MBBS';
+    final verifiedPatientsCount = _doctorDetail?.verifiedPatientsCount ?? '35';
+    final experience = _doctorDetail?.experience ?? '2 Years';
+    final satisfiedText = _doctorDetail?.satisfiedText ?? '4% (35)';
+    final description = (_doctorDetail?.description ?? '').isNotEmpty
+        ? _doctorDetail!.description
+        : 'Doctor details are currently unavailable.';
+    final ratingValue =
+        double.tryParse((_doctorDetail?.rating ?? '4.5').split('/').first.trim()) ??
+            4.5;
     return Scaffold(
       body: DecoratedBox(
         decoration: const BoxDecoration(
@@ -50,8 +123,8 @@ class DoctorConsultationBookDoctorScreen extends StatelessWidget {
                         child: Center(
                           child: SvgPicture.asset(
                             ConsultationUiConfig.backArrowAsset,
-                            width: 24.w,
-                            height: 24.h,
+                            width: 18.w,
+                            height: 18.h,
                             fit: BoxFit.contain,
                             colorFilter: const ColorFilter.mode(
                               ConsultationUiConfig.primaryText,
@@ -96,12 +169,7 @@ class DoctorConsultationBookDoctorScreen extends StatelessWidget {
                         ),
                         Positioned(
                           top: 0,
-                          child: Image.asset(
-                            ConsultationUiConfig.heroDoctorAsset,
-                            width: 188.w,
-                            height: 177.h,
-                            fit: BoxFit.cover,
-                          ),
+                          child: _buildDoctorHeroImage(imageUrl),
                         ),
                       ],
                     ),
@@ -121,47 +189,88 @@ class DoctorConsultationBookDoctorScreen extends StatelessWidget {
                     children: [
                       Expanded(
                         child: SingleChildScrollView(
-                          padding: EdgeInsets.fromLTRB(20.w, 20.h, 20.w, 16.h),
+                          padding: EdgeInsets.fromLTRB(20.w, 16.h, 20.w, 16.h),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                'Book your video consultation here!',
-                                style: textTheme.titleMedium?.copyWith(
-                                  color: ConsultationUiConfig.primaryText,
-                                  fontSize: 16.sp,
-                                  fontWeight: FontWeight.w600,
+                              if (_isLoading)
+                                AppShimmerCard(
+                                  height: 300.h,
+                                  borderRadius: 12.r,
+                                )
+                              else
+                                DoctorProfileSection(
+                                  doctorName: doctorName,
+                                  specialty: specialty,
+                                  imageUrl: imageUrl,
+                                  qualification: qualification,
+                                  verifiedPatientsCount: verifiedPatientsCount,
+                                  experience: experience,
+                                  satisfiedText: satisfiedText,
+                                  rating: ratingValue,
+                                  description: description,
+                                  textTheme: textTheme,
                                 ),
-                              ),
+                              SizedBox(height: 16.h),
+                              const Divider(color: Color(0xFFE4E8ED), thickness: 1),
                               SizedBox(height: 14.h),
-                              _DoctorSummaryCard(
-                                doctorName: doctorName,
-                                specialty: specialty,
-                                fee: fee,
-                                imageUrl: imageUrl,
-                                textTheme: textTheme,
+                              Row(
+                                children: [
+                                  SvgPicture.asset(
+                                    'assets/img/consultation/video.svg',
+                                    width: 16.w,
+                                    height: 16.h,
+                                    fit: BoxFit.contain,
+                                  ),
+                                  SizedBox(width: 6.w),
+                                  Text(
+                                    'Book your video consultation here!',
+                                    style: textTheme.titleMedium?.copyWith(
+                                      color: ConsultationUiConfig.primaryText,
+                                      fontSize: 16.sp,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ],
                               ),
                               SizedBox(height: 18.h),
-                              _ScheduleSection(textTheme: textTheme),
+                              AvailabilitySection(textTheme: textTheme),
+                              SizedBox(height: 20.h),
+                              IssueSection(textTheme: textTheme),
+                              SizedBox(height: 18.h),
+                              PatientSection(textTheme: textTheme),
+                              SizedBox(height: 18.h),
+                              DocumentsSection(
+                                textTheme: textTheme,
+                                onBrowseTap: _openUploadDocumentSheet,
+                                attachedMediaName: _attachedMediaName,
+                              ),
+                              SizedBox(height: 16.h),
+                              const Divider(
+                                color: Color(0xFFE4E8ED),
+                                thickness: 1,
+                              ),
+                              SizedBox(height: 16.h),
                             ],
                           ),
                         ),
                       ),
                       Padding(
-                        padding: EdgeInsets.fromLTRB(29.w, 0, 29.w, 20.h),
+                        padding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 12.h),
                         child: SizedBox(
                           width: double.infinity,
-                          height: 62.h,
+                          height: 58.h,
                           child: ElevatedButton(
                             onPressed: () => _showConfirmation(context),
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFF024886),
+                              elevation: 0,
+                              backgroundColor: ConsultationUiConfig.ctaColor,
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(20.r),
+                                borderRadius: BorderRadius.circular(18.r),
                               ),
                             ),
                             child: Text(
-                              'Get Appointment',
+                              'Get Appointment  $fee',
                               style: textTheme.titleMedium?.copyWith(
                                 color: Colors.white,
                                 fontSize: 18.sp,
@@ -183,6 +292,7 @@ class DoctorConsultationBookDoctorScreen extends StatelessWidget {
   }
 
   void _showConfirmation(BuildContext context) {
+    final doctorName = _doctorDetail?.name ?? widget.doctorName;
     showDialog<void>(
       context: context,
       builder: (context) {
@@ -216,149 +326,165 @@ class DoctorConsultationBookDoctorScreen extends StatelessWidget {
       },
     );
   }
-}
 
-class _DoctorSummaryCard extends StatelessWidget {
-  final String doctorName;
-  final String specialty;
-  final String fee;
-  final String imageUrl;
-  final TextTheme textTheme;
-
-  const _DoctorSummaryCard({
-    required this.doctorName,
-    required this.specialty,
-    required this.fee,
-    required this.imageUrl,
-    required this.textTheme,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.all(10.r),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: const Color(0x19061E40)),
+  Future<void> _openUploadDocumentSheet() async {
+    FocusScope.of(context).unfocus();
+    await showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
       ),
-      child: Row(
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(10.r),
-            child: SizedBox(
-              width: 86.w,
-              height: 86.h,
-              child: imageUrl.isEmpty
-                  ? const ColoredBox(color: Color(0xFFF2F2F2))
-                  : Image.network(
-                      imageUrl,
-                      fit: BoxFit.cover,
-                      errorBuilder: (_, __, ___) =>
-                          const ColoredBox(color: Color(0xFFF2F2F2)),
-                    ),
-            ),
-          ),
-          SizedBox(width: 10.w),
-          Expanded(
+      builder: (sheetContext) {
+        return SafeArea(
+          child: Padding(
+            padding: EdgeInsets.fromLTRB(20.w, 8.h, 20.w, 16.h),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
               children: [
-                Text(
-                  doctorName,
-                  style: textTheme.titleMedium?.copyWith(
-                    color: ConsultationUiConfig.primaryText,
-                    fontSize: 16.sp,
-                    fontWeight: FontWeight.w600,
+                Container(
+                  width: 46.w,
+                  height: 5.h,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFD5D9DE),
+                    borderRadius: BorderRadius.circular(99.r),
                   ),
                 ),
+                SizedBox(height: 18.h),
                 Text(
-                  specialty,
-                  style: textTheme.bodyMedium?.copyWith(
-                    color: ConsultationUiConfig.tertiaryText,
-                    fontSize: 14.sp,
-                  ),
-                ),
-                SizedBox(height: 8.h),
-                Text(
-                  fee,
-                  style: textTheme.titleSmall?.copyWith(
-                    color: const Color(0xFF110844),
-                    fontSize: 14.sp,
+                  'Upload Document',
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    color: const Color(0xFF061E40),
+                    fontSize: 30.sp,
                     fontWeight: FontWeight.w700,
                   ),
+                ),
+                SizedBox(height: 14.h),
+                UploadOptionTile(
+                  icon: Icons.camera_alt_outlined,
+                  label: 'Use camera',
+                  onTap: () {
+                    Navigator.of(sheetContext).pop();
+                    _pickFromCamera();
+                  },
+                ),
+                UploadOptionTile(
+                  icon: Icons.photo_library_outlined,
+                  label: 'Upload from gallery',
+                  onTap: () {
+                    Navigator.of(sheetContext).pop();
+                    _pickFromGallery();
+                  },
+                ),
+                UploadOptionTile(
+                  icon: Icons.folder_open_outlined,
+                  label: 'Upload from File',
+                  onTap: () {
+                    Navigator.of(sheetContext).pop();
+                    _pickFromFile();
+                  },
                 ),
               ],
             ),
           ),
-        ],
-      ),
+        );
+      },
     );
   }
-}
 
-class _ScheduleSection extends StatelessWidget {
-  final TextTheme textTheme;
+  Future<void> _pickFromCamera() async {
+    try {
+      final picked = await _imagePicker.pickImage(
+        source: ImageSource.camera,
+        imageQuality: 85,
+      );
+      if (picked == null || !mounted) return;
+      setState(() {
+        _attachedMediaName = p.basename(picked.path);
+      });
+    } on PlatformException {
+      _showSnackBar('Camera access is unavailable right now.');
+    } catch (_) {
+      _showSnackBar('Could not capture media. Please try again.');
+    }
+  }
 
-  const _ScheduleSection({required this.textTheme});
+  Future<void> _pickFromGallery() async {
+    try {
+      final picked = await _imagePicker.pickImage(
+        source: ImageSource.gallery,
+        imageQuality: 85,
+      );
+      if (picked == null || !mounted) return;
+      setState(() {
+        _attachedMediaName = p.basename(picked.path);
+      });
+    } on PlatformException {
+      _showSnackBar('Gallery access is unavailable right now.');
+    } catch (_) {
+      _showSnackBar('Could not pick media from gallery.');
+    }
+  }
 
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.all(14.r),
-      decoration: BoxDecoration(
-        color: const Color(0xFFF8F9FB),
-        borderRadius: BorderRadius.circular(12.r),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Preferred Schedule',
-            style: textTheme.titleSmall?.copyWith(
-              color: ConsultationUiConfig.primaryText,
-              fontWeight: FontWeight.w600,
-              fontSize: 14.sp,
-            ),
-          ),
-          SizedBox(height: 10.h),
-          Wrap(
-            spacing: 8.w,
-            runSpacing: 8.h,
-            children: const [
-              _ChipLabel(text: '15/05/24'),
-              _ChipLabel(text: '16/05/24'),
-              _ChipLabel(text: '10am - 1pm'),
-              _ChipLabel(text: '4pm - 7pm'),
-            ],
-          ),
-        ],
-      ),
+  Future<void> _pickFromFile() async {
+    try {
+      final result = await FilePicker.pickFiles();
+      if (result == null || result.files.isEmpty || !mounted) return;
+      final selected = result.files.first;
+      setState(() {
+        _attachedMediaName = selected.name;
+      });
+    } catch (_) {
+      _showSnackBar('Could not pick file. Please try again.');
+    }
+  }
+
+  void _showSnackBar(String message) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(SnackBar(content: Text(message)));
+  }
+
+  Widget _buildDoctorHeroImage(String imageUrl) {
+    final width = 188.w;
+    final height = 177.h;
+    final trimmed = imageUrl.trim();
+    if (trimmed.isEmpty) {
+      return Image.asset(
+        ConsultationUiConfig.heroDoctorAsset,
+        width: width,
+        height: height,
+        fit: BoxFit.cover,
+      );
+    }
+    final isNetwork =
+        trimmed.startsWith('http://') || trimmed.startsWith('https://');
+    if (isNetwork) {
+      return CachedNetworkImage(
+        imageUrl: trimmed,
+        width: width,
+        height: height,
+        fit: BoxFit.cover,
+        placeholder: (_, __) => _heroFallback(width, height),
+        errorWidget: (_, __, ___) => _heroFallback(width, height),
+      );
+    }
+    return Image.asset(
+      trimmed,
+      width: width,
+      height: height,
+      fit: BoxFit.cover,
+      errorBuilder: (_, _, _) => _heroFallback(width, height),
     );
   }
-}
 
-class _ChipLabel extends StatelessWidget {
-  final String text;
-
-  const _ChipLabel({required this.text});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(6.r),
-        border: Border.all(color: const Color(0x26061E40)),
-      ),
-      child: Text(
-        text,
-        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-          color: ConsultationUiConfig.primaryText,
-          fontSize: 12.sp,
-        ),
-      ),
+  Widget _heroFallback(double width, double height) {
+    return Image.asset(
+      ConsultationUiConfig.heroDoctorAsset,
+      width: width,
+      height: height,
+      fit: BoxFit.cover,
     );
   }
 }

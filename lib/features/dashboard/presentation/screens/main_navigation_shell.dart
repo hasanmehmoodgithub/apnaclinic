@@ -80,6 +80,7 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
         return AnnotatedRegion<SystemUiOverlayStyle>(
           value: AppSystemUi.overlayStyle,
           child: Scaffold(
+            backgroundColor: Colors.white,
             body: PageView(
               controller: _pageController,
               onPageChanged: _onPageChanged,
@@ -92,9 +93,11 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
                 const ProfileScreen(showBackButton: false),
               ],
             ),
-            bottomNavigationBar: ApnaBottomNavigationBar(
-              currentIndex: state.currentIndex,
-              onTap: _onNavTap,
+            bottomNavigationBar: SafeArea(
+              child: ApnaBottomNavigationBar(
+                currentIndex: state.currentIndex,
+                onTap: _onNavTap,
+              ),
             ),
           ),
         );
