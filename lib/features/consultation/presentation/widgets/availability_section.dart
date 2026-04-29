@@ -128,7 +128,7 @@ class _AvailabilitySectionState extends State<AvailabilitySection> {
                         item.dayOfMonth,
                         style: widget.textTheme.titleMedium?.copyWith(
                           color: selected ? Colors.white : const Color(0xFF545F70),
-                          fontSize: 24.sp,
+                          fontSize: 22.sp,
                           fontWeight: FontWeight.w500,
                         ),
                       ),
