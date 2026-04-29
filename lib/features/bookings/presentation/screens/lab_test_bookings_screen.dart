@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
+import '../../../../core/router/app_routes.dart';
+import '../../../../generated/assets.dart';
+import '../../../lab_test/presentation/lab_test_route_args.dart';
 import '../../data/mock/lab_test_bookings_mock_api.dart';
 import '../../data/models/lab_test_booking_item_model.dart';
 
@@ -150,7 +154,7 @@ class _LabTestBookingCard extends StatelessWidget {
                               color: booking.isConfirmed
                                   ? const Color(0xFF15A9A0)
                                   : const Color(0xFFBA2025),
-                              fontSize: 14.sp,
+                              fontSize: 12.sp,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -167,7 +171,7 @@ class _LabTestBookingCard extends StatelessWidget {
                           booking.totalFee,
                           style: theme.textTheme.titleSmall?.copyWith(
                             color: Colors.black,
-                            fontSize: 14.sp,
+                            fontSize: 12.sp,
                             fontWeight: FontWeight.w700,
                           ),
                         ),
@@ -183,7 +187,7 @@ class _LabTestBookingCard extends StatelessWidget {
                           booking.dateLabel,
                           style: theme.textTheme.bodyMedium?.copyWith(
                             color: const Color(0xFF667B99),
-                            fontSize: 14.sp,
+                            fontSize: 12.sp,
                             fontWeight: FontWeight.w500,
                           ),
                         ),
@@ -194,7 +198,21 @@ class _LabTestBookingCard extends StatelessWidget {
                       width: 86.w,
                       height: 30.h,
                       child: OutlinedButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          context.push(
+                            AppRoutes.path(AppRoutes.labTestViewDetails),
+                            extra: LabTestViewDetailsArgs(
+                              testTitle: booking.reportTitle,
+                              labName: 'Chughtai Lab',
+                              labLogoUrl: Assets.labTestChughtaiLabLogo,
+                              partnerLogoUrl: Assets.labTestOladocOgo,
+                              sampleType: 'Blood',
+                              discountedFee: booking.discountedFee,
+                              originalFee: booking.originalFee,
+                              discountCode: booking.orderNo,
+                            ),
+                          );
+                        },
                         style: OutlinedButton.styleFrom(
                           side: BorderSide(color: const Color(0xFF9BA6A7), width: 0.275.r),
                           shape: RoundedRectangleBorder(

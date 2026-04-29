@@ -100,4 +100,20 @@ class LabTestMockApi {
       },
     };
   }
+
+  Future<Map<String, dynamic>> getLabTestViewDetailsSuccessResponse() async {
+    await Future<void>.delayed(const Duration(milliseconds: 700));
+    return {
+      'success': true,
+      'message': 'Lab test view details fetched successfully',
+      'data': {
+        'patientName': 'Zubair Abbasi',
+        'orderNo': '155850',
+        'bookingDate': '2026-04-21',
+        'status': 'Confirmed',
+        'note':
+            'Your report will be ready in 24 hours after the sample is collected.',
+      },
+    };
+  }
 }

@@ -570,7 +570,8 @@ class _TestSummaryCard extends StatelessWidget {
               borderRadius: BorderRadius.vertical(
                 bottom: Radius.circular(14),
               ),
-            ),            padding: const EdgeInsets.fromLTRB(14, 13, 14, 13),
+            ),
+            padding: const EdgeInsets.fromLTRB(14, 13, 14, 13),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
