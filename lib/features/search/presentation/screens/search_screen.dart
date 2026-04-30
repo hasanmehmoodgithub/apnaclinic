@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -744,7 +745,7 @@ class _DoctorResultCard extends StatelessWidget {
                               _RatingBadge(rating: item.rating ?? '4 / 5'),
                             ],
                           ),
-                          SizedBox(height: 2.h),
+                          SizedBox(height: 1.h),
                           Text(item.subtitle,
                               style: TextStyle(
                                   color: const Color(0xFF667B99),
@@ -769,11 +770,11 @@ class _DoctorResultCard extends StatelessWidget {
                       ),
                   ],
                 ),
-                SizedBox(height: 6.h),
+                SizedBox(height: 2.h),
                 Text(item.description ?? '6 years Experience   MMBS, FCPS',
                     style: TextStyle(
                         color: const Color(0xFF667B99), fontSize: 12.sp)),
-                SizedBox(height: 8.h),
+                SizedBox(height: 4.h),
                 if (!showHospital)
                   Row(
                     children: [
@@ -791,7 +792,7 @@ class _DoctorResultCard extends StatelessWidget {
                             fontSize: 12.sp,
                             fontWeight: FontWeight.w500)),
                   ),
-                SizedBox(height: 10.h),
+                SizedBox(height: 3.h),
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
@@ -842,6 +843,9 @@ class _PharmacyResultCard extends StatelessWidget {
   const _PharmacyResultCard({required this.item});
   final SearchResultEntity item;
 
+  static const String _pharmacyImageUrl =
+      'https://bio-labs.net/wp-content/uploads/2022/10/12-Bio-Col-Tabs.webp';
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -859,7 +863,27 @@ class _PharmacyResultCard extends StatelessWidget {
             ),
             clipBehavior: Clip.antiAlias,
             alignment: Alignment.center,
-            child: Image.asset(Assets.servicesPharmacy, fit: BoxFit.contain),
+            child: CachedNetworkImage(
+              imageUrl: _pharmacyImageUrl,
+              fit: BoxFit.cover,
+              width: double.infinity,
+              height: double.infinity,
+              placeholder: (context, url) => Center(
+                child: SizedBox(
+                  width: 22.r,
+                  height: 22.r,
+                  child: const CircularProgressIndicator(
+                    strokeWidth: 2,
+                    valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF061E40)),
+                  ),
+                ),
+              ),
+              errorWidget: (context, url, error) => Image.asset(
+                Assets.servicesPharmacy,
+                fit: BoxFit.contain,
+              ),
+              fadeInDuration: const Duration(milliseconds: 300),
+            ),
           ),
           SizedBox(width: 16.w),
           Expanded(
@@ -867,17 +891,23 @@ class _PharmacyResultCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(item.title,
-                    style: TextStyle(
-                        color: const Color(0xFF061E40),
-                        fontSize: 18.sp,
-                        fontWeight: FontWeight.w700)),
+                Text(
+                  item.title,
+                  style: TextStyle(
+                    color: const Color(0xFF061E40),
+                    fontSize: 18.sp,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
                 SizedBox(height: 4.h),
-                Text(item.price ?? item.subtitle,
-                    style: TextStyle(
-                        color: const Color(0xFF061E40),
-                        fontSize: 15.sp,
-                        fontWeight: FontWeight.w500)),
+                Text(
+                  item.price ?? item.subtitle,
+                  style: TextStyle(
+                    color: const Color(0xFF061E40),
+                    fontSize: 15.sp,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
               ],
             ),
           ),
