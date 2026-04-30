@@ -18,7 +18,7 @@ class DoctorConsultationBookingsScreen extends StatelessWidget {
       fee: 'Rs.30,000/-',
       oldFee: 'Rs. 80,000/-',
       doctorImageUrl:
-          'https://www.figma.com/api/mcp/asset/650cab28-c213-41c8-8a46-d7044f57bcb0',
+          'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&w=800&q=80',
     ),
     _DoctorBookingItem(
       doctorName: 'Dr. Kainat Shahid',
@@ -33,7 +33,7 @@ class DoctorConsultationBookingsScreen extends StatelessWidget {
       fee: 'Rs.30,000/-',
       oldFee: 'Rs. 80,000/-',
       doctorImageUrl:
-          'https://www.figma.com/api/mcp/asset/f7d026f4-ae7e-4263-9bfa-081a7839f8f3',
+          'https://images.unsplash.com/photo-1594824476967-48c8b964273f?auto=format&fit=crop&w=800&q=80',
     ),
     _DoctorBookingItem(
       doctorName: 'Dr. Kainat Shahid',
@@ -48,7 +48,7 @@ class DoctorConsultationBookingsScreen extends StatelessWidget {
       fee: 'Rs.30,000/-',
       oldFee: 'Rs. 80,000/-',
       doctorImageUrl:
-          'https://www.figma.com/api/mcp/asset/f7d026f4-ae7e-4263-9bfa-081a7839f8f3',
+          'https://images.unsplash.com/photo-1594824476967-48c8b964273f?auto=format&fit=crop&w=800&q=80',
     ),
   ];
 
