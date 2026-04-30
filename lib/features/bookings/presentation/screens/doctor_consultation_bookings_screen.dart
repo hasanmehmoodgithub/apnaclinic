@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 
+import 'package:flutter/material.dart';
+import '../../../../core/extensions/screen_util_extensions.dart';
+
+import 'package:flutter/material.dart';
+import '../../../../core/extensions/screen_util_extensions.dart';
+
 class DoctorConsultationBookingsScreen extends StatelessWidget {
   const DoctorConsultationBookingsScreen({super.key});
 
@@ -18,7 +24,7 @@ class DoctorConsultationBookingsScreen extends StatelessWidget {
       fee: 'Rs.30,000/-',
       oldFee: 'Rs. 80,000/-',
       doctorImageUrl:
-          'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&w=800&q=80',
+      'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&w=800&q=80',
     ),
     _DoctorBookingItem(
       doctorName: 'Dr. Kainat Shahid',
@@ -33,7 +39,7 @@ class DoctorConsultationBookingsScreen extends StatelessWidget {
       fee: 'Rs.30,000/-',
       oldFee: 'Rs. 80,000/-',
       doctorImageUrl:
-          'https://images.unsplash.com/photo-1594824476967-48c8b964273f?auto=format&fit=crop&w=800&q=80',
+      'https://images.unsplash.com/photo-1594824476967-48c8b964273f?auto=format&fit=crop&w=800&q=80',
     ),
     _DoctorBookingItem(
       doctorName: 'Dr. Kainat Shahid',
@@ -48,7 +54,7 @@ class DoctorConsultationBookingsScreen extends StatelessWidget {
       fee: 'Rs.30,000/-',
       oldFee: 'Rs. 80,000/-',
       doctorImageUrl:
-          'https://images.unsplash.com/photo-1594824476967-48c8b964273f?auto=format&fit=crop&w=800&q=80',
+      'https://images.unsplash.com/photo-1594824476967-48c8b964273f?auto=format&fit=crop&w=800&q=80',
     ),
   ];
 
@@ -59,7 +65,7 @@ class DoctorConsultationBookingsScreen extends StatelessWidget {
       padding: EdgeInsets.fromLTRB(0, 20.h, 0, 8.h),
       itemBuilder: (context, index) =>
           _DoctorBookingCard(item: _items[index], textTheme: textTheme),
-      separatorBuilder: (_, __) => SizedBox(height: 12.h),
+      separatorBuilder: (_, __) => SizedBox(height: 14.h),
       itemCount: _items.length,
     );
   }
@@ -79,7 +85,7 @@ class _DoctorBookingCard extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(14.r),
+        borderRadius: BorderRadius.circular(16.r),
         boxShadow: const [
           BoxShadow(
             color: Color(0x33053453),
@@ -89,237 +95,264 @@ class _DoctorBookingCard extends StatelessWidget {
           ),
         ],
       ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(14.r),
-        child: Padding(
-          padding: EdgeInsets.fromLTRB(8.w, 8.h, 8.w, 8.h),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                width: 93.w,
-                height: 129.h,
-                decoration: BoxDecoration(
-                  color: const Color(0xFFF4F4F4),
-                  borderRadius: BorderRadius.circular(9.r),
-                ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(9.r),
-                  child: Image.network(
-                    item.doctorImageUrl,
-                    fit: BoxFit.cover,
-                    errorBuilder: (_, __, ___) => const Icon(
-                      Icons.person_rounded,
-                      color: Color(0xFFBFC7CF),
-                      size: 40,
-                    ),
+      child: Padding(
+        padding: EdgeInsets.all(10.w),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Doctor image
+            Container(
+              width: 85.w,
+              height: 110.h,
+              decoration: BoxDecoration(
+                color: const Color(0xFFF4F4F4),
+                borderRadius: BorderRadius.circular(10.r),
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(10.r),
+                child: Image.network(
+                  item.doctorImageUrl,
+                  fit: BoxFit.cover,
+                  errorBuilder: (_, __, ___) => const Icon(
+                    Icons.person_rounded,
+                    color: Color(0xFFBFC7CF),
+                    size: 40,
                   ),
                 ),
               ),
-              SizedBox(width: 8.w),
-              Expanded(
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      item.doctorName,
-                                      style: textTheme.titleMedium?.copyWith(
-                                        color: const Color(0xFF061E40),
-                                        fontSize: 16.sp,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                    SizedBox(height: 2.h),
-                                    Text(
-                                      item.specialty,
-                                      style: textTheme.bodyMedium?.copyWith(
-                                        color: const Color(0xFF667B99),
-                                        fontSize: 14.sp,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              _RatingBadge(textTheme: textTheme),
-                            ],
+            ),
+            SizedBox(width: 10.w),
+
+            // Middle content section (name, info, status, fee)
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Top row: Name + Rating badge
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Flexible(
+                        child: Text(
+                          item.doctorName,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: textTheme.titleMedium?.copyWith(
+                            color: const Color(0xFF061E40),
+                            fontSize: 14.sp,
+                            fontWeight: FontWeight.w500,
+                            height: 1.1,
                           ),
-                          SizedBox(height: 5.h),
-                          Text(
-                            '${item.experience}  ${item.qualification}',
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: textTheme.bodySmall?.copyWith(
-                              color: const Color(0xFF667B99),
-                              fontSize: 12.sp,
-                              fontWeight: FontWeight.w300,
-                            ),
-                          ),
-                          SizedBox(height: 7.h),
-                          Wrap(
-                            spacing: 3.w,
-                            runSpacing: 3.h,
-                            children: [
-                              _InfoPill(label: item.date, textTheme: textTheme),
-                              _InfoPill(label: item.time, textTheme: textTheme),
-                            ],
-                          ),
-                          SizedBox(height: 7.h),
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              Expanded(
-                                child: Container(
-                                  padding: EdgeInsets.only(right: 6.w),
-                                  decoration: const BoxDecoration(
-                                    border: Border(
-                                      right: BorderSide(
-                                        color: Color(0xFF9BA6A7),
-                                        width: 0.3,
-                                      ),
-                                    ),
-                                  ),
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        'Status:',
-                                        style: textTheme.bodySmall?.copyWith(
-                                          color: const Color(0xFF667B99),
-                                          fontSize: 12.sp,
-                                        ),
-                                      ),
-                                      SizedBox(height: 4.h),
-                                      Container(
-                                        padding: EdgeInsets.symmetric(
-                                          horizontal: 6.w,
-                                          vertical: 4.h,
-                                        ),
-                                        decoration: BoxDecoration(
-                                          color: item.statusBgColor,
-                                          borderRadius: BorderRadius.circular(13.r),
-                                        ),
-                                        child: Text(
-                                          item.status,
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: textTheme.bodySmall?.copyWith(
-                                            color: item.statusTextColor,
-                                            fontSize: 12.sp,
-                                            fontWeight: FontWeight.w500,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                              SizedBox(width: 8.w),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      'Fee',
-                                      style: textTheme.bodySmall?.copyWith(
-                                        color: const Color(0xFF667B99),
-                                        fontSize: 12.sp,
-                                      ),
-                                    ),
-                                    SizedBox(height: 3.h),
-                                    Text(
-                                      item.fee,
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: textTheme.bodySmall?.copyWith(
-                                        color: Colors.black,
-                                        fontSize: 12.sp,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                    SizedBox(height: 2.h),
-                                    Text(
-                                      item.oldFee,
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: textTheme.bodySmall?.copyWith(
-                                        color: const Color(0xFF979797),
-                                        fontSize: 12.sp,
-                                        decoration: TextDecoration.lineThrough,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
+                        ),
                       ),
+                      SizedBox(width: 5.w),
+                      _RatingBadge(textTheme: textTheme),
+                    ],
+                  ),
+                  SizedBox(height: 1.h),
+
+                  // Specialty
+                  Text(
+                    item.specialty,
+                    style: textTheme.bodyMedium?.copyWith(
+                      color: const Color(0xFF667B99),
+                      fontSize: 12.sp,
+                      fontWeight: FontWeight.w400,
                     ),
-                    SizedBox(width: 8.w),
-                    SizedBox(
-                      height: 129.h,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Container(
-                            width: 40.w,
-                            height: 40.h,
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              shape: BoxShape.circle,
-                              border: Border.all(
-                                color: const Color(0x36000000),
-                                width: 0.305,
-                              ),
-                            ),
-                            child: ClipOval(
-                              child: _NetAsset(_partnerLogoUrl, fit: BoxFit.cover),
-                            ),
-                          ),
-                          SizedBox(
-                            width: 86.w,
-                            height: 32.h,
-                            child: OutlinedButton(
-                              onPressed: () {},
-                              style: OutlinedButton.styleFrom(
-                                side: const BorderSide(
-                                  color: Color(0xFF9BA6A7),
-                                  width: 0.32,
-                                ),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8.108.r),
-                                ),
-                                padding: EdgeInsets.zero,
-                                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                              ),
-                              child: Text(
-                                'View details',
+                  ),
+
+                  SizedBox(height: 1.h),
+
+                  // Experience + Qualification
+                  Text(
+                    '${item.experience} | ${item.qualification}',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: textTheme.bodySmall?.copyWith(
+                      color: const Color(0xFF667B99),
+                      fontSize: 10.sp,
+                      fontWeight: FontWeight.w300,
+                    ),
+                  ),
+
+                  SizedBox(height: 5.h),
+
+                  // Date + Time pills
+                  Row(
+                    children: [
+                      _InfoPill(label: item.date, textTheme: textTheme),
+                      SizedBox(width: 5.w),
+                      _InfoPill(label: item.time, textTheme: textTheme),
+                    ],
+                  ),
+
+                  SizedBox(height: 6.h),
+
+                  // Status + Fee row (with divider in between)
+                  IntrinsicHeight(
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        // Status column
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                'Status:',
                                 style: textTheme.bodySmall?.copyWith(
-                                  color: const Color(0xFF061E40),
-                                  fontSize: 12.sp,
-                                  fontWeight: FontWeight.w500,
+                                  color: const Color(0xFF667B99),
+                                  fontSize: 11.sp,
+                                  fontWeight: FontWeight.w400,
                                 ),
                               ),
-                            ),
+                              SizedBox(height: 4.h),
+                              Container(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 6.w,
+                                  vertical: 4.h,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: item.statusBgColor,
+                                  borderRadius: BorderRadius.circular(10.r),
+                                ),
+                                child: Text(
+                                  item.status,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.visible,
+                                  softWrap: false,
+                                  style: textTheme.bodySmall?.copyWith(
+                                    color: item.statusTextColor,
+                                    fontSize: 12.sp,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
-                        ],
+                        ),
+
+                        // Vertical divider between Status and Fee
+                        Container(
+                          width: 0.5,
+                          margin: EdgeInsets.symmetric(horizontal: 6.w),
+                          color: const Color(0xFF9BA6A7),
+                        ),
+
+                        // Fee column
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                'Fee',
+                                style: textTheme.bodySmall?.copyWith(
+                                  color: const Color(0xFF667B99),
+                                  fontSize: 11.sp,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                              ),
+                              SizedBox(height: 3.h),
+                              FittedBox(
+                                fit: BoxFit.scaleDown,
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                  item.fee,
+                                  maxLines: 1,
+                                  softWrap: false,
+                                  style: textTheme.bodySmall?.copyWith(
+                                    color: Colors.black,
+                                    fontSize: 12.sp,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ),
+                              FittedBox(
+                                fit: BoxFit.scaleDown,
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                  item.oldFee,
+                                  maxLines: 1,
+                                  softWrap: false,
+                                  style: textTheme.bodySmall?.copyWith(
+                                    color: const Color(0xFF979797),
+                                    fontSize: 11.sp,
+                                    decoration: TextDecoration.lineThrough,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            SizedBox(width: 8.w),
+
+            // Right column: Logo (top) + View details button (bottom)
+            SizedBox(
+              height: 130.h,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  // Partner logo
+                  Container(
+                    width: 36.w,
+                    height: 36.h,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: const Color(0x36000000),
+                        width: 0.4,
                       ),
                     ),
-                  ],
-                ),
+                    child: ClipOval(
+                      child: Padding(
+                        padding: EdgeInsets.all(3.w),
+                        child: _NetAsset(_partnerLogoUrl, fit: BoxFit.contain),
+                      ),
+                    ),
+                  ),
+                  // View details button
+                  SizedBox(
+                    width: 82.w,
+                    height: 33.h,
+                    child: OutlinedButton(
+                      onPressed: () {},
+                      style: OutlinedButton.styleFrom(
+                        side: const BorderSide(
+                          color: Color(0xFF9BA6A7),
+                          width: 0.5,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8.r),
+                        ),
+                        padding: EdgeInsets.zero,
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      ),
+                      child: Text(
+                        'View details',
+                        style: textTheme.bodySmall?.copyWith(
+                          color: const Color(0xFF061E40),
+                          fontSize: 12.sp,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
@@ -334,16 +367,16 @@ class _RatingBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 3.h),
+      padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 2.h),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(5.967.r),
-        border: Border.all(color: const Color(0xFF98E089), width: 0.994),
+        borderRadius: BorderRadius.circular(6.r),
+        border: Border.all(color: const Color(0xFF98E089), width: 1),
       ),
       child: Text(
         '4 / 5',
         style: textTheme.bodySmall?.copyWith(
           color: const Color(0xFF667B99),
-          fontSize: 7.956.sp,
+          fontSize: 9.sp,
           fontWeight: FontWeight.w700,
         ),
       ),
@@ -360,16 +393,17 @@ class _InfoPill extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
+      padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
       decoration: BoxDecoration(
-        border: Border.all(color: const Color(0xFF9BA6A7), width: 0.3),
-        borderRadius: BorderRadius.circular(39.988.r),
+        border: Border.all(color: const Color(0xFF9BA6A7), width: 0.5),
+        borderRadius: BorderRadius.circular(40.r),
       ),
       child: Text(
         label,
         style: textTheme.bodySmall?.copyWith(
           color: const Color(0xFF667B99),
-          fontSize: 12.sp,
+          fontSize: 11.sp,
+          fontWeight: FontWeight.w400,
         ),
       ),
     );

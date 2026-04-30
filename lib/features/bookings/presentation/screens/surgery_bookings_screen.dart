@@ -1,6 +1,13 @@
 import 'package:flutter/material.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 
+import 'package:flutter/material.dart';
+import '../../../../core/extensions/screen_util_extensions.dart';
+
+import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import '../../../../core/extensions/screen_util_extensions.dart';
+
 class SurgeryBookingsScreen extends StatelessWidget {
   const SurgeryBookingsScreen({super.key});
 
@@ -37,7 +44,7 @@ class _SurgeryBookingCard extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(14.r),
+        borderRadius: BorderRadius.circular(16.r),
         boxShadow: const [
           BoxShadow(
             color: Color(0x33053453),
@@ -48,17 +55,17 @@ class _SurgeryBookingCard extends StatelessWidget {
         ],
       ),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(14.r),
+        borderRadius: BorderRadius.circular(16.r),
         child: Stack(
           children: [
-            // Decorative right-side background vector, matched to Figma card.
+            // Decorative right-side blue blob (larger and more pronounced like target)
             Positioned(
-              right: -84.w,
-              top: -16.h,
+              right: -100.w,
+              top: -40.h,
               child: IgnorePointer(
                 child: Container(
-                  width: 232.w,
-                  height: 232.h,
+                  width: 280.w,
+                  height: 280.h,
                   decoration: const BoxDecoration(
                     color: Color(0xFFDFF1F4),
                     shape: BoxShape.circle,
@@ -66,175 +73,237 @@ class _SurgeryBookingCard extends StatelessWidget {
                 ),
               ),
             ),
+
             Padding(
-              padding: EdgeInsets.fromLTRB(16.w, 10.h, 14.w, 10.h),
+              padding: EdgeInsets.fromLTRB(10.w, 9.h, 10.w, 9.h),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Icon(
-                Icons.airline_seat_flat_rounded,
-                size: 20.r,
-                color: const Color(0xFF5D758F),
-              ),
-              SizedBox(width: 8.w),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      item.procedure,
-                      style: textTheme.titleMedium?.copyWith(
-                        color: const Color(0xFF061E40),
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.w500,
+                  // ─────── TOP SECTION: Bed icon + procedure/hospital + logo + chat ───────
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Left: bed icon ABOVE procedure name
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SvgPicture.asset(
+                              'assets/icons/surgerybooking.svg',
+                              width: 18.r,
+                              height: 18.r,
+                            ),
+                            SizedBox(height: 8.h),
+                            Text(
+                              item.procedure,
+                              style: textTheme.titleMedium?.copyWith(
+                                color: const Color(0xFF061E40),
+                                fontSize: 18.sp,
+                                fontWeight: FontWeight.w500,
+                                height: 1.2,
+                              ),
+                            ),
+                            SizedBox(height: 2.h),
+                            Text(
+                              item.hospital,
+                              style: textTheme.bodyMedium?.copyWith(
+                                color: const Color(0xFF061E40),
+                                fontSize: 14.sp,
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                    SizedBox(height: 6.h),
-                    Text(
-                      item.hospital,
-                      style: textTheme.bodyMedium?.copyWith(
-                        color: const Color(0xFF061E40),
-                        fontSize: 14.sp,
-                        fontWeight: FontWeight.w400,
+                      SizedBox(width: 6.w),
+                      // Right: oladoc logo + chat bubble icon
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          // oladoc circular logo
+                          Container(
+                            width: 38.w,
+                            height: 38.h,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: const Color(0x36000000),
+                                width: 0.4,
+                              ),
+                            ),
+                            child: Center(
+                              child: RichText(
+                                text: TextSpan(
+                                  style: TextStyle(
+                                    fontSize: 9.sp,
+                                    fontWeight: FontWeight.w700,
+                                    height: 1,
+                                  ),
+                                  children: const [
+                                    TextSpan(
+                                      text: 'ola',
+                                      style: TextStyle(color: Color(0xFFF39A2E)),
+                                    ),
+                                    TextSpan(
+                                      text: 'doc',
+                                      style: TextStyle(color: Color(0xFF1F3A8A)),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                          SizedBox(height: 8.h),
+                          // chat bubble svg icon
+                          SvgPicture.asset(
+                            'assets/icons/surgerymessage.svg',
+                            width: 25.r,
+                            height: 25.r,
+                          ),
+                        ],
                       ),
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(
-                width: 30.w,
-                height: 30.h,
-                child: DecoratedBox(
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(
-                      color: const Color(0x36000000),
-                      width: 0.214,
-                    ),
+                    ],
                   ),
-                  child: const Center(
-                    child: Text(
-                      'olx',
-                      style: TextStyle(
-                        fontSize: 9,
-                        fontWeight: FontWeight.w600,
-                        color: Color(0xFFF39A2E),
+
+                  SizedBox(height: 5.h),
+                  Container(height: 0.5, color: const Color(0xFFCBD3D9)),
+                  SizedBox(height: 5.h),
+
+                  // ─────── MIDDLE SECTION: Doctor name | Specialty + qualification ───────
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Expanded(
+                        child: Text(
+                          item.doctor,
+                          style: textTheme.bodyMedium?.copyWith(
+                            color: const Color(0xFF061E40),
+                            fontSize: 15.sp,
+                            fontWeight: FontWeight.w300,
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: 8.h),
-          Container(height: 0.3.h, color: const Color(0xFF9BA6A7)),
-          SizedBox(height: 9.h),
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  item.doctor,
-                  style: textTheme.bodyMedium?.copyWith(
-                    color: const Color(0xFF061E40),
-                    fontSize: 14.sp,
-                    fontWeight: FontWeight.w400,
-                  ),
-                ),
-              ),
-              Text(
-                '${item.specialty}  | ${item.qualification}',
-                style: textTheme.bodySmall?.copyWith(
-                  color: const Color(0xFF333333),
-                  fontSize: 12.sp,
-                  fontWeight: FontWeight.w300,
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: 9.h),
-          Container(height: 0.3.h, color: const Color(0xFF9BA6A7)),
-          SizedBox(height: 9.h),
-          Row(
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Status:',
-                    style: textTheme.bodySmall?.copyWith(
-                      color: const Color(0xFF667B99),
-                      fontSize: 11.sp,
-                      fontWeight: FontWeight.w400,
-                    ),
-                  ),
-                  SizedBox(height: 4.h),
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFDEF8FB),
-                      borderRadius: BorderRadius.circular(13.r),
-                    ),
-                    child: Text(
-                      item.status,
-                      style: textTheme.bodyMedium?.copyWith(
-                        color: const Color(0xFF0590A0),
-                        fontSize: 12.sp,
-                        fontWeight: FontWeight.w500,
+                      SizedBox(width: 8.w),
+                      Text(
+                        '${item.specialty}  |  ${item.qualification}',
+                        style: textTheme.bodySmall?.copyWith(
+                          color: const Color(0xFF667B99),
+                          fontSize: 12.sp,
+                          fontWeight: FontWeight.w300,
+                        ),
                       ),
+                    ],
+                  ),
+
+                  SizedBox(height: 8.h),
+                  Container(height: 0.5, color: const Color(0xFFCBD3D9)),
+                  SizedBox(height: 8.h),
+
+                  // ─────── BOTTOM SECTION: Status | Date Created    View Details ───────
+                  IntrinsicHeight(
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        // Status column
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              'Status:',
+                              style: textTheme.bodySmall?.copyWith(
+                                color: const Color(0xFF667B99),
+                                fontSize: 12.sp,
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                            SizedBox(height: 3.h),
+                            Container(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 12.w,
+                                vertical: 5.h,
+                              ),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFDEF8FB),
+                                borderRadius: BorderRadius.circular(20.r),
+                              ),
+                              child: Text(
+                                item.status,
+                                style: textTheme.bodyMedium?.copyWith(
+                                  color: const Color(0xFF0590A0),
+                                  fontSize: 13.sp,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+
+                        // Vertical divider between Status and Date Created
+                        Container(
+                          width: 0.5,
+                          margin: EdgeInsets.symmetric(horizontal: 14.w),
+                          color: const Color(0xFF9BA6A7),
+                        ),
+
+                        // Date Created column
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              'Date Created',
+                              style: textTheme.bodySmall?.copyWith(
+                                color: const Color(0xFF667B99),
+                                fontSize: 12.sp,
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                            SizedBox(height: 3.h),
+                            Text(
+                              item.dateCreated,
+                              style: textTheme.bodySmall?.copyWith(
+                                color: const Color(0xFF667B99),
+                                fontSize: 13.sp,
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                          ],
+                        ),
+
+                        const Spacer(),
+
+                        // Pill-shaped View Details button
+                        SizedBox(
+                          height: 40.h,
+                          child: OutlinedButton(
+                            onPressed: () {},
+                            style: OutlinedButton.styleFrom(
+                              backgroundColor: Colors.transparent,
+                              side: const BorderSide(
+                                color: Color(0xFF9BA6A7),
+                                width: 0.5,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(40.r),
+                              ),
+                              padding: EdgeInsets.symmetric(horizontal: 18.w),
+                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                            ),
+                            child: Text(
+                              'View Details',
+                              style: textTheme.bodySmall?.copyWith(
+                                color: const Color(0xFF061E40),
+                                fontSize: 13.sp,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                ],
-              ),
-              SizedBox(width: 22.w),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Date Created',
-                    style: textTheme.bodySmall?.copyWith(
-                      color: const Color(0xFF667B99),
-                      fontSize: 12.sp,
-                    ),
-                  ),
-                  SizedBox(height: 4.h),
-                  Text(
-                    item.dateCreated,
-                    style: textTheme.bodySmall?.copyWith(
-                      color: const Color(0xFF667B99),
-                      fontSize: 12.sp,
-                    ),
-                  ),
-                ],
-              ),
-              const Spacer(),
-              SizedBox(
-                width: 86.w,
-                child: OutlinedButton(
-                  onPressed: () {},
-                  style: OutlinedButton.styleFrom(
-                    side: const BorderSide(color: Color(0xFF9BA6A7), width: 0.275),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(39.433.r),
-                    ),
-                    padding: EdgeInsets.symmetric(vertical: 8.h),
-                    minimumSize: Size(86.w, 30.h),
-                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                  ),
-                  child: Text(
-                    'View Details',
-                    style: textTheme.bodySmall?.copyWith(
-                      color: const Color(0xFF061E40),
-                      fontSize: 12.sp,
-                      fontWeight: FontWeight.w400,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
                 ],
               ),
             ),
