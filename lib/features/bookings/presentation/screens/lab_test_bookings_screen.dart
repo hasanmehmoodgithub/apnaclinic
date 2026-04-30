@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/router/app_routes.dart';
@@ -66,8 +67,6 @@ class _LabTestBookingCard extends StatelessWidget {
   const _LabTestBookingCard({required this.booking});
 
   final LabTestBookingItemModel booking;
-  static const String _labIconUrl =
-      'https://www.figma.com/api/mcp/asset/ecd4fd50-b34d-42f4-a75f-7481960f99da';
 
   @override
   Widget build(BuildContext context) {
@@ -110,7 +109,10 @@ class _LabTestBookingCard extends StatelessWidget {
                 SizedBox(
                   width: 24.w,
                   height: 24.h,
-                  child: _LabIcon(url: _labIconUrl),
+                  child: SvgPicture.asset(
+                    Assets.labTestWalkin,
+                    fit: BoxFit.contain,
+                  ),
                 ),
                 SizedBox(height: 8.h),
                 Text(
@@ -251,25 +253,6 @@ class _LabTestBookingCard extends StatelessWidget {
         SizedBox(height: 4.h),
         child,
       ],
-    );
-  }
-}
-
-class _LabIcon extends StatelessWidget {
-  final String url;
-
-  const _LabIcon({required this.url});
-
-  @override
-  Widget build(BuildContext context) {
-    return Image.network(
-      url,
-      fit: BoxFit.contain,
-      errorBuilder: (_, __, ___) => Icon(
-        Icons.science_outlined,
-        size: 20.r,
-        color: const Color(0xFF6F7D95),
-      ),
     );
   }
 }

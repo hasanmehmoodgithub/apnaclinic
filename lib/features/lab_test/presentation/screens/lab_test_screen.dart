@@ -16,7 +16,6 @@ import '../../../../generated/assets.dart';
 import '../../domain/entities/lab_test_item_entity.dart';
 import '../cubit/lab_test_cubit.dart';
 import '../cubit/lab_test_state.dart';
-import '../lab_test_figma_assets.dart';
 import '../lab_test_route_args.dart';
 import '../widgets/lab_test_figma_image.dart';
 import '../widgets/lab_test_price_pill.dart';
@@ -278,7 +277,7 @@ class _LabTestScreenState extends State<LabTestScreen> {
                                   ),
                                   const SizedBox(width: 4),
                                   LabTestFigmaImage(
-                                    url: LabTestFigmaAssets.citySheetChevron,
+                                    url: Assets.labTestCityChevron,
                                     width: 8,
                                     height: 4,
                                   ),
@@ -331,7 +330,7 @@ class _LabTestScreenState extends State<LabTestScreen> {
                                 ),
                               ),
                               LabTestFigmaImage(
-                                url: LabTestFigmaAssets.citySheetSearchGlyph,
+                                url: Assets.labTestSearchGlyphSmall,
                                 width: 13,
                                 height: 13,
                               ),
@@ -721,7 +720,7 @@ class _SelectCitySheetState extends State<_SelectCitySheet> {
             mainAxisSize: MainAxisSize.min,
             children: [
               LabTestFigmaImage(
-                url: LabTestFigmaAssets.citySheetHandle,
+                url: Assets.labTestSheetHandle,
                 width: 37,
                 height: 4,
               ),
@@ -751,7 +750,7 @@ class _SelectCitySheetState extends State<_SelectCitySheet> {
                 child: Row(
                   children: [
                     LabTestFigmaImage(
-                      url: LabTestFigmaAssets.citySheetSearchFieldIcon,
+                      url: Assets.labTestSearchGlyph,
                       width: 19,
                       height: 19,
                     ),
