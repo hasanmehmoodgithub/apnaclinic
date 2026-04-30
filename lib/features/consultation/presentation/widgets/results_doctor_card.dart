@@ -4,10 +4,10 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/router/app_routes.dart';
 import '../constants/consultation_ui_config.dart';
+import 'rating_progress_badge.dart';
 import 'results_doctor_item.dart';
 import 'results_doctor_thumb.dart';
 import 'results_partner_badge.dart';
-import 'results_rating_badge.dart';
 
 class ResultsDoctorCard extends StatelessWidget {
   const ResultsDoctorCard({
@@ -73,9 +73,24 @@ class ResultsDoctorCard extends StatelessWidget {
                                   ),
                                 ),
                               ),
-                              ResultsRatingBadge(
-                                textTheme: textTheme,
-                                rating: doctor.rating,
+                              SizedBox(
+                                width: 46.w,
+                                height: 16.h,
+                                child: FittedBox(
+                                  fit: BoxFit.contain,
+                                  child: SizedBox(
+                                    width: 72.w,
+                                    height: 30.h,
+                                    child: RatingProgressBadge(
+                                      rating: double.tryParse(
+                                            doctor.rating.split('/').first.trim(),
+                                          ) ??
+                                          0,
+                                      maxRating: 5,
+                                      textTheme: textTheme,
+                                    ),
+                                  ),
+                                ),
                               ),
                             ],
                           ),

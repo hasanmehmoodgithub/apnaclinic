@@ -80,7 +80,7 @@ class PharmacyMainContentSection extends StatelessWidget {
             itemCount: medicines.length,
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
-              mainAxisSpacing: 16.h,
+              mainAxisSpacing: 0.h,
               crossAxisSpacing: 8.w,
               childAspectRatio: 0.76,
             ),

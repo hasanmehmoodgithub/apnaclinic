@@ -8,18 +8,22 @@ class LabTestBookingsMockApi {
 
     final response = <Map<String, dynamic>>[
       {
-        'orderNo': '224',
-        'reportTitle': 'Lab Test Report',
+        'orderNo': '85048960',
+        'reportTitle': 'Lipid Profile',
         'statusLabel': 'Confirmed',
-        'totalFee': 'Rs.30,000/-',
+        'totalFee': 'Rs. 1,920/-',
+        'discountedFee': 'Rs. 1,920/-',
+        'originalFee': 'Rs. 2,400/-',
         'dateLabel': '11 Feb,2025',
         'isConfirmed': true,
       },
       {
-        'orderNo': '225',
-        'reportTitle': 'Lab Test Report',
+        'orderNo': '85048961',
+        'reportTitle': 'Lipid Profile',
         'statusLabel': 'Canceled',
         'totalFee': 'Rs.30,000/-',
+        'discountedFee': 'Rs. 27,000/-',
+        'originalFee': 'Rs. 30,000/-',
         'dateLabel': '11 Feb,2025',
         'isConfirmed': false,
       },

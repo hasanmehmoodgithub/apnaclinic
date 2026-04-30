@@ -79,6 +79,10 @@ class _DoctorConsultationBookDoctorScreenState
 
   @override
   Widget build(BuildContext context) {
+    if (_isLoading) {
+      return _buildFullScreenShimmer(context);
+    }
+
     final textTheme = Theme.of(context).textTheme;
     final doctorName = _doctorDetail?.name ?? widget.doctorName;
     final specialty = _doctorDetail?.specialty ?? widget.specialty;
@@ -193,24 +197,18 @@ class _DoctorConsultationBookDoctorScreenState
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              if (_isLoading)
-                                AppShimmerCard(
-                                  height: 300.h,
-                                  borderRadius: 12.r,
-                                )
-                              else
-                                DoctorProfileSection(
-                                  doctorName: doctorName,
-                                  specialty: specialty,
-                                  imageUrl: imageUrl,
-                                  qualification: qualification,
-                                  verifiedPatientsCount: verifiedPatientsCount,
-                                  experience: experience,
-                                  satisfiedText: satisfiedText,
-                                  rating: ratingValue,
-                                  description: description,
-                                  textTheme: textTheme,
-                                ),
+                              DoctorProfileSection(
+                                doctorName: doctorName,
+                                specialty: specialty,
+                                imageUrl: imageUrl,
+                                qualification: qualification,
+                                verifiedPatientsCount: verifiedPatientsCount,
+                                experience: experience,
+                                satisfiedText: satisfiedText,
+                                rating: ratingValue,
+                                description: description,
+                                textTheme: textTheme,
+                              ),
                               SizedBox(height: 16.h),
                               const Divider(color: Color(0xFFE4E8ED), thickness: 1),
                               SizedBox(height: 14.h),
@@ -270,7 +268,7 @@ class _DoctorConsultationBookDoctorScreenState
                               ),
                             ),
                             child: Text(
-                              'Get Appointment  $fee',
+                              'Get Appointment',
                               style: textTheme.titleMedium?.copyWith(
                                 color: Colors.white,
                                 fontSize: 18.sp,
@@ -485,6 +483,103 @@ class _DoctorConsultationBookDoctorScreenState
       width: width,
       height: height,
       fit: BoxFit.cover,
+    );
+  }
+
+  Widget _buildFullScreenShimmer(BuildContext context) {
+    return Scaffold(
+      body: DecoratedBox(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              ConsultationUiConfig.pageTopGradient,
+              ConsultationUiConfig.pageBottomGradient,
+            ],
+            stops: [0.09, 0.36],
+          ),
+        ),
+        child: SafeArea(
+          child: Column(
+            children: [
+              Padding(
+                padding: EdgeInsets.fromLTRB(22.w, 8.h, 22.w, 8.h),
+                child: Row(
+                  children: [
+                    AppShimmerCircle(diameter: 24.r),
+                    SizedBox(width: 12.w),
+                    Expanded(child: AppShimmerText(height: 22.h, borderRadius: 8.r)),
+                    SizedBox(width: 36.w),
+                  ],
+                ),
+              ),
+              SizedBox(height: 8.h),
+              AppShimmerCard(
+                width: 240.w,
+                height: 178.h,
+                borderRadius: 14.r,
+              ),
+              SizedBox(height: 10.h),
+              Expanded(
+                child: Container(
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(42.r),
+                    ),
+                  ),
+                  child: Column(
+                    children: [
+                      Expanded(
+                        child: SingleChildScrollView(
+                          padding: EdgeInsets.fromLTRB(20.w, 16.h, 20.w, 16.h),
+                          child: Column(
+                            children: [
+                              AppShimmerCard(
+                                height: 300.h,
+                                borderRadius: 12.r,
+                              ),
+                              SizedBox(height: 14.h),
+                              AppShimmerCard(
+                                height: 74.h,
+                                borderRadius: 12.r,
+                              ),
+                              SizedBox(height: 14.h),
+                              AppShimmerCard(
+                                height: 116.h,
+                                borderRadius: 10.r,
+                              ),
+                              SizedBox(height: 14.h),
+                              AppShimmerCard(
+                                height: 52.h,
+                                borderRadius: 10.r,
+                              ),
+                              SizedBox(height: 14.h),
+                              AppShimmerCard(
+                                height: 78.h,
+                                borderRadius: 10.r,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 12.h),
+                        child: AppShimmerCard(
+                          height: 58.h,
+                          borderRadius: 18.r,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

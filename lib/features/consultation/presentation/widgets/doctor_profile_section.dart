@@ -49,8 +49,8 @@ class DoctorProfileSection extends StatelessWidget {
                     doctorName,
                     style: textTheme.titleMedium?.copyWith(
                       color: ConsultationUiConfig.primaryText,
-                      fontSize: 24.sp,
-                      height: 1.05,
+                      fontSize: 22.sp,
+                      // height: 1.05,
                       fontWeight: FontWeight.w400,
                     ),
                   ),
@@ -305,13 +305,14 @@ class _StatCard extends StatelessWidget {
         border: Border.all(color: const Color(0xFFE2E6EB), width: 1),
       ),
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             title,
             style: textTheme.bodySmall?.copyWith(
               color: const Color(0xFF7A8797),
-              fontSize: 14.sp,
+              fontSize: 13.sp,
               height: 1.2,
               fontWeight: FontWeight.w500,
             ),
@@ -321,7 +322,7 @@ class _StatCard extends StatelessWidget {
             value,
             style: textTheme.bodyMedium?.copyWith(
               color: const Color(0xFF1E2D3F),
-              fontSize: 16.sp,
+              fontSize: 15.sp,
               fontWeight: FontWeight.w700,
             ),
           ),

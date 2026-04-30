@@ -92,6 +92,28 @@ class LabTestCheckoutArgs {
   final List<String> requirementLines;
 }
 
+class LabTestViewDetailsArgs {
+  const LabTestViewDetailsArgs({
+    required this.testTitle,
+    required this.labName,
+    required this.labLogoUrl,
+    required this.partnerLogoUrl,
+    required this.sampleType,
+    required this.discountedFee,
+    required this.originalFee,
+    required this.discountCode,
+  });
+
+  final String testTitle;
+  final String labName;
+  final String labLogoUrl;
+  final String partnerLogoUrl;
+  final String sampleType;
+  final String discountedFee;
+  final String originalFee;
+  final String discountCode;
+}
+
 class LabTestCartItem {
   const LabTestCartItem({
     required this.testTitle,

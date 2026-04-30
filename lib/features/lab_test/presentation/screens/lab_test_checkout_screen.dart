@@ -7,7 +7,7 @@ import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/preference/app_pref.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/widgets/app_scaffold_gradient.dart';
-import '../lab_test_figma_assets.dart';
+import '../../../../generated/assets.dart';
 import '../lab_test_route_args.dart';
 import '../widgets/lab_test_figma_image.dart';
 
@@ -144,7 +144,7 @@ class _LabTestCheckoutScreenState extends State<LabTestCheckoutScreen> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       LabTestFigmaImage(
-                        url: LabTestFigmaAssets.successCheckmark,
+                        url: Assets.labTestBookingConfirmationGreenCheck,
                         width: 60,
                         height: 60,
                       ),
@@ -196,7 +196,7 @@ class _LabTestCheckoutScreenState extends State<LabTestCheckoutScreen> {
                         child: Row(
                           children: [
                             SvgPicture.asset(
-                              LabTestFigmaAssets.checkoutDiscountIcon,
+                              Assets.labTestDiscountIcon,
                               width: 16,
                               height: 16,
                               colorFilter: const ColorFilter.mode(
@@ -779,7 +779,7 @@ class _PaymentBreakdownCard extends StatelessWidget {
                 //             Transform.rotate(
                 //               angle: 3.14159,
                 //               child: LabTestFigmaImage(
-                //                 url: LabTestFigmaAssets.checkoutDiscountIcon,
+                //                 url: Assets.labTestDiscountIcon,
                 //                 width: 15.394,
                 //                 height: 16,
                 //               ),
@@ -1052,7 +1052,7 @@ class _PatientFormSection extends StatelessWidget {
           controller: phoneController,
           hint: 'Type or select from phonebook',
           suffix: LabTestFigmaImage(
-            url: LabTestFigmaAssets.checkoutAddressBook,
+            url: Assets.labTestAddressBook,
             width: 16,
             height: 16,
           ),
