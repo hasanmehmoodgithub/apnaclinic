@@ -10,7 +10,6 @@ import '../../../../core/preference/app_pref.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/widgets/app_scaffold_gradient.dart';
 import '../../../../generated/assets.dart';
-import '../lab_test_figma_assets.dart';
 import '../lab_test_route_args.dart';
 import '../widgets/lab_test_figma_image.dart';
 import '../widgets/lab_test_price_pill.dart';
@@ -185,8 +184,7 @@ class _LabTestBookingScreenState extends State<LabTestBookingScreen> {
                                 Expanded(
                                   child: _MethodTile(
                                     title: 'Walk In',
-                                    iconUrl: LabTestFigmaAssets
-                                        .bookingLabTestMethodIcon,
+                                    iconUrl: Assets.labTestWalkin,
                                     selected: _labVisit,
                                     onTap: _labVisit
                                         ? () {}
@@ -200,8 +198,7 @@ class _LabTestBookingScreenState extends State<LabTestBookingScreen> {
                                 Expanded(
                                   child: _MethodTile(
                                     title: 'Home Sample',
-                                    iconUrl: LabTestFigmaAssets
-                                        .bookingHomeSampleIcon,
+                                    iconUrl: Assets.labTestHomeSample,
                                     selected: !_labVisit,
                                     onTap: !_labVisit
                                         ? () {}
@@ -570,7 +567,8 @@ class _TestSummaryCard extends StatelessWidget {
               borderRadius: BorderRadius.vertical(
                 bottom: Radius.circular(14),
               ),
-            ),            padding: const EdgeInsets.fromLTRB(14, 13, 14, 13),
+            ),
+            padding: const EdgeInsets.fromLTRB(14, 13, 14, 13),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [

@@ -4,6 +4,8 @@ class LabTestBookingItemModel {
     required this.reportTitle,
     required this.statusLabel,
     required this.totalFee,
+    required this.discountedFee,
+    required this.originalFee,
     required this.dateLabel,
     required this.isConfirmed,
   });
@@ -12,6 +14,8 @@ class LabTestBookingItemModel {
   final String reportTitle;
   final String statusLabel;
   final String totalFee;
+  final String discountedFee;
+  final String originalFee;
   final String dateLabel;
   final bool isConfirmed;
 
@@ -21,6 +25,8 @@ class LabTestBookingItemModel {
       reportTitle: (json['reportTitle'] ?? '').toString(),
       statusLabel: (json['statusLabel'] ?? '').toString(),
       totalFee: (json['totalFee'] ?? '').toString(),
+      discountedFee: (json['discountedFee'] ?? json['totalFee'] ?? '').toString(),
+      originalFee: (json['originalFee'] ?? json['totalFee'] ?? '').toString(),
       dateLabel: (json['dateLabel'] ?? '').toString(),
       isConfirmed: json['isConfirmed'] == true,
     );
