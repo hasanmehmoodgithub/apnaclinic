@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
+import '../../../../core/constants/app_colors.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../generated/assets.dart';
 
@@ -44,18 +45,14 @@ class PharmacyQuantityStepper extends StatelessWidget {
       padding: EdgeInsets.symmetric(horizontal: containerPadding),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(radius),
-        border: Border.all(color: const Color(0xFFCBD3DC), width: 0.8),
-        color: Colors.white,
+        border: Border.all(color: AppColors.clrCBD3DC, width: 0.8),
+        color: AppColors.clrWhite,
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           if (showBasketIcon) ...[
-            SvgPicture.asset(
-              Assets.iconsBasket,
-              width: 14.r,
-              height: 14.r,
-            ),
+            SvgPicture.asset(Assets.iconsBasket, width: 14.r, height: 14.r),
             SizedBox(width: spacing),
           ],
           _ActionIconButton(label: '-', onTap: onRemove, fontSize: actionFont),
@@ -63,10 +60,10 @@ class PharmacyQuantityStepper extends StatelessWidget {
           Text(
             '$quantity',
             style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                  color: const Color(0xFF667B99),
-                  fontWeight: FontWeight.w400,
-                  fontSize: qtyFont,
-                ),
+              color: AppColors.clr667B99,
+              fontWeight: FontWeight.w400,
+              fontSize: qtyFont,
+            ),
           ),
           SizedBox(width: spacing),
           _ActionIconButton(label: '+', onTap: onAdd, fontSize: actionFont),
@@ -95,10 +92,10 @@ class _ActionIconButton extends StatelessWidget {
       child: Text(
         label,
         style: Theme.of(context).textTheme.titleSmall?.copyWith(
-              color: const Color(0xFF667B99),
-              fontWeight: FontWeight.w700,
-              fontSize: fontSize,
-            ),
+          color: AppColors.clr667B99,
+          fontWeight: FontWeight.w700,
+          fontSize: fontSize,
+        ),
       ),
     );
   }

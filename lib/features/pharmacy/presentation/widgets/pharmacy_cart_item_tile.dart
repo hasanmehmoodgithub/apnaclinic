@@ -4,6 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import '../../../../components/shimmer/app_shimmer.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
+import '../../../../core/l10n/app_localizations.dart';
 import '../../domain/entities/pharmacy_cart_item_entity.dart';
 import 'pharmacy_quantity_stepper.dart';
 
@@ -21,6 +22,7 @@ class PharmacyCartItemTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -29,7 +31,7 @@ class PharmacyCartItemTile extends StatelessWidget {
           width: 108.r,
           height: 88.r,
           decoration: BoxDecoration(
-            color: const Color(0xFFECECEC),
+            color: AppColors.clrECECEC,
             borderRadius: BorderRadius.circular(22.r),
           ),
           clipBehavior: Clip.antiAlias,
@@ -43,11 +45,11 @@ class PharmacyCartItemTile extends StatelessWidget {
               shape: ShimmerShape.roundedRectangle,
             ),
             errorWidget: (context, url, error) => const ColoredBox(
-              color: Color(0xFFE9EEF3),
+              color: AppColors.clrE9EEF3,
               child: Center(
                 child: Icon(
                   Icons.medication_rounded,
-                  color: Color(0xFF8091A8),
+                  color: AppColors.clr8091A8,
                 ),
               ),
             ),
@@ -65,7 +67,7 @@ class PharmacyCartItemTile extends StatelessWidget {
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: theme.textTheme.titleMedium?.copyWith(
-                    color: const Color(0xFF061E40),
+                    color: AppColors.clr060,
                     fontWeight: FontWeight.w700,
                     fontSize: 14.sp,
                     height: 1.2,
@@ -98,11 +100,16 @@ class PharmacyCartItemTile extends StatelessWidget {
                               children: [
                                 TextSpan(
                                   text: '${item.quantity}x ',
-                                  style: const TextStyle(color: AppColors.clr667B99),
+                                  style: const TextStyle(
+                                    color: AppColors.clr667B99,
+                                  ),
                                 ),
                                 TextSpan(
-                                  text: 'Rs ${item.medicine.price.toStringAsFixed(0)}/-',
-                                  style: const TextStyle(color: AppColors.clr060),
+                                  text:
+                                      '${l10n.pharmacyCurrencyPrefix}${item.medicine.price.toStringAsFixed(0)}/-',
+                                  style: const TextStyle(
+                                    color: AppColors.clr060,
+                                  ),
                                 ),
                               ],
                             ),

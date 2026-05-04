@@ -174,5 +174,15 @@
   "onboardingLaboratoryTitle": "Laboratory Testing",
   "onboardingLaboratorySubtitle": "Access reliable lab tests with accurate results.",
   "onboardingSurgeryTitle": "Surgery Booking",
-  "onboardingSurgerySubtitle": "Book your surgery with ease."
+  "onboardingSurgerySubtitle": "Book your surgery with ease.",
+  "pharmacyMoreLike": "More Like",
+  "pharmacyAddToCart": "Add to Cart",
+  "pharmacyAddToCartLower": "Add to cart",
+  "freeDoctorTitle": "Free Doctor",
+  "freeDoctorOpenAppCta": "Open Fikrfree app",
+  "freeDoctorOpenAppError": "Could not open FikrFree right now.",
+  "freeDoctorConsultationTitle": "24/7 Free Doctor Consultation",
+  "freeDoctorPoint1": "This service is available exclusively for Bima m-Health subscribers.",
+  "freeDoctorPoint2": "Get 24/7 access to qualified doctors for general medical support and much more.",
+  "freeDoctorPoint3": "To avail the service, subscribe to BIMA m-Health via FikrFree."
 }

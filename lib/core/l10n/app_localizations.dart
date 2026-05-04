@@ -733,6 +733,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Book your surgery with ease.'**
   String get onboardingSurgerySubtitle;
+
+  /// No description provided for @pharmacyMoreLike.
+  ///
+  /// In en, this message translates to:
+  /// **'More Like'**
+  String get pharmacyMoreLike;
+
+  /// No description provided for @pharmacyAddToCart.
+  ///
+  /// In en, this message translates to:
+  /// **'Add to Cart'**
+  String get pharmacyAddToCart;
+
+  /// No description provided for @pharmacyAddToCartLower.
+  ///
+  /// In en, this message translates to:
+  /// **'Add to cart'**
+  String get pharmacyAddToCartLower;
+
+  /// No description provided for @freeDoctorTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Free Doctor'**
+  String get freeDoctorTitle;
+
+  /// No description provided for @freeDoctorOpenAppCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Fikrfree app'**
+  String get freeDoctorOpenAppCta;
+
+  /// No description provided for @freeDoctorOpenAppError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not open FikrFree right now.'**
+  String get freeDoctorOpenAppError;
+
+  /// No description provided for @freeDoctorConsultationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'24/7 Free Doctor Consultation'**
+  String get freeDoctorConsultationTitle;
+
+  /// No description provided for @freeDoctorPoint1.
+  ///
+  /// In en, this message translates to:
+  /// **'This service is available exclusively for Bima m-Health subscribers.'**
+  String get freeDoctorPoint1;
+
+  /// No description provided for @freeDoctorPoint2.
+  ///
+  /// In en, this message translates to:
+  /// **'Get 24/7 access to qualified doctors for general medical support and much more.'**
+  String get freeDoctorPoint2;
+
+  /// No description provided for @freeDoctorPoint3.
+  ///
+  /// In en, this message translates to:
+  /// **'To avail the service, subscribe to BIMA m-Health via FikrFree.'**
+  String get freeDoctorPoint3;
 }
 
 class _AppLocalizationsDelegate

@@ -105,5 +105,15 @@
   "onboardingLaboratoryTitle": "لیبارٹری ٹیسٹنگ",
   "onboardingLaboratorySubtitle": "درست نتائج کے ساتھ قابلِ اعتماد لیب ٹیسٹس حاصل کریں۔",
   "onboardingSurgeryTitle": "سرجری بکنگ",
-  "onboardingSurgerySubtitle": "اپنی سرجری آسانی سے بک کریں۔"
+  "onboardingSurgerySubtitle": "اپنی سرجری آسانی سے بک کریں۔",
+  "pharmacyMoreLike": "مزید اسی طرح",
+  "pharmacyAddToCart": "کارٹ میں شامل کریں",
+  "pharmacyAddToCartLower": "کارٹ میں شامل کریں",
+  "freeDoctorTitle": "مفت ڈاکٹر",
+  "freeDoctorOpenAppCta": "Fikrfree ایپ کھولیں",
+  "freeDoctorOpenAppError": "اس وقت FikrFree نہیں کھل سکی۔",
+  "freeDoctorConsultationTitle": "24/7 مفت ڈاکٹر مشاورت",
+  "freeDoctorPoint1": "یہ سروس صرف Bima m-Health سبسکرائبرز کے لیے دستیاب ہے۔",
+  "freeDoctorPoint2": "عمومی طبی رہنمائی اور مزید کے لیے 24/7 مستند ڈاکٹروں تک رسائی حاصل کریں۔",
+  "freeDoctorPoint3": "سروس حاصل کرنے کے لیے FikrFree کے ذریعے BIMA m-Health سبسکرائب کریں۔"
 }

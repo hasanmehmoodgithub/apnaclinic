@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/constants/app_colors.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 
 /// Search input used by the pharmacy main panel.
@@ -25,24 +26,24 @@ class PharmacyMainSearchFieldWidget extends StatelessWidget {
         initialValue: searchQuery,
         decoration: InputDecoration(
           hintText: searchHint,
-          suffixIcon: const Icon(Icons.search, color: Color(0xFF9AA4B2)),
+          suffixIcon: const Icon(Icons.search, color: AppColors.clr9AA4B2),
           filled: true,
-          fillColor: Colors.white,
+          fillColor: AppColors.clrWhite,
           contentPadding: EdgeInsets.symmetric(
             horizontal: 14.w,
             vertical: 14.h,
           ),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(14.r),
-            borderSide: const BorderSide(color: Color(0xFFE3E8EE)),
+            borderSide: const BorderSide(color: AppColors.clrE3E8EE),
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(14.r),
-            borderSide: const BorderSide(color: Color(0xFFE3E8EE)),
+            borderSide: const BorderSide(color: AppColors.clrE3E8EE),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(14.r),
-            borderSide: const BorderSide(color: Color(0xFF9EC7E8)),
+            borderSide: const BorderSide(color: AppColors.clr9EC7E8),
           ),
         ),
       ),

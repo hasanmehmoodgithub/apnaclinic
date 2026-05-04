@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/constants/app_colors.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 
 /// Reusable header for pharmacy flow screens (cart, checkout).
@@ -23,10 +24,7 @@ class PharmacyFlowHeaderWidget extends StatelessWidget {
         children: [
           IconButton(
             onPressed: onBackTap,
-            icon: const Icon(
-              Icons.arrow_back_rounded,
-              color: Color(0xFF061E40),
-            ),
+            icon: const Icon(Icons.arrow_back_rounded, color: AppColors.clr060),
           ),
           Expanded(
             child: Text(
@@ -34,7 +32,7 @@ class PharmacyFlowHeaderWidget extends StatelessWidget {
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.w700,
-                color: const Color(0xFF061E40),
+                color: AppColors.clr060,
                 fontSize: 31.sp / 1.6,
               ),
             ),

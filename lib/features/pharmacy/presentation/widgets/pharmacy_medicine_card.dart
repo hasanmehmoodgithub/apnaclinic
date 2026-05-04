@@ -5,7 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../../components/shimmer/app_shimmer.dart';
+import '../../../../core/constants/app_colors.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
+import '../../../../core/l10n/app_localizations.dart';
 import '../../../../generated/assets.dart';
 import '../../domain/entities/pharmacy_medicine_entity.dart';
 
@@ -23,6 +25,7 @@ class PharmacyMedicineCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     return InkWell(
       onTap: onTap,
@@ -50,9 +53,12 @@ class PharmacyMedicineCard extends StatelessWidget {
                       ),
                       errorWidget: (context, url, error) {
                         return const ColoredBox(
-                          color: Color(0xFFF0F4F8),
+                          color: AppColors.clrF0F4F8,
                           child: Center(
-                            child: Icon(Icons.medication_rounded, color: Color(0xFF8A9AAE)),
+                            child: Icon(
+                              Icons.medication_rounded,
+                              color: AppColors.clr8A9AAE,
+                            ),
                           ),
                         );
                       },
@@ -66,14 +72,20 @@ class PharmacyMedicineCard extends StatelessWidget {
                     onPressed: onAddToCart,
                     icon: SvgPicture.asset(
                       Assets.iconsBasket,
-                      color: const Color(0xFF061E40),
+                      colorFilter: const ColorFilter.mode(
+                        AppColors.clr060,
+                        BlendMode.srcIn,
+                      ),
                     ),
                     style: IconButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      side: const BorderSide(color: Color(0xFF9BA6A7), width: 0.8),
+                      backgroundColor: AppColors.clrWhite,
+                      side: const BorderSide(
+                        color: AppColors.clr9BA6A7,
+                        width: 0.8,
+                      ),
                       minimumSize: Size(32.r, 32.r),
                       maximumSize: Size(32.r, 32.r),
-                      padding:  EdgeInsets.all(8.r),
+                      padding: EdgeInsets.all(8.r),
                     ),
                   ),
                 ),
@@ -95,7 +107,7 @@ class PharmacyMedicineCard extends StatelessWidget {
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                           style: theme.textTheme.titleSmall?.copyWith(
-                            color: const Color(0xFF061E40),
+                            color: AppColors.clr060,
                             fontWeight: FontWeight.w700,
                             fontSize: 12.sp,
                             height: 1.25,
@@ -103,22 +115,22 @@ class PharmacyMedicineCard extends StatelessWidget {
                         ),
                         SizedBox(height: 4.h),
                         Text(
-                          'Rs ${medicine.price.toStringAsFixed(0)}',
+                          '${l10n.pharmacyCurrencyPrefix}${medicine.price.toStringAsFixed(0)}',
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: theme.textTheme.titleSmall?.copyWith(
-                            color: const Color(0xFF203A59),
+                            color: AppColors.clr203A59,
                             fontWeight: FontWeight.w700,
                             fontSize: 14.sp,
                           ),
                         ),
                         if (medicine.oldPrice > medicine.price)
                           Text(
-                            'Rs ${medicine.oldPrice.toStringAsFixed(0)}',
+                            '${l10n.pharmacyCurrencyPrefix}${medicine.oldPrice.toStringAsFixed(0)}',
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: theme.textTheme.bodySmall?.copyWith(
-                              color: const Color(0xFF7C8EA5),
+                              color: AppColors.clr7C8EA5,
                               decoration: TextDecoration.lineThrough,
                               fontSize: 10.sp,
                             ),
@@ -158,7 +170,7 @@ class _CompanyLogo extends StatelessWidget {
         width: 28,
         height: 28,
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: AppColors.clrWhite,
           borderRadius: BorderRadius.circular(8),
         ),
         clipBehavior: Clip.antiAlias,

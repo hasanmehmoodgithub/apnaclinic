@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/constants/app_colors.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import 'pharmacy_cart_icon_with_count.dart';
 
@@ -29,7 +30,7 @@ class PharmacyScreenHeaderWidget extends StatelessWidget {
             onPressed: onBackTap,
             icon: const Icon(
               Icons.arrow_back_rounded,
-              color: Color(0xFF08294D),
+              color: AppColors.clr08294D,
             ),
           ),
           Expanded(
@@ -37,7 +38,7 @@ class PharmacyScreenHeaderWidget extends StatelessWidget {
               title,
               textAlign: TextAlign.center,
               style: theme.textTheme.titleLarge?.copyWith(
-                color: const Color(0xFF0E2D55),
+                color: AppColors.clr0E2D55,
                 fontWeight: FontWeight.w700,
                 fontSize: 21.sp,
               ),

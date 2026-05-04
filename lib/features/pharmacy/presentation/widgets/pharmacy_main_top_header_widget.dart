@@ -1,6 +1,7 @@
 import 'package:apnaclinic/core/extensions/context_extensions.dart';
 import 'package:flutter/material.dart';
 
+import '../../../../core/constants/app_colors.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../generated/assets.dart';
 import 'pharmacy_cart_icon_with_count.dart';
@@ -29,7 +30,11 @@ class PharmacyMainTopHeaderWidget extends StatelessWidget {
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: [Color(0xFFB8EDE5), Color(0xFFE8F8F5), Color(0xFFF5FBFA)],
+          colors: [
+            AppColors.clrB8EDE5,
+            AppColors.clrE8F8F5,
+            AppColors.clrF5FBFA,
+          ],
           stops: [0.0, 0.55, 1.0],
         ),
       ),
@@ -44,7 +49,7 @@ class PharmacyMainTopHeaderWidget extends StatelessWidget {
                   IconButton(
                     onPressed: onBackTap,
                     icon: const Icon(Icons.arrow_back_rounded),
-                    color: const Color(0xFF0B2239),
+                    color: AppColors.clr0B2239,
                   ),
                   Expanded(
                     child: Text(
@@ -52,7 +57,7 @@ class PharmacyMainTopHeaderWidget extends StatelessWidget {
                       textAlign: TextAlign.center,
                       style: theme.textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.w700,
-                        color: const Color(0xFF0B2239),
+                        color: AppColors.clr0B2239,
                       ),
                     ),
                   ),

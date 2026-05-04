@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/constants/app_colors.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/router/app_routes.dart';
@@ -22,7 +23,7 @@ class PharmacyMainScreen extends StatelessWidget {
     final bannerHeight = MediaQuery.sizeOf(context).height * _topBannerFraction;
     return Scaffold(
       body: ColoredBox(
-        color: const Color(0xFFF4F6F8),
+        color: AppColors.clrF4F6F8,
         child: Column(
           children: [
             SizedBox(
@@ -45,7 +46,7 @@ class PharmacyMainScreen extends StatelessWidget {
               child: Container(
                 width: double.infinity,
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: AppColors.clrWhite,
                   borderRadius: BorderRadius.vertical(
                     top: Radius.circular(42.r),
                   ),

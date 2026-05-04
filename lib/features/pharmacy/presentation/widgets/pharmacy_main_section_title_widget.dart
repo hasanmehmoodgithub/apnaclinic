@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../core/constants/app_colors.dart';
 
 /// Title block above search in the pharmacy main panel.
 class PharmacyMainSectionTitleWidget extends StatelessWidget {
@@ -11,7 +12,7 @@ class PharmacyMainSectionTitleWidget extends StatelessWidget {
     return Text(
       title,
       style: Theme.of(context).textTheme.titleMedium?.copyWith(
-        color: const Color(0xFF1A2B49),
+        color: AppColors.clr1A2B49,
         fontWeight: FontWeight.w600,
       ),
     );

@@ -15,5 +15,6 @@ alwaysApply: true
 - Prefer scoped rebuilds with `BlocSelector` or `BlocBuilder(buildWhen:)`.
 - Use dedicated loading/error/empty widgets; do not add extra screen-state enums.
 - Keep code DRY, reuse theme/spacing/shared components.
+- Do not hardcode colors in widgets; add colors to app color constants (e.g. `AppColors`) and reuse.
+- Prefer shared app text styles; move repeated styles into centralized app text style/theme utilities and reuse across the app.
 - Comments should be short and explain why (only when needed).
-- Touched files must pass `dart analyze`.

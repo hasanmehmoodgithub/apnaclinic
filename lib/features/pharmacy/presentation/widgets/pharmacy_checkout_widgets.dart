@@ -27,7 +27,7 @@ class PharmacySummaryRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final style = Theme.of(context).textTheme.bodyLarge?.copyWith(
-      color: const Color(0xFF061E40),
+      color: AppColors.clr060,
       fontWeight: isBold ? FontWeight.w700 : FontWeight.w400,
       fontSize: isBold ? 17.sp / 1.6 : 16.sp / 1.6,
     );
@@ -41,7 +41,7 @@ class PharmacySummaryRow extends StatelessWidget {
               child: Text(
                 title,
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  color: const Color(0xFF061E40),
+                  color: AppColors.clr060,
                   fontWeight: FontWeight.w400,
                   fontSize: 13.sp,
                 ),
@@ -54,7 +54,7 @@ class PharmacySummaryRow extends StatelessWidget {
                   TextSpan(
                     text: l10n.pharmacyCurrencyPrefix,
                     style: style?.copyWith(
-                      color: const Color(0xFF5D758F),
+                      color: AppColors.clr5D758F,
                       fontWeight: isBold ? FontWeight.w700 : FontWeight.w500,
                     ),
                   ),
@@ -88,7 +88,7 @@ class PharmacyCheckoutField extends StatelessWidget {
         Text(
           label,
           style: theme.textTheme.titleSmall?.copyWith(
-            color: const Color(0xFF061E40),
+            color: AppColors.clr060,
             fontWeight: FontWeight.w500,
             fontSize: 13.sp,
           ),
@@ -106,7 +106,7 @@ class PharmacyCheckoutField extends StatelessWidget {
           child: Text(
             value,
             style: theme.textTheme.titleSmall?.copyWith(
-              color: const Color(0xFF5D758F),
+              color: AppColors.clr5D758F,
               fontWeight: FontWeight.w400,
               fontSize: 14.sp,
             ),
@@ -138,7 +138,7 @@ class PharmacyCheckoutEditableField extends StatelessWidget {
         Text(
           label,
           style: theme.textTheme.titleSmall?.copyWith(
-            color: const Color(0xFF061E40),
+            color: AppColors.clr060,
             fontWeight: FontWeight.w500,
             fontSize: 16.sp,
           ),
@@ -156,7 +156,7 @@ class PharmacyCheckoutEditableField extends StatelessWidget {
             child: TextField(
               controller: controller,
               style: theme.textTheme.bodyLarge?.copyWith(
-                color: const Color(0xFF5D758F),
+                color: AppColors.clr5D758F,
                 fontSize: 16.sp / 1.6,
                 fontWeight: FontWeight.w400,
               ),
@@ -165,7 +165,7 @@ class PharmacyCheckoutEditableField extends StatelessWidget {
                 border: InputBorder.none,
                 hintText: hint,
                 hintStyle: theme.textTheme.bodyLarge?.copyWith(
-                  color: const Color(0xFF8C9CB0),
+                  color: AppColors.clr8C9CB0,
                   fontSize: 16.sp / 1.6,
                 ),
               ),
@@ -200,7 +200,7 @@ class PharmacyCheckoutCityDropdown extends StatelessWidget {
         Text(
           label,
           style: theme.textTheme.titleSmall?.copyWith(
-            color: const Color(0xFF061E40),
+            color: AppColors.clr060,
             fontWeight: FontWeight.w500,
             fontSize: 16.sp,
           ),
@@ -220,11 +220,11 @@ class PharmacyCheckoutCityDropdown extends StatelessWidget {
               isExpanded: true,
               icon: Icon(
                 Icons.expand_more_rounded,
-                color: const Color(0xFF5D758F),
+                color: AppColors.clr5D758F,
                 size: 20.r,
               ),
               style: theme.textTheme.bodyLarge?.copyWith(
-                color: const Color(0xFF5D758F),
+                color: AppColors.clr5D758F,
                 fontSize: 19.sp / 1.6,
                 fontWeight: FontWeight.w500,
               ),
@@ -261,7 +261,7 @@ class PharmacyCheckoutCartItemRow extends StatelessWidget {
           width: 130.r,
           height: 88.r,
           decoration: BoxDecoration(
-            color: const Color(0xFFECECEC),
+            color: AppColors.clrECECEC,
             borderRadius: BorderRadius.circular(22.r),
           ),
           clipBehavior: Clip.antiAlias,
@@ -275,9 +275,12 @@ class PharmacyCheckoutCartItemRow extends StatelessWidget {
               shape: ShimmerShape.roundedRectangle,
             ),
             errorWidget: (context, url, error) => const ColoredBox(
-              color: Color(0xFFE9EEF3),
+              color: AppColors.clrE9EEF3,
               child: Center(
-                child: Icon(Icons.medication_rounded, color: Color(0xFF8091A8)),
+                child: Icon(
+                  Icons.medication_rounded,
+                  color: AppColors.clr8091A8,
+                ),
               ),
             ),
           ),
@@ -295,7 +298,7 @@ class PharmacyCheckoutCartItemRow extends StatelessWidget {
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: theme.textTheme.titleMedium?.copyWith(
-                    color: const Color(0xFF061E40),
+                    color: AppColors.clr060,
                     fontWeight: FontWeight.w700,
                     fontSize: 16.sp,
                     height: 1.2,
@@ -336,8 +339,8 @@ class PharmacyInfoCard extends StatelessWidget {
     this.title,
     required this.message,
     this.footer,
-    this.bgColor = Colors.white,
-    this.footerBgColor = const Color(0xFFFFE9C3),
+    this.bgColor = AppColors.clrWhite,
+    this.footerBgColor = AppColors.clrFFE9C3,
   });
 
   final String? title;
@@ -363,7 +366,7 @@ class PharmacyInfoCard extends StatelessWidget {
             Text(
               title!,
               style: theme.textTheme.titleSmall?.copyWith(
-                color: const Color(0xFF061E40),
+                color: AppColors.clr060,
                 fontWeight: FontWeight.w800,
                 fontSize: 17.sp / 1.6,
               ),
@@ -374,7 +377,7 @@ class PharmacyInfoCard extends StatelessWidget {
             message,
 
             style: theme.textTheme.bodyMedium?.copyWith(
-              color: const Color(0xFF061E40),
+              color: AppColors.clr060,
               fontSize: 16.sp / 1.6,
               fontWeight: FontWeight.w700,
               height: 1.3,
@@ -392,7 +395,7 @@ class PharmacyInfoCard extends StatelessWidget {
               child: Text(
                 footer!,
                 style: theme.textTheme.bodyMedium?.copyWith(
-                  color: const Color(0xFF061E40),
+                  color: AppColors.clr060,
                   fontSize: 16.sp / 1.6,
                   fontWeight: FontWeight.w700,
                   height: 1.3,

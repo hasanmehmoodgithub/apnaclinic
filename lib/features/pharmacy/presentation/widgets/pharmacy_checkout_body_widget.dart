@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/constants/app_colors.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/router/app_routes.dart';
@@ -43,7 +44,7 @@ class PharmacyCheckoutBodyWidget extends StatelessWidget {
                   l10n.pharmacyCheckoutPatientDetailTitle,
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.w500,
-                    color: const Color(0xFF061E40),
+                    color: AppColors.clr060,
                     fontSize: 16.sp,
                   ),
                 ),
@@ -63,7 +64,7 @@ class PharmacyCheckoutBodyWidget extends StatelessWidget {
                   l10n.pharmacyCheckoutOrderDetailsTitle,
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.w500,
-                    color: const Color(0xFF061E40),
+                    color: AppColors.clr060,
                     fontSize: 16.sp,
                   ),
                 ),
@@ -74,7 +75,7 @@ class PharmacyCheckoutBodyWidget extends StatelessWidget {
                     child: PharmacyCheckoutCartItemRow(item: item),
                   ),
                 ),
-                Divider(height: 26.h, color: const Color(0xFFD6DCE2)),
+                Divider(height: 26.h, color: AppColors.clrD6DCE2),
                 PharmacySummaryRow(
                   title: l10n.pharmacyCheckoutDeliveryChargesLabel,
                   value: state.deliveryCharges,
@@ -92,7 +93,7 @@ class PharmacyCheckoutBodyWidget extends StatelessWidget {
                   title: l10n.pharmacyCheckoutTotalLabel,
                   value: state.total,
                   isBold: true,
-                  bgColor: const Color(0xffBBBBBB),
+                  bgColor: AppColors.clrBBBBBB,
                   padding: const EdgeInsets.all(8),
                 ),
                 SizedBox(height: 24.h),
@@ -115,7 +116,7 @@ class PharmacyCheckoutBodyWidget extends StatelessWidget {
                 Text(
                   l10n.pharmacyCheckoutPaymentMethodTitle,
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    color: const Color(0xFF061E40),
+                    color: AppColors.clr060,
                     fontWeight: FontWeight.w500,
                     fontSize: 16.sp,
                   ),
@@ -147,13 +148,13 @@ class PharmacyCheckoutBodyWidget extends StatelessWidget {
                 ),
                 SizedBox(height: 16.h),
                 PharmacyInfoCard(
-                  bgColor: const Color(0xffE9F4FC),
+                  bgColor: AppColors.clrE9F4FC,
                   title: l10n.pharmacyCheckoutDisclaimerTitle,
                   message: l10n.pharmacyCheckoutDisclaimerMessage,
                 ),
                 SizedBox(height: 12.h),
                 PharmacyInfoCard(
-                  bgColor: const Color(0xffFCF5E9),
+                  bgColor: AppColors.clrFCF5E9,
                   message: l10n.pharmacyCheckoutDeliveryInfoMessage,
                   footer: l10n.pharmacyCheckoutDeliveryInfoFooter,
                 ),
@@ -167,7 +168,7 @@ class PharmacyCheckoutBodyWidget extends StatelessWidget {
                 top: false,
                 child: AppButtonWidget(
                   title: l10n.pharmacyCheckoutConfirmCta,
-                  bgClr: const Color(0xFF1FAFA3),
+                  bgClr: AppColors.clr1FAFA3,
                   onTap: state.cartItems.isEmpty
                       ? null
                       : () async {
