@@ -507,10 +507,38 @@ class _DoctorConsultationBookDoctorScreenState
                 padding: EdgeInsets.fromLTRB(22.w, 8.h, 22.w, 8.h),
                 child: Row(
                   children: [
-                    AppShimmerCircle(diameter: 24.r),
-                    SizedBox(width: 12.w),
-                    Expanded(child: AppShimmerText(height: 22.h, borderRadius: 8.r)),
-                    SizedBox(width: 36.w),
+                    GestureDetector(
+                      behavior: HitTestBehavior.opaque,
+                      onTap: () => Navigator.of(context).pop(),
+                      child: SizedBox(
+                        width: 24.w,
+                        height: 24.h,
+                        child: Center(
+                          child: SvgPicture.asset(
+                            ConsultationUiConfig.backArrowAsset,
+                            width: 18.w,
+                            height: 18.h,
+                            fit: BoxFit.contain,
+                            colorFilter: const ColorFilter.mode(
+                              ConsultationUiConfig.primaryText,
+                              BlendMode.srcIn,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: Text(
+                        ConsultationUiConfig.screenTitle,
+                        textAlign: TextAlign.center,
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          color: ConsultationUiConfig.primaryText,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 20.sp,
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: 24.w),
                   ],
                 ),
               ),

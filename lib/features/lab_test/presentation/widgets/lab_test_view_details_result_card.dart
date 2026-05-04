@@ -156,7 +156,7 @@ class LabTestViewDetailsResultCard extends StatelessWidget {
                               style: theme.textTheme.bodySmall?.copyWith(
                                 color: const Color(0xFF0DAA9A),
                                 fontWeight: FontWeight.w600,
-                                fontSize: 11.sp,
+                                fontSize: 10.sp,
                               ),
                             ),
                           ),
@@ -189,7 +189,7 @@ class LabTestViewDetailsResultCard extends StatelessWidget {
                                   discountedFee,
                                   style: theme.textTheme.titleSmall?.copyWith(
                                     color: const Color(0xFF1A2533),
-                                    fontSize: 11.sp,
+                                    fontSize: 10.sp,
                                     fontWeight: FontWeight.w600,
                                     height: 1,
                                   ),
@@ -198,7 +198,7 @@ class LabTestViewDetailsResultCard extends StatelessWidget {
                                   originalFee,
                                   style: theme.textTheme.bodySmall?.copyWith(
                                     color: const Color(0xFF9A9A9A),
-                                    fontSize: 11.sp,
+                                    fontSize: 9.sp,
                                     decoration: TextDecoration.lineThrough,
                                   ),
                                 ),
@@ -229,7 +229,7 @@ class LabTestViewDetailsResultCard extends StatelessWidget {
                             overflow: TextOverflow.ellipsis,
                             style: theme.textTheme.bodySmall?.copyWith(
                               color: const Color(0xFFB3B3B3),
-                              fontSize: 8.sp,
+                              fontSize: 9.sp,
                             ),
                           ),
                         ),
