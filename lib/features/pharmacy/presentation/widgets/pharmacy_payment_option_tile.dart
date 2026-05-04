@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../../core/extensions/screen_util_extensions.dart';
+import '../../../../core/l10n/app_localizations.dart';
 import '../cubit/pharmacy_state.dart';
 
 class PharmacyPaymentOptionTile extends StatelessWidget {
@@ -43,8 +44,8 @@ class PharmacyPaymentOptionTile extends StatelessWidget {
                   Container(
                     width: 46.r,
                     height: 46.r,
-                    decoration:  BoxDecoration(
-                      border: Border.all(width: 0.3,color: Color(0xff9BA6A7)),
+                    decoration: BoxDecoration(
+                      border: Border.all(width: 0.3, color: Color(0xff9BA6A7)),
                       shape: BoxShape.circle,
                     ),
                     alignment: Alignment.center,
@@ -52,7 +53,7 @@ class PharmacyPaymentOptionTile extends StatelessWidget {
                   ),
                   SizedBox(width: 12.w),
                   Text(
-                    _label(method),
+                    _label(context, method),
                     style: theme.textTheme.titleSmall?.copyWith(
                       color: const Color(0xFF061E40),
                       fontWeight: FontWeight.w500,
@@ -91,16 +92,16 @@ class PharmacyPaymentOptionTile extends StatelessWidget {
   Widget _leading(PharmacyPaymentMethod method) {
     return switch (method) {
       PharmacyPaymentMethod.jazzCash => SvgPicture.asset(
-          Assets.iconsJazzCash,
-          width: 36.r,
-          height: 18.r,
-        ),
-      PharmacyPaymentMethod.debitCard =>  SvgPicture.asset(
+        Assets.iconsJazzCash,
+        width: 36.r,
+        height: 18.r,
+      ),
+      PharmacyPaymentMethod.debitCard => SvgPicture.asset(
         Assets.iconsDebitCard,
         width: 36.r,
         height: 18.r,
       ),
-      PharmacyPaymentMethod.cashOnDelivery =>  SvgPicture.asset(
+      PharmacyPaymentMethod.cashOnDelivery => SvgPicture.asset(
         Assets.iconsCash,
         width: 36.r,
         height: 18.r,
@@ -108,11 +109,13 @@ class PharmacyPaymentOptionTile extends StatelessWidget {
     };
   }
 
-  String _label(PharmacyPaymentMethod method) {
+  String _label(BuildContext context, PharmacyPaymentMethod method) {
+    // Keep payment labels in localization so checkout text is fully translatable.
+    final l10n = AppLocalizations.of(context)!;
     return switch (method) {
-      PharmacyPaymentMethod.jazzCash => 'Jazz Cash',
-      PharmacyPaymentMethod.debitCard => 'Debit / Credit Card',
-      PharmacyPaymentMethod.cashOnDelivery => 'Pay via Cash',
+      PharmacyPaymentMethod.jazzCash => l10n.pharmacyPaymentJazzCash,
+      PharmacyPaymentMethod.debitCard => l10n.pharmacyPaymentDebitCard,
+      PharmacyPaymentMethod.cashOnDelivery => l10n.pharmacyPaymentCash,
     };
   }
 }

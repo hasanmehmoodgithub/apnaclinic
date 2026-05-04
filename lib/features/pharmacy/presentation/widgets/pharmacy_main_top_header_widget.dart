@@ -5,14 +5,17 @@ import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../generated/assets.dart';
 import 'pharmacy_cart_icon_with_count.dart';
 
-class PharmacyMainTopHeader extends StatelessWidget {
-  const PharmacyMainTopHeader({
+/// Hub top: back, title, cart, and banner image. Cart count is supplied by the parent (e.g. [BlocSelector]).
+class PharmacyMainTopHeaderWidget extends StatelessWidget {
+  const PharmacyMainTopHeaderWidget({
     super.key,
+    required this.title,
     required this.cartCount,
     required this.onBackTap,
     required this.onCartTap,
   });
 
+  final String title;
   final int cartCount;
   final VoidCallback onBackTap;
   final VoidCallback onCartTap;
@@ -45,7 +48,7 @@ class PharmacyMainTopHeader extends StatelessWidget {
                   ),
                   Expanded(
                     child: Text(
-                      'Pharmacy',
+                      title,
                       textAlign: TextAlign.center,
                       style: theme.textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.w700,
@@ -56,11 +59,11 @@ class PharmacyMainTopHeader extends StatelessWidget {
                   PharmacyCartIconWithCount(
                     cartCount: cartCount,
                     onTap: onCartTap,
-                    iconContainerSize:35.r,
+                    iconContainerSize: 35.r,
                     badgeRightOffset: 2,
                     badgeTopOffset: 2,
                   ),
-                  SizedBox(width:8.w),
+                  SizedBox(width: 8.w),
                 ],
               ),
             ),
@@ -68,7 +71,7 @@ class PharmacyMainTopHeader extends StatelessWidget {
               child: Image.asset(
                 Assets.imgPharmacyBanner,
                 fit: BoxFit.fitWidth,
-                width:context.screenWidth/2.2,
+                width: context.screenWidth / 2.2,
               ),
             ),
           ],

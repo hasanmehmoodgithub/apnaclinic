@@ -469,6 +469,270 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Save'**
   String get profileSaveCta;
+
+  /// Title on the pharmacy detail screen header
+  ///
+  /// In en, this message translates to:
+  /// **'Pharmacy'**
+  String get pharmacyScreenTitle;
+
+  /// Pharmacy medicines list failed to load
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to load medicines right now. Please try again in a moment.'**
+  String get pharmacyLoadError;
+
+  /// Pharmacy list has no items
+  ///
+  /// In en, this message translates to:
+  /// **'No medicine found'**
+  String get pharmacyEmptyMedicines;
+
+  /// Section title on pharmacy hub main screen
+  ///
+  /// In en, this message translates to:
+  /// **'Choose Medicine'**
+  String get pharmacyMainChooseMedicineTitle;
+
+  /// Search field hint on pharmacy hub
+  ///
+  /// In en, this message translates to:
+  /// **'Search medicine..'**
+  String get pharmacyMainSearchHint;
+
+  /// No description provided for @pharmacyCartTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Cart'**
+  String get pharmacyCartTitle;
+
+  /// No description provided for @pharmacyCartEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Your cart is empty'**
+  String get pharmacyCartEmpty;
+
+  /// No description provided for @pharmacyCheckoutCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Check Out'**
+  String get pharmacyCheckoutCta;
+
+  /// No description provided for @pharmacyCheckoutTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Check Out'**
+  String get pharmacyCheckoutTitle;
+
+  /// No description provided for @pharmacyCheckoutPatientDetailTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Patient Detail'**
+  String get pharmacyCheckoutPatientDetailTitle;
+
+  /// No description provided for @pharmacyCheckoutPatientLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Patient'**
+  String get pharmacyCheckoutPatientLabel;
+
+  /// No description provided for @pharmacyCheckoutPatientSelf.
+  ///
+  /// In en, this message translates to:
+  /// **'Self'**
+  String get pharmacyCheckoutPatientSelf;
+
+  /// No description provided for @pharmacyCheckoutSpecialInstructionsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Special Instructions'**
+  String get pharmacyCheckoutSpecialInstructionsLabel;
+
+  /// No description provided for @pharmacyCheckoutSpecialInstructionsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'----'**
+  String get pharmacyCheckoutSpecialInstructionsHint;
+
+  /// No description provided for @pharmacyCheckoutOrderDetailsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Order Details'**
+  String get pharmacyCheckoutOrderDetailsTitle;
+
+  /// No description provided for @pharmacyCheckoutDeliveryChargesLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Delivery Charges'**
+  String get pharmacyCheckoutDeliveryChargesLabel;
+
+  /// No description provided for @pharmacyCheckoutDiscountLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Discount (8%)'**
+  String get pharmacyCheckoutDiscountLabel;
+
+  /// No description provided for @pharmacyCheckoutTotalLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Total'**
+  String get pharmacyCheckoutTotalLabel;
+
+  /// No description provided for @pharmacyCheckoutAddressLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Delivery address'**
+  String get pharmacyCheckoutAddressLabel;
+
+  /// No description provided for @pharmacyCheckoutAddressHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your address'**
+  String get pharmacyCheckoutAddressHint;
+
+  /// No description provided for @pharmacyCheckoutCityLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Area / City *'**
+  String get pharmacyCheckoutCityLabel;
+
+  /// No description provided for @pharmacyCheckoutPaymentMethodTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment Method'**
+  String get pharmacyCheckoutPaymentMethodTitle;
+
+  /// No description provided for @pharmacyCheckoutDisclaimerTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Disclaimer'**
+  String get pharmacyCheckoutDisclaimerTitle;
+
+  /// No description provided for @pharmacyCheckoutDisclaimerMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Sold and fulfilled by our Licensed Pharmacy Partner(s) \"MEDIQ PHARMACY\". License No. : 05-352-0070-053618P'**
+  String get pharmacyCheckoutDisclaimerMessage;
+
+  /// No description provided for @pharmacyCheckoutDeliveryInfoMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Orders will be delivered within 3 hours between 8:00 AM and 8:00 PM. Orders placed after 8:00 PM will be delivered by 12PM the following day.'**
+  String get pharmacyCheckoutDeliveryInfoMessage;
+
+  /// No description provided for @pharmacyCheckoutDeliveryInfoFooter.
+  ///
+  /// In en, this message translates to:
+  /// **'Orders below Rs 2500 will include delivery charges of Rs 250.'**
+  String get pharmacyCheckoutDeliveryInfoFooter;
+
+  /// No description provided for @pharmacyCheckoutConfirmCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm'**
+  String get pharmacyCheckoutConfirmCta;
+
+  /// No description provided for @pharmacyOrderPlacedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Order Placed'**
+  String get pharmacyOrderPlacedTitle;
+
+  /// No description provided for @pharmacyOrderPlacedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Orders received b/w 8 AM - 8 PM will be delivered within 3 business hrs.'**
+  String get pharmacyOrderPlacedMessage;
+
+  /// No description provided for @pharmacyOrderPlacedClose.
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get pharmacyOrderPlacedClose;
+
+  /// No description provided for @pharmacyPaymentJazzCash.
+  ///
+  /// In en, this message translates to:
+  /// **'Jazz Cash'**
+  String get pharmacyPaymentJazzCash;
+
+  /// No description provided for @pharmacyPaymentDebitCard.
+  ///
+  /// In en, this message translates to:
+  /// **'Debit / Credit Card'**
+  String get pharmacyPaymentDebitCard;
+
+  /// No description provided for @pharmacyPaymentCash.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay via Cash'**
+  String get pharmacyPaymentCash;
+
+  /// No description provided for @pharmacyCurrencyPrefix.
+  ///
+  /// In en, this message translates to:
+  /// **'Rs. '**
+  String get pharmacyCurrencyPrefix;
+
+  /// No description provided for @onboardingSkip.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip'**
+  String get onboardingSkip;
+
+  /// No description provided for @onboardingNext.
+  ///
+  /// In en, this message translates to:
+  /// **'Next'**
+  String get onboardingNext;
+
+  /// No description provided for @onboardingDoctorConsultationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Doctor Consultation'**
+  String get onboardingDoctorConsultationTitle;
+
+  /// No description provided for @onboardingDoctorConsultationSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Access to PMDC certified doctors'**
+  String get onboardingDoctorConsultationSubtitle;
+
+  /// No description provided for @onboardingPharmacyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Pharmacy'**
+  String get onboardingPharmacyTitle;
+
+  /// No description provided for @onboardingPharmacySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Get authentic medicines at your doorstep.'**
+  String get onboardingPharmacySubtitle;
+
+  /// No description provided for @onboardingLaboratoryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Laboratory Testing'**
+  String get onboardingLaboratoryTitle;
+
+  /// No description provided for @onboardingLaboratorySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Access reliable lab tests with accurate results.'**
+  String get onboardingLaboratorySubtitle;
+
+  /// No description provided for @onboardingSurgeryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Surgery Booking'**
+  String get onboardingSurgeryTitle;
+
+  /// No description provided for @onboardingSurgerySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Book your surgery with ease.'**
+  String get onboardingSurgerySubtitle;
 }
 
 class _AppLocalizationsDelegate

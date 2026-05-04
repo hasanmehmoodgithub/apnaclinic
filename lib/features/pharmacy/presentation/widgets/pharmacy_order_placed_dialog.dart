@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../../core/extensions/screen_util_extensions.dart';
+import '../../../../core/l10n/app_localizations.dart';
 
 class PharmacyOrderPlacedDialog extends StatelessWidget {
   const PharmacyOrderPlacedDialog({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     return Dialog(
       backgroundColor: Colors.white,
@@ -24,7 +27,7 @@ class PharmacyOrderPlacedDialog extends StatelessWidget {
             ),
             SizedBox(height: 12.h),
             Text(
-              'Order Placed',
+              l10n.pharmacyOrderPlacedTitle,
               style: theme.textTheme.titleLarge?.copyWith(
                 color: const Color(0xFF102A56),
                 fontWeight: FontWeight.w700,
@@ -32,7 +35,7 @@ class PharmacyOrderPlacedDialog extends StatelessWidget {
             ),
             SizedBox(height: 10.h),
             Text(
-              'Orders received b/w 8 AM - 8 PM will be delivered within 3 business hrs.',
+              l10n.pharmacyOrderPlacedMessage,
               textAlign: TextAlign.center,
               style: theme.textTheme.bodyMedium?.copyWith(
                 color: const Color(0xFF6B7C96),
@@ -42,7 +45,7 @@ class PharmacyOrderPlacedDialog extends StatelessWidget {
             SizedBox(
               width: double.infinity,
               child: FilledButton(
-                onPressed: () => Navigator.of(context).pop(),
+                onPressed: () => context.pop(),
                 style: FilledButton.styleFrom(
                   backgroundColor: const Color(0xFF27B3A6),
                   minimumSize: Size.fromHeight(52.h),
@@ -50,7 +53,7 @@ class PharmacyOrderPlacedDialog extends StatelessWidget {
                     borderRadius: BorderRadius.circular(14.r),
                   ),
                 ),
-                child: const Text('Close'),
+                child: Text(l10n.pharmacyOrderPlacedClose),
               ),
             ),
           ],

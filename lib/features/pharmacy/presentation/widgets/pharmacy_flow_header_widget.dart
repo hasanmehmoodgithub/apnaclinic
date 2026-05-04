@@ -1,23 +1,22 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/extensions/screen_util_extensions.dart';
-import 'pharmacy_cart_icon_with_count.dart';
 
-class PharmacyScreenHeader extends StatelessWidget {
-  const PharmacyScreenHeader({
+/// Reusable header for pharmacy flow screens (cart, checkout).
+class PharmacyFlowHeaderWidget extends StatelessWidget {
+  const PharmacyFlowHeaderWidget({
     super.key,
-    required this.cartCount,
+    required this.title,
     required this.onBackTap,
-    required this.onCartTap,
+    this.trailingWidth = 44,
   });
 
-  final int cartCount;
+  final String title;
   final VoidCallback onBackTap;
-  final VoidCallback onCartTap;
+  final double trailingWidth;
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     return Padding(
       padding: EdgeInsets.fromLTRB(12.w, 12.h, 12.w, 13.h),
       child: Row(
@@ -26,24 +25,21 @@ class PharmacyScreenHeader extends StatelessWidget {
             onPressed: onBackTap,
             icon: const Icon(
               Icons.arrow_back_rounded,
-              color: Color(0xFF08294D),
+              color: Color(0xFF061E40),
             ),
           ),
           Expanded(
             child: Text(
-              'Pharmacy',
+              title,
               textAlign: TextAlign.center,
-              style: theme.textTheme.titleLarge?.copyWith(
-                color: const Color(0xFF0E2D55),
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.w700,
-                fontSize: 21.sp,
+                color: const Color(0xFF061E40),
+                fontSize: 31.sp / 1.6,
               ),
             ),
           ),
-          PharmacyCartIconWithCount(
-            cartCount: cartCount,
-            onTap: onCartTap,
-          ),
+          SizedBox(width: trailingWidth.w),
         ],
       ),
     );

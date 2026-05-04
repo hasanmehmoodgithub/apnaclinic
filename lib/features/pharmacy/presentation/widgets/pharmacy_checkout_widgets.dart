@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import '../../../../components/shimmer/app_shimmer.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
+import '../../../../core/l10n/app_localizations.dart';
 import '../../domain/entities/pharmacy_cart_item_entity.dart';
 
 class PharmacySummaryRow extends StatelessWidget {
@@ -24,28 +25,34 @@ class PharmacySummaryRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final style = Theme.of(context).textTheme.bodyLarge?.copyWith(
-          color: const Color(0xFF061E40),
-          fontWeight: isBold ? FontWeight.w700 : FontWeight.w400,
-          fontSize: isBold ? 17.sp / 1.6 : 16.sp / 1.6,
-        );
+      color: const Color(0xFF061E40),
+      fontWeight: isBold ? FontWeight.w700 : FontWeight.w400,
+      fontSize: isBold ? 17.sp / 1.6 : 16.sp / 1.6,
+    );
     return Container(
       color: bgColor,
       child: Padding(
         padding: padding,
         child: Row(
           children: [
-            Expanded(child: Text(title, style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-              color: const Color(0xFF061E40),
-              fontWeight: FontWeight.w400,
-              fontSize: 13.sp
-            ))),
+            Expanded(
+              child: Text(
+                title,
+                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                  color: const Color(0xFF061E40),
+                  fontWeight: FontWeight.w400,
+                  fontSize: 13.sp,
+                ),
+              ),
+            ),
             RichText(
               text: TextSpan(
                 style: style,
                 children: [
                   TextSpan(
-                    text: 'Rs. ',
+                    text: l10n.pharmacyCurrencyPrefix,
                     style: style?.copyWith(
                       color: const Color(0xFF5D758F),
                       fontWeight: isBold ? FontWeight.w700 : FontWeight.w500,
@@ -239,15 +246,13 @@ class PharmacyCheckoutCityDropdown extends StatelessWidget {
 }
 
 class PharmacyCheckoutCartItemRow extends StatelessWidget {
-  const PharmacyCheckoutCartItemRow({
-    super.key,
-    required this.item,
-  });
+  const PharmacyCheckoutCartItemRow({super.key, required this.item});
 
   final PharmacyCartItemEntity item;
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -272,10 +277,7 @@ class PharmacyCheckoutCartItemRow extends StatelessWidget {
             errorWidget: (context, url, error) => const ColoredBox(
               color: Color(0xFFE9EEF3),
               child: Center(
-                child: Icon(
-                  Icons.medication_rounded,
-                  color: Color(0xFF8091A8),
-                ),
+                child: Icon(Icons.medication_rounded, color: Color(0xFF8091A8)),
               ),
             ),
           ),
@@ -312,7 +314,8 @@ class PharmacyCheckoutCartItemRow extends StatelessWidget {
                         style: const TextStyle(color: AppColors.clr667B99),
                       ),
                       TextSpan(
-                        text: 'Rs ${item.medicine.price.toStringAsFixed(0)}/-',
+                        text:
+                            '${l10n.pharmacyCurrencyPrefix}${item.medicine.price.toStringAsFixed(0)}/-',
                         style: const TextStyle(color: AppColors.clr060),
                       ),
                     ],
@@ -388,7 +391,7 @@ class PharmacyInfoCard extends StatelessWidget {
               ),
               child: Text(
                 footer!,
-                style:  theme.textTheme.bodyMedium?.copyWith(
+                style: theme.textTheme.bodyMedium?.copyWith(
                   color: const Color(0xFF061E40),
                   fontSize: 16.sp / 1.6,
                   fontWeight: FontWeight.w700,
@@ -402,4 +405,3 @@ class PharmacyInfoCard extends StatelessWidget {
     );
   }
 }
-

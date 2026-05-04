@@ -115,5 +115,64 @@
   "profileDobLabel": "Date of Birth",
   "profileDobHint": "DD/MM/YY",
   "profileDobRequired": "Please select date of birth.",
-  "profileSaveCta": "Save"
+  "profileSaveCta": "Save",
+  "pharmacyScreenTitle": "Pharmacy",
+  "@pharmacyScreenTitle": {
+    "description": "Title on the pharmacy detail screen header"
+  },
+  "pharmacyLoadError": "Unable to load medicines right now. Please try again in a moment.",
+  "@pharmacyLoadError": {
+    "description": "Pharmacy medicines list failed to load"
+  },
+  "pharmacyEmptyMedicines": "No medicine found",
+  "@pharmacyEmptyMedicines": {
+    "description": "Pharmacy list has no items"
+  },
+  "pharmacyMainChooseMedicineTitle": "Choose Medicine",
+  "@pharmacyMainChooseMedicineTitle": {
+    "description": "Section title on pharmacy hub main screen"
+  },
+  "pharmacyMainSearchHint": "Search medicine..",
+  "@pharmacyMainSearchHint": {
+    "description": "Search field hint on pharmacy hub"
+  },
+  "pharmacyCartTitle": "Cart",
+  "pharmacyCartEmpty": "Your cart is empty",
+  "pharmacyCheckoutCta": "Check Out",
+  "pharmacyCheckoutTitle": "Check Out",
+  "pharmacyCheckoutPatientDetailTitle": "Patient Detail",
+  "pharmacyCheckoutPatientLabel": "Patient",
+  "pharmacyCheckoutPatientSelf": "Self",
+  "pharmacyCheckoutSpecialInstructionsLabel": "Special Instructions",
+  "pharmacyCheckoutSpecialInstructionsHint": "----",
+  "pharmacyCheckoutOrderDetailsTitle": "Order Details",
+  "pharmacyCheckoutDeliveryChargesLabel": "Delivery Charges",
+  "pharmacyCheckoutDiscountLabel": "Discount (8%)",
+  "pharmacyCheckoutTotalLabel": "Total",
+  "pharmacyCheckoutAddressLabel": "Delivery address",
+  "pharmacyCheckoutAddressHint": "Enter your address",
+  "pharmacyCheckoutCityLabel": "Area / City *",
+  "pharmacyCheckoutPaymentMethodTitle": "Payment Method",
+  "pharmacyCheckoutDisclaimerTitle": "Disclaimer",
+  "pharmacyCheckoutDisclaimerMessage": "Sold and fulfilled by our Licensed Pharmacy Partner(s) \"MEDIQ PHARMACY\". License No. : 05-352-0070-053618P",
+  "pharmacyCheckoutDeliveryInfoMessage": "Orders will be delivered within 3 hours between 8:00 AM and 8:00 PM. Orders placed after 8:00 PM will be delivered by 12PM the following day.",
+  "pharmacyCheckoutDeliveryInfoFooter": "Orders below Rs 2500 will include delivery charges of Rs 250.",
+  "pharmacyCheckoutConfirmCta": "Confirm",
+  "pharmacyOrderPlacedTitle": "Order Placed",
+  "pharmacyOrderPlacedMessage": "Orders received b/w 8 AM - 8 PM will be delivered within 3 business hrs.",
+  "pharmacyOrderPlacedClose": "Close",
+  "pharmacyPaymentJazzCash": "Jazz Cash",
+  "pharmacyPaymentDebitCard": "Debit / Credit Card",
+  "pharmacyPaymentCash": "Pay via Cash",
+  "pharmacyCurrencyPrefix": "Rs. ",
+  "onboardingSkip": "Skip",
+  "onboardingNext": "Next",
+  "onboardingDoctorConsultationTitle": "Doctor Consultation",
+  "onboardingDoctorConsultationSubtitle": "Access to PMDC certified doctors",
+  "onboardingPharmacyTitle": "Pharmacy",
+  "onboardingPharmacySubtitle": "Get authentic medicines at your doorstep.",
+  "onboardingLaboratoryTitle": "Laboratory Testing",
+  "onboardingLaboratorySubtitle": "Access reliable lab tests with accurate results.",
+  "onboardingSurgeryTitle": "Surgery Booking",
+  "onboardingSurgerySubtitle": "Book your surgery with ease."
 }

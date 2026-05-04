@@ -1,0 +1,187 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+
+import '../../../../core/extensions/screen_util_extensions.dart';
+import '../../../../core/l10n/app_localizations.dart';
+import '../../../../core/router/app_routes.dart';
+import '../../../../core/widgets/app_button_widget.dart';
+import '../cubit/pharmacy_cubit.dart';
+import '../cubit/pharmacy_state.dart';
+import 'pharmacy_checkout_widgets.dart';
+import 'pharmacy_order_placed_dialog.dart';
+import 'pharmacy_payment_option_tile.dart';
+
+/// Checkout panel content and confirm action.
+class PharmacyCheckoutBodyWidget extends StatelessWidget {
+  const PharmacyCheckoutBodyWidget({
+    super.key,
+    required this.addressController,
+    required this.specialInstructionsController,
+    required this.cities,
+  });
+
+  final TextEditingController addressController;
+  final TextEditingController specialInstructionsController;
+  final List<String> cities;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    return BlocBuilder<PharmacyCubit, PharmacyState>(
+      buildWhen: (previous, current) =>
+          previous.cartItems != current.cartItems ||
+          previous.selectedCity != current.selectedCity ||
+          previous.selectedPaymentMethod != current.selectedPaymentMethod,
+      builder: (context, state) {
+        return Stack(
+          children: [
+            ListView(
+              padding: EdgeInsets.fromLTRB(23.w, 24.h, 23.w, 126.h),
+              children: [
+                Text(
+                  l10n.pharmacyCheckoutPatientDetailTitle,
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w500,
+                    color: const Color(0xFF061E40),
+                    fontSize: 16.sp,
+                  ),
+                ),
+                SizedBox(height: 22.h),
+                PharmacyCheckoutField(
+                  label: l10n.pharmacyCheckoutPatientLabel,
+                  value: l10n.pharmacyCheckoutPatientSelf,
+                ),
+                SizedBox(height: 22.h),
+                PharmacyCheckoutEditableField(
+                  label: l10n.pharmacyCheckoutSpecialInstructionsLabel,
+                  controller: specialInstructionsController,
+                  hint: l10n.pharmacyCheckoutSpecialInstructionsHint,
+                ),
+                SizedBox(height: 22.h),
+                Text(
+                  l10n.pharmacyCheckoutOrderDetailsTitle,
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w500,
+                    color: const Color(0xFF061E40),
+                    fontSize: 16.sp,
+                  ),
+                ),
+                SizedBox(height: 14.h),
+                ...state.cartItems.map(
+                  (item) => Padding(
+                    padding: EdgeInsets.only(bottom: 14.h),
+                    child: PharmacyCheckoutCartItemRow(item: item),
+                  ),
+                ),
+                Divider(height: 26.h, color: const Color(0xFFD6DCE2)),
+                PharmacySummaryRow(
+                  title: l10n.pharmacyCheckoutDeliveryChargesLabel,
+                  value: state.deliveryCharges,
+                  isBold: true,
+                  padding: EdgeInsets.symmetric(vertical: 2.h),
+                ),
+                PharmacySummaryRow(
+                  title: l10n.pharmacyCheckoutDiscountLabel,
+                  value: state.discount,
+                  isBold: true,
+                  padding: EdgeInsets.symmetric(vertical: 2.h),
+                ),
+                SizedBox(height: 12.h),
+                PharmacySummaryRow(
+                  title: l10n.pharmacyCheckoutTotalLabel,
+                  value: state.total,
+                  isBold: true,
+                  bgColor: const Color(0xffBBBBBB),
+                  padding: const EdgeInsets.all(8),
+                ),
+                SizedBox(height: 24.h),
+                PharmacyCheckoutEditableField(
+                  label: l10n.pharmacyCheckoutAddressLabel,
+                  controller: addressController,
+                  hint: l10n.pharmacyCheckoutAddressHint,
+                ),
+                SizedBox(height: 20.h),
+                PharmacyCheckoutCityDropdown(
+                  label: l10n.pharmacyCheckoutCityLabel,
+                  value: state.selectedCity,
+                  cities: cities,
+                  onChanged: (city) {
+                    if (city == null) return;
+                    context.read<PharmacyCubit>().selectCheckoutCity(city);
+                  },
+                ),
+                SizedBox(height: 22.h),
+                Text(
+                  l10n.pharmacyCheckoutPaymentMethodTitle,
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    color: const Color(0xFF061E40),
+                    fontWeight: FontWeight.w500,
+                    fontSize: 16.sp,
+                  ),
+                ),
+                SizedBox(height: 7.h),
+                PharmacyPaymentOptionTile(
+                  method: PharmacyPaymentMethod.jazzCash,
+                  selectedMethod: state.selectedPaymentMethod,
+                  onTap: () => context
+                      .read<PharmacyCubit>()
+                      .selectPaymentMethod(PharmacyPaymentMethod.jazzCash),
+                ),
+                SizedBox(height: 7.h),
+                PharmacyPaymentOptionTile(
+                  method: PharmacyPaymentMethod.debitCard,
+                  selectedMethod: state.selectedPaymentMethod,
+                  onTap: () => context
+                      .read<PharmacyCubit>()
+                      .selectPaymentMethod(PharmacyPaymentMethod.debitCard),
+                ),
+                SizedBox(height: 7.h),
+                PharmacyPaymentOptionTile(
+                  method: PharmacyPaymentMethod.cashOnDelivery,
+                  selectedMethod: state.selectedPaymentMethod,
+                  onTap: () =>
+                      context.read<PharmacyCubit>().selectPaymentMethod(
+                        PharmacyPaymentMethod.cashOnDelivery,
+                      ),
+                ),
+                SizedBox(height: 16.h),
+                PharmacyInfoCard(
+                  bgColor: const Color(0xffE9F4FC),
+                  title: l10n.pharmacyCheckoutDisclaimerTitle,
+                  message: l10n.pharmacyCheckoutDisclaimerMessage,
+                ),
+                SizedBox(height: 12.h),
+                PharmacyInfoCard(
+                  bgColor: const Color(0xffFCF5E9),
+                  message: l10n.pharmacyCheckoutDeliveryInfoMessage,
+                  footer: l10n.pharmacyCheckoutDeliveryInfoFooter,
+                ),
+              ],
+            ),
+            Positioned(
+              left: 24.w,
+              right: 24.w,
+              bottom: 14.h,
+              child: SafeArea(
+                top: false,
+                child: AppButtonWidget(
+                  title: l10n.pharmacyCheckoutConfirmCta,
+                  bgClr: const Color(0xFF1FAFA3),
+                  onTap: state.cartItems.isEmpty
+                      ? null
+                      : () async {
+                          await showPharmacyOrderPlacedDialog(context);
+                          if (!context.mounted) return;
+                          context.read<PharmacyCubit>().clearCart();
+                          context.goNamed(AppRoutes.pharmacyMain);
+                        },
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+}
