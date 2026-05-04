@@ -156,7 +156,7 @@ class _LabTestBookingCard extends StatelessWidget {
                               color: booking.isConfirmed
                                   ? const Color(0xFF15A9A0)
                                   : const Color(0xFFBA2025),
-                              fontSize: 12.sp,
+                              fontSize: 10.sp,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -173,7 +173,7 @@ class _LabTestBookingCard extends StatelessWidget {
                           booking.totalFee,
                           style: theme.textTheme.titleSmall?.copyWith(
                             color: Colors.black,
-                            fontSize: 12.sp,
+                            fontSize: 11.sp,
                             fontWeight: FontWeight.w700,
                           ),
                         ),
@@ -246,7 +246,7 @@ class _LabTestBookingCard extends StatelessWidget {
           label,
           style: theme.textTheme.bodySmall?.copyWith(
             color: const Color(0xFF667B99),
-            fontSize: 14.sp,
+            fontSize: 12.sp,
             fontWeight: FontWeight.w400,
           ),
         ),

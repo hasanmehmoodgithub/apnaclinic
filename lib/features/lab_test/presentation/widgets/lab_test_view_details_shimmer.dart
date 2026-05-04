@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../components/shimmer/app_shimmer.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
@@ -13,20 +14,37 @@ class LabTestViewDetailsShimmer extends StatelessWidget {
       child: Column(
         children: [
           Padding(
-            padding: EdgeInsets.fromLTRB(8.w, 6.h, 16.w, 18.h),
+            padding: const EdgeInsets.fromLTRB(8, 4, 16, 18),
             child: Row(
               children: [
-                AppShimmerCircle(diameter: 30.r),
-                Expanded(
-                  child: Center(
-                    child: AppShimmerText(
-                      width: 84.w,
-                      height: 22.h,
-                      borderRadius: 8.r,
+                Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(20),
+                    onTap: () => context.pop(),
+                    child: const SizedBox(
+                      width: 40,
+                      height: 40,
+                      child: Icon(
+                        Icons.arrow_back_rounded,
+                        color: Color(0xFF061E40),
+                        size: 24,
+                      ),
                     ),
                   ),
                 ),
-                SizedBox(width: 30.w),
+                Expanded(
+                  child: Text(
+                    'View details',
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                      color: const Color(0xFF061E40),
+                      fontWeight: FontWeight.w700,
+                      fontSize: 20.sp,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 40),
               ],
             ),
           ),
