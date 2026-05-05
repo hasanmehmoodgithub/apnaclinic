@@ -1,7 +1,9 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/constants/app_colors.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../generated/assets.dart';
@@ -25,7 +27,7 @@ Future<void> showPromotionalBannerDialog(
             Align(
               alignment: Alignment.topRight,
               child: InkWell(
-                onTap: () => Navigator.of(dialogContext).pop(),
+                onTap: () => dialogContext.pop(),
                 borderRadius: BorderRadius.circular(16.r),
                 child: Padding(
                   padding: EdgeInsets.all(4.r),
@@ -46,19 +48,18 @@ Future<void> showPromotionalBannerDialog(
                   final normalizedRoute = banner.route
                       .trim()
                       .replaceFirst(RegExp(r'^/'), '');
-                  Navigator.of(dialogContext).pop();
+                  dialogContext.pop();
                   if (normalizedRoute.isEmpty) return;
                   context.push(AppRoutes.path(normalizedRoute));
                 },
-                child: Image.network(
-                  banner.url,
+                child: CachedNetworkImage(
+                  imageUrl: banner.url,
                   fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) {
-                    return Image.asset(
-                      'assets/img/banner.png',
-                      fit: BoxFit.cover,
-                    );
-                  },
+                  errorWidget: (context, _, _) =>
+                      Image.asset(Assets.imgBanner, fit: BoxFit.cover),
+                  placeholder: (context, _) => Container(
+                    color: AppColors.clrEAF6F1,
+                  ),
                 ),
               ),
             ),

@@ -1,11 +1,15 @@
 import 'package:apnaclinic/core/extensions/screen_util_extensions.dart';
+import 'package:apnaclinic/core/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import '../../../../core/constants/app_colors.dart';
 
 class MenuHeader extends StatelessWidget {
   const MenuHeader({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
 
     return Padding(
@@ -13,18 +17,18 @@ class MenuHeader extends StatelessWidget {
       child: Row(
         children: [
           IconButton(
-            onPressed: () => Navigator.of(context).pop(),
+            onPressed: () => context.pop(),
             icon: const Icon(
               Icons.arrow_back_rounded,
-              color: Color(0xFF08294D),
+              color: AppColors.clr08294D,
             ),
           ),
           Expanded(
             child: Text(
-              'Menu',
+              l10n.dashboardMenuTitle,
               textAlign: TextAlign.center,
               style: theme.textTheme.titleLarge?.copyWith(
-                color: const Color(0xFF0E2D55),
+                color: AppColors.clr0E2D55,
                 fontWeight: FontWeight.w700,
                 fontSize: (32 / 1.6).sp,
               ),

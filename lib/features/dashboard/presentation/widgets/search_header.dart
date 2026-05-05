@@ -1,20 +1,9 @@
+import 'package:apnaclinic/core/constants/app_colors.dart';
 import 'package:apnaclinic/generated/assets.dart';
+import 'package:apnaclinic/core/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
-
-/// Solid teal header with rounded bottom + search row overlapping into the body.
-import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-
-import '../../../../core/extensions/screen_util_extensions.dart';
-import '../../../../generated/assets.dart';
-
-import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-
-import '../../../../core/extensions/screen_util_extensions.dart';
-import '../../../../generated/assets.dart';
 
 class SearchHeader extends StatefulWidget {
   const SearchHeader({
@@ -29,16 +18,6 @@ class SearchHeader extends StatefulWidget {
   final ValueChanged<String>? onSearchSubmitted;
   final VoidCallback? onVoiceTap;
   final VoidCallback? onSearchButtonTap;
-
-  static const Color _headerTeal = Color(0xFF52A898);
-  static const Color _hintText = Color(0xFF1D4E89);
-  static const Color _iconBlue = Color(0xFF024886);
-  static const Color _fieldBg = Color(0xFFF3F4F6);
-
-  static const double _cornerRadius = 28;
-  static const double _searchHeight = 54.0;
-  static const double _overlap = 24;
-
   @override
   State<SearchHeader> createState() => _SearchHeaderState();
 }
@@ -91,6 +70,7 @@ class _SearchHeaderState extends State<SearchHeader> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
 
     return Column(
@@ -103,10 +83,10 @@ class _SearchHeaderState extends State<SearchHeader> {
             Container(
               width: double.infinity,
               decoration: const BoxDecoration(
-                color: SearchHeader._headerTeal,
+                color: AppColors.clr52A898,
                 borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(SearchHeader._cornerRadius),
-                  bottomRight: Radius.circular(SearchHeader._cornerRadius),
+                  bottomLeft: Radius.circular(28),
+                  bottomRight: Radius.circular(28),
                 ),
               ),
               padding: EdgeInsets.fromLTRB(32.w, 18.h, 20.w, 42.h),
@@ -115,9 +95,9 @@ class _SearchHeaderState extends State<SearchHeader> {
                 child: Text(
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  'Hello, ${widget.userName}',
+                  l10n.dashboardHello(widget.userName),
                   style: theme.textTheme.titleLarge?.copyWith(
-                    color: Colors.white,
+                    color: AppColors.clrWhite,
                     fontWeight: FontWeight.w600,
                     fontSize: 24.sp,
                     letterSpacing: 0.15,
@@ -128,15 +108,15 @@ class _SearchHeaderState extends State<SearchHeader> {
             Positioned(
               left: 24.w,
               right: 24.w,
-              bottom: -SearchHeader._overlap.h,
+              bottom: -24.h,
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Expanded(
                     child: Container(
-                      height: SearchHeader._searchHeight.h,
+                      height: 54.h,
                       decoration: BoxDecoration(
-                        color: SearchHeader._fieldBg,
+                        color: AppColors.clrF3F4F6,
                         borderRadius: BorderRadius.circular(10.r),
                       ),
                       alignment: Alignment.center,
@@ -146,13 +126,13 @@ class _SearchHeaderState extends State<SearchHeader> {
                         onSubmitted: _handleSubmitted,
                         textInputAction: TextInputAction.search,
                         style: theme.textTheme.bodyMedium?.copyWith(
-                          color: const Color(0xFF111827),
+                          color: AppColors.clr111827,
                         ),
                         decoration: InputDecoration(
                           isDense: true,
-                          hintText: 'Search Medicine, Doctor, Test....',
+                          hintText: l10n.dashboardSearchHint,
                           hintStyle: theme.textTheme.bodyMedium?.copyWith(
-                            color: SearchHeader._hintText,
+                            color: AppColors.clr1D4E89,
                             fontWeight: FontWeight.w500,
                             fontSize: 14.sp,
                           ),
@@ -187,10 +167,10 @@ class _SearchHeaderState extends State<SearchHeader> {
                   ),
                   SizedBox(width: 6.w),
                   Container(
-                    width: SearchHeader._searchHeight.r,
-                    height: SearchHeader._searchHeight.r,
+                    width: 54.r,
+                    height: 54.r,
                     decoration: BoxDecoration(
-                      color: SearchHeader._fieldBg,
+                      color: AppColors.clrF3F4F6,
                       borderRadius: BorderRadius.circular(12.r),
                     ),
                     child: Material(
@@ -203,7 +183,7 @@ class _SearchHeaderState extends State<SearchHeader> {
                         child: Center(
                           child: Icon(
                             Icons.search_rounded,
-                            color: SearchHeader._iconBlue,
+                            color: AppColors.clr024886,
                             size: (34 / 1.35).r,
                           ),
                         ),
@@ -215,7 +195,7 @@ class _SearchHeaderState extends State<SearchHeader> {
             ),
           ],
         ),
-        SizedBox(height: (SearchHeader._overlap + 8).h),
+        SizedBox(height: (24 + 8).h),
       ],
     );
   }

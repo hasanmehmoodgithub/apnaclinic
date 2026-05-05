@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import '../../../../core/constants/app_colors.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
+import '../../../../core/l10n/app_localizations.dart';
+import '../../../../generated/assets.dart';
 
 /// White bar with four side tabs and a raised center Home button.
 class ApnaBottomNavigationBar extends StatelessWidget {
@@ -13,17 +16,9 @@ class ApnaBottomNavigationBar extends StatelessWidget {
   final int currentIndex;
   final ValueChanged<int> onTap;
 
-  static const Color inactiveColor = Color(0xFF024886);
-  static const Color activeColor = Color(0xFF26A69A);
-
-  static const String freeDoctor = 'assets/svg/nav_free_doctor.svg';
-  static const String support = 'assets/svg/nav_support.svg';
-  static const String homeLogo = 'assets/svg/nav_home_logo.svg';
-  static const String bookings = 'assets/svg/nav_bookings.svg';
-  static const String profile = 'assets/svg/nav_profile.svg';
-
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final bottomInset = MediaQuery.paddingOf(context).bottom;
 
     return Material(
@@ -43,10 +38,10 @@ class ApnaBottomNavigationBar extends StatelessWidget {
                 height: 66.h,
                 child: DecoratedBox(
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: AppColors.clrWhite,
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.08),
+                        color: AppColors.clrBlack.withValues(alpha: 0.08),
                         blurRadius: 16.r,
                         offset: Offset(0, -4.h),
                       ),
@@ -58,16 +53,16 @@ class ApnaBottomNavigationBar extends StatelessWidget {
                       SizedBox(width: 8.w,),
                       Expanded(
                         child: _SideTab(
-                          label: 'Free Doctor',
-                          asset: freeDoctor,
+                          label: l10n.dashboardBottomFreeDoctor,
+                          asset: Assets.svgNavFreeDoctor,
                           selected: currentIndex == 0,
                           onTap: () => onTap(0),
                         ),
                       ),
                       Expanded(
                         child: _SideTab(
-                          label: 'Support',
-                          asset: support,
+                          label: l10n.dashboardBottomSupport,
+                          asset: Assets.svgNavSupport,
                           selected: currentIndex == 1,
                           onTap: () => onTap(1),
                         ),
@@ -75,16 +70,16 @@ class ApnaBottomNavigationBar extends StatelessWidget {
                       SizedBox(width: 66.w),
                       Expanded(
                         child: _SideTab(
-                          label: 'My Bookings',
-                          asset: bookings,
+                          label: l10n.dashboardBottomBookings,
+                          asset: Assets.svgNavBookings,
                           selected: currentIndex == 3,
                           onTap: () => onTap(3),
                         ),
                       ),
                       Expanded(
                         child: _SideTab(
-                          label: 'Profile',
-                          asset: profile,
+                          label: l10n.dashboardBottomProfile,
+                          asset: Assets.svgNavProfile,
                           selected: currentIndex == 4,
                           onTap: () => onTap(4),
                         ),
@@ -97,6 +92,7 @@ class ApnaBottomNavigationBar extends StatelessWidget {
               Positioned(
                 bottom: 12.h,
                 child: _HomeCenterButton(
+                  label: l10n.dashboardBottomHome,
                   selected: currentIndex == 2,
                   onTap: () => onTap(2),
                 ),
@@ -125,8 +121,8 @@ class _SideTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final color = selected
-        ? ApnaBottomNavigationBar.activeColor
-        : ApnaBottomNavigationBar.inactiveColor;
+        ? AppColors.clr26A69A
+        : AppColors.clr024886;
 
     return InkWell(
       onTap: onTap,
@@ -163,18 +159,20 @@ class _SideTab extends StatelessWidget {
 
 class _HomeCenterButton extends StatelessWidget {
   const _HomeCenterButton({
+    required this.label,
     required this.selected,
     required this.onTap,
   });
 
+  final String label;
   final bool selected;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
     final labelColor = selected
-        ? ApnaBottomNavigationBar.activeColor
-        : ApnaBottomNavigationBar.inactiveColor;
+        ? AppColors.clr26A69A
+        : AppColors.clr024886;
 
     return Material(
       color: Colors.transparent,
@@ -188,13 +186,13 @@ class _HomeCenterButton extends StatelessWidget {
               width: 64.r,
               height: 64.r,
               child: SvgPicture.asset(
-                ApnaBottomNavigationBar.homeLogo,
+                Assets.svgNavHomeLogo,
                 fit: BoxFit.contain,
               ),
             ),
             SizedBox(height: 4.h),
             Text(
-              'Home',
+              label,
               style: TextStyle(
                 fontSize: 11.sp,
                 fontWeight: FontWeight.w700,

@@ -399,4 +399,136 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get customerSupportDialError => 'Could not start the call.';
+
+  @override
+  String get accountDetailsTitle => 'Account Details';
+
+  @override
+  String get accountAddTitle => 'Add Account';
+
+  @override
+  String get accountEnterDetailsTitle => 'Enter Account Details';
+
+  @override
+  String get accountMethodLabel => 'Account Method';
+
+  @override
+  String get accountNumberLabel => 'Account Number';
+
+  @override
+  String get accountSaveCta => 'Save';
+
+  @override
+  String get accountContinueCta => 'Continue';
+
+  @override
+  String get accountMethodAddedSuccess => 'Payment Method Added Successfully';
+
+  @override
+  String get accountLinkedMessagePrefix => 'Your';
+
+  @override
+  String get accountLinkedMessageMiddle => 'account no.';
+
+  @override
+  String get accountLinkedMessageSuffix => 'has been linked successfully';
+
+  @override
+  String get accountHolderFallback => 'Account Holder';
+
+  @override
+  String get accountValidationEnterNumber => 'Enter account number';
+
+  @override
+  String get accountValidationDigitsOnly => 'Only digits are allowed';
+
+  @override
+  String get accountValidationElevenDigits => 'Enter 11 digit Pakistan number';
+
+  @override
+  String get accountValidationValidPakistanMobile =>
+      'Enter valid Pakistan mobile number';
+
+  @override
+  String get accountMethodJazzCash => 'JazzCash';
+
+  @override
+  String dashboardHello(String name) {
+    return 'Hello, $name';
+  }
+
+  @override
+  String get dashboardSearchHint => 'Search Medicine, Doctor, Test....';
+
+  @override
+  String get dashboardOurServicesTitle => 'Our Services';
+
+  @override
+  String get dashboardSecureHealthTitle => 'Secure Your Health First';
+
+  @override
+  String get dashboardFikrfreeTagline =>
+      'Sehat aur insurance ab apke hath mei!';
+
+  @override
+  String get dashboardBottomFreeDoctor => 'Free Doctor';
+
+  @override
+  String get dashboardBottomSupport => 'Support';
+
+  @override
+  String get dashboardBottomBookings => 'My Bookings';
+
+  @override
+  String get dashboardBottomProfile => 'Profile';
+
+  @override
+  String get dashboardBottomHome => 'Home';
+
+  @override
+  String get dashboardMenuTitle => 'Menu';
+
+  @override
+  String get dashboardMenuCustomerSupport => 'Customer Support';
+
+  @override
+  String get dashboardMenuFaq => 'FAQ’s';
+
+  @override
+  String get dashboardMenuGuestUser => 'Guest User';
+
+  @override
+  String get dashboardMenuSignInManageAccount =>
+      'Sign in to manage your account';
+
+  @override
+  String get dashboardMenuSignInContinue => 'Sign in to continue';
+
+  @override
+  String get dashboardMenuLogout => 'Logout';
+
+  @override
+  String get dashboardMenuAbout => 'About';
+
+  @override
+  String get dashboardMenuAppVersion => 'App Version';
+
+  @override
+  String get dashboardMenuTerms => 'Terms & Conditions';
+
+  @override
+  String get dashboardMenuPrivacy => 'Privacy Policy';
+
+  @override
+  String get dashboardMenuEditProfile => 'Edit Profile';
+
+  @override
+  String get dashboardMenuLoginSignup => 'Login / Signup';
+
+  @override
+  String get dashboardLogoutMessage =>
+      'Are you sure you want to logout from your account?';
+
+  @override
+  String get dashboardCancel => 'Cancel';
 }

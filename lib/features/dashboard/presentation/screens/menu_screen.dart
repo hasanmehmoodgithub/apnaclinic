@@ -3,8 +3,10 @@ import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../components/widgets/app_button.dart';
+import '../../../../core/constants/app_colors.dart';
 import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
+import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/preference/app_pref.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/widgets/app_scaffold_gradient.dart';
@@ -32,56 +34,52 @@ class _MenuScreenState extends State<MenuScreen> {
     _isLoggedIn = _appPref.getLoginStatus();
   }
 
-  static final List<_MenuItem> _mainItems = [
-    // _MenuItem(
-    //   'My Bookings',
-    //   Icons.calendar_month_outlined,
-    //   Color(0xFFE8F4FF),
-    // ),
-    _MenuItem(
-      'Customer Support',
-      Icons.headset_mic_outlined,
-      Color(0xFFCAD8FD).withValues(alpha: 0.46),
-    ),
-    _MenuItem(
-      "FAQ’s",
-      Icons.help_outline_rounded,
-      Color(0xFFEBDFFF).withValues(alpha: 0.46),
-    ),
-  ];
-
-  static final List<MenuAboutItemData> _aboutItems = [
-    MenuAboutItemData('App Version', subtitle: '1.0'),
-    MenuAboutItemData(
-      'Terms & Conditions',
-      onTap: () => launchUrl(
-        Uri.parse('https://apnaclinic.ecnstg.com/terms'),
-        mode: LaunchMode.externalApplication,
-      ),
-    ),
-    MenuAboutItemData(
-      'Privacy Policy',
-      onTap: () => launchUrl(
-        Uri.parse('https://apnaclinic.ecnstg.com/privacy-policy'),
-        mode: LaunchMode.externalApplication,
-      ),
-    ),
-  ];
-
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final userLocal = _appPref.getUserLocalModel();
     final firstName = userLocal?.firstName.trim() ?? '';
     final lastName = userLocal?.lastName.trim() ?? '';
     final fullName = '$firstName $lastName'.trim();
     final phone = userLocal?.phone.trim() ?? '';
-    final displayName = fullName.isEmpty ? 'Guest User' : fullName;
+    final displayName = fullName.isEmpty ? l10n.dashboardMenuGuestUser : fullName;
     final displayPhone = phone.isEmpty
-        ? 'Sign in to manage your account'
+        ? l10n.dashboardMenuSignInManageAccount
         : phone;
+    final mainItems = [
+      _MenuItem(
+        id: _MenuItemId.customerSupport,
+        title: l10n.dashboardMenuCustomerSupport,
+        icon: Icons.headset_mic_outlined,
+        curveOverlayColor: AppColors.clrCAD8FD.withValues(alpha: 0.46),
+      ),
+      _MenuItem(
+        id: _MenuItemId.faq,
+        title: l10n.dashboardMenuFaq,
+        icon: Icons.help_outline_rounded,
+        curveOverlayColor: AppColors.clrEBDFFF.withValues(alpha: 0.46),
+      ),
+    ];
+    final aboutItems = [
+      MenuAboutItemData(l10n.dashboardMenuAppVersion, subtitle: '1.0'),
+      MenuAboutItemData(
+        l10n.dashboardMenuTerms,
+        onTap: () => launchUrl(
+          Uri.parse('https://apnaclinic.ecnstg.com/terms'),
+          mode: LaunchMode.externalApplication,
+        ),
+      ),
+      MenuAboutItemData(
+        l10n.dashboardMenuPrivacy,
+        onTap: () => launchUrl(
+          Uri.parse('https://apnaclinic.ecnstg.com/privacy-policy'),
+          mode: LaunchMode.externalApplication,
+        ),
+      ),
+    ];
 
     return AppScaffoldGradient(
-      colors: const [Color(0xFFD5FFFB), Color(0xFFE0E6FF)],
+      colors: const [AppColors.clrD5FFFB, AppColors.clrE0E6FF],
       begin: Alignment.topLeft,
       end: Alignment.bottomRight,
       child: Column(
@@ -104,10 +102,10 @@ class _MenuScreenState extends State<MenuScreen> {
                         children: [
                           MenuProfileCard(
                             isLoggedIn: _isLoggedIn,
-                            name: _isLoggedIn ? displayName : 'Guest User',
+                            name: _isLoggedIn ? displayName : l10n.dashboardMenuGuestUser,
                             phone: _isLoggedIn
                                 ? displayPhone
-                                : 'Sign in to continue',
+                                : l10n.dashboardMenuSignInContinue,
                             onActionTap: () {
                               if (!_isLoggedIn) {
                                 context.push(
@@ -121,16 +119,16 @@ class _MenuScreenState extends State<MenuScreen> {
                             },
                           ),
                           SizedBox(height: 14.h),
-                          for (final item in _mainItems) ...[
+                          for (final item in mainItems) ...[
                             MenuActionTile(
                               onTap: () {
-                                if (item.title == 'Customer Support') {
+                                if (item.id == _MenuItemId.customerSupport) {
                                   context.push(
                                     AppRoutes.path(AppRoutes.customerSupport),
                                   );
                                   return;
                                 }
-                                if (item.title == "FAQ’s") {
+                                if (item.id == _MenuItemId.faq) {
                                   launchUrl(
                                     Uri.parse('https://apnaclinic.ecnstg.com/faq'),
                                     mode: LaunchMode.externalApplication,
@@ -144,7 +142,7 @@ class _MenuScreenState extends State<MenuScreen> {
                             SizedBox(height: 14.h),
                           ],
                           MenuAboutCard(
-                            items: _aboutItems,
+                            items: aboutItems,
                             onAboutTap: () => launchUrl(
                               Uri.parse('https://apnaclinic.ecnstg.com/'),
                               mode: LaunchMode.externalApplication,
@@ -159,7 +157,7 @@ class _MenuScreenState extends State<MenuScreen> {
                         child: SizedBox(
                           width: double.infinity,
                           child: AppButton.primary(
-                            text: 'Logout',
+                            text: l10n.dashboardMenuLogout,
                             onPressed: () async {
                               final shouldLogout = await showMenuLogoutDialog(
                                 context,
@@ -175,8 +173,8 @@ class _MenuScreenState extends State<MenuScreen> {
                                 _isLoggedIn = false;
                               });
                             },
-                            backgroundColor: const Color(0xFF40AFA2),
-                            foregroundColor: Colors.white,
+                            backgroundColor: AppColors.clr40AFA2,
+                            foregroundColor: AppColors.clrWhite,
                             elevation: 0,
                             height: 62.h,
                             borderRadius: 13.r,
@@ -197,9 +195,20 @@ class _MenuScreenState extends State<MenuScreen> {
 }
 
 class _MenuItem {
-  const _MenuItem(this.title, this.icon, this.curveOverlayColor);
+  const _MenuItem({
+    required this.id,
+    required this.title,
+    required this.icon,
+    required this.curveOverlayColor,
+  });
 
+  final _MenuItemId id;
   final String title;
   final IconData icon;
   final Color curveOverlayColor;
+}
+
+enum _MenuItemId {
+  customerSupport,
+  faq,
 }

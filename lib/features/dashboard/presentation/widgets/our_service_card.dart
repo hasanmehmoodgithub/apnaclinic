@@ -1,5 +1,6 @@
 import 'package:apnaclinic/core/constants/app_colors.dart';
 import 'package:apnaclinic/generated/assets.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
@@ -28,7 +29,7 @@ class OurServiceCardWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final ImageProvider serviceImageProvider = imageAsset.startsWith('http')
-        ? NetworkImage(imageAsset)
+        ? CachedNetworkImageProvider(imageAsset)
         : AssetImage(imageAsset) as ImageProvider;
 
     return InkWell(
@@ -80,7 +81,7 @@ class OurServiceCardWidget extends StatelessWidget {
                   vertical: 4.h,
                 ),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFFFDB61),
+                  color: AppColors.clrFFFFDB61,
                   borderRadius: BorderRadius.circular(20.r),
                 ),
                 child: Row(
@@ -97,7 +98,7 @@ class OurServiceCardWidget extends StatelessWidget {
                       style: theme.textTheme.labelSmall?.copyWith(
                         fontWeight: FontWeight.w800,
                         fontSize: 14.sp,
-                        color:  Colors.black,
+                        color: AppColors.clrBlack,
                       ),
                     ),
                   ],

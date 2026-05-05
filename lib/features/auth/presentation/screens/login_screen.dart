@@ -11,7 +11,7 @@ import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/router/app_routes.dart';
 import '../cubit/auth_cubit.dart';
 import '../cubit/auth_state.dart';
-import '../widgets/auth_shell.dart';
+import '../widgets/auth_top_header_widget.dart';
 import '../widgets/login_legal_text.dart';
 import '../widgets/login_otp_section.dart';
 import '../widgets/login_phone_input_section.dart';
@@ -57,54 +57,76 @@ class _LoginViewState extends State<_LoginView> {
 
     return BlocBuilder<AuthCubit, AuthState>(
       builder: (context, state) {
-        return AuthShell(
-          onBackTap: () => _handleBackTap(state),
-          child: Padding(
-            padding: EdgeInsets.fromLTRB(30.w, 22.h, 30.w, 20.h),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  LoginPhoneInputSection(
-                    controller: _phoneController,
-                    onChanged: _handlePhoneChanged,
-                    errorText: !state.otpRequested ? state.errorMessage : null,
-                  ),
-                  if (state.otpRequested) ...[
-                    LoginOtpSection(
-                      controller: _otpController,
-                      focusNode: _otpFocusNode,
-                      otpSecondsRemaining: state.otpSecondsRemaining,
-                      canResendOtp: state.canResendOtp,
-                      onResendTap: () => context.read<AuthCubit>().requestOtp(
-                        context.read<AuthCubit>().formatPhoneInput(
-                          _phoneController.text.trim(),
-                        ),
-                      ),
-                      onOtpChanged: (_) =>
-                          context.read<AuthCubit>().clearError(),
-                      errorText: state.errorMessage,
-                    ),
-                  ],
-                  const Spacer(),
-                  AppButton.primary(
-                    text: state.otpRequested
-                        ? l10n.authVerifyCta
-                        : l10n.authSendOtpCta,
-                    onPressed: state.isLoading ? null : () => _submit(state),
-                    isLoading: state.isLoading,
-                    backgroundColor: AppColors.clr0FAA9A,
-                    foregroundColor: AppColors.clrWhite,
-                    height: 62.h,
-                    borderRadius: 20.r,
-                    fontSize: (30 / 1.65).sp,
-                  ),
-                  SizedBox(height: 20.h),
-                  const LoginLegalText(),
-                ],
+        return Scaffold(
+          backgroundColor: AppColors.clrF4F6F8,
+          body: Column(
+            children: [
+              AuthTopHeaderWidget(
+                onBackTap: () => _handleBackTap(state),
               ),
-            ),
+              Expanded(
+                child: Container(
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: AppColors.clrWhite,
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(30.r),
+                    ),
+                  ),
+                  child: Padding(
+                    padding: EdgeInsets.fromLTRB(30.w, 22.h, 30.w, 20.h),
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          LoginPhoneInputSection(
+                            controller: _phoneController,
+                            onChanged: _handlePhoneChanged,
+                            errorText: !state.otpRequested
+                                ? state.errorMessage
+                                : null,
+                          ),
+                          if (state.otpRequested) ...[
+                            LoginOtpSection(
+                              controller: _otpController,
+                              focusNode: _otpFocusNode,
+                              otpSecondsRemaining: state.otpSecondsRemaining,
+                              canResendOtp: state.canResendOtp,
+                              onResendTap: () => context.read<AuthCubit>().requestOtp(
+                                context.read<AuthCubit>().formatPhoneInput(
+                                  _phoneController.text.trim(),
+                                ),
+                              ),
+                              onOtpChanged: (_) =>
+                                  context.read<AuthCubit>().clearError(),
+                              errorText: state.errorMessage,
+                            ),
+                          ],
+                          const Spacer(),
+                          AppButton.primary(
+                            text: state.otpRequested
+                                ? l10n.authVerifyCta
+                                : l10n.authSendOtpCta,
+                            onPressed: state.isLoading
+                                ? null
+                                : () => _submit(state),
+                            isLoading: state.isLoading,
+                            backgroundColor: AppColors.clr0FAA9A,
+                            foregroundColor: AppColors.clrWhite,
+                            height: 62.h,
+                            borderRadius: 20.r,
+                            fontSize: (30 / 1.65).sp,
+                          ),
+                          SizedBox(height: 20.h),
+                          const LoginLegalText(),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
         );
       },

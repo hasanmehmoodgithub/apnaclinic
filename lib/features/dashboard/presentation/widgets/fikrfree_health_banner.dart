@@ -1,4 +1,5 @@
 import 'package:apnaclinic/core/constants/app_colors.dart';
+import 'package:apnaclinic/core/l10n/app_localizations.dart';
 import 'package:apnaclinic/generated/assets.dart';
 import 'package:flutter/material.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
@@ -13,17 +14,18 @@ class FikrfreeHealthBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Secure Your Health First',
+          l10n.dashboardSecureHealthTitle,
           style: theme.textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.w700,
             fontSize: 16.sp,
-            color: const Color(0xFF111827),
+            color: AppColors.clr111827,
           ),
         ),
         SizedBox(height: 12.h),
@@ -39,7 +41,7 @@ class FikrfreeHealthBanner extends StatelessWidget {
             ],
           ),
           child: Material(
-            color: const Color(0xFFEAF6F1),
+            color: AppColors.clrEAF6F1,
             borderRadius: BorderRadius.circular(16.r),
             clipBehavior: Clip.antiAlias,
             child: InkWell(
@@ -63,7 +65,7 @@ class FikrfreeHealthBanner extends StatelessWidget {
                           ),
                           SizedBox(height: 6.h),
                           Text(
-                            'Sehat aur insurance ab apke hath mei!',
+                            l10n.dashboardFikrfreeTagline,
                             style: theme.textTheme.bodySmall?.copyWith(
                               color: AppColors.clr43,
                               fontWeight: FontWeight.w400,
@@ -82,7 +84,7 @@ class FikrfreeHealthBanner extends StatelessWidget {
                         children: [
                           Icon(
                             Icons.chevron_right_rounded,
-                            color: const Color(0xFF0D9488),
+                            color: AppColors.clr0D9488,
                             size: 22.r,
                           ),
                           SizedBox(height: 12.h),

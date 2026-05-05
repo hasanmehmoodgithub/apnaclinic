@@ -1,47 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
-
-import '../../../../core/di/dependency_injection.dart';
-import '../../../../core/enums/state_status.dart';
-import '../../../../core/extensions/screen_util_extensions.dart';
-import '../../../../core/preference/app_pref.dart';
-import '../../../../core/router/app_routes.dart';
-import '../../../../core/widgets/apna_clinic_app_bar.dart';
-import '../../../../core/widgets/heart_loader_widget.dart';
-import '../../domain/entities/our_service_entity.dart';
-import '../cubit/dashboard_services_cubit.dart';
-import '../cubit/dashboard_services_state.dart';
-import '../widgets/fikrfree_health_banner.dart';
-import '../widgets/our_services_widget.dart';
-import '../widgets/promotional_banner_dialog.dart';
-import '../widgets/search_header.dart';
-import '../../../profile_setup/presentation/screens/profile_screen.dart';
-import '../../../notification/presentation/cubit/notification_cubit.dart';
-import '../../../notification/presentation/cubit/notification_state.dart';
-
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
-
-import '../../../../core/di/dependency_injection.dart';
-import '../../../../core/enums/state_status.dart';
-import '../../../../core/extensions/screen_util_extensions.dart';
-import '../../../../core/preference/app_pref.dart';
-import '../../../../core/router/app_routes.dart';
-import '../../../../core/widgets/apna_clinic_app_bar.dart';
-import '../../../../core/widgets/heart_loader_widget.dart';
-import '../../domain/entities/our_service_entity.dart';
-import '../cubit/dashboard_services_cubit.dart';
-import '../cubit/dashboard_services_state.dart';
-import '../widgets/fikrfree_health_banner.dart';
-import '../widgets/our_services_widget.dart';
-import '../widgets/promotional_banner_dialog.dart';
-import '../widgets/search_header.dart';
-import '../../../profile_setup/presentation/screens/profile_screen.dart';
-import '../../../notification/presentation/cubit/notification_cubit.dart';
-import '../../../notification/presentation/cubit/notification_state.dart';
-
+import 'package:apnaclinic/core/constants/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -50,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/enums/state_status.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
+import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/preference/app_pref.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/widgets/apna_clinic_app_bar.dart';
@@ -61,7 +19,6 @@ import '../widgets/fikrfree_health_banner.dart';
 import '../widgets/our_services_widget.dart';
 import '../widgets/promotional_banner_dialog.dart';
 import '../widgets/search_header.dart';
-import '../../../profile_setup/presentation/screens/profile_screen.dart';
 import '../../../notification/presentation/cubit/notification_cubit.dart';
 import '../../../notification/presentation/cubit/notification_state.dart';
 
@@ -109,6 +66,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     return AnimatedBuilder(
       animation: routerDelegate,
       builder: (context, _) {
+        final l10n = AppLocalizations.of(context)!;
         _isLoggedIn = sl<AppPref>().getLoginStatus();
         final greetingName = _resolveGreetingName();
         final theme = Theme.of(context);
@@ -126,7 +84,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
           child: BlocConsumer<DashboardCubit, DashboardServicesState>(
             listener: _onDashboardStateChanged,
             builder: (context, state) =>
-                _buildHomeBody(context, state, greetingName, theme),
+                _buildHomeBody(context, state, greetingName, theme, l10n),
           ),
         );
       },
@@ -173,9 +131,10 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       DashboardServicesState state,
       String greetingName,
       ThemeData theme,
+      AppLocalizations l10n,
       ) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.clrWhite,
       // Tapping anywhere outside the text field dismisses the keyboard.
       body: GestureDetector(
         behavior: HitTestBehavior.translucent,
@@ -183,7 +142,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
         child: Column(
           children: [
             Container(
-              color: const Color(0xFF52A898),
+              color: AppColors.clr52A898,
               child: SafeArea(
                 child: BlocBuilder<NotificationCubit, NotificationState>(
                   bloc: _notificationCubit,
@@ -209,14 +168,9 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                       showLoginButton: !_isLoggedIn,
                       onLoginTap: () =>
                           context.push(AppRoutes.path(AppRoutes.authLogin)),
-                      onProfileTap: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute<void>(
-                            builder: (_) =>
-                            const ProfileScreen(showBackButton: true),
-                          ),
-                        );
-                      },
+                      onProfileTap: () => context.push(
+                        AppRoutes.path(AppRoutes.profileSetup),
+                      ),
                     );
                   },
                 ),
@@ -236,10 +190,10 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                     padding: EdgeInsets.fromLTRB(20.w, 12.h, 20.w, 0),
                     sliver: SliverToBoxAdapter(
                       child: Text(
-                        'Our Services',
+                        l10n.dashboardOurServicesTitle,
                         style: theme.textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.w600,
-                          color: const Color(0xFF111827),
+                          color: AppColors.clr111827,
                         ),
                       ),
                     ),
@@ -268,13 +222,13 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   }
 
   String _resolveGreetingName() {
-    if (!_isLoggedIn) return 'Guest';
+    if (!_isLoggedIn) return '';
     final appPref = sl<AppPref>();
     final userLocal = appPref.getUserLocalModel();
     final firstName = userLocal?.firstName.trim() ?? '';
     final lastName = userLocal?.lastName.trim() ?? '';
     final fullName = '$firstName $lastName'.trim();
-    return fullName.isEmpty ? 'Guest' : fullName;
+    return fullName;
   }
 
   void _onServiceTap(BuildContext context, OurServiceEntity service) {

@@ -1,5 +1,7 @@
 import 'package:apnaclinic/components/widgets/action_option_card.dart';
+import 'package:apnaclinic/core/constants/app_colors.dart';
 import 'package:apnaclinic/core/extensions/screen_util_extensions.dart';
+import 'package:apnaclinic/core/l10n/app_localizations.dart';
 import 'package:apnaclinic/generated/assets.dart';
 import 'package:flutter/material.dart';
 
@@ -19,6 +21,7 @@ class MenuProfileCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
 
     return ActionOptionCard(
@@ -26,19 +29,19 @@ class MenuProfileCard extends StatelessWidget {
       subtitle: phone,
       onTap: onActionTap,
       onTrailingTap: onActionTap,
-      curveOverlayColor: const Color(0x99EBDFFF),
+      curveOverlayColor: AppColors.clrEBDFFF.withValues(alpha: 0.6),
       trailingOverlayWidth: 124.w,
 
       contentPadding: EdgeInsets.fromLTRB(18.w, 25.h, 16.w, 24.h),
       titleSpacing: 7,
       titleStyle: theme.textTheme.titleMedium?.copyWith(
-        color: const Color(0xFF0E2D55),
+        color: AppColors.clr0E2D55,
         fontWeight: FontWeight.w500,
         fontSize: 20.sp,
         height: 1,
       ),
       subtitleStyle: theme.textTheme.bodyMedium?.copyWith(
-        color: const Color(0xFF4A4A4A),
+        color: AppColors.clr4A4A4A,
         fontWeight: FontWeight.w400,
         fontSize: 14.sp,
         height: 1,
@@ -50,10 +53,10 @@ class MenuProfileCard extends StatelessWidget {
         onPressed: onActionTap,
         style: OutlinedButton.styleFrom(
           side: const BorderSide(
-            color: Color(0xFF9BA6A7),
+            color: AppColors.clr9BA6A7,
             width: 0.8,
           ),
-          foregroundColor: const Color(0xFF0E2D55),
+          foregroundColor: AppColors.clr0E2D55,
           minimumSize: Size(72.w, 24.h),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20.r),
@@ -65,11 +68,13 @@ class MenuProfileCard extends StatelessWidget {
           backgroundColor: Colors.transparent,
         ),
         child: Text(
-          isLoggedIn ? 'Edit Profile' : 'Login / Signup',
+          isLoggedIn
+              ? l10n.dashboardMenuEditProfile
+              : l10n.dashboardMenuLoginSignup,
           style: theme.textTheme.labelLarge?.copyWith(
             fontWeight: FontWeight.w500,
             fontSize: 9.sp,
-            color: const Color(0xFF0E2D55),
+            color: AppColors.clr0E2D55,
           ),
         ),
       ),

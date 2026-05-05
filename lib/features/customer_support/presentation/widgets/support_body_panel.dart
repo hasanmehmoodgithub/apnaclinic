@@ -20,21 +20,11 @@ class SupportBodyPanel extends StatelessWidget {
 
   final CustomerSupportState state;
 
-  static const Color _headingDark = AppColors.clr111827;
-  static const Color _subtitleGrey = AppColors.clr6B7280;
-  static const double _cardTopRadius = 32;
-  static const List<Color> _curveOverlayColors = [
-    AppColors.clrE9F4FC,
-    AppColors.clrE9EEF3,
-    AppColors.clrFCF5E9,
-    AppColors.clrF5FBFA,
-  ];
-
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
-    const radius = BorderRadius.vertical(top: Radius.circular(_cardTopRadius));
+    const radius = BorderRadius.vertical(top: Radius.circular(32));
 
     final content = state.content;
     final helpTitle =
@@ -79,13 +69,13 @@ class SupportBodyPanel extends StatelessWidget {
                     Text(
                       helpTitle,
                       style: theme.textTheme.bodyLarge?.copyWith(
-                        color: _headingDark,
+                        color: AppColors.clr111827,
                       ),
                     ),
                     Text(
                       helpSubtitle,
                       style: theme.textTheme.bodySmall?.copyWith(
-                        color: _subtitleGrey,
+                        color: AppColors.clr6B7280,
                         height: 1.4,
                       ),
                     ),
@@ -93,8 +83,12 @@ class SupportBodyPanel extends StatelessWidget {
                     for (int i = 0; i < contacts.length; i++) ...[
                       ActionOptionCard(
                         title: contacts[i].cardTitle,
-                        curveOverlayColor:
-                            _curveOverlayColors[i % _curveOverlayColors.length],
+                        curveOverlayColor: [
+                          AppColors.clrE9F4FC,
+                          AppColors.clrE9EEF3,
+                          AppColors.clrFCF5E9,
+                          AppColors.clrF5FBFA,
+                        ][i % 4],
                         leading: SizedBox(
                           width: 60.r,
                           height: 60.r,

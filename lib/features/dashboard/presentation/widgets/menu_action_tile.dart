@@ -1,4 +1,5 @@
 import 'package:apnaclinic/components/widgets/action_option_card.dart';
+import 'package:apnaclinic/core/constants/app_colors.dart';
 import 'package:apnaclinic/core/extensions/screen_util_extensions.dart';
 import 'package:flutter/material.dart';
 
@@ -33,7 +34,7 @@ class MenuActionTile extends StatelessWidget {
             width: 0.33.r,
           ),
         ),
-        child: Icon(icon, size: 24.r, color: const Color(0xFF303D4F)),
+        child: Icon(icon, size: 24.r, color: AppColors.clr303D4F),
       ),
     );
   }

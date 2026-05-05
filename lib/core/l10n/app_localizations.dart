@@ -853,6 +853,258 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Could not start the call.'**
   String get customerSupportDialError;
+
+  /// No description provided for @accountDetailsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Account Details'**
+  String get accountDetailsTitle;
+
+  /// No description provided for @accountAddTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Account'**
+  String get accountAddTitle;
+
+  /// No description provided for @accountEnterDetailsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter Account Details'**
+  String get accountEnterDetailsTitle;
+
+  /// No description provided for @accountMethodLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Account Method'**
+  String get accountMethodLabel;
+
+  /// No description provided for @accountNumberLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Account Number'**
+  String get accountNumberLabel;
+
+  /// No description provided for @accountSaveCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get accountSaveCta;
+
+  /// No description provided for @accountContinueCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue'**
+  String get accountContinueCta;
+
+  /// No description provided for @accountMethodAddedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment Method Added Successfully'**
+  String get accountMethodAddedSuccess;
+
+  /// No description provided for @accountLinkedMessagePrefix.
+  ///
+  /// In en, this message translates to:
+  /// **'Your'**
+  String get accountLinkedMessagePrefix;
+
+  /// No description provided for @accountLinkedMessageMiddle.
+  ///
+  /// In en, this message translates to:
+  /// **'account no.'**
+  String get accountLinkedMessageMiddle;
+
+  /// No description provided for @accountLinkedMessageSuffix.
+  ///
+  /// In en, this message translates to:
+  /// **'has been linked successfully'**
+  String get accountLinkedMessageSuffix;
+
+  /// No description provided for @accountHolderFallback.
+  ///
+  /// In en, this message translates to:
+  /// **'Account Holder'**
+  String get accountHolderFallback;
+
+  /// No description provided for @accountValidationEnterNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter account number'**
+  String get accountValidationEnterNumber;
+
+  /// No description provided for @accountValidationDigitsOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'Only digits are allowed'**
+  String get accountValidationDigitsOnly;
+
+  /// No description provided for @accountValidationElevenDigits.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter 11 digit Pakistan number'**
+  String get accountValidationElevenDigits;
+
+  /// No description provided for @accountValidationValidPakistanMobile.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter valid Pakistan mobile number'**
+  String get accountValidationValidPakistanMobile;
+
+  /// No description provided for @accountMethodJazzCash.
+  ///
+  /// In en, this message translates to:
+  /// **'JazzCash'**
+  String get accountMethodJazzCash;
+
+  /// No description provided for @dashboardHello.
+  ///
+  /// In en, this message translates to:
+  /// **'Hello, {name}'**
+  String dashboardHello(String name);
+
+  /// No description provided for @dashboardSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search Medicine, Doctor, Test....'**
+  String get dashboardSearchHint;
+
+  /// No description provided for @dashboardOurServicesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Our Services'**
+  String get dashboardOurServicesTitle;
+
+  /// No description provided for @dashboardSecureHealthTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Secure Your Health First'**
+  String get dashboardSecureHealthTitle;
+
+  /// No description provided for @dashboardFikrfreeTagline.
+  ///
+  /// In en, this message translates to:
+  /// **'Sehat aur insurance ab apke hath mei!'**
+  String get dashboardFikrfreeTagline;
+
+  /// No description provided for @dashboardBottomFreeDoctor.
+  ///
+  /// In en, this message translates to:
+  /// **'Free Doctor'**
+  String get dashboardBottomFreeDoctor;
+
+  /// No description provided for @dashboardBottomSupport.
+  ///
+  /// In en, this message translates to:
+  /// **'Support'**
+  String get dashboardBottomSupport;
+
+  /// No description provided for @dashboardBottomBookings.
+  ///
+  /// In en, this message translates to:
+  /// **'My Bookings'**
+  String get dashboardBottomBookings;
+
+  /// No description provided for @dashboardBottomProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile'**
+  String get dashboardBottomProfile;
+
+  /// No description provided for @dashboardBottomHome.
+  ///
+  /// In en, this message translates to:
+  /// **'Home'**
+  String get dashboardBottomHome;
+
+  /// No description provided for @dashboardMenuTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Menu'**
+  String get dashboardMenuTitle;
+
+  /// No description provided for @dashboardMenuCustomerSupport.
+  ///
+  /// In en, this message translates to:
+  /// **'Customer Support'**
+  String get dashboardMenuCustomerSupport;
+
+  /// No description provided for @dashboardMenuFaq.
+  ///
+  /// In en, this message translates to:
+  /// **'FAQ’s'**
+  String get dashboardMenuFaq;
+
+  /// No description provided for @dashboardMenuGuestUser.
+  ///
+  /// In en, this message translates to:
+  /// **'Guest User'**
+  String get dashboardMenuGuestUser;
+
+  /// No description provided for @dashboardMenuSignInManageAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in to manage your account'**
+  String get dashboardMenuSignInManageAccount;
+
+  /// No description provided for @dashboardMenuSignInContinue.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in to continue'**
+  String get dashboardMenuSignInContinue;
+
+  /// No description provided for @dashboardMenuLogout.
+  ///
+  /// In en, this message translates to:
+  /// **'Logout'**
+  String get dashboardMenuLogout;
+
+  /// No description provided for @dashboardMenuAbout.
+  ///
+  /// In en, this message translates to:
+  /// **'About'**
+  String get dashboardMenuAbout;
+
+  /// No description provided for @dashboardMenuAppVersion.
+  ///
+  /// In en, this message translates to:
+  /// **'App Version'**
+  String get dashboardMenuAppVersion;
+
+  /// No description provided for @dashboardMenuTerms.
+  ///
+  /// In en, this message translates to:
+  /// **'Terms & Conditions'**
+  String get dashboardMenuTerms;
+
+  /// No description provided for @dashboardMenuPrivacy.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy Policy'**
+  String get dashboardMenuPrivacy;
+
+  /// No description provided for @dashboardMenuEditProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Profile'**
+  String get dashboardMenuEditProfile;
+
+  /// No description provided for @dashboardMenuLoginSignup.
+  ///
+  /// In en, this message translates to:
+  /// **'Login / Signup'**
+  String get dashboardMenuLoginSignup;
+
+  /// No description provided for @dashboardLogoutMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to logout from your account?'**
+  String get dashboardLogoutMessage;
+
+  /// No description provided for @dashboardCancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get dashboardCancel;
 }
 
 class _AppLocalizationsDelegate

@@ -399,4 +399,137 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get customerSupportDialError => 'کال شروع نہیں ہو سکی۔';
+
+  @override
+  String get accountDetailsTitle => 'اکاؤنٹ کی تفصیل';
+
+  @override
+  String get accountAddTitle => 'اکاؤنٹ شامل کریں';
+
+  @override
+  String get accountEnterDetailsTitle => 'اکاؤنٹ کی تفصیل درج کریں';
+
+  @override
+  String get accountMethodLabel => 'اکاؤنٹ میتھڈ';
+
+  @override
+  String get accountNumberLabel => 'اکاؤنٹ نمبر';
+
+  @override
+  String get accountSaveCta => 'محفوظ کریں';
+
+  @override
+  String get accountContinueCta => 'جاری رکھیں';
+
+  @override
+  String get accountMethodAddedSuccess =>
+      'ادائیگی کا طریقہ کامیابی سے شامل ہو گیا';
+
+  @override
+  String get accountLinkedMessagePrefix => 'آپ کا';
+
+  @override
+  String get accountLinkedMessageMiddle => 'اکاؤنٹ نمبر';
+
+  @override
+  String get accountLinkedMessageSuffix => 'کامیابی سے لنک ہو گیا ہے';
+
+  @override
+  String get accountHolderFallback => 'اکاؤنٹ ہولڈر';
+
+  @override
+  String get accountValidationEnterNumber => 'اکاؤنٹ نمبر درج کریں';
+
+  @override
+  String get accountValidationDigitsOnly => 'صرف ہندسے درج کریں';
+
+  @override
+  String get accountValidationElevenDigits =>
+      '11 ہندسوں کا پاکستانی نمبر درج کریں';
+
+  @override
+  String get accountValidationValidPakistanMobile =>
+      'درست پاکستانی موبائل نمبر درج کریں';
+
+  @override
+  String get accountMethodJazzCash => 'JazzCash';
+
+  @override
+  String dashboardHello(String name) {
+    return 'ہیلو، $name';
+  }
+
+  @override
+  String get dashboardSearchHint => 'دوائی، ڈاکٹر، ٹیسٹ تلاش کریں....';
+
+  @override
+  String get dashboardOurServicesTitle => 'ہماری سروسز';
+
+  @override
+  String get dashboardSecureHealthTitle => 'اپنی صحت کو پہلے محفوظ کریں';
+
+  @override
+  String get dashboardFikrfreeTagline => 'صحت اور انشورنس اب آپ کے ہاتھ میں!';
+
+  @override
+  String get dashboardBottomFreeDoctor => 'مفت ڈاکٹر';
+
+  @override
+  String get dashboardBottomSupport => 'سپورٹ';
+
+  @override
+  String get dashboardBottomBookings => 'میری بکنگز';
+
+  @override
+  String get dashboardBottomProfile => 'پروفائل';
+
+  @override
+  String get dashboardBottomHome => 'ہوم';
+
+  @override
+  String get dashboardMenuTitle => 'مینو';
+
+  @override
+  String get dashboardMenuCustomerSupport => 'کسٹمر سپورٹ';
+
+  @override
+  String get dashboardMenuFaq => 'سوالات';
+
+  @override
+  String get dashboardMenuGuestUser => 'مہمان صارف';
+
+  @override
+  String get dashboardMenuSignInManageAccount =>
+      'اپنا اکاؤنٹ سنبھالنے کے لیے سائن اِن کریں';
+
+  @override
+  String get dashboardMenuSignInContinue => 'جاری رکھنے کے لیے سائن اِن کریں';
+
+  @override
+  String get dashboardMenuLogout => 'لاگ آؤٹ';
+
+  @override
+  String get dashboardMenuAbout => 'متعلق';
+
+  @override
+  String get dashboardMenuAppVersion => 'ایپ ورژن';
+
+  @override
+  String get dashboardMenuTerms => 'شرائط و ضوابط';
+
+  @override
+  String get dashboardMenuPrivacy => 'پرائیویسی پالیسی';
+
+  @override
+  String get dashboardMenuEditProfile => 'پروفائل ایڈٹ کریں';
+
+  @override
+  String get dashboardMenuLoginSignup => 'لاگ اِن / سائن اپ';
+
+  @override
+  String get dashboardLogoutMessage =>
+      'کیا آپ واقعی اپنے اکاؤنٹ سے لاگ آؤٹ کرنا چاہتے ہیں؟';
+
+  @override
+  String get dashboardCancel => 'منسوخ کریں';
 }
