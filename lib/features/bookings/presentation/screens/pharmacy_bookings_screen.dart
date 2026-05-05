@@ -41,7 +41,7 @@ class PharmacyBookingsScreen extends StatelessWidget {
         textTheme: textTheme,
         l10n: l10n,
       ),
-      separatorBuilder: (_, __) => SizedBox(height: 12.h),
+      separatorBuilder: (_, _) => SizedBox(height: 12.h),
       itemCount: _items.length,
     );
   }

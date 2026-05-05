@@ -62,7 +62,7 @@ class DoctorConsultationBookingsScreen extends StatelessWidget {
       padding: EdgeInsets.fromLTRB(0, 20.h, 0, 8.h),
       itemBuilder: (context, index) =>
           _DoctorBookingCard(item: _items[index], textTheme: textTheme, l10n: l10n),
-      separatorBuilder: (_, __) => SizedBox(height: 14.h),
+      separatorBuilder: (_, _) => SizedBox(height: 14.h),
       itemCount: _items.length,
     );
   }
@@ -115,10 +115,10 @@ class _DoctorBookingCard extends StatelessWidget {
                 child: CachedNetworkImage(
                   imageUrl: item.doctorImageUrl,
                   fit: BoxFit.cover,
-                  placeholder: (_, __) => const Center(
+                  placeholder: (_, _) => const Center(
                     child: CircularProgressIndicator(strokeWidth: 2),
                   ),
-                  errorWidget: (_, __, ___) => const Icon(
+                  errorWidget: (_, _, _) => const Icon(
                     Icons.person_rounded,
                     color: Color(0xFFBFC7CF),
                     size: 40,
@@ -426,8 +426,8 @@ class _NetAsset extends StatelessWidget {
     return CachedNetworkImage(
       imageUrl: url,
       fit: fit,
-      placeholder: (_, __) => const SizedBox.shrink(),
-      errorWidget: (_, __, ___) => const SizedBox.shrink(),
+      placeholder: (_, _) => const SizedBox.shrink(),
+      errorWidget: (_, _, _) => const SizedBox.shrink(),
     );
   }
 }

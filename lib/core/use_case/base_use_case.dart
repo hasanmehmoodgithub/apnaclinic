@@ -1,5 +1,4 @@
 import '../functional/functional_export.dart';
-import '../failure/exceptions.dart';
 
 /// Base use case interface
 /// All use cases should implement this interface

@@ -1,4 +1,3 @@
-import '../../../../core/failure/exceptions.dart';
 import '../../../../core/functional/functional_export.dart';
 import '../mappers/auth_mapper.dart';
 import '../../domain/entities/auth_entity.dart';

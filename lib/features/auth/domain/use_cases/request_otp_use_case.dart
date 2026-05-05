@@ -1,6 +1,5 @@
 import 'package:equatable/equatable.dart';
 
-import '../../../../core/failure/exceptions.dart';
 import '../../../../core/functional/functional_export.dart';
 import '../../../../core/use_case/base_use_case.dart';
 import '../entities/auth_entity.dart';

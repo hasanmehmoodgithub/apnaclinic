@@ -293,8 +293,8 @@ class _DoctorConsultationBookDoctorScreenState
         width: width,
         height: height,
         fit: BoxFit.cover,
-        placeholder: (_, __) => _heroFallback(width, height),
-        errorWidget: (_, __, ___) => _heroFallback(width, height),
+        placeholder: (_, _) => _heroFallback(width, height),
+        errorWidget: (_, _, _) => _heroFallback(width, height),
       );
     }
     return Image.asset(

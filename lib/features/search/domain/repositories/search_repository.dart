@@ -1,4 +1,3 @@
-import '../../../../core/failure/exceptions.dart';
 import '../../../../core/functional/functional_export.dart';
 import '../entities/search_entity.dart';
 
