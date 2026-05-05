@@ -10,6 +10,7 @@ alwaysApply: true
 - Do not hardcode user-facing text; use `AppLocalizations.of(context)!`. If needed, add ARB keys and run `gen-l10n`.
 - Keep screen files thin: lifecycle -> `build` composition -> handlers/helpers.
 - Split UI by visual flow into small widgets in `presentation/widgets/`, one meaningful class per file.
+- Move in-screen widget classes out of main screen files into `presentation/widgets/` as separate files.
 - Reuse app-level generic widgets in shared/core; keep feature-specific widgets inside feature.
 - Do not create shell wrapper widgets.
 - Prefer scoped rebuilds with `BlocSelector` or `BlocBuilder(buildWhen:)`.

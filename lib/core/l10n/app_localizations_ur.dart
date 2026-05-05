@@ -616,6 +616,37 @@ class AppLocalizationsUr extends AppLocalizations {
   String get labTestScreenTitle => 'لیب ٹیسٹ';
 
   @override
+  String get surgeryScreenTitle => 'پروسیجرز اور سرجریز';
+
+  @override
+  String get surgeryBookingScreenTitle => 'سرجری بکنگ';
+
+  @override
+  String get surgeryNoProceduresMessage =>
+      'اس وقت کوئی سرجری پروسیجر دستیاب نہیں۔';
+
+  @override
+  String get surgerySelectForSurgery => 'سرجری کے لیے منتخب کریں';
+
+  @override
+  String get surgeryLocationLabel => 'مقام';
+
+  @override
+  String get commonChange => 'تبدیل کریں';
+
+  @override
+  String get surgerySearchNameHint => 'نام تلاش کریں..';
+
+  @override
+  String get surgerySelectCityTitle => 'شہر منتخب کریں';
+
+  @override
+  String get surgerySearchByNameHint => 'نام سے تلاش کریں';
+
+  @override
+  String get commonProceed => 'آگے بڑھیں';
+
+  @override
   String get labTestSelectCityPlaceholder => 'شہر منتخب کریں';
 
   @override

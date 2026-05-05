@@ -286,6 +286,16 @@
     }
   },
   "labTestScreenTitle": "Lab Test",
+  "surgeryScreenTitle": "Procedures & Surgeries",
+  "surgeryBookingScreenTitle": "Surgery Booking",
+  "surgeryNoProceduresMessage": "No surgery procedures available right now.",
+  "surgerySelectForSurgery": "Select for Surgery",
+  "surgeryLocationLabel": "Location",
+  "commonChange": "Change",
+  "surgerySearchNameHint": "Search name..",
+  "surgerySelectCityTitle": "Select a city",
+  "surgerySearchByNameHint": "Search by name",
+  "commonProceed": "Proceed",
   "@labTestScreenTitle": {
     "description": "Title for the lab test browse screen app bar"
   },

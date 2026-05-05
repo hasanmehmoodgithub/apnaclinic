@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
+import '../../../../core/constants/app_colors.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
+import '../../../../core/l10n/app_localizations.dart';
 import '../cubit/surgery_cubit.dart';
 import '../cubit/surgery_state.dart';
 
@@ -11,7 +14,7 @@ Future<void> showCityPickerSheet(BuildContext context) {
   return showModalBottomSheet<void>(
     context: context,
     isScrollControlled: true,
-    backgroundColor: Colors.white,
+    backgroundColor: AppColors.clrWhite,
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(14.r)),
     ),
@@ -42,6 +45,7 @@ class _CityBottomSheetState extends State<CityBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     // Rebuild when cubit state's city list changes (e.g., async load)
     return BlocBuilder<SurgeryCubit, SurgeryState>(
       buildWhen: (prev, curr) =>
@@ -65,7 +69,7 @@ class _CityBottomSheetState extends State<CityBottomSheet> {
                     width: 40.w,
                     height: 4.h,
                     decoration: BoxDecoration(
-                      color: const Color(0xFFCACACA),
+                      color: AppColors.clrCACACA,
                       borderRadius: BorderRadius.circular(100.r),
                     ),
                   ),
@@ -74,9 +78,9 @@ class _CityBottomSheetState extends State<CityBottomSheet> {
 
                 // Title
                 Text(
-                  'Select a city',
+                  l10n.surgerySelectCityTitle,
                   style: TextStyle(
-                    color: const Color(0xFF061E40),
+                    color: AppColors.clr060,
                     fontWeight: FontWeight.w700,
                     fontSize: 18.sp,
                   ),
@@ -89,19 +93,19 @@ class _CityBottomSheetState extends State<CityBottomSheet> {
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(6.r),
                     border:
-                    Border.all(color: const Color(0xFFE0E0E0), width: 1),
+                    Border.all(color: AppColors.clrE0E0E0, width: 1),
                   ),
                   child: TextField(
                     onChanged: (value) => setState(() => query = value),
                     style: TextStyle(
                       fontSize: 15.sp,
-                      color: const Color(0xFF5D758F),
+                      color: AppColors.clr5D758F,
                     ),
                     decoration: InputDecoration(
                       border: InputBorder.none,
-                      hintText: 'Search by name',
+                      hintText: l10n.surgerySearchByNameHint,
                       hintStyle: TextStyle(
-                        color: const Color(0xFF9AAABD),
+                        color: AppColors.clr9AAABD,
                         fontSize: 15.sp,
                         fontWeight: FontWeight.w400,
                       ),
@@ -113,7 +117,7 @@ class _CityBottomSheetState extends State<CityBottomSheet> {
                         padding: EdgeInsets.only(right: 12.w),
                         child: Icon(
                           Icons.search_rounded,
-                          color: const Color(0xFF9AAABD),
+                          color: AppColors.clr9AAABD,
                           size: 22.r,
                         ),
                       ),
@@ -151,21 +155,21 @@ class _CityBottomSheetState extends State<CityBottomSheet> {
                   child: FilledButton(
                     onPressed: () {
                       context.read<SurgeryCubit>().changeCity(selectedCity);
-                      Navigator.of(context).pop();
+                      context.pop();
                     },
                     style: FilledButton.styleFrom(
-                      backgroundColor: const Color(0xFF0FAFA0),
+                      backgroundColor: AppColors.clr0FAA9A,
                       minimumSize: Size.fromHeight(50.h),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16.r),
                       ),
                     ),
                     child: Text(
-                      'Proceed',
+                      l10n.commonProceed,
                       style: TextStyle(
                         fontSize: 17.sp,
                         fontWeight: FontWeight.w600,
-                        color: Colors.white,
+                        color: AppColors.clrWhite,
                       ),
                     ),
                   ),
@@ -195,7 +199,7 @@ class _CityTile extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       child: Container(
-        color: selected ? const Color(0xFFF2F2F2) : Colors.transparent,
+        color: selected ? AppColors.clrF2F2F2 : Colors.transparent,
         child: Column(
           children: [
             Padding(
@@ -206,7 +210,7 @@ class _CityTile extends StatelessWidget {
                     child: Text(
                       city,
                       style: TextStyle(
-                        color: const Color(0xFF061E40),
+                        color: AppColors.clr060,
                         fontSize: 15.sp,
                         fontWeight: FontWeight.w400,
                       ),
@@ -218,7 +222,7 @@ class _CityTile extends StatelessWidget {
             ),
             Container(
               height: 1,
-              color: const Color(0xFFE8E8E8),
+              color: AppColors.clrE8E8E8,
             ),
           ],
         ),
@@ -241,8 +245,8 @@ class _RadioCircle extends StatelessWidget {
         shape: BoxShape.circle,
         border: Border.all(
           color: selected
-              ? const Color(0xFF061E40)
-              : const Color(0xFFBFCAD6),
+              ? AppColors.clr060
+              : AppColors.clrBFCAD6,
           width: 1.2,
         ),
       ),
@@ -252,7 +256,7 @@ class _RadioCircle extends StatelessWidget {
           width: 10.r,
           height: 10.r,
           decoration: const BoxDecoration(
-            color: Color(0xFF061E40),
+            color: AppColors.clr060,
             shape: BoxShape.circle,
           ),
         ),

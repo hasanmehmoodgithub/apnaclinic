@@ -1,9 +1,14 @@
 import 'package:apnaclinic/core/widgets/app_scaffold_gradient.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../cubit/surgery_cubit.dart';
+import '../widgets/surgery_doctor_summary_widget.dart';
+import '../widgets/surgery_option.dart';
+import '../widgets/surgery_text_input_field_widget.dart';
+import '../widgets/surgery_type_dialog_widget.dart';
 
 class SurgeryPatientDetailsScreen extends StatefulWidget {
   const SurgeryPatientDetailsScreen({
@@ -39,7 +44,7 @@ class SurgeryPatientDetailsScreen extends StatefulWidget {
 class _SurgeryPatientDetailsScreenState
     extends State<SurgeryPatientDetailsScreen> {
 
-  late _SurgeryOption selectedSurgery;
+  late SurgeryOption selectedSurgery;
   bool showEmergencyError = false;
   bool isSubmittingBooking = false;
 
@@ -48,11 +53,11 @@ class _SurgeryPatientDetailsScreenState
   late final TextEditingController contactNumberController;
   late final TextEditingController emergencyContactController;
 
-  final List<_SurgeryOption> options = const [
-    _SurgeryOption('Refractive Surgery', 'Rs. 65,000/-', 'Rs. 100,000/-'),
-    _SurgeryOption('Corneal transplant.', 'Rs. 65,000/-', 'Rs. 100,000/-'),
-    _SurgeryOption('Glaucoma surgery', 'Rs. 65,000/-', 'Rs. 100,000/-'),
-    _SurgeryOption('Trabeculectomy', 'Rs. 65,000/-', 'Rs. 100,000/-'),
+  final List<SurgeryOption> options = const [
+    SurgeryOption('Refractive Surgery', 'Rs. 65,000/-', 'Rs. 100,000/-'),
+    SurgeryOption('Corneal transplant.', 'Rs. 65,000/-', 'Rs. 100,000/-'),
+    SurgeryOption('Glaucoma surgery', 'Rs. 65,000/-', 'Rs. 100,000/-'),
+    SurgeryOption('Trabeculectomy', 'Rs. 65,000/-', 'Rs. 100,000/-'),
   ];
 
   @override
@@ -86,7 +91,7 @@ class _SurgeryPatientDetailsScreenState
             child: Row(
               children: [
                 IconButton(
-                  onPressed: () => Navigator.of(context).maybePop(),
+                  onPressed: () => context.pop(),
                   icon: const Icon(
                     Icons.arrow_back_rounded,
                     color: Color(0xFF061E40),
@@ -132,31 +137,42 @@ class _SurgeryPatientDetailsScreenState
                           ),
                         ),
                         SizedBox(height: 14.h),
-                        _DoctorSummary(widget: widget),
+                        SurgeryDoctorSummaryWidget(
+                          doctorName: widget.doctorName,
+                          speciality: widget.speciality,
+                          experience: widget.experience,
+                          qualifications: widget.qualifications,
+                          hospitalName: widget.hospitalName,
+                          procedureName: widget.procedureName,
+                          price: widget.price,
+                          oldPrice: widget.oldPrice,
+                          imageUrl: widget.imageUrl,
+                          partnerLogoUrl: widget.partnerLogoUrl,
+                        ),
                         SizedBox(height: 20.h),
 
-                        _TextInputField(
+                        SurgeryTextInputFieldWidget(
                           title: 'Patient Name',
                           hintText: 'Patient Name',
                           controller: patientNameController,
                           keyboardType: TextInputType.name,
                         ),
                         SizedBox(height: 14.h),
-                        _TextInputField(
+                        SurgeryTextInputFieldWidget(
                           title: 'Age',
                           hintText: 'Patient Age',
                           controller: ageController,
                           keyboardType: TextInputType.number,
                         ),
                         SizedBox(height: 14.h),
-                        _TextInputField(
+                        SurgeryTextInputFieldWidget(
                           title: 'Contact Number',
                           hintText: 'Patient Contact Number',
                           controller: contactNumberController,
                           keyboardType: TextInputType.phone,
                         ),
                         SizedBox(height: 14.h),
-                        _TextInputField(
+                        SurgeryTextInputFieldWidget(
                           title: 'Emergency Contact',
                           hintText: 'Patient Emergency Contact',
                           controller: emergencyContactController,
@@ -291,11 +307,11 @@ class _SurgeryPatientDetailsScreenState
     // Dismiss the keyboard if it's open so the dialog sits centered.
     FocusScope.of(context).unfocus();
 
-    final picked = await showDialog<_SurgeryOption>(
+    final picked = await showDialog<SurgeryOption>(
       context: context,
       barrierColor: Colors.black.withValues(alpha: 0.45),
       builder: (dialogContext) {
-        return _SurgeryTypeDialog(
+        return SurgeryTypeDialogWidget(
           options: options,
           selected: selectedSurgery,
         );
@@ -403,7 +419,7 @@ class _SurgeryPatientDetailsScreenState
                   width: double.infinity,
                   child: FilledButton(
                     onPressed: () {
-                      Navigator.of(dialogContext).pop();
+                      dialogContext.pop();
                       if (mounted) {
                         Navigator.of(
                           context,
@@ -479,376 +495,4 @@ class _SurgeryPatientDetailsScreenState
         ),
       );
   }
-}
-
-// ======================= Surgery Type Dialog =======================
-class _SurgeryTypeDialog extends StatelessWidget {
-  const _SurgeryTypeDialog({
-    required this.options,
-    required this.selected,
-  });
-
-  final List<_SurgeryOption> options;
-  final _SurgeryOption selected;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
-    return Dialog(
-      insetPadding: EdgeInsets.symmetric(horizontal: 20.w),
-      backgroundColor: Colors.white,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(14.r),
-      ),
-      clipBehavior: Clip.antiAlias,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          // Dialog title
-          Padding(
-            padding: EdgeInsets.fromLTRB(20.w, 20.h, 20.w, 18.h),
-            child: Text(
-              'Select surgery type',
-              style: theme.textTheme.titleMedium?.copyWith(
-                color: const Color(0xFF061E40),
-                fontWeight: FontWeight.w700,
-                fontSize: 17.sp,
-              ),
-            ),
-          ),
-
-          // Options list
-          ...List.generate(options.length, (i) {
-            final option = options[i];
-            final isSelected = option.name == selected.name;
-            final isLast = i == options.length - 1;
-
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                // Separator above each row (acts as a divider between rows)
-                Container(
-                  height: 1,
-                  color: const Color(0xFFEDEDED),
-                ),
-                InkWell(
-                  onTap: () => Navigator.of(context).pop(option),
-                  child: Container(
-                    color: isSelected
-                        ? const Color(0xFFF1F1F1)
-                        : Colors.white,
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 20.w,
-                      vertical: 16.h,
-                    ),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Expanded(
-                          child: Text(
-                            option.name,
-                            style: theme.textTheme.titleSmall?.copyWith(
-                              color: const Color(0xFF061E40),
-                              fontSize: 15.sp,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            Text(
-                              option.price,
-                              style: theme.textTheme.titleSmall?.copyWith(
-                                color: const Color(0xFF061E40),
-                                fontSize: 15.sp,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                            SizedBox(height: 2.h),
-                            Text(
-                              option.oldPrice,
-                              style: theme.textTheme.bodyMedium?.copyWith(
-                                color: const Color(0xFFB4B4B4),
-                                fontSize: 12.sp,
-                                decoration: TextDecoration.lineThrough,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                if (isLast)
-                // Bottom padding area so the last row doesn't hug the edge too tight
-                  const SizedBox.shrink(),
-              ],
-            );
-          }),
-          SizedBox(height: 4.h),
-        ],
-      ),
-    );
-  }
-}
-
-// ======================= Doctor Summary Card =======================
-class _DoctorSummary extends StatelessWidget {
-  const _DoctorSummary({required this.widget});
-
-  final SurgeryPatientDetailsScreen widget;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    return Container(
-      padding: EdgeInsets.all(12.w),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12.r),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 8,
-            offset: Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Doctor row — NO card background, sits directly on white
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(8.r),
-                child: SizedBox(
-                  width: 56.r,
-                  height: 56.r,
-                  child: Image.network(
-                    widget.imageUrl,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) => Container(
-                      color: const Color(0xFFEFEFEF),
-                      child: const Icon(Icons.person, color: Color(0xFFBDBDBD)),
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(width: 12.w),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      widget.doctorName,
-                      style: theme.textTheme.titleMedium?.copyWith(
-                        color: const Color(0xFF061E40),
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    Text(
-                      widget.speciality,
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        color: const Color(0xFFA6A6A6),
-                        fontSize: 13.sp,
-                      ),
-                    ),
-                    Text(
-                      '${widget.experience}  ${widget.qualifications}',
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        color: const Color(0xFFA6A6A6),
-                        fontSize: 13.sp,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              // Partner logo (oladoc)
-              Container(
-                width: 30.r,
-                height: 30.r,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    color: Colors.black.withValues(alpha: 0.21),
-                    width: 1,
-                  ),
-                ),
-                clipBehavior: Clip.antiAlias,
-                child: ClipOval(
-                  child: Image.network(
-                    widget.partnerLogoUrl,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) =>
-                    const SizedBox.shrink(),
-                  ),
-                ),
-              ),
-            ],
-          ),
-
-          SizedBox(height: 14.h),
-
-          // Hospital + price row
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      widget.hospitalName,
-                      style: theme.textTheme.titleSmall?.copyWith(
-                        color: const Color(0xFF061E40),
-                        fontWeight: FontWeight.w700,
-                        fontSize: 16.sp,
-                      ),
-                    ),
-                    SizedBox(height: 2.h),
-                    Text(
-                      widget.procedureName,
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        color: const Color(0xFF061E40),
-                        fontSize: 14.sp,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Text(
-                    'Stating from',
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: const Color(0xFF777272),
-                      fontSize: 12.sp,
-                    ),
-                  ),
-                  Text(
-                    widget.price,
-                    style: theme.textTheme.titleSmall?.copyWith(
-                      color: const Color(0xFF061E40),
-                      fontWeight: FontWeight.w600,
-                      fontSize: 16.sp,
-                    ),
-                  ),
-                  Text(
-                    widget.oldPrice,
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      color: const Color(0xFFB4B4B4),
-                      fontSize: 13.sp,
-                      decoration: TextDecoration.lineThrough,
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-// ======================= Text Input Field =======================
-class _TextInputField extends StatelessWidget {
-  const _TextInputField({
-    required this.title,
-    required this.controller,
-    required this.keyboardType,
-    this.hintText,
-    this.hasError = false,
-    this.errorText,
-  });
-
-  final String title;
-  final String? hintText;
-  final TextEditingController controller;
-  final TextInputType keyboardType;
-  final bool hasError;
-  final String? errorText;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    // In error state we show the error message as the hint.
-    // Otherwise we show the provided hintText in a light placeholder color.
-    final String? effectiveHint = hasError ? errorText : hintText;
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          title,
-          style: theme.textTheme.bodyLarge?.copyWith(
-            color: const Color(0xFF061E40),
-            fontSize: 15.sp,
-          ),
-        ),
-        SizedBox(height: 8.h),
-        Container(
-          height: 48.h,
-          padding: EdgeInsets.only(left: 12.w, right: 8.w),
-          decoration: BoxDecoration(
-            color: hasError ? const Color(0xFFFFF8F8) : const Color(0xFFF1F1F1),
-            borderRadius: BorderRadius.all(Radius.circular(10)),
-            border: Border(
-              bottom: BorderSide(
-                color: hasError ? const Color(0xFF852221) : Colors.transparent,
-                width: 0.6,
-              ),
-            ),
-          ),
-          child: Row(
-            children: [
-              Expanded(
-                child: TextField(
-                  controller: controller,
-                  keyboardType: keyboardType,
-                  // Typed text style — darker "filled" color
-                  style: theme.textTheme.bodyLarge?.copyWith(
-                    color: hasError
-                        ? const Color(0xFFBA2025)
-                        : const Color(0xFF4A555F),
-                    fontSize: 15.sp,
-                    fontWeight: FontWeight.w500,
-                  ),
-                  decoration: InputDecoration(
-                    border: InputBorder.none,
-                    isDense: true,
-                    contentPadding: EdgeInsets.symmetric(vertical: 14.h),
-                    hintText: effectiveHint,
-                    // Hint text style — light placeholder grey
-                    hintStyle: theme.textTheme.bodyLarge?.copyWith(
-                      color: hasError
-                          ? const Color(0xFFBA2025)
-                          : const Color(0xFFB6BDC8),
-                      fontSize: 15.sp,
-                      fontWeight: FontWeight.w400,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _SurgeryOption {
-  const _SurgeryOption(this.name, this.price, this.oldPrice);
-  final String name;
-  final String price;
-  final String oldPrice;
 }

@@ -615,6 +615,37 @@ class AppLocalizationsEn extends AppLocalizations {
   String get labTestScreenTitle => 'Lab Test';
 
   @override
+  String get surgeryScreenTitle => 'Procedures & Surgeries';
+
+  @override
+  String get surgeryBookingScreenTitle => 'Surgery Booking';
+
+  @override
+  String get surgeryNoProceduresMessage =>
+      'No surgery procedures available right now.';
+
+  @override
+  String get surgerySelectForSurgery => 'Select for Surgery';
+
+  @override
+  String get surgeryLocationLabel => 'Location';
+
+  @override
+  String get commonChange => 'Change';
+
+  @override
+  String get surgerySearchNameHint => 'Search name..';
+
+  @override
+  String get surgerySelectCityTitle => 'Select a city';
+
+  @override
+  String get surgerySearchByNameHint => 'Search by name';
+
+  @override
+  String get commonProceed => 'Proceed';
+
+  @override
   String get labTestSelectCityPlaceholder => 'Select City';
 
   @override

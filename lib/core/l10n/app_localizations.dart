@@ -1256,6 +1256,66 @@ abstract class AppLocalizations {
   /// **'Lab Test'**
   String get labTestScreenTitle;
 
+  /// No description provided for @surgeryScreenTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Procedures & Surgeries'**
+  String get surgeryScreenTitle;
+
+  /// No description provided for @surgeryBookingScreenTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Surgery Booking'**
+  String get surgeryBookingScreenTitle;
+
+  /// No description provided for @surgeryNoProceduresMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'No surgery procedures available right now.'**
+  String get surgeryNoProceduresMessage;
+
+  /// No description provided for @surgerySelectForSurgery.
+  ///
+  /// In en, this message translates to:
+  /// **'Select for Surgery'**
+  String get surgerySelectForSurgery;
+
+  /// No description provided for @surgeryLocationLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Location'**
+  String get surgeryLocationLabel;
+
+  /// No description provided for @commonChange.
+  ///
+  /// In en, this message translates to:
+  /// **'Change'**
+  String get commonChange;
+
+  /// No description provided for @surgerySearchNameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search name..'**
+  String get surgerySearchNameHint;
+
+  /// No description provided for @surgerySelectCityTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a city'**
+  String get surgerySelectCityTitle;
+
+  /// No description provided for @surgerySearchByNameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search by name'**
+  String get surgerySearchByNameHint;
+
+  /// No description provided for @commonProceed.
+  ///
+  /// In en, this message translates to:
+  /// **'Proceed'**
+  String get commonProceed;
+
   /// No description provided for @labTestSelectCityPlaceholder.
   ///
   /// In en, this message translates to:
