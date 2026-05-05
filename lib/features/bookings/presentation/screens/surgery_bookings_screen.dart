@@ -1,12 +1,8 @@
+import 'package:apnaclinic/features/bookings/presentation/screens/surgery_booking_details_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 
-import 'package:flutter/material.dart';
-import '../../../../core/extensions/screen_util_extensions.dart';
-
-import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import '../../../../core/extensions/screen_util_extensions.dart';
 
 class SurgeryBookingsScreen extends StatelessWidget {
   const SurgeryBookingsScreen({super.key});
@@ -27,17 +23,30 @@ class SurgeryBookingsScreen extends StatelessWidget {
     return ListView(
       padding: EdgeInsets.fromLTRB(0, 20.h, 0, 8.h),
       children: [
-        _SurgeryBookingCard(item: _item, textTheme: textTheme),
+        GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTap: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (_) => SurgeryDetailsScreen(
+                  item: _toDetails(_item),
+                  initialStatus: SurgeryBookingStatus.paymentPending,
+                ),
+              ),
+            );
+          },
+          child: SurgeryBookingCard(item: _item, textTheme: textTheme),
+        ),
       ],
     );
   }
 }
 
-class _SurgeryBookingCard extends StatelessWidget {
+class SurgeryBookingCard extends StatelessWidget {
   final _SurgeryBookingItem item;
   final TextTheme textTheme;
 
-  const _SurgeryBookingCard({required this.item, required this.textTheme});
+  const SurgeryBookingCard({required this.item, required this.textTheme});
 
   @override
   Widget build(BuildContext context) {
@@ -58,7 +67,6 @@ class _SurgeryBookingCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(16.r),
         child: Stack(
           children: [
-            // Decorative right-side blue blob (larger and more pronounced like target)
             Positioned(
               right: -100.w,
               top: -40.h,
@@ -73,17 +81,14 @@ class _SurgeryBookingCard extends StatelessWidget {
                 ),
               ),
             ),
-
             Padding(
               padding: EdgeInsets.fromLTRB(10.w, 9.h, 10.w, 9.h),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // ─────── TOP SECTION: Bed icon + procedure/hospital + logo + chat ───────
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Left: bed icon ABOVE procedure name
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -116,11 +121,9 @@ class _SurgeryBookingCard extends StatelessWidget {
                         ),
                       ),
                       SizedBox(width: 6.w),
-                      // Right: oladoc logo + chat bubble icon
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          // oladoc circular logo
                           Container(
                             width: 38.w,
                             height: 38.h,
@@ -155,7 +158,6 @@ class _SurgeryBookingCard extends StatelessWidget {
                             ),
                           ),
                           SizedBox(height: 8.h),
-                          // chat bubble svg icon
                           SvgPicture.asset(
                             'assets/icons/surgerymessage.svg',
                             width: 25.r,
@@ -165,12 +167,9 @@ class _SurgeryBookingCard extends StatelessWidget {
                       ),
                     ],
                   ),
-
                   SizedBox(height: 5.h),
                   Container(height: 0.5, color: const Color(0xFFCBD3D9)),
                   SizedBox(height: 5.h),
-
-                  // ─────── MIDDLE SECTION: Doctor name | Specialty + qualification ───────
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
@@ -195,17 +194,13 @@ class _SurgeryBookingCard extends StatelessWidget {
                       ),
                     ],
                   ),
-
                   SizedBox(height: 8.h),
                   Container(height: 0.5, color: const Color(0xFFCBD3D9)),
                   SizedBox(height: 8.h),
-
-                  // ─────── BOTTOM SECTION: Status | Date Created    View Details ───────
                   IntrinsicHeight(
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        // Status column
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisSize: MainAxisSize.min,
@@ -239,15 +234,11 @@ class _SurgeryBookingCard extends StatelessWidget {
                             ),
                           ],
                         ),
-
-                        // Vertical divider between Status and Date Created
                         Container(
                           width: 0.5,
                           margin: EdgeInsets.symmetric(horizontal: 14.w),
                           color: const Color(0xFF9BA6A7),
                         ),
-
-                        // Date Created column
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisSize: MainAxisSize.min,
@@ -271,14 +262,22 @@ class _SurgeryBookingCard extends StatelessWidget {
                             ),
                           ],
                         ),
-
                         const Spacer(),
-
-                        // Pill-shaped View Details button
                         SizedBox(
                           height: 40.h,
                           child: OutlinedButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              // Same destination as tapping the whole card
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (_) => SurgeryDetailsScreen(
+                                    item: _toDetails(item),
+                                    initialStatus:
+                                    SurgeryBookingStatus.paymentPending,
+                                  ),
+                                ),
+                              );
+                            },
                             style: OutlinedButton.styleFrom(
                               backgroundColor: Colors.transparent,
                               side: const BorderSide(
@@ -332,4 +331,31 @@ class _SurgeryBookingItem {
     required this.status,
     required this.dateCreated,
   });
+}
+
+// ── Top-level helper so both the card tap and the "View Details" button
+// ── can share the same mapping logic.
+SurgeryDetailsItem _toDetails(_SurgeryBookingItem b) {
+  return SurgeryDetailsItem(
+    procedure: b.procedure,
+    procedureSubtitle: 'Photorefractive keratectomy Surgery',
+    hospital: b.hospital,
+    doctor: b.doctor,
+    specialty: b.specialty,
+    qualification: b.qualification,
+    dateCreated: b.dateCreated,
+    patientName: 'Haseeb Qasim',
+    age: 30,
+    contactNumber: '0341-1234567',
+    emergencyContact: '0341-1234567',
+    fee: 80000,
+    discountPercent: 15,
+    discountAmount: 12000,
+    total: 68000,
+    appointmentDay: '15',
+    appointmentMonth: 'May',
+    appointmentWeekday: 'Thursday',
+    appointmentTime: '09am - 10am',
+    appointmentDateFull: '15th May,2025',
+  );
 }
