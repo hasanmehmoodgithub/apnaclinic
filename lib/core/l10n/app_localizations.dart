@@ -260,11 +260,23 @@ abstract class AppLocalizations {
   /// **'Proceed'**
   String get authProceedCta;
 
+  /// No description provided for @authVerifyCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify'**
+  String get authVerifyCta;
+
   /// No description provided for @authResendOtp.
   ///
   /// In en, this message translates to:
   /// **'Resend OTP'**
   String get authResendOtp;
+
+  /// No description provided for @authOtpSecondsShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Sec'**
+  String get authOtpSecondsShort;
 
   /// No description provided for @authOtpSentTo.
   ///
@@ -793,6 +805,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'To avail the service, subscribe to BIMA m-Health via FikrFree.'**
   String get freeDoctorPoint3;
+
+  /// No description provided for @customerSupportTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Customer Support'**
+  String get customerSupportTitle;
+
+  /// No description provided for @customerSupportHelpCentreTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Help Centre'**
+  String get customerSupportHelpCentreTitle;
+
+  /// No description provided for @customerSupportHelpCentreSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Reach out to Apna Clinic for any support.'**
+  String get customerSupportHelpCentreSubtitle;
+
+  /// No description provided for @customerSupportFallbackCardTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Apna Clinic Support'**
+  String get customerSupportFallbackCardTitle;
+
+  /// No description provided for @customerSupportFallbackDialogTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Customer Support'**
+  String get customerSupportFallbackDialogTitle;
+
+  /// No description provided for @customerSupportFallbackDialogMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Or further support please contact us 24/7 on\n042-111-333-033.'**
+  String get customerSupportFallbackDialogMessage;
+
+  /// No description provided for @customerSupportCallNowCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Call Now'**
+  String get customerSupportCallNowCta;
+
+  /// No description provided for @customerSupportDialError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not start the call.'**
+  String get customerSupportDialError;
 }
 
 class _AppLocalizationsDelegate

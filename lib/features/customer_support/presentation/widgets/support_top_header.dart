@@ -1,4 +1,8 @@
 import 'package:apnaclinic/core/extensions/screen_util_extensions.dart';
+import 'package:apnaclinic/core/constants/app_colors.dart';
+import 'package:apnaclinic/core/l10n/app_localizations.dart';
+import 'package:apnaclinic/generated/assets.dart';
+import 'package:go_router/go_router.dart';
 import 'package:flutter/material.dart';
 
 class SupportTopHeader extends StatelessWidget {
@@ -11,11 +15,9 @@ class SupportTopHeader extends StatelessWidget {
   final bool showBackButton;
   final VoidCallback? onBack;
 
-  static const String _heroAsset = 'assets/img/support/support_hero.png';
-  static const Color _titleNavy = Color(0xFF0B2239);
-
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
 
     return Container(
@@ -24,7 +26,11 @@ class SupportTopHeader extends StatelessWidget {
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: [Color(0xFFC8EEF2), Color(0xFFE2F5F7), Color(0xFFF0FAFB)],
+          colors: [
+            AppColors.clrC8EEF2,
+            AppColors.clrE2F5F7,
+            AppColors.clrF0FAFB,
+          ],
           stops: [0.0, 0.5, 1.0],
         ),
       ),
@@ -43,17 +49,19 @@ class SupportTopHeader extends StatelessWidget {
                         ? IconButton(
                             onPressed:
                                 onBack ??
-                                () => Navigator.of(context).maybePop(),
+                                () {
+                                  if (context.canPop()) context.pop();
+                                },
                             icon: const Icon(Icons.arrow_back_rounded),
-                            color: _titleNavy,
+                            color: AppColors.clr0B2239,
                           )
                         : SizedBox(width: 48.w),
                   ),
                   Text(
-                    'Customer Support',
+                    l10n.customerSupportTitle,
                     style: theme.textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.w700,
-                      color: _titleNavy,
+                      color: AppColors.clr0B2239,
                     ),
                   ),
                 ],
@@ -63,7 +71,7 @@ class SupportTopHeader extends StatelessWidget {
               child: Padding(
                 padding: EdgeInsets.fromLTRB(0, 1.h, 0, 30.h),
                 child: Image.asset(
-                  _heroAsset,
+                  Assets.supportSupportHero,
                   fit: BoxFit.fill,
                   alignment: Alignment.topCenter,
                 ),

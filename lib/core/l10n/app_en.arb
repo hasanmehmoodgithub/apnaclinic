@@ -81,7 +81,9 @@
   "authOtpVerificationTitle": "OTP Verification",
   "authOtpHintCode": "1 2 3 4",
   "authProceedCta": "Proceed",
+  "authVerifyCta": "Verify",
   "authResendOtp": "Resend OTP",
+  "authOtpSecondsShort": "Sec",
   "authOtpSentTo": "OTP sent to",
   "authOtpSentMessage": "OTP sent successfully.",
   "authPhoneValidationError": "Please enter a valid phone number.",
@@ -184,5 +186,13 @@
   "freeDoctorConsultationTitle": "24/7 Free Doctor Consultation",
   "freeDoctorPoint1": "This service is available exclusively for Bima m-Health subscribers.",
   "freeDoctorPoint2": "Get 24/7 access to qualified doctors for general medical support and much more.",
-  "freeDoctorPoint3": "To avail the service, subscribe to BIMA m-Health via FikrFree."
+  "freeDoctorPoint3": "To avail the service, subscribe to BIMA m-Health via FikrFree.",
+  "customerSupportTitle": "Customer Support",
+  "customerSupportHelpCentreTitle": "Help Centre",
+  "customerSupportHelpCentreSubtitle": "Reach out to Apna Clinic for any support.",
+  "customerSupportFallbackCardTitle": "Apna Clinic Support",
+  "customerSupportFallbackDialogTitle": "Customer Support",
+  "customerSupportFallbackDialogMessage": "Or further support please contact us 24/7 on\n042-111-333-033.",
+  "customerSupportCallNowCta": "Call Now",
+  "customerSupportDialError": "Could not start the call."
 }

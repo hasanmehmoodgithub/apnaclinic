@@ -90,7 +90,13 @@ class AppLocalizationsUr extends AppLocalizations {
   String get authProceedCta => 'آگے بڑھیں';
 
   @override
+  String get authVerifyCta => 'تصدیق کریں';
+
+  @override
   String get authResendOtp => 'OTP دوبارہ بھیجیں';
+
+  @override
+  String get authOtpSecondsShort => 'سیکنڈ';
 
   @override
   String get authOtpSentTo => 'OTP بھیجا گیا';
@@ -367,4 +373,30 @@ class AppLocalizationsUr extends AppLocalizations {
   @override
   String get freeDoctorPoint3 =>
       'سروس حاصل کرنے کے لیے FikrFree کے ذریعے BIMA m-Health سبسکرائب کریں۔';
+
+  @override
+  String get customerSupportTitle => 'کسٹمر سپورٹ';
+
+  @override
+  String get customerSupportHelpCentreTitle => 'ہیلپ سینٹر';
+
+  @override
+  String get customerSupportHelpCentreSubtitle =>
+      'کسی بھی مدد کے لیے Apna Clinic سے رابطہ کریں۔';
+
+  @override
+  String get customerSupportFallbackCardTitle => 'Apna Clinic سپورٹ';
+
+  @override
+  String get customerSupportFallbackDialogTitle => 'کسٹمر سپورٹ';
+
+  @override
+  String get customerSupportFallbackDialogMessage =>
+      'مزید مدد کے لیے براہ کرم 24/7 اس نمبر پر رابطہ کریں:\n042-111-333-033';
+
+  @override
+  String get customerSupportCallNowCta => 'ابھی کال کریں';
+
+  @override
+  String get customerSupportDialError => 'کال شروع نہیں ہو سکی۔';
 }

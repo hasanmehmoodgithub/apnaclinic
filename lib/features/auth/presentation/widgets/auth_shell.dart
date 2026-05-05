@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import '../../../../core/constants/app_colors.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../generated/assets.dart';
 
@@ -13,7 +14,7 @@ class AuthShell extends StatelessWidget {
   Widget build(BuildContext context) {
     final topInset = MediaQuery.paddingOf(context).top;
     return Scaffold(
-      backgroundColor: const Color(0xFFF4F5F7),
+      backgroundColor: AppColors.clrF4F6F8,
       body: LayoutBuilder(
         builder: (context, constraints) {
           return Column(
@@ -23,7 +24,7 @@ class AuthShell extends StatelessWidget {
                 height: 65.h + topInset,
                 // clipBehavior: Clip.antiAlias,
                 decoration: const BoxDecoration(
-                  color: Colors.white,
+                  color: AppColors.clrWhite,
                   // borderRadius: BorderRadius.vertical(
                   //   // bottom: Radius.circular(40),
                   // ),
@@ -51,7 +52,7 @@ class AuthShell extends StatelessWidget {
                             child: Center(
                               child: Icon(
                                 Icons.arrow_back_rounded,
-                                color: Color(0xFF061E40),
+                                color: AppColors.clr060,
                                 size: 22.r,
                               ),
                             ),
@@ -74,7 +75,7 @@ class AuthShell extends StatelessWidget {
                 child: Container(
                   width: double.infinity,
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: AppColors.clrWhite,
                     borderRadius: BorderRadius.vertical(
                       top: Radius.circular(30.r),
                     ),

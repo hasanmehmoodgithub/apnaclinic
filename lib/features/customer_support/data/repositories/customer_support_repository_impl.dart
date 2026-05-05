@@ -13,7 +13,7 @@ class CustomerSupportRepositoryImpl implements CustomerSupportRepository {
 
   @override
   Future<Either<ErrorMsg, CustomerSupportEntity>>
-      getCustomerSupportContent() async {
+  getCustomerSupportContent() async {
     try {
       final model = await remoteDataSource.getCustomerSupportContent();
       final entity = CustomerSupportMapper.toEntity(model);

@@ -7,7 +7,7 @@ import 'customer_support_state.dart';
 
 class CustomerSupportCubit extends Cubit<CustomerSupportState> {
   CustomerSupportCubit({required this.getContentUseCase})
-      : super(const CustomerSupportState()) {
+    : super(const CustomerSupportState()) {
     loadContent();
   }
 
@@ -30,8 +30,9 @@ class CustomerSupportCubit extends Cubit<CustomerSupportState> {
       ),
       (content) => emit(
         state.copyWith(
-          loadingStateStatus:
-              content.contacts.isEmpty ? StateStatus.empty : StateStatus.success,
+          loadingStateStatus: content.contacts.isEmpty
+              ? StateStatus.empty
+              : StateStatus.success,
           content: content,
           errorMessage: null,
         ),

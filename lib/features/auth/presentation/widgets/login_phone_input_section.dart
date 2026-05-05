@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../../../../core/constants/app_colors.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
 
@@ -28,14 +29,14 @@ class LoginPhoneInputSection extends StatelessWidget {
           l10n.authMobileNumberLabel,
           style: theme.textTheme.titleLarge?.copyWith(
             fontWeight: FontWeight.w700,
-            color: const Color(0xFF061E40),
+            color: AppColors.clr060,
           ),
         ),
         SizedBox(height: 2.h),
         Text(
           l10n.authLoginSubtitle,
           style: theme.textTheme.bodySmall?.copyWith(
-            color: const Color(0xFF98A2B3),
+            color: AppColors.clr98A2B3,
             fontWeight: FontWeight.w400,
           ),
         ),
@@ -46,13 +47,13 @@ class LoginPhoneInputSection extends StatelessWidget {
           maxLength: 10,
           inputFormatters: [FilteringTextInputFormatter.digitsOnly],
           style: theme.textTheme.bodyLarge?.copyWith(
-            color: Colors.black,
+            color: AppColors.clrBlack,
             fontWeight: FontWeight.w500,
           ),
           decoration: InputDecoration(
-            hintText: '3XXXXXXXXX',
+            hintText: l10n.authPhoneHint.replaceFirst('+92 ', ''),
             hintStyle: theme.textTheme.bodyLarge?.copyWith(
-              color: const Color(0xFF667085),
+              color: AppColors.clr667085,
               fontWeight: FontWeight.w400,
             ),
             prefixIcon: Padding(
@@ -60,7 +61,7 @@ class LoginPhoneInputSection extends StatelessWidget {
               child: Text(
                 '+92',
                 style: theme.textTheme.bodyLarge?.copyWith(
-                  color: const Color(0xFF061E40),
+                  color: AppColors.clr060,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -71,7 +72,7 @@ class LoginPhoneInputSection extends StatelessWidget {
             ),
             counterText: '',
             filled: true,
-            fillColor: Colors.white,
+            fillColor: AppColors.clrWhite,
             contentPadding: EdgeInsets.symmetric(
               horizontal: 12.w,
               vertical: 15.h,
@@ -79,28 +80,28 @@ class LoginPhoneInputSection extends StatelessWidget {
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8.r),
               borderSide: const BorderSide(
-                color: Color(0xFF9BA6A7),
+                color: AppColors.clr9BA6A7,
                 width: 0.9,
               ),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8.r),
               borderSide: const BorderSide(
-                color: Color(0xFF9BA6A7),
+                color: AppColors.clr9BA6A7,
                 width: 0.9,
               ),
             ),
             errorBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8.r),
               borderSide: const BorderSide(
-                color: Color(0xFFE01F26),
+                color: AppColors.clrE01F26,
                 width: 0.9,
               ),
             ),
             focusedErrorBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8.r),
               borderSide: const BorderSide(
-                color: Color(0xFFE01F26),
+                color: AppColors.clrE01F26,
                 width: 0.9,
               ),
             ),
@@ -119,7 +120,7 @@ class LoginPhoneInputSection extends StatelessWidget {
         Text(
           l10n.authOtpHint,
           style: theme.textTheme.bodySmall?.copyWith(
-            color: const Color(0xFF98A2B3),
+            color: AppColors.clr98A2B3,
           ),
         ),
         if (errorText != null) ...[
@@ -127,7 +128,7 @@ class LoginPhoneInputSection extends StatelessWidget {
           Text(
             errorText!,
             style: theme.textTheme.bodySmall?.copyWith(
-              color: const Color(0xFFE01F26),
+              color: AppColors.clrE01F26,
               fontWeight: FontWeight.w500,
             ),
           ),

@@ -90,7 +90,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get authProceedCta => 'Proceed';
 
   @override
+  String get authVerifyCta => 'Verify';
+
+  @override
   String get authResendOtp => 'Resend OTP';
+
+  @override
+  String get authOtpSecondsShort => 'Sec';
 
   @override
   String get authOtpSentTo => 'OTP sent to';
@@ -367,4 +373,30 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get freeDoctorPoint3 =>
       'To avail the service, subscribe to BIMA m-Health via FikrFree.';
+
+  @override
+  String get customerSupportTitle => 'Customer Support';
+
+  @override
+  String get customerSupportHelpCentreTitle => 'Help Centre';
+
+  @override
+  String get customerSupportHelpCentreSubtitle =>
+      'Reach out to Apna Clinic for any support.';
+
+  @override
+  String get customerSupportFallbackCardTitle => 'Apna Clinic Support';
+
+  @override
+  String get customerSupportFallbackDialogTitle => 'Customer Support';
+
+  @override
+  String get customerSupportFallbackDialogMessage =>
+      'Or further support please contact us 24/7 on\n042-111-333-033.';
+
+  @override
+  String get customerSupportCallNowCta => 'Call Now';
+
+  @override
+  String get customerSupportDialError => 'Could not start the call.';
 }

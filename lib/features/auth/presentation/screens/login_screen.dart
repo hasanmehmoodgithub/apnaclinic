@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../components/widgets/app_button.dart';
+import '../../../../core/constants/app_colors.dart';
 import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/enums/app_enums.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
@@ -42,8 +43,6 @@ class _LoginViewState extends State<_LoginView> {
 
   String get _otpCode => _otpController.text;
 
-
-
   @override
   void dispose() {
     _phoneController.dispose();
@@ -79,23 +78,24 @@ class _LoginViewState extends State<_LoginView> {
                       otpSecondsRemaining: state.otpSecondsRemaining,
                       canResendOtp: state.canResendOtp,
                       onResendTap: () => context.read<AuthCubit>().requestOtp(
-                            context.read<AuthCubit>().formatPhoneInput(
-                                  _phoneController.text.trim(),
-                                ),
-                          ),
-                      onOtpChanged: (_) => context.read<AuthCubit>().clearError(),
+                        context.read<AuthCubit>().formatPhoneInput(
+                          _phoneController.text.trim(),
+                        ),
+                      ),
+                      onOtpChanged: (_) =>
+                          context.read<AuthCubit>().clearError(),
                       errorText: state.errorMessage,
                     ),
                   ],
                   const Spacer(),
                   AppButton.primary(
                     text: state.otpRequested
-                        ? 'Verify'
+                        ? l10n.authVerifyCta
                         : l10n.authSendOtpCta,
                     onPressed: state.isLoading ? null : () => _submit(state),
                     isLoading: state.isLoading,
-                    backgroundColor: const Color(0xFF0FAA9A),
-                    foregroundColor: Colors.white,
+                    backgroundColor: AppColors.clr0FAA9A,
+                    foregroundColor: AppColors.clrWhite,
                     height: 62.h,
                     borderRadius: 20.r,
                     fontSize: (30 / 1.65).sp,
@@ -110,6 +110,7 @@ class _LoginViewState extends State<_LoginView> {
       },
     );
   }
+
   void _clearOtpInputs() {
     _otpController.clear();
     _otpFocusNode.requestFocus();
@@ -128,8 +129,8 @@ class _LoginViewState extends State<_LoginView> {
       return;
     }
 
-    if (Navigator.of(context).canPop()) {
-      Navigator.of(context).pop();
+    if (context.canPop()) {
+      context.pop();
       return;
     }
 

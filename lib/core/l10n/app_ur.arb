@@ -27,7 +27,9 @@
   "authOtpVerificationTitle": "OTP تصدیق",
   "authOtpHintCode": "1 2 3 4",
   "authProceedCta": "آگے بڑھیں",
+  "authVerifyCta": "تصدیق کریں",
   "authResendOtp": "OTP دوبارہ بھیجیں",
+  "authOtpSecondsShort": "سیکنڈ",
   "authOtpSentTo": "OTP بھیجا گیا",
   "authOtpSentMessage": "OTP کامیابی سے بھیج دیا گیا۔",
   "authPhoneValidationError": "درست فون نمبر درج کریں۔",
@@ -115,5 +117,13 @@
   "freeDoctorConsultationTitle": "24/7 مفت ڈاکٹر مشاورت",
   "freeDoctorPoint1": "یہ سروس صرف Bima m-Health سبسکرائبرز کے لیے دستیاب ہے۔",
   "freeDoctorPoint2": "عمومی طبی رہنمائی اور مزید کے لیے 24/7 مستند ڈاکٹروں تک رسائی حاصل کریں۔",
-  "freeDoctorPoint3": "سروس حاصل کرنے کے لیے FikrFree کے ذریعے BIMA m-Health سبسکرائب کریں۔"
+  "freeDoctorPoint3": "سروس حاصل کرنے کے لیے FikrFree کے ذریعے BIMA m-Health سبسکرائب کریں۔",
+  "customerSupportTitle": "کسٹمر سپورٹ",
+  "customerSupportHelpCentreTitle": "ہیلپ سینٹر",
+  "customerSupportHelpCentreSubtitle": "کسی بھی مدد کے لیے Apna Clinic سے رابطہ کریں۔",
+  "customerSupportFallbackCardTitle": "Apna Clinic سپورٹ",
+  "customerSupportFallbackDialogTitle": "کسٹمر سپورٹ",
+  "customerSupportFallbackDialogMessage": "مزید مدد کے لیے براہ کرم 24/7 اس نمبر پر رابطہ کریں:\n042-111-333-033",
+  "customerSupportCallNowCta": "ابھی کال کریں",
+  "customerSupportDialError": "کال شروع نہیں ہو سکی۔"
 }

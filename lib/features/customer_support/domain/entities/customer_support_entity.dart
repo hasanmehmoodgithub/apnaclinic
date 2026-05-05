@@ -15,11 +15,11 @@ class CustomerSupportContactEntity extends Equatable {
 
   @override
   List<Object?> get props => [
-        cardTitle,
-        dialogTitle,
-        dialogMessage,
-        dialNumber,
-      ];
+    cardTitle,
+    dialogTitle,
+    dialogMessage,
+    dialNumber,
+  ];
 }
 
 class CustomerSupportEntity extends Equatable {
@@ -34,9 +34,5 @@ class CustomerSupportEntity extends Equatable {
   final List<CustomerSupportContactEntity> contacts;
 
   @override
-  List<Object?> get props => [
-        helpCentreTitle,
-        helpCentreSubtitle,
-        contacts,
-      ];
+  List<Object?> get props => [helpCentreTitle, helpCentreSubtitle, contacts];
 }
