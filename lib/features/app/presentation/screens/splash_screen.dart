@@ -3,6 +3,8 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/preference/app_pref.dart';
 import '../../../../core/router/app_routes.dart';
+import '../../domain/use_cases/get_initial_route_use_case.dart';
+import '../widgets/splash_background_image_widget.dart';
 
 /// Splash Screen - First screen shown when app launches
 class SplashScreen extends StatefulWidget {
@@ -13,9 +15,12 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+  late final GetInitialRouteUseCase _getInitialRouteUseCase;
+
   @override
   void initState() {
     super.initState();
+    _getInitialRouteUseCase = GetInitialRouteUseCase(sl<AppPref>());
     _navigateToNext();
   }
 
@@ -23,23 +28,12 @@ class _SplashScreenState extends State<SplashScreen> {
     await Future<void>.delayed(const Duration(seconds: 3));
 
     if (!mounted) return;
-    final appPref = sl<AppPref>();
-    final seenOnboarding = appPref.isOnboardingCompleted();
-    final nextRoute = !seenOnboarding ? AppRoutes.onboarding : AppRoutes.home;
+    final nextRoute = _getInitialRouteUseCase();
     context.go(AppRoutes.path(nextRoute));
   }
 
   @override
-  void dispose() {
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SizedBox.expand(
-        child: Image.asset('assets/img/splash.webp', fit: BoxFit.cover),
-      ),
-    );
+    return const Scaffold(body: SplashBackgroundImageWidget());
   }
 }

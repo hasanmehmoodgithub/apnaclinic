@@ -1,6 +1,5 @@
 import 'dart:developer';
 
-import '../../../../core/failure/exceptions.dart';
 import '../../../../core/functional/functional_export.dart';
 import '../../domain/entities/pharmacy_cart_item_entity.dart';
 import '../../domain/entities/pharmacy_medicine_entity.dart';

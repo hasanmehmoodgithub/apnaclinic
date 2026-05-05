@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../core/extensions/screen_util_extensions.dart';
+import '../../../../core/l10n/app_localizations.dart';
 
 class ResultsSelectCategoriesDialog extends StatelessWidget {
   const ResultsSelectCategoriesDialog({
@@ -14,6 +16,7 @@ class ResultsSelectCategoriesDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final textTheme = Theme.of(context).textTheme;
     return Dialog(
       insetPadding: EdgeInsets.symmetric(horizontal: 22.w, vertical: 44.h),
@@ -30,7 +33,7 @@ class ResultsSelectCategoriesDialog extends StatelessWidget {
                 children: [
                   Expanded(
                     child: Text(
-                      'Select Categories',
+                      l10n.consultationSelectCategoriesTitle,
                       style: textTheme.titleMedium?.copyWith(
                         color: const Color(0xFF2A3441),
                         fontSize: 15.sp,
@@ -40,7 +43,7 @@ class ResultsSelectCategoriesDialog extends StatelessWidget {
                   ),
                   InkWell(
                     borderRadius: BorderRadius.circular(14.r),
-                    onTap: () => Navigator.of(context).pop(selectedCategory),
+                    onTap: () => context.pop(selectedCategory),
                     child: Padding(
                       padding: EdgeInsets.all(2.r),
                       child: Icon(
@@ -61,7 +64,7 @@ class ResultsSelectCategoriesDialog extends StatelessWidget {
                     children: categories.map((category) {
                       final isSelected = category == selectedCategory;
                       return InkWell(
-                        onTap: () => Navigator.of(context).pop(category),
+                        onTap: () => context.pop(category),
                         borderRadius: BorderRadius.circular(7.r),
                         child: Container(
                           height: 42.h,

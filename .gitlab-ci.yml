@@ -1,0 +1,15 @@
+stages:
+  - verify
+
+danger:
+  stage: verify
+  image: ghcr.io/cirruslabs/flutter:stable
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+  before_script:
+    - apt-get update && apt-get install -y nodejs npm
+    - npm ci
+  script:
+    - npx danger ci --dangerfile dangerfile.js
+  variables:
+    DANGER_GITLAB_API_TOKEN: $DANGER_GITLAB_API_TOKEN

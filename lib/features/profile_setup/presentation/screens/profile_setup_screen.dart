@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import '../../../../core/constants/app_colors.dart';
 import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/enums/state_status.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
@@ -72,17 +73,19 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
     } on PlatformException {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
+        SnackBar(
           content: Text(
-            'Image picker not ready yet. Please fully restart the app.',
+            AppLocalizations.of(context)!.profileImagePickerRestartMessage,
           ),
         ),
       );
     } catch (_) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Could not pick image. Please try again.'),
+        SnackBar(
+          content: Text(
+            AppLocalizations.of(context)!.profileImagePickerFailedMessage,
+          ),
         ),
       );
     }
@@ -103,29 +106,29 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
         return Theme(
           data: theme.copyWith(
             colorScheme: theme.colorScheme.copyWith(
-              primary: const Color(0xFF0FAA9A),
-              onPrimary: Colors.white,
-              surface: Colors.white,
-              onSurface: const Color(0xFF061E40),
+              primary: AppColors.clr0FAA9A,
+              onPrimary: AppColors.clrWhite,
+              surface: AppColors.clrWhite,
+              onSurface: AppColors.clr060,
             ),
             datePickerTheme: DatePickerThemeData(
-              backgroundColor: Colors.white,
-              headerBackgroundColor: const Color(0xFF0FAA9A),
-              headerForegroundColor: Colors.white,
+              backgroundColor: AppColors.clrWhite,
+              headerBackgroundColor: AppColors.clr0FAA9A,
+              headerForegroundColor: AppColors.clrWhite,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(20.r),
               ),
               dayStyle: theme.textTheme.bodyMedium?.copyWith(
-                color: const Color(0xFF061E40),
+                color: AppColors.clr060,
               ),
               todayBorder: BorderSide(
-                color: const Color(0xFF0FAA9A),
+                color: AppColors.clr0FAA9A,
                 width: 1.r,
               ),
             ),
             textButtonTheme: TextButtonThemeData(
               style: TextButton.styleFrom(
-                foregroundColor: const Color(0xFF0FAA9A),
+                foregroundColor: AppColors.clr0FAA9A,
                 textStyle: theme.textTheme.labelLarge?.copyWith(
                   fontWeight: FontWeight.w700,
                 ),
@@ -161,33 +164,33 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                   trailing: selected == 'male'
                       ? Icon(
                     Icons.check_rounded,
-                    color: const Color(0xFF0FAA9A),
+                    color: AppColors.clr0FAA9A,
                     size: 20.r,
                   )
                       : null,
-                  onTap: () => Navigator.of(dialogContext).pop('male'),
+                  onTap: () => dialogContext.pop('male'),
                 ),
                 ListTile(
                   title: Text(l10n.profileGenderFemale),
                   trailing: selected == 'female'
                       ? Icon(
                     Icons.check_rounded,
-                    color: const Color(0xFF0FAA9A),
+                    color: AppColors.clr0FAA9A,
                     size: 20.r,
                   )
                       : null,
-                  onTap: () => Navigator.of(dialogContext).pop('female'),
+                  onTap: () => dialogContext.pop('female'),
                 ),
                 ListTile(
                   title: Text(l10n.profileGenderOther),
                   trailing: selected == 'other'
                       ? Icon(
                     Icons.check_rounded,
-                    color: const Color(0xFF0FAA9A),
+                    color: AppColors.clr0FAA9A,
                     size: 20.r,
                   )
                       : null,
-                  onTap: () => Navigator.of(dialogContext).pop('other'),
+                  onTap: () => dialogContext.pop('other'),
                 ),
               ],
             ),
@@ -251,15 +254,15 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
       hintStyle: Theme.of(
         context,
       ).textTheme.bodyMedium?.copyWith(
-        color: isValueText ? const Color(0xFF101828) : const Color(0xFF667085),
+        color: isValueText ? AppColors.clr101828 : AppColors.clr667085,
       ),
       isDense: true,
       contentPadding: EdgeInsets.only(bottom: 10.h),
       enabledBorder: const UnderlineInputBorder(
-        borderSide: BorderSide(color: Color(0xFFD0D5DD)),
+        borderSide: BorderSide(color: AppColors.clrD0D5DD),
       ),
       focusedBorder: const UnderlineInputBorder(
-        borderSide: BorderSide(color: Color(0xFF0FAA9A), width: 1.5),
+        borderSide: BorderSide(color: AppColors.clr0FAA9A, width: 1.5),
       ),
       suffixIcon: suffixIcon,
     );
@@ -277,8 +280,8 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
 
     return Scaffold(
       backgroundColor: isInitialLoading
-          ? Colors.white
-          : const Color(0xFFC7EFEB),
+          ? AppColors.clrWhite
+          : AppColors.clrC7EFEB,
       body: LayoutBuilder(
         builder: (context, constraints) {
           return BlocConsumer<ProfileSetupCubit, ProfileSetupState>(

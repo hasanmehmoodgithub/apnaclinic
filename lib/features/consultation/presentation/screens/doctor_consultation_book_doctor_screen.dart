@@ -3,21 +3,22 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart' as p;
 import '../../../../components/shimmer/app_shimmer.dart';
 import '../../../../core/di/dependency_injection.dart';
 
 import '../../../../core/extensions/screen_util_extensions.dart';
+import '../../../../core/l10n/app_localizations.dart';
 import '../../data/mock/consultation_doctors_mock_api.dart';
 import '../constants/consultation_ui_config.dart';
+import '../widgets/consultation_booking_confirmation_dialog_widget.dart';
 import '../widgets/results_doctor_item.dart';
-import '../widgets/availability_section.dart';
-import '../widgets/doctor_profile_section.dart';
-import '../widgets/documents_section.dart';
-import '../widgets/issue_section.dart';
-import '../widgets/patient_section.dart';
-import '../widgets/upload_option_tile.dart';
+import '../widgets/consultation_hero_banner_widget.dart';
+import '../widgets/consultation_screen_header_widget.dart';
+import '../widgets/doctor_consultation_booking_body_widget.dart';
+import '../widgets/consultation_upload_document_sheet_widget.dart';
 
 class DoctorConsultationBookDoctorScreen extends StatefulWidget {
   final String? doctorId;
@@ -79,6 +80,7 @@ class _DoctorConsultationBookDoctorScreenState
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     if (_isLoading) {
       return _buildFullScreenShimmer(context);
     }
@@ -86,7 +88,6 @@ class _DoctorConsultationBookDoctorScreenState
     final textTheme = Theme.of(context).textTheme;
     final doctorName = _doctorDetail?.name ?? widget.doctorName;
     final specialty = _doctorDetail?.specialty ?? widget.specialty;
-    final fee = _doctorDetail?.fee ?? widget.fee;
     final imageUrl = _doctorDetail?.imageUrl ?? widget.imageUrl;
     final qualification = _doctorDetail?.qualification ?? 'MBBS';
     final verifiedPatientsCount = _doctorDetail?.verifiedPatientsCount ?? '35';
@@ -114,71 +115,12 @@ class _DoctorConsultationBookDoctorScreenState
         child: SafeArea(
           child: Column(
             children: [
-              Padding(
-                padding: EdgeInsets.fromLTRB(22.w, 8.h, 22.w, 8.h),
-                child: Row(
-                  children: [
-                    GestureDetector(
-                      behavior: HitTestBehavior.opaque,
-                      onTap: () => Navigator.of(context).pop(),
-                      child: SizedBox(
-                        width: 24.w,
-                        height: 24.h,
-                        child: Center(
-                          child: SvgPicture.asset(
-                            ConsultationUiConfig.backArrowAsset,
-                            width: 18.w,
-                            height: 18.h,
-                            fit: BoxFit.contain,
-                            colorFilter: const ColorFilter.mode(
-                              ConsultationUiConfig.primaryText,
-                              BlendMode.srcIn,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      child: Text(
-                        ConsultationUiConfig.screenTitle,
-                        textAlign: TextAlign.center,
-                        style: textTheme.titleLarge?.copyWith(
-                          color: ConsultationUiConfig.primaryText,
-                          fontWeight: FontWeight.w700,
-                          fontSize: 20.sp,
-                        ),
-                      ),
-                    ),
-                    SizedBox(width: 24.w),
-                  ],
-                ),
+              ConsultationScreenHeaderWidget(
+                title: ConsultationUiConfig.screenTitle,
+                onBackTap: context.pop,
               ),
-              SizedBox(
-                height: 178.h,
-                child: Center(
-                  child: SizedBox(
-                    width: 240.w,
-                    height: 178.h,
-                    child: Stack(
-                      alignment: Alignment.topCenter,
-                      children: [
-                        Positioned(
-                          top: 2.h,
-                          child: SvgPicture.asset(
-                            ConsultationUiConfig.heroVectorAsset,
-                            width: 238.w,
-                            height: 172.h,
-                            fit: BoxFit.contain,
-                          ),
-                        ),
-                        Positioned(
-                          top: 0,
-                          child: _buildDoctorHeroImage(imageUrl),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
+              ConsultationHeroBannerWidget(
+                doctorImage: _buildDoctorHeroImage(imageUrl),
               ),
               Expanded(
                 child: Container(
@@ -191,67 +133,19 @@ class _DoctorConsultationBookDoctorScreenState
                   ),
                   child: Column(
                     children: [
-                      Expanded(
-                        child: SingleChildScrollView(
-                          padding: EdgeInsets.fromLTRB(20.w, 16.h, 20.w, 16.h),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              DoctorProfileSection(
-                                doctorName: doctorName,
-                                specialty: specialty,
-                                imageUrl: imageUrl,
-                                qualification: qualification,
-                                verifiedPatientsCount: verifiedPatientsCount,
-                                experience: experience,
-                                satisfiedText: satisfiedText,
-                                rating: ratingValue,
-                                description: description,
-                                textTheme: textTheme,
-                              ),
-                              SizedBox(height: 16.h),
-                              const Divider(color: Color(0xFFE4E8ED), thickness: 1),
-                              SizedBox(height: 14.h),
-                              Row(
-                                children: [
-                                  SvgPicture.asset(
-                                    'assets/img/consultation/video.svg',
-                                    width: 16.w,
-                                    height: 16.h,
-                                    fit: BoxFit.contain,
-                                  ),
-                                  SizedBox(width: 6.w),
-                                  Text(
-                                    'Book your video consultation here!',
-                                    style: textTheme.titleMedium?.copyWith(
-                                      color: ConsultationUiConfig.primaryText,
-                                      fontSize: 16.sp,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              SizedBox(height: 18.h),
-                              AvailabilitySection(textTheme: textTheme),
-                              SizedBox(height: 20.h),
-                              IssueSection(textTheme: textTheme),
-                              SizedBox(height: 18.h),
-                              PatientSection(textTheme: textTheme),
-                              SizedBox(height: 18.h),
-                              DocumentsSection(
-                                textTheme: textTheme,
-                                onBrowseTap: _openUploadDocumentSheet,
-                                attachedMediaName: _attachedMediaName,
-                              ),
-                              SizedBox(height: 16.h),
-                              const Divider(
-                                color: Color(0xFFE4E8ED),
-                                thickness: 1,
-                              ),
-                              SizedBox(height: 16.h),
-                            ],
-                          ),
-                        ),
+                      DoctorConsultationBookingBodyWidget(
+                        doctorName: doctorName,
+                        specialty: specialty,
+                        imageUrl: imageUrl,
+                        qualification: qualification,
+                        verifiedPatientsCount: verifiedPatientsCount,
+                        experience: experience,
+                        satisfiedText: satisfiedText,
+                        rating: ratingValue,
+                        description: description,
+                        textTheme: textTheme,
+                        attachedMediaName: _attachedMediaName,
+                        onBrowseTap: _openUploadDocumentSheet,
                       ),
                       Padding(
                         padding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 12.h),
@@ -268,7 +162,7 @@ class _DoctorConsultationBookDoctorScreenState
                               ),
                             ),
                             child: Text(
-                              'Get Appointment',
+                              l10n.consultationGetAppointmentCta,
                               style: textTheme.titleMedium?.copyWith(
                                 color: Colors.white,
                                 fontSize: 18.sp,
@@ -293,35 +187,8 @@ class _DoctorConsultationBookDoctorScreenState
     final doctorName = _doctorDetail?.name ?? widget.doctorName;
     showDialog<void>(
       context: context,
-      builder: (context) {
-        final textTheme = Theme.of(context).textTheme;
-        return AlertDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16.r),
-          ),
-          title: Text(
-            'Appointment Confirmed!',
-            style: textTheme.titleLarge?.copyWith(
-              color: ConsultationUiConfig.primaryText,
-              fontWeight: FontWeight.w700,
-              fontSize: 22.sp,
-            ),
-          ),
-          content: Text(
-            'Your consultation has been booked with $doctorName. You can join the call from Appointments.',
-            style: textTheme.bodyMedium?.copyWith(
-              color: ConsultationUiConfig.tertiaryText,
-              fontSize: 14.sp,
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('OK'),
-            ),
-          ],
-        );
-      },
+      builder: (context) =>
+          ConsultationBookingConfirmationDialogWidget(doctorName: doctorName),
     );
   }
 
@@ -334,57 +201,19 @@ class _DoctorConsultationBookDoctorScreenState
         borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
       ),
       builder: (sheetContext) {
-        return SafeArea(
-          child: Padding(
-            padding: EdgeInsets.fromLTRB(20.w, 8.h, 20.w, 16.h),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  width: 46.w,
-                  height: 5.h,
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFD5D9DE),
-                    borderRadius: BorderRadius.circular(99.r),
-                  ),
-                ),
-                SizedBox(height: 18.h),
-                Text(
-                  'Upload Document',
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    color: const Color(0xFF061E40),
-                    fontSize: 30.sp,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-                SizedBox(height: 14.h),
-                UploadOptionTile(
-                  icon: Icons.camera_alt_outlined,
-                  label: 'Use camera',
-                  onTap: () {
-                    Navigator.of(sheetContext).pop();
-                    _pickFromCamera();
-                  },
-                ),
-                UploadOptionTile(
-                  icon: Icons.photo_library_outlined,
-                  label: 'Upload from gallery',
-                  onTap: () {
-                    Navigator.of(sheetContext).pop();
-                    _pickFromGallery();
-                  },
-                ),
-                UploadOptionTile(
-                  icon: Icons.folder_open_outlined,
-                  label: 'Upload from File',
-                  onTap: () {
-                    Navigator.of(sheetContext).pop();
-                    _pickFromFile();
-                  },
-                ),
-              ],
-            ),
-          ),
+        return ConsultationUploadDocumentSheetWidget(
+          onCameraTap: () {
+            sheetContext.pop();
+            _pickFromCamera();
+          },
+          onGalleryTap: () {
+            sheetContext.pop();
+            _pickFromGallery();
+          },
+          onFileTap: () {
+            sheetContext.pop();
+            _pickFromFile();
+          },
         );
       },
     );
@@ -401,9 +230,9 @@ class _DoctorConsultationBookDoctorScreenState
         _attachedMediaName = p.basename(picked.path);
       });
     } on PlatformException {
-      _showSnackBar('Camera access is unavailable right now.');
+      _showSnackBar(AppLocalizations.of(context)!.consultationCameraUnavailable);
     } catch (_) {
-      _showSnackBar('Could not capture media. Please try again.');
+      _showSnackBar(AppLocalizations.of(context)!.consultationCaptureMediaFailed);
     }
   }
 
@@ -418,9 +247,9 @@ class _DoctorConsultationBookDoctorScreenState
         _attachedMediaName = p.basename(picked.path);
       });
     } on PlatformException {
-      _showSnackBar('Gallery access is unavailable right now.');
+      _showSnackBar(AppLocalizations.of(context)!.consultationGalleryUnavailable);
     } catch (_) {
-      _showSnackBar('Could not pick media from gallery.');
+      _showSnackBar(AppLocalizations.of(context)!.consultationPickGalleryFailed);
     }
   }
 
@@ -433,7 +262,7 @@ class _DoctorConsultationBookDoctorScreenState
         _attachedMediaName = selected.name;
       });
     } catch (_) {
-      _showSnackBar('Could not pick file. Please try again.');
+      _showSnackBar(AppLocalizations.of(context)!.consultationPickFileFailed);
     }
   }
 
@@ -464,8 +293,8 @@ class _DoctorConsultationBookDoctorScreenState
         width: width,
         height: height,
         fit: BoxFit.cover,
-        placeholder: (_, __) => _heroFallback(width, height),
-        errorWidget: (_, __, ___) => _heroFallback(width, height),
+        placeholder: (_, _) => _heroFallback(width, height),
+        errorWidget: (_, _, _) => _heroFallback(width, height),
       );
     }
     return Image.asset(
@@ -509,7 +338,7 @@ class _DoctorConsultationBookDoctorScreenState
                   children: [
                     GestureDetector(
                       behavior: HitTestBehavior.opaque,
-                      onTap: () => Navigator.of(context).pop(),
+                      onTap: () => context.pop(),
                       child: SizedBox(
                         width: 24.w,
                         height: 24.h,

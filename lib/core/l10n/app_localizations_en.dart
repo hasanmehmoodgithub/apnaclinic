@@ -90,7 +90,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get authProceedCta => 'Proceed';
 
   @override
+  String get authVerifyCta => 'Verify';
+
+  @override
   String get authResendOtp => 'Resend OTP';
+
+  @override
+  String get authOtpSecondsShort => 'Sec';
 
   @override
   String get authOtpSentTo => 'OTP sent to';
@@ -194,6 +200,52 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get profileSaveCta => 'Save';
+
+  @override
+  String get profileSetupHeaderTitle => 'Profile Setup';
+
+  @override
+  String get profileImagePickerRestartMessage =>
+      'Image picker not ready yet. Please fully restart the app.';
+
+  @override
+  String get profileImagePickerFailedMessage =>
+      'Could not pick image. Please try again.';
+
+  @override
+  String get profileGuestUserTitle => 'Guest User';
+
+  @override
+  String get profileSignupLoginCta => 'Sign Up / Login';
+
+  @override
+  String get profileEditCta => 'Edit';
+
+  @override
+  String get profileAccountDetailsTitle => 'Account Details';
+
+  @override
+  String get profileDefaultTag => 'Default';
+
+  @override
+  String get profileAddAccountCta => 'Add Account';
+
+  @override
+  String get profileMobileBankPrefix => 'Mobile Bank';
+
+  @override
+  String get profileRemoveAccountTitle => 'Remove Account';
+
+  @override
+  String profileRemoveAccountMessage(String bankName, String accountNumber) {
+    return 'Are you sure you want to remove $bankName account $accountNumber ?';
+  }
+
+  @override
+  String get profileRemoveCta => 'Remove';
+
+  @override
+  String get profileCancelCta => 'Cancel';
 
   @override
   String get pharmacyScreenTitle => 'Pharmacy';
@@ -367,4 +419,565 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get freeDoctorPoint3 =>
       'To avail the service, subscribe to BIMA m-Health via FikrFree.';
+
+  @override
+  String get customerSupportTitle => 'Customer Support';
+
+  @override
+  String get customerSupportHelpCentreTitle => 'Help Centre';
+
+  @override
+  String get customerSupportHelpCentreSubtitle =>
+      'Reach out to Apna Clinic for any support.';
+
+  @override
+  String get customerSupportFallbackCardTitle => 'Apna Clinic Support';
+
+  @override
+  String get customerSupportFallbackDialogTitle => 'Customer Support';
+
+  @override
+  String get customerSupportFallbackDialogMessage =>
+      'Or further support please contact us 24/7 on\n042-111-333-033.';
+
+  @override
+  String get customerSupportCallNowCta => 'Call Now';
+
+  @override
+  String get customerSupportDialError => 'Could not start the call.';
+
+  @override
+  String get accountDetailsTitle => 'Account Details';
+
+  @override
+  String get accountAddTitle => 'Add Account';
+
+  @override
+  String get accountEnterDetailsTitle => 'Enter Account Details';
+
+  @override
+  String get accountMethodLabel => 'Account Method';
+
+  @override
+  String get accountNumberLabel => 'Account Number';
+
+  @override
+  String get accountSaveCta => 'Save';
+
+  @override
+  String get accountContinueCta => 'Continue';
+
+  @override
+  String get accountMethodAddedSuccess => 'Payment Method Added Successfully';
+
+  @override
+  String get accountLinkedMessagePrefix => 'Your';
+
+  @override
+  String get accountLinkedMessageMiddle => 'account no.';
+
+  @override
+  String get accountLinkedMessageSuffix => 'has been linked successfully';
+
+  @override
+  String get accountHolderFallback => 'Account Holder';
+
+  @override
+  String get accountValidationEnterNumber => 'Enter account number';
+
+  @override
+  String get accountValidationDigitsOnly => 'Only digits are allowed';
+
+  @override
+  String get accountValidationElevenDigits => 'Enter 11 digit Pakistan number';
+
+  @override
+  String get accountValidationValidPakistanMobile =>
+      'Enter valid Pakistan mobile number';
+
+  @override
+  String get accountMethodJazzCash => 'JazzCash';
+
+  @override
+  String dashboardHello(String name) {
+    return 'Hello, $name';
+  }
+
+  @override
+  String get dashboardSearchHint => 'Search Medicine, Doctor, Test....';
+
+  @override
+  String get dashboardOurServicesTitle => 'Our Services';
+
+  @override
+  String get dashboardSecureHealthTitle => 'Secure Your Health First';
+
+  @override
+  String get dashboardFikrfreeTagline =>
+      'Sehat aur insurance ab apke hath mei!';
+
+  @override
+  String get dashboardBottomFreeDoctor => 'Free Doctor';
+
+  @override
+  String get dashboardBottomSupport => 'Support';
+
+  @override
+  String get dashboardBottomBookings => 'My Bookings';
+
+  @override
+  String get dashboardBottomProfile => 'Profile';
+
+  @override
+  String get dashboardBottomHome => 'Home';
+
+  @override
+  String get dashboardMenuTitle => 'Menu';
+
+  @override
+  String get dashboardMenuCustomerSupport => 'Customer Support';
+
+  @override
+  String get dashboardMenuFaq => 'FAQ’s';
+
+  @override
+  String get dashboardMenuGuestUser => 'Guest User';
+
+  @override
+  String get dashboardMenuSignInManageAccount =>
+      'Sign in to manage your account';
+
+  @override
+  String get dashboardMenuSignInContinue => 'Sign in to continue';
+
+  @override
+  String get dashboardMenuLogout => 'Logout';
+
+  @override
+  String get dashboardMenuAbout => 'About';
+
+  @override
+  String get dashboardMenuAppVersion => 'App Version';
+
+  @override
+  String get dashboardMenuTerms => 'Terms & Conditions';
+
+  @override
+  String get dashboardMenuPrivacy => 'Privacy Policy';
+
+  @override
+  String get dashboardMenuEditProfile => 'Edit Profile';
+
+  @override
+  String get dashboardMenuLoginSignup => 'Login / Signup';
+
+  @override
+  String get dashboardLogoutMessage =>
+      'Are you sure you want to logout from your account?';
+
+  @override
+  String get dashboardCancel => 'Cancel';
+
+  @override
+  String get notificationsTitle => 'Notifications';
+
+  @override
+  String get notificationsRetryCta => 'Retry';
+
+  @override
+  String get notificationsEmptyTitle => 'No Notifications Yet!';
+
+  @override
+  String get notificationsLoadError =>
+      'Unable to load notifications. Pull to refresh or try again.';
+
+  @override
+  String get searchScreenTitle => 'Search';
+
+  @override
+  String get searchListeningHint => 'Listening...';
+
+  @override
+  String get searchRecentSearchesTitle => 'Recent Searches';
+
+  @override
+  String get searchPopularSearchesTitle => 'Popular Searches';
+
+  @override
+  String get searchSeeAllCta => 'See All';
+
+  @override
+  String searchForQuery(String query) {
+    return 'Search for \"$query\"';
+  }
+
+  @override
+  String get labTestScreenTitle => 'Lab Test';
+
+  @override
+  String get surgeryScreenTitle => 'Procedures & Surgeries';
+
+  @override
+  String get surgeryBookingScreenTitle => 'Surgery Booking';
+
+  @override
+  String get surgeryNoProceduresMessage =>
+      'No surgery procedures available right now.';
+
+  @override
+  String get surgerySelectForSurgery => 'Select for Surgery';
+
+  @override
+  String get surgeryLocationLabel => 'Location';
+
+  @override
+  String get commonChange => 'Change';
+
+  @override
+  String get surgerySearchNameHint => 'Search name..';
+
+  @override
+  String get surgerySelectCityTitle => 'Select a city';
+
+  @override
+  String get surgerySearchByNameHint => 'Search by name';
+
+  @override
+  String get commonProceed => 'Proceed';
+
+  @override
+  String get labTestSelectCityPlaceholder => 'Select City';
+
+  @override
+  String get labTestCityFieldLabel => 'City';
+
+  @override
+  String get labTestChangeCityCta => 'Change';
+
+  @override
+  String get labTestSelectTestHeading => 'Select Test';
+
+  @override
+  String get labTestSearchFieldHint => 'Search';
+
+  @override
+  String get labTestSelectCitySheetTitle => 'Select a City';
+
+  @override
+  String get labTestSelectCitySheetSearchHint => 'Search for City';
+
+  @override
+  String get labTestRequirementLabel => 'Requirement';
+
+  @override
+  String get labTestSampleTypeLabel => 'Sample Type';
+
+  @override
+  String get labTestPleaseSelectCityFirst => 'Please select a city first.';
+
+  @override
+  String get labTestDataStillLoading => 'Lab test data is still loading.';
+
+  @override
+  String get labTestCatalogLoadFailed => 'Failed to load lab tests.';
+
+  @override
+  String get labTestNoTestsFound => 'No tests found';
+
+  @override
+  String get labTestCartBadgeOverflow => '9+';
+
+  @override
+  String get labTestBrowseItemFeeFallback => 'Rs. 15,000/-';
+
+  @override
+  String get labTestBookingChooseMethodTitle => 'Choose a Booking Method';
+
+  @override
+  String get labTestBookingMethodWalkIn => 'Walk In';
+
+  @override
+  String get labTestBookingMethodHomeSample => 'Home Sample';
+
+  @override
+  String get labTestBookingAddToCart => 'Add to Cart';
+
+  @override
+  String get labTestBookingViewYourCart => 'View Your Cart';
+
+  @override
+  String get labTestBookingDataUnavailable => 'Lab test data unavailable';
+
+  @override
+  String get labTestCartChangeWarningTitle => 'Warning!';
+
+  @override
+  String get labTestCartChangeWarningBody =>
+      'Changing the City, Service Provider or\nLab will remove all items from your cart.\nDo you want to proceed?';
+
+  @override
+  String get labTestCartChangeViewCart => 'View Cart';
+
+  @override
+  String get labTestCartChangeContinue => 'Continue';
+
+  @override
+  String get labTestCartBadgeOverflow99 => '99+';
+
+  @override
+  String get labTestCartScreenTitle => 'Cart';
+
+  @override
+  String get labTestCartEmptyMessage => 'No items in cart';
+
+  @override
+  String get labTestCartProceedCheckout => 'Proceed Checkout';
+
+  @override
+  String get labTestViewDetailsLoadError =>
+      'Unable to load details. Please try again.';
+
+  @override
+  String get labTestSomethingWentWrong => 'Something went wrong';
+
+  @override
+  String get commonRetry => 'Retry';
+
+  @override
+  String get labTestViewDetailsResultsTitle => 'Test Results';
+
+  @override
+  String get labTestViewDetailsOrderTitle => 'Order Details';
+
+  @override
+  String get labTestDiscountCodeCopied => 'Discount code copied';
+
+  @override
+  String get labTestOrderNoPrefix => 'Order no.';
+
+  @override
+  String get labTestBookingDateLabel => 'Booking Date';
+
+  @override
+  String get labTestTotalFeeLabel => 'Total Fee';
+
+  @override
+  String get labTestDiscountCodeLabel => 'Discount Code';
+
+  @override
+  String get labTestShowCodeInstruction =>
+      'Show this code to the lab representative';
+
+  @override
+  String get labTestCheckoutTitle => 'Payment Details';
+
+  @override
+  String get labTestCheckoutRequiredFieldsError =>
+      'Please fill all the required fields';
+
+  @override
+  String get labTestCheckoutBookedTitle => 'Lab Test Booked Successfully';
+
+  @override
+  String get labTestCheckoutBookedMessage =>
+      'A lab representative will contact you shortly.\nPresent your discount code to the lab representative.\nTo access your code later:';
+
+  @override
+  String get labTestCheckoutBookedPathHint => 'Menu > My Bookings > Lab Test';
+
+  @override
+  String get commonClose => 'Close';
+
+  @override
+  String get labTestBookingMethodWalkInCompact => 'Walk In';
+
+  @override
+  String get labTestCheckoutFeeLabel => 'Fee';
+
+  @override
+  String get labTestCheckoutDiscountLabel => 'Discount';
+
+  @override
+  String get labTestCheckoutTotalLabel => 'Total';
+
+  @override
+  String get labTestPatientDetailsTitle => 'Patient Details';
+
+  @override
+  String get commonDone => 'Done';
+
+  @override
+  String get commonEdit => 'Edit';
+
+  @override
+  String get labTestEmergencyContactTitle => 'Emergency Contact';
+
+  @override
+  String get labTestEmergencyContactHintText =>
+      'Please provide an emergency contact number, incase you are unavailable.';
+
+  @override
+  String get labTestEmergencyNumberHint => 'Enter Number here...';
+
+  @override
+  String get labTestPatientNameLabel => 'Patient Name';
+
+  @override
+  String get labTestContactNumberLabel => 'Contact Number';
+
+  @override
+  String get labTestAddressLabel => 'Address';
+
+  @override
+  String get labTestFullNameHint => 'Full name';
+
+  @override
+  String get labTestPhonebookHint => 'Type or select from phonebook';
+
+  @override
+  String get labTestAgeLabel => 'Age';
+
+  @override
+  String get labTestAddressHint => 'Type address here...';
+
+  @override
+  String get commonMale => 'Male';
+
+  @override
+  String get commonFemale => 'Female';
+
+  @override
+  String get labTestBookCta => 'Book Lab Test';
+
+  @override
+  String get consultationAiScreeningTitle => 'AI Screening';
+
+  @override
+  String get consultationAiWelcomePrefix => 'Hello, welcome to ';
+
+  @override
+  String get consultationAiWelcomeSuffix => ' , let\'s get started';
+
+  @override
+  String get consultationAiStartCta => 'Let\'s Start';
+
+  @override
+  String get consultationSelectCategoriesTitle => 'Select Categories';
+
+  @override
+  String get consultationSpecialistTitle => 'Specialist';
+
+  @override
+  String get consultationVideoBookingPrompt =>
+      'Book your video consultation here!';
+
+  @override
+  String get consultationGetAppointmentCta => 'Get Appointment';
+
+  @override
+  String get consultationBookingConfirmedTitle => 'Appointment Confirmed!';
+
+  @override
+  String consultationBookingConfirmedMessage(Object doctorName) {
+    return 'Your consultation has been booked with $doctorName. You can join the call from Appointments.';
+  }
+
+  @override
+  String get commonOk => 'OK';
+
+  @override
+  String get consultationUploadDocumentTitle => 'Upload Document';
+
+  @override
+  String get consultationUseCamera => 'Use camera';
+
+  @override
+  String get consultationUploadFromGallery => 'Upload from gallery';
+
+  @override
+  String get consultationUploadFromFile => 'Upload from File';
+
+  @override
+  String get consultationCameraUnavailable =>
+      'Camera access is unavailable right now.';
+
+  @override
+  String get consultationCaptureMediaFailed =>
+      'Could not capture media. Please try again.';
+
+  @override
+  String get consultationGalleryUnavailable =>
+      'Gallery access is unavailable right now.';
+
+  @override
+  String get consultationPickGalleryFailed =>
+      'Could not pick media from gallery.';
+
+  @override
+  String get consultationPickFileFailed =>
+      'Could not pick file. Please try again.';
+
+  @override
+  String get bookingsDashboardTitle => 'My Bookings';
+
+  @override
+  String get bookingsTabDoctorConsultation => 'Doctor Consultation';
+
+  @override
+  String get bookingsTabSurgery => 'Surgery';
+
+  @override
+  String get bookingsTabLabTest => 'Lab Test';
+
+  @override
+  String get bookingsTabPharmacy => 'Pharmacy';
+
+  @override
+  String get bookingsLabTestEmptyDescription => 'No lab test bookings yet.';
+
+  @override
+  String get bookingsStatusLabel => 'Status';
+
+  @override
+  String get bookingsDateLabel => 'Date';
+
+  @override
+  String get bookingsDateCreatedLabel => 'Date Created';
+
+  @override
+  String get bookingsViewDetailsCta => 'View Details';
+
+  @override
+  String get bookingsFeeLabel => 'Fee';
+
+  @override
+  String get bookingsTotalLabel => 'Total';
+
+  @override
+  String get bookingsSurgeryProcedureSubtitle =>
+      'Photorefractive keratectomy Surgery';
+
+  @override
+  String get bookingsSurgeryPatientName => 'Haseeb Qasim';
+
+  @override
+  String get bookingsProceedCheckoutCta => 'Proceed Checkout';
+
+  @override
+  String get bookingsRequirementsTitle => 'Requirements';
+
+  @override
+  String get bookingsSurgeryRequirement1 =>
+      'Fast for 9-12 Hours before Appointment time';
+
+  @override
+  String get bookingsSurgeryRequirement2 =>
+      'Avoid Stenious Physical Activ ity the day of the appointment';
+
+  @override
+  String get bookingsSurgeryRequirement3 =>
+      'Ensure that you are NOTtaking any antibiotic medication course';
+
+  @override
+  String get labTestSampleTypeBlood => 'Blood';
 }

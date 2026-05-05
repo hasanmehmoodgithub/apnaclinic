@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/constants/app_colors.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 
 class ProfileSetupAvatarPicker extends StatelessWidget {
@@ -20,7 +21,7 @@ class ProfileSetupAvatarPicker extends StatelessWidget {
       children: [
         CircleAvatar(
           radius: 56.r,
-          backgroundColor: Colors.white.withValues(alpha: 0.95),
+          backgroundColor: AppColors.clrWhite.withValues(alpha: 0.95),
           backgroundImage: avatarProvider,
           onBackgroundImageError: avatarProvider == null
               ? null
@@ -29,7 +30,7 @@ class ProfileSetupAvatarPicker extends StatelessWidget {
               ? Icon(
                   Icons.account_circle_rounded,
                   size: 56.r,
-                  color: const Color(0xFFBFD5D9),
+                  color: AppColors.clrBFD5D9,
                 )
               : null,
         ),
@@ -44,13 +45,13 @@ class ProfileSetupAvatarPicker extends StatelessWidget {
               child: Container(
                 padding: EdgeInsets.all(6.r),
                 decoration: const BoxDecoration(
-                  color: Color(0xFFDDF3EE),
+                  color: AppColors.clrDDF3EE,
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
                   Icons.camera_alt_outlined,
                   size: 16.r,
-                  color: const Color(0xFF0FAA9A),
+                  color: AppColors.clr0FAA9A,
                 ),
               ),
             ),

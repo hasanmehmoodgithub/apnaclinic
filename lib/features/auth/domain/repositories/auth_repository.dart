@@ -1,4 +1,3 @@
-import '../../../../core/failure/exceptions.dart';
 import '../../../../core/functional/functional_export.dart';
 import '../entities/auth_entity.dart';
 import '../use_cases/request_otp_use_case.dart';

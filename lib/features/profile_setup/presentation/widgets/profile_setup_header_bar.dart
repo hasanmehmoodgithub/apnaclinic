@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/constants/app_colors.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/preference/app_pref.dart';
@@ -17,7 +18,9 @@ class ProfileSetupHeaderBar extends StatelessWidget {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
     final isProfileCompleted = sl<AppPref>().isProfileCompleted();
-    final title = isProfileCompleted ? l10n.profileTitle : 'Profile Setup';
+    final title = isProfileCompleted
+        ? l10n.profileTitle
+        : l10n.profileSetupHeaderTitle;
     return SizedBox(
       height: topInset + 48.h,
       child: Padding(
@@ -41,7 +44,7 @@ class ProfileSetupHeaderBar extends StatelessWidget {
                   child: Center(
                     child: Icon(
                       Icons.arrow_back_rounded,
-                      color: const Color(0xFF061E40),
+                      color: AppColors.clr060,
                       size: 22.r,
                     ),
                   ),
@@ -56,7 +59,7 @@ class ProfileSetupHeaderBar extends StatelessWidget {
                     title,
                     style: theme.textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.w700,
-                      color: const Color(0xFF061E40),
+                      color: AppColors.clr060,
                     ),
                   ),
                 ),

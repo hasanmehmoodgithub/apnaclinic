@@ -90,7 +90,13 @@ class AppLocalizationsUr extends AppLocalizations {
   String get authProceedCta => 'آگے بڑھیں';
 
   @override
+  String get authVerifyCta => 'تصدیق کریں';
+
+  @override
   String get authResendOtp => 'OTP دوبارہ بھیجیں';
+
+  @override
+  String get authOtpSecondsShort => 'Sec';
 
   @override
   String get authOtpSentTo => 'OTP بھیجا گیا';
@@ -194,6 +200,52 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get profileSaveCta => 'محفوظ کریں';
+
+  @override
+  String get profileSetupHeaderTitle => 'پروفائل سیٹ اپ';
+
+  @override
+  String get profileImagePickerRestartMessage =>
+      'امیج پکر ابھی تیار نہیں۔ براہ کرم ایپ مکمل طور پر ری اسٹارٹ کریں۔';
+
+  @override
+  String get profileImagePickerFailedMessage =>
+      'تصویر منتخب نہیں ہو سکی۔ براہ کرم دوبارہ کوشش کریں۔';
+
+  @override
+  String get profileGuestUserTitle => 'مہمان صارف';
+
+  @override
+  String get profileSignupLoginCta => 'سائن اپ / لاگ اِن';
+
+  @override
+  String get profileEditCta => 'ترمیم';
+
+  @override
+  String get profileAccountDetailsTitle => 'اکاؤنٹ کی تفصیل';
+
+  @override
+  String get profileDefaultTag => 'ڈیفالٹ';
+
+  @override
+  String get profileAddAccountCta => 'اکاؤنٹ شامل کریں';
+
+  @override
+  String get profileMobileBankPrefix => 'موبائل بینک';
+
+  @override
+  String get profileRemoveAccountTitle => 'اکاؤنٹ حذف کریں';
+
+  @override
+  String profileRemoveAccountMessage(String bankName, String accountNumber) {
+    return 'کیا آپ واقعی $bankName اکاؤنٹ $accountNumber حذف کرنا چاہتے ہیں؟';
+  }
+
+  @override
+  String get profileRemoveCta => 'حذف کریں';
+
+  @override
+  String get profileCancelCta => 'منسوخ کریں';
 
   @override
   String get pharmacyScreenTitle => 'فارمیسی';
@@ -367,4 +419,566 @@ class AppLocalizationsUr extends AppLocalizations {
   @override
   String get freeDoctorPoint3 =>
       'سروس حاصل کرنے کے لیے FikrFree کے ذریعے BIMA m-Health سبسکرائب کریں۔';
+
+  @override
+  String get customerSupportTitle => 'کسٹمر سپورٹ';
+
+  @override
+  String get customerSupportHelpCentreTitle => 'ہیلپ سینٹر';
+
+  @override
+  String get customerSupportHelpCentreSubtitle =>
+      'کسی بھی مدد کے لیے Apna Clinic سے رابطہ کریں۔';
+
+  @override
+  String get customerSupportFallbackCardTitle => 'Apna Clinic سپورٹ';
+
+  @override
+  String get customerSupportFallbackDialogTitle => 'کسٹمر سپورٹ';
+
+  @override
+  String get customerSupportFallbackDialogMessage =>
+      'مزید مدد کے لیے براہ کرم 24/7 اس نمبر پر رابطہ کریں:\n042-111-333-033';
+
+  @override
+  String get customerSupportCallNowCta => 'ابھی کال کریں';
+
+  @override
+  String get customerSupportDialError => 'کال شروع نہیں ہو سکی۔';
+
+  @override
+  String get accountDetailsTitle => 'اکاؤنٹ کی تفصیل';
+
+  @override
+  String get accountAddTitle => 'اکاؤنٹ شامل کریں';
+
+  @override
+  String get accountEnterDetailsTitle => 'اکاؤنٹ کی تفصیل درج کریں';
+
+  @override
+  String get accountMethodLabel => 'اکاؤنٹ میتھڈ';
+
+  @override
+  String get accountNumberLabel => 'اکاؤنٹ نمبر';
+
+  @override
+  String get accountSaveCta => 'محفوظ کریں';
+
+  @override
+  String get accountContinueCta => 'جاری رکھیں';
+
+  @override
+  String get accountMethodAddedSuccess =>
+      'ادائیگی کا طریقہ کامیابی سے شامل ہو گیا';
+
+  @override
+  String get accountLinkedMessagePrefix => 'آپ کا';
+
+  @override
+  String get accountLinkedMessageMiddle => 'اکاؤنٹ نمبر';
+
+  @override
+  String get accountLinkedMessageSuffix => 'کامیابی سے لنک ہو گیا ہے';
+
+  @override
+  String get accountHolderFallback => 'اکاؤنٹ ہولڈر';
+
+  @override
+  String get accountValidationEnterNumber => 'اکاؤنٹ نمبر درج کریں';
+
+  @override
+  String get accountValidationDigitsOnly => 'صرف ہندسے درج کریں';
+
+  @override
+  String get accountValidationElevenDigits =>
+      '11 ہندسوں کا پاکستانی نمبر درج کریں';
+
+  @override
+  String get accountValidationValidPakistanMobile =>
+      'درست پاکستانی موبائل نمبر درج کریں';
+
+  @override
+  String get accountMethodJazzCash => 'JazzCash';
+
+  @override
+  String dashboardHello(String name) {
+    return 'ہیلو، $name';
+  }
+
+  @override
+  String get dashboardSearchHint => 'دوائی، ڈاکٹر، ٹیسٹ تلاش کریں....';
+
+  @override
+  String get dashboardOurServicesTitle => 'ہماری سروسز';
+
+  @override
+  String get dashboardSecureHealthTitle => 'اپنی صحت کو پہلے محفوظ کریں';
+
+  @override
+  String get dashboardFikrfreeTagline => 'صحت اور انشورنس اب آپ کے ہاتھ میں!';
+
+  @override
+  String get dashboardBottomFreeDoctor => 'مفت ڈاکٹر';
+
+  @override
+  String get dashboardBottomSupport => 'سپورٹ';
+
+  @override
+  String get dashboardBottomBookings => 'میری بکنگز';
+
+  @override
+  String get dashboardBottomProfile => 'پروفائل';
+
+  @override
+  String get dashboardBottomHome => 'ہوم';
+
+  @override
+  String get dashboardMenuTitle => 'مینو';
+
+  @override
+  String get dashboardMenuCustomerSupport => 'کسٹمر سپورٹ';
+
+  @override
+  String get dashboardMenuFaq => 'سوالات';
+
+  @override
+  String get dashboardMenuGuestUser => 'مہمان صارف';
+
+  @override
+  String get dashboardMenuSignInManageAccount =>
+      'اپنا اکاؤنٹ سنبھالنے کے لیے سائن اِن کریں';
+
+  @override
+  String get dashboardMenuSignInContinue => 'جاری رکھنے کے لیے سائن اِن کریں';
+
+  @override
+  String get dashboardMenuLogout => 'لاگ آؤٹ';
+
+  @override
+  String get dashboardMenuAbout => 'متعلق';
+
+  @override
+  String get dashboardMenuAppVersion => 'ایپ ورژن';
+
+  @override
+  String get dashboardMenuTerms => 'شرائط و ضوابط';
+
+  @override
+  String get dashboardMenuPrivacy => 'پرائیویسی پالیسی';
+
+  @override
+  String get dashboardMenuEditProfile => 'پروفائل ایڈٹ کریں';
+
+  @override
+  String get dashboardMenuLoginSignup => 'لاگ اِن / سائن اپ';
+
+  @override
+  String get dashboardLogoutMessage =>
+      'کیا آپ واقعی اپنے اکاؤنٹ سے لاگ آؤٹ کرنا چاہتے ہیں؟';
+
+  @override
+  String get dashboardCancel => 'منسوخ کریں';
+
+  @override
+  String get notificationsTitle => 'نوٹیفیکیشنز';
+
+  @override
+  String get notificationsRetryCta => 'دوبارہ کوشش کریں';
+
+  @override
+  String get notificationsEmptyTitle => 'ابھی تک کوئی نوٹیفیکیشن نہیں!';
+
+  @override
+  String get notificationsLoadError =>
+      'نوٹیفیکیشنز لوڈ نہیں ہو سکیں۔ ریفریش کریں یا دوبارہ کوشش کریں۔';
+
+  @override
+  String get searchScreenTitle => 'تلاش';
+
+  @override
+  String get searchListeningHint => 'سن رہا ہے...';
+
+  @override
+  String get searchRecentSearchesTitle => 'حالیہ تلاشیں';
+
+  @override
+  String get searchPopularSearchesTitle => 'مقبول تلاشیں';
+
+  @override
+  String get searchSeeAllCta => 'سب دیکھیں';
+
+  @override
+  String searchForQuery(String query) {
+    return '\"$query\" تلاش کریں';
+  }
+
+  @override
+  String get labTestScreenTitle => 'لیب ٹیسٹ';
+
+  @override
+  String get surgeryScreenTitle => 'پروسیجرز اور سرجریز';
+
+  @override
+  String get surgeryBookingScreenTitle => 'سرجری بکنگ';
+
+  @override
+  String get surgeryNoProceduresMessage =>
+      'اس وقت کوئی سرجری پروسیجر دستیاب نہیں۔';
+
+  @override
+  String get surgerySelectForSurgery => 'سرجری کے لیے منتخب کریں';
+
+  @override
+  String get surgeryLocationLabel => 'مقام';
+
+  @override
+  String get commonChange => 'تبدیل کریں';
+
+  @override
+  String get surgerySearchNameHint => 'نام تلاش کریں..';
+
+  @override
+  String get surgerySelectCityTitle => 'شہر منتخب کریں';
+
+  @override
+  String get surgerySearchByNameHint => 'نام سے تلاش کریں';
+
+  @override
+  String get commonProceed => 'آگے بڑھیں';
+
+  @override
+  String get labTestSelectCityPlaceholder => 'شہر منتخب کریں';
+
+  @override
+  String get labTestCityFieldLabel => 'شہر';
+
+  @override
+  String get labTestChangeCityCta => 'تبدیل کریں';
+
+  @override
+  String get labTestSelectTestHeading => 'ٹیسٹ منتخب کریں';
+
+  @override
+  String get labTestSearchFieldHint => 'تلاش';
+
+  @override
+  String get labTestSelectCitySheetTitle => 'شہر منتخب کریں';
+
+  @override
+  String get labTestSelectCitySheetSearchHint => 'شہر تلاش کریں';
+
+  @override
+  String get labTestRequirementLabel => 'ضروریات';
+
+  @override
+  String get labTestSampleTypeLabel => 'نمونے کی قسم';
+
+  @override
+  String get labTestPleaseSelectCityFirst => 'براہ کرم پہلے شہر منتخب کریں۔';
+
+  @override
+  String get labTestDataStillLoading => 'لیب ٹیسٹ ڈیٹا ابھی لوڈ ہو رہا ہے۔';
+
+  @override
+  String get labTestCatalogLoadFailed => 'لیب ٹیسٹ لوڈ نہیں ہو سکے۔';
+
+  @override
+  String get labTestNoTestsFound => 'کوئی ٹیسٹ نہیں ملا';
+
+  @override
+  String get labTestCartBadgeOverflow => '9+';
+
+  @override
+  String get labTestBrowseItemFeeFallback => 'Rs. 15,000/-';
+
+  @override
+  String get labTestBookingChooseMethodTitle => 'بکنگ کا طریقہ منتخب کریں';
+
+  @override
+  String get labTestBookingMethodWalkIn => 'واک اِن';
+
+  @override
+  String get labTestBookingMethodHomeSample => 'ہوم سیمپل';
+
+  @override
+  String get labTestBookingAddToCart => 'کارٹ میں شامل کریں';
+
+  @override
+  String get labTestBookingViewYourCart => 'اپنا کارٹ دیکھیں';
+
+  @override
+  String get labTestBookingDataUnavailable => 'لیب ٹیسٹ ڈیٹا دستیاب نہیں';
+
+  @override
+  String get labTestCartChangeWarningTitle => 'انتباہ!';
+
+  @override
+  String get labTestCartChangeWarningBody =>
+      'شہر، سروس فراہم کنندہ یا لیب تبدیل کرنے سے\nآپ کے کارٹ کی تمام اشیاء ہٹ جائیں گی۔\nکیا آپ آگے بڑھنا چاہتے ہیں؟';
+
+  @override
+  String get labTestCartChangeViewCart => 'کارٹ دیکھیں';
+
+  @override
+  String get labTestCartChangeContinue => 'جاری رکھیں';
+
+  @override
+  String get labTestCartBadgeOverflow99 => '99+';
+
+  @override
+  String get labTestCartScreenTitle => 'کارٹ';
+
+  @override
+  String get labTestCartEmptyMessage => 'کارٹ میں کوئی شے نہیں';
+
+  @override
+  String get labTestCartProceedCheckout => 'چیک آؤٹ جاری رکھیں';
+
+  @override
+  String get labTestViewDetailsLoadError =>
+      'تفصیلات لوڈ نہیں ہو سکیں۔ براہ کرم دوبارہ کوشش کریں۔';
+
+  @override
+  String get labTestSomethingWentWrong => 'کچھ غلط ہو گیا';
+
+  @override
+  String get commonRetry => 'دوبارہ کوشش کریں';
+
+  @override
+  String get labTestViewDetailsResultsTitle => 'ٹیسٹ نتائج';
+
+  @override
+  String get labTestViewDetailsOrderTitle => 'آرڈر کی تفصیلات';
+
+  @override
+  String get labTestDiscountCodeCopied => 'ڈسکاؤنٹ کوڈ کاپی ہو گیا';
+
+  @override
+  String get labTestOrderNoPrefix => 'آرڈر نمبر';
+
+  @override
+  String get labTestBookingDateLabel => 'بکنگ کی تاریخ';
+
+  @override
+  String get labTestTotalFeeLabel => 'کل فیس';
+
+  @override
+  String get labTestDiscountCodeLabel => 'ڈسکاؤنٹ کوڈ';
+
+  @override
+  String get labTestShowCodeInstruction => 'یہ کوڈ لیب نمائندے کو دکھائیں';
+
+  @override
+  String get labTestCheckoutTitle => 'ادائیگی کی تفصیلات';
+
+  @override
+  String get labTestCheckoutRequiredFieldsError =>
+      'براہ کرم تمام ضروری فیلڈز بھریں';
+
+  @override
+  String get labTestCheckoutBookedTitle => 'لیب ٹیسٹ کامیابی سے بک ہو گیا';
+
+  @override
+  String get labTestCheckoutBookedMessage =>
+      'لیب کا نمائندہ جلد آپ سے رابطہ کرے گا۔\nاپنا ڈسکاؤنٹ کوڈ لیب نمائندے کو دکھائیں۔\nبعد میں کوڈ دیکھنے کے لیے:';
+
+  @override
+  String get labTestCheckoutBookedPathHint => 'مینو > میری بکنگز > لیب ٹیسٹ';
+
+  @override
+  String get commonClose => 'بند کریں';
+
+  @override
+  String get labTestBookingMethodWalkInCompact => 'واک اِن';
+
+  @override
+  String get labTestCheckoutFeeLabel => 'فیس';
+
+  @override
+  String get labTestCheckoutDiscountLabel => 'رعایت';
+
+  @override
+  String get labTestCheckoutTotalLabel => 'کل';
+
+  @override
+  String get labTestPatientDetailsTitle => 'مریض کی تفصیلات';
+
+  @override
+  String get commonDone => 'مکمل';
+
+  @override
+  String get commonEdit => 'ترمیم';
+
+  @override
+  String get labTestEmergencyContactTitle => 'ہنگامی رابطہ';
+
+  @override
+  String get labTestEmergencyContactHintText =>
+      'براہ کرم ہنگامی رابطے کا نمبر فراہم کریں، اگر آپ دستیاب نہ ہوں۔';
+
+  @override
+  String get labTestEmergencyNumberHint => 'یہاں نمبر درج کریں...';
+
+  @override
+  String get labTestPatientNameLabel => 'مریض کا نام';
+
+  @override
+  String get labTestContactNumberLabel => 'رابطہ نمبر';
+
+  @override
+  String get labTestAddressLabel => 'پتہ';
+
+  @override
+  String get labTestFullNameHint => 'مکمل نام';
+
+  @override
+  String get labTestPhonebookHint => 'نمبر ٹائپ کریں یا فون بک سے منتخب کریں';
+
+  @override
+  String get labTestAgeLabel => 'عمر';
+
+  @override
+  String get labTestAddressHint => 'یہاں پتہ درج کریں...';
+
+  @override
+  String get commonMale => 'مرد';
+
+  @override
+  String get commonFemale => 'عورت';
+
+  @override
+  String get labTestBookCta => 'لیب ٹیسٹ بک کریں';
+
+  @override
+  String get consultationAiScreeningTitle => 'اے آئی اسکریننگ';
+
+  @override
+  String get consultationAiWelcomePrefix => 'ہیلو، خوش آمدید ';
+
+  @override
+  String get consultationAiWelcomeSuffix => ' ، آئیے شروع کرتے ہیں';
+
+  @override
+  String get consultationAiStartCta => 'آئیے شروع کریں';
+
+  @override
+  String get consultationSelectCategoriesTitle => 'زمرہ منتخب کریں';
+
+  @override
+  String get consultationSpecialistTitle => 'ماہر';
+
+  @override
+  String get consultationVideoBookingPrompt =>
+      'اپنی ویڈیو مشاورت یہاں بک کریں!';
+
+  @override
+  String get consultationGetAppointmentCta => 'اپائنٹمنٹ لیں';
+
+  @override
+  String get consultationBookingConfirmedTitle => 'اپائنٹمنٹ کنفرم ہو گئی!';
+
+  @override
+  String consultationBookingConfirmedMessage(Object doctorName) {
+    return 'آپ کی مشاورت $doctorName کے ساتھ بک ہو گئی ہے۔ آپ کال میں اپائنٹمنٹس سے شامل ہو سکتے ہیں۔';
+  }
+
+  @override
+  String get commonOk => 'ٹھیک ہے';
+
+  @override
+  String get consultationUploadDocumentTitle => 'دستاویز اپلوڈ کریں';
+
+  @override
+  String get consultationUseCamera => 'کیمرہ استعمال کریں';
+
+  @override
+  String get consultationUploadFromGallery => 'گیلری سے اپلوڈ کریں';
+
+  @override
+  String get consultationUploadFromFile => 'فائل سے اپلوڈ کریں';
+
+  @override
+  String get consultationCameraUnavailable =>
+      'فی الحال کیمرہ تک رسائی دستیاب نہیں ہے۔';
+
+  @override
+  String get consultationCaptureMediaFailed =>
+      'میڈیا کیپچر نہیں ہو سکا۔ براہ کرم دوبارہ کوشش کریں۔';
+
+  @override
+  String get consultationGalleryUnavailable =>
+      'فی الحال گیلری تک رسائی دستیاب نہیں ہے۔';
+
+  @override
+  String get consultationPickGalleryFailed =>
+      'گیلری سے میڈیا منتخب نہیں ہو سکا۔';
+
+  @override
+  String get consultationPickFileFailed =>
+      'فائل منتخب نہیں ہو سکی۔ براہ کرم دوبارہ کوشش کریں۔';
+
+  @override
+  String get bookingsDashboardTitle => 'میری بکنگز';
+
+  @override
+  String get bookingsTabDoctorConsultation => 'ڈاکٹر مشاورت';
+
+  @override
+  String get bookingsTabSurgery => 'سرجری';
+
+  @override
+  String get bookingsTabLabTest => 'لیب ٹیسٹ';
+
+  @override
+  String get bookingsTabPharmacy => 'فارمیسی';
+
+  @override
+  String get bookingsLabTestEmptyDescription =>
+      'ابھی تک کوئی لیب ٹیسٹ بکنگ نہیں ہے۔';
+
+  @override
+  String get bookingsStatusLabel => 'اسٹیٹس';
+
+  @override
+  String get bookingsDateLabel => 'تاریخ';
+
+  @override
+  String get bookingsDateCreatedLabel => 'بننے کی تاریخ';
+
+  @override
+  String get bookingsViewDetailsCta => 'تفصیلات دیکھیں';
+
+  @override
+  String get bookingsFeeLabel => 'فیس';
+
+  @override
+  String get bookingsTotalLabel => 'کل';
+
+  @override
+  String get bookingsSurgeryProcedureSubtitle =>
+      'فوٹوریفریکٹو کیراٹیکٹومی سرجری';
+
+  @override
+  String get bookingsSurgeryPatientName => 'حسیب قاسم';
+
+  @override
+  String get bookingsProceedCheckoutCta => 'چیک آؤٹ جاری رکھیں';
+
+  @override
+  String get bookingsRequirementsTitle => 'ضروریات';
+
+  @override
+  String get bookingsSurgeryRequirement1 =>
+      'اپائنٹمنٹ وقت سے پہلے 9-12 گھنٹے روزہ رکھیں';
+
+  @override
+  String get bookingsSurgeryRequirement2 =>
+      'اپائنٹمنٹ والے دن سخت جسمانی سرگرمی سے پرہیز کریں';
+
+  @override
+  String get bookingsSurgeryRequirement3 =>
+      'یقینی بنائیں کہ آپ کسی اینٹی بایوٹک کورس پر نہ ہوں';
+
+  @override
+  String get labTestSampleTypeBlood => 'خون';
 }

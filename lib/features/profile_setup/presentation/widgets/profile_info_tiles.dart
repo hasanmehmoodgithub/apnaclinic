@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/constants/app_colors.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
+import '../../../../core/l10n/app_localizations.dart';
 
 class InfoTilesRow extends StatelessWidget {
   const InfoTilesRow({
@@ -16,22 +18,31 @@ class InfoTilesRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return IntrinsicHeight(
       child: Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SizedBox(
           width: 94.w,
-          child: InfoTile(title: 'Gender', value: gender, minWidth: 94.w),
+          child: InfoTile(
+            title: l10n.profileGenderLabel,
+            value: gender,
+            minWidth: 94.w,
+          ),
         ),
         SizedBox(width: 8.w),
         SizedBox(
           width: 146.w,
-          child: InfoTile(title: 'Date of Birth', value: dob, minWidth: 146.w),
+          child: InfoTile(
+            title: l10n.profileDobLabel,
+            value: dob,
+            minWidth: 146.w,
+          ),
         ),
         SizedBox(width: 8.w),
         Expanded(
-          child: InfoTile(title: 'Email', value: email, minWidth: 0),
+          child: InfoTile(title: l10n.profileEmailLabel, value: email, minWidth: 0),
         ),
       ],
       ),
@@ -59,7 +70,7 @@ class InfoTile extends StatelessWidget {
       padding: EdgeInsets.fromLTRB(12.w, 8.h, 12.w, 8.h),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10.r),
-        border: Border.all(color: const Color(0xFFC9CFD7), width: 1),
+        border: Border.all(color: AppColors.clrC9CFD7, width: 1),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -70,7 +81,7 @@ class InfoTile extends StatelessWidget {
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: theme.textTheme.bodySmall?.copyWith(
-              color: const Color(0xFF7A91AE),
+              color: AppColors.clr7A91AE,
               fontSize: 11.sp,
               fontWeight: FontWeight.w500,
               height: 1,
@@ -82,7 +93,7 @@ class InfoTile extends StatelessWidget {
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: theme.textTheme.titleMedium?.copyWith(
-              color: const Color(0xFF2B2C58),
+              color: AppColors.clr2B2C58,
               fontWeight: FontWeight.w500,
               fontSize: 16.sp,
               height: 1,

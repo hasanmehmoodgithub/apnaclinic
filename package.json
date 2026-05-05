@@ -1,0 +1,20 @@
+{
+  "name": "apnaclinic",
+  "version": "1.0.0",
+  "description": "Apna Clinic",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "danger:ci": "danger ci",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "danger": "^13.0.7"
+  }
+}

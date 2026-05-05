@@ -1,8 +1,10 @@
 import 'package:apnaclinic/features/bookings/presentation/screens/surgery_booking_details_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:flutter_svg/svg.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
-
+import '../../../../core/l10n/app_localizations.dart';
+import '../../../../core/router/app_routes.dart';
 
 class SurgeryBookingsScreen extends StatelessWidget {
   const SurgeryBookingsScreen({super.key});
@@ -19,6 +21,7 @@ class SurgeryBookingsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final textTheme = Theme.of(context).textTheme;
     return ListView(
       padding: EdgeInsets.fromLTRB(0, 20.h, 0, 8.h),
@@ -26,27 +29,31 @@ class SurgeryBookingsScreen extends StatelessWidget {
         GestureDetector(
           behavior: HitTestBehavior.opaque,
           onTap: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (_) => SurgeryDetailsScreen(
-                  item: _toDetails(_item),
-                  initialStatus: SurgeryBookingStatus.paymentPending,
-                ),
+            context.pushNamed(
+              AppRoutes.surgeryBookingDetails,
+              extra: SurgeryBookingDetailsArgs(
+                item: _toDetails(_item, l10n),
+                initialStatus: SurgeryBookingStatus.paymentPending,
               ),
             );
           },
-          child: SurgeryBookingCard(item: _item, textTheme: textTheme),
+          child: _SurgeryBookingCard(item: _item, textTheme: textTheme, l10n: l10n),
         ),
       ],
     );
   }
 }
 
-class SurgeryBookingCard extends StatelessWidget {
+class _SurgeryBookingCard extends StatelessWidget {
   final _SurgeryBookingItem item;
   final TextTheme textTheme;
+  final AppLocalizations l10n;
 
-  const SurgeryBookingCard({required this.item, required this.textTheme});
+  const _SurgeryBookingCard({
+    required this.item,
+    required this.textTheme,
+    required this.l10n,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -206,7 +213,7 @@ class SurgeryBookingCard extends StatelessWidget {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Text(
-                              'Status:',
+                              '${l10n.bookingsStatusLabel}:',
                               style: textTheme.bodySmall?.copyWith(
                                 color: const Color(0xFF667B99),
                                 fontSize: 12.sp,
@@ -244,7 +251,7 @@ class SurgeryBookingCard extends StatelessWidget {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Text(
-                              'Date Created',
+                              l10n.bookingsDateCreatedLabel,
                               style: textTheme.bodySmall?.copyWith(
                                 color: const Color(0xFF667B99),
                                 fontSize: 12.sp,
@@ -268,13 +275,11 @@ class SurgeryBookingCard extends StatelessWidget {
                           child: OutlinedButton(
                             onPressed: () {
                               // Same destination as tapping the whole card
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (_) => SurgeryDetailsScreen(
-                                    item: _toDetails(item),
-                                    initialStatus:
-                                    SurgeryBookingStatus.paymentPending,
-                                  ),
+                              context.pushNamed(
+                                AppRoutes.surgeryBookingDetails,
+                                extra: SurgeryBookingDetailsArgs(
+                                  item: _toDetails(item, l10n),
+                                  initialStatus: SurgeryBookingStatus.paymentPending,
                                 ),
                               );
                             },
@@ -291,7 +296,7 @@ class SurgeryBookingCard extends StatelessWidget {
                               tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                             ),
                             child: Text(
-                              'View Details',
+                              l10n.bookingsViewDetailsCta,
                               style: textTheme.bodySmall?.copyWith(
                                 color: const Color(0xFF061E40),
                                 fontSize: 13.sp,
@@ -335,16 +340,16 @@ class _SurgeryBookingItem {
 
 // ── Top-level helper so both the card tap and the "View Details" button
 // ── can share the same mapping logic.
-SurgeryDetailsItem _toDetails(_SurgeryBookingItem b) {
+SurgeryDetailsItem _toDetails(_SurgeryBookingItem b, AppLocalizations l10n) {
   return SurgeryDetailsItem(
     procedure: b.procedure,
-    procedureSubtitle: 'Photorefractive keratectomy Surgery',
+    procedureSubtitle: l10n.bookingsSurgeryProcedureSubtitle,
     hospital: b.hospital,
     doctor: b.doctor,
     specialty: b.specialty,
     qualification: b.qualification,
     dateCreated: b.dateCreated,
-    patientName: 'Haseeb Qasim',
+    patientName: l10n.bookingsSurgeryPatientName,
     age: 30,
     contactNumber: '0341-1234567',
     emergencyContact: '0341-1234567',

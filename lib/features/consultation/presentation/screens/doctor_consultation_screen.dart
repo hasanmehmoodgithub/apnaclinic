@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:url_launcher/url_launcher.dart';
 import '../../../../components/shimmer/app_shimmer.dart';
 
 import '../../../../core/extensions/screen_util_extensions.dart';
@@ -12,21 +11,6 @@ import '../constants/consultation_ui_config.dart';
 import '../cubit/consultation_cubit.dart';
 import '../cubit/consultation_state.dart';
 import '../widgets/consultation_category_card.dart';
-
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import '../../../../components/shimmer/app_shimmer.dart';
-
-import '../../../../core/extensions/screen_util_extensions.dart';
-import '../../../../core/router/app_routes.dart';
-import '../../domain/entities/consultation_category_entity.dart';
-import '../constants/consultation_ui_config.dart';
-import '../cubit/consultation_cubit.dart';
-import '../cubit/consultation_state.dart';
-import '../widgets/consultation_category_card.dart';
-import 'ai_consultation_screen.dart';
 
 class DoctorConsultationScreen extends StatefulWidget {
   const DoctorConsultationScreen({super.key});
@@ -76,7 +60,7 @@ class _DoctorConsultationScreenState extends State<DoctorConsultationScreen> {
                   children: [
                     GestureDetector(
                       behavior: HitTestBehavior.opaque,
-                      onTap: () => Navigator.of(context).pop(),
+                      onTap: () => context.pop(),
                       child: SizedBox(
                         width: 15.w,
                         height: 15.h,

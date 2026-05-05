@@ -1,6 +1,5 @@
 import 'dart:developer';
 
-import '../../../../core/failure/exceptions.dart';
 import '../../../../core/functional/functional_export.dart';
 import '../../domain/entities/promotional_banner_entity.dart';
 import '../../domain/entities/our_service_entity.dart';

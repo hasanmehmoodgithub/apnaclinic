@@ -1,6 +1,9 @@
+import 'package:apnaclinic/core/constants/app_colors.dart';
 import 'package:apnaclinic/components/widgets/app_button.dart';
 import 'package:apnaclinic/core/extensions/screen_util_extensions.dart';
+import 'package:apnaclinic/core/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 Future<bool> showMenuLogoutDialog(BuildContext context) async {
   final result = await showDialog<bool>(
@@ -8,6 +11,7 @@ Future<bool> showMenuLogoutDialog(BuildContext context) async {
     barrierDismissible: true,
     barrierColor: Colors.black.withValues(alpha: 0.35),
     builder: (dialogContext) {
+      final l10n = AppLocalizations.of(dialogContext)!;
       final theme = Theme.of(dialogContext);
       return Dialog(
         backgroundColor: Colors.transparent,
@@ -28,30 +32,30 @@ Future<bool> showMenuLogoutDialog(BuildContext context) async {
                 height: 64.r,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: const Color(0xFFE8F8F5),
-                  border: Border.all(color: const Color(0xFFD7ECE7)),
+                  color: AppColors.clrE8F8F5,
+                  border: Border.all(color: AppColors.clrD7ECE7),
                 ),
                 child: Icon(
                   Icons.logout_rounded,
-                  color: const Color(0xFF40AFA2),
+                  color: AppColors.clr40AFA2,
                   size: 30.r,
                 ),
               ),
               SizedBox(height: 18.h),
               Text(
-                'Logout',
+                l10n.dashboardMenuLogout,
                 textAlign: TextAlign.center,
                 style: theme.textTheme.titleLarge?.copyWith(
-                  color: const Color(0xFF0E2D55),
+                  color: AppColors.clr0E2D55,
                   fontWeight: FontWeight.w700,
                 ),
               ),
               SizedBox(height: 14.h),
               Text(
-                'Are you sure you want to logout from your account?',
+                l10n.dashboardLogoutMessage,
                 textAlign: TextAlign.center,
                 style: theme.textTheme.bodyMedium?.copyWith(
-                  color: const Color(0xFF4B5563),
+                  color: AppColors.clr4B5563,
                   height: 1.4,
                 ),
               ),
@@ -62,21 +66,21 @@ Future<bool> showMenuLogoutDialog(BuildContext context) async {
                     child: SizedBox(
                       height: 50.h,
                       child: TextButton(
-                        onPressed: () => Navigator.of(dialogContext).pop(false),
+                        onPressed: () => dialogContext.pop(false),
                         style: TextButton.styleFrom(
-                          foregroundColor: const Color(0xFF0E2D55),
+                          foregroundColor: AppColors.clr0E2D55,
                           side: const BorderSide(
-                            color: Color(0xFF9BA6A7),
+                            color: AppColors.clr9BA6A7,
                           ),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12.r),
                           ),
                         ),
                         child: Text(
-                          'Cancel',
+                          l10n.dashboardCancel,
                           style: theme.textTheme.titleSmall?.copyWith(
                             fontWeight: FontWeight.w600,
-                            color: const Color(0xFF0E2D55),
+                            color: AppColors.clr0E2D55,
                           ),
                         ),
                       ),
@@ -85,9 +89,9 @@ Future<bool> showMenuLogoutDialog(BuildContext context) async {
                   SizedBox(width: 12.w),
                   Expanded(
                     child: AppButton.primary(
-                      text: 'Logout',
-                      onPressed: () => Navigator.of(dialogContext).pop(true),
-                      backgroundColor: const Color(0xFF40AFA2),
+                      text: l10n.dashboardMenuLogout,
+                      onPressed: () => dialogContext.pop(true),
+                      backgroundColor: AppColors.clr40AFA2,
                       foregroundColor: Colors.white,
                       height: 50.h,
                       borderRadius: 12.r,

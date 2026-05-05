@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:pinput/pinput.dart';
 
+import '../../../../core/constants/app_colors.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
 
@@ -36,15 +37,12 @@ class LoginOtpSection extends StatelessWidget {
       textStyle: theme.textTheme.titleLarge?.copyWith(
         fontSize: 24.sp,
         fontWeight: FontWeight.w700,
-        color: const Color(0xFF4A555F),
+        color: AppColors.clr4A555F,
       ),
       decoration: BoxDecoration(
         color: Colors.transparent,
         borderRadius: BorderRadius.circular(9.r),
-        border: Border.all(
-          color: const Color(0xFF9BA6A7),
-          width: 1,
-        ),
+        border: Border.all(color: AppColors.clr9BA6A7, width: 1),
       ),
     );
 
@@ -57,7 +55,7 @@ class LoginOtpSection extends StatelessWidget {
           style: theme.textTheme.titleLarge?.copyWith(
             fontSize: (30 / 1.65).sp,
             fontWeight: FontWeight.w700,
-            color: const Color(0xFF061E40),
+            color: AppColors.clr060,
           ),
         ),
         const SizedBox(height: 8),
@@ -68,14 +66,12 @@ class LoginOtpSection extends StatelessWidget {
           keyboardType: TextInputType.number,
           inputFormatters: [FilteringTextInputFormatter.digitsOnly],
           defaultPinTheme: defaultPinTheme,
-          separatorBuilder: (index) =>
-              index == 3 ? const SizedBox.shrink() : SizedBox(width: itemSpacing),
+          separatorBuilder: (index) => index == 3
+              ? const SizedBox.shrink()
+              : SizedBox(width: itemSpacing),
           focusedPinTheme: defaultPinTheme.copyWith(
             decoration: defaultPinTheme.decoration?.copyWith(
-              border: Border.all(
-                color: const Color(0xFF0FAA9A),
-                width: 1.5,
-              ),
+              border: Border.all(color: AppColors.clr0FAA9A, width: 1.5),
             ),
           ),
           submittedPinTheme: defaultPinTheme,
@@ -89,7 +85,7 @@ class LoginOtpSection extends StatelessWidget {
                 ? Text(
                     l10n.authResendOtp,
                     style: theme.textTheme.bodyMedium?.copyWith(
-                      color: const Color(0xFF5D758F),
+                      color: AppColors.clr5D758F,
                     ),
                   )
                 : Text.rich(
@@ -97,15 +93,14 @@ class LoginOtpSection extends StatelessWidget {
                       children: [
                         TextSpan(text: '${l10n.authResendOtp} '),
                         TextSpan(
-                          text: '$otpSecondsRemaining Sec',
-                          style: const TextStyle(
-                            fontWeight: FontWeight.w700,
-                          ),
+                          text:
+                              '$otpSecondsRemaining ${l10n.authOtpSecondsShort}',
+                          style: const TextStyle(fontWeight: FontWeight.w700),
                         ),
                       ],
                     ),
                     style: theme.textTheme.bodyMedium?.copyWith(
-                      color: const Color(0xFF5D758F),
+                      color: AppColors.clr5D758F,
                     ),
                   ),
           ),
@@ -115,7 +110,7 @@ class LoginOtpSection extends StatelessWidget {
           Text(
             errorText!,
             style: theme.textTheme.bodySmall?.copyWith(
-              color: const Color(0xFFE01F26),
+              color: AppColors.clrE01F26,
               fontWeight: FontWeight.w500,
             ),
           ),

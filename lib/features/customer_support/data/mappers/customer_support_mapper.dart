@@ -30,8 +30,9 @@ class CustomerSupportMapper {
     }
 
     return CustomerSupportEntity(
-      helpCentreTitle:
-          p.helpCentreTitle.isNotEmpty ? p.helpCentreTitle : 'Help Centre',
+      helpCentreTitle: p.helpCentreTitle.isNotEmpty
+          ? p.helpCentreTitle
+          : 'Help Centre',
       helpCentreSubtitle: p.helpCentreSubtitle.isNotEmpty
           ? p.helpCentreSubtitle
           : 'Reach out to Apna Clinic for any support.',

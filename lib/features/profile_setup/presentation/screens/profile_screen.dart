@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/constants/app_colors.dart';
 import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
+import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/preference/app_pref.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../account/data/account_local_store.dart';
@@ -56,13 +58,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
               '${_monthShort(dob.month)} ${dob.year}';
 
     return Scaffold(
-      backgroundColor: const Color(0xFFC7EFEB),
+      backgroundColor: AppColors.clrC7EFEB,
       body: SafeArea(
         child: Column(
           children: [
             ProfileHeaderBar(
               showBackButton: widget.showBackButton,
-              onBack: widget.onBack ?? () => Navigator.of(context).maybePop(),
+              onBack: widget.onBack ?? () => context.pop(),
             ),
             SizedBox(height: 10.h),
             const ProfileAvatarSection(),
@@ -72,7 +74,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               child: Container(
                 width: double.infinity,
                 decoration: BoxDecoration(
-                  color: Color(0xFFFFFFFF),
+                  color: AppColors.clrWhite,
                   borderRadius:
                       BorderRadius.vertical(top: Radius.circular(42.r)),
                 ),
@@ -119,11 +121,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final theme = Theme.of(context);
     return showDialog<bool>(
       context: context,
-      barrierColor: Colors.black.withValues(alpha: 0.35),
+      barrierColor: AppColors.clrBlack.withValues(alpha: 0.35),
       builder: (context) {
+        final l10n = AppLocalizations.of(context)!;
         return Dialog(
           insetPadding: EdgeInsets.symmetric(horizontal: 16.w),
-          backgroundColor: Colors.white,
+          backgroundColor: AppColors.clrWhite,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(18.r),
           ),
@@ -136,30 +139,33 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   width: 58.r,
                   height: 58.r,
                   decoration: const BoxDecoration(
-                    color: Color(0xFFC9252C),
+                    color: AppColors.clrC9252C,
                     shape: BoxShape.circle,
                   ),
                   child: Icon(
                     Icons.delete_outline_rounded,
-                    color: Colors.white,
+                    color: AppColors.clrWhite,
                     size: 30.r,
                   ),
                 ),
                 SizedBox(height: 18.h),
                 Text(
-                  'Remove Account',
+                  l10n.profileRemoveAccountTitle,
                   style: theme.textTheme.titleLarge?.copyWith(
-                    color: const Color(0xFF102A56),
+                    color: AppColors.clr102A56,
                     fontWeight: FontWeight.w500,
                     fontSize: 18.sp,
                   ),
                 ),
                 SizedBox(height: 10.h),
                 Text(
-                  'Are you sure you want to remove ${account.bankName} account ${account.accountNumber} ?',
+                  l10n.profileRemoveAccountMessage(
+                    account.bankName,
+                    account.accountNumber,
+                  ),
                   textAlign: TextAlign.center,
                   style: theme.textTheme.bodyMedium?.copyWith(
-                    color: const Color(0xFF6C7EA0),
+                    color: AppColors.clr6C7EA0,
                     height: 1.3,
                   ),
                 ),
@@ -170,17 +176,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       child: SizedBox(
                         height: 56.h,
                         child: FilledButton(
-                          onPressed: () => Navigator.of(context).pop(true),
+                          onPressed: () => context.pop(true),
                           style: FilledButton.styleFrom(
-                            backgroundColor: const Color(0xFFC9252C),
+                            backgroundColor: AppColors.clrC9252C,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12.r),
                             ),
                           ),
                           child: Text(
-                            'Remove',
+                            l10n.profileRemoveCta,
                             style: theme.textTheme.titleSmall?.copyWith(
-                              color: Colors.white,
+                              color: AppColors.clrWhite,
                               fontWeight: FontWeight.w700,
                             ),
                           ),
@@ -192,17 +198,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       child: SizedBox(
                         height: 56.h,
                         child: OutlinedButton(
-                          onPressed: () => Navigator.of(context).pop(false),
+                          onPressed: () => context.pop(false),
                           style: OutlinedButton.styleFrom(
-                            side: const BorderSide(color: Color(0xFFB7C0CC)),
+                            side: const BorderSide(color: AppColors.clrB7C0CC),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12.r),
                             ),
                           ),
                           child: Text(
-                            'Cancel',
+                            l10n.profileCancelCta,
                             style: theme.textTheme.titleSmall?.copyWith(
-                              color: const Color(0xFF4B5668),
+                              color: AppColors.clr4B5668,
                               fontWeight: FontWeight.w600,
                             ),
                           ),

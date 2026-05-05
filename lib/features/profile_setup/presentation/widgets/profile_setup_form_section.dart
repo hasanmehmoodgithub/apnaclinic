@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../components/widgets/app_button.dart';
+import '../../../../core/constants/app_colors.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../cubit/profile_setup_state.dart';
@@ -45,7 +46,7 @@ class ProfileSetupFormSection extends StatelessWidget {
       child: Container(
         width: double.infinity,
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: AppColors.clrWhite,
           borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
         ),
         child: SingleChildScrollView(
@@ -59,14 +60,14 @@ class ProfileSetupFormSection extends StatelessWidget {
                   l10n.profileSetupTitle,
                   style: theme.textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.w700,
-                    color: const Color(0xFF061E40),
+                    color: AppColors.clr060,
                   ),
                 ),
                 SizedBox(height: 4.h),
                 Text(
                   l10n.profileSetupSubtitle,
                   style: theme.textTheme.bodySmall?.copyWith(
-                    color: const Color(0xFF98A2B3),
+                    color: AppColors.clr98A2B3,
                   ),
                 ),
                 SizedBox(height: 18.h),
@@ -113,7 +114,7 @@ class ProfileSetupFormSection extends StatelessWidget {
                             : l10n.profileGenderOther,
                         suffixIcon: Icon(
                           Icons.keyboard_arrow_down_rounded,
-                          color: const Color(0xFF0FAA9A),
+                          color: AppColors.clr0FAA9A,
                           size: 22.r,
                         ),
                         isValueText: state.selectedGender != null,
@@ -162,7 +163,7 @@ class ProfileSetupFormSection extends StatelessWidget {
                         suffixIcon: Icon(
                           Icons.calendar_today_outlined,
                           size: 18.r,
-                          color: const Color(0xFF98A2B3),
+                          color: AppColors.clr98A2B3,
                         ),
                         isValueText: state.dateOfBirth != null,
                       ),
@@ -174,7 +175,7 @@ class ProfileSetupFormSection extends StatelessWidget {
                   Text(
                     state.errorMessage!,
                     style: theme.textTheme.bodySmall?.copyWith(
-                      color: const Color(0xFFE01F26),
+                      color: AppColors.clrE01F26,
                     ),
                   ),
                 ],
@@ -183,8 +184,8 @@ class ProfileSetupFormSection extends StatelessWidget {
                   text: l10n.profileSaveCta,
                   onPressed: state.isSaving ? null : onSave,
                   isLoading: state.isSaving,
-                  backgroundColor: const Color(0xFF0FAA9A),
-                  foregroundColor: Colors.white,
+                  backgroundColor: AppColors.clr0FAA9A,
+                  foregroundColor: AppColors.clrWhite,
                   height: 52.h,
                   borderRadius: 12.r,
                 ),
@@ -208,7 +209,7 @@ class _ProfileFieldLabel extends StatelessWidget {
       text,
       style: Theme.of(
         context,
-      ).textTheme.bodySmall?.copyWith(color: const Color(0xFF98A2B3)),
+      ).textTheme.bodySmall?.copyWith(color: AppColors.clr98A2B3),
     );
   }
 }

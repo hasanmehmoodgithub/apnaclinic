@@ -13,14 +13,11 @@ class ProfileAvatarSection extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Container(
+          SizedBox(
             width: 126.r,
             height: 126.r,
-            child:  Image.asset(
-                Assets.imgPlaceHolderPerson
-            ),
+            child: Image.asset(Assets.imgPlaceHolderPerson),
           ),
-
         ],
       ),
     );

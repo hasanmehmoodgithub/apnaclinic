@@ -260,11 +260,23 @@ abstract class AppLocalizations {
   /// **'Proceed'**
   String get authProceedCta;
 
+  /// No description provided for @authVerifyCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify'**
+  String get authVerifyCta;
+
   /// No description provided for @authResendOtp.
   ///
   /// In en, this message translates to:
   /// **'Resend OTP'**
   String get authResendOtp;
+
+  /// No description provided for @authOtpSecondsShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Sec'**
+  String get authOtpSecondsShort;
 
   /// No description provided for @authOtpSentTo.
   ///
@@ -469,6 +481,90 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Save'**
   String get profileSaveCta;
+
+  /// No description provided for @profileSetupHeaderTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile Setup'**
+  String get profileSetupHeaderTitle;
+
+  /// No description provided for @profileImagePickerRestartMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Image picker not ready yet. Please fully restart the app.'**
+  String get profileImagePickerRestartMessage;
+
+  /// No description provided for @profileImagePickerFailedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not pick image. Please try again.'**
+  String get profileImagePickerFailedMessage;
+
+  /// No description provided for @profileGuestUserTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Guest User'**
+  String get profileGuestUserTitle;
+
+  /// No description provided for @profileSignupLoginCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign Up / Login'**
+  String get profileSignupLoginCta;
+
+  /// No description provided for @profileEditCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit'**
+  String get profileEditCta;
+
+  /// No description provided for @profileAccountDetailsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Account Details'**
+  String get profileAccountDetailsTitle;
+
+  /// No description provided for @profileDefaultTag.
+  ///
+  /// In en, this message translates to:
+  /// **'Default'**
+  String get profileDefaultTag;
+
+  /// No description provided for @profileAddAccountCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Account'**
+  String get profileAddAccountCta;
+
+  /// No description provided for @profileMobileBankPrefix.
+  ///
+  /// In en, this message translates to:
+  /// **'Mobile Bank'**
+  String get profileMobileBankPrefix;
+
+  /// No description provided for @profileRemoveAccountTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove Account'**
+  String get profileRemoveAccountTitle;
+
+  /// No description provided for @profileRemoveAccountMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to remove {bankName} account {accountNumber} ?'**
+  String profileRemoveAccountMessage(String bankName, String accountNumber);
+
+  /// No description provided for @profileRemoveCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove'**
+  String get profileRemoveCta;
+
+  /// No description provided for @profileCancelCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get profileCancelCta;
 
   /// Title on the pharmacy detail screen header
   ///
@@ -793,6 +889,1068 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'To avail the service, subscribe to BIMA m-Health via FikrFree.'**
   String get freeDoctorPoint3;
+
+  /// No description provided for @customerSupportTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Customer Support'**
+  String get customerSupportTitle;
+
+  /// No description provided for @customerSupportHelpCentreTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Help Centre'**
+  String get customerSupportHelpCentreTitle;
+
+  /// No description provided for @customerSupportHelpCentreSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Reach out to Apna Clinic for any support.'**
+  String get customerSupportHelpCentreSubtitle;
+
+  /// No description provided for @customerSupportFallbackCardTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Apna Clinic Support'**
+  String get customerSupportFallbackCardTitle;
+
+  /// No description provided for @customerSupportFallbackDialogTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Customer Support'**
+  String get customerSupportFallbackDialogTitle;
+
+  /// No description provided for @customerSupportFallbackDialogMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Or further support please contact us 24/7 on\n042-111-333-033.'**
+  String get customerSupportFallbackDialogMessage;
+
+  /// No description provided for @customerSupportCallNowCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Call Now'**
+  String get customerSupportCallNowCta;
+
+  /// No description provided for @customerSupportDialError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not start the call.'**
+  String get customerSupportDialError;
+
+  /// No description provided for @accountDetailsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Account Details'**
+  String get accountDetailsTitle;
+
+  /// No description provided for @accountAddTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Account'**
+  String get accountAddTitle;
+
+  /// No description provided for @accountEnterDetailsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter Account Details'**
+  String get accountEnterDetailsTitle;
+
+  /// No description provided for @accountMethodLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Account Method'**
+  String get accountMethodLabel;
+
+  /// No description provided for @accountNumberLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Account Number'**
+  String get accountNumberLabel;
+
+  /// No description provided for @accountSaveCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get accountSaveCta;
+
+  /// No description provided for @accountContinueCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue'**
+  String get accountContinueCta;
+
+  /// No description provided for @accountMethodAddedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment Method Added Successfully'**
+  String get accountMethodAddedSuccess;
+
+  /// No description provided for @accountLinkedMessagePrefix.
+  ///
+  /// In en, this message translates to:
+  /// **'Your'**
+  String get accountLinkedMessagePrefix;
+
+  /// No description provided for @accountLinkedMessageMiddle.
+  ///
+  /// In en, this message translates to:
+  /// **'account no.'**
+  String get accountLinkedMessageMiddle;
+
+  /// No description provided for @accountLinkedMessageSuffix.
+  ///
+  /// In en, this message translates to:
+  /// **'has been linked successfully'**
+  String get accountLinkedMessageSuffix;
+
+  /// No description provided for @accountHolderFallback.
+  ///
+  /// In en, this message translates to:
+  /// **'Account Holder'**
+  String get accountHolderFallback;
+
+  /// No description provided for @accountValidationEnterNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter account number'**
+  String get accountValidationEnterNumber;
+
+  /// No description provided for @accountValidationDigitsOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'Only digits are allowed'**
+  String get accountValidationDigitsOnly;
+
+  /// No description provided for @accountValidationElevenDigits.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter 11 digit Pakistan number'**
+  String get accountValidationElevenDigits;
+
+  /// No description provided for @accountValidationValidPakistanMobile.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter valid Pakistan mobile number'**
+  String get accountValidationValidPakistanMobile;
+
+  /// No description provided for @accountMethodJazzCash.
+  ///
+  /// In en, this message translates to:
+  /// **'JazzCash'**
+  String get accountMethodJazzCash;
+
+  /// No description provided for @dashboardHello.
+  ///
+  /// In en, this message translates to:
+  /// **'Hello, {name}'**
+  String dashboardHello(String name);
+
+  /// No description provided for @dashboardSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search Medicine, Doctor, Test....'**
+  String get dashboardSearchHint;
+
+  /// No description provided for @dashboardOurServicesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Our Services'**
+  String get dashboardOurServicesTitle;
+
+  /// No description provided for @dashboardSecureHealthTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Secure Your Health First'**
+  String get dashboardSecureHealthTitle;
+
+  /// No description provided for @dashboardFikrfreeTagline.
+  ///
+  /// In en, this message translates to:
+  /// **'Sehat aur insurance ab apke hath mei!'**
+  String get dashboardFikrfreeTagline;
+
+  /// No description provided for @dashboardBottomFreeDoctor.
+  ///
+  /// In en, this message translates to:
+  /// **'Free Doctor'**
+  String get dashboardBottomFreeDoctor;
+
+  /// No description provided for @dashboardBottomSupport.
+  ///
+  /// In en, this message translates to:
+  /// **'Support'**
+  String get dashboardBottomSupport;
+
+  /// No description provided for @dashboardBottomBookings.
+  ///
+  /// In en, this message translates to:
+  /// **'My Bookings'**
+  String get dashboardBottomBookings;
+
+  /// No description provided for @dashboardBottomProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile'**
+  String get dashboardBottomProfile;
+
+  /// No description provided for @dashboardBottomHome.
+  ///
+  /// In en, this message translates to:
+  /// **'Home'**
+  String get dashboardBottomHome;
+
+  /// No description provided for @dashboardMenuTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Menu'**
+  String get dashboardMenuTitle;
+
+  /// No description provided for @dashboardMenuCustomerSupport.
+  ///
+  /// In en, this message translates to:
+  /// **'Customer Support'**
+  String get dashboardMenuCustomerSupport;
+
+  /// No description provided for @dashboardMenuFaq.
+  ///
+  /// In en, this message translates to:
+  /// **'FAQ’s'**
+  String get dashboardMenuFaq;
+
+  /// No description provided for @dashboardMenuGuestUser.
+  ///
+  /// In en, this message translates to:
+  /// **'Guest User'**
+  String get dashboardMenuGuestUser;
+
+  /// No description provided for @dashboardMenuSignInManageAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in to manage your account'**
+  String get dashboardMenuSignInManageAccount;
+
+  /// No description provided for @dashboardMenuSignInContinue.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in to continue'**
+  String get dashboardMenuSignInContinue;
+
+  /// No description provided for @dashboardMenuLogout.
+  ///
+  /// In en, this message translates to:
+  /// **'Logout'**
+  String get dashboardMenuLogout;
+
+  /// No description provided for @dashboardMenuAbout.
+  ///
+  /// In en, this message translates to:
+  /// **'About'**
+  String get dashboardMenuAbout;
+
+  /// No description provided for @dashboardMenuAppVersion.
+  ///
+  /// In en, this message translates to:
+  /// **'App Version'**
+  String get dashboardMenuAppVersion;
+
+  /// No description provided for @dashboardMenuTerms.
+  ///
+  /// In en, this message translates to:
+  /// **'Terms & Conditions'**
+  String get dashboardMenuTerms;
+
+  /// No description provided for @dashboardMenuPrivacy.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy Policy'**
+  String get dashboardMenuPrivacy;
+
+  /// No description provided for @dashboardMenuEditProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Profile'**
+  String get dashboardMenuEditProfile;
+
+  /// No description provided for @dashboardMenuLoginSignup.
+  ///
+  /// In en, this message translates to:
+  /// **'Login / Signup'**
+  String get dashboardMenuLoginSignup;
+
+  /// No description provided for @dashboardLogoutMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to logout from your account?'**
+  String get dashboardLogoutMessage;
+
+  /// No description provided for @dashboardCancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get dashboardCancel;
+
+  /// No description provided for @notificationsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get notificationsTitle;
+
+  /// No description provided for @notificationsRetryCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get notificationsRetryCta;
+
+  /// No description provided for @notificationsEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No Notifications Yet!'**
+  String get notificationsEmptyTitle;
+
+  /// No description provided for @notificationsLoadError.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to load notifications. Pull to refresh or try again.'**
+  String get notificationsLoadError;
+
+  /// No description provided for @searchScreenTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Search'**
+  String get searchScreenTitle;
+
+  /// No description provided for @searchListeningHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Listening...'**
+  String get searchListeningHint;
+
+  /// No description provided for @searchRecentSearchesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent Searches'**
+  String get searchRecentSearchesTitle;
+
+  /// No description provided for @searchPopularSearchesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Popular Searches'**
+  String get searchPopularSearchesTitle;
+
+  /// No description provided for @searchSeeAllCta.
+  ///
+  /// In en, this message translates to:
+  /// **'See All'**
+  String get searchSeeAllCta;
+
+  /// No description provided for @searchForQuery.
+  ///
+  /// In en, this message translates to:
+  /// **'Search for \"{query}\"'**
+  String searchForQuery(String query);
+
+  /// Title for the lab test browse screen app bar
+  ///
+  /// In en, this message translates to:
+  /// **'Lab Test'**
+  String get labTestScreenTitle;
+
+  /// No description provided for @surgeryScreenTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Procedures & Surgeries'**
+  String get surgeryScreenTitle;
+
+  /// No description provided for @surgeryBookingScreenTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Surgery Booking'**
+  String get surgeryBookingScreenTitle;
+
+  /// No description provided for @surgeryNoProceduresMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'No surgery procedures available right now.'**
+  String get surgeryNoProceduresMessage;
+
+  /// No description provided for @surgerySelectForSurgery.
+  ///
+  /// In en, this message translates to:
+  /// **'Select for Surgery'**
+  String get surgerySelectForSurgery;
+
+  /// No description provided for @surgeryLocationLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Location'**
+  String get surgeryLocationLabel;
+
+  /// No description provided for @commonChange.
+  ///
+  /// In en, this message translates to:
+  /// **'Change'**
+  String get commonChange;
+
+  /// No description provided for @surgerySearchNameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search name..'**
+  String get surgerySearchNameHint;
+
+  /// No description provided for @surgerySelectCityTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a city'**
+  String get surgerySelectCityTitle;
+
+  /// No description provided for @surgerySearchByNameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search by name'**
+  String get surgerySearchByNameHint;
+
+  /// No description provided for @commonProceed.
+  ///
+  /// In en, this message translates to:
+  /// **'Proceed'**
+  String get commonProceed;
+
+  /// No description provided for @labTestSelectCityPlaceholder.
+  ///
+  /// In en, this message translates to:
+  /// **'Select City'**
+  String get labTestSelectCityPlaceholder;
+
+  /// No description provided for @labTestCityFieldLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'City'**
+  String get labTestCityFieldLabel;
+
+  /// No description provided for @labTestChangeCityCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Change'**
+  String get labTestChangeCityCta;
+
+  /// No description provided for @labTestSelectTestHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Test'**
+  String get labTestSelectTestHeading;
+
+  /// No description provided for @labTestSearchFieldHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search'**
+  String get labTestSearchFieldHint;
+
+  /// No description provided for @labTestSelectCitySheetTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a City'**
+  String get labTestSelectCitySheetTitle;
+
+  /// No description provided for @labTestSelectCitySheetSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search for City'**
+  String get labTestSelectCitySheetSearchHint;
+
+  /// No description provided for @labTestRequirementLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Requirement'**
+  String get labTestRequirementLabel;
+
+  /// No description provided for @labTestSampleTypeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Sample Type'**
+  String get labTestSampleTypeLabel;
+
+  /// No description provided for @labTestPleaseSelectCityFirst.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select a city first.'**
+  String get labTestPleaseSelectCityFirst;
+
+  /// No description provided for @labTestDataStillLoading.
+  ///
+  /// In en, this message translates to:
+  /// **'Lab test data is still loading.'**
+  String get labTestDataStillLoading;
+
+  /// No description provided for @labTestCatalogLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load lab tests.'**
+  String get labTestCatalogLoadFailed;
+
+  /// No description provided for @labTestNoTestsFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No tests found'**
+  String get labTestNoTestsFound;
+
+  /// No description provided for @labTestCartBadgeOverflow.
+  ///
+  /// In en, this message translates to:
+  /// **'9+'**
+  String get labTestCartBadgeOverflow;
+
+  /// No description provided for @labTestBrowseItemFeeFallback.
+  ///
+  /// In en, this message translates to:
+  /// **'Rs. 15,000/-'**
+  String get labTestBrowseItemFeeFallback;
+
+  /// No description provided for @labTestBookingChooseMethodTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a Booking Method'**
+  String get labTestBookingChooseMethodTitle;
+
+  /// No description provided for @labTestBookingMethodWalkIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Walk In'**
+  String get labTestBookingMethodWalkIn;
+
+  /// No description provided for @labTestBookingMethodHomeSample.
+  ///
+  /// In en, this message translates to:
+  /// **'Home Sample'**
+  String get labTestBookingMethodHomeSample;
+
+  /// No description provided for @labTestBookingAddToCart.
+  ///
+  /// In en, this message translates to:
+  /// **'Add to Cart'**
+  String get labTestBookingAddToCart;
+
+  /// No description provided for @labTestBookingViewYourCart.
+  ///
+  /// In en, this message translates to:
+  /// **'View Your Cart'**
+  String get labTestBookingViewYourCart;
+
+  /// No description provided for @labTestBookingDataUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Lab test data unavailable'**
+  String get labTestBookingDataUnavailable;
+
+  /// No description provided for @labTestCartChangeWarningTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Warning!'**
+  String get labTestCartChangeWarningTitle;
+
+  /// No description provided for @labTestCartChangeWarningBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Changing the City, Service Provider or\nLab will remove all items from your cart.\nDo you want to proceed?'**
+  String get labTestCartChangeWarningBody;
+
+  /// No description provided for @labTestCartChangeViewCart.
+  ///
+  /// In en, this message translates to:
+  /// **'View Cart'**
+  String get labTestCartChangeViewCart;
+
+  /// No description provided for @labTestCartChangeContinue.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue'**
+  String get labTestCartChangeContinue;
+
+  /// No description provided for @labTestCartBadgeOverflow99.
+  ///
+  /// In en, this message translates to:
+  /// **'99+'**
+  String get labTestCartBadgeOverflow99;
+
+  /// No description provided for @labTestCartScreenTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Cart'**
+  String get labTestCartScreenTitle;
+
+  /// No description provided for @labTestCartEmptyMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'No items in cart'**
+  String get labTestCartEmptyMessage;
+
+  /// No description provided for @labTestCartProceedCheckout.
+  ///
+  /// In en, this message translates to:
+  /// **'Proceed Checkout'**
+  String get labTestCartProceedCheckout;
+
+  /// No description provided for @labTestViewDetailsLoadError.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to load details. Please try again.'**
+  String get labTestViewDetailsLoadError;
+
+  /// No description provided for @labTestSomethingWentWrong.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong'**
+  String get labTestSomethingWentWrong;
+
+  /// No description provided for @commonRetry.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get commonRetry;
+
+  /// No description provided for @labTestViewDetailsResultsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Test Results'**
+  String get labTestViewDetailsResultsTitle;
+
+  /// No description provided for @labTestViewDetailsOrderTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Order Details'**
+  String get labTestViewDetailsOrderTitle;
+
+  /// No description provided for @labTestDiscountCodeCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'Discount code copied'**
+  String get labTestDiscountCodeCopied;
+
+  /// No description provided for @labTestOrderNoPrefix.
+  ///
+  /// In en, this message translates to:
+  /// **'Order no.'**
+  String get labTestOrderNoPrefix;
+
+  /// No description provided for @labTestBookingDateLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Booking Date'**
+  String get labTestBookingDateLabel;
+
+  /// No description provided for @labTestTotalFeeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Fee'**
+  String get labTestTotalFeeLabel;
+
+  /// No description provided for @labTestDiscountCodeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Discount Code'**
+  String get labTestDiscountCodeLabel;
+
+  /// No description provided for @labTestShowCodeInstruction.
+  ///
+  /// In en, this message translates to:
+  /// **'Show this code to the lab representative'**
+  String get labTestShowCodeInstruction;
+
+  /// No description provided for @labTestCheckoutTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment Details'**
+  String get labTestCheckoutTitle;
+
+  /// No description provided for @labTestCheckoutRequiredFieldsError.
+  ///
+  /// In en, this message translates to:
+  /// **'Please fill all the required fields'**
+  String get labTestCheckoutRequiredFieldsError;
+
+  /// No description provided for @labTestCheckoutBookedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Lab Test Booked Successfully'**
+  String get labTestCheckoutBookedTitle;
+
+  /// No description provided for @labTestCheckoutBookedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'A lab representative will contact you shortly.\nPresent your discount code to the lab representative.\nTo access your code later:'**
+  String get labTestCheckoutBookedMessage;
+
+  /// No description provided for @labTestCheckoutBookedPathHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Menu > My Bookings > Lab Test'**
+  String get labTestCheckoutBookedPathHint;
+
+  /// No description provided for @commonClose.
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get commonClose;
+
+  /// No description provided for @labTestBookingMethodWalkInCompact.
+  ///
+  /// In en, this message translates to:
+  /// **'Walk In'**
+  String get labTestBookingMethodWalkInCompact;
+
+  /// No description provided for @labTestCheckoutFeeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Fee'**
+  String get labTestCheckoutFeeLabel;
+
+  /// No description provided for @labTestCheckoutDiscountLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Discount'**
+  String get labTestCheckoutDiscountLabel;
+
+  /// No description provided for @labTestCheckoutTotalLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Total'**
+  String get labTestCheckoutTotalLabel;
+
+  /// No description provided for @labTestPatientDetailsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Patient Details'**
+  String get labTestPatientDetailsTitle;
+
+  /// No description provided for @commonDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get commonDone;
+
+  /// No description provided for @commonEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit'**
+  String get commonEdit;
+
+  /// No description provided for @labTestEmergencyContactTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Emergency Contact'**
+  String get labTestEmergencyContactTitle;
+
+  /// No description provided for @labTestEmergencyContactHintText.
+  ///
+  /// In en, this message translates to:
+  /// **'Please provide an emergency contact number, incase you are unavailable.'**
+  String get labTestEmergencyContactHintText;
+
+  /// No description provided for @labTestEmergencyNumberHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter Number here...'**
+  String get labTestEmergencyNumberHint;
+
+  /// No description provided for @labTestPatientNameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Patient Name'**
+  String get labTestPatientNameLabel;
+
+  /// No description provided for @labTestContactNumberLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact Number'**
+  String get labTestContactNumberLabel;
+
+  /// No description provided for @labTestAddressLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Address'**
+  String get labTestAddressLabel;
+
+  /// No description provided for @labTestFullNameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Full name'**
+  String get labTestFullNameHint;
+
+  /// No description provided for @labTestPhonebookHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Type or select from phonebook'**
+  String get labTestPhonebookHint;
+
+  /// No description provided for @labTestAgeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Age'**
+  String get labTestAgeLabel;
+
+  /// No description provided for @labTestAddressHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Type address here...'**
+  String get labTestAddressHint;
+
+  /// No description provided for @commonMale.
+  ///
+  /// In en, this message translates to:
+  /// **'Male'**
+  String get commonMale;
+
+  /// No description provided for @commonFemale.
+  ///
+  /// In en, this message translates to:
+  /// **'Female'**
+  String get commonFemale;
+
+  /// No description provided for @labTestBookCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Book Lab Test'**
+  String get labTestBookCta;
+
+  /// No description provided for @consultationAiScreeningTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'AI Screening'**
+  String get consultationAiScreeningTitle;
+
+  /// No description provided for @consultationAiWelcomePrefix.
+  ///
+  /// In en, this message translates to:
+  /// **'Hello, welcome to '**
+  String get consultationAiWelcomePrefix;
+
+  /// No description provided for @consultationAiWelcomeSuffix.
+  ///
+  /// In en, this message translates to:
+  /// **' , let\'s get started'**
+  String get consultationAiWelcomeSuffix;
+
+  /// No description provided for @consultationAiStartCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Let\'s Start'**
+  String get consultationAiStartCta;
+
+  /// No description provided for @consultationSelectCategoriesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Categories'**
+  String get consultationSelectCategoriesTitle;
+
+  /// No description provided for @consultationSpecialistTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Specialist'**
+  String get consultationSpecialistTitle;
+
+  /// No description provided for @consultationVideoBookingPrompt.
+  ///
+  /// In en, this message translates to:
+  /// **'Book your video consultation here!'**
+  String get consultationVideoBookingPrompt;
+
+  /// No description provided for @consultationGetAppointmentCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Get Appointment'**
+  String get consultationGetAppointmentCta;
+
+  /// No description provided for @consultationBookingConfirmedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Appointment Confirmed!'**
+  String get consultationBookingConfirmedTitle;
+
+  /// No description provided for @consultationBookingConfirmedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Your consultation has been booked with {doctorName}. You can join the call from Appointments.'**
+  String consultationBookingConfirmedMessage(Object doctorName);
+
+  /// No description provided for @commonOk.
+  ///
+  /// In en, this message translates to:
+  /// **'OK'**
+  String get commonOk;
+
+  /// No description provided for @consultationUploadDocumentTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload Document'**
+  String get consultationUploadDocumentTitle;
+
+  /// No description provided for @consultationUseCamera.
+  ///
+  /// In en, this message translates to:
+  /// **'Use camera'**
+  String get consultationUseCamera;
+
+  /// No description provided for @consultationUploadFromGallery.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload from gallery'**
+  String get consultationUploadFromGallery;
+
+  /// No description provided for @consultationUploadFromFile.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload from File'**
+  String get consultationUploadFromFile;
+
+  /// No description provided for @consultationCameraUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Camera access is unavailable right now.'**
+  String get consultationCameraUnavailable;
+
+  /// No description provided for @consultationCaptureMediaFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not capture media. Please try again.'**
+  String get consultationCaptureMediaFailed;
+
+  /// No description provided for @consultationGalleryUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Gallery access is unavailable right now.'**
+  String get consultationGalleryUnavailable;
+
+  /// No description provided for @consultationPickGalleryFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not pick media from gallery.'**
+  String get consultationPickGalleryFailed;
+
+  /// No description provided for @consultationPickFileFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not pick file. Please try again.'**
+  String get consultationPickFileFailed;
+
+  /// No description provided for @bookingsDashboardTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'My Bookings'**
+  String get bookingsDashboardTitle;
+
+  /// No description provided for @bookingsTabDoctorConsultation.
+  ///
+  /// In en, this message translates to:
+  /// **'Doctor Consultation'**
+  String get bookingsTabDoctorConsultation;
+
+  /// No description provided for @bookingsTabSurgery.
+  ///
+  /// In en, this message translates to:
+  /// **'Surgery'**
+  String get bookingsTabSurgery;
+
+  /// No description provided for @bookingsTabLabTest.
+  ///
+  /// In en, this message translates to:
+  /// **'Lab Test'**
+  String get bookingsTabLabTest;
+
+  /// No description provided for @bookingsTabPharmacy.
+  ///
+  /// In en, this message translates to:
+  /// **'Pharmacy'**
+  String get bookingsTabPharmacy;
+
+  /// No description provided for @bookingsLabTestEmptyDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'No lab test bookings yet.'**
+  String get bookingsLabTestEmptyDescription;
+
+  /// No description provided for @bookingsStatusLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Status'**
+  String get bookingsStatusLabel;
+
+  /// No description provided for @bookingsDateLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Date'**
+  String get bookingsDateLabel;
+
+  /// No description provided for @bookingsDateCreatedLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Date Created'**
+  String get bookingsDateCreatedLabel;
+
+  /// No description provided for @bookingsViewDetailsCta.
+  ///
+  /// In en, this message translates to:
+  /// **'View Details'**
+  String get bookingsViewDetailsCta;
+
+  /// No description provided for @bookingsFeeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Fee'**
+  String get bookingsFeeLabel;
+
+  /// No description provided for @bookingsTotalLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Total'**
+  String get bookingsTotalLabel;
+
+  /// No description provided for @bookingsSurgeryProcedureSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Photorefractive keratectomy Surgery'**
+  String get bookingsSurgeryProcedureSubtitle;
+
+  /// No description provided for @bookingsSurgeryPatientName.
+  ///
+  /// In en, this message translates to:
+  /// **'Haseeb Qasim'**
+  String get bookingsSurgeryPatientName;
+
+  /// No description provided for @bookingsProceedCheckoutCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Proceed Checkout'**
+  String get bookingsProceedCheckoutCta;
+
+  /// No description provided for @bookingsRequirementsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Requirements'**
+  String get bookingsRequirementsTitle;
+
+  /// No description provided for @bookingsSurgeryRequirement1.
+  ///
+  /// In en, this message translates to:
+  /// **'Fast for 9-12 Hours before Appointment time'**
+  String get bookingsSurgeryRequirement1;
+
+  /// No description provided for @bookingsSurgeryRequirement2.
+  ///
+  /// In en, this message translates to:
+  /// **'Avoid Stenious Physical Activ ity the day of the appointment'**
+  String get bookingsSurgeryRequirement2;
+
+  /// No description provided for @bookingsSurgeryRequirement3.
+  ///
+  /// In en, this message translates to:
+  /// **'Ensure that you are NOTtaking any antibiotic medication course'**
+  String get bookingsSurgeryRequirement3;
+
+  /// No description provided for @labTestSampleTypeBlood.
+  ///
+  /// In en, this message translates to:
+  /// **'Blood'**
+  String get labTestSampleTypeBlood;
 }
 
 class _AppLocalizationsDelegate
