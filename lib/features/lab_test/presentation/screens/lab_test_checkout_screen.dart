@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
+import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/preference/app_pref.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/widgets/app_scaffold_gradient.dart';
@@ -113,8 +114,9 @@ class _LabTestCheckoutScreenState extends State<LabTestCheckoutScreen> {
   }
 
   void _onProceed() {
+    final l10n = AppLocalizations.of(context)!;
     if (_emergencyController.text.trim().isEmpty) {
-      setState(() => _checkoutErrorMessage = 'Please fill all the required fields');
+      setState(() => _checkoutErrorMessage = l10n.labTestCheckoutRequiredFieldsError);
       return;
     }
     if (_checkoutErrorMessage != null) {
@@ -150,7 +152,7 @@ class _LabTestCheckoutScreenState extends State<LabTestCheckoutScreen> {
                       ),
                       const SizedBox(height: 6),
                       Text(
-                        'Lab Test Booked Successfully',
+                        l10n.labTestCheckoutBookedTitle,
                         textAlign: TextAlign.center,
                         style: Theme.of(context).textTheme.titleMedium?.copyWith(
                           color: const Color(0xFF0E2650),
@@ -161,9 +163,7 @@ class _LabTestCheckoutScreenState extends State<LabTestCheckoutScreen> {
                       ),
                       const SizedBox(height: 16),
                       Text(
-                        'A lab representative will contact you shortly.\n'
-                        'Present your discount code to the lab representative.\n'
-                        'To access your code later:',
+                        l10n.labTestCheckoutBookedMessage,
                         textAlign: TextAlign.center,
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           color: const Color(0xFF5676A8),
@@ -173,7 +173,7 @@ class _LabTestCheckoutScreenState extends State<LabTestCheckoutScreen> {
                       ),
                       const SizedBox(height: 16),
                       Text(
-                        'Menu > My Bookings > Lab Test',
+                        l10n.labTestCheckoutBookedPathHint,
                         textAlign: TextAlign.center,
                         style: Theme.of(context).textTheme.titleSmall?.copyWith(
                           color: const Color(0xFF0D1218),
@@ -207,7 +207,7 @@ class _LabTestCheckoutScreenState extends State<LabTestCheckoutScreen> {
                             const SizedBox(width: 8),
                             Expanded(
                               child: Text(
-                                'Discount Code',
+                                l10n.labTestDiscountCodeLabel,
                                 style: Theme.of(context).textTheme.titleSmall
                                     ?.copyWith(
                                       color: const Color(0xFF0D1218),
@@ -245,10 +245,10 @@ class _LabTestCheckoutScreenState extends State<LabTestCheckoutScreen> {
                             ),
                           ),
                           onPressed: () {
-                            Navigator.of(dialogContext).pop();
+                            dialogContext.pop();
                             context.go(AppRoutes.path(AppRoutes.home));
                           },
-                          child: const Text('Close'),
+                          child: Text(l10n.commonClose),
                         ),
                       ),
                     ],
@@ -264,13 +264,14 @@ class _LabTestCheckoutScreenState extends State<LabTestCheckoutScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final a = widget.args;
 
     return AppScaffoldGradient(
       child: Column(
         children: [
-          _CheckoutHeader(),
+          _CheckoutHeader(title: l10n.labTestCheckoutTitle),
           Expanded(
             child: Center(
               child: Container(
@@ -333,6 +334,10 @@ class _LabTestCheckoutScreenState extends State<LabTestCheckoutScreen> {
 }
 
 class _CheckoutHeader extends StatelessWidget {
+  const _CheckoutHeader({required this.title});
+
+  final String title;
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -359,7 +364,7 @@ class _CheckoutHeader extends StatelessWidget {
           ),
           Expanded(
             child: Text(
-              'Payment Details',
+              title,
               textAlign: TextAlign.center,
               style: theme.textTheme.titleLarge?.copyWith(
                 color: const Color(0xFF061E40),
@@ -383,6 +388,7 @@ class _SummaryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     return Container(
       padding: const EdgeInsets.fromLTRB(8, 12, 8, 12),
@@ -496,7 +502,7 @@ class _SummaryCard extends StatelessWidget {
                     child: Row(
                       children: [
                         Text(
-                          'Sample Type',
+                          l10n.labTestSampleTypeLabel,
                           style: theme.textTheme.bodySmall?.copyWith(
                             color: const Color(0xFF667B99),
                             fontSize: 12.sp,
@@ -538,8 +544,8 @@ class _SummaryCard extends StatelessWidget {
                           ),
                           child: Text(
                             args.bookingMethodIsHomeSample
-                                ? 'Home Sample'
-                                : 'Walk In',
+                                ? l10n.labTestBookingMethodHomeSample
+                                : l10n.labTestBookingMethodWalkInCompact,
                             style: theme.textTheme.bodySmall?.copyWith(
                               color: const Color(0xFF667B99),
                               fontSize: 12.sp,
@@ -557,7 +563,7 @@ class _SummaryCard extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Fee',
+                            l10n.labTestCheckoutFeeLabel,
                             style: theme.textTheme.bodySmall?.copyWith(
                               color: const Color(0xFF667B99),
                               fontSize: 12.sp,
@@ -601,98 +607,6 @@ class _SummaryCard extends StatelessWidget {
   }
 }
 
-class _RequirementsCheckoutCard extends StatelessWidget {
-  const _RequirementsCheckoutCard({required this.lines, this.fastingLabel});
-
-  final List<String> lines;
-  final String? fastingLabel;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: const Color(0xFFDDE3EA), width: 1),
-        boxShadow: [
-          BoxShadow(
-            color: const Color(0x54565C67),
-            blurRadius: 8,
-            spreadRadius: 1.1,
-            offset: Offset.zero,
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Requirements',
-                  style: theme.textTheme.titleMedium?.copyWith(
-                    color: const Color(0xFF061E40),
-                    fontWeight: FontWeight.w500,
-                    fontSize: 16.sp,
-                  ),
-                ),
-                if (fastingLabel != null)
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 4,
-                    ),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFB7EAC3),
-                      borderRadius: BorderRadius.circular(59),
-                    ),
-                    child: Text(
-                      fastingLabel!,
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        fontFamily: 'Afacad',
-                        color: const Color(0xFF198733),
-                        fontSize: 14.sp,
-                      ),
-                    ),
-                  ),
-              ],
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                for (var i = 0; i < lines.length; i++) ...[
-                  Padding(
-                    padding: EdgeInsets.only(
-                      left: 24,
-                      bottom: i == lines.length - 1 ? 0 : 10,
-                    ),
-                    child: Text(
-                      '${i + 1}. ${lines[i]}',
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        fontFamily: 'Afacad',
-                        fontSize: 16.sp,
-                        height: 1.2,
-                        color: Colors.black,
-                      ),
-                    ),
-                  ),
-                ],
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
 class _PaymentBreakdownCard extends StatelessWidget {
   const _PaymentBreakdownCard({required this.args});
 
@@ -700,6 +614,7 @@ class _PaymentBreakdownCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final discounted = _parseMoney(args.discountedFee);
     final original = _parseMoney(args.originalFee);
@@ -745,7 +660,7 @@ class _PaymentBreakdownCard extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
             child: Text(
-              'Payment Details',
+              l10n.labTestCheckoutTitle,
               style: theme.textTheme.titleMedium?.copyWith(
                 color: const Color(0xFF061E40),
                 fontWeight: FontWeight.w500,
@@ -757,10 +672,10 @@ class _PaymentBreakdownCard extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Column(
               children: [
-                _moneyRow(theme, 'Fee', feeValue),
+                _moneyRow(theme, l10n.labTestCheckoutFeeLabel, feeValue),
                 _moneyRow(
                   theme,
-                  'Discount ($discountPercent%)',
+                  '${l10n.labTestCheckoutDiscountLabel} ($discountPercent%)',
                   discountValue,
                 ),
                 // Padding(
@@ -826,7 +741,7 @@ class _PaymentBreakdownCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'Total',
+                  l10n.labTestCheckoutTotalLabel,
                   style: theme.textTheme.titleMedium?.copyWith(
                     color: const Color(0xFF061E40),
                     fontWeight: FontWeight.w500,
@@ -955,25 +870,26 @@ class _PatientFormSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         _sectionHeader(
-          'Patient Details',
-          trailing: isEditingPatientDetails ? 'Done' : 'Edit',
+          l10n.labTestPatientDetailsTitle,
+          trailing: isEditingPatientDetails ? l10n.commonDone : l10n.commonEdit,
           onTrailingTap: onToggleEdit,
         ),
         const SizedBox(height: 6),
         isEditingPatientDetails
-            ? _buildEditablePatientDetailsCard()
-            : _buildPatientDetailsSummaryCard(),
+            ? _buildEditablePatientDetailsCard(context)
+            : _buildPatientDetailsSummaryCard(context),
         const SizedBox(height: 6),
-        _sectionHeader('Emergency Contact'),
+        _sectionHeader(l10n.labTestEmergencyContactTitle),
         const SizedBox(height: 6),
         _formCard(
           children: [
             Text(
-              'Please provide an emergency contact number, incase you are unavailable.',
+              l10n.labTestEmergencyContactHintText,
               style: theme.textTheme.bodySmall?.copyWith(
                 color: const Color(0xFF667B99),
                 fontSize: 12.sp,
@@ -983,7 +899,7 @@ class _PatientFormSection extends StatelessWidget {
             const SizedBox(height: 8),
             _greyField(
               controller: emergencyController,
-              hint: 'Enter Number here...',
+              hint: l10n.labTestEmergencyNumberHint,
             ),
           ],
         ),
@@ -991,7 +907,8 @@ class _PatientFormSection extends StatelessWidget {
     );
   }
 
-  Widget _buildPatientDetailsSummaryCard() {
+  Widget _buildPatientDetailsSummaryCard(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final dividerColor = const Color(0xFFCDD5DF);
     return Container(
       padding: const EdgeInsets.fromLTRB(16, 10, 16, 12),
@@ -1011,22 +928,22 @@ class _PatientFormSection extends StatelessWidget {
       child: Column(
         children: [
           _summaryRow(
-            label: 'Patient Name',
+            label: l10n.labTestPatientNameLabel,
             value: _fallback(nameController.text),
             dividerColor: dividerColor,
           ),
           _summaryRow(
-            label: 'Gender',
-            value: _displayGender(gender),
+            label: l10n.profileGenderLabel,
+            value: _displayGender(context, gender),
             dividerColor: dividerColor,
           ),
           _summaryRow(
-            label: 'Age',
+            label: l10n.labTestAgeLabel,
             value: _fallback(ageController.text),
             dividerColor: dividerColor,
           ),
           _summaryRow(
-            label: 'Contact Number',
+            label: l10n.labTestContactNumberLabel,
             value: _fallback(phoneController.text),
             dividerColor: dividerColor,
           ),
@@ -1041,16 +958,17 @@ class _PatientFormSection extends StatelessWidget {
     );
   }
 
-  Widget _buildEditablePatientDetailsCard() {
+  Widget _buildEditablePatientDetailsCard(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return _formCard(
       children: [
-        _fieldLabel('Patient Name'),
-        _greyField(controller: nameController, hint: 'Full name'),
+        _fieldLabel(l10n.labTestPatientNameLabel),
+        _greyField(controller: nameController, hint: l10n.labTestFullNameHint),
         const SizedBox(height: 14),
-        _fieldLabel('Contact Number'),
+        _fieldLabel(l10n.labTestContactNumberLabel),
         _greyField(
           controller: phoneController,
-          hint: 'Type or select from phonebook',
+          hint: l10n.labTestPhonebookHint,
           suffix: LabTestFigmaImage(
             url: Assets.labTestAddressBook,
             width: 16,
@@ -1065,13 +983,13 @@ class _PatientFormSection extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  _fieldLabel('Gender'),
+                  _fieldLabel(l10n.profileGenderLabel),
                   const SizedBox(height: 3),
                   Row(
                     children: [
                       Expanded(
                         child: _genderChip(
-                          label: 'Male',
+                          label: l10n.commonMale,
                           selected: gender == 'male',
                           onTap: () => onGender('male'),
                         ),
@@ -1079,7 +997,7 @@ class _PatientFormSection extends StatelessWidget {
                       const SizedBox(width: 8),
                       Expanded(
                         child: _genderChip(
-                          label: 'Female',
+                          label: l10n.commonFemale,
                           selected: gender == 'female',
                           onTap: () => onGender('female'),
                         ),
@@ -1094,7 +1012,7 @@ class _PatientFormSection extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  _fieldLabel('Age'),
+                  _fieldLabel(l10n.labTestAgeLabel),
                   const SizedBox(height: 3),
                   Container(
                     height: 30,
@@ -1124,10 +1042,10 @@ class _PatientFormSection extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 14),
-        _fieldLabel('Address'),
+        _fieldLabel(l10n.labTestAddressLabel),
         _greyField(
           controller: addressController,
-          hint: 'Type address here...',
+          hint: l10n.labTestAddressHint,
           minLines: 2,
         ),
       ],
@@ -1139,6 +1057,7 @@ class _PatientFormSection extends StatelessWidget {
     required String value,
     required Color dividerColor,
     bool isLast = false,
+    int maxValueLines = 1,
   }) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 8),
@@ -1168,7 +1087,7 @@ class _PatientFormSection extends StatelessWidget {
               alignment: Alignment.centerRight,
               child: Text(
                 value,
-                maxLines: label == 'Address' ? 2 : 1,
+                maxLines: maxValueLines,
                 overflow: TextOverflow.ellipsis,
                 textAlign: TextAlign.right,
                 style: theme.textTheme.bodyLarge?.copyWith(
@@ -1190,10 +1109,11 @@ class _PatientFormSection extends StatelessWidget {
     return trimmed.isEmpty ? '--' : trimmed;
   }
 
-  String _displayGender(String rawGender) {
+  String _displayGender(BuildContext context, String rawGender) {
     final normalized = rawGender.trim().toLowerCase();
-    if (normalized == 'male') return 'Male';
-    if (normalized == 'female') return 'Female';
+    final l10n = AppLocalizations.of(context)!;
+    if (normalized == 'male') return l10n.commonMale;
+    if (normalized == 'female') return l10n.commonFemale;
     return '--';
   }
 
@@ -1460,7 +1380,7 @@ class _CheckoutBottomBar extends StatelessWidget {
                   ),
                 ),
                 onPressed: onProceed,
-                child: const Text('Book Lab Test'),
+                child: Text(AppLocalizations.of(context)!.labTestBookCta),
               ),
             ),
             const SizedBox(height: 8),

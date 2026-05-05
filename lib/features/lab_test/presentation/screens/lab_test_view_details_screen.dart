@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/di/dependency_injection.dart';
+import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/widgets/app_scaffold_gradient.dart';
 import '../../data/mock/lab_test_mock_api.dart';
 import '../lab_test_route_args.dart';
@@ -51,8 +52,9 @@ class _LabTestViewDetailsScreenState extends State<LabTestViewDetailsScreen> {
       });
     } catch (_) {
       if (!mounted) return;
+      final l10n = AppLocalizations.of(context)!;
       setState(() {
-        _errorMessage = 'Unable to load details. Please try again.';
+        _errorMessage = l10n.labTestViewDetailsLoadError;
         _isLoading = false;
       });
     }
@@ -60,6 +62,7 @@ class _LabTestViewDetailsScreenState extends State<LabTestViewDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     if (_isLoading) return const LabTestViewDetailsShimmer();
 
     if (_errorMessage != null || _details == null) {
@@ -70,11 +73,11 @@ class _LabTestViewDetailsScreenState extends State<LabTestViewDetailsScreen> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(_errorMessage ?? 'Something went wrong'),
+                Text(_errorMessage ?? l10n.labTestSomethingWentWrong),
                 const SizedBox(height: 10),
                 FilledButton(
                   onPressed: _loadDetails,
-                  child: const Text('Retry'),
+                  child: Text(l10n.commonRetry),
                 ),
               ],
             ),
@@ -87,7 +90,7 @@ class _LabTestViewDetailsScreenState extends State<LabTestViewDetailsScreen> {
     return AppScaffoldGradient(
       child: Column(
         children: [
-          const LabTestViewDetailsHeader(title: 'Lab Test'),
+          LabTestViewDetailsHeader(title: l10n.labTestScreenTitle),
           Expanded(
             child: Container(
               width: double.infinity,
@@ -100,8 +103,8 @@ class _LabTestViewDetailsScreenState extends State<LabTestViewDetailsScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'Test Results',
+                    Text(
+                      l10n.labTestViewDetailsResultsTitle,
                       style: TextStyle(
                         color: Color(0xFF202B3A),
                         fontSize: 16,
@@ -120,8 +123,8 @@ class _LabTestViewDetailsScreenState extends State<LabTestViewDetailsScreen> {
                       originalFee: widget.args.originalFee,
                     ),
                     const SizedBox(height: 18),
-                    const Text(
-                      'Order Details',
+                    Text(
+                      l10n.labTestViewDetailsOrderTitle,
                       style: TextStyle(
                         color: Color(0xFF202B3A),
                         fontSize: 16,
