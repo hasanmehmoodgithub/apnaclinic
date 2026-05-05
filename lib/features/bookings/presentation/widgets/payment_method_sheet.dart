@@ -1,4 +1,4 @@
-import 'package:apnaclinic/features/bookings/presentation/screens/payment_option.dart';
+import 'package:apnaclinic/features/bookings/presentation/widgets/payment_option.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 

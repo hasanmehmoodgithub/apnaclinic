@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import '../../features/app/presentation/screens/splash_screen.dart';
+import '../../features/bookings/data/models/surgery_details_item.dart';
 import '../../features/consultation/presentation/cubit/consultation_cubit.dart';
 import '../../features/consultation/presentation/screens/ai_consultation_screen.dart';
 import '../../features/consultation/presentation/screens/doctor_consultation_book_doctor_screen.dart';
