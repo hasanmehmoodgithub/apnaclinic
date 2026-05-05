@@ -194,4 +194,95 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get profileSaveCta => 'محفوظ کریں';
+
+  @override
+  String get labTestScreenTitle => 'لیب ٹیسٹ';
+
+  @override
+  String get labTestSelectCityPlaceholder => 'شہر منتخب کریں';
+
+  @override
+  String get labTestCityFieldLabel => 'شہر';
+
+  @override
+  String get labTestChangeCityCta => 'تبدیل کریں';
+
+  @override
+  String get labTestSelectTestHeading => 'ٹیسٹ منتخب کریں';
+
+  @override
+  String get labTestSearchFieldHint => 'تلاش';
+
+  @override
+  String get labTestSelectCitySheetTitle => 'شہر منتخب کریں';
+
+  @override
+  String get labTestSelectCitySheetSearchHint => 'شہر تلاش کریں';
+
+  @override
+  String get labTestRequirementLabel => 'ضروریات';
+
+  @override
+  String get labTestSampleTypeLabel => 'نمونے کی قسم';
+
+  @override
+  String get labTestPleaseSelectCityFirst => 'براہ کرم پہلے شہر منتخب کریں۔';
+
+  @override
+  String get labTestDataStillLoading => 'لیب ٹیسٹ ڈیٹا ابھی لوڈ ہو رہا ہے۔';
+
+  @override
+  String get labTestCatalogLoadFailed => 'لیب ٹیسٹ لوڈ نہیں ہو سکے۔';
+
+  @override
+  String get labTestNoTestsFound => 'کوئی ٹیسٹ نہیں ملا';
+
+  @override
+  String get labTestCartBadgeOverflow => '9+';
+
+  @override
+  String get labTestBrowseItemFeeFallback => 'Rs. 15,000/-';
+
+  @override
+  String get labTestBookingChooseMethodTitle => 'بکنگ کا طریقہ منتخب کریں';
+
+  @override
+  String get labTestBookingMethodWalkIn => 'واک اِن';
+
+  @override
+  String get labTestBookingMethodHomeSample => 'ہوم سیمپل';
+
+  @override
+  String get labTestBookingAddToCart => 'کارٹ میں شامل کریں';
+
+  @override
+  String get labTestBookingViewYourCart => 'اپنا کارٹ دیکھیں';
+
+  @override
+  String get labTestBookingDataUnavailable => 'لیب ٹیسٹ ڈیٹا دستیاب نہیں';
+
+  @override
+  String get labTestCartChangeWarningTitle => 'انتباہ!';
+
+  @override
+  String get labTestCartChangeWarningBody =>
+      'شہر، سروس فراہم کنندہ یا لیب تبدیل کرنے سے\nآپ کے کارٹ کی تمام اشیاء ہٹ جائیں گی۔\nکیا آپ آگے بڑھنا چاہتے ہیں؟';
+
+  @override
+  String get labTestCartChangeViewCart => 'کارٹ دیکھیں';
+
+  @override
+  String get labTestCartChangeContinue => 'جاری رکھیں';
+
+  @override
+  String get labTestCartBadgeOverflow99 => '99+';
+
+  @override
+  String get labTestCartScreenTitle => 'کارٹ';
+
+  @override
+  String get labTestCartEmptyMessage => 'کارٹ میں کوئی شے نہیں';
+
+  @override
+  String get labTestCartProceedCheckout => 'چیک آؤٹ جاری رکھیں';
 }

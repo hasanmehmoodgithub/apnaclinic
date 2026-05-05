@@ -1,0 +1,109 @@
+import 'package:flutter/material.dart';
+
+import '../../../../core/extensions/screen_util_extensions.dart';
+
+/// Primary CTA: add to cart or open cart when selection already added.
+class LabTestBookingBottomBarWidget extends StatelessWidget {
+  const LabTestBookingBottomBarWidget({
+    super.key,
+    required this.buttonLabel,
+    required this.onPressed,
+    required this.showLeadingCartCount,
+    required this.cartCount,
+    required this.cartCountOverflowLabel,
+  });
+
+  final String buttonLabel;
+  final VoidCallback onPressed;
+  final bool showLeadingCartCount;
+  final int cartCount;
+  final String cartCountOverflowLabel;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.fromLTRB(24.w, 14.h, 24.w, 8.h),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.07),
+            offset: const Offset(0, -5),
+            blurRadius: 30,
+          ),
+        ],
+      ),
+      child: SafeArea(
+        top: false,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SizedBox(
+              width: double.infinity,
+              height: 57.h,
+              child: FilledButton(
+                style: FilledButton.styleFrom(
+                  backgroundColor: const Color(0xFF0FAA9A),
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12.909.r),
+                  ),
+                  textStyle: TextStyle(
+                    fontWeight: FontWeight.w700,
+                    fontSize: 16.sp,
+                  ),
+                ),
+                onPressed: onPressed,
+                child: Stack(
+                  children: [
+                    Center(child: Text(buttonLabel)),
+                    if (showLeadingCartCount && cartCount > 0)
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Padding(
+                          padding: EdgeInsets.only(left: 12.w),
+                          child: Container(
+                            width: 28,
+                            height: 28,
+                            decoration: const BoxDecoration(
+                              color: Color(0xFFF2F7F6),
+                              shape: BoxShape.circle,
+                            ),
+                            alignment: Alignment.center,
+                            child: Text(
+                              cartCount > 99
+                                  ? cartCountOverflowLabel
+                                  : '$cartCount',
+                              style: Theme.of(context).textTheme.titleSmall
+                                  ?.copyWith(
+                                color: const Color(0xFF0FAA9A),
+                                fontWeight: FontWeight.w700,
+                                fontSize: 14.sp,
+                                height: 1,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+            ),
+            SizedBox(height: 8.h),
+            Center(
+              child: Container(
+                width: 135.w,
+                height: 5.h,
+                decoration: BoxDecoration(
+                  color: const Color(0xFFB9C0C9),
+                  borderRadius: BorderRadius.circular(100.r),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

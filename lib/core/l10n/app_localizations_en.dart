@@ -194,4 +194,95 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get profileSaveCta => 'Save';
+
+  @override
+  String get labTestScreenTitle => 'Lab Test';
+
+  @override
+  String get labTestSelectCityPlaceholder => 'Select City';
+
+  @override
+  String get labTestCityFieldLabel => 'City';
+
+  @override
+  String get labTestChangeCityCta => 'Change';
+
+  @override
+  String get labTestSelectTestHeading => 'Select Test';
+
+  @override
+  String get labTestSearchFieldHint => 'Search';
+
+  @override
+  String get labTestSelectCitySheetTitle => 'Select a City';
+
+  @override
+  String get labTestSelectCitySheetSearchHint => 'Search for City';
+
+  @override
+  String get labTestRequirementLabel => 'Requirement';
+
+  @override
+  String get labTestSampleTypeLabel => 'Sample Type';
+
+  @override
+  String get labTestPleaseSelectCityFirst => 'Please select a city first.';
+
+  @override
+  String get labTestDataStillLoading => 'Lab test data is still loading.';
+
+  @override
+  String get labTestCatalogLoadFailed => 'Failed to load lab tests.';
+
+  @override
+  String get labTestNoTestsFound => 'No tests found';
+
+  @override
+  String get labTestCartBadgeOverflow => '9+';
+
+  @override
+  String get labTestBrowseItemFeeFallback => 'Rs. 15,000/-';
+
+  @override
+  String get labTestBookingChooseMethodTitle => 'Choose a Booking Method';
+
+  @override
+  String get labTestBookingMethodWalkIn => 'Walk In';
+
+  @override
+  String get labTestBookingMethodHomeSample => 'Home Sample';
+
+  @override
+  String get labTestBookingAddToCart => 'Add to Cart';
+
+  @override
+  String get labTestBookingViewYourCart => 'View Your Cart';
+
+  @override
+  String get labTestBookingDataUnavailable => 'Lab test data unavailable';
+
+  @override
+  String get labTestCartChangeWarningTitle => 'Warning!';
+
+  @override
+  String get labTestCartChangeWarningBody =>
+      'Changing the City, Service Provider or\nLab will remove all items from your cart.\nDo you want to proceed?';
+
+  @override
+  String get labTestCartChangeViewCart => 'View Cart';
+
+  @override
+  String get labTestCartChangeContinue => 'Continue';
+
+  @override
+  String get labTestCartBadgeOverflow99 => '99+';
+
+  @override
+  String get labTestCartScreenTitle => 'Cart';
+
+  @override
+  String get labTestCartEmptyMessage => 'No items in cart';
+
+  @override
+  String get labTestCartProceedCheckout => 'Proceed Checkout';
 }

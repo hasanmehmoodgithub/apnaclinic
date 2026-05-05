@@ -469,6 +469,186 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Save'**
   String get profileSaveCta;
+
+  /// Title for the lab test browse screen app bar
+  ///
+  /// In en, this message translates to:
+  /// **'Lab Test'**
+  String get labTestScreenTitle;
+
+  /// No description provided for @labTestSelectCityPlaceholder.
+  ///
+  /// In en, this message translates to:
+  /// **'Select City'**
+  String get labTestSelectCityPlaceholder;
+
+  /// No description provided for @labTestCityFieldLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'City'**
+  String get labTestCityFieldLabel;
+
+  /// No description provided for @labTestChangeCityCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Change'**
+  String get labTestChangeCityCta;
+
+  /// No description provided for @labTestSelectTestHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Test'**
+  String get labTestSelectTestHeading;
+
+  /// No description provided for @labTestSearchFieldHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search'**
+  String get labTestSearchFieldHint;
+
+  /// No description provided for @labTestSelectCitySheetTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a City'**
+  String get labTestSelectCitySheetTitle;
+
+  /// No description provided for @labTestSelectCitySheetSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search for City'**
+  String get labTestSelectCitySheetSearchHint;
+
+  /// No description provided for @labTestRequirementLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Requirement'**
+  String get labTestRequirementLabel;
+
+  /// No description provided for @labTestSampleTypeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Sample Type'**
+  String get labTestSampleTypeLabel;
+
+  /// No description provided for @labTestPleaseSelectCityFirst.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select a city first.'**
+  String get labTestPleaseSelectCityFirst;
+
+  /// No description provided for @labTestDataStillLoading.
+  ///
+  /// In en, this message translates to:
+  /// **'Lab test data is still loading.'**
+  String get labTestDataStillLoading;
+
+  /// No description provided for @labTestCatalogLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load lab tests.'**
+  String get labTestCatalogLoadFailed;
+
+  /// No description provided for @labTestNoTestsFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No tests found'**
+  String get labTestNoTestsFound;
+
+  /// No description provided for @labTestCartBadgeOverflow.
+  ///
+  /// In en, this message translates to:
+  /// **'9+'**
+  String get labTestCartBadgeOverflow;
+
+  /// No description provided for @labTestBrowseItemFeeFallback.
+  ///
+  /// In en, this message translates to:
+  /// **'Rs. 15,000/-'**
+  String get labTestBrowseItemFeeFallback;
+
+  /// No description provided for @labTestBookingChooseMethodTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a Booking Method'**
+  String get labTestBookingChooseMethodTitle;
+
+  /// No description provided for @labTestBookingMethodWalkIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Walk In'**
+  String get labTestBookingMethodWalkIn;
+
+  /// No description provided for @labTestBookingMethodHomeSample.
+  ///
+  /// In en, this message translates to:
+  /// **'Home Sample'**
+  String get labTestBookingMethodHomeSample;
+
+  /// No description provided for @labTestBookingAddToCart.
+  ///
+  /// In en, this message translates to:
+  /// **'Add to Cart'**
+  String get labTestBookingAddToCart;
+
+  /// No description provided for @labTestBookingViewYourCart.
+  ///
+  /// In en, this message translates to:
+  /// **'View Your Cart'**
+  String get labTestBookingViewYourCart;
+
+  /// No description provided for @labTestBookingDataUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Lab test data unavailable'**
+  String get labTestBookingDataUnavailable;
+
+  /// No description provided for @labTestCartChangeWarningTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Warning!'**
+  String get labTestCartChangeWarningTitle;
+
+  /// No description provided for @labTestCartChangeWarningBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Changing the City, Service Provider or\nLab will remove all items from your cart.\nDo you want to proceed?'**
+  String get labTestCartChangeWarningBody;
+
+  /// No description provided for @labTestCartChangeViewCart.
+  ///
+  /// In en, this message translates to:
+  /// **'View Cart'**
+  String get labTestCartChangeViewCart;
+
+  /// No description provided for @labTestCartChangeContinue.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue'**
+  String get labTestCartChangeContinue;
+
+  /// No description provided for @labTestCartBadgeOverflow99.
+  ///
+  /// In en, this message translates to:
+  /// **'99+'**
+  String get labTestCartBadgeOverflow99;
+
+  /// No description provided for @labTestCartScreenTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Cart'**
+  String get labTestCartScreenTitle;
+
+  /// No description provided for @labTestCartEmptyMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'No items in cart'**
+  String get labTestCartEmptyMessage;
+
+  /// No description provided for @labTestCartProceedCheckout.
+  ///
+  /// In en, this message translates to:
+  /// **'Proceed Checkout'**
+  String get labTestCartProceedCheckout;
 }
 
 class _AppLocalizationsDelegate
