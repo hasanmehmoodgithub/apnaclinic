@@ -1,0 +1,23 @@
+---
+description: Flutter refactor standards (clean architecture + l10n + go_router)
+alwaysApply: true
+---
+
+# Flutter Clean Refactor Rule
+
+- Use existing clean architecture boundaries; keep business logic in Cubit/use-cases/domain, not widgets.
+- Use `go_router` only (`context.pop/go/pushNamed`); avoid `Navigator`.
+- Do not hardcode user-facing text; use `AppLocalizations.of(context)!`. If needed, add ARB keys and run `gen-l10n`.
+- Keep screen files thin: lifecycle -> `build` composition -> handlers/helpers.
+- Split UI by visual flow into small widgets in `presentation/widgets/`, one meaningful class per file.
+- Reuse app-level generic widgets in shared/core; keep feature-specific widgets inside feature.
+- Do not create shell wrapper widgets.
+- Prefer scoped rebuilds with `BlocSelector` or `BlocBuilder(buildWhen:)`.
+- Use dedicated loading/error/empty widgets; do not add extra screen-state enums.
+- Keep code DRY, reuse theme/spacing/shared components.
+- Do not hardcode colors in widgets; add colors to app color constants (e.g. `AppColors`) and reuse.
+- Prefer shared app text styles; move repeated styles into centralized app text style/theme utilities and reuse across the app.
+- Use-case convention: when a use-case needs input, always create a dedicated `Params` class and pass it through repository and data source layers.
+- For network images in UI, use `CachedNetworkImage` (with placeholder/error states) instead of raw `Image.network`.
+- Use generated asset constants from `generated/assets.dart` (`Assets.*`) instead of hardcoded asset string paths.
+- Comments should be short and explain why (only when needed).
