@@ -9,7 +9,8 @@ class GetPharmacyMedicinesParams {
 }
 
 class GetPharmacyMedicinesUseCase
-    implements UseCase<List<PharmacyMedicineEntity>, GetPharmacyMedicinesParams> {
+    implements
+        UseCase<List<PharmacyMedicineEntity>, GetPharmacyMedicinesParams> {
   GetPharmacyMedicinesUseCase({required this.repository});
 
   final PharmacyRepository repository;

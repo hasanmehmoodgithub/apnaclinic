@@ -5,7 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../../components/shimmer/app_shimmer.dart';
+import '../../../../core/constants/app_colors.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
+import '../../../../core/l10n/app_localizations.dart';
 import '../../../../generated/assets.dart';
 import '../../domain/entities/pharmacy_medicine_entity.dart';
 
@@ -21,13 +23,14 @@ class PharmacySelectedCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Column(
       children: [
         Container(
           height: 260.h,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(26.r),
-            color: const Color(0xFFE6EDF1),
+            color: AppColors.clrE6EDF1,
           ),
           clipBehavior: Clip.antiAlias,
           child: CachedNetworkImage(
@@ -42,12 +45,12 @@ class PharmacySelectedCard extends StatelessWidget {
             ),
             errorWidget: (context, url, error) {
               return Container(
-                color: const Color(0xFFE9EEF3),
+                color: AppColors.clrE9EEF3,
                 alignment: Alignment.center,
                 child: const Icon(
                   Icons.medication_rounded,
                   size: 52,
-                  color: Color(0xFF8091A8),
+                  color: AppColors.clr8091A8,
                 ),
               );
             },
@@ -69,8 +72,9 @@ class PharmacySelectedCard extends StatelessWidget {
                         SizedBox(height: 4.h),
                         Text(
                           featured.name,
-                          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                                color: const Color(0xFF061E40),
+                          style: Theme.of(context).textTheme.titleLarge
+                              ?.copyWith(
+                                color: AppColors.clr060,
                                 fontWeight: FontWeight.w700,
                                 fontSize: 12.sp,
                               ),
@@ -78,9 +82,10 @@ class PharmacySelectedCard extends StatelessWidget {
                         Align(
                           alignment: Alignment.topLeft,
                           child: Text(
-                            'Rs ${featured.price.toStringAsFixed(0)} /-',
-                            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                  color: const Color(0xFF4D5A70),
+                            '${l10n.pharmacyCurrencyPrefix}${featured.price.toStringAsFixed(0)} /-',
+                            style: Theme.of(context).textTheme.titleMedium
+                                ?.copyWith(
+                                  color: AppColors.clr4D5A70,
                                   fontSize: 13.sp,
                                   fontWeight: FontWeight.w500,
                                 ),
@@ -98,12 +103,15 @@ class PharmacySelectedCard extends StatelessWidget {
                 Assets.iconsBasket,
                 width: 15.r,
                 height: 15.r,
-                color: const Color(0xFF667B99),
+                colorFilter: const ColorFilter.mode(
+                  AppColors.clr667B99,
+                  BlendMode.srcIn,
+                ),
               ),
-              label: const Text('Add to cart'),
+              label: Text(l10n.pharmacyAddToCartLower),
               style: OutlinedButton.styleFrom(
-                side: const BorderSide(color: Color(0xFF9BA6A7), width: 0.8),
-                foregroundColor: const Color(0xFF061E40),
+                side: const BorderSide(color: AppColors.clr9BA6A7, width: 0.8),
+                foregroundColor: AppColors.clr060,
                 minimumSize: Size(0, 20.r),
                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 visualDensity: VisualDensity.compact,
@@ -119,10 +127,10 @@ class PharmacySelectedCard extends StatelessWidget {
         Text(
           featured.description,
           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: const Color(0xFF4A4A4A),
-                height: 1.2,
-                fontSize: 14.sp,
-              ),
+            color: AppColors.clr4A4A4A,
+            height: 1.2,
+            fontSize: 14.sp,
+          ),
         ),
       ],
     );
@@ -151,7 +159,7 @@ class _CompanyLogo extends StatelessWidget {
         width: 28,
         height: 28,
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: AppColors.clrWhite,
           borderRadius: BorderRadius.circular(8),
         ),
         clipBehavior: Clip.antiAlias,

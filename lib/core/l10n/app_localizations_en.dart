@@ -194,4 +194,177 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get profileSaveCta => 'Save';
+
+  @override
+  String get pharmacyScreenTitle => 'Pharmacy';
+
+  @override
+  String get pharmacyLoadError =>
+      'Unable to load medicines right now. Please try again in a moment.';
+
+  @override
+  String get pharmacyEmptyMedicines => 'No medicine found';
+
+  @override
+  String get pharmacyMainChooseMedicineTitle => 'Choose Medicine';
+
+  @override
+  String get pharmacyMainSearchHint => 'Search medicine..';
+
+  @override
+  String get pharmacyCartTitle => 'Cart';
+
+  @override
+  String get pharmacyCartEmpty => 'Your cart is empty';
+
+  @override
+  String get pharmacyCheckoutCta => 'Check Out';
+
+  @override
+  String get pharmacyCheckoutTitle => 'Check Out';
+
+  @override
+  String get pharmacyCheckoutPatientDetailTitle => 'Patient Detail';
+
+  @override
+  String get pharmacyCheckoutPatientLabel => 'Patient';
+
+  @override
+  String get pharmacyCheckoutPatientSelf => 'Self';
+
+  @override
+  String get pharmacyCheckoutSpecialInstructionsLabel => 'Special Instructions';
+
+  @override
+  String get pharmacyCheckoutSpecialInstructionsHint => '----';
+
+  @override
+  String get pharmacyCheckoutOrderDetailsTitle => 'Order Details';
+
+  @override
+  String get pharmacyCheckoutDeliveryChargesLabel => 'Delivery Charges';
+
+  @override
+  String get pharmacyCheckoutDiscountLabel => 'Discount (8%)';
+
+  @override
+  String get pharmacyCheckoutTotalLabel => 'Total';
+
+  @override
+  String get pharmacyCheckoutAddressLabel => 'Delivery address';
+
+  @override
+  String get pharmacyCheckoutAddressHint => 'Enter your address';
+
+  @override
+  String get pharmacyCheckoutCityLabel => 'Area / City *';
+
+  @override
+  String get pharmacyCheckoutPaymentMethodTitle => 'Payment Method';
+
+  @override
+  String get pharmacyCheckoutDisclaimerTitle => 'Disclaimer';
+
+  @override
+  String get pharmacyCheckoutDisclaimerMessage =>
+      'Sold and fulfilled by our Licensed Pharmacy Partner(s) \"MEDIQ PHARMACY\". License No. : 05-352-0070-053618P';
+
+  @override
+  String get pharmacyCheckoutDeliveryInfoMessage =>
+      'Orders will be delivered within 3 hours between 8:00 AM and 8:00 PM. Orders placed after 8:00 PM will be delivered by 12PM the following day.';
+
+  @override
+  String get pharmacyCheckoutDeliveryInfoFooter =>
+      'Orders below Rs 2500 will include delivery charges of Rs 250.';
+
+  @override
+  String get pharmacyCheckoutConfirmCta => 'Confirm';
+
+  @override
+  String get pharmacyOrderPlacedTitle => 'Order Placed';
+
+  @override
+  String get pharmacyOrderPlacedMessage =>
+      'Orders received b/w 8 AM - 8 PM will be delivered within 3 business hrs.';
+
+  @override
+  String get pharmacyOrderPlacedClose => 'Close';
+
+  @override
+  String get pharmacyPaymentJazzCash => 'Jazz Cash';
+
+  @override
+  String get pharmacyPaymentDebitCard => 'Debit / Credit Card';
+
+  @override
+  String get pharmacyPaymentCash => 'Pay via Cash';
+
+  @override
+  String get pharmacyCurrencyPrefix => 'Rs. ';
+
+  @override
+  String get onboardingSkip => 'Skip';
+
+  @override
+  String get onboardingNext => 'Next';
+
+  @override
+  String get onboardingDoctorConsultationTitle => 'Doctor Consultation';
+
+  @override
+  String get onboardingDoctorConsultationSubtitle =>
+      'Access to PMDC certified doctors';
+
+  @override
+  String get onboardingPharmacyTitle => 'Pharmacy';
+
+  @override
+  String get onboardingPharmacySubtitle =>
+      'Get authentic medicines at your doorstep.';
+
+  @override
+  String get onboardingLaboratoryTitle => 'Laboratory Testing';
+
+  @override
+  String get onboardingLaboratorySubtitle =>
+      'Access reliable lab tests with accurate results.';
+
+  @override
+  String get onboardingSurgeryTitle => 'Surgery Booking';
+
+  @override
+  String get onboardingSurgerySubtitle => 'Book your surgery with ease.';
+
+  @override
+  String get pharmacyMoreLike => 'More Like';
+
+  @override
+  String get pharmacyAddToCart => 'Add to Cart';
+
+  @override
+  String get pharmacyAddToCartLower => 'Add to cart';
+
+  @override
+  String get freeDoctorTitle => 'Free Doctor';
+
+  @override
+  String get freeDoctorOpenAppCta => 'Open Fikrfree app';
+
+  @override
+  String get freeDoctorOpenAppError => 'Could not open FikrFree right now.';
+
+  @override
+  String get freeDoctorConsultationTitle => '24/7 Free Doctor Consultation';
+
+  @override
+  String get freeDoctorPoint1 =>
+      'This service is available exclusively for Bima m-Health subscribers.';
+
+  @override
+  String get freeDoctorPoint2 =>
+      'Get 24/7 access to qualified doctors for general medical support and much more.';
+
+  @override
+  String get freeDoctorPoint3 =>
+      'To avail the service, subscribe to BIMA m-Health via FikrFree.';
 }

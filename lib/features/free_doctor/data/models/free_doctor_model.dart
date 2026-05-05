@@ -19,10 +19,8 @@ class FreeDoctorModel {
       descriptionPoints: (json['descriptionPoints'] as List<dynamic>? ?? [])
           .map((e) => e.toString())
           .toList(),
-      fikrfreeAndroidPackage:
-          (json['fikrfreeAndroidPackage'] ?? '').toString(),
-      fikrfreeIosAppStoreUrl:
-          (json['fikrfreeIosAppStoreUrl'] ?? '').toString(),
+      fikrfreeAndroidPackage: (json['fikrfreeAndroidPackage'] ?? '').toString(),
+      fikrfreeIosAppStoreUrl: (json['fikrfreeIosAppStoreUrl'] ?? '').toString(),
       fikrfreeWebUrl: (json['fikrfreeWebUrl'] ?? '').toString(),
     );
   }

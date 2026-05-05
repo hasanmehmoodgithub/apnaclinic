@@ -15,7 +15,7 @@ class PharmacyRepositoryImpl implements PharmacyRepository {
 
   @override
   Future<Either<ErrorMsg, List<PharmacyMedicineEntity>>>
-      getPharmacyMedicines() async {
+  getPharmacyMedicines() async {
     try {
       final model = await remoteDataSource.getPharmacyMedicines();
       final entities = PharmacyMedicineMapper.toEntityList(model);
@@ -27,7 +27,8 @@ class PharmacyRepositoryImpl implements PharmacyRepository {
   }
 
   @override
-  Future<Either<ErrorMsg, List<PharmacyCartItemEntity>>> getPharmacyCart() async {
+  Future<Either<ErrorMsg, List<PharmacyCartItemEntity>>>
+  getPharmacyCart() async {
     try {
       final model = await remoteDataSource.getPharmacyCart();
       final entities = PharmacyMedicineMapper.toCartItemEntityList(model);

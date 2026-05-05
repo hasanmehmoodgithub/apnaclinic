@@ -9,7 +9,7 @@ import 'free_doctor_state.dart';
 
 class FreeDoctorCubit extends Cubit<FreeDoctorState> {
   FreeDoctorCubit({required this.getContentUseCase})
-      : super(const FreeDoctorState()) {
+    : super(const FreeDoctorState()) {
     loadContent();
   }
 

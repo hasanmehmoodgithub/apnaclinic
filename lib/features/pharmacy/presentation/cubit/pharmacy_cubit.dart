@@ -13,8 +13,7 @@ class PharmacyCubit extends Cubit<PharmacyState> {
     required this.getPharmacyMedicinesUseCase,
     required this.getPharmacyCartUseCase,
     required this.addToCartUseCase,
-  })
-      : super(const PharmacyState()) {
+  }) : super(const PharmacyState()) {
     loadMedicines();
     loadCart();
   }
@@ -33,8 +32,9 @@ class PharmacyCubit extends Cubit<PharmacyState> {
       ),
     );
 
-    final result =
-        await getPharmacyMedicinesUseCase(const GetPharmacyMedicinesParams());
+    final result = await getPharmacyMedicinesUseCase(
+      const GetPharmacyMedicinesParams(),
+    );
     if (isClosed) return;
 
     result.fold(
@@ -46,8 +46,9 @@ class PharmacyCubit extends Cubit<PharmacyState> {
       ),
       (data) => emit(
         state.copyWith(
-          medicinesLoadingStateStatus:
-              data.isEmpty ? StateStatus.empty : StateStatus.success,
+          medicinesLoadingStateStatus: data.isEmpty
+              ? StateStatus.empty
+              : StateStatus.success,
           medicines: data,
           medicinesErrorMessage: null,
         ),
@@ -59,28 +60,30 @@ class PharmacyCubit extends Cubit<PharmacyState> {
     final result = await getPharmacyCartUseCase(const GetPharmacyCartParams());
     if (isClosed) return;
 
-    result.fold(
-      (_) {},
-      (items) => emit(state.copyWith(cartItems: items)),
-    );
+    result.fold((_) {}, (items) => emit(state.copyWith(cartItems: items)));
   }
 
   void addToCart(PharmacyMedicineEntity medicine, {int quantity = 1}) {
-    final existingIndex =
-        state.cartItems.indexWhere((item) => item.medicine.id == medicine.id);
+    final existingIndex = state.cartItems.indexWhere(
+      (item) => item.medicine.id == medicine.id,
+    );
     final items = [...state.cartItems];
 
     if (existingIndex >= 0) {
       final existing = items[existingIndex];
-      items[existingIndex] =
-          existing.copyWith(quantity: existing.quantity + quantity);
+      items[existingIndex] = existing.copyWith(
+        quantity: existing.quantity + quantity,
+      );
     } else {
       items.add(PharmacyCartItemEntity(medicine: medicine, quantity: quantity));
     }
     emit(state.copyWith(cartItems: items));
   }
 
-  Future<bool> addToCartApi(PharmacyMedicineEntity medicine, {int quantity = 1}) async {
+  Future<bool> addToCartApi(
+    PharmacyMedicineEntity medicine, {
+    int quantity = 1,
+  }) async {
     final result = await addToCartUseCase(
       AddToCartParams(medicineId: medicine.id, quantity: quantity),
     );
@@ -110,8 +113,9 @@ class PharmacyCubit extends Cubit<PharmacyState> {
   void removeFromCart(String medicineId) {
     emit(
       state.copyWith(
-        cartItems:
-            state.cartItems.where((item) => item.medicine.id != medicineId).toList(),
+        cartItems: state.cartItems
+            .where((item) => item.medicine.id != medicineId)
+            .toList(),
       ),
     );
   }

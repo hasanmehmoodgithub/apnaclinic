@@ -25,14 +25,10 @@ void initFreeDoctorInjector() {
   );
 
   sl.registerLazySingleton<GetFreeDoctorContentUseCase>(
-    () => GetFreeDoctorContentUseCase(
-      repository: sl<FreeDoctorRepository>(),
-    ),
+    () => GetFreeDoctorContentUseCase(repository: sl<FreeDoctorRepository>()),
   );
 
   sl.registerFactory<FreeDoctorCubit>(
-    () => FreeDoctorCubit(
-      getContentUseCase: sl<GetFreeDoctorContentUseCase>(),
-    ),
+    () => FreeDoctorCubit(getContentUseCase: sl<GetFreeDoctorContentUseCase>()),
   );
 }

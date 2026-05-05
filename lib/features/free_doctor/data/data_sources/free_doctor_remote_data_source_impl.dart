@@ -33,8 +33,8 @@ class FreeDoctorRemoteDataSourceImpl implements FreeDoctorRemoteDataSource {
         return Future.value(responseModel);
       }
 
-      final message =
-          (response['message'] ?? AppStrings.freeDoctorLoadError).toString();
+      final message = (response['message'] ?? AppStrings.freeDoctorLoadError)
+          .toString();
       return Future.error(message);
     } catch (e) {
       log('getFreeDoctorContent error: $e');

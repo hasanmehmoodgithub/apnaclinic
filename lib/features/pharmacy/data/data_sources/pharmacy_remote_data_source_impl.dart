@@ -32,8 +32,8 @@ class PharmacyRemoteDataSourceImpl implements PharmacyRemoteDataSource {
         return Future.value(PharmacyMedicinesResponseModel.fromJson(response));
       }
 
-      final message =
-          (response['message'] ?? AppStrings.pharmacyLoadError).toString();
+      final message = (response['message'] ?? AppStrings.pharmacyLoadError)
+          .toString();
       return Future.error(message);
     } catch (e) {
       final message = ErrorHandler.handleExceptions(
@@ -59,10 +59,14 @@ class PharmacyRemoteDataSourceImpl implements PharmacyRemoteDataSource {
         return Future.value(PharmacyCartResponseModel.fromJson(response));
       }
 
-      final message = (response['message'] ?? AppStrings.pharmacyLoadError).toString();
+      final message = (response['message'] ?? AppStrings.pharmacyLoadError)
+          .toString();
       return Future.error(message);
     } catch (e) {
-      final message = ErrorHandler.handleExceptions(e, endpoint: AppUrls.pharmacyCart);
+      final message = ErrorHandler.handleExceptions(
+        e,
+        endpoint: AppUrls.pharmacyCart,
+      );
       return Future.error(message);
     }
   }
@@ -82,10 +86,7 @@ class PharmacyRemoteDataSourceImpl implements PharmacyRemoteDataSource {
       } else {
         response = await apiService.post(
           AppUrls.pharmacyAddToCart,
-          data: {
-            'medicineId': medicineId,
-            'quantity': quantity,
-          },
+          data: {'medicineId': medicineId, 'quantity': quantity},
         );
         log('addToCart response: $response');
       }
@@ -94,10 +95,14 @@ class PharmacyRemoteDataSourceImpl implements PharmacyRemoteDataSource {
         return response;
       }
 
-      final message = (response['message'] ?? AppStrings.pharmacyLoadError).toString();
+      final message = (response['message'] ?? AppStrings.pharmacyLoadError)
+          .toString();
       return Future.error(message);
     } catch (e) {
-      final message = ErrorHandler.handleExceptions(e, endpoint: AppUrls.pharmacyAddToCart);
+      final message = ErrorHandler.handleExceptions(
+        e,
+        endpoint: AppUrls.pharmacyAddToCart,
+      );
       return Future.error(message);
     }
   }

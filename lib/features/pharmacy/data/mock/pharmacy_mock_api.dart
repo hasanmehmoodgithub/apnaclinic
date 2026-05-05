@@ -16,9 +16,9 @@ class PharmacyMockApi {
           'id': 'm1',
           'name': 'Bio-Col Tablets (Vitamin B12 + Folic Acid)',
           'description':
-          'Combination of Vitamin B12 (500mcg) and Folic Acid (400mcg) used for blood formation, energy boost, and prevention of anemia.',
+              'Combination of Vitamin B12 (500mcg) and Folic Acid (400mcg) used for blood formation, energy boost, and prevention of anemia.',
           'imageUrl':
-          'https://bio-labs.net/wp-content/uploads/2022/10/12-Bio-Col-Tabs.webp',
+              'https://bio-labs.net/wp-content/uploads/2022/10/12-Bio-Col-Tabs.webp',
           'companyUrl': _companyUrl,
           'price': 450.0,
           'oldPrice': 550.0,
@@ -33,9 +33,9 @@ class PharmacyMockApi {
           'id': 'm2',
           'name': 'Bio-D3 Ampoule',
           'description':
-          'Vitamin D3 injection used for bone health and deficiency treatment.',
+              'Vitamin D3 injection used for bone health and deficiency treatment.',
           'imageUrl':
-          'https://bio-labs.net/wp-content/uploads/2019/12/13-Bio-D3-Inj_.webp',
+              'https://bio-labs.net/wp-content/uploads/2019/12/13-Bio-D3-Inj_.webp',
           'companyUrl': _companyUrl,
           'price': 900.0,
           'oldPrice': 1100.0,
@@ -47,9 +47,9 @@ class PharmacyMockApi {
           'id': 'm3',
           'name': 'BIORIS Tablets 2mg',
           'description':
-          'Used for managing blood sugar levels in diabetes patients.',
+              'Used for managing blood sugar levels in diabetes patients.',
           'imageUrl':
-          'https://bio-labs.net/wp-content/uploads/2019/12/19-Bioris-2mg-Tabs-.webp',
+              'https://bio-labs.net/wp-content/uploads/2019/12/19-Bioris-2mg-Tabs-.webp',
           'companyUrl': _companyUrl,
           'price': 600.0,
           'oldPrice': 750.0,
@@ -61,9 +61,9 @@ class PharmacyMockApi {
           'id': 'm4',
           'name': 'Nextone Injection (Ceftriaxone)',
           'description':
-          'Broad-spectrum antibiotic injection used for severe infections.',
+              'Broad-spectrum antibiotic injection used for severe infections.',
           'imageUrl':
-          'https://bio-labs.net/wp-content/uploads/2024/01/75-72-74-mockup.webp',
+              'https://bio-labs.net/wp-content/uploads/2024/01/75-72-74-mockup.webp',
           'companyUrl': _companyUrl,
           'price': 1200.0,
           'oldPrice': 1400.0,
@@ -74,10 +74,9 @@ class PharmacyMockApi {
         {
           'id': 'm5',
           'name': 'O-ZEETINE Capsules 6/25MG',
-          'description':
-          'Used for gastric and acidity-related conditions.',
+          'description': 'Used for gastric and acidity-related conditions.',
           'imageUrl':
-          'https://bio-labs.net/wp-content/uploads/2024/01/75-72-74-mockup.webp',
+              'https://bio-labs.net/wp-content/uploads/2024/01/75-72-74-mockup.webp',
           'companyUrl': _companyUrl,
           'price': 800.0,
           'oldPrice': 950.0,
@@ -89,9 +88,9 @@ class PharmacyMockApi {
           'id': 'm6',
           'name': 'Vemtix Injection',
           'description':
-          'Used in treatment of nausea, vomiting, and chemotherapy side effects.',
+              'Used in treatment of nausea, vomiting, and chemotherapy side effects.',
           'imageUrl':
-          'https://bio-labs.net/wp-content/uploads/2024/11/Vemtix-8mg-Inj.png',
+              'https://bio-labs.net/wp-content/uploads/2024/11/Vemtix-8mg-Inj.png',
           'companyUrl': _companyUrl,
           'price': 1500.0,
           'oldPrice': 1800.0,
@@ -110,10 +109,10 @@ class PharmacyMockApi {
       'message': 'Cart fetched successfully',
       'cart': [
         {
-
           'id': 'm2',
           'name': 'Bio-D3 Ampoule',
-          'description': 'Vitamin D3 injection used for bone health and deficiency treatment.',
+          'description':
+              'Vitamin D3 injection used for bone health and deficiency treatment.',
           'imageUrl':
               'https://bio-labs.net/wp-content/uploads/2019/12/13-Bio-D3-Inj_.webp',
           'companyUrl': _companyUrl,

@@ -4,10 +4,7 @@ import '../../../../core/use_case/base_use_case.dart';
 import '../repositories/pharmacy_repository.dart';
 
 class AddToCartParams {
-  const AddToCartParams({
-    required this.medicineId,
-    required this.quantity,
-  });
+  const AddToCartParams({required this.medicineId, required this.quantity});
 
   final String medicineId;
   final int quantity;

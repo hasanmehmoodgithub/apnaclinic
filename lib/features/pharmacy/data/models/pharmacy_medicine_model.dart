@@ -57,10 +57,7 @@ class PharmacyMedicinesResponseModel {
 }
 
 class PharmacyCartItemModel {
-  const PharmacyCartItemModel({
-    required this.medicine,
-    required this.quantity,
-  });
+  const PharmacyCartItemModel({required this.medicine, required this.quantity});
 
   final PharmacyMedicineModel medicine;
   final int quantity;
@@ -89,7 +86,8 @@ class PharmacyCartResponseModel {
   final List<PharmacyCartItemModel> items;
 
   factory PharmacyCartResponseModel.fromJson(Map<String, dynamic> json) {
-    final rawList = json['cart'] ?? json['items'] ?? json['data'] ?? <dynamic>[];
+    final rawList =
+        json['cart'] ?? json['items'] ?? json['data'] ?? <dynamic>[];
     final list = (rawList is List ? rawList : <dynamic>[])
         .whereType<Map<String, dynamic>>()
         .map(PharmacyCartItemModel.fromJson)
