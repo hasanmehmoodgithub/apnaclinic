@@ -1,10 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../core/extensions/screen_util_extensions.dart';
+import '../../../../core/l10n/app_localizations.dart';
+import '../widgets/surgery_booking_details_header_widget.dart';
+import '../widgets/surgery_booking_patient_details_card_widget.dart';
+import '../widgets/surgery_booking_requirements_card_widget.dart';
 
 
 enum SurgeryBookingStatus { inReview, paymentPending, confirmed }
+
+class SurgeryBookingDetailsArgs {
+  const SurgeryBookingDetailsArgs({
+    required this.item,
+    required this.initialStatus,
+  });
+
+  final SurgeryDetailsItem item;
+  final SurgeryBookingStatus initialStatus;
+}
 
 class SurgeryDetailsItem {
   final String procedure;
@@ -142,6 +157,7 @@ class _SurgeryDetailsScreenState extends State<SurgeryDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final textTheme = Theme.of(context).textTheme;
     final showCheckout = _status == SurgeryBookingStatus.paymentPending;
 
@@ -165,7 +181,7 @@ class _SurgeryDetailsScreenState extends State<SurgeryDetailsScreen> {
           bottom: false,
           child: Column(
             children: [
-              _buildAppBar(textTheme),
+              const SurgeryBookingDetailsHeaderWidget(),
               Expanded(
                 child: ListView(
                   padding: EdgeInsets.fromLTRB(
@@ -177,7 +193,7 @@ class _SurgeryDetailsScreenState extends State<SurgeryDetailsScreen> {
                   children: [
                     _buildSurgeryCard(textTheme),
                     SizedBox(height: 14.h),
-                    _buildRequirementsCard(textTheme),
+                    const SurgeryBookingRequirementsCardWidget(),
                     if (_status == SurgeryBookingStatus.paymentPending ||
                         _status == SurgeryBookingStatus.confirmed) ...[
                       SizedBox(height: 14.h),
@@ -186,7 +202,7 @@ class _SurgeryDetailsScreenState extends State<SurgeryDetailsScreen> {
                       _buildRepresentativeNote(textTheme),
                     ],
                     SizedBox(height: 14.h),
-                    _buildPatientDetailsCard(textTheme),
+                    SurgeryBookingPatientDetailsCardWidget(item: widget.item),
                     SizedBox(height: 14.h),
                     _buildPaymentDetailsCard(textTheme),
                     if (_status == SurgeryBookingStatus.inReview) ...[
@@ -219,7 +235,7 @@ class _SurgeryDetailsScreenState extends State<SurgeryDetailsScreen> {
                 ),
               ),
               child: Text(
-                'Proceed Checkout',
+                l10n.bookingsProceedCheckoutCta,
                 style: textTheme.titleMedium?.copyWith(
                   color: Colors.white,
                   fontSize: 16.sp,
@@ -231,37 +247,6 @@ class _SurgeryDetailsScreenState extends State<SurgeryDetailsScreen> {
         ),
       )
           : null,
-    );
-  }
-
-  // ─────────────── App Bar ───────────────
-  Widget _buildAppBar(TextTheme textTheme) {
-    return Padding(
-      padding: EdgeInsets.fromLTRB(8.w, 8.h, 8.w, 12.h),
-      child: Row(
-        children: [
-          IconButton(
-            onPressed: () => Navigator.of(context).maybePop(),
-            icon: Icon(Icons.arrow_back,
-                color: const Color(0xFF061E40), size: 22.r),
-          ),
-          Expanded(
-            child: Center(
-              child: Padding(
-                padding: EdgeInsets.only(right: 40.w),
-                child: Text(
-                  'My Bookings',
-                  style: textTheme.titleLarge?.copyWith(
-                    color: const Color(0xFF061E40),
-                    fontSize: 20.sp,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
     );
   }
 
@@ -506,54 +491,6 @@ class _SurgeryDetailsScreenState extends State<SurgeryDetailsScreen> {
   }
 
   // ─────────────── Requirements Card ───────────────
-  Widget _buildRequirementsCard(TextTheme textTheme) {
-    final items = [
-      'Fast for 9-12 Hours before Appointment time',
-      'Avoid Stenious Physical Activ ity the day of the appointment',
-      'Ensure that you are NOTtaking any antibiotic medication course',
-    ];
-    return _SectionCard(
-      title: 'Requirements',
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: List.generate(items.length, (i) {
-          return Padding(
-            padding: EdgeInsets.only(
-              top: i == 0 ? 4.h : 10.h,
-            ),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(
-                  width: 24.w,
-                  child: Text(
-                    '${i + 1}.',
-                    style: textTheme.bodyMedium?.copyWith(
-                      color: const Color(0xFF061E40),
-                      fontSize: 12.sp,
-                      fontWeight: FontWeight.w400,
-                    ),
-                  ),
-                ),
-                Expanded(
-                  child: Text(
-                    items[i],
-                    style: textTheme.bodyMedium?.copyWith(
-                      color: const Color(0xFF061E40),
-                      fontSize: 12.sp,
-                      fontWeight: FontWeight.w400,
-                      height: 1.2,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          );
-        }),
-      ),
-    );
-  }
-
   // ─────────────── Appointment Details Card ───────────────
   Widget _buildAppointmentDetailsCard(TextTheme textTheme) {
     return Container(
@@ -693,24 +630,6 @@ class _SurgeryDetailsScreenState extends State<SurgeryDetailsScreen> {
           ),
           Icon(Icons.error_outline,
               size: 18.r, color: const Color(0xFF061E40)),
-        ],
-      ),
-    );
-  }
-
-  // ─────────────── Patient Details Card ───────────────
-  Widget _buildPatientDetailsCard(TextTheme textTheme) {
-    return _SectionCard(
-      title: 'Patient Details',
-      child: Column(
-        children: [
-          _kvRow('Patient Name', widget.item.patientName, textTheme),
-          _divider(),
-          _kvRow('Age', '${widget.item.age}', textTheme),
-          _divider(),
-          _kvRow('Contact Number', widget.item.contactNumber, textTheme),
-          _divider(),
-          _kvRow('Emergency Contact', widget.item.emergencyContact, textTheme),
         ],
       ),
     );
@@ -919,41 +838,6 @@ class _SurgeryDetailsScreenState extends State<SurgeryDetailsScreen> {
   }
 
   // ─────────────── Helpers ───────────────
-  Widget _divider() => Container(
-    height: 0.6,
-    margin: EdgeInsets.symmetric(vertical: 6.h),
-    color: const Color(0xFFE2E8EE),
-  );
-
-  Widget _kvRow(String key, String value, TextTheme textTheme,
-      {bool valueIsAccent = false}) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Expanded(
-          child: Text(
-            key,
-            style: textTheme.bodyMedium?.copyWith(
-              color: const Color(0xFF8593A8),
-              fontSize: 12.sp,
-              fontWeight: FontWeight.w400,
-            ),
-          ),
-        ),
-        Text(
-          value,
-          style: textTheme.bodyMedium?.copyWith(
-            color: valueIsAccent
-                ? const Color(0xFF061E40)
-                : const Color(0xFF061E40),
-            fontSize: 12.sp,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-      ],
-    );
-  }
-
   String _formatNumber(int n) {
     final s = n.toString();
     final buf = StringBuffer();
@@ -963,48 +847,6 @@ class _SurgeryDetailsScreenState extends State<SurgeryDetailsScreen> {
       if (reverseIndex > 1 && reverseIndex % 3 == 1) buf.write(',');
     }
     return buf.toString();
-  }
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-//  Section Card  (white rounded card with title)
-// ─────────────────────────────────────────────────────────────────────────────
-class _SectionCard extends StatelessWidget {
-  final String title;
-  final Widget child;
-  const _SectionCard({required this.title, required this.child});
-
-  @override
-  Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-    return Container(
-      padding: EdgeInsets.fromLTRB(12.w, 12.h, 16.w, 16.h),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(14.r),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x0F053453),
-            blurRadius: 16,
-            offset: Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            title,
-            style: textTheme.titleMedium?.copyWith(
-              color: const Color(0xFF061E40),
-              fontSize: 14.sp,
-            ),
-          ),
-          SizedBox(height: 12.h),
-          child,
-        ],
-      ),
-    );
   }
 }
 
@@ -1131,7 +973,7 @@ class _PaymentMethodSheetState extends State<_PaymentMethodSheet> {
                 width: double.infinity,
                 height: 54.h,
                 child: ElevatedButton(
-                  onPressed: () => Navigator.of(context).pop(_selected),
+                  onPressed: () => context.pop(_selected),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF1AB6A1),
                     foregroundColor: Colors.white,
@@ -1301,7 +1143,7 @@ class _AlertDialogCard extends StatelessWidget {
               width: double.infinity,
               height: 52.h,
               child: ElevatedButton(
-                onPressed: () => Navigator.of(context).pop(),
+                onPressed: () => context.pop(),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF1AB6A1),
                   foregroundColor: Colors.white,
@@ -1323,31 +1165,6 @@ class _AlertDialogCard extends StatelessWidget {
           ],
         ),
       ),
-    );
-  }
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-//  Safe SVG loader — falls back to a Flutter icon if asset is missing
-//  (so the screen still renders cleanly during development)
-// ─────────────────────────────────────────────────────────────────────────────
-class _SafeSvg extends StatelessWidget {
-  final String asset;
-  final double size;
-  final Widget fallback;
-  const _SafeSvg({
-    required this.asset,
-    required this.size,
-    required this.fallback,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return SvgPicture.asset(
-      asset,
-      width: size,
-      height: size,
-      placeholderBuilder: (_) => fallback,
     );
   }
 }

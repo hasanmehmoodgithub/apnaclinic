@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../components/shimmer/app_shimmer.dart';
 import '../../../../core/di/dependency_injection.dart';
 
 import '../../../../core/extensions/screen_util_extensions.dart';
+import '../../../../core/l10n/app_localizations.dart';
 import '../../data/mock/consultation_categories_mock_api.dart';
 import '../../data/mock/consultation_doctors_mock_api.dart';
 import '../constants/consultation_ui_config.dart';
@@ -13,6 +14,8 @@ import '../widgets/results_doctor_item.dart';
 import '../widgets/results_filter_button.dart';
 import '../widgets/results_search_field.dart';
 import '../widgets/results_select_categories_dialog.dart';
+import '../widgets/consultation_screen_header_widget.dart';
+import '../widgets/consultation_hero_banner_widget.dart';
 
 class DoctorConsultationResultsScreen extends StatefulWidget {
   final String selectedCategory;
@@ -113,6 +116,7 @@ class _DoctorConsultationResultsScreenState
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     if (_isLoading) {
       return _buildFullScreenShimmer(context);
     }
@@ -143,75 +147,16 @@ class _DoctorConsultationResultsScreenState
         child: SafeArea(
           child: Column(
             children: [
-              Padding(
-                padding: EdgeInsets.fromLTRB(22.w, 8.h, 22.w, 8.h),
-                child: Row(
-                  children: [
-                    GestureDetector(
-                      behavior: HitTestBehavior.opaque,
-                      onTap: () => Navigator.of(context).pop(),
-                      child: SizedBox(
-                        width: 24.w,
-                        height: 24.h,
-                        child: Center(
-                          child: SvgPicture.asset(
-                            ConsultationUiConfig.backArrowAsset,
-                            width: 18.w,
-                            height: 18.h,
-                            fit: BoxFit.contain,
-                            colorFilter: const ColorFilter.mode(
-                              ConsultationUiConfig.primaryText,
-                              BlendMode.srcIn,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      child: Text(
-                        'Specialist',
-                        textAlign: TextAlign.center,
-                        style: textTheme.titleLarge?.copyWith(
-                          color: ConsultationUiConfig.primaryText,
-                          fontWeight: FontWeight.w700,
-                          fontSize: 20.sp,
-                        ),
-                      ),
-                    ),
-                    SizedBox(width: 24.w),
-                  ],
-                ),
+              ConsultationScreenHeaderWidget(
+                title: l10n.consultationSpecialistTitle,
+                onBackTap: context.pop,
               ),
-              SizedBox(
-                height: 178.h,
-                child: Center(
-                  child: SizedBox(
-                    width: 240.w,
-                    height: 178.h,
-                    child: Stack(
-                      alignment: Alignment.topCenter,
-                      children: [
-                        Positioned(
-                          top: 2.h,
-                          child: SvgPicture.asset(
-                            ConsultationUiConfig.heroVectorAsset,
-                            width: 238.w,
-                            height: 172.h,
-                            fit: BoxFit.contain,
-                          ),
-                        ),
-                        Positioned(
-                          top: 0,
-                          child: Image.asset(
-                            ConsultationUiConfig.heroDoctorAsset,
-                            width: 188.w,
-                            height: 177.h,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+              ConsultationHeroBannerWidget(
+                doctorImage: Image.asset(
+                  ConsultationUiConfig.heroDoctorAsset,
+                  width: 188.w,
+                  height: 177.h,
+                  fit: BoxFit.cover,
                 ),
               ),
               Expanded(
@@ -289,6 +234,7 @@ class _DoctorConsultationResultsScreenState
   }
 
   Widget _buildFullScreenShimmer(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       body: DecoratedBox(
         decoration: const BoxDecoration(
@@ -305,44 +251,9 @@ class _DoctorConsultationResultsScreenState
         child: SafeArea(
           child: Column(
             children: [
-              Padding(
-                padding: EdgeInsets.fromLTRB(22.w, 8.h, 22.w, 8.h),
-                child: Row(
-                  children: [
-                    GestureDetector(
-                      behavior: HitTestBehavior.opaque,
-                      onTap: () => Navigator.of(context).pop(),
-                      child: SizedBox(
-                        width: 24.w,
-                        height: 24.h,
-                        child: Center(
-                          child: SvgPicture.asset(
-                            ConsultationUiConfig.backArrowAsset,
-                            width: 18.w,
-                            height: 18.h,
-                            fit: BoxFit.contain,
-                            colorFilter: const ColorFilter.mode(
-                              ConsultationUiConfig.primaryText,
-                              BlendMode.srcIn,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      child: Text(
-                        'Specialist',
-                        textAlign: TextAlign.center,
-                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                          color: ConsultationUiConfig.primaryText,
-                          fontWeight: FontWeight.w700,
-                          fontSize: 20.sp,
-                        ),
-                      ),
-                    ),
-                    SizedBox(width: 24.w),
-                  ],
-                ),
+              ConsultationScreenHeaderWidget(
+                title: l10n.consultationSpecialistTitle,
+                onBackTap: context.pop,
               ),
               SizedBox(height: 8.h),
               AppShimmerCard(

@@ -23,6 +23,7 @@ class AppRoutes {
   static const String pharmacyCheckout = 'pharmacyCheckout';
   static const String search = 'search';
   static const String surgery = 'surgery';
+  static const String surgeryBookingDetails = 'surgery-booking-details';
   static const String addAccount = 'add-account';
   static const String accountDetails = 'account-details';
   static const String aiScreening = 'ai-screening';

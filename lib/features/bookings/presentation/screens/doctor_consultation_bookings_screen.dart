@@ -1,11 +1,7 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
-
-import 'package:flutter/material.dart';
-import '../../../../core/extensions/screen_util_extensions.dart';
-
-import 'package:flutter/material.dart';
-import '../../../../core/extensions/screen_util_extensions.dart';
+import '../../../../core/l10n/app_localizations.dart';
 
 class DoctorConsultationBookingsScreen extends StatelessWidget {
   const DoctorConsultationBookingsScreen({super.key});
@@ -60,11 +56,12 @@ class DoctorConsultationBookingsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final textTheme = Theme.of(context).textTheme;
     return ListView.separated(
       padding: EdgeInsets.fromLTRB(0, 20.h, 0, 8.h),
       itemBuilder: (context, index) =>
-          _DoctorBookingCard(item: _items[index], textTheme: textTheme),
+          _DoctorBookingCard(item: _items[index], textTheme: textTheme, l10n: l10n),
       separatorBuilder: (_, __) => SizedBox(height: 14.h),
       itemCount: _items.length,
     );
@@ -72,10 +69,15 @@ class DoctorConsultationBookingsScreen extends StatelessWidget {
 }
 
 class _DoctorBookingCard extends StatelessWidget {
-  const _DoctorBookingCard({required this.item, required this.textTheme});
+  const _DoctorBookingCard({
+    required this.item,
+    required this.textTheme,
+    required this.l10n,
+  });
 
   final _DoctorBookingItem item;
   final TextTheme textTheme;
+  final AppLocalizations l10n;
 
   static const String _partnerLogoUrl =
       'https://www.figma.com/api/mcp/asset/705ed652-7c25-48fd-916b-375e85a43137';
@@ -110,10 +112,13 @@ class _DoctorBookingCard extends StatelessWidget {
               ),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(10.r),
-                child: Image.network(
-                  item.doctorImageUrl,
+                child: CachedNetworkImage(
+                  imageUrl: item.doctorImageUrl,
                   fit: BoxFit.cover,
-                  errorBuilder: (_, __, ___) => const Icon(
+                  placeholder: (_, __) => const Center(
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  ),
+                  errorWidget: (_, __, ___) => const Icon(
                     Icons.person_rounded,
                     color: Color(0xFFBFC7CF),
                     size: 40,
@@ -201,7 +206,7 @@ class _DoctorBookingCard extends StatelessWidget {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Text(
-                                'Status:',
+                                '${l10n.bookingsStatusLabel}:',
                                 style: textTheme.bodySmall?.copyWith(
                                   color: const Color(0xFF667B99),
                                   fontSize: 11.sp,
@@ -248,7 +253,7 @@ class _DoctorBookingCard extends StatelessWidget {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Text(
-                                'Fee',
+                                l10n.bookingsFeeLabel,
                                 style: textTheme.bodySmall?.copyWith(
                                   color: const Color(0xFF667B99),
                                   fontSize: 11.sp,
@@ -340,7 +345,7 @@ class _DoctorBookingCard extends StatelessWidget {
                         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       ),
                       child: Text(
-                        'View details',
+                        l10n.bookingsViewDetailsCta,
                         style: textTheme.bodySmall?.copyWith(
                           color: const Color(0xFF061E40),
                           fontSize: 12.sp,
@@ -418,10 +423,11 @@ class _NetAsset extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Image.network(
-      url,
+    return CachedNetworkImage(
+      imageUrl: url,
       fit: fit,
-      errorBuilder: (_, __, ___) => const SizedBox.shrink(),
+      placeholder: (_, __) => const SizedBox.shrink(),
+      errorWidget: (_, __, ___) => const SizedBox.shrink(),
     );
   }
 }

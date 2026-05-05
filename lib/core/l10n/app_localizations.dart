@@ -1711,6 +1711,246 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Book Lab Test'**
   String get labTestBookCta;
+
+  /// No description provided for @consultationAiScreeningTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'AI Screening'**
+  String get consultationAiScreeningTitle;
+
+  /// No description provided for @consultationAiWelcomePrefix.
+  ///
+  /// In en, this message translates to:
+  /// **'Hello, welcome to '**
+  String get consultationAiWelcomePrefix;
+
+  /// No description provided for @consultationAiWelcomeSuffix.
+  ///
+  /// In en, this message translates to:
+  /// **' , let\'s get started'**
+  String get consultationAiWelcomeSuffix;
+
+  /// No description provided for @consultationAiStartCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Let\'s Start'**
+  String get consultationAiStartCta;
+
+  /// No description provided for @consultationSelectCategoriesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Categories'**
+  String get consultationSelectCategoriesTitle;
+
+  /// No description provided for @consultationSpecialistTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Specialist'**
+  String get consultationSpecialistTitle;
+
+  /// No description provided for @consultationVideoBookingPrompt.
+  ///
+  /// In en, this message translates to:
+  /// **'Book your video consultation here!'**
+  String get consultationVideoBookingPrompt;
+
+  /// No description provided for @consultationGetAppointmentCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Get Appointment'**
+  String get consultationGetAppointmentCta;
+
+  /// No description provided for @consultationBookingConfirmedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Appointment Confirmed!'**
+  String get consultationBookingConfirmedTitle;
+
+  /// No description provided for @consultationBookingConfirmedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Your consultation has been booked with {doctorName}. You can join the call from Appointments.'**
+  String consultationBookingConfirmedMessage(Object doctorName);
+
+  /// No description provided for @commonOk.
+  ///
+  /// In en, this message translates to:
+  /// **'OK'**
+  String get commonOk;
+
+  /// No description provided for @consultationUploadDocumentTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload Document'**
+  String get consultationUploadDocumentTitle;
+
+  /// No description provided for @consultationUseCamera.
+  ///
+  /// In en, this message translates to:
+  /// **'Use camera'**
+  String get consultationUseCamera;
+
+  /// No description provided for @consultationUploadFromGallery.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload from gallery'**
+  String get consultationUploadFromGallery;
+
+  /// No description provided for @consultationUploadFromFile.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload from File'**
+  String get consultationUploadFromFile;
+
+  /// No description provided for @consultationCameraUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Camera access is unavailable right now.'**
+  String get consultationCameraUnavailable;
+
+  /// No description provided for @consultationCaptureMediaFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not capture media. Please try again.'**
+  String get consultationCaptureMediaFailed;
+
+  /// No description provided for @consultationGalleryUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Gallery access is unavailable right now.'**
+  String get consultationGalleryUnavailable;
+
+  /// No description provided for @consultationPickGalleryFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not pick media from gallery.'**
+  String get consultationPickGalleryFailed;
+
+  /// No description provided for @consultationPickFileFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not pick file. Please try again.'**
+  String get consultationPickFileFailed;
+
+  /// No description provided for @bookingsDashboardTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'My Bookings'**
+  String get bookingsDashboardTitle;
+
+  /// No description provided for @bookingsTabDoctorConsultation.
+  ///
+  /// In en, this message translates to:
+  /// **'Doctor Consultation'**
+  String get bookingsTabDoctorConsultation;
+
+  /// No description provided for @bookingsTabSurgery.
+  ///
+  /// In en, this message translates to:
+  /// **'Surgery'**
+  String get bookingsTabSurgery;
+
+  /// No description provided for @bookingsTabLabTest.
+  ///
+  /// In en, this message translates to:
+  /// **'Lab Test'**
+  String get bookingsTabLabTest;
+
+  /// No description provided for @bookingsTabPharmacy.
+  ///
+  /// In en, this message translates to:
+  /// **'Pharmacy'**
+  String get bookingsTabPharmacy;
+
+  /// No description provided for @bookingsLabTestEmptyDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'No lab test bookings yet.'**
+  String get bookingsLabTestEmptyDescription;
+
+  /// No description provided for @bookingsStatusLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Status'**
+  String get bookingsStatusLabel;
+
+  /// No description provided for @bookingsDateLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Date'**
+  String get bookingsDateLabel;
+
+  /// No description provided for @bookingsDateCreatedLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Date Created'**
+  String get bookingsDateCreatedLabel;
+
+  /// No description provided for @bookingsViewDetailsCta.
+  ///
+  /// In en, this message translates to:
+  /// **'View Details'**
+  String get bookingsViewDetailsCta;
+
+  /// No description provided for @bookingsFeeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Fee'**
+  String get bookingsFeeLabel;
+
+  /// No description provided for @bookingsTotalLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Total'**
+  String get bookingsTotalLabel;
+
+  /// No description provided for @bookingsSurgeryProcedureSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Photorefractive keratectomy Surgery'**
+  String get bookingsSurgeryProcedureSubtitle;
+
+  /// No description provided for @bookingsSurgeryPatientName.
+  ///
+  /// In en, this message translates to:
+  /// **'Haseeb Qasim'**
+  String get bookingsSurgeryPatientName;
+
+  /// No description provided for @bookingsProceedCheckoutCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Proceed Checkout'**
+  String get bookingsProceedCheckoutCta;
+
+  /// No description provided for @bookingsRequirementsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Requirements'**
+  String get bookingsRequirementsTitle;
+
+  /// No description provided for @bookingsSurgeryRequirement1.
+  ///
+  /// In en, this message translates to:
+  /// **'Fast for 9-12 Hours before Appointment time'**
+  String get bookingsSurgeryRequirement1;
+
+  /// No description provided for @bookingsSurgeryRequirement2.
+  ///
+  /// In en, this message translates to:
+  /// **'Avoid Stenious Physical Activ ity the day of the appointment'**
+  String get bookingsSurgeryRequirement2;
+
+  /// No description provided for @bookingsSurgeryRequirement3.
+  ///
+  /// In en, this message translates to:
+  /// **'Ensure that you are NOTtaking any antibiotic medication course'**
+  String get bookingsSurgeryRequirement3;
+
+  /// No description provided for @labTestSampleTypeBlood.
+  ///
+  /// In en, this message translates to:
+  /// **'Blood'**
+  String get labTestSampleTypeBlood;
 }
 
 class _AppLocalizationsDelegate

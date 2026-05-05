@@ -848,4 +848,136 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get labTestBookCta => 'Book Lab Test';
+
+  @override
+  String get consultationAiScreeningTitle => 'AI Screening';
+
+  @override
+  String get consultationAiWelcomePrefix => 'Hello, welcome to ';
+
+  @override
+  String get consultationAiWelcomeSuffix => ' , let\'s get started';
+
+  @override
+  String get consultationAiStartCta => 'Let\'s Start';
+
+  @override
+  String get consultationSelectCategoriesTitle => 'Select Categories';
+
+  @override
+  String get consultationSpecialistTitle => 'Specialist';
+
+  @override
+  String get consultationVideoBookingPrompt =>
+      'Book your video consultation here!';
+
+  @override
+  String get consultationGetAppointmentCta => 'Get Appointment';
+
+  @override
+  String get consultationBookingConfirmedTitle => 'Appointment Confirmed!';
+
+  @override
+  String consultationBookingConfirmedMessage(Object doctorName) {
+    return 'Your consultation has been booked with $doctorName. You can join the call from Appointments.';
+  }
+
+  @override
+  String get commonOk => 'OK';
+
+  @override
+  String get consultationUploadDocumentTitle => 'Upload Document';
+
+  @override
+  String get consultationUseCamera => 'Use camera';
+
+  @override
+  String get consultationUploadFromGallery => 'Upload from gallery';
+
+  @override
+  String get consultationUploadFromFile => 'Upload from File';
+
+  @override
+  String get consultationCameraUnavailable =>
+      'Camera access is unavailable right now.';
+
+  @override
+  String get consultationCaptureMediaFailed =>
+      'Could not capture media. Please try again.';
+
+  @override
+  String get consultationGalleryUnavailable =>
+      'Gallery access is unavailable right now.';
+
+  @override
+  String get consultationPickGalleryFailed =>
+      'Could not pick media from gallery.';
+
+  @override
+  String get consultationPickFileFailed =>
+      'Could not pick file. Please try again.';
+
+  @override
+  String get bookingsDashboardTitle => 'My Bookings';
+
+  @override
+  String get bookingsTabDoctorConsultation => 'Doctor Consultation';
+
+  @override
+  String get bookingsTabSurgery => 'Surgery';
+
+  @override
+  String get bookingsTabLabTest => 'Lab Test';
+
+  @override
+  String get bookingsTabPharmacy => 'Pharmacy';
+
+  @override
+  String get bookingsLabTestEmptyDescription => 'No lab test bookings yet.';
+
+  @override
+  String get bookingsStatusLabel => 'Status';
+
+  @override
+  String get bookingsDateLabel => 'Date';
+
+  @override
+  String get bookingsDateCreatedLabel => 'Date Created';
+
+  @override
+  String get bookingsViewDetailsCta => 'View Details';
+
+  @override
+  String get bookingsFeeLabel => 'Fee';
+
+  @override
+  String get bookingsTotalLabel => 'Total';
+
+  @override
+  String get bookingsSurgeryProcedureSubtitle =>
+      'Photorefractive keratectomy Surgery';
+
+  @override
+  String get bookingsSurgeryPatientName => 'Haseeb Qasim';
+
+  @override
+  String get bookingsProceedCheckoutCta => 'Proceed Checkout';
+
+  @override
+  String get bookingsRequirementsTitle => 'Requirements';
+
+  @override
+  String get bookingsSurgeryRequirement1 =>
+      'Fast for 9-12 Hours before Appointment time';
+
+  @override
+  String get bookingsSurgeryRequirement2 =>
+      'Avoid Stenious Physical Activ ity the day of the appointment';
+
+  @override
+  String get bookingsSurgeryRequirement3 =>
+      'Ensure that you are NOTtaking any antibiotic medication course';
+
+  @override
+  String get labTestSampleTypeBlood => 'Blood';
 }
