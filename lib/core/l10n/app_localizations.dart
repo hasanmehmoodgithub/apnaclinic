@@ -1214,6 +1214,42 @@ abstract class AppLocalizations {
   /// **'Unable to load notifications. Pull to refresh or try again.'**
   String get notificationsLoadError;
 
+  /// No description provided for @searchScreenTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Search'**
+  String get searchScreenTitle;
+
+  /// No description provided for @searchListeningHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Listening...'**
+  String get searchListeningHint;
+
+  /// No description provided for @searchRecentSearchesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent Searches'**
+  String get searchRecentSearchesTitle;
+
+  /// No description provided for @searchPopularSearchesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Popular Searches'**
+  String get searchPopularSearchesTitle;
+
+  /// No description provided for @searchSeeAllCta.
+  ///
+  /// In en, this message translates to:
+  /// **'See All'**
+  String get searchSeeAllCta;
+
+  /// No description provided for @searchForQuery.
+  ///
+  /// In en, this message translates to:
+  /// **'Search for \"{query}\"'**
+  String searchForQuery(String query);
+
   /// Title for the lab test browse screen app bar
   ///
   /// In en, this message translates to:

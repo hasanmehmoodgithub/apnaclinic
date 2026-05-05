@@ -592,6 +592,26 @@ class AppLocalizationsEn extends AppLocalizations {
       'Unable to load notifications. Pull to refresh or try again.';
 
   @override
+  String get searchScreenTitle => 'Search';
+
+  @override
+  String get searchListeningHint => 'Listening...';
+
+  @override
+  String get searchRecentSearchesTitle => 'Recent Searches';
+
+  @override
+  String get searchPopularSearchesTitle => 'Popular Searches';
+
+  @override
+  String get searchSeeAllCta => 'See All';
+
+  @override
+  String searchForQuery(String query) {
+    return 'Search for \"$query\"';
+  }
+
+  @override
   String get labTestScreenTitle => 'Lab Test';
 
   @override

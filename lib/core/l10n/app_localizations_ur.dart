@@ -593,6 +593,26 @@ class AppLocalizationsUr extends AppLocalizations {
       'نوٹیفیکیشنز لوڈ نہیں ہو سکیں۔ ریفریش کریں یا دوبارہ کوشش کریں۔';
 
   @override
+  String get searchScreenTitle => 'تلاش';
+
+  @override
+  String get searchListeningHint => 'سن رہا ہے...';
+
+  @override
+  String get searchRecentSearchesTitle => 'حالیہ تلاشیں';
+
+  @override
+  String get searchPopularSearchesTitle => 'مقبول تلاشیں';
+
+  @override
+  String get searchSeeAllCta => 'سب دیکھیں';
+
+  @override
+  String searchForQuery(String query) {
+    return '\"$query\" تلاش کریں';
+  }
+
+  @override
   String get labTestScreenTitle => 'لیب ٹیسٹ';
 
   @override

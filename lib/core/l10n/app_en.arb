@@ -272,6 +272,19 @@
   "notificationsRetryCta": "Retry",
   "notificationsEmptyTitle": "No Notifications Yet!",
   "notificationsLoadError": "Unable to load notifications. Pull to refresh or try again.",
+  "searchScreenTitle": "Search",
+  "searchListeningHint": "Listening...",
+  "searchRecentSearchesTitle": "Recent Searches",
+  "searchPopularSearchesTitle": "Popular Searches",
+  "searchSeeAllCta": "See All",
+  "searchForQuery": "Search for \"{query}\"",
+  "@searchForQuery": {
+    "placeholders": {
+      "query": {
+        "type": "String"
+      }
+    }
+  },
   "labTestScreenTitle": "Lab Test",
   "@labTestScreenTitle": {
     "description": "Title for the lab test browse screen app bar"
