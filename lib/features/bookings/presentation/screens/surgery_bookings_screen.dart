@@ -5,6 +5,7 @@ import 'package:flutter_svg/svg.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/router/app_routes.dart';
+import '../../data/models/surgery_details_item.dart';
 
 class SurgeryBookingsScreen extends StatelessWidget {
   const SurgeryBookingsScreen({super.key});

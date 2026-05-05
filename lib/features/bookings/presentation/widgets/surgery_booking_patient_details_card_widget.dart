@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
-import '../screens/surgery_booking_details_screen.dart';
+import '../../data/models/surgery_details_item.dart';
 
 class SurgeryBookingPatientDetailsCardWidget extends StatelessWidget {
   const SurgeryBookingPatientDetailsCardWidget({
