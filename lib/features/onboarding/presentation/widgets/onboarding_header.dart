@@ -6,10 +6,12 @@ class OnboardingHeader extends StatelessWidget {
   const OnboardingHeader({
     super.key,
     required this.scale,
+    required this.skipLabel,
     required this.onSkip,
   });
 
   final double scale;
+  final String skipLabel;
   final VoidCallback onSkip;
 
   @override
@@ -31,7 +33,7 @@ class OnboardingHeader extends StatelessWidget {
               minimumSize: Size(37.w * scale, 20.h * scale),
               tapTargetSize: MaterialTapTargetSize.shrinkWrap,
             ),
-            child: const Text('Skip'),
+            child: Text(skipLabel),
           ),
         ),
         Positioned(

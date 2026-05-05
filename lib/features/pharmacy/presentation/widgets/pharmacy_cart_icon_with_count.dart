@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
+import '../../../../core/constants/app_colors.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../generated/assets.dart';
 
@@ -45,7 +46,7 @@ class PharmacyCartIconWithCount extends StatelessWidget {
                 width: containerSize,
                 height: containerSize,
                 decoration: const BoxDecoration(
-                  color: Colors.white,
+                  color: AppColors.clrWhite,
                   shape: BoxShape.circle,
                 ),
                 child: Center(
@@ -53,7 +54,10 @@ class PharmacyCartIconWithCount extends StatelessWidget {
                     Assets.iconsBasket,
                     width: basketIconSize,
                     height: basketIconSize,
-                    color: const Color(0xFF000000),
+                    colorFilter: const ColorFilter.mode(
+                      AppColors.clrBlack,
+                      BlendMode.srcIn,
+                    ),
                   ),
                 ),
               ),
@@ -68,7 +72,7 @@ class PharmacyCartIconWithCount extends StatelessWidget {
                 height: 16.r,
                 alignment: Alignment.center,
                 decoration: const BoxDecoration(
-                  color: Colors.red,
+                  color: AppColors.clrRed,
                   shape: BoxShape.circle,
                 ),
                 child: Text(
@@ -77,7 +81,7 @@ class PharmacyCartIconWithCount extends StatelessWidget {
                   overflow: TextOverflow.clip,
                   textAlign: TextAlign.center,
                   style: theme.textTheme.labelSmall?.copyWith(
-                    color: Colors.white,
+                    color: AppColors.clrWhite,
                     fontWeight: FontWeight.w700,
                     fontSize: 8.sp,
                     height: 1,

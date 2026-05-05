@@ -33,7 +33,7 @@ class AuthMockApi {
       'data': <String, dynamic>{
         'token': 'mock-token',
         'userId': phoneNumber,
-        'isOnboardingCompleted': false,
+        'isOnboardingCompleted': true,
         'user': <String, dynamic>{
           'firstName': isOnboardingCompleted ? 'Hasan' : '',
           'lastName': isOnboardingCompleted ? 'Ali' : '',

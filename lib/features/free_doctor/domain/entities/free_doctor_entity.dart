@@ -17,10 +17,10 @@ class FreeDoctorEntity extends Equatable {
 
   @override
   List<Object?> get props => [
-        title,
-        descriptionPoints,
-        fikrfreeAndroidPackage,
-        fikrfreeIosAppStoreUrl,
-        fikrfreeWebUrl,
-      ];
+    title,
+    descriptionPoints,
+    fikrfreeAndroidPackage,
+    fikrfreeIosAppStoreUrl,
+    fikrfreeWebUrl,
+  ];
 }

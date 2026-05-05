@@ -15,7 +15,8 @@ class CustomerSupportContactModel {
     return CustomerSupportContactModel(
       cardTitle: (json['cardTitle'] ?? json['title'] ?? '').toString(),
       dialogTitle: (json['dialogTitle'] ?? '').toString(),
-      dialogMessage: (json['dialogMessage'] ?? json['message'] ?? '').toString(),
+      dialogMessage: (json['dialogMessage'] ?? json['message'] ?? '')
+          .toString(),
       dialNumber: (json['dialNumber'] ?? json['phone'] ?? '').toString(),
     );
   }

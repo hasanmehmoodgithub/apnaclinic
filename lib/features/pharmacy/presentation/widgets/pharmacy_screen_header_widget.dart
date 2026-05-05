@@ -1,16 +1,20 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/constants/app_colors.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import 'pharmacy_cart_icon_with_count.dart';
 
-class PharmacyScreenHeader extends StatelessWidget {
-  const PharmacyScreenHeader({
+/// Top bar: back, title, cart. Cart count comes from the parent (e.g. after [BlocSelector]).
+class PharmacyScreenHeaderWidget extends StatelessWidget {
+  const PharmacyScreenHeaderWidget({
     super.key,
+    required this.title,
     required this.cartCount,
     required this.onBackTap,
     required this.onCartTap,
   });
 
+  final String title;
   final int cartCount;
   final VoidCallback onBackTap;
   final VoidCallback onCartTap;
@@ -26,24 +30,21 @@ class PharmacyScreenHeader extends StatelessWidget {
             onPressed: onBackTap,
             icon: const Icon(
               Icons.arrow_back_rounded,
-              color: Color(0xFF08294D),
+              color: AppColors.clr08294D,
             ),
           ),
           Expanded(
             child: Text(
-              'Pharmacy',
+              title,
               textAlign: TextAlign.center,
               style: theme.textTheme.titleLarge?.copyWith(
-                color: const Color(0xFF0E2D55),
+                color: AppColors.clr0E2D55,
                 fontWeight: FontWeight.w700,
                 fontSize: 21.sp,
               ),
             ),
           ),
-          PharmacyCartIconWithCount(
-            cartCount: cartCount,
-            onTap: onCartTap,
-          ),
+          PharmacyCartIconWithCount(cartCount: cartCount, onTap: onCartTap),
         ],
       ),
     );

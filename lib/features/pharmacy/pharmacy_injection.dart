@@ -27,21 +27,15 @@ void initPharmacyInjector() {
   );
 
   sl.registerLazySingleton<GetPharmacyMedicinesUseCase>(
-    () => GetPharmacyMedicinesUseCase(
-      repository: sl<PharmacyRepository>(),
-    ),
+    () => GetPharmacyMedicinesUseCase(repository: sl<PharmacyRepository>()),
   );
 
   sl.registerLazySingleton<GetPharmacyCartUseCase>(
-    () => GetPharmacyCartUseCase(
-      repository: sl<PharmacyRepository>(),
-    ),
+    () => GetPharmacyCartUseCase(repository: sl<PharmacyRepository>()),
   );
 
   sl.registerLazySingleton<AddToCartUseCase>(
-    () => AddToCartUseCase(
-      repository: sl<PharmacyRepository>(),
-    ),
+    () => AddToCartUseCase(repository: sl<PharmacyRepository>()),
   );
 
   sl.registerFactory<PharmacyCubit>(

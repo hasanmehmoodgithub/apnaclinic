@@ -1,10 +1,13 @@
+import 'package:apnaclinic/core/constants/app_colors.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/enums/state_status.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
+import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/preference/app_pref.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/widgets/apna_clinic_app_bar.dart';
@@ -16,29 +19,6 @@ import '../widgets/fikrfree_health_banner.dart';
 import '../widgets/our_services_widget.dart';
 import '../widgets/promotional_banner_dialog.dart';
 import '../widgets/search_header.dart';
-import '../../../profile_setup/presentation/screens/profile_screen.dart';
-import '../../../notification/presentation/cubit/notification_cubit.dart';
-import '../../../notification/presentation/cubit/notification_state.dart';
-
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
-
-import '../../../../core/di/dependency_injection.dart';
-import '../../../../core/enums/state_status.dart';
-import '../../../../core/extensions/screen_util_extensions.dart';
-import '../../../../core/preference/app_pref.dart';
-import '../../../../core/router/app_routes.dart';
-import '../../../../core/widgets/apna_clinic_app_bar.dart';
-import '../../../../core/widgets/heart_loader_widget.dart';
-import '../../domain/entities/our_service_entity.dart';
-import '../cubit/dashboard_services_cubit.dart';
-import '../cubit/dashboard_services_state.dart';
-import '../widgets/fikrfree_health_banner.dart';
-import '../widgets/our_services_widget.dart';
-import '../widgets/promotional_banner_dialog.dart';
-import '../widgets/search_header.dart';
-import '../../../profile_setup/presentation/screens/profile_screen.dart';
 import '../../../notification/presentation/cubit/notification_cubit.dart';
 import '../../../notification/presentation/cubit/notification_state.dart';
 
@@ -49,7 +29,7 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   static const String _bannerLoaderId = 'banner_loader';
   bool _isLoggedIn = false;
   bool _isPromoDialogShown = false;
@@ -59,6 +39,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _isLoggedIn = sl<AppPref>().getLoginStatus();
     _dashboardCubit = sl<DashboardCubit>();
     _notificationCubit = sl<NotificationCubit>();
@@ -66,9 +47,17 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _dashboardCubit.close();
     _notificationCubit.close();
     super.dispose();
+  }
+
+  /// Forces the keyboard to close. Called whenever the home screen comes
+  /// back into focus (e.g. user popped back from search screen).
+  void _dismissKeyboard() {
+    FocusManager.instance.primaryFocus?.unfocus();
+    SystemChannels.textInput.invokeMethod<void>('TextInput.hide');
   }
 
   @override
@@ -77,15 +66,25 @@ class _HomeScreenState extends State<HomeScreen> {
     return AnimatedBuilder(
       animation: routerDelegate,
       builder: (context, _) {
+        final l10n = AppLocalizations.of(context)!;
         _isLoggedIn = sl<AppPref>().getLoginStatus();
         final greetingName = _resolveGreetingName();
         final theme = Theme.of(context);
+
+        // Whenever the router rebuilds us (which includes returning from
+        // the search screen), defer a keyboard-dismiss to the next frame
+        // so any lingering soft keyboard is closed.
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (!mounted) return;
+          _dismissKeyboard();
+        });
+
         return BlocProvider.value(
           value: _dashboardCubit,
           child: BlocConsumer<DashboardCubit, DashboardServicesState>(
             listener: _onDashboardStateChanged,
             builder: (context, state) =>
-                _buildHomeBody(context, state, greetingName, theme),
+                _buildHomeBody(context, state, greetingName, theme, l10n),
           ),
         );
       },
@@ -117,10 +116,10 @@ class _HomeScreenState extends State<HomeScreen> {
     showPromotionalBannerDialog(context, banner: banner);
   }
 
-  /// Pushes to the search screen, optionally carrying an initial query.
-  /// The query is passed via go_router `extra` so the search screen can
-  /// auto-populate its text field and submit on open.
   void _openSearch(BuildContext context, {String? query}) {
+    // Belt-and-braces: close the keyboard before navigating, in case the
+    // SearchHeader's own dismiss didn't fire (e.g. button-only path).
+    _dismissKeyboard();
     context.push(
       AppRoutes.path(AppRoutes.search),
       extra: (query == null || query.trim().isEmpty) ? null : query.trim(),
@@ -132,104 +131,109 @@ class _HomeScreenState extends State<HomeScreen> {
       DashboardServicesState state,
       String greetingName,
       ThemeData theme,
+      AppLocalizations l10n,
       ) {
     return Scaffold(
-      backgroundColor: Colors.white,
-      body: Column(
-        children: [
-          Container(
-            color: const Color(0xFF52A898),
-            child: SafeArea(
-              child: BlocBuilder<NotificationCubit, NotificationState>(
-                bloc: _notificationCubit,
-                builder: (context, notificationState) {
-                  final unreadCount = notificationState.notifications
-                      .where((item) => !item.isRead)
-                      .length;
-                  return ApnaClinicAppBar(
-                    style: ApnaAppBarStyle.light,
-                    systemOverlayStyle: ApnaClinicAppBar.lightBarColoredStatus,
-                    onMenuTap: () =>
-                        context.push(AppRoutes.path(AppRoutes.dashboardMenu)),
-                    onNotificationTap: () {
-                      if (!_isLoggedIn) {
-                        context.push(AppRoutes.path(AppRoutes.authLogin));
-                        return;
-                      }
-                      context.push(AppRoutes.path(AppRoutes.notifications));
-                    },
-                    notificationCount: _isLoggedIn ? unreadCount : 0,
-                    showLoginButton: !_isLoggedIn,
-                    onLoginTap: () =>
-                        context.push(AppRoutes.path(AppRoutes.authLogin)),
-                    onProfileTap: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute<void>(
-                          builder: (_) =>
-                          const ProfileScreen(showBackButton: true),
-                        ),
-                      );
-                    },
-                  );
-                },
+      backgroundColor: AppColors.clrWhite,
+      // Tapping anywhere outside the text field dismisses the keyboard.
+      body: GestureDetector(
+        behavior: HitTestBehavior.translucent,
+        onTap: _dismissKeyboard,
+        child: Column(
+          children: [
+            Container(
+              color: AppColors.clr52A898,
+              child: SafeArea(
+                child: BlocBuilder<NotificationCubit, NotificationState>(
+                  bloc: _notificationCubit,
+                  builder: (context, notificationState) {
+                    final unreadCount = notificationState.notifications
+                        .where((item) => !item.isRead)
+                        .length;
+                    return ApnaClinicAppBar(
+                      style: ApnaAppBarStyle.light,
+                      systemOverlayStyle:
+                      ApnaClinicAppBar.lightBarColoredStatus,
+                      onMenuTap: () => context.push(
+                        AppRoutes.path(AppRoutes.dashboardMenu),
+                      ),
+                      onNotificationTap: () {
+                        if (!_isLoggedIn) {
+                          context.push(AppRoutes.path(AppRoutes.authLogin));
+                          return;
+                        }
+                        context.push(AppRoutes.path(AppRoutes.notifications));
+                      },
+                      notificationCount: _isLoggedIn ? unreadCount : 0,
+                      showLoginButton: !_isLoggedIn,
+                      onLoginTap: () =>
+                          context.push(AppRoutes.path(AppRoutes.authLogin)),
+                      onProfileTap: () => context.push(
+                        AppRoutes.path(AppRoutes.profileSetup),
+                      ),
+                    );
+                  },
+                ),
               ),
             ),
-          ),
-          SearchHeader(
-            userName: greetingName,
-            onSearchSubmitted: (query) => _openSearch(context, query: query),
-            onVoiceTap: () {},
-            onSearchButtonTap: () => _openSearch(context),
-          ),
-          Expanded(
-            child: CustomScrollView(
-              key: const ValueKey('dashboard_content'),
-              slivers: [
-                SliverPadding(
-                  padding: EdgeInsets.fromLTRB(20.w, 12.h, 20.w, 0),
-                  sliver: SliverToBoxAdapter(
-                    child: Text(
-                      'Our Services',
-                      style: theme.textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w600,
-                        color: const Color(0xFF111827),
+            SearchHeader(
+              userName: greetingName,
+              onSearchSubmitted: (query) => _openSearch(context, query: query),
+              onVoiceTap: () {},
+              onSearchButtonTap: () => _openSearch(context),
+            ),
+            Expanded(
+              child: CustomScrollView(
+                key: const ValueKey('dashboard_content'),
+                slivers: [
+                  SliverPadding(
+                    padding: EdgeInsets.fromLTRB(20.w, 12.h, 20.w, 0),
+                    sliver: SliverToBoxAdapter(
+                      child: Text(
+                        l10n.dashboardOurServicesTitle,
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.clr111827,
+                        ),
                       ),
                     ),
                   ),
-                ),
-                SliverPadding(padding: EdgeInsets.only(top: 14.h)),
-                OurServicesWidget(
-                  state: state,
-                  onServiceTap: (service) => _onServiceTap(context, service),
-                ),
-                SliverPadding(
-                  padding: EdgeInsets.fromLTRB(20.w, 24.h, 20.w, 32.h),
-                  sliver: SliverToBoxAdapter(
-                    child: FikrfreeHealthBanner(
-                      onTap: () {},
+                  SliverPadding(padding: EdgeInsets.only(top: 14.h)),
+                  OurServicesWidget(
+                    state: state,
+                    onServiceTap: (service) =>
+                        _onServiceTap(context, service),
+                  ),
+                  SliverPadding(
+                    padding: EdgeInsets.fromLTRB(20.w, 24.h, 20.w, 32.h),
+                    sliver: SliverToBoxAdapter(
+                      child: FikrfreeHealthBanner(
+                        onTap: () {},
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 
   String _resolveGreetingName() {
-    if (!_isLoggedIn) return 'Guest';
+    if (!_isLoggedIn) return '';
     final appPref = sl<AppPref>();
     final userLocal = appPref.getUserLocalModel();
     final firstName = userLocal?.firstName.trim() ?? '';
     final lastName = userLocal?.lastName.trim() ?? '';
     final fullName = '$firstName $lastName'.trim();
-    return fullName.isEmpty ? 'Guest' : fullName;
+    return fullName;
   }
 
   void _onServiceTap(BuildContext context, OurServiceEntity service) {
-    final normalizedRoute = service.route.trim().replaceFirst(RegExp(r'^/'), '');
+    final normalizedRoute =
+    service.route.trim().replaceFirst(RegExp(r'^/'), '');
     if (normalizedRoute.isEmpty) return;
 
     context.push(AppRoutes.path(normalizedRoute));

@@ -3,27 +3,25 @@ import 'package:flutter/material.dart';
 import '../../../../components/shimmer/app_shimmer.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 
+/// Loading / error / empty placeholders for pharmacy lists (no extra route enums).
 class PharmacyScreenStateView extends StatelessWidget {
   const PharmacyScreenStateView.loading({super.key})
-      : type = _PharmacyScreenStateType.loading,
-        message = null;
+    : type = PharmacyScreenStateViewKind.loading,
+      message = null;
 
-  const PharmacyScreenStateView.error({
-    super.key,
-    required this.message,
-  }) : type = _PharmacyScreenStateType.error;
+  const PharmacyScreenStateView.error({super.key, required this.message})
+    : type = PharmacyScreenStateViewKind.error;
 
-  const PharmacyScreenStateView.empty({super.key})
-      : type = _PharmacyScreenStateType.empty,
-        message = null;
+  const PharmacyScreenStateView.empty({super.key, required this.message})
+    : type = PharmacyScreenStateViewKind.empty;
 
-  final _PharmacyScreenStateType type;
+  final PharmacyScreenStateViewKind type;
   final String? message;
 
   @override
   Widget build(BuildContext context) {
     switch (type) {
-      case _PharmacyScreenStateType.loading:
+      case PharmacyScreenStateViewKind.loading:
         return ListView(
           padding: EdgeInsets.all(16.r),
           children: [
@@ -41,17 +39,12 @@ class PharmacyScreenStateView extends StatelessWidget {
             ),
           ],
         );
-      case _PharmacyScreenStateType.error:
-        return Center(
-          child: Text(
-            message ?? '',
-            textAlign: TextAlign.center,
-          ),
-        );
-      case _PharmacyScreenStateType.empty:
-        return const Center(child: Text('No medicine found'));
+      case PharmacyScreenStateViewKind.error:
+        return Center(child: Text(message ?? '', textAlign: TextAlign.center));
+      case PharmacyScreenStateViewKind.empty:
+        return Center(child: Text(message ?? '', textAlign: TextAlign.center));
     }
   }
 }
 
-enum _PharmacyScreenStateType { loading, error, empty }
+enum PharmacyScreenStateViewKind { loading, error, empty }

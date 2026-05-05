@@ -90,7 +90,13 @@ class AppLocalizationsUr extends AppLocalizations {
   String get authProceedCta => 'آگے بڑھیں';
 
   @override
+  String get authVerifyCta => 'تصدیق کریں';
+
+  @override
   String get authResendOtp => 'OTP دوبارہ بھیجیں';
+
+  @override
+  String get authOtpSecondsShort => 'سیکنڈ';
 
   @override
   String get authOtpSentTo => 'OTP بھیجا گیا';
@@ -194,6 +200,338 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get profileSaveCta => 'محفوظ کریں';
+
+  @override
+  String get pharmacyScreenTitle => 'فارمیسی';
+
+  @override
+  String get pharmacyLoadError =>
+      'ابھی دوائیں لوڈ نہیں ہو سکتیں۔ براہ کرم تھوڑی دیر بعد دوبارہ کوشش کریں۔';
+
+  @override
+  String get pharmacyEmptyMedicines => 'کوئی دوا نہیں ملی';
+
+  @override
+  String get pharmacyMainChooseMedicineTitle => 'دوا منتخب کریں';
+
+  @override
+  String get pharmacyMainSearchHint => 'دوا تلاش کریں..';
+
+  @override
+  String get pharmacyCartTitle => 'کارٹ';
+
+  @override
+  String get pharmacyCartEmpty => 'آپ کی کارٹ خالی ہے';
+
+  @override
+  String get pharmacyCheckoutCta => 'چیک آؤٹ';
+
+  @override
+  String get pharmacyCheckoutTitle => 'چیک آؤٹ';
+
+  @override
+  String get pharmacyCheckoutPatientDetailTitle => 'مریض کی تفصیل';
+
+  @override
+  String get pharmacyCheckoutPatientLabel => 'مریض';
+
+  @override
+  String get pharmacyCheckoutPatientSelf => 'خود';
+
+  @override
+  String get pharmacyCheckoutSpecialInstructionsLabel => 'خصوصی ہدایات';
+
+  @override
+  String get pharmacyCheckoutSpecialInstructionsHint => '----';
+
+  @override
+  String get pharmacyCheckoutOrderDetailsTitle => 'آرڈر کی تفصیل';
+
+  @override
+  String get pharmacyCheckoutDeliveryChargesLabel => 'ڈیلیوری چارجز';
+
+  @override
+  String get pharmacyCheckoutDiscountLabel => 'رعایت (8%)';
+
+  @override
+  String get pharmacyCheckoutTotalLabel => 'کل';
+
+  @override
+  String get pharmacyCheckoutAddressLabel => 'ڈیلیوری ایڈریس';
+
+  @override
+  String get pharmacyCheckoutAddressHint => 'اپنا پتہ درج کریں';
+
+  @override
+  String get pharmacyCheckoutCityLabel => 'علاقہ / شہر *';
+
+  @override
+  String get pharmacyCheckoutPaymentMethodTitle => 'ادائیگی کا طریقہ';
+
+  @override
+  String get pharmacyCheckoutDisclaimerTitle => 'دستخط';
+
+  @override
+  String get pharmacyCheckoutDisclaimerMessage =>
+      'فروخت اور ترسیل ہمارے لائسنس یافتہ فارمیسی پارٹنر(ز) \"MEDIQ PHARMACY\" کی جانب سے۔ لائسنس نمبر: 05-352-0070-053618P';
+
+  @override
+  String get pharmacyCheckoutDeliveryInfoMessage =>
+      '8:00 صبح سے 8:00 شام کے درمیان موصول ہونے والے آرڈرز 3 گھنٹوں میں پہنچا دیے جائیں گے۔ 8:00 شام کے بعد موصول آرڈرز اگلے دن 12 بجے تک پہنچیں گے۔';
+
+  @override
+  String get pharmacyCheckoutDeliveryInfoFooter =>
+      '2500 روپے سے کم آرڈرز پر 250 روپے ڈیلیوری چارجز لاگو ہوں گے۔';
+
+  @override
+  String get pharmacyCheckoutConfirmCta => 'تصدیق کریں';
+
+  @override
+  String get pharmacyOrderPlacedTitle => 'آرڈر ہو گیا';
+
+  @override
+  String get pharmacyOrderPlacedMessage =>
+      '8 AM سے 8 PM کے درمیان موصول آرڈرز 3 کاروباری گھنٹوں میں پہنچائے جائیں گے۔';
+
+  @override
+  String get pharmacyOrderPlacedClose => 'بند کریں';
+
+  @override
+  String get pharmacyPaymentJazzCash => 'جاز کیش';
+
+  @override
+  String get pharmacyPaymentDebitCard => 'ڈیبٹ / کریڈٹ کارڈ';
+
+  @override
+  String get pharmacyPaymentCash => 'کیش سے ادائیگی';
+
+  @override
+  String get pharmacyCurrencyPrefix => 'روپے ';
+
+  @override
+  String get onboardingSkip => 'اسکپ';
+
+  @override
+  String get onboardingNext => 'اگلا';
+
+  @override
+  String get onboardingDoctorConsultationTitle => 'ڈاکٹر کنسلٹیشن';
+
+  @override
+  String get onboardingDoctorConsultationSubtitle =>
+      'PMDC تصدیق شدہ ڈاکٹروں تک رسائی';
+
+  @override
+  String get onboardingPharmacyTitle => 'فارمیسی';
+
+  @override
+  String get onboardingPharmacySubtitle =>
+      'مستند ادویات گھر کی دہلیز پر حاصل کریں۔';
+
+  @override
+  String get onboardingLaboratoryTitle => 'لیبارٹری ٹیسٹنگ';
+
+  @override
+  String get onboardingLaboratorySubtitle =>
+      'درست نتائج کے ساتھ قابلِ اعتماد لیب ٹیسٹس حاصل کریں۔';
+
+  @override
+  String get onboardingSurgeryTitle => 'سرجری بکنگ';
+
+  @override
+  String get onboardingSurgerySubtitle => 'اپنی سرجری آسانی سے بک کریں۔';
+
+  @override
+  String get pharmacyMoreLike => 'مزید اسی طرح';
+
+  @override
+  String get pharmacyAddToCart => 'کارٹ میں شامل کریں';
+
+  @override
+  String get pharmacyAddToCartLower => 'کارٹ میں شامل کریں';
+
+  @override
+  String get freeDoctorTitle => 'مفت ڈاکٹر';
+
+  @override
+  String get freeDoctorOpenAppCta => 'Fikrfree ایپ کھولیں';
+
+  @override
+  String get freeDoctorOpenAppError => 'اس وقت FikrFree نہیں کھل سکی۔';
+
+  @override
+  String get freeDoctorConsultationTitle => '24/7 مفت ڈاکٹر مشاورت';
+
+  @override
+  String get freeDoctorPoint1 =>
+      'یہ سروس صرف Bima m-Health سبسکرائبرز کے لیے دستیاب ہے۔';
+
+  @override
+  String get freeDoctorPoint2 =>
+      'عمومی طبی رہنمائی اور مزید کے لیے 24/7 مستند ڈاکٹروں تک رسائی حاصل کریں۔';
+
+  @override
+  String get freeDoctorPoint3 =>
+      'سروس حاصل کرنے کے لیے FikrFree کے ذریعے BIMA m-Health سبسکرائب کریں۔';
+
+  @override
+  String get customerSupportTitle => 'کسٹمر سپورٹ';
+
+  @override
+  String get customerSupportHelpCentreTitle => 'ہیلپ سینٹر';
+
+  @override
+  String get customerSupportHelpCentreSubtitle =>
+      'کسی بھی مدد کے لیے Apna Clinic سے رابطہ کریں۔';
+
+  @override
+  String get customerSupportFallbackCardTitle => 'Apna Clinic سپورٹ';
+
+  @override
+  String get customerSupportFallbackDialogTitle => 'کسٹمر سپورٹ';
+
+  @override
+  String get customerSupportFallbackDialogMessage =>
+      'مزید مدد کے لیے براہ کرم 24/7 اس نمبر پر رابطہ کریں:\n042-111-333-033';
+
+  @override
+  String get customerSupportCallNowCta => 'ابھی کال کریں';
+
+  @override
+  String get customerSupportDialError => 'کال شروع نہیں ہو سکی۔';
+
+  @override
+  String get accountDetailsTitle => 'اکاؤنٹ کی تفصیل';
+
+  @override
+  String get accountAddTitle => 'اکاؤنٹ شامل کریں';
+
+  @override
+  String get accountEnterDetailsTitle => 'اکاؤنٹ کی تفصیل درج کریں';
+
+  @override
+  String get accountMethodLabel => 'اکاؤنٹ میتھڈ';
+
+  @override
+  String get accountNumberLabel => 'اکاؤنٹ نمبر';
+
+  @override
+  String get accountSaveCta => 'محفوظ کریں';
+
+  @override
+  String get accountContinueCta => 'جاری رکھیں';
+
+  @override
+  String get accountMethodAddedSuccess =>
+      'ادائیگی کا طریقہ کامیابی سے شامل ہو گیا';
+
+  @override
+  String get accountLinkedMessagePrefix => 'آپ کا';
+
+  @override
+  String get accountLinkedMessageMiddle => 'اکاؤنٹ نمبر';
+
+  @override
+  String get accountLinkedMessageSuffix => 'کامیابی سے لنک ہو گیا ہے';
+
+  @override
+  String get accountHolderFallback => 'اکاؤنٹ ہولڈر';
+
+  @override
+  String get accountValidationEnterNumber => 'اکاؤنٹ نمبر درج کریں';
+
+  @override
+  String get accountValidationDigitsOnly => 'صرف ہندسے درج کریں';
+
+  @override
+  String get accountValidationElevenDigits =>
+      '11 ہندسوں کا پاکستانی نمبر درج کریں';
+
+  @override
+  String get accountValidationValidPakistanMobile =>
+      'درست پاکستانی موبائل نمبر درج کریں';
+
+  @override
+  String get accountMethodJazzCash => 'JazzCash';
+
+  @override
+  String dashboardHello(String name) {
+    return 'ہیلو، $name';
+  }
+
+  @override
+  String get dashboardSearchHint => 'دوائی، ڈاکٹر، ٹیسٹ تلاش کریں....';
+
+  @override
+  String get dashboardOurServicesTitle => 'ہماری سروسز';
+
+  @override
+  String get dashboardSecureHealthTitle => 'اپنی صحت کو پہلے محفوظ کریں';
+
+  @override
+  String get dashboardFikrfreeTagline => 'صحت اور انشورنس اب آپ کے ہاتھ میں!';
+
+  @override
+  String get dashboardBottomFreeDoctor => 'مفت ڈاکٹر';
+
+  @override
+  String get dashboardBottomSupport => 'سپورٹ';
+
+  @override
+  String get dashboardBottomBookings => 'میری بکنگز';
+
+  @override
+  String get dashboardBottomProfile => 'پروفائل';
+
+  @override
+  String get dashboardBottomHome => 'ہوم';
+
+  @override
+  String get dashboardMenuTitle => 'مینو';
+
+  @override
+  String get dashboardMenuCustomerSupport => 'کسٹمر سپورٹ';
+
+  @override
+  String get dashboardMenuFaq => 'سوالات';
+
+  @override
+  String get dashboardMenuGuestUser => 'مہمان صارف';
+
+  @override
+  String get dashboardMenuSignInManageAccount =>
+      'اپنا اکاؤنٹ سنبھالنے کے لیے سائن اِن کریں';
+
+  @override
+  String get dashboardMenuSignInContinue => 'جاری رکھنے کے لیے سائن اِن کریں';
+
+  @override
+  String get dashboardMenuLogout => 'لاگ آؤٹ';
+
+  @override
+  String get dashboardMenuAbout => 'متعلق';
+
+  @override
+  String get dashboardMenuAppVersion => 'ایپ ورژن';
+
+  @override
+  String get dashboardMenuTerms => 'شرائط و ضوابط';
+
+  @override
+  String get dashboardMenuPrivacy => 'پرائیویسی پالیسی';
+
+  @override
+  String get dashboardMenuEditProfile => 'پروفائل ایڈٹ کریں';
+
+  @override
+  String get dashboardMenuLoginSignup => 'لاگ اِن / سائن اپ';
+
+  @override
+  String get dashboardLogoutMessage =>
+      'کیا آپ واقعی اپنے اکاؤنٹ سے لاگ آؤٹ کرنا چاہتے ہیں؟';
+
+  @override
+  String get dashboardCancel => 'منسوخ کریں';
 
   @override
   String get labTestScreenTitle => 'لیب ٹیسٹ';

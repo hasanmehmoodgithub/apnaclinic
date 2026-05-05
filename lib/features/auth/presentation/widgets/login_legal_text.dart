@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/constants/app_colors.dart';
 import '../../../../core/l10n/app_localizations.dart';
 
 class LoginLegalText extends StatelessWidget {
@@ -27,7 +28,7 @@ class LoginLegalText extends StatelessWidget {
       ),
       textAlign: TextAlign.center,
       style: theme.textTheme.bodySmall?.copyWith(
-        color: const Color(0xFF667085),
+        color: AppColors.clr667085,
         height: 1.65,
       ),
     );

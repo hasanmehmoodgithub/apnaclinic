@@ -1,11 +1,14 @@
 import 'package:apnaclinic/components/widgets/app_button.dart';
 import 'package:apnaclinic/components/widgets/action_option_card.dart';
+import 'package:apnaclinic/core/constants/app_colors.dart';
 import 'package:apnaclinic/core/enums/state_status.dart';
 import 'package:apnaclinic/core/extensions/screen_util_extensions.dart';
+import 'package:apnaclinic/core/l10n/app_localizations.dart';
 import 'package:apnaclinic/generated/assets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../domain/entities/customer_support_entity.dart';
 import '../cubit/customer_support_cubit.dart';
@@ -17,50 +20,38 @@ class SupportBodyPanel extends StatelessWidget {
 
   final CustomerSupportState state;
 
-  static const Color _headingDark = Color(0xFF111827);
-  static const Color _subtitleGrey = Color(0xFF6B7280);
-  static const double _cardTopRadius = 32;
-  static const List<Color> _curveOverlayColors = [
-    Color(0xFFE9F9FC),
-    Color(0xFFEFF3FF),
-    Color(0xFFFFF1E8),
-    Color(0xFFF4EDFF),
-  ];
-  static const List<CustomerSupportContactEntity> _fallbackContacts = [
-    CustomerSupportContactEntity(
-      cardTitle: 'Apna Clinic Support',
-      dialogTitle: 'Customer Support',
-      dialogMessage:
-          'Or further support please contact us 24/7 on\n042-111-333-033.',
-      dialNumber: '042111333033',
-    ),
-  ];
-
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
-    const radius = BorderRadius.vertical(
-      top: Radius.circular(_cardTopRadius),
-    );
+    const radius = BorderRadius.vertical(top: Radius.circular(32));
 
     final content = state.content;
-    final helpTitle = content?.helpCentreTitle ?? 'Help Centre';
-    final helpSubtitle = content?.helpCentreSubtitle ??
-        'Reach out to Apna Clinic for any support.';
+    final helpTitle =
+        content?.helpCentreTitle ?? l10n.customerSupportHelpCentreTitle;
+    final helpSubtitle =
+        content?.helpCentreSubtitle ?? l10n.customerSupportHelpCentreSubtitle;
     final isLoading = state.loadingStateStatus == StateStatus.loading;
     final rawContacts =
         content?.contacts ?? const <CustomerSupportContactEntity>[];
     final contacts = !isLoading && rawContacts.isEmpty
-        ? _fallbackContacts
+        ? [
+            CustomerSupportContactEntity(
+              cardTitle: l10n.customerSupportFallbackCardTitle,
+              dialogTitle: l10n.customerSupportFallbackDialogTitle,
+              dialogMessage: l10n.customerSupportFallbackDialogMessage,
+              dialNumber: '042111333033',
+            ),
+          ]
         : rawContacts;
 
     return DecoratedBox(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.clrWhite,
         borderRadius: radius,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.07),
+            color: AppColors.clrBlack.withValues(alpha: 0.07),
             blurRadius: 24.r,
             offset: Offset(0, -6.h),
           ),
@@ -78,13 +69,13 @@ class SupportBodyPanel extends StatelessWidget {
                     Text(
                       helpTitle,
                       style: theme.textTheme.bodyLarge?.copyWith(
-                        color: _headingDark,
+                        color: AppColors.clr111827,
                       ),
                     ),
                     Text(
                       helpSubtitle,
                       style: theme.textTheme.bodySmall?.copyWith(
-                        color: _subtitleGrey,
+                        color: AppColors.clr6B7280,
                         height: 1.4,
                       ),
                     ),
@@ -92,8 +83,12 @@ class SupportBodyPanel extends StatelessWidget {
                     for (int i = 0; i < contacts.length; i++) ...[
                       ActionOptionCard(
                         title: contacts[i].cardTitle,
-                        curveOverlayColor:
-                            _curveOverlayColors[i % _curveOverlayColors.length],
+                        curveOverlayColor: [
+                          AppColors.clrE9F4FC,
+                          AppColors.clrE9EEF3,
+                          AppColors.clrFCF5E9,
+                          AppColors.clrF5FBFA,
+                        ][i % 4],
                         leading: SizedBox(
                           width: 60.r,
                           height: 60.r,
@@ -102,10 +97,7 @@ class SupportBodyPanel extends StatelessWidget {
                             fit: BoxFit.contain,
                           ),
                         ),
-                        onTap: () => _showSupportDialog(
-                          context,
-                          contacts[i],
-                        ),
+                        onTap: () => _showSupportDialog(context, contacts[i]),
                       ),
                       if (i != contacts.length - 1) SizedBox(height: 16.h),
                     ],
@@ -123,15 +115,16 @@ class SupportBodyPanel extends StatelessWidget {
     showDialog<void>(
       context: context,
       builder: (dialogContext) {
+        final l10n = AppLocalizations.of(dialogContext)!;
         final theme = Theme.of(dialogContext);
         return Dialog(
           backgroundColor: Colors.transparent,
           insetPadding: EdgeInsets.symmetric(horizontal: 18.w),
           child: Container(
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: AppColors.clrWhite,
               borderRadius: BorderRadius.circular(4.r),
-              border: Border.all(color: const Color(0xFFD6DEE6)),
+              border: Border.all(color: AppColors.clrD6DCE2),
             ),
             padding: EdgeInsets.fromLTRB(16.w, 14.h, 16.w, 16.h),
             child: Column(
@@ -142,22 +135,17 @@ class SupportBodyPanel extends StatelessWidget {
                   height: 60.r,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    border: Border.all(
-                      color: const Color(0xFFD6D9DE),
-                    ),
+                    border: Border.all(color: AppColors.clrD6DCE2),
                   ),
                   child: ClipOval(
-                    child: Image.asset(
-                      Assets.imgPartner,
-                      fit: BoxFit.cover,
-                    ),
+                    child: Image.asset(Assets.imgPartner, fit: BoxFit.cover),
                   ),
                 ),
                 SizedBox(height: 16.h),
                 Text(
                   contact.dialogTitle,
                   style: theme.textTheme.headlineSmall?.copyWith(
-                    color: const Color(0xFF0E2D55),
+                    color: AppColors.clr0E2D55,
                     fontWeight: FontWeight.w500,
                     fontSize: 20.sp,
                   ),
@@ -167,7 +155,7 @@ class SupportBodyPanel extends StatelessWidget {
                   contact.dialogMessage,
                   textAlign: TextAlign.center,
                   style: theme.textTheme.bodyLarge?.copyWith(
-                    color: const Color(0xFF6C82A2),
+                    color: AppColors.clr6C82A2,
                     height: 1.25,
                     fontSize: 13.sp,
                   ),
@@ -177,27 +165,27 @@ class SupportBodyPanel extends StatelessWidget {
                   width: double.infinity,
                   height: 52.h,
                   child: AppButton.primary(
-                    text: 'Call Now',
+                    text: l10n.customerSupportCallNowCta,
                     onPressed: () async {
                       if (!dialogContext.mounted) return;
                       if (contact.dialNumber.trim().isEmpty) {
-                        Navigator.of(dialogContext).pop();
+                        dialogContext.pop();
                         return;
                       }
                       final cubit = context.read<CustomerSupportCubit>();
                       final ok = await cubit.dialNumber(contact.dialNumber);
                       if (!dialogContext.mounted) return;
-                      Navigator.of(dialogContext).pop();
+                      dialogContext.pop();
                       if (!ok && context.mounted) {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Could not start the call.'),
+                          SnackBar(
+                            content: Text(l10n.customerSupportDialError),
                             behavior: SnackBarBehavior.floating,
                           ),
                         );
                       }
                     },
-                    backgroundColor: const Color(0xFF40AFA2),
+                    backgroundColor: AppColors.clr40AFA2,
                     borderRadius: 12.r,
                     fontWeight: FontWeight.w700,
                     fontSize: (22 / 1.6).sp,

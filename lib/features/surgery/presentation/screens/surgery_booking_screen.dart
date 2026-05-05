@@ -40,7 +40,7 @@ class _SurgeryBookingScreenState extends State<SurgeryBookingScreen> {
       price: 'Rs. 65,000/-',
       oldPrice: 'Rs. 100,000/-',
       imageUrl:
-          'https://www.figma.com/api/mcp/asset/ffc43bb2-89d9-4625-9d3a-8181a8770661',
+          'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&w=800&q=80',
       partnerLogoUrl:
           'https://www.figma.com/api/mcp/asset/5e669d2b-dc77-4e06-86d2-9ead92b99252',
     ),
@@ -54,7 +54,7 @@ class _SurgeryBookingScreenState extends State<SurgeryBookingScreen> {
       price: 'Rs. 65,000/-',
       oldPrice: 'Rs. 100,000/-',
       imageUrl:
-          'https://www.figma.com/api/mcp/asset/53a7b334-8ba8-496f-93bb-8e8d6774aacd',
+          'https://images.unsplash.com/photo-1594824476967-48c8b964273f?auto=format&fit=crop&w=800&q=80',
       partnerLogoUrl:
           'https://www.figma.com/api/mcp/asset/5e669d2b-dc77-4e06-86d2-9ead92b99252',
     ),
@@ -68,7 +68,7 @@ class _SurgeryBookingScreenState extends State<SurgeryBookingScreen> {
       price: 'Rs. 50,000/-',
       oldPrice: 'Rs. 80,000/-',
       imageUrl:
-          'https://www.figma.com/api/mcp/asset/b58142b3-b9db-44d0-87b2-6d84da0d6968',
+          'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?auto=format&fit=crop&w=800&q=80',
       partnerLogoUrl:
           'https://www.figma.com/api/mcp/asset/5e669d2b-dc77-4e06-86d2-9ead92b99252',
     ),

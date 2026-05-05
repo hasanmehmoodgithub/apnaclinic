@@ -5,10 +5,12 @@ class OnboardingNextButton extends StatelessWidget {
   const OnboardingNextButton({
     super.key,
     required this.scale,
+    required this.label,
     required this.onTap,
   });
 
   final double scale;
+  final String label;
   final VoidCallback onTap;
 
   static const Color _mint = Color(0xFF0FAE9D);
@@ -28,8 +30,11 @@ class OnboardingNextButton extends StatelessWidget {
           padding: EdgeInsets.symmetric(horizontal: 24.w * scale),
         ),
         label: Text(
-          'Next',
-          style: TextStyle(fontSize: 18.sp * scale, fontWeight: FontWeight.w700),
+          label,
+          style: TextStyle(
+            fontSize: 18.sp * scale,
+            fontWeight: FontWeight.w700,
+          ),
         ),
         icon: Icon(Icons.arrow_forward_rounded, size: 24.r * scale),
         iconAlignment: IconAlignment.end,

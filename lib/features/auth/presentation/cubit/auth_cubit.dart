@@ -16,10 +16,10 @@ class AuthCubit extends Cubit<AuthState> {
     required RequestOtpUseCase requestOtpUseCase,
     required VerifyOtpUseCase verifyOtpUseCase,
     required AppPref appPref,
-  })  : _requestOtpUseCase = requestOtpUseCase,
-        _verifyOtpUseCase = verifyOtpUseCase,
-        _appPref = appPref,
-        super(const AuthState());
+  }) : _requestOtpUseCase = requestOtpUseCase,
+       _verifyOtpUseCase = verifyOtpUseCase,
+       _appPref = appPref,
+       super(const AuthState());
 
   final RequestOtpUseCase _requestOtpUseCase;
   final VerifyOtpUseCase _verifyOtpUseCase;
@@ -104,23 +104,26 @@ class AuthCubit extends Cubit<AuthState> {
       RequestOtpParams(phoneNumber: phoneNumber),
     );
     if (isClosed) return false;
-    return result.fold((error) {
-      _safeEmit(
-        state.copyWith(
-          isLoading: false,
-          requestOtpLoadingStateStatus: StateStatus.error,
-          errorMessage: error,
-        ),
-      );
-      return false;
-    }, (_) {
-      _startOtpTimer();
-      _safeEmit(_otpRequestedSuccessState());
-      return true;
-    });
+    return result.fold(
+      (error) {
+        _safeEmit(
+          state.copyWith(
+            isLoading: false,
+            requestOtpLoadingStateStatus: StateStatus.error,
+            errorMessage: error,
+          ),
+        );
+        return false;
+      },
+      (_) {
+        _startOtpTimer();
+        _safeEmit(_otpRequestedSuccessState());
+        return true;
+      },
+    );
   }
 
-  Future<_VerifyOtpOutcome> verifyOtp(String otp) async {
+  Future<VerifyOtpOutcome> verifyOtp(String otp) async {
     _safeEmit(
       state.copyWith(
         isLoading: true,
@@ -130,38 +133,40 @@ class AuthCubit extends Cubit<AuthState> {
     );
 
     final result = await _verifyOtpUseCase(
-      VerifyOtpParams(
-        phoneNumber: state.phoneNumber,
-        otp: otp,
-      ),
+      VerifyOtpParams(phoneNumber: state.phoneNumber, otp: otp),
     );
-    if (isClosed) return const _VerifyOtpOutcome(isSuccess: false, goToHome: false);
-    return result.fold((error) {
-      _safeEmit(
-        state.copyWith(
-          isLoading: false,
-          verifyOtpLoadingStateStatus: StateStatus.error,
-          errorMessage: error,
-        ),
-      );
-      return const _VerifyOtpOutcome(isSuccess: false, goToHome: false);
-    }, (entity) async {
-      await _saveUserSession(entity: entity);
-      if (isClosed) {
-        return const _VerifyOtpOutcome(isSuccess: false, goToHome: false);
-      }
-      _safeEmit(
-        state.copyWith(
-          isLoading: false,
-          verifyOtpLoadingStateStatus: StateStatus.success,
-          errorMessage: null,
-        ),
-      );
-      return _VerifyOtpOutcome(
-        isSuccess: true,
-        goToHome: entity.isOnboardingCompleted,
-      );
-    });
+    if (isClosed) {
+      return const VerifyOtpOutcome(isSuccess: false, goToHome: false);
+    }
+    return result.fold(
+      (error) {
+        _safeEmit(
+          state.copyWith(
+            isLoading: false,
+            verifyOtpLoadingStateStatus: StateStatus.error,
+            errorMessage: error,
+          ),
+        );
+        return const VerifyOtpOutcome(isSuccess: false, goToHome: false);
+      },
+      (entity) async {
+        await _saveUserSession(entity: entity);
+        if (isClosed) {
+          return const VerifyOtpOutcome(isSuccess: false, goToHome: false);
+        }
+        _safeEmit(
+          state.copyWith(
+            isLoading: false,
+            verifyOtpLoadingStateStatus: StateStatus.success,
+            errorMessage: null,
+          ),
+        );
+        return VerifyOtpOutcome(
+          isSuccess: true,
+          goToHome: entity.isOnboardingCompleted,
+        );
+      },
+    );
   }
 
   void clearError() {
@@ -250,11 +255,8 @@ class AuthCubit extends Cubit<AuthState> {
   }
 }
 
-class _VerifyOtpOutcome {
-  const _VerifyOtpOutcome({
-    required this.isSuccess,
-    required this.goToHome,
-  });
+class VerifyOtpOutcome {
+  const VerifyOtpOutcome({required this.isSuccess, required this.goToHome});
 
   final bool isSuccess;
   final bool goToHome;

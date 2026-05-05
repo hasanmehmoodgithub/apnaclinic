@@ -260,11 +260,23 @@ abstract class AppLocalizations {
   /// **'Proceed'**
   String get authProceedCta;
 
+  /// No description provided for @authVerifyCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify'**
+  String get authVerifyCta;
+
   /// No description provided for @authResendOtp.
   ///
   /// In en, this message translates to:
   /// **'Resend OTP'**
   String get authResendOtp;
+
+  /// No description provided for @authOtpSecondsShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Sec'**
+  String get authOtpSecondsShort;
 
   /// No description provided for @authOtpSentTo.
   ///
@@ -469,6 +481,630 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Save'**
   String get profileSaveCta;
+
+  /// Title on the pharmacy detail screen header
+  ///
+  /// In en, this message translates to:
+  /// **'Pharmacy'**
+  String get pharmacyScreenTitle;
+
+  /// Pharmacy medicines list failed to load
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to load medicines right now. Please try again in a moment.'**
+  String get pharmacyLoadError;
+
+  /// Pharmacy list has no items
+  ///
+  /// In en, this message translates to:
+  /// **'No medicine found'**
+  String get pharmacyEmptyMedicines;
+
+  /// Section title on pharmacy hub main screen
+  ///
+  /// In en, this message translates to:
+  /// **'Choose Medicine'**
+  String get pharmacyMainChooseMedicineTitle;
+
+  /// Search field hint on pharmacy hub
+  ///
+  /// In en, this message translates to:
+  /// **'Search medicine..'**
+  String get pharmacyMainSearchHint;
+
+  /// No description provided for @pharmacyCartTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Cart'**
+  String get pharmacyCartTitle;
+
+  /// No description provided for @pharmacyCartEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Your cart is empty'**
+  String get pharmacyCartEmpty;
+
+  /// No description provided for @pharmacyCheckoutCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Check Out'**
+  String get pharmacyCheckoutCta;
+
+  /// No description provided for @pharmacyCheckoutTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Check Out'**
+  String get pharmacyCheckoutTitle;
+
+  /// No description provided for @pharmacyCheckoutPatientDetailTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Patient Detail'**
+  String get pharmacyCheckoutPatientDetailTitle;
+
+  /// No description provided for @pharmacyCheckoutPatientLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Patient'**
+  String get pharmacyCheckoutPatientLabel;
+
+  /// No description provided for @pharmacyCheckoutPatientSelf.
+  ///
+  /// In en, this message translates to:
+  /// **'Self'**
+  String get pharmacyCheckoutPatientSelf;
+
+  /// No description provided for @pharmacyCheckoutSpecialInstructionsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Special Instructions'**
+  String get pharmacyCheckoutSpecialInstructionsLabel;
+
+  /// No description provided for @pharmacyCheckoutSpecialInstructionsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'----'**
+  String get pharmacyCheckoutSpecialInstructionsHint;
+
+  /// No description provided for @pharmacyCheckoutOrderDetailsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Order Details'**
+  String get pharmacyCheckoutOrderDetailsTitle;
+
+  /// No description provided for @pharmacyCheckoutDeliveryChargesLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Delivery Charges'**
+  String get pharmacyCheckoutDeliveryChargesLabel;
+
+  /// No description provided for @pharmacyCheckoutDiscountLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Discount (8%)'**
+  String get pharmacyCheckoutDiscountLabel;
+
+  /// No description provided for @pharmacyCheckoutTotalLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Total'**
+  String get pharmacyCheckoutTotalLabel;
+
+  /// No description provided for @pharmacyCheckoutAddressLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Delivery address'**
+  String get pharmacyCheckoutAddressLabel;
+
+  /// No description provided for @pharmacyCheckoutAddressHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your address'**
+  String get pharmacyCheckoutAddressHint;
+
+  /// No description provided for @pharmacyCheckoutCityLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Area / City *'**
+  String get pharmacyCheckoutCityLabel;
+
+  /// No description provided for @pharmacyCheckoutPaymentMethodTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment Method'**
+  String get pharmacyCheckoutPaymentMethodTitle;
+
+  /// No description provided for @pharmacyCheckoutDisclaimerTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Disclaimer'**
+  String get pharmacyCheckoutDisclaimerTitle;
+
+  /// No description provided for @pharmacyCheckoutDisclaimerMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Sold and fulfilled by our Licensed Pharmacy Partner(s) \"MEDIQ PHARMACY\". License No. : 05-352-0070-053618P'**
+  String get pharmacyCheckoutDisclaimerMessage;
+
+  /// No description provided for @pharmacyCheckoutDeliveryInfoMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Orders will be delivered within 3 hours between 8:00 AM and 8:00 PM. Orders placed after 8:00 PM will be delivered by 12PM the following day.'**
+  String get pharmacyCheckoutDeliveryInfoMessage;
+
+  /// No description provided for @pharmacyCheckoutDeliveryInfoFooter.
+  ///
+  /// In en, this message translates to:
+  /// **'Orders below Rs 2500 will include delivery charges of Rs 250.'**
+  String get pharmacyCheckoutDeliveryInfoFooter;
+
+  /// No description provided for @pharmacyCheckoutConfirmCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm'**
+  String get pharmacyCheckoutConfirmCta;
+
+  /// No description provided for @pharmacyOrderPlacedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Order Placed'**
+  String get pharmacyOrderPlacedTitle;
+
+  /// No description provided for @pharmacyOrderPlacedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Orders received b/w 8 AM - 8 PM will be delivered within 3 business hrs.'**
+  String get pharmacyOrderPlacedMessage;
+
+  /// No description provided for @pharmacyOrderPlacedClose.
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get pharmacyOrderPlacedClose;
+
+  /// No description provided for @pharmacyPaymentJazzCash.
+  ///
+  /// In en, this message translates to:
+  /// **'Jazz Cash'**
+  String get pharmacyPaymentJazzCash;
+
+  /// No description provided for @pharmacyPaymentDebitCard.
+  ///
+  /// In en, this message translates to:
+  /// **'Debit / Credit Card'**
+  String get pharmacyPaymentDebitCard;
+
+  /// No description provided for @pharmacyPaymentCash.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay via Cash'**
+  String get pharmacyPaymentCash;
+
+  /// No description provided for @pharmacyCurrencyPrefix.
+  ///
+  /// In en, this message translates to:
+  /// **'Rs. '**
+  String get pharmacyCurrencyPrefix;
+
+  /// No description provided for @onboardingSkip.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip'**
+  String get onboardingSkip;
+
+  /// No description provided for @onboardingNext.
+  ///
+  /// In en, this message translates to:
+  /// **'Next'**
+  String get onboardingNext;
+
+  /// No description provided for @onboardingDoctorConsultationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Doctor Consultation'**
+  String get onboardingDoctorConsultationTitle;
+
+  /// No description provided for @onboardingDoctorConsultationSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Access to PMDC certified doctors'**
+  String get onboardingDoctorConsultationSubtitle;
+
+  /// No description provided for @onboardingPharmacyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Pharmacy'**
+  String get onboardingPharmacyTitle;
+
+  /// No description provided for @onboardingPharmacySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Get authentic medicines at your doorstep.'**
+  String get onboardingPharmacySubtitle;
+
+  /// No description provided for @onboardingLaboratoryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Laboratory Testing'**
+  String get onboardingLaboratoryTitle;
+
+  /// No description provided for @onboardingLaboratorySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Access reliable lab tests with accurate results.'**
+  String get onboardingLaboratorySubtitle;
+
+  /// No description provided for @onboardingSurgeryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Surgery Booking'**
+  String get onboardingSurgeryTitle;
+
+  /// No description provided for @onboardingSurgerySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Book your surgery with ease.'**
+  String get onboardingSurgerySubtitle;
+
+  /// No description provided for @pharmacyMoreLike.
+  ///
+  /// In en, this message translates to:
+  /// **'More Like'**
+  String get pharmacyMoreLike;
+
+  /// No description provided for @pharmacyAddToCart.
+  ///
+  /// In en, this message translates to:
+  /// **'Add to Cart'**
+  String get pharmacyAddToCart;
+
+  /// No description provided for @pharmacyAddToCartLower.
+  ///
+  /// In en, this message translates to:
+  /// **'Add to cart'**
+  String get pharmacyAddToCartLower;
+
+  /// No description provided for @freeDoctorTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Free Doctor'**
+  String get freeDoctorTitle;
+
+  /// No description provided for @freeDoctorOpenAppCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Fikrfree app'**
+  String get freeDoctorOpenAppCta;
+
+  /// No description provided for @freeDoctorOpenAppError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not open FikrFree right now.'**
+  String get freeDoctorOpenAppError;
+
+  /// No description provided for @freeDoctorConsultationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'24/7 Free Doctor Consultation'**
+  String get freeDoctorConsultationTitle;
+
+  /// No description provided for @freeDoctorPoint1.
+  ///
+  /// In en, this message translates to:
+  /// **'This service is available exclusively for Bima m-Health subscribers.'**
+  String get freeDoctorPoint1;
+
+  /// No description provided for @freeDoctorPoint2.
+  ///
+  /// In en, this message translates to:
+  /// **'Get 24/7 access to qualified doctors for general medical support and much more.'**
+  String get freeDoctorPoint2;
+
+  /// No description provided for @freeDoctorPoint3.
+  ///
+  /// In en, this message translates to:
+  /// **'To avail the service, subscribe to BIMA m-Health via FikrFree.'**
+  String get freeDoctorPoint3;
+
+  /// No description provided for @customerSupportTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Customer Support'**
+  String get customerSupportTitle;
+
+  /// No description provided for @customerSupportHelpCentreTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Help Centre'**
+  String get customerSupportHelpCentreTitle;
+
+  /// No description provided for @customerSupportHelpCentreSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Reach out to Apna Clinic for any support.'**
+  String get customerSupportHelpCentreSubtitle;
+
+  /// No description provided for @customerSupportFallbackCardTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Apna Clinic Support'**
+  String get customerSupportFallbackCardTitle;
+
+  /// No description provided for @customerSupportFallbackDialogTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Customer Support'**
+  String get customerSupportFallbackDialogTitle;
+
+  /// No description provided for @customerSupportFallbackDialogMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Or further support please contact us 24/7 on\n042-111-333-033.'**
+  String get customerSupportFallbackDialogMessage;
+
+  /// No description provided for @customerSupportCallNowCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Call Now'**
+  String get customerSupportCallNowCta;
+
+  /// No description provided for @customerSupportDialError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not start the call.'**
+  String get customerSupportDialError;
+
+  /// No description provided for @accountDetailsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Account Details'**
+  String get accountDetailsTitle;
+
+  /// No description provided for @accountAddTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Account'**
+  String get accountAddTitle;
+
+  /// No description provided for @accountEnterDetailsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter Account Details'**
+  String get accountEnterDetailsTitle;
+
+  /// No description provided for @accountMethodLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Account Method'**
+  String get accountMethodLabel;
+
+  /// No description provided for @accountNumberLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Account Number'**
+  String get accountNumberLabel;
+
+  /// No description provided for @accountSaveCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get accountSaveCta;
+
+  /// No description provided for @accountContinueCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue'**
+  String get accountContinueCta;
+
+  /// No description provided for @accountMethodAddedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment Method Added Successfully'**
+  String get accountMethodAddedSuccess;
+
+  /// No description provided for @accountLinkedMessagePrefix.
+  ///
+  /// In en, this message translates to:
+  /// **'Your'**
+  String get accountLinkedMessagePrefix;
+
+  /// No description provided for @accountLinkedMessageMiddle.
+  ///
+  /// In en, this message translates to:
+  /// **'account no.'**
+  String get accountLinkedMessageMiddle;
+
+  /// No description provided for @accountLinkedMessageSuffix.
+  ///
+  /// In en, this message translates to:
+  /// **'has been linked successfully'**
+  String get accountLinkedMessageSuffix;
+
+  /// No description provided for @accountHolderFallback.
+  ///
+  /// In en, this message translates to:
+  /// **'Account Holder'**
+  String get accountHolderFallback;
+
+  /// No description provided for @accountValidationEnterNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter account number'**
+  String get accountValidationEnterNumber;
+
+  /// No description provided for @accountValidationDigitsOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'Only digits are allowed'**
+  String get accountValidationDigitsOnly;
+
+  /// No description provided for @accountValidationElevenDigits.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter 11 digit Pakistan number'**
+  String get accountValidationElevenDigits;
+
+  /// No description provided for @accountValidationValidPakistanMobile.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter valid Pakistan mobile number'**
+  String get accountValidationValidPakistanMobile;
+
+  /// No description provided for @accountMethodJazzCash.
+  ///
+  /// In en, this message translates to:
+  /// **'JazzCash'**
+  String get accountMethodJazzCash;
+
+  /// No description provided for @dashboardHello.
+  ///
+  /// In en, this message translates to:
+  /// **'Hello, {name}'**
+  String dashboardHello(String name);
+
+  /// No description provided for @dashboardSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search Medicine, Doctor, Test....'**
+  String get dashboardSearchHint;
+
+  /// No description provided for @dashboardOurServicesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Our Services'**
+  String get dashboardOurServicesTitle;
+
+  /// No description provided for @dashboardSecureHealthTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Secure Your Health First'**
+  String get dashboardSecureHealthTitle;
+
+  /// No description provided for @dashboardFikrfreeTagline.
+  ///
+  /// In en, this message translates to:
+  /// **'Sehat aur insurance ab apke hath mei!'**
+  String get dashboardFikrfreeTagline;
+
+  /// No description provided for @dashboardBottomFreeDoctor.
+  ///
+  /// In en, this message translates to:
+  /// **'Free Doctor'**
+  String get dashboardBottomFreeDoctor;
+
+  /// No description provided for @dashboardBottomSupport.
+  ///
+  /// In en, this message translates to:
+  /// **'Support'**
+  String get dashboardBottomSupport;
+
+  /// No description provided for @dashboardBottomBookings.
+  ///
+  /// In en, this message translates to:
+  /// **'My Bookings'**
+  String get dashboardBottomBookings;
+
+  /// No description provided for @dashboardBottomProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile'**
+  String get dashboardBottomProfile;
+
+  /// No description provided for @dashboardBottomHome.
+  ///
+  /// In en, this message translates to:
+  /// **'Home'**
+  String get dashboardBottomHome;
+
+  /// No description provided for @dashboardMenuTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Menu'**
+  String get dashboardMenuTitle;
+
+  /// No description provided for @dashboardMenuCustomerSupport.
+  ///
+  /// In en, this message translates to:
+  /// **'Customer Support'**
+  String get dashboardMenuCustomerSupport;
+
+  /// No description provided for @dashboardMenuFaq.
+  ///
+  /// In en, this message translates to:
+  /// **'FAQ’s'**
+  String get dashboardMenuFaq;
+
+  /// No description provided for @dashboardMenuGuestUser.
+  ///
+  /// In en, this message translates to:
+  /// **'Guest User'**
+  String get dashboardMenuGuestUser;
+
+  /// No description provided for @dashboardMenuSignInManageAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in to manage your account'**
+  String get dashboardMenuSignInManageAccount;
+
+  /// No description provided for @dashboardMenuSignInContinue.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in to continue'**
+  String get dashboardMenuSignInContinue;
+
+  /// No description provided for @dashboardMenuLogout.
+  ///
+  /// In en, this message translates to:
+  /// **'Logout'**
+  String get dashboardMenuLogout;
+
+  /// No description provided for @dashboardMenuAbout.
+  ///
+  /// In en, this message translates to:
+  /// **'About'**
+  String get dashboardMenuAbout;
+
+  /// No description provided for @dashboardMenuAppVersion.
+  ///
+  /// In en, this message translates to:
+  /// **'App Version'**
+  String get dashboardMenuAppVersion;
+
+  /// No description provided for @dashboardMenuTerms.
+  ///
+  /// In en, this message translates to:
+  /// **'Terms & Conditions'**
+  String get dashboardMenuTerms;
+
+  /// No description provided for @dashboardMenuPrivacy.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy Policy'**
+  String get dashboardMenuPrivacy;
+
+  /// No description provided for @dashboardMenuEditProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Profile'**
+  String get dashboardMenuEditProfile;
+
+  /// No description provided for @dashboardMenuLoginSignup.
+  ///
+  /// In en, this message translates to:
+  /// **'Login / Signup'**
+  String get dashboardMenuLoginSignup;
+
+  /// No description provided for @dashboardLogoutMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to logout from your account?'**
+  String get dashboardLogoutMessage;
+
+  /// No description provided for @dashboardCancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get dashboardCancel;
 
   /// Title for the lab test browse screen app bar
   ///
