@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/extensions/screen_util_extensions.dart';
+import '../../../../core/l10n/app_localizations.dart';
 
 class PharmacyBookingsScreen extends StatelessWidget {
   const PharmacyBookingsScreen({super.key});
@@ -31,12 +32,14 @@ class PharmacyBookingsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final textTheme = Theme.of(context).textTheme;
     return ListView.separated(
       padding: EdgeInsets.fromLTRB(0, 20.h, 0, 10.h),
       itemBuilder: (context, index) => _PharmacyBookingCard(
         item: _items[index],
         textTheme: textTheme,
+        l10n: l10n,
       ),
       separatorBuilder: (_, __) => SizedBox(height: 12.h),
       itemCount: _items.length,
@@ -47,8 +50,13 @@ class PharmacyBookingsScreen extends StatelessWidget {
 class _PharmacyBookingCard extends StatelessWidget {
   final _PharmacyBookingItem item;
   final TextTheme textTheme;
+  final AppLocalizations l10n;
 
-  const _PharmacyBookingCard({required this.item, required this.textTheme});
+  const _PharmacyBookingCard({
+    required this.item,
+    required this.textTheme,
+    required this.l10n,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -107,8 +115,12 @@ class _PharmacyBookingCard extends StatelessWidget {
                       ),
                       children: [
                         const TextSpan(
-                          text: 'Total  ',
+                          text: '',
                           style: TextStyle(color: Color(0xFF5D758F)),
+                        ),
+                        TextSpan(
+                          text: '${l10n.bookingsTotalLabel}  ',
+                          style: const TextStyle(color: Color(0xFF5D758F)),
                         ),
                         TextSpan(
                           text: item.total,
@@ -148,7 +160,7 @@ class _PharmacyBookingCard extends StatelessWidget {
                           tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                         ),
                         child: Text(
-                          'View Details',
+                          l10n.bookingsViewDetailsCta,
                           style: textTheme.bodySmall?.copyWith(
                             color: Colors.black,
                             fontSize: 8.6.sp,

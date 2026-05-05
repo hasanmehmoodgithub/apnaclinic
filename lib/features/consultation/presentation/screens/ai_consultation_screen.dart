@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
 
+import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../constants/consultation_ui_config.dart';
 
@@ -9,6 +11,7 @@ class AiScreeningScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final textTheme = Theme.of(context).textTheme;
 
     return Scaffold(
@@ -23,7 +26,7 @@ class AiScreeningScreen extends StatelessWidget {
                 children: [
                   GestureDetector(
                     behavior: HitTestBehavior.opaque,
-                    onTap: () => Navigator.of(context).pop(),
+                    onTap: () => context.pop(),
                     child: SizedBox(
                       width: 15.w,
                       height: 15.h,
@@ -43,7 +46,7 @@ class AiScreeningScreen extends StatelessWidget {
                   ),
                   Expanded(
                     child: Text(
-                      'AI Screening',
+                      l10n.consultationAiScreeningTitle,
                       textAlign: TextAlign.center,
                       style: textTheme.titleLarge?.copyWith(
                         color: ConsultationUiConfig.primaryText,
@@ -82,7 +85,7 @@ class AiScreeningScreen extends StatelessWidget {
                           color: const Color(0xFF4A6B78),
                         ),
                         children: [
-                          const TextSpan(text: 'Hello, welcome to '),
+                          TextSpan(text: l10n.consultationAiWelcomePrefix),
                           TextSpan(
                             text: 'Apna Clinic',
                             style: TextStyle(
@@ -91,7 +94,7 @@ class AiScreeningScreen extends StatelessWidget {
                               fontSize: 20.sp,
                             ),
                           ),
-                          const TextSpan(text: " , let's get started"),
+                          TextSpan(text: l10n.consultationAiWelcomeSuffix),
                         ],
                       ),
                     ),
@@ -210,7 +213,7 @@ class _LetsStartButton extends StatelessWidget {
         ),
         alignment: Alignment.center,
         child: Text(
-          "Let's Start",
+          AppLocalizations.of(context)!.consultationAiStartCta,
           style: TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.w600,

@@ -22,6 +22,7 @@ import '../../features/lab_test/presentation/screens/lab_test_screen.dart';
 import '../../features/lab_test/presentation/screens/lab_test_view_details_screen.dart';
 import '../../features/notification/presentation/cubit/notification_cubit.dart';
 import '../../features/notification/presentation/screens/notifcation_screen.dart';
+import '../../features/bookings/presentation/screens/surgery_booking_details_screen.dart';
 import '../../features/pharmacy/domain/entities/pharmacy_medicine_entity.dart';
 import '../../features/pharmacy/presentation/screens/pharmacy_cart_screen.dart';
 import '../../features/pharmacy/presentation/screens/pharmacy_checkout_screen.dart';
@@ -196,6 +197,20 @@ class AppRouter {
           create: (_) => sl<SurgeryCubit>(),
           child: const SurgeryScreen(),
         ),
+      ),
+      GoRoute(
+        path: AppRoutes.path(AppRoutes.surgeryBookingDetails),
+        name: AppRoutes.surgeryBookingDetails,
+        builder: (context, state) {
+          final extra = state.extra;
+          if (extra is! SurgeryBookingDetailsArgs) {
+            return const SizedBox.shrink();
+          }
+          return SurgeryDetailsScreen(
+            item: extra.item,
+            initialStatus: extra.initialStatus,
+          );
+        },
       ),
       GoRoute(
         path: AppRoutes.path(AppRoutes.labTest),

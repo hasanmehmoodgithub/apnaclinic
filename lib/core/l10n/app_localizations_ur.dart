@@ -817,4 +817,137 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get labTestBookCta => 'لیب ٹیسٹ بک کریں';
+
+  @override
+  String get consultationAiScreeningTitle => 'اے آئی اسکریننگ';
+
+  @override
+  String get consultationAiWelcomePrefix => 'ہیلو، خوش آمدید ';
+
+  @override
+  String get consultationAiWelcomeSuffix => ' ، آئیے شروع کرتے ہیں';
+
+  @override
+  String get consultationAiStartCta => 'آئیے شروع کریں';
+
+  @override
+  String get consultationSelectCategoriesTitle => 'زمرہ منتخب کریں';
+
+  @override
+  String get consultationSpecialistTitle => 'ماہر';
+
+  @override
+  String get consultationVideoBookingPrompt =>
+      'اپنی ویڈیو مشاورت یہاں بک کریں!';
+
+  @override
+  String get consultationGetAppointmentCta => 'اپائنٹمنٹ لیں';
+
+  @override
+  String get consultationBookingConfirmedTitle => 'اپائنٹمنٹ کنفرم ہو گئی!';
+
+  @override
+  String consultationBookingConfirmedMessage(Object doctorName) {
+    return 'آپ کی مشاورت $doctorName کے ساتھ بک ہو گئی ہے۔ آپ کال میں اپائنٹمنٹس سے شامل ہو سکتے ہیں۔';
+  }
+
+  @override
+  String get commonOk => 'ٹھیک ہے';
+
+  @override
+  String get consultationUploadDocumentTitle => 'دستاویز اپلوڈ کریں';
+
+  @override
+  String get consultationUseCamera => 'کیمرہ استعمال کریں';
+
+  @override
+  String get consultationUploadFromGallery => 'گیلری سے اپلوڈ کریں';
+
+  @override
+  String get consultationUploadFromFile => 'فائل سے اپلوڈ کریں';
+
+  @override
+  String get consultationCameraUnavailable =>
+      'فی الحال کیمرہ تک رسائی دستیاب نہیں ہے۔';
+
+  @override
+  String get consultationCaptureMediaFailed =>
+      'میڈیا کیپچر نہیں ہو سکا۔ براہ کرم دوبارہ کوشش کریں۔';
+
+  @override
+  String get consultationGalleryUnavailable =>
+      'فی الحال گیلری تک رسائی دستیاب نہیں ہے۔';
+
+  @override
+  String get consultationPickGalleryFailed =>
+      'گیلری سے میڈیا منتخب نہیں ہو سکا۔';
+
+  @override
+  String get consultationPickFileFailed =>
+      'فائل منتخب نہیں ہو سکی۔ براہ کرم دوبارہ کوشش کریں۔';
+
+  @override
+  String get bookingsDashboardTitle => 'میری بکنگز';
+
+  @override
+  String get bookingsTabDoctorConsultation => 'ڈاکٹر مشاورت';
+
+  @override
+  String get bookingsTabSurgery => 'سرجری';
+
+  @override
+  String get bookingsTabLabTest => 'لیب ٹیسٹ';
+
+  @override
+  String get bookingsTabPharmacy => 'فارمیسی';
+
+  @override
+  String get bookingsLabTestEmptyDescription =>
+      'ابھی تک کوئی لیب ٹیسٹ بکنگ نہیں ہے۔';
+
+  @override
+  String get bookingsStatusLabel => 'اسٹیٹس';
+
+  @override
+  String get bookingsDateLabel => 'تاریخ';
+
+  @override
+  String get bookingsDateCreatedLabel => 'بننے کی تاریخ';
+
+  @override
+  String get bookingsViewDetailsCta => 'تفصیلات دیکھیں';
+
+  @override
+  String get bookingsFeeLabel => 'فیس';
+
+  @override
+  String get bookingsTotalLabel => 'کل';
+
+  @override
+  String get bookingsSurgeryProcedureSubtitle =>
+      'فوٹوریفریکٹو کیراٹیکٹومی سرجری';
+
+  @override
+  String get bookingsSurgeryPatientName => 'حسیب قاسم';
+
+  @override
+  String get bookingsProceedCheckoutCta => 'چیک آؤٹ جاری رکھیں';
+
+  @override
+  String get bookingsRequirementsTitle => 'ضروریات';
+
+  @override
+  String get bookingsSurgeryRequirement1 =>
+      'اپائنٹمنٹ وقت سے پہلے 9-12 گھنٹے روزہ رکھیں';
+
+  @override
+  String get bookingsSurgeryRequirement2 =>
+      'اپائنٹمنٹ والے دن سخت جسمانی سرگرمی سے پرہیز کریں';
+
+  @override
+  String get bookingsSurgeryRequirement3 =>
+      'یقینی بنائیں کہ آپ کسی اینٹی بایوٹک کورس پر نہ ہوں';
+
+  @override
+  String get labTestSampleTypeBlood => 'خون';
 }

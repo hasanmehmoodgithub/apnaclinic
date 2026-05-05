@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
+import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/widgets/app_scaffold_gradient.dart';
 
 import 'doctor_consultation_bookings_screen.dart';
@@ -17,18 +19,18 @@ class BookingsDashboardScreen extends StatelessWidget {
   final bool showBackButton;
   final VoidCallback? onBack;
 
-  static const List<String> _tabs = [
-    'Doctor Consultation',
-    'Surgery',
-    'Lab Test',
-    'Pharmacy',
-  ];
-
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
+    final tabs = <String>[
+      l10n.bookingsTabDoctorConsultation,
+      l10n.bookingsTabSurgery,
+      l10n.bookingsTabLabTest,
+      l10n.bookingsTabPharmacy,
+    ];
     return DefaultTabController(
-      length: _tabs.length,
+      length: tabs.length,
       child: AppScaffoldGradient(
         child: Column(
           children: [
@@ -38,8 +40,12 @@ class BookingsDashboardScreen extends StatelessWidget {
                   children: [
                     showBackButton
                         ? IconButton(
-                            onPressed:
-                                onBack ?? () => Navigator.of(context).maybePop(),
+                            onPressed: onBack ??
+                                () {
+                                  if (context.canPop()) {
+                                    context.pop();
+                                  }
+                                },
                             icon: const Icon(
                               Icons.arrow_back_rounded,
                               color: Color(0xFF061E40),
@@ -48,7 +54,7 @@ class BookingsDashboardScreen extends StatelessWidget {
                         : SizedBox(width: 48.w),
                     Expanded(
                       child: Text(
-                        'My Bookings',
+                        l10n.bookingsDashboardTitle,
                         textAlign: TextAlign.center,
                         style: theme.textTheme.titleLarge?.copyWith(
                           color: const Color(0xFF061E40),
@@ -99,7 +105,7 @@ class BookingsDashboardScreen extends StatelessWidget {
                             fontSize: 14.sp,
                             fontWeight: FontWeight.w500,
                           ),
-                          tabs: [for (final tab in _tabs) Tab(text: tab)],
+                          tabs: [for (final tab in tabs) Tab(text: tab)],
                         ),
                       ),
                       const Expanded(

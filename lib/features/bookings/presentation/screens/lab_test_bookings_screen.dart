@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
+import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../generated/assets.dart';
 import '../../../lab_test/presentation/lab_test_route_args.dart';
@@ -28,6 +29,7 @@ class _LabTestBookingsScreenState extends State<LabTestBookingsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Padding(
       padding: EdgeInsets.fromLTRB(2.w, 18.h, 2.w, 8.h),
       child: FutureBuilder<List<LabTestBookingItemModel>>(
@@ -42,8 +44,8 @@ class _LabTestBookingsScreenState extends State<LabTestBookingsScreen> {
             return Column(
               children: [
                 EmptyBookingWidget(
-                  description: 'No lab test bookings yet.',
-                  buttonText: 'Book Lab Test',
+                  description: l10n.bookingsLabTestEmptyDescription,
+                  buttonText: l10n.labTestBookCta,
                   onTap: () {},
                 ),
               ],
@@ -70,6 +72,7 @@ class _LabTestBookingCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
 
     return Container(
@@ -116,7 +119,7 @@ class _LabTestBookingCard extends StatelessWidget {
                 ),
                 SizedBox(height: 8.h),
                 Text(
-                  'Order No.${booking.orderNo}',
+                  '${l10n.labTestOrderNoPrefix}.${booking.orderNo}',
                   style: theme.textTheme.titleMedium?.copyWith(
                     color: const Color(0xFF061E40),
                     fontWeight: FontWeight.w500,
@@ -141,7 +144,7 @@ class _LabTestBookingCard extends StatelessWidget {
                     Expanded(
                       child: _metaColumn(
                         theme,
-                        label: 'Status:',
+                        label: '${l10n.bookingsStatusLabel}:',
                         child: Container(
                           padding: EdgeInsets.symmetric(horizontal: 9.w, vertical: 3.h),
                           decoration: BoxDecoration(
@@ -168,7 +171,7 @@ class _LabTestBookingCard extends StatelessWidget {
                     Expanded(
                       child: _metaColumn(
                         theme,
-                        label: 'Total Fee',
+                        label: l10n.labTestTotalFeeLabel,
                         child: Text(
                           booking.totalFee,
                           style: theme.textTheme.titleSmall?.copyWith(
@@ -184,7 +187,7 @@ class _LabTestBookingCard extends StatelessWidget {
                     Expanded(
                       child: _metaColumn(
                         theme,
-                        label: 'Date',
+                        label: l10n.bookingsDateLabel,
                         child: Text(
                           booking.dateLabel,
                           style: theme.textTheme.bodyMedium?.copyWith(
@@ -208,7 +211,7 @@ class _LabTestBookingCard extends StatelessWidget {
                               labName: 'Chughtai Lab',
                               labLogoUrl: Assets.labTestChughtaiLabLogo,
                               partnerLogoUrl: Assets.labTestOladocOgo,
-                              sampleType: 'Blood',
+                              sampleType: l10n.labTestSampleTypeBlood,
                               discountedFee: booking.discountedFee,
                               originalFee: booking.originalFee,
                               discountCode: booking.orderNo,
@@ -225,7 +228,7 @@ class _LabTestBookingCard extends StatelessWidget {
                           textStyle: TextStyle(fontSize: 12.sp, fontWeight: FontWeight.w400),
                           tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                         ),
-                        child: const Text('View Details'),
+                        child: Text(l10n.bookingsViewDetailsCta),
                       ),
                     ),
                   ],
