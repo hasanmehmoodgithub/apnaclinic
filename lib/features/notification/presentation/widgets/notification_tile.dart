@@ -2,6 +2,7 @@ import 'package:apnaclinic/generated/assets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
+import '../../../../core/constants/app_colors.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../domain/entities/notification_entity.dart';
 
@@ -27,7 +28,7 @@ class NotificationTile extends StatelessWidget {
         decoration: BoxDecoration(
           border: Border(
             bottom: BorderSide(
-              color: isLast ? Colors.transparent : const Color(0xFFDDE1E5),
+              color: isLast ? Colors.transparent : AppColors.clrDDE1E5,
               width: 1.r,
             ),
           ),
@@ -43,7 +44,7 @@ class NotificationTile extends StatelessWidget {
                       padding: EdgeInsets.only(top: 10.h),
                       child: Icon(
                         Icons.circle,
-                        color: const Color(0xFF0FAA9A),
+                        color: AppColors.clr0FAA9A,
                         size: 7.r,
                       ),
                     ),
@@ -55,12 +56,15 @@ class NotificationTile extends StatelessWidget {
               padding: EdgeInsets.all(10),
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: const Color(0xFFD8ECFE),
-                border: Border.all(color: const Color(0xFFB4D3EE)),
+                color: AppColors.clrD8ECFE,
+                border: Border.all(color: AppColors.clrB4D3EE),
               ),
               child: SvgPicture.asset(
                 _resolveTypeIcon(item.type),
-                color: const Color(0xFF0B77C5),
+                colorFilter: const ColorFilter.mode(
+                  AppColors.clr0B77C5,
+                  BlendMode.srcIn,
+                ),
                 height: 22.r,
                 width: 22.r,
               ),
@@ -73,7 +77,7 @@ class NotificationTile extends StatelessWidget {
                   Text(
                     item.title,
                     style: theme.textTheme.titleMedium?.copyWith(
-                      color: const Color(0xFF0E2D55),
+                      color: AppColors.clr0E2D55,
                       fontWeight: FontWeight.w700,
                       fontSize: (30 / 1.6).sp,
                     ),
@@ -82,7 +86,7 @@ class NotificationTile extends StatelessWidget {
                   Text(
                     item.message,
                     style: theme.textTheme.bodyMedium?.copyWith(
-                      color: const Color(0xFF454545),
+                      color: AppColors.clr454545,
                       fontSize: (28 / 1.6).sp,
                       height: 1.25,
                     ),
@@ -91,7 +95,7 @@ class NotificationTile extends StatelessWidget {
                   Text(
                     item.timeLabel,
                     style: theme.textTheme.bodySmall?.copyWith(
-                      color: const Color(0xFF111827),
+                      color: AppColors.clr111827,
                       fontSize: (24 / 1.6).sp,
                       fontWeight: FontWeight.w500,
                     ),

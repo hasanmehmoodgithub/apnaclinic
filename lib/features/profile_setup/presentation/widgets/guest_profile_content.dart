@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/constants/app_colors.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
+import '../../../../core/l10n/app_localizations.dart';
 
 class GuestProfileContent extends StatelessWidget {
   const GuestProfileContent({super.key, required this.onLoginTap});
@@ -9,6 +11,7 @@ class GuestProfileContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     return Column(
       children: [
@@ -26,20 +29,20 @@ class GuestProfileContent extends StatelessWidget {
                   width: 44.r,
                   height: 44.r,
                   decoration: const BoxDecoration(
-                    color: Color(0xFFDDE5EF),
+                    color: AppColors.clrDDE5EF,
                     shape: BoxShape.circle,
                   ),
                   child: const Icon(
                     Icons.person_rounded,
-                    color: Color(0xFF6B7280),
+                    color: AppColors.clr6B7280,
                   ),
                 ),
                 SizedBox(width: 10.w),
                 Expanded(
                   child: Text(
-                    'Guest User',
+                    l10n.profileGuestUserTitle,
                     style: theme.textTheme.headlineSmall?.copyWith(
-                      color: const Color(0xFF1A2A4A),
+                      color: AppColors.clr1A2A4A,
                       fontWeight: FontWeight.w500,
                       fontSize: 16.sp,
                     ),
@@ -50,7 +53,7 @@ class GuestProfileContent extends StatelessWidget {
                   style: OutlinedButton.styleFrom(
                     minimumSize: Size(0, 40.h),
                     side: const BorderSide(
-                      color: Color(0xFF8C949C),
+                      color: AppColors.clr8C949C,
                     ),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(22.r),
@@ -60,9 +63,9 @@ class GuestProfileContent extends StatelessWidget {
                     ),
                   ),
                   child: Text(
-                    'Sign Up / Login',
+                    l10n.profileSignupLoginCta,
                     style: theme.textTheme.titleMedium?.copyWith(
-                      color: const Color(0xFF3A4557),
+                      color: AppColors.clr3A4557,
                       fontWeight: FontWeight.w500,
                       fontSize: 14.sp,
                     ),

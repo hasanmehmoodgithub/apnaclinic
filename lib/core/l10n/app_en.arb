@@ -118,6 +118,30 @@
   "profileDobHint": "DD/MM/YY",
   "profileDobRequired": "Please select date of birth.",
   "profileSaveCta": "Save",
+  "profileSetupHeaderTitle": "Profile Setup",
+  "profileImagePickerRestartMessage": "Image picker not ready yet. Please fully restart the app.",
+  "profileImagePickerFailedMessage": "Could not pick image. Please try again.",
+  "profileGuestUserTitle": "Guest User",
+  "profileSignupLoginCta": "Sign Up / Login",
+  "profileEditCta": "Edit",
+  "profileAccountDetailsTitle": "Account Details",
+  "profileDefaultTag": "Default",
+  "profileAddAccountCta": "Add Account",
+  "profileMobileBankPrefix": "Mobile Bank",
+  "profileRemoveAccountTitle": "Remove Account",
+  "profileRemoveAccountMessage": "Are you sure you want to remove {bankName} account {accountNumber} ?",
+  "@profileRemoveAccountMessage": {
+    "placeholders": {
+      "bankName": {
+        "type": "String"
+      },
+      "accountNumber": {
+        "type": "String"
+      }
+    }
+  },
+  "profileRemoveCta": "Remove",
+  "profileCancelCta": "Cancel",
   "pharmacyScreenTitle": "Pharmacy",
   "@pharmacyScreenTitle": {
     "description": "Title on the pharmacy detail screen header"
@@ -247,8 +271,7 @@
   "notificationsTitle": "Notifications",
   "notificationsRetryCta": "Retry",
   "notificationsEmptyTitle": "No Notifications Yet!",
-  "notificationsLoadError": "Unable to load notifications. Pull to refresh or try again."
-  "profileSaveCta": "Save",
+  "notificationsLoadError": "Unable to load notifications. Pull to refresh or try again.",
   "labTestScreenTitle": "Lab Test",
   "@labTestScreenTitle": {
     "description": "Title for the lab test browse screen app bar"

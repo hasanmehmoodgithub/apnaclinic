@@ -482,6 +482,90 @@ abstract class AppLocalizations {
   /// **'Save'**
   String get profileSaveCta;
 
+  /// No description provided for @profileSetupHeaderTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile Setup'**
+  String get profileSetupHeaderTitle;
+
+  /// No description provided for @profileImagePickerRestartMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Image picker not ready yet. Please fully restart the app.'**
+  String get profileImagePickerRestartMessage;
+
+  /// No description provided for @profileImagePickerFailedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not pick image. Please try again.'**
+  String get profileImagePickerFailedMessage;
+
+  /// No description provided for @profileGuestUserTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Guest User'**
+  String get profileGuestUserTitle;
+
+  /// No description provided for @profileSignupLoginCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign Up / Login'**
+  String get profileSignupLoginCta;
+
+  /// No description provided for @profileEditCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit'**
+  String get profileEditCta;
+
+  /// No description provided for @profileAccountDetailsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Account Details'**
+  String get profileAccountDetailsTitle;
+
+  /// No description provided for @profileDefaultTag.
+  ///
+  /// In en, this message translates to:
+  /// **'Default'**
+  String get profileDefaultTag;
+
+  /// No description provided for @profileAddAccountCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Account'**
+  String get profileAddAccountCta;
+
+  /// No description provided for @profileMobileBankPrefix.
+  ///
+  /// In en, this message translates to:
+  /// **'Mobile Bank'**
+  String get profileMobileBankPrefix;
+
+  /// No description provided for @profileRemoveAccountTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove Account'**
+  String get profileRemoveAccountTitle;
+
+  /// No description provided for @profileRemoveAccountMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to remove {bankName} account {accountNumber} ?'**
+  String profileRemoveAccountMessage(String bankName, String accountNumber);
+
+  /// No description provided for @profileRemoveCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove'**
+  String get profileRemoveCta;
+
+  /// No description provided for @profileCancelCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get profileCancelCta;
+
   /// Title on the pharmacy detail screen header
   ///
   /// In en, this message translates to:
@@ -1105,6 +1189,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Cancel'**
   String get dashboardCancel;
+
+  /// No description provided for @notificationsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get notificationsTitle;
+
+  /// No description provided for @notificationsRetryCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get notificationsRetryCta;
+
+  /// No description provided for @notificationsEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No Notifications Yet!'**
+  String get notificationsEmptyTitle;
+
+  /// No description provided for @notificationsLoadError.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to load notifications. Pull to refresh or try again.'**
+  String get notificationsLoadError;
 
   /// Title for the lab test browse screen app bar
   ///

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/constants/app_colors.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
+import '../../../../core/l10n/app_localizations.dart';
 import '../../../account/domain/models/account_method.dart';
 import 'profile_account_tiles.dart';
 import 'profile_info_tiles.dart';
@@ -33,6 +35,7 @@ class LoggedInProfileContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     return Padding(
       padding: const EdgeInsets.all(18.0),
@@ -48,9 +51,9 @@ class LoggedInProfileContent extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      fullName.isEmpty ? 'User' : fullName,
+                      fullName.isEmpty ? l10n.profileGuestUserTitle : fullName,
                       style: theme.textTheme.headlineSmall?.copyWith(
-                        color: const Color(0xFF1A2A4A),
+                        color: AppColors.clr1A2A4A,
                         fontWeight: FontWeight.w500,
                         fontSize: (38 / 1.6).sp,
                         height: 1,
@@ -60,7 +63,7 @@ class LoggedInProfileContent extends StatelessWidget {
                     Text(
                       phone.isEmpty ? '--' : phone,
                       style: theme.textTheme.bodyMedium?.copyWith(
-                        color: const Color(0xFF7A8594),
+                        color: AppColors.clr7A8594,
                         fontSize: 16.sp,
                         height: 1,
                       ),
@@ -80,22 +83,22 @@ class LoggedInProfileContent extends StatelessWidget {
                         height: 16.r,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: const Color(0xFFE4E7EB),
+                          color: AppColors.clrE4E7EB,
                           border: Border.all(
-                            color: const Color(0xFFC2C9D2),
+                            color: AppColors.clrC2C9D2,
                           ),
                         ),
                         child: Icon(
                           Icons.edit_rounded,
                           size: 10.r,
-                          color: const Color(0xFF7B8794),
+                          color: AppColors.clr7B8794,
                         ),
                       ),
                       SizedBox(width: 6.w),
                       Text(
-                        'Edit',
+                        l10n.profileEditCta,
                         style: theme.textTheme.bodyMedium?.copyWith(
-                          color: const Color(0xFF3D4C63),
+                          color: AppColors.clr3D4C63,
                           fontSize: (22 / 1.6).sp,
                         ),
                       ),
@@ -113,9 +116,9 @@ class LoggedInProfileContent extends StatelessWidget {
           ),
           SizedBox(height: 14.h),
           Text(
-            'Account Details',
+            l10n.profileAccountDetailsTitle,
             style: theme.textTheme.titleMedium?.copyWith(
-              color: const Color(0xFF2D2D2D),
+              color: AppColors.clr2D2D2D,
               fontWeight: FontWeight.w500,
               fontSize: (16 / 1.05).sp,
             ),

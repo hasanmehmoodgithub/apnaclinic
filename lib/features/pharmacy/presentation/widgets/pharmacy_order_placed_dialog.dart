@@ -5,6 +5,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
+import '../../../../generated/assets.dart';
 
 class PharmacyOrderPlacedDialog extends StatelessWidget {
   const PharmacyOrderPlacedDialog({super.key});
@@ -24,7 +25,7 @@ class PharmacyOrderPlacedDialog extends StatelessWidget {
             SizedBox(
               width: 60.r,
               height: 60.r,
-              child: SvgPicture.asset('assets/icons/tick.svg'),
+              child: SvgPicture.asset(Assets.iconsTick),
             ),
             SizedBox(height: 12.h),
             Text(

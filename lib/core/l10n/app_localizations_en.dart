@@ -202,6 +202,52 @@ class AppLocalizationsEn extends AppLocalizations {
   String get profileSaveCta => 'Save';
 
   @override
+  String get profileSetupHeaderTitle => 'Profile Setup';
+
+  @override
+  String get profileImagePickerRestartMessage =>
+      'Image picker not ready yet. Please fully restart the app.';
+
+  @override
+  String get profileImagePickerFailedMessage =>
+      'Could not pick image. Please try again.';
+
+  @override
+  String get profileGuestUserTitle => 'Guest User';
+
+  @override
+  String get profileSignupLoginCta => 'Sign Up / Login';
+
+  @override
+  String get profileEditCta => 'Edit';
+
+  @override
+  String get profileAccountDetailsTitle => 'Account Details';
+
+  @override
+  String get profileDefaultTag => 'Default';
+
+  @override
+  String get profileAddAccountCta => 'Add Account';
+
+  @override
+  String get profileMobileBankPrefix => 'Mobile Bank';
+
+  @override
+  String get profileRemoveAccountTitle => 'Remove Account';
+
+  @override
+  String profileRemoveAccountMessage(String bankName, String accountNumber) {
+    return 'Are you sure you want to remove $bankName account $accountNumber ?';
+  }
+
+  @override
+  String get profileRemoveCta => 'Remove';
+
+  @override
+  String get profileCancelCta => 'Cancel';
+
+  @override
   String get pharmacyScreenTitle => 'Pharmacy';
 
   @override
@@ -531,6 +577,19 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get dashboardCancel => 'Cancel';
+
+  @override
+  String get notificationsTitle => 'Notifications';
+
+  @override
+  String get notificationsRetryCta => 'Retry';
+
+  @override
+  String get notificationsEmptyTitle => 'No Notifications Yet!';
+
+  @override
+  String get notificationsLoadError =>
+      'Unable to load notifications. Pull to refresh or try again.';
 
   @override
   String get labTestScreenTitle => 'Lab Test';

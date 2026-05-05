@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../components/shimmer/app_shimmer.dart';
 import '../../../../core/constants/app_colors.dart';
@@ -18,7 +19,6 @@ Future<void> showPharmacyAddToCartSheet(
   required String loaderIdPrefix,
 }) async {
   final pharmacyCubit = context.read<PharmacyCubit>();
-  final bottomSheetNavigator = Navigator.of(context);
   var qty = 1;
 
   await showModalBottomSheet<void>(
@@ -143,8 +143,8 @@ Future<void> showPharmacyAddToCartSheet(
                         quantity: qty,
                       );
                       HeartLoaderDialogController.close(loaderId);
-                      if (success && bottomSheetNavigator.mounted) {
-                        bottomSheetNavigator.pop();
+                      if (success && sheetContext.mounted) {
+                        sheetContext.pop();
                       }
                     },
                   ),

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/constants/app_colors.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
+import '../../../../core/l10n/app_localizations.dart';
 import '../../../account/domain/models/account_method.dart';
 
 class AccountTile extends StatelessWidget {
@@ -17,6 +19,7 @@ class AccountTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     return InkWell(
       onTap: onTap,
@@ -27,7 +30,7 @@ class AccountTile extends StatelessWidget {
           color: Colors.transparent,
           borderRadius: BorderRadius.circular(4.r),
           border: Border.all(
-            color: const Color(0xFFC9CFD7),
+            color: AppColors.clrC9CFD7,
             width: 0.8.r,
           ),
         ),
@@ -39,9 +42,9 @@ class AccountTile extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Mobile Bank/${account.bankName}',
+                    '${l10n.profileMobileBankPrefix}/${account.bankName}',
                     style: theme.textTheme.bodySmall?.copyWith(
-                      color: const Color(0xFF7A91AE),
+                      color: AppColors.clr7A91AE,
                       fontSize: (12 / 1.05).sp,
                     ),
                   ),
@@ -51,7 +54,7 @@ class AccountTile extends StatelessWidget {
                     maxLines: 2,
                     overflow: TextOverflow.visible,
                     style: theme.textTheme.titleMedium?.copyWith(
-                      color: const Color(0xFF2B2C58),
+                      color: AppColors.clr2B2C58,
                       fontWeight: FontWeight.w500,
                       fontSize: (26 / 1.6).sp,
                       height: 1.15,
@@ -65,14 +68,14 @@ class AccountTile extends StatelessWidget {
                 margin: EdgeInsets.only(left: 8.w, top: 2.h),
                 padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: AppColors.clrWhite,
                   borderRadius: BorderRadius.circular(12.r),
-                  border: Border.all(color: const Color(0xFFD4D9E1)),
+                  border: Border.all(color: AppColors.clrD4D9E1),
                 ),
                 child: Text(
-                  'Default',
+                  l10n.profileDefaultTag,
                   style: theme.textTheme.labelSmall?.copyWith(
-                    color: const Color(0xFF7B8794),
+                    color: AppColors.clr7B8794,
                   ),
                 ),
               ),
@@ -86,12 +89,12 @@ class AccountTile extends StatelessWidget {
                   height: 28.r,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    border: Border.all(color: const Color(0xFFD4D9E1)),
-                    color: Colors.white,
+                    border: Border.all(color: AppColors.clrD4D9E1),
+                    color: AppColors.clrWhite,
                   ),
                   child: Icon(
                     Icons.delete_outline_rounded,
-                    color: const Color(0xFFC62828),
+                    color: AppColors.clrC62828,
                     size: 16.r,
                   ),
                 ),
@@ -110,6 +113,7 @@ class AddAccountTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     return InkWell(
       onTap: onTap,
@@ -118,19 +122,19 @@ class AddAccountTile extends StatelessWidget {
         height: 56.h,
         padding: EdgeInsets.symmetric(horizontal: 12.w),
         decoration: BoxDecoration(
-          color: const Color(0xFFF3F3F3),
+          color: AppColors.clrF3F3F3,
           borderRadius: BorderRadius.circular(6.r),
           border: Border.all(
-            color: const Color(0xFFD4D9E1),
+            color: AppColors.clrD4D9E1,
             width: 0.6.r,
           ),
         ),
         child: Row(
           children: [
             Text(
-              'Add Account',
+              l10n.profileAddAccountCta,
               style: theme.textTheme.titleSmall?.copyWith(
-                color: const Color(0xFF2C2F5A),
+                color: AppColors.clr2C2F5A,
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -141,12 +145,12 @@ class AddAccountTile extends StatelessWidget {
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 border: Border.all(
-                  color: const Color(0xFFC6CCD5),
+                  color: AppColors.clrC6CCD5,
                 ),
               ),
               child: const Icon(
                 Icons.add,
-                color: Color(0xFF2C2F5A),
+                color: AppColors.clr2C2F5A,
               ),
             ),
           ],

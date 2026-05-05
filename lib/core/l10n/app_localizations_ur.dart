@@ -96,7 +96,7 @@ class AppLocalizationsUr extends AppLocalizations {
   String get authResendOtp => 'OTP دوبارہ بھیجیں';
 
   @override
-  String get authOtpSecondsShort => 'سیکنڈ';
+  String get authOtpSecondsShort => 'Sec';
 
   @override
   String get authOtpSentTo => 'OTP بھیجا گیا';
@@ -200,6 +200,52 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get profileSaveCta => 'محفوظ کریں';
+
+  @override
+  String get profileSetupHeaderTitle => 'پروفائل سیٹ اپ';
+
+  @override
+  String get profileImagePickerRestartMessage =>
+      'امیج پکر ابھی تیار نہیں۔ براہ کرم ایپ مکمل طور پر ری اسٹارٹ کریں۔';
+
+  @override
+  String get profileImagePickerFailedMessage =>
+      'تصویر منتخب نہیں ہو سکی۔ براہ کرم دوبارہ کوشش کریں۔';
+
+  @override
+  String get profileGuestUserTitle => 'مہمان صارف';
+
+  @override
+  String get profileSignupLoginCta => 'سائن اپ / لاگ اِن';
+
+  @override
+  String get profileEditCta => 'ترمیم';
+
+  @override
+  String get profileAccountDetailsTitle => 'اکاؤنٹ کی تفصیل';
+
+  @override
+  String get profileDefaultTag => 'ڈیفالٹ';
+
+  @override
+  String get profileAddAccountCta => 'اکاؤنٹ شامل کریں';
+
+  @override
+  String get profileMobileBankPrefix => 'موبائل بینک';
+
+  @override
+  String get profileRemoveAccountTitle => 'اکاؤنٹ حذف کریں';
+
+  @override
+  String profileRemoveAccountMessage(String bankName, String accountNumber) {
+    return 'کیا آپ واقعی $bankName اکاؤنٹ $accountNumber حذف کرنا چاہتے ہیں؟';
+  }
+
+  @override
+  String get profileRemoveCta => 'حذف کریں';
+
+  @override
+  String get profileCancelCta => 'منسوخ کریں';
 
   @override
   String get pharmacyScreenTitle => 'فارمیسی';
@@ -532,6 +578,19 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get dashboardCancel => 'منسوخ کریں';
+
+  @override
+  String get notificationsTitle => 'نوٹیفیکیشنز';
+
+  @override
+  String get notificationsRetryCta => 'دوبارہ کوشش کریں';
+
+  @override
+  String get notificationsEmptyTitle => 'ابھی تک کوئی نوٹیفیکیشن نہیں!';
+
+  @override
+  String get notificationsLoadError =>
+      'نوٹیفیکیشنز لوڈ نہیں ہو سکیں۔ ریفریش کریں یا دوبارہ کوشش کریں۔';
 
   @override
   String get labTestScreenTitle => 'لیب ٹیسٹ';

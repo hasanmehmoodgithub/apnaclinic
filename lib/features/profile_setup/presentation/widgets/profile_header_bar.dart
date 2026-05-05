@@ -2,6 +2,7 @@ import 'package:apnaclinic/core/constants/app_colors.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../core/extensions/screen_util_extensions.dart';
+import '../../../../core/l10n/app_localizations.dart';
 
 class ProfileHeaderBar extends StatelessWidget {
   const ProfileHeaderBar({
@@ -15,6 +16,7 @@ class ProfileHeaderBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     return Padding(
       padding: EdgeInsets.fromLTRB(8.w, 6.h, 16.w, 6.h),
@@ -25,13 +27,13 @@ class ProfileHeaderBar extends StatelessWidget {
                   onPressed: onBack,
                   icon: const Icon(
                     Icons.arrow_back_rounded,
-                    color: Color(0xFF061E40),
+                    color: AppColors.clr060,
                   ),
                 )
               : SizedBox(width: 48.w),
           Expanded(
             child: Text(
-              'Profile',
+              l10n.profile,
               textAlign: TextAlign.center,
               style: theme.textTheme.titleLarge?.copyWith(
                 color: AppColors.clr060,
