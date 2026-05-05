@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../../core/extensions/screen_util_extensions.dart';
+import '../../../../core/l10n/app_localizations.dart';
 import '../../../../generated/assets.dart';
 import 'lab_test_figma_image.dart';
 
@@ -24,6 +25,7 @@ class LabTestViewDetailsOrderCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     return Container(
       height: 260,
@@ -70,7 +72,7 @@ class LabTestViewDetailsOrderCard extends StatelessWidget {
                               ),
                               SizedBox(height: 2.h),
                               Text(
-                                'Order no. $orderNo',
+                                '${l10n.labTestOrderNoPrefix} $orderNo',
                                 style: theme.textTheme.bodyMedium?.copyWith(
                                   color: const Color(0xFF6F7784),
                                   fontSize: 14.sp,
@@ -83,7 +85,7 @@ class LabTestViewDetailsOrderCard extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Booking Date',
+                              l10n.labTestBookingDateLabel,
                               style: theme.textTheme.bodySmall?.copyWith(
                                 color: const Color(0xFF8A93A0),
                                 fontSize: 14.sp,
@@ -102,13 +104,13 @@ class LabTestViewDetailsOrderCard extends StatelessWidget {
                       ],
                     ),
                     SizedBox(height: 12.h),
-                    Container(height: 1, color: const Color(0xff84848cff)),
+                    Container(height: 1, color: const Color(0xFF84848C)),
                     SizedBox(height: 12.h),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Total Fee',
+                          l10n.labTestTotalFeeLabel,
                           style: theme.textTheme.bodyMedium?.copyWith(
                             color: const Color(0xFF6F7784),
                             fontSize: 16.sp,
@@ -133,7 +135,7 @@ class LabTestViewDetailsOrderCard extends StatelessWidget {
                   await Clipboard.setData(ClipboardData(text: discountCode));
                   if (!context.mounted) return;
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Discount code copied')),
+                    SnackBar(content: Text(l10n.labTestDiscountCodeCopied)),
                   );
                 },
                 child: Padding(
@@ -159,7 +161,7 @@ class LabTestViewDetailsOrderCard extends StatelessWidget {
                             SizedBox(width: 6.w),
                             Expanded(
                               child: Text(
-                                'Discount Code',
+                                l10n.labTestDiscountCodeLabel,
                                 style: theme.textTheme.bodyMedium?.copyWith(
                                   color: const Color(0xFF1C232D),
                                   fontWeight: FontWeight.w600,
@@ -183,7 +185,7 @@ class LabTestViewDetailsOrderCard extends StatelessWidget {
                         Align(
                           alignment: Alignment.centerLeft,
                           child: Text(
-                            'Show this code to the lab representative',
+                            l10n.labTestShowCodeInstruction,
                             style: theme.textTheme.bodySmall?.copyWith(
                               color: const Color(0xFF4A5059),
                               fontSize: 14.sp,

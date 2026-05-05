@@ -649,6 +649,228 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Proceed Checkout'**
   String get labTestCartProceedCheckout;
+
+  /// No description provided for @labTestViewDetailsLoadError.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to load details. Please try again.'**
+  String get labTestViewDetailsLoadError;
+
+  /// No description provided for @labTestSomethingWentWrong.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong'**
+  String get labTestSomethingWentWrong;
+
+  /// No description provided for @commonRetry.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get commonRetry;
+
+  /// No description provided for @labTestViewDetailsResultsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Test Results'**
+  String get labTestViewDetailsResultsTitle;
+
+  /// No description provided for @labTestViewDetailsOrderTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Order Details'**
+  String get labTestViewDetailsOrderTitle;
+
+  /// No description provided for @labTestDiscountCodeCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'Discount code copied'**
+  String get labTestDiscountCodeCopied;
+
+  /// No description provided for @labTestOrderNoPrefix.
+  ///
+  /// In en, this message translates to:
+  /// **'Order no.'**
+  String get labTestOrderNoPrefix;
+
+  /// No description provided for @labTestBookingDateLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Booking Date'**
+  String get labTestBookingDateLabel;
+
+  /// No description provided for @labTestTotalFeeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Fee'**
+  String get labTestTotalFeeLabel;
+
+  /// No description provided for @labTestDiscountCodeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Discount Code'**
+  String get labTestDiscountCodeLabel;
+
+  /// No description provided for @labTestShowCodeInstruction.
+  ///
+  /// In en, this message translates to:
+  /// **'Show this code to the lab representative'**
+  String get labTestShowCodeInstruction;
+
+  /// No description provided for @labTestCheckoutTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment Details'**
+  String get labTestCheckoutTitle;
+
+  /// No description provided for @labTestCheckoutRequiredFieldsError.
+  ///
+  /// In en, this message translates to:
+  /// **'Please fill all the required fields'**
+  String get labTestCheckoutRequiredFieldsError;
+
+  /// No description provided for @labTestCheckoutBookedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Lab Test Booked Successfully'**
+  String get labTestCheckoutBookedTitle;
+
+  /// No description provided for @labTestCheckoutBookedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'A lab representative will contact you shortly.\nPresent your discount code to the lab representative.\nTo access your code later:'**
+  String get labTestCheckoutBookedMessage;
+
+  /// No description provided for @labTestCheckoutBookedPathHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Menu > My Bookings > Lab Test'**
+  String get labTestCheckoutBookedPathHint;
+
+  /// No description provided for @commonClose.
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get commonClose;
+
+  /// No description provided for @labTestBookingMethodWalkInCompact.
+  ///
+  /// In en, this message translates to:
+  /// **'Walk In'**
+  String get labTestBookingMethodWalkInCompact;
+
+  /// No description provided for @labTestCheckoutFeeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Fee'**
+  String get labTestCheckoutFeeLabel;
+
+  /// No description provided for @labTestCheckoutDiscountLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Discount'**
+  String get labTestCheckoutDiscountLabel;
+
+  /// No description provided for @labTestCheckoutTotalLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Total'**
+  String get labTestCheckoutTotalLabel;
+
+  /// No description provided for @labTestPatientDetailsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Patient Details'**
+  String get labTestPatientDetailsTitle;
+
+  /// No description provided for @commonDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get commonDone;
+
+  /// No description provided for @commonEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit'**
+  String get commonEdit;
+
+  /// No description provided for @labTestEmergencyContactTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Emergency Contact'**
+  String get labTestEmergencyContactTitle;
+
+  /// No description provided for @labTestEmergencyContactHintText.
+  ///
+  /// In en, this message translates to:
+  /// **'Please provide an emergency contact number, incase you are unavailable.'**
+  String get labTestEmergencyContactHintText;
+
+  /// No description provided for @labTestEmergencyNumberHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter Number here...'**
+  String get labTestEmergencyNumberHint;
+
+  /// No description provided for @labTestPatientNameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Patient Name'**
+  String get labTestPatientNameLabel;
+
+  /// No description provided for @labTestContactNumberLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact Number'**
+  String get labTestContactNumberLabel;
+
+  /// No description provided for @labTestAddressLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Address'**
+  String get labTestAddressLabel;
+
+  /// No description provided for @labTestFullNameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Full name'**
+  String get labTestFullNameHint;
+
+  /// No description provided for @labTestPhonebookHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Type or select from phonebook'**
+  String get labTestPhonebookHint;
+
+  /// No description provided for @labTestAgeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Age'**
+  String get labTestAgeLabel;
+
+  /// No description provided for @labTestAddressHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Type address here...'**
+  String get labTestAddressHint;
+
+  /// No description provided for @commonMale.
+  ///
+  /// In en, this message translates to:
+  /// **'Male'**
+  String get commonMale;
+
+  /// No description provided for @commonFemale.
+  ///
+  /// In en, this message translates to:
+  /// **'Female'**
+  String get commonFemale;
+
+  /// No description provided for @labTestBookCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Book Lab Test'**
+  String get labTestBookCta;
 }
 
 class _AppLocalizationsDelegate

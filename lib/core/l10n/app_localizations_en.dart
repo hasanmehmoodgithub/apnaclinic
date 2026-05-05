@@ -285,4 +285,120 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get labTestCartProceedCheckout => 'Proceed Checkout';
+
+  @override
+  String get labTestViewDetailsLoadError =>
+      'Unable to load details. Please try again.';
+
+  @override
+  String get labTestSomethingWentWrong => 'Something went wrong';
+
+  @override
+  String get commonRetry => 'Retry';
+
+  @override
+  String get labTestViewDetailsResultsTitle => 'Test Results';
+
+  @override
+  String get labTestViewDetailsOrderTitle => 'Order Details';
+
+  @override
+  String get labTestDiscountCodeCopied => 'Discount code copied';
+
+  @override
+  String get labTestOrderNoPrefix => 'Order no.';
+
+  @override
+  String get labTestBookingDateLabel => 'Booking Date';
+
+  @override
+  String get labTestTotalFeeLabel => 'Total Fee';
+
+  @override
+  String get labTestDiscountCodeLabel => 'Discount Code';
+
+  @override
+  String get labTestShowCodeInstruction =>
+      'Show this code to the lab representative';
+
+  @override
+  String get labTestCheckoutTitle => 'Payment Details';
+
+  @override
+  String get labTestCheckoutRequiredFieldsError =>
+      'Please fill all the required fields';
+
+  @override
+  String get labTestCheckoutBookedTitle => 'Lab Test Booked Successfully';
+
+  @override
+  String get labTestCheckoutBookedMessage =>
+      'A lab representative will contact you shortly.\nPresent your discount code to the lab representative.\nTo access your code later:';
+
+  @override
+  String get labTestCheckoutBookedPathHint => 'Menu > My Bookings > Lab Test';
+
+  @override
+  String get commonClose => 'Close';
+
+  @override
+  String get labTestBookingMethodWalkInCompact => 'Walk In';
+
+  @override
+  String get labTestCheckoutFeeLabel => 'Fee';
+
+  @override
+  String get labTestCheckoutDiscountLabel => 'Discount';
+
+  @override
+  String get labTestCheckoutTotalLabel => 'Total';
+
+  @override
+  String get labTestPatientDetailsTitle => 'Patient Details';
+
+  @override
+  String get commonDone => 'Done';
+
+  @override
+  String get commonEdit => 'Edit';
+
+  @override
+  String get labTestEmergencyContactTitle => 'Emergency Contact';
+
+  @override
+  String get labTestEmergencyContactHintText =>
+      'Please provide an emergency contact number, incase you are unavailable.';
+
+  @override
+  String get labTestEmergencyNumberHint => 'Enter Number here...';
+
+  @override
+  String get labTestPatientNameLabel => 'Patient Name';
+
+  @override
+  String get labTestContactNumberLabel => 'Contact Number';
+
+  @override
+  String get labTestAddressLabel => 'Address';
+
+  @override
+  String get labTestFullNameHint => 'Full name';
+
+  @override
+  String get labTestPhonebookHint => 'Type or select from phonebook';
+
+  @override
+  String get labTestAgeLabel => 'Age';
+
+  @override
+  String get labTestAddressHint => 'Type address here...';
+
+  @override
+  String get commonMale => 'Male';
+
+  @override
+  String get commonFemale => 'Female';
+
+  @override
+  String get labTestBookCta => 'Book Lab Test';
 }
