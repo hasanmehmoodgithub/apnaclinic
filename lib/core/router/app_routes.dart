@@ -17,6 +17,9 @@ class AppRoutes {
   static const String consultation = 'consultation';
   static const String consultationDoctors = 'consultation-doctors';
   static const String consultationBookDoctor = 'consultation-book-doctor';
+  static const String consultationCheckout = 'consultation-checkout';
+  static const String doctorConsultationBookingDetails =
+      'doctor-consultation-booking-details';
   static const String pharmacy = 'pharmacy';
   static const String pharmacyMain = 'pharmacyMain';
   static const String pharmacyCart = 'pharmacyCart';

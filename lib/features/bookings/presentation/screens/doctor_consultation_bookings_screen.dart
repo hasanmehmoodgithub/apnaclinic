@@ -1,69 +1,54 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
+import '../../../../core/router/app_routes.dart';
+import '../../data/mock/doctor_consultation_bookings_mock_api.dart';
+import '../../data/models/doctor_consultation_booking_details_model.dart';
+import '../doctor_consultation_booking_details_args.dart';
 
-class DoctorConsultationBookingsScreen extends StatelessWidget {
+class DoctorConsultationBookingsScreen extends StatefulWidget {
   const DoctorConsultationBookingsScreen({super.key});
 
-  static const List<_DoctorBookingItem> _items = [
-    _DoctorBookingItem(
-      doctorName: 'Dr. Sumbal Shahid',
-      specialty: 'Orthopaedic',
-      experience: '4 years Experience',
-      qualification: 'MMBS, FCPS',
-      date: '10/09/24',
-      time: '10am - 1pm',
-      status: 'Confirmed',
-      statusTextColor: Color(0xFF0590A0),
-      statusBgColor: Color(0xFFDEF8FB),
-      fee: 'Rs.30,000/-',
-      oldFee: 'Rs. 80,000/-',
-      doctorImageUrl:
-      'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&w=800&q=80',
-    ),
-    _DoctorBookingItem(
-      doctorName: 'Dr. Kainat Shahid',
-      specialty: 'Neurologist',
-      experience: '4 years Experience',
-      qualification: 'MMBS, FCPS',
-      date: '10/09/24',
-      time: '10am - 1pm',
-      status: 'Canceled',
-      statusTextColor: Color(0xFFE01F26),
-      statusBgColor: Color(0xFFFBDEDE),
-      fee: 'Rs.30,000/-',
-      oldFee: 'Rs. 80,000/-',
-      doctorImageUrl:
-      'https://images.unsplash.com/photo-1594824476967-48c8b964273f?auto=format&fit=crop&w=800&q=80',
-    ),
-    _DoctorBookingItem(
-      doctorName: 'Dr. Kainat Shahid',
-      specialty: 'Neurologist',
-      experience: '6 years Experience',
-      qualification: 'MMBS, FCPS',
-      date: '10/09/24',
-      time: '10am - 1pm',
-      status: 'Canceled',
-      statusTextColor: Color(0xFFE01F26),
-      statusBgColor: Color(0xFFFBDEDE),
-      fee: 'Rs.30,000/-',
-      oldFee: 'Rs. 80,000/-',
-      doctorImageUrl:
-      'https://images.unsplash.com/photo-1594824476967-48c8b964273f?auto=format&fit=crop&w=800&q=80',
-    ),
-  ];
+  @override
+  State<DoctorConsultationBookingsScreen> createState() =>
+      _DoctorConsultationBookingsScreenState();
+}
+
+class _DoctorConsultationBookingsScreenState
+    extends State<DoctorConsultationBookingsScreen> {
+  late final Future<List<DoctorConsultationBookingDetailsModel>> _bookingsFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _bookingsFuture = DoctorConsultationBookingsMockApi().getBookings();
+  }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final textTheme = Theme.of(context).textTheme;
-    return ListView.separated(
-      padding: EdgeInsets.fromLTRB(0, 20.h, 0, 8.h),
-      itemBuilder: (context, index) =>
-          _DoctorBookingCard(item: _items[index], textTheme: textTheme, l10n: l10n),
-      separatorBuilder: (_, _) => SizedBox(height: 14.h),
-      itemCount: _items.length,
+    return FutureBuilder<List<DoctorConsultationBookingDetailsModel>>(
+      future: _bookingsFuture,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator(strokeWidth: 2));
+        }
+        final items = snapshot.data ?? const <DoctorConsultationBookingDetailsModel>[];
+        return ListView.separated(
+          padding: EdgeInsets.fromLTRB(0, 20.h, 0, 8.h),
+          itemBuilder: (context, index) => _DoctorBookingCard(
+            item: items[index],
+            textTheme: textTheme,
+            l10n: l10n,
+          ),
+          separatorBuilder: (_, _) => SizedBox(height: 14.h),
+          itemCount: items.length,
+        );
+      },
     );
   }
 }
@@ -75,7 +60,7 @@ class _DoctorBookingCard extends StatelessWidget {
     required this.l10n,
   });
 
-  final _DoctorBookingItem item;
+  final DoctorConsultationBookingDetailsModel item;
   final TextTheme textTheme;
   final AppLocalizations l10n;
 
@@ -186,9 +171,9 @@ class _DoctorBookingCard extends StatelessWidget {
                   // Date + Time pills
                   Row(
                     children: [
-                      _InfoPill(label: item.date, textTheme: textTheme),
+                      _InfoPill(label: item.listDate, textTheme: textTheme),
                       SizedBox(width: 5.w),
-                      _InfoPill(label: item.time, textTheme: textTheme),
+                      _InfoPill(label: item.listTime, textTheme: textTheme),
                     ],
                   ),
 
@@ -220,16 +205,16 @@ class _DoctorBookingCard extends StatelessWidget {
                                   vertical: 4.h,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: item.statusBgColor,
+                                  color: _statusBgColor(item.status),
                                   borderRadius: BorderRadius.circular(10.r),
                                 ),
                                 child: Text(
-                                  item.status,
+                                  _localizedStatus(item.status, l10n),
                                   maxLines: 1,
                                   overflow: TextOverflow.visible,
                                   softWrap: false,
                                   style: textTheme.bodySmall?.copyWith(
-                                    color: item.statusTextColor,
+                                    color: _statusTextColor(item.status),
                                     fontSize: 12.sp,
                                     fontWeight: FontWeight.w500,
                                   ),
@@ -265,7 +250,7 @@ class _DoctorBookingCard extends StatelessWidget {
                                 fit: BoxFit.scaleDown,
                                 alignment: Alignment.centerLeft,
                                 child: Text(
-                                  item.fee,
+                                  'Rs.${item.consultationFee}',
                                   maxLines: 1,
                                   softWrap: false,
                                   style: textTheme.bodySmall?.copyWith(
@@ -279,7 +264,7 @@ class _DoctorBookingCard extends StatelessWidget {
                                 fit: BoxFit.scaleDown,
                                 alignment: Alignment.centerLeft,
                                 child: Text(
-                                  item.oldFee,
+                                  'Rs. ${item.consultationFee + item.discountAmount}/-',
                                   maxLines: 1,
                                   softWrap: false,
                                   style: textTheme.bodySmall?.copyWith(
@@ -332,7 +317,12 @@ class _DoctorBookingCard extends StatelessWidget {
                     width: 82.w,
                     height: 33.h,
                     child: OutlinedButton(
-                      onPressed: () {},
+                      onPressed: () => context.pushNamed(
+                        AppRoutes.doctorConsultationBookingDetails,
+                        extra: DoctorConsultationBookingDetailsArgs(
+                          bookingId: item.bookingId,
+                        ),
+                      ),
                       style: OutlinedButton.styleFrom(
                         side: const BorderSide(
                           color: Color(0xFF9BA6A7),
@@ -361,6 +351,48 @@ class _DoctorBookingCard extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+String _localizedStatus(
+  DoctorConsultationBookingStatus status,
+  AppLocalizations l10n,
+) {
+  switch (status) {
+    case DoctorConsultationBookingStatus.pending:
+      return l10n.bookingsStatusPending;
+    case DoctorConsultationBookingStatus.confirmed:
+      return l10n.bookingsStatusConfirmed;
+    case DoctorConsultationBookingStatus.cancel:
+      return l10n.bookingsStatusCancel;
+    case DoctorConsultationBookingStatus.completed:
+      return l10n.bookingsStatusCompleted;
+  }
+}
+
+Color _statusTextColor(DoctorConsultationBookingStatus status) {
+  switch (status) {
+    case DoctorConsultationBookingStatus.pending:
+      return const Color(0xFF946300);
+    case DoctorConsultationBookingStatus.confirmed:
+      return const Color(0xFF0590A0);
+    case DoctorConsultationBookingStatus.cancel:
+      return const Color(0xFFE01F26);
+    case DoctorConsultationBookingStatus.completed:
+      return const Color(0xFF1F8F4A);
+  }
+}
+
+Color _statusBgColor(DoctorConsultationBookingStatus status) {
+  switch (status) {
+    case DoctorConsultationBookingStatus.pending:
+      return const Color(0xFFFFF6DD);
+    case DoctorConsultationBookingStatus.confirmed:
+      return const Color(0xFFDEF8FB);
+    case DoctorConsultationBookingStatus.cancel:
+      return const Color(0xFFFBDEDE);
+    case DoctorConsultationBookingStatus.completed:
+      return const Color(0xFFE5F7EA);
   }
 }
 
@@ -432,32 +464,3 @@ class _NetAsset extends StatelessWidget {
   }
 }
 
-class _DoctorBookingItem {
-  const _DoctorBookingItem({
-    required this.doctorName,
-    required this.specialty,
-    required this.experience,
-    required this.qualification,
-    required this.date,
-    required this.time,
-    required this.status,
-    required this.statusTextColor,
-    required this.statusBgColor,
-    required this.fee,
-    required this.oldFee,
-    required this.doctorImageUrl,
-  });
-
-  final String doctorName;
-  final String specialty;
-  final String experience;
-  final String qualification;
-  final String date;
-  final String time;
-  final String status;
-  final Color statusTextColor;
-  final Color statusBgColor;
-  final String fee;
-  final String oldFee;
-  final String doctorImageUrl;
-}

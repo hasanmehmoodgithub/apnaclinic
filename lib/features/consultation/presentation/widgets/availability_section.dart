@@ -5,8 +5,13 @@ import '../constants/consultation_ui_config.dart';
 
 class AvailabilitySection extends StatefulWidget {
   final TextTheme textTheme;
+  final ValueChanged<String?>? onTimeSlotChanged;
 
-  const AvailabilitySection({super.key, required this.textTheme});
+  const AvailabilitySection({
+    super.key,
+    required this.textTheme,
+    this.onTimeSlotChanged,
+  });
 
   @override
   State<AvailabilitySection> createState() => _AvailabilitySectionState();
@@ -102,6 +107,7 @@ class _AvailabilitySectionState extends State<AvailabilitySection> {
                 onTap: () => setState(() {
                   _selectedDateIndex = index;
                   _selectedTimeSlotIndex = null;
+                  widget.onTimeSlotChanged?.call(null);
                 }),
                 child: Container(
                   width: 56.w,
@@ -151,7 +157,10 @@ class _AvailabilitySectionState extends State<AvailabilitySection> {
                 textTheme: widget.textTheme,
                 text: selectedDay.timeSlots[index],
                 isSelected: _selectedTimeSlotIndex == index,
-                onTap: () => setState(() => _selectedTimeSlotIndex = index),
+                onTap: () => setState(() {
+                  _selectedTimeSlotIndex = index;
+                  widget.onTimeSlotChanged?.call(selectedDay.timeSlots[index]);
+                }),
               ),
             ),
           ),

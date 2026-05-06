@@ -13,10 +13,22 @@ danger:
     - echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_20.x nodistro main" > /etc/apt/sources.list.d/nodesource.list
     - apt-get update && apt-get install -y nodejs
     - node -v && npm -v
-    - if [ -n "$GITLAB_CA_PEM" ]; then echo "$GITLAB_CA_PEM" > /tmp/gitlab-ca.pem; fi
+    - |
+      if [ -n "$GITLAB_CA_PEM_B64" ]; then
+        echo "$GITLAB_CA_PEM_B64" | base64 -d > /tmp/gitlab-ca.pem
+      elif [ -n "$GITLAB_CA_PEM" ]; then
+        printf "%b" "$GITLAB_CA_PEM" > /tmp/gitlab-ca.pem
+      fi
+    - |
+      if [ -s /tmp/gitlab-ca.pem ]; then
+        cp /tmp/gitlab-ca.pem /usr/local/share/ca-certificates/gitlab-ca.crt
+        update-ca-certificates
+        export NODE_EXTRA_CA_CERTS=/tmp/gitlab-ca.pem
+      else
+        echo "WARNING: GITLAB_CA_PEM(_B64) is empty; TLS verification may fail for Danger."
+      fi
     - npm ci
   script:
     - npx danger ci --dangerfile dangerfile.js
   variables:
     DANGER_GITLAB_API_TOKEN: $DANGER_GITLAB_API_TOKEN
-    NODE_EXTRA_CA_CERTS: /tmp/gitlab-ca.pem

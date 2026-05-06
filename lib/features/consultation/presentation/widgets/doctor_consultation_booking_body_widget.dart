@@ -25,6 +25,8 @@ class DoctorConsultationBookingBodyWidget extends StatelessWidget {
     required this.textTheme,
     required this.attachedMediaName,
     required this.onBrowseTap,
+    required this.issueController,
+    required this.onTimeSlotChanged,
   });
 
   final String doctorName;
@@ -39,6 +41,8 @@ class DoctorConsultationBookingBodyWidget extends StatelessWidget {
   final TextTheme textTheme;
   final String? attachedMediaName;
   final VoidCallback onBrowseTap;
+  final TextEditingController issueController;
+  final ValueChanged<String?> onTimeSlotChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -84,9 +88,15 @@ class DoctorConsultationBookingBodyWidget extends StatelessWidget {
               ],
             ),
             SizedBox(height: 18.h),
-            AvailabilitySection(textTheme: textTheme),
+            AvailabilitySection(
+              textTheme: textTheme,
+              onTimeSlotChanged: onTimeSlotChanged,
+            ),
             SizedBox(height: 20.h),
-            IssueSection(textTheme: textTheme),
+            IssueSection(
+              textTheme: textTheme,
+              controller: issueController,
+            ),
             SizedBox(height: 18.h),
             PatientSection(textTheme: textTheme),
             SizedBox(height: 18.h),
