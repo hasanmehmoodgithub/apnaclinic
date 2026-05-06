@@ -1,3 +1,4 @@
+import 'package:apnaclinic/core/constants/app_colors.dart';
 import 'package:apnaclinic/features/bookings/presentation/widgets/payment_method_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -110,6 +111,7 @@ class _SurgeryDetailsScreenState extends State<SurgeryDetailsScreen> {
     final showCheckout = _status == SurgeryBookingStatus.paymentPending;
 
     return AppScaffoldGradient(
+
       child: Column(
         children: [
           // ─── Header (same pattern as BookingsDashboardScreen) ───
@@ -142,33 +144,36 @@ class _SurgeryDetailsScreenState extends State<SurgeryDetailsScreen> {
           ),
           // ─── Body content ───
           Expanded(
-            child: ListView(
-              padding: EdgeInsets.fromLTRB(
-                16.w, 8.h, 16.w, showCheckout ? 110.h : 24.h,
-              ),
-              children: [
-                SurgeryBookingCardWidget(
-                  item: widget.item,
-                  statusLabel: _statusLabel,
+            child: Container(
+              color: AppColors.clrWhite,
+              child: ListView(
+                padding: EdgeInsets.fromLTRB(
+                  16.w, 8.h, 16.w, showCheckout ? 110.h : 24.h,
                 ),
-                SizedBox(height: 14.h),
-                const SurgeryBookingRequirementsCardWidget(),
-                if (_status == SurgeryBookingStatus.paymentPending ||
-                    _status == SurgeryBookingStatus.confirmed) ...[
+                children: [
+                  SurgeryBookingCardWidget(
+                    item: widget.item,
+                    statusLabel: _statusLabel,
+                  ),
                   SizedBox(height: 14.h),
-                  SurgeryBookingAppointmentDetailsCardWidget(item: widget.item),
-                  SizedBox(height: 10.h),
-                  const SurgeryBookingRepresentativeNoteWidget(),
-                ],
-                SizedBox(height: 14.h),
-                SurgeryBookingPatientDetailsCardWidget(item: widget.item),
-                SizedBox(height: 14.h),
-                SurgeryBookingPaymentDetailsCardWidget(item: widget.item),
-                if (_status == SurgeryBookingStatus.inReview) ...[
+                  const SurgeryBookingRequirementsCardWidget(),
+                  if (_status == SurgeryBookingStatus.paymentPending ||
+                      _status == SurgeryBookingStatus.confirmed) ...[
+                    SizedBox(height: 14.h),
+                    SurgeryBookingAppointmentDetailsCardWidget(item: widget.item),
+                    SizedBox(height: 10.h),
+                    const SurgeryBookingRepresentativeNoteWidget(),
+                  ],
                   SizedBox(height: 14.h),
-                  const SurgeryBookingEInvoiceCardWidget(),
+                  SurgeryBookingPatientDetailsCardWidget(item: widget.item),
+                  SizedBox(height: 14.h),
+                  SurgeryBookingPaymentDetailsCardWidget(item: widget.item),
+                  if (_status == SurgeryBookingStatus.inReview) ...[
+                    SizedBox(height: 14.h),
+                    const SurgeryBookingEInvoiceCardWidget(),
+                  ],
                 ],
-              ],
+              ),
             ),
           ),
           // ─── Bottom CTA: Proceed Checkout (only when paymentPending) ───

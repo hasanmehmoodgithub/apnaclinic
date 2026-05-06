@@ -1,7 +1,7 @@
-import 'package:flutter/foundation.dart';
+import '../../../../core/config/mock_config.dart';
 
 class NotificationMockApi {
-  static bool useMockResponses = kDebugMode & true;
+  static bool useMockResponses = MockConfig.enableMocks;
 
   Future<Map<String, dynamic>> getNotificationsSuccessResponse() async {
     await Future<void>.delayed(const Duration(milliseconds: 700));

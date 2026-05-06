@@ -12,11 +12,16 @@ danger:
     - curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg
     - echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_20.x nodistro main" > /etc/apt/sources.list.d/nodesource.list
     - apt-get update && apt-get install -y nodejs
+    - |
+      if [ -z "$GITLAB_CA_PEM" ]; then
+        echo "ERROR: GITLAB_CA_PEM is not set. Add your GitLab CA chain PEM in CI/CD Variables."
+        exit 1
+      fi
+    - printf "%s" "$GITLAB_CA_PEM" > /tmp/gitlab-ca.pem
+    - export NODE_EXTRA_CA_CERTS=/tmp/gitlab-ca.pem
     - node -v && npm -v
-    - if [ -n "$GITLAB_CA_PEM" ]; then echo "$GITLAB_CA_PEM" > /tmp/gitlab-ca.pem; fi
     - npm ci
   script:
     - npx danger ci --dangerfile dangerfile.js
   variables:
     DANGER_GITLAB_API_TOKEN: $DANGER_GITLAB_API_TOKEN
-    NODE_EXTRA_CA_CERTS: /tmp/gitlab-ca.pem
