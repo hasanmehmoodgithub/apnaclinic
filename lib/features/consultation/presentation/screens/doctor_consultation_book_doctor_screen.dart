@@ -11,14 +11,15 @@ import '../../../../core/di/dependency_injection.dart';
 
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
+import '../../../../core/router/app_routes.dart';
 import '../../data/mock/consultation_doctors_mock_api.dart';
 import '../constants/consultation_ui_config.dart';
-import '../widgets/consultation_booking_confirmation_dialog_widget.dart';
 import '../widgets/results_doctor_item.dart';
 import '../widgets/consultation_hero_banner_widget.dart';
 import '../widgets/consultation_screen_header_widget.dart';
 import '../widgets/doctor_consultation_booking_body_widget.dart';
 import '../widgets/consultation_upload_document_sheet_widget.dart';
+import '../doctor_consultation_checkout_args.dart';
 
 class DoctorConsultationBookDoctorScreen extends StatefulWidget {
   final String? doctorId;
@@ -45,9 +46,12 @@ class _DoctorConsultationBookDoctorScreenState
     extends State<DoctorConsultationBookDoctorScreen> {
   final ConsultationDoctorsMockApi _doctorsApi = sl<ConsultationDoctorsMockApi>();
   final ImagePicker _imagePicker = ImagePicker();
+  final TextEditingController _issueController = TextEditingController();
   ResultsDoctorItem? _doctorDetail;
   bool _isLoading = true;
   String? _attachedMediaName;
+  String? _selectedTimeSlot;
+  String? _validationErrorMessage;
 
   @override
   void initState() {
@@ -76,6 +80,12 @@ class _DoctorConsultationBookDoctorScreenState
       if (!mounted) return;
       setState(() => _isLoading = false);
     }
+  }
+
+  @override
+  void dispose() {
+    _issueController.dispose();
+    super.dispose();
   }
 
   @override
@@ -146,14 +156,73 @@ class _DoctorConsultationBookDoctorScreenState
                         textTheme: textTheme,
                         attachedMediaName: _attachedMediaName,
                         onBrowseTap: _openUploadDocumentSheet,
+                        issueController: _issueController,
+                        onTimeSlotChanged: (value) {
+                          setState(() {
+                            _selectedTimeSlot = value;
+                            if (_validationErrorMessage != null) {
+                              _validationErrorMessage = null;
+                            }
+                          });
+                        },
                       ),
+                      if (_validationErrorMessage != null)
+                        Padding(
+                          padding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 8.h),
+                          child: Container(
+                            width: double.infinity,
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 12.w,
+                              vertical: 10.h,
+                            ),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFFEE4E2),
+                              borderRadius: BorderRadius.circular(10.r),
+                            ),
+                            child: Text(
+                              _validationErrorMessage!,
+                              style: textTheme.bodySmall?.copyWith(
+                                color: const Color(0xFFB42318),
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
+                        ),
                       Padding(
                         padding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 12.h),
                         child: SizedBox(
                           width: double.infinity,
                           height: 58.h,
                           child: ElevatedButton(
-                            onPressed: () => _showConfirmation(context),
+                            onPressed: () {
+                              final trimmedIssue = _issueController.text.trim();
+                              if (trimmedIssue.isEmpty) {
+                                setState(() {
+                                  _validationErrorMessage =
+                                      l10n.consultationRequiredFieldsError;
+                                });
+                                return;
+                              }
+                              if (_selectedTimeSlot == null) {
+                                setState(() {
+                                  _validationErrorMessage =
+                                      l10n.consultationSelectSlotError;
+                                });
+                                return;
+                              }
+                              setState(() {
+                                _validationErrorMessage = null;
+                              });
+                              context.pushNamed(
+                                AppRoutes.consultationCheckout,
+                                extra: DoctorConsultationCheckoutArgs(
+                                  doctorName: doctorName,
+                                  specialty: specialty,
+                                  qualification: qualification,
+                                  doctorImageUrl: imageUrl,
+                                ),
+                              );
+                            },
                             style: ElevatedButton.styleFrom(
                               elevation: 0,
                               backgroundColor: ConsultationUiConfig.ctaColor,
@@ -180,15 +249,6 @@ class _DoctorConsultationBookDoctorScreenState
           ),
         ),
       ),
-    );
-  }
-
-  void _showConfirmation(BuildContext context) {
-    final doctorName = _doctorDetail?.name ?? widget.doctorName;
-    showDialog<void>(
-      context: context,
-      builder: (context) =>
-          ConsultationBookingConfirmationDialogWidget(doctorName: doctorName),
     );
   }
 

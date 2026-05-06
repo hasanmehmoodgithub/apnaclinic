@@ -1868,6 +1868,72 @@ abstract class AppLocalizations {
   /// **'Could not pick file. Please try again.'**
   String get consultationPickFileFailed;
 
+  /// No description provided for @consultationPaymentMethodTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment Method'**
+  String get consultationPaymentMethodTitle;
+
+  /// No description provided for @consultationVideoConsultationLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Video Consultation'**
+  String get consultationVideoConsultationLabel;
+
+  /// No description provided for @consultationConsultationFeesLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Consultation Fees'**
+  String get consultationConsultationFeesLabel;
+
+  /// No description provided for @consultationDiscountLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Discount'**
+  String get consultationDiscountLabel;
+
+  /// No description provided for @consultationTotalChargesLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Charges'**
+  String get consultationTotalChargesLabel;
+
+  /// No description provided for @consultationSelectAccountTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Account'**
+  String get consultationSelectAccountTitle;
+
+  /// No description provided for @consultationProceedCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Proceed'**
+  String get consultationProceedCta;
+
+  /// No description provided for @consultationJazzCashChargeDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Amount will be charged from your jazz cash account.'**
+  String get consultationJazzCashChargeDescription;
+
+  /// No description provided for @consultationRequiredFieldsError.
+  ///
+  /// In en, this message translates to:
+  /// **'Please fill all the required fields'**
+  String get consultationRequiredFieldsError;
+
+  /// No description provided for @consultationSelectSlotError.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select a slot for video consultation'**
+  String get consultationSelectSlotError;
+
+  /// No description provided for @commonContinue.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue'**
+  String get commonContinue;
+
   /// No description provided for @bookingsDashboardTitle.
   ///
   /// In en, this message translates to:
@@ -1981,6 +2047,78 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Ensure that you are NOTtaking any antibiotic medication course'**
   String get bookingsSurgeryRequirement3;
+
+  /// No description provided for @bookingsDetailsLoadError.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to load booking details. Please try again.'**
+  String get bookingsDetailsLoadError;
+
+  /// No description provided for @bookingsStatusPending.
+  ///
+  /// In en, this message translates to:
+  /// **'PENDING'**
+  String get bookingsStatusPending;
+
+  /// No description provided for @bookingsStatusConfirmed.
+  ///
+  /// In en, this message translates to:
+  /// **'CONFIRMED'**
+  String get bookingsStatusConfirmed;
+
+  /// No description provided for @bookingsStatusCancel.
+  ///
+  /// In en, this message translates to:
+  /// **'CANCEL'**
+  String get bookingsStatusCancel;
+
+  /// No description provided for @bookingsStatusCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'COMPLETED'**
+  String get bookingsStatusCompleted;
+
+  /// No description provided for @bookingsPatientLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Patient'**
+  String get bookingsPatientLabel;
+
+  /// No description provided for @bookingsIssueLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Issue'**
+  String get bookingsIssueLabel;
+
+  /// No description provided for @bookingsBillingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Billing'**
+  String get bookingsBillingTitle;
+
+  /// No description provided for @bookingsEInvoiceLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'E-Invoice'**
+  String get bookingsEInvoiceLabel;
+
+  /// No description provided for @bookingsConsultationFeeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Consultation fee'**
+  String get bookingsConsultationFeeLabel;
+
+  /// No description provided for @bookingsDiscountLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Discount (100%)'**
+  String get bookingsDiscountLabel;
+
+  /// No description provided for @bookingsJoinNowCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Join Now'**
+  String get bookingsJoinNowCta;
 
   /// No description provided for @labTestSampleTypeBlood.
   ///

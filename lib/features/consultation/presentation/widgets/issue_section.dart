@@ -3,9 +3,14 @@ import 'package:flutter/material.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 
 class IssueSection extends StatelessWidget {
-  const IssueSection({super.key, required this.textTheme});
+  const IssueSection({
+    super.key,
+    required this.textTheme,
+    required this.controller,
+  });
 
   final TextTheme textTheme;
+  final TextEditingController controller;
 
   @override
   Widget build(BuildContext context) {
@@ -29,6 +34,7 @@ class IssueSection extends StatelessWidget {
             borderRadius: BorderRadius.circular(10.r),
           ),
           child: TextField(
+            controller: controller,
             maxLines: null,
             expands: true,
             textAlignVertical: TextAlignVertical.top,
