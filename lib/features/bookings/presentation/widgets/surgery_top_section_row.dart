@@ -81,12 +81,6 @@ class TopSection extends StatelessWidget {
                 ),
               ),
             ),
-            SizedBox(height: 8.h),
-            SvgPicture.asset(
-              'assets/icons/surgerymessage.svg',
-              width: 25.r,
-              height: 25.r,
-            ),
           ],
         ),
       ],

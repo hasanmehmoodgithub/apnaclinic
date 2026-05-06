@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/extensions/screen_util_extensions.dart';
+import '../../../../core/widgets/app_info_dialog.dart';
 
 class SurgeryBookingRepresentativeNoteWidget extends StatelessWidget {
   const SurgeryBookingRepresentativeNoteWidget({super.key});
@@ -27,10 +28,27 @@ class SurgeryBookingRepresentativeNoteWidget extends StatelessWidget {
               ),
             ),
           ),
-          Icon(
-            Icons.error_outline,
-            size: 18.r,
-            color: const Color(0xFF061E40),
+          InkWell(
+            onTap: () {
+              AppInfoDialog.show(
+                context,
+                title: 'Representative Contact',
+                description:
+                'A representative from our team will reach out to you '
+                    'within 24 hours to confirm your appointment details and '
+                    'guide you through the next steps.',
+                icon: Icons.info_outline,
+              );
+            },
+            borderRadius: BorderRadius.circular(20.r),
+            child: Padding(
+              padding: EdgeInsets.all(4.r),
+              child: Icon(
+                Icons.error_outline,
+                size: 18.r,
+                color: const Color(0xFF061E40),
+              ),
+            ),
           ),
         ],
       ),

@@ -1,4 +1,3 @@
-import 'package:apnaclinic/core/constants/app_colors.dart';
 import 'package:apnaclinic/features/bookings/presentation/widgets/payment_method_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -111,7 +110,6 @@ class _SurgeryDetailsScreenState extends State<SurgeryDetailsScreen> {
     final showCheckout = _status == SurgeryBookingStatus.paymentPending;
 
     return AppScaffoldGradient(
-
       child: Column(
         children: [
           // ─── Header (same pattern as BookingsDashboardScreen) ───
@@ -142,76 +140,91 @@ class _SurgeryDetailsScreenState extends State<SurgeryDetailsScreen> {
               SizedBox(width: 44.w),
             ],
           ),
-          // ─── Body content ───
+          // ─── Body content with white background & rounded top corners ───
           Expanded(
             child: Container(
-              color: AppColors.clrWhite,
-              child: ListView(
-                padding: EdgeInsets.fromLTRB(
-                  16.w, 8.h, 16.w, showCheckout ? 110.h : 24.h,
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(24.r),
+                  topRight: Radius.circular(24.r),
                 ),
+              ),
+              child: Stack(
                 children: [
-                  SurgeryBookingCardWidget(
-                    item: widget.item,
-                    statusLabel: _statusLabel,
+                  ListView(
+                    padding: EdgeInsets.fromLTRB(
+                      16.w, 16.h, 16.w, showCheckout ? 110.h : 24.h,
+                    ),
+                    children: [
+                      SurgeryBookingCardWidget(
+                        item: widget.item,
+                        statusLabel: _statusLabel,
+                      ),
+                      SizedBox(height: 14.h),
+                      const SurgeryBookingRequirementsCardWidget(),
+                      if (_status == SurgeryBookingStatus.paymentPending ||
+                          _status == SurgeryBookingStatus.confirmed) ...[
+                        SizedBox(height: 14.h),
+                        SurgeryBookingAppointmentDetailsCardWidget(item: widget.item),
+                        SizedBox(height: 10.h),
+                        const SurgeryBookingRepresentativeNoteWidget(),
+                      ],
+                      SizedBox(height: 14.h),
+                      SurgeryBookingPatientDetailsCardWidget(item: widget.item),
+                      SizedBox(height: 14.h),
+                      SurgeryBookingPaymentDetailsCardWidget(item: widget.item),
+                      if (_status == SurgeryBookingStatus.inReview) ...[
+                        SizedBox(height: 14.h),
+                        const SurgeryBookingEInvoiceCardWidget(),
+                      ],
+                    ],
                   ),
-                  SizedBox(height: 14.h),
-                  const SurgeryBookingRequirementsCardWidget(),
-                  if (_status == SurgeryBookingStatus.paymentPending ||
-                      _status == SurgeryBookingStatus.confirmed) ...[
-                    SizedBox(height: 14.h),
-                    SurgeryBookingAppointmentDetailsCardWidget(item: widget.item),
-                    SizedBox(height: 10.h),
-                    const SurgeryBookingRepresentativeNoteWidget(),
-                  ],
-                  SizedBox(height: 14.h),
-                  SurgeryBookingPatientDetailsCardWidget(item: widget.item),
-                  SizedBox(height: 14.h),
-                  SurgeryBookingPaymentDetailsCardWidget(item: widget.item),
-                  if (_status == SurgeryBookingStatus.inReview) ...[
-                    SizedBox(height: 14.h),
-                    const SurgeryBookingEInvoiceCardWidget(),
-                  ],
+                  // ─── Bottom CTA: Proceed Checkout (only when paymentPending) ───
+                  if (showCheckout)
+                    Positioned(
+                      left: 0,
+                      right: 0,
+                      bottom: 0,
+                      child: SafeArea(
+                        top: false,
+                        child: Padding(
+                          padding: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 12.h),
+                          child: SizedBox(
+                            height: 56.h,
+                            width: double.infinity,
+                            child: ElevatedButton(
+                              onPressed: _openPaymentMethodSheet,
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: const Color(0xFF1AB6A1),
+                                foregroundColor: Colors.white,
+                                elevation: 0,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(14.r),
+                                ),
+                              ),
+                              child: Text(
+                                l10n.bookingsProceedCheckoutCta,
+                                style: textTheme.titleMedium?.copyWith(
+                                  color: Colors.white,
+                                  fontSize: 16.sp,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
                 ],
               ),
             ),
           ),
-          // ─── Bottom CTA: Proceed Checkout (only when paymentPending) ───
-          if (showCheckout)
-            SafeArea(
-              top: false,
-              child: Padding(
-                padding: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 12.h),
-                child: SizedBox(
-                  height: 56.h,
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: _openPaymentMethodSheet,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF1AB6A1),
-                      foregroundColor: Colors.white,
-                      elevation: 0,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(14.r),
-                      ),
-                    ),
-                    child: Text(
-                      l10n.bookingsProceedCheckoutCta,
-                      style: textTheme.titleMedium?.copyWith(
-                        color: Colors.white,
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
         ],
       ),
     );
   }
-
 }
 
 
