@@ -12,6 +12,7 @@ import '../widgets/account_app_bar_widget.dart';
 import '../widgets/account_method_card_widget.dart';
 
 class AccountDetailsScreen extends StatefulWidget {
+  //
   const AccountDetailsScreen({
     super.key,
     this.initialAccountIndex,
