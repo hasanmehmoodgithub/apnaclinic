@@ -35,12 +35,17 @@ Current enforced checks:
 
 Danger needs API access to read/write MR checks/comments.
 
-Create this CI/CD variable in GitLab project settings:
+Create these CI/CD variables in GitLab project settings:
 
 - **Key:** `DANGER_GITLAB_API_TOKEN`
 - **Value:** GitLab access token
 - **Scope needed:** `api`
 - Recommended: mark as **Masked** and **Protected**
+
+For self-hosted GitLab with custom TLS chain, add one of:
+
+- **Preferred:** `GITLAB_CA_FILE` as a **File** variable containing your CA PEM chain
+- **Alternative:** `GITLAB_CA_PEM` as a text variable containing full PEM chain
 
 Path:
 

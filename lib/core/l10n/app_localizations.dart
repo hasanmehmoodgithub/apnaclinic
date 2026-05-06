@@ -1040,6 +1040,42 @@ abstract class AppLocalizations {
   /// **'JazzCash'**
   String get accountMethodJazzCash;
 
+  /// No description provided for @accountNoAccountsMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'No accounts found.'**
+  String get accountNoAccountsMessage;
+
+  /// No description provided for @accountIdLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'ID'**
+  String get accountIdLabel;
+
+  /// No description provided for @accountNumberShortLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Number'**
+  String get accountNumberShortLabel;
+
+  /// No description provided for @accountDefaultLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Default'**
+  String get accountDefaultLabel;
+
+  /// No description provided for @commonYes.
+  ///
+  /// In en, this message translates to:
+  /// **'Yes'**
+  String get commonYes;
+
+  /// No description provided for @commonNo.
+  ///
+  /// In en, this message translates to:
+  /// **'No'**
+  String get commonNo;
+
   /// No description provided for @dashboardHello.
   ///
   /// In en, this message translates to:

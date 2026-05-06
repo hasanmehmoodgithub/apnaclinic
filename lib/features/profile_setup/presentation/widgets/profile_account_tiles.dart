@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../components/shimmer/app_shimmer.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
@@ -156,6 +157,21 @@ class AddAccountTile extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+class ProfileAccountDetailsShimmerWidget extends StatelessWidget {
+  const ProfileAccountDetailsShimmerWidget({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        AppShimmerCard(height: 74.h, borderRadius: 6.r),
+        SizedBox(height: 8.h),
+        AppShimmerCard(height: 74.h, borderRadius: 6.r),
+      ],
     );
   }
 }

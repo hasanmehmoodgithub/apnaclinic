@@ -236,6 +236,12 @@
   "accountValidationElevenDigits": "Enter 11 digit Pakistan number",
   "accountValidationValidPakistanMobile": "Enter valid Pakistan mobile number",
   "accountMethodJazzCash": "JazzCash",
+  "accountNoAccountsMessage": "No accounts found.",
+  "accountIdLabel": "ID",
+  "accountNumberShortLabel": "Number",
+  "accountDefaultLabel": "Default",
+  "commonYes": "Yes",
+  "commonNo": "No",
   "dashboardHello": "Hello, {name}",
   "@dashboardHello": {
     "placeholders": {

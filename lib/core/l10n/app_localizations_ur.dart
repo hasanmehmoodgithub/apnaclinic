@@ -501,6 +501,24 @@ class AppLocalizationsUr extends AppLocalizations {
   String get accountMethodJazzCash => 'JazzCash';
 
   @override
+  String get accountNoAccountsMessage => 'کوئی اکاؤنٹ موجود نہیں۔';
+
+  @override
+  String get accountIdLabel => 'شناخت';
+
+  @override
+  String get accountNumberShortLabel => 'نمبر';
+
+  @override
+  String get accountDefaultLabel => 'ڈیفالٹ';
+
+  @override
+  String get commonYes => 'ہاں';
+
+  @override
+  String get commonNo => 'نہیں';
+
+  @override
   String dashboardHello(String name) {
     return 'ہیلو، $name';
   }

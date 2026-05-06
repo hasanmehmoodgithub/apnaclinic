@@ -499,6 +499,24 @@ class AppLocalizationsEn extends AppLocalizations {
   String get accountMethodJazzCash => 'JazzCash';
 
   @override
+  String get accountNoAccountsMessage => 'No accounts found.';
+
+  @override
+  String get accountIdLabel => 'ID';
+
+  @override
+  String get accountNumberShortLabel => 'Number';
+
+  @override
+  String get accountDefaultLabel => 'Default';
+
+  @override
+  String get commonYes => 'Yes';
+
+  @override
+  String get commonNo => 'No';
+
+  @override
   String dashboardHello(String name) {
     return 'Hello, $name';
   }

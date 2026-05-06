@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
+import '../../../account/domain/entities/account_item_entity.dart';
 import '../../../account/domain/models/account_method.dart';
 import 'profile_account_tiles.dart';
 import 'profile_info_tiles.dart';
@@ -16,6 +17,10 @@ class LoggedInProfileContent extends StatelessWidget {
     required this.dob,
     required this.email,
     required this.accounts,
+    required this.accountDetails,
+    required this.isAccountDetailsLoading,
+    required this.accountDetailsError,
+    required this.onDeleteAccountDetailTap,
     required this.onAccountTap,
     required this.onEditTap,
     required this.onAddAccountTap,
@@ -28,6 +33,10 @@ class LoggedInProfileContent extends StatelessWidget {
   final String dob;
   final String email;
   final List<AccountMethod> accounts;
+  final List<AccountItemEntity> accountDetails;
+  final bool isAccountDetailsLoading;
+  final String? accountDetailsError;
+  final void Function(int index, AccountItemEntity item) onDeleteAccountDetailTap;
   final VoidCallback onAccountTap;
   final VoidCallback onEditTap;
   final VoidCallback onAddAccountTap;
@@ -124,18 +133,46 @@ class LoggedInProfileContent extends StatelessWidget {
             ),
           ),
           SizedBox(height: 8.h),
-          ...accounts.asMap().entries.map(
-            (entry) => Padding(
+          if (isAccountDetailsLoading)
+            const ProfileAccountDetailsShimmerWidget()
+          else if (accountDetailsError != null)
+            Padding(
               padding: EdgeInsets.only(bottom: 8.h),
-              child: AccountTile(
-                account: entry.value,
-                onTap: onAccountTap,
-                onDelete: entry.value.isDefault
-                    ? null
-                    : () => onDeleteAccountTap(entry.key, entry.value),
+              child: Text(
+                accountDetailsError!,
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: AppColors.clrC62828,
+                ),
+              ),
+            )
+          else if (accountDetails.isEmpty)
+            Padding(
+              padding: EdgeInsets.only(bottom: 8.h),
+              child: Text(
+                l10n.accountNoAccountsMessage,
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: AppColors.clr7A91AE,
+                ),
+              ),
+            )
+          else
+            ...accountDetails.asMap().entries.map(
+              (entry) => Padding(
+                padding: EdgeInsets.only(bottom: 8.h),
+                child: AccountTile(
+                  account: AccountMethod(
+                    bankName: l10n.accountMethodJazzCash,
+                    accountHolderName: l10n.accountHolderFallback,
+                    accountNumber: entry.value.number,
+                    isDefault: entry.value.isDefault,
+                  ),
+                  onTap: () {},
+                  onDelete: entry.value.isDefault
+                      ? null
+                      : () => onDeleteAccountDetailTap(entry.key, entry.value),
+                ),
               ),
             ),
-          ),
           AddAccountTile(onTap: onAddAccountTap),
         ],
       ),

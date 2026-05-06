@@ -7,17 +7,23 @@ danger:
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
   before_script:
-    - apt-get update && apt-get install -y curl ca-certificates gnupg
+    - apt-get update && apt-get install -y curl ca-certificates gnupg openssl
     - mkdir -p /etc/apt/keyrings
     - curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg
     - echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_20.x nodistro main" > /etc/apt/sources.list.d/nodesource.list
     - apt-get update && apt-get install -y nodejs
     - |
-      if [ -z "$GITLAB_CA_PEM" ]; then
-        echo "ERROR: GITLAB_CA_PEM is not set. Add your GitLab CA chain PEM in CI/CD Variables."
+      if [ -n "$GITLAB_CA_FILE" ] && [ -f "$GITLAB_CA_FILE" ]; then
+        cp "$GITLAB_CA_FILE" /tmp/gitlab-ca.pem
+      elif [ -n "$GITLAB_CA_PEM" ]; then
+        printf "%s" "$GITLAB_CA_PEM" > /tmp/gitlab-ca.pem
+      else
+        echo "ERROR: Set either GITLAB_CA_FILE (file variable) or GITLAB_CA_PEM (text variable)."
         exit 1
       fi
-    - printf "%s" "$GITLAB_CA_PEM" > /tmp/gitlab-ca.pem
+    - openssl x509 -in /tmp/gitlab-ca.pem -noout -subject
+    - cp /tmp/gitlab-ca.pem /usr/local/share/ca-certificates/gitlab-ca.crt
+    - update-ca-certificates
     - export NODE_EXTRA_CA_CERTS=/tmp/gitlab-ca.pem
     - node -v && npm -v
     - npm ci
