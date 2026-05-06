@@ -1,6 +1,20 @@
 stages:
   - verify
 
+analyze:
+  stage: verify
+  image: ghcr.io/cirruslabs/flutter:stable
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+  script:
+    - flutter pub get
+    - flutter analyze --machine > analysis_report.json || true
+  artifacts:
+    when: always
+    paths:
+      - analysis_report.json
+    expire_in: 1 day
+
 danger:
   stage: verify
   image: ghcr.io/cirruslabs/flutter:stable
@@ -26,8 +40,12 @@ danger:
     - update-ca-certificates
     - export NODE_EXTRA_CA_CERTS=/tmp/gitlab-ca.pem
     - node -v && npm -v
-    - npm ci
+    - npm install -g danger
+    - flutter pub get
+  needs:
+    - job: analyze
+      artifacts: true
   script:
-    - npx danger ci --dangerfile dangerfile.js
+    - dart run danger_dart ci
   variables:
     DANGER_GITLAB_API_TOKEN: $DANGER_GITLAB_API_TOKEN
