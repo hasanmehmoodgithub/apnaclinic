@@ -48,6 +48,9 @@ danger:
         cp /tmp/gitlab-ca.pem /usr/local/share/ca-certificates/gitlab-ca.crt
         update-ca-certificates
         export NODE_EXTRA_CA_CERTS=/tmp/gitlab-ca.pem
+      else
+        echo "WARNING: No custom CA found. Falling back to insecure TLS for Danger API calls."
+        export NODE_TLS_REJECT_UNAUTHORIZED=0
       fi
     - node -v && npm -v
     - npm install -g danger
