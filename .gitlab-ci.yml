@@ -29,16 +29,20 @@ danger:
     - |
       if [ -n "$GITLAB_CA_FILE" ] && [ -f "$GITLAB_CA_FILE" ]; then
         cp "$GITLAB_CA_FILE" /tmp/gitlab-ca.pem
+        echo "Using custom CA from GITLAB_CA_FILE"
       elif [ -n "$GITLAB_CA_PEM" ]; then
         printf "%s" "$GITLAB_CA_PEM" > /tmp/gitlab-ca.pem
+        echo "Using custom CA from GITLAB_CA_PEM"
       else
-        echo "ERROR: Set either GITLAB_CA_FILE (file variable) or GITLAB_CA_PEM (text variable)."
-        exit 1
+        echo "No custom GitLab CA provided; continuing with system default CAs."
       fi
-    - openssl x509 -in /tmp/gitlab-ca.pem -noout -subject
-    - cp /tmp/gitlab-ca.pem /usr/local/share/ca-certificates/gitlab-ca.crt
-    - update-ca-certificates
-    - export NODE_EXTRA_CA_CERTS=/tmp/gitlab-ca.pem
+    - |
+      if [ -f /tmp/gitlab-ca.pem ]; then
+        openssl x509 -in /tmp/gitlab-ca.pem -noout -subject
+        cp /tmp/gitlab-ca.pem /usr/local/share/ca-certificates/gitlab-ca.crt
+        update-ca-certificates
+        export NODE_EXTRA_CA_CERTS=/tmp/gitlab-ca.pem
+      fi
     - node -v && npm -v
     - npm install -g danger
     - flutter pub get
