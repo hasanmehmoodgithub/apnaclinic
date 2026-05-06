@@ -34,7 +34,13 @@ danger:
         printf "%s" "$GITLAB_CA_PEM" > /tmp/gitlab-ca.pem
         echo "Using custom CA from GITLAB_CA_PEM"
       else
-        echo "No custom GitLab CA provided; continuing with system default CAs."
+        echo "No custom GitLab CA provided; attempting to fetch cert chain from $CI_SERVER_HOST."
+        openssl s_client -showcerts -servername "$CI_SERVER_HOST" -connect "$CI_SERVER_HOST:443" </dev/null 2>/dev/null \
+          | sed -n '/-----BEGIN CERTIFICATE-----/,/-----END CERTIFICATE-----/p' > /tmp/gitlab-ca.pem || true
+        if [ ! -s /tmp/gitlab-ca.pem ]; then
+          echo "Could not auto-fetch GitLab cert chain; continuing with system default CAs."
+          rm -f /tmp/gitlab-ca.pem
+        fi
       fi
     - |
       if [ -f /tmp/gitlab-ca.pem ]; then
