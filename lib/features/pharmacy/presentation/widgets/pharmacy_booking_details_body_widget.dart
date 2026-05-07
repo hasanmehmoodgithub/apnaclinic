@@ -1,0 +1,158 @@
+import 'package:flutter/material.dart';
+
+import '../../../../core/constants/app_colors.dart';
+import '../../../../core/extensions/screen_util_extensions.dart';
+import '../../../../core/l10n/app_localizations.dart';
+import 'pharmacy_booking_feedback_widget.dart';
+import 'pharmacy_booking_invoice_tile_widget.dart';
+import 'pharmacy_booking_medicine_card_widget.dart';
+import 'pharmacy_booking_order_status_widget.dart';
+import 'pharmacy_booking_price_summary_widget.dart';
+import 'pharmacy_booking_section_line_widget.dart';
+
+enum PharmacyBookingTimelineStatus {
+  confirmed,
+  readyForDispatch,
+  shipped,
+  completed,
+  cancelled,
+}
+
+class PharmacyBookingDetailsBodyWidget extends StatelessWidget {
+  const PharmacyBookingDetailsBodyWidget({super.key, required this.status});
+
+  final PharmacyBookingTimelineStatus status;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    return ListView(
+      padding: EdgeInsets.fromLTRB(24.w, 18.h, 24.w, 24.h),
+      children: [
+        const PharmacyBookingMedicineCardWidget(),
+        const PharmacyBookingSectionLineWidget(top: 18, bottom: 14),
+        const PharmacyBookingPriceSummaryWidget(),
+        SizedBox(height: 22.h),
+        const PharmacyBookingInvoiceTileWidget(),
+        SizedBox(height: 18.h),
+        _LabeledValueRow(
+          title: l10n.pharmacyCheckoutAddressLabel,
+          value: l10n.pharmacyBookingDeliveryCity,
+        ),
+        SizedBox(height: 10.h),
+        Text(
+          l10n.pharmacyBookingDeliveryAddress,
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+            color: AppColors.clr6C7EA0,
+            fontSize: 14.sp,
+            height: 1.2,
+          ),
+        ),
+        const PharmacyBookingSectionLineWidget(top: 16, bottom: 16),
+        _LabeledValueColumn(
+          title: l10n.pharmacyCheckoutPaymentMethodTitle,
+          value: l10n.pharmacyPaymentJazzCash,
+        ),
+        const PharmacyBookingSectionLineWidget(top: 16, bottom: 16),
+        PharmacyBookingOrderStatusWidget(status: status),
+        SizedBox(height: 16.h),
+        if (status == PharmacyBookingTimelineStatus.completed) ...[
+          const PharmacyBookingFeedbackWidget(),
+          SizedBox(height: 16.h),
+        ],
+        Container(
+          width: double.infinity,
+          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 11.h),
+          decoration: BoxDecoration(
+            color: AppColors.clrFCF5E9,
+            borderRadius: BorderRadius.circular(10.r),
+          ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: Text(
+                  l10n.pharmacyCheckoutDeliveryInfoMessage,
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: AppColors.clr060,
+                    fontWeight: FontWeight.w500,
+                    fontSize: 14.sp,
+                    height: 1.2,
+                  ),
+                ),
+              ),
+              SizedBox(width: 8.w),
+              Icon(
+                Icons.info_outline_rounded,
+                size: 16.r,
+                color: AppColors.clr4A555F,
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _LabeledValueRow extends StatelessWidget {
+  const _LabeledValueRow({required this.title, required this.value});
+
+  final String title;
+  final String value;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(
+          child: Text(
+            title,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              color: AppColors.clr060,
+              fontSize: 14.sp,
+            ),
+          ),
+        ),
+        Text(
+          value,
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+            color: AppColors.clr6C7EA0,
+            fontSize: 14.sp,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _LabeledValueColumn extends StatelessWidget {
+  const _LabeledValueColumn({required this.title, required this.value});
+
+  final String title;
+  final String value;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+            color: AppColors.clr060,
+            fontSize: 14.sp,
+          ),
+        ),
+        SizedBox(height: 10.h),
+        Text(
+          value,
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+            color: AppColors.clr6C7EA0,
+            fontSize: 14.sp,
+          ),
+        ),
+      ],
+    );
+  }
+}
