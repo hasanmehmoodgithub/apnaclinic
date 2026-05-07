@@ -119,7 +119,7 @@ class _DoctorConsultationBookDoctorScreenState
               ConsultationUiConfig.pageTopGradient,
               ConsultationUiConfig.pageBottomGradient,
             ],
-            stops: [0.09, 0.36],
+            stops: [0.5, 1.0],
           ),
         ),
         child: SafeArea(
@@ -167,25 +167,35 @@ class _DoctorConsultationBookDoctorScreenState
                         },
                       ),
                       if (_validationErrorMessage != null)
-                        Padding(
-                          padding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 8.h),
-                          child: Container(
-                            width: double.infinity,
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 12.w,
-                              vertical: 10.h,
-                            ),
-                            decoration: BoxDecoration(
-                              color: const Color(0xFFFEE4E2),
-                              borderRadius: BorderRadius.circular(10.r),
-                            ),
-                            child: Text(
-                              _validationErrorMessage!,
-                              style: textTheme.bodySmall?.copyWith(
-                                color: const Color(0xFFB42318),
-                                fontWeight: FontWeight.w500,
+                        Container(
+                          width: double.infinity,
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 16.w,
+                            vertical: 12.h,
+                          ),
+                          margin: EdgeInsets.only(bottom: 12.h),
+                          color: const Color(0xFFFDECEC),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.error_outline,
+                                size: 18.r,
+                                color: const Color(0xFFD72222),
                               ),
-                            ),
+                              SizedBox(width: 8.w),
+                              Flexible(
+                                child: Text(
+                                  _validationErrorMessage!,
+                                  textAlign: TextAlign.center,
+                                  style: textTheme.bodyMedium?.copyWith(
+                                    color: const Color(0xFFD72222),
+                                    fontSize: 15.sp,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       Padding(
@@ -386,7 +396,7 @@ class _DoctorConsultationBookDoctorScreenState
               ConsultationUiConfig.pageTopGradient,
               ConsultationUiConfig.pageBottomGradient,
             ],
-            stops: [0.09, 0.36],
+            stops: [0.5, 1.0],
           ),
         ),
         child: SafeArea(
@@ -431,13 +441,9 @@ class _DoctorConsultationBookDoctorScreenState
                   ],
                 ),
               ),
-              SizedBox(height: 8.h),
-              AppShimmerCard(
-                width: 240.w,
-                height: 178.h,
-                borderRadius: 14.r,
+              ConsultationHeroBannerWidget(
+                doctorImage: _buildDoctorHeroImage(widget.imageUrl),
               ),
-              SizedBox(height: 10.h),
               Expanded(
                 child: Container(
                   width: double.infinity,
