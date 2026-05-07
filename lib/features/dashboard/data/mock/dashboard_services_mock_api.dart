@@ -1,8 +1,8 @@
-import 'package:flutter/foundation.dart';
+import '../../../../core/config/mock_config.dart';
 
 class DashboardServicesMockApi {
   /// Toggle mock responses for dashboard services API.
-  static bool useMockResponses = kDebugMode & true;
+  static bool useMockResponses = MockConfig.enableMocks;
 
   Future<Map<String, dynamic>> getDashboardServicesSuccessResponse() async {
     await Future<void>.delayed(const Duration(milliseconds: 600));

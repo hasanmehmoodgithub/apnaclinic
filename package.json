@@ -7,14 +7,11 @@
     "lib": "lib"
   },
   "scripts": {
-    "danger:ci": "danger ci",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "commonjs",
-  "devDependencies": {
-    "danger": "^13.0.7"
-  }
+  "devDependencies": {}
 }

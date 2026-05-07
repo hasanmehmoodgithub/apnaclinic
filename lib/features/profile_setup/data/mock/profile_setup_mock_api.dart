@@ -1,9 +1,9 @@
-import 'package:flutter/foundation.dart';
+import '../../../../core/config/mock_config.dart';
 
 import '../../domain/models/profile_setup_data.dart';
 
 class ProfileSetupMockApi {
-  static bool useMockResponses = kDebugMode & true;
+  static bool useMockResponses = MockConfig.enableMocks;
 
   Future<Map<String, dynamic>> getProfileSetupSuccessResponse() async {
     await Future<void>.delayed(const Duration(milliseconds: 250));

@@ -499,6 +499,24 @@ class AppLocalizationsEn extends AppLocalizations {
   String get accountMethodJazzCash => 'JazzCash';
 
   @override
+  String get accountNoAccountsMessage => 'No accounts found.';
+
+  @override
+  String get accountIdLabel => 'ID';
+
+  @override
+  String get accountNumberShortLabel => 'Number';
+
+  @override
+  String get accountDefaultLabel => 'Default';
+
+  @override
+  String get commonYes => 'Yes';
+
+  @override
+  String get commonNo => 'No';
+
+  @override
   String dashboardHello(String name) {
     return 'Hello, $name';
   }
@@ -918,6 +936,42 @@ class AppLocalizationsEn extends AppLocalizations {
       'Could not pick file. Please try again.';
 
   @override
+  String get consultationPaymentMethodTitle => 'Payment Method';
+
+  @override
+  String get consultationVideoConsultationLabel => 'Video Consultation';
+
+  @override
+  String get consultationConsultationFeesLabel => 'Consultation Fees';
+
+  @override
+  String get consultationDiscountLabel => 'Discount';
+
+  @override
+  String get consultationTotalChargesLabel => 'Total Charges';
+
+  @override
+  String get consultationSelectAccountTitle => 'Select Account';
+
+  @override
+  String get consultationProceedCta => 'Proceed';
+
+  @override
+  String get consultationJazzCashChargeDescription =>
+      'Amount will be charged from your jazz cash account.';
+
+  @override
+  String get consultationRequiredFieldsError =>
+      'Please fill all the required fields';
+
+  @override
+  String get consultationSelectSlotError =>
+      'Please select a slot for video consultation';
+
+  @override
+  String get commonContinue => 'Continue';
+
+  @override
   String get bookingsDashboardTitle => 'My Bookings';
 
   @override
@@ -977,6 +1031,43 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get bookingsSurgeryRequirement3 =>
       'Ensure that you are NOTtaking any antibiotic medication course';
+
+  @override
+  String get bookingsDetailsLoadError =>
+      'Unable to load booking details. Please try again.';
+
+  @override
+  String get bookingsStatusPending => 'PENDING';
+
+  @override
+  String get bookingsStatusConfirmed => 'CONFIRMED';
+
+  @override
+  String get bookingsStatusCancel => 'CANCEL';
+
+  @override
+  String get bookingsStatusCompleted => 'COMPLETED';
+
+  @override
+  String get bookingsPatientLabel => 'Patient';
+
+  @override
+  String get bookingsIssueLabel => 'Issue';
+
+  @override
+  String get bookingsBillingTitle => 'Billing';
+
+  @override
+  String get bookingsEInvoiceLabel => 'E-Invoice';
+
+  @override
+  String get bookingsConsultationFeeLabel => 'Consultation fee';
+
+  @override
+  String get bookingsDiscountLabel => 'Discount (100%)';
+
+  @override
+  String get bookingsJoinNowCta => 'Join Now';
 
   @override
   String get labTestSampleTypeBlood => 'Blood';

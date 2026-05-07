@@ -1,7 +1,7 @@
-import 'package:flutter/foundation.dart';
+import '../../../../core/config/mock_config.dart';
 
 class ConsultationCategoriesMockApi {
-  static bool useMockResponses = kDebugMode & true;
+  static bool useMockResponses = MockConfig.enableMocks;
 
   Future<Map<String, dynamic>>
   getConsultationCategoriesSuccessResponse() async {

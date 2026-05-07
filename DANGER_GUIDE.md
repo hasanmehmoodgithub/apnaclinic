@@ -1,6 +1,6 @@
 # Danger Guide (GitLab CI)
 
-This project uses **Danger JS** to run merge-request quality checks before merge.
+This project uses **Danger Dart** to run merge-request quality checks before merge.
 
 Danger runs in GitLab CI and comments/fails the MR when rules are violated.
 
@@ -10,9 +10,8 @@ Danger runs in GitLab CI and comments/fails the MR when rules are violated.
 
 The setup is already added in this repo:
 
-- `dangerfile.js` - Danger rules and checks.
-- `.gitlab-ci.yml` - CI job that runs Danger on merge request pipelines.
-- `package.json` - includes `danger` dependency and `danger:ci` script.
+- `dangerfile.dart` - Danger rules and checks.
+- `.gitlab-ci.yml` - MR analyze + Danger jobs.
 
 Current enforced checks:
 
@@ -20,10 +19,9 @@ Current enforced checks:
    - Fails MR if `setState(` appears in newly added lines.
    - Enforces Cubit/Bloc state updates.
 
-2. **Analyzer/lints must pass**
-   - Runs:
-     - `dart analyze --fatal-infos --fatal-warnings`
-   - Fails MR on analyzer issues.
+2. **Analyzer report parsing**
+   - CI runs `flutter analyze --machine > analysis_report.json || true`
+   - Danger parses report and posts fail/warn results in MR.
 
 3. **Widget file max line limit**
    - For changed files under `presentation/widgets/`
@@ -35,12 +33,17 @@ Current enforced checks:
 
 Danger needs API access to read/write MR checks/comments.
 
-Create this CI/CD variable in GitLab project settings:
+Create these CI/CD variables in GitLab project settings:
 
 - **Key:** `DANGER_GITLAB_API_TOKEN`
 - **Value:** GitLab access token
 - **Scope needed:** `api`
 - Recommended: mark as **Masked** and **Protected**
+
+For self-hosted GitLab with custom TLS chain, add one of:
+
+- **Preferred:** `GITLAB_CA_FILE` as a **File** variable containing your CA PEM chain
+- **Alternative:** `GITLAB_CA_PEM` as a text variable containing full PEM chain
 
 Path:
 
@@ -67,19 +70,19 @@ If any Danger rule fails, the pipeline fails and merge is blocked (depending on 
 Install dependencies:
 
 ```bash
-npm ci
+flutter pub get
 ```
 
-Check dangerfile syntax:
+Generate machine analysis report:
 
 ```bash
-node --check dangerfile.js
+flutter analyze --machine > analysis_report.json || true
 ```
 
-Run analyzer manually:
+Run Danger:
 
 ```bash
-dart analyze --fatal-infos --fatal-warnings
+dart run danger_dart ci
 ```
 
 ---
@@ -88,7 +91,7 @@ dart analyze --fatal-infos --fatal-warnings
 
 Edit:
 
-- `dangerfile.js`
+- `dangerfile.dart`
 
 Typical additions:
 

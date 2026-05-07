@@ -1,0 +1,104 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+
+import '../../../../core/extensions/screen_util_extensions.dart';
+import '../../data/models/doctor_consultation_checkout_model.dart';
+
+class DoctorConsultationCheckoutPaymentMethodTileWidget extends StatelessWidget {
+  const DoctorConsultationCheckoutPaymentMethodTileWidget({
+    super.key,
+    required this.option,
+    required this.isSelected,
+    required this.onTap,
+  });
+
+  final DoctorConsultationPaymentOptionModel option;
+  final bool isSelected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12.r),
+      child: Container(
+        padding: EdgeInsets.fromLTRB(12.w, 12.h, 12.w, 12.h),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12.r),
+          boxShadow: const [
+            BoxShadow(
+              color: Color(0x0A000000),
+              blurRadius: 10,
+              offset: Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 42.w,
+              height: 42.h,
+              decoration: const BoxDecoration(
+                color: Color(0xFFF8FAFC),
+                shape: BoxShape.circle,
+              ),
+              padding: EdgeInsets.all(8.r),
+              child: SvgPicture.asset(option.iconAsset),
+            ),
+            SizedBox(width: 10.w),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    option.title,
+                    style: textTheme.titleMedium?.copyWith(
+                      color: const Color(0xFF061E40),
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  Text(
+                    option.description,
+                    style: textTheme.bodySmall?.copyWith(
+                      color: const Color(0xFF7B8798),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(width: 8.w),
+            InkWell(
+              onTap: onTap,
+              borderRadius: BorderRadius.circular(99.r),
+              child: Container(
+                width: 22.w,
+                height: 22.h,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: const Color(0xFFB8C0CC),
+                    width: 1.2,
+                  ),
+                ),
+                child: isSelected
+                    ? Center(
+                        child: Container(
+                          width: 10.w,
+                          height: 10.h,
+                          decoration: const BoxDecoration(
+                            color: Color(0xFF0E3D66),
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                      )
+                    : null,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

@@ -501,6 +501,24 @@ class AppLocalizationsUr extends AppLocalizations {
   String get accountMethodJazzCash => 'JazzCash';
 
   @override
+  String get accountNoAccountsMessage => 'کوئی اکاؤنٹ موجود نہیں۔';
+
+  @override
+  String get accountIdLabel => 'شناخت';
+
+  @override
+  String get accountNumberShortLabel => 'نمبر';
+
+  @override
+  String get accountDefaultLabel => 'ڈیفالٹ';
+
+  @override
+  String get commonYes => 'ہاں';
+
+  @override
+  String get commonNo => 'نہیں';
+
+  @override
   String dashboardHello(String name) {
     return 'ہیلو، $name';
   }
@@ -918,6 +936,42 @@ class AppLocalizationsUr extends AppLocalizations {
       'فائل منتخب نہیں ہو سکی۔ براہ کرم دوبارہ کوشش کریں۔';
 
   @override
+  String get consultationPaymentMethodTitle => 'ادائیگی کا طریقہ';
+
+  @override
+  String get consultationVideoConsultationLabel => 'ویڈیو مشاورت';
+
+  @override
+  String get consultationConsultationFeesLabel => 'مشاورت فیس';
+
+  @override
+  String get consultationDiscountLabel => 'رعایت';
+
+  @override
+  String get consultationTotalChargesLabel => 'کل چارجز';
+
+  @override
+  String get consultationSelectAccountTitle => 'اکاؤنٹ منتخب کریں';
+
+  @override
+  String get consultationProceedCta => 'آگے بڑھیں';
+
+  @override
+  String get consultationJazzCashChargeDescription =>
+      'رقم آپ کے جاز کیش اکاؤنٹ سے کاٹی جائے گی۔';
+
+  @override
+  String get consultationRequiredFieldsError =>
+      'براہ کرم تمام ضروری فیلڈز پُر کریں';
+
+  @override
+  String get consultationSelectSlotError =>
+      'براہ کرم ویڈیو مشاورت کے لیے وقت منتخب کریں';
+
+  @override
+  String get commonContinue => 'جاری رکھیں';
+
+  @override
   String get bookingsDashboardTitle => 'میری بکنگز';
 
   @override
@@ -978,6 +1032,43 @@ class AppLocalizationsUr extends AppLocalizations {
   @override
   String get bookingsSurgeryRequirement3 =>
       'یقینی بنائیں کہ آپ کسی اینٹی بایوٹک کورس پر نہ ہوں';
+
+  @override
+  String get bookingsDetailsLoadError =>
+      'بکنگ کی تفصیلات لوڈ نہیں ہو سکیں۔ براہ کرم دوبارہ کوشش کریں۔';
+
+  @override
+  String get bookingsStatusPending => 'PENDING';
+
+  @override
+  String get bookingsStatusConfirmed => 'CONFIRMED';
+
+  @override
+  String get bookingsStatusCancel => 'CANCEL';
+
+  @override
+  String get bookingsStatusCompleted => 'COMPLETED';
+
+  @override
+  String get bookingsPatientLabel => 'مریض';
+
+  @override
+  String get bookingsIssueLabel => 'مسئلہ';
+
+  @override
+  String get bookingsBillingTitle => 'بلنگ';
+
+  @override
+  String get bookingsEInvoiceLabel => 'ای-انوائس';
+
+  @override
+  String get bookingsConsultationFeeLabel => 'کنسلٹیشن فیس';
+
+  @override
+  String get bookingsDiscountLabel => 'ڈسکاؤنٹ (100%)';
+
+  @override
+  String get bookingsJoinNowCta => 'ابھی شامل ہوں';
 
   @override
   String get labTestSampleTypeBlood => 'خون';

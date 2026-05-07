@@ -7,6 +7,8 @@ import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/preference/app_pref.dart';
 import '../../../../core/router/app_routes.dart';
+import '../../../account/domain/entities/account_item_entity.dart';
+import '../../../account/domain/use_cases/get_accounts_list_use_case.dart';
 import '../../../account/data/account_local_store.dart';
 import '../../../account/domain/models/account_method.dart';
 import '../widgets/guest_profile_content.dart';
@@ -31,12 +33,33 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   late final AppPref _appPref;
   late final AccountLocalStore _accountStore;
+  bool _isAccountDetailsLoading = true;
+  String? _accountDetailsError;
+  List<AccountItemEntity> _accountDetails = const [];
 
   @override
   void initState() {
     super.initState();
     _appPref = sl<AppPref>();
     _accountStore = AccountLocalStore(_appPref);
+    _loadAccountDetails();
+  }
+
+  Future<void> _loadAccountDetails() async {
+    try {
+      final items = await sl<GetAccountsListUseCase>().call();
+      if (!mounted) return;
+      setState(() {
+        _accountDetails = items;
+        _isAccountDetailsLoading = false;
+      });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _accountDetailsError = e.toString();
+        _isAccountDetailsLoading = false;
+      });
+    }
   }
 
   @override
@@ -86,6 +109,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         dob: dobLabel.isEmpty ? '--' : dobLabel,
                         email: email.isEmpty ? '--' : email,
                         accounts: accounts,
+                        accountDetails: _accountDetails,
+                        isAccountDetailsLoading: _isAccountDetailsLoading,
+                        accountDetailsError: _accountDetailsError,
+                        onDeleteAccountDetailTap: _onDeleteAccountDetailTap,
                         onAccountTap: () =>
                             context.push(AppRoutes.path(AppRoutes.accountDetails)),
                         onEditTap: () =>
@@ -115,6 +142,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
     if (mounted) {
       setState(() {});
     }
+  }
+
+  void _onDeleteAccountDetailTap(int index, AccountItemEntity item) {
+    if (item.isDefault) return;
+    setState(() {
+      _accountDetails = [..._accountDetails]..removeAt(index);
+    });
   }
 
   Future<bool?> _showRemoveAccountDialog(AccountMethod account) {

@@ -1,8 +1,8 @@
-import 'package:flutter/foundation.dart';
+import '../../../../core/config/mock_config.dart';
 
 class FreeDoctorMockApi {
   /// Toggle mock responses for free doctor API.
-  static bool useMockResponses = kDebugMode & true;
+  static bool useMockResponses = MockConfig.enableMocks;
 
   Future<Map<String, dynamic>> getFreeDoctorSuccessResponse() async {
     await Future<void>.delayed(const Duration(milliseconds: 250));

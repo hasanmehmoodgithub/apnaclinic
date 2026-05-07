@@ -12,6 +12,7 @@ import '../widgets/account_app_bar_widget.dart';
 import '../widgets/account_method_card_widget.dart';
 
 class AccountDetailsScreen extends StatefulWidget {
+  //
   const AccountDetailsScreen({
     super.key,
     this.initialAccountIndex,
@@ -81,6 +82,13 @@ class _AccountDetailsScreenState extends State<AccountDetailsScreen> {
     );
   }
 
+  String _displayBankName(String bankName, AppLocalizations l10n) {
+    if (bankName.trim().isEmpty) return l10n.accountMethodJazzCash;
+    final normalized = bankName.replaceAll(' ', '').toLowerCase();
+    if (normalized == 'jazzcash') return l10n.accountMethodJazzCash;
+    return bankName;
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
@@ -101,12 +109,5 @@ class _AccountDetailsScreenState extends State<AccountDetailsScreen> {
         },
       ),
     );
-  }
-
-  String _displayBankName(String bankName, AppLocalizations l10n) {
-    if (bankName.trim().isEmpty) return l10n.accountMethodJazzCash;
-    final normalized = bankName.replaceAll(' ', '').toLowerCase();
-    if (normalized == 'jazzcash') return l10n.accountMethodJazzCash;
-    return bankName;
   }
 }

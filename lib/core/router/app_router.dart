@@ -4,11 +4,19 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import '../../features/app/presentation/screens/splash_screen.dart';
 import '../../features/bookings/data/models/surgery_details_item.dart';
+import '../../features/bookings/data/mock/doctor_consultation_bookings_mock_api.dart';
+import '../../features/bookings/presentation/cubit/doctor_consultation_booking_details_cubit.dart';
+import '../../features/bookings/presentation/doctor_consultation_booking_details_args.dart';
+import '../../features/bookings/presentation/screens/doctor_consultation_booking_details_screen.dart';
 import '../../features/consultation/presentation/cubit/consultation_cubit.dart';
 import '../../features/consultation/presentation/screens/ai_consultation_screen.dart';
 import '../../features/consultation/presentation/screens/doctor_consultation_book_doctor_screen.dart';
+import '../../features/consultation/presentation/screens/doctor_consultation_checkout_screen.dart';
 import '../../features/consultation/presentation/screens/doctor_consultation_results_screen.dart';
 import '../../features/consultation/presentation/screens/doctor_consultation_screen.dart';
+import '../../features/consultation/presentation/cubit/doctor_consultation_checkout_cubit.dart';
+import '../../features/consultation/data/mock/doctor_consultation_checkout_mock_api.dart';
+import '../../features/consultation/presentation/doctor_consultation_checkout_args.dart';
 import '../../features/customer_support/presentation/screens/customer_support_screen.dart';
 import '../../features/dashboard/presentation/screens/menu_screen.dart';
 import '../../features/lab_test/domain/repositories/lab_test_cart_repository.dart';
@@ -151,6 +159,39 @@ class AppRouter {
             specialty: (data?['specialty'] as String?) ?? 'Neurologist',
             fee: (data?['fee'] as String?) ?? 'Rs. 15,000/-',
             imageUrl: (data?['imageUrl'] as String?) ?? '',
+          );
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.path(AppRoutes.consultationCheckout),
+        name: AppRoutes.consultationCheckout,
+        builder: (context, state) {
+          final extra = state.extra;
+          if (extra is! DoctorConsultationCheckoutArgs) {
+            return const SizedBox.shrink();
+          }
+          return BlocProvider<DoctorConsultationCheckoutCubit>(
+            create: (_) => DoctorConsultationCheckoutCubit(
+              api: DoctorConsultationCheckoutMockApi(),
+            ),
+            child: DoctorConsultationCheckoutScreen(args: extra),
+          );
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.path(AppRoutes.doctorConsultationBookingDetails),
+        name: AppRoutes.doctorConsultationBookingDetails,
+        builder: (context, state) {
+          final extra = state.extra;
+          if (extra is! DoctorConsultationBookingDetailsArgs) {
+            return const SizedBox.shrink();
+          }
+          return BlocProvider<DoctorConsultationBookingDetailsCubit>(
+            create: (_) => DoctorConsultationBookingDetailsCubit(
+              api: DoctorConsultationBookingsMockApi(),
+              bookingId: extra.bookingId,
+            ),
+            child: const DoctorConsultationBookingDetailsScreen(),
           );
         },
       ),
