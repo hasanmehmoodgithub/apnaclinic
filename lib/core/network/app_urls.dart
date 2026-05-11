@@ -16,7 +16,12 @@ class AppUrls {
   static String get login => '$baseUrl/login';
 
   /// Request OTP endpoint
-  static String get requestOtp => '$baseUrl/request-otp';
+  static String get requestOtp {
+    final normalizedBaseUrl = baseUrl.endsWith('/')
+        ? baseUrl.substring(0, baseUrl.length - 1)
+        : baseUrl;
+    return '$normalizedBaseUrl/api/v1.0/user-auth/auth/otp/generate';
+  }
 
   /// Sign in endpoint - full URL with custom path
   static String get signIn => '$baseUrl/login_ww';

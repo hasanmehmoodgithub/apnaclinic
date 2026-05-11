@@ -2,7 +2,7 @@
 enum AppFlavor {
   development(
     name: 'Development',
-    apiBaseUrl: 'https://dev-api.example.com/api',
+    apiBaseUrl: 'http://apnaclinic-auth.apps.jpocp.jazz.com.pk',
     appName: 'My App (Dev)',
     enableLogging: true,
     enableDebugFeatures: true,

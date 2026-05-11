@@ -1,7 +1,9 @@
 import 'package:dio/dio.dart';
+import 'package:chucker_flutter/chucker_flutter.dart';
 import '../di/dependency_injection.dart';
 import '../preference/app_pref.dart';
 import '../flavor/flavor_config.dart';
+import '../utils/chucker_guard.dart';
 import 'api_config.dart';
 import 'api_logger_interceptor.dart';
 
@@ -32,6 +34,9 @@ class ApiService {
     final shouldLog = enableLogging ?? FlavorConfig.enableLogging;
     if (shouldLog) {
       _dio.interceptors.add(ApiLoggerInterceptor());
+    }
+    if (ChuckerGuard.isEnabled) {
+      _dio.interceptors.add(ChuckerDioInterceptor());
     }
 
     // Automatically load and set auth token

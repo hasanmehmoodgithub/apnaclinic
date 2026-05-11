@@ -3,6 +3,9 @@ class AuthResponseModel {
     required this.success,
     required this.message,
     required this.isOnboardingCompleted,
+    this.msisdn,
+    this.expiresInMinutes,
+    this.generationAttemptCount,
     this.token,
     this.userId,
     this.firstName,
@@ -16,6 +19,9 @@ class AuthResponseModel {
   final bool success;
   final String message;
   final bool isOnboardingCompleted;
+  final String? msisdn;
+  final int? expiresInMinutes;
+  final int? generationAttemptCount;
   final String? token;
   final String? userId;
   final String? firstName;
@@ -24,6 +30,12 @@ class AuthResponseModel {
   final String? email;
   final String? address;
   final String? dateOfBirth;
+
+  static int? _toInt(dynamic value) {
+    if (value is int) return value;
+    if (value is String) return int.tryParse(value);
+    return null;
+  }
 
   factory AuthResponseModel.fromJson(Map<String, dynamic> json) {
     final data = json['data'];
@@ -36,6 +48,16 @@ class AuthResponseModel {
       isOnboardingCompleted:
           (dataMap['isOnboardingCompleted'] ?? json['isOnboardingCompleted']) ==
           true,
+      msisdn: (dataMap['msisdn'] ?? json['msisdn'])?.toString(),
+      expiresInMinutes: _toInt(
+        dataMap['expiresIn'] ??
+            dataMap['expriesIn'] ??
+            json['expiresIn'] ??
+            json['expriesIn'],
+      ),
+      generationAttemptCount: _toInt(
+        dataMap['generationAttemptCount'] ?? json['generationAttemptCount'],
+      ),
       token: (dataMap['token'] ?? json['token'])?.toString(),
       userId: (dataMap['userId'] ?? json['userId'])?.toString(),
       firstName: (userMap['firstName'] ?? dataMap['firstName'])?.toString(),

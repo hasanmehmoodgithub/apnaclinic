@@ -20,85 +20,81 @@ class ApnaBottomNavigationBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final bottomInset = MediaQuery.paddingOf(context).bottom;
-
-    return Material(
-      color: Colors.transparent,
-      child: Padding(
-        padding: EdgeInsets.only(bottom: bottomInset),
-        child: SizedBox(
-          height: 108.h,
-          child: Stack(
-            clipBehavior: Clip.none,
-            alignment: Alignment.bottomCenter,
-            children: [
-              Positioned(
-                left: 0,
-                right: 0,
-                bottom: 0,
-                height: 66.h,
-                child: DecoratedBox(
-                  decoration: BoxDecoration(
-                    color: AppColors.clrWhite,
-                    boxShadow: [
-                      BoxShadow(
-                        color: AppColors.clrBlack.withValues(alpha: 0.08),
-                        blurRadius: 16.r,
-                        offset: Offset(0, -4.h),
+    return Container(
+      padding: EdgeInsets.only(bottom: bottomInset),
+      child: SizedBox(
+        height: 108.h,
+        child: Stack(
+          clipBehavior: Clip.none,
+          alignment: Alignment.bottomCenter,
+          children: [
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: 0,
+              height: 66.h,
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  color: AppColors.clrWhite,
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.clrBlack.withValues(alpha: 0.08),
+                      blurRadius: 16.r,
+                      offset: Offset(0, -4.h),
+                    ),
+                  ],
+                ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    SizedBox(width: 8.w,),
+                    Expanded(
+                      child: _SideTab(
+                        label: l10n.dashboardBottomFreeDoctor,
+                        asset: Assets.svgNavFreeDoctor,
+                        selected: currentIndex == 0,
+                        onTap: () => onTap(0),
                       ),
-                    ],
-                  ),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      SizedBox(width: 8.w,),
-                      Expanded(
-                        child: _SideTab(
-                          label: l10n.dashboardBottomFreeDoctor,
-                          asset: Assets.svgNavFreeDoctor,
-                          selected: currentIndex == 0,
-                          onTap: () => onTap(0),
-                        ),
+                    ),
+                    Expanded(
+                      child: _SideTab(
+                        label: l10n.dashboardBottomSupport,
+                        asset: Assets.svgNavSupport,
+                        selected: currentIndex == 1,
+                        onTap: () => onTap(1),
                       ),
-                      Expanded(
-                        child: _SideTab(
-                          label: l10n.dashboardBottomSupport,
-                          asset: Assets.svgNavSupport,
-                          selected: currentIndex == 1,
-                          onTap: () => onTap(1),
-                        ),
+                    ),
+                    SizedBox(width: 66.w),
+                    Expanded(
+                      child: _SideTab(
+                        label: l10n.dashboardBottomBookings,
+                        asset: Assets.svgNavBookings,
+                        selected: currentIndex == 3,
+                        onTap: () => onTap(3),
                       ),
-                      SizedBox(width: 66.w),
-                      Expanded(
-                        child: _SideTab(
-                          label: l10n.dashboardBottomBookings,
-                          asset: Assets.svgNavBookings,
-                          selected: currentIndex == 3,
-                          onTap: () => onTap(3),
-                        ),
+                    ),
+                    Expanded(
+                      child: _SideTab(
+                        label: l10n.dashboardBottomProfile,
+                        asset: Assets.svgNavProfile,
+                        selected: currentIndex == 4,
+                        onTap: () => onTap(4),
                       ),
-                      Expanded(
-                        child: _SideTab(
-                          label: l10n.dashboardBottomProfile,
-                          asset: Assets.svgNavProfile,
-                          selected: currentIndex == 4,
-                          onTap: () => onTap(4),
-                        ),
-                      ),
-                      SizedBox(width: 8.w,),
-                    ],
-                  ),
+                    ),
+                    SizedBox(width: 8.w,),
+                  ],
                 ),
               ),
-              Positioned(
-                bottom: 12.h,
-                child: _HomeCenterButton(
-                  label: l10n.dashboardBottomHome,
-                  selected: currentIndex == 2,
-                  onTap: () => onTap(2),
-                ),
+            ),
+            Positioned(
+              bottom: 12.h,
+              child: _HomeCenterButton(
+                label: l10n.dashboardBottomHome,
+                selected: currentIndex == 2,
+                onTap: () => onTap(2),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

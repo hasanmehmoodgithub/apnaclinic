@@ -19,6 +19,17 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   final ApiService apiService;
   final AuthMockApi authMockApi;
 
+  String _normalizeMsisdn(String phoneNumber) {
+    var digits = phoneNumber.replaceAll(RegExp(r'\D'), '');
+    if (digits.startsWith('0')) {
+      digits = digits.substring(1);
+    }
+    if (!digits.startsWith('92')) {
+      digits = '92$digits';
+    }
+    return digits;
+  }
+
   @override
   Future<AuthResponseModel> requestOtp(RequestOtpParams params) async {
     try {
@@ -26,12 +37,16 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       if (AuthMockApi.useMockResponses) {
         await Future<void>.delayed(const Duration(milliseconds: 600));
         response = await authMockApi.requestOtpSuccessResponse(
-          phoneNumber: params.phoneNumber,
+          phoneNumber: _normalizeMsisdn(params.phoneNumber),
+          channel: params.channel,
         );
       } else {
         response = await apiService.post(
           AppUrls.requestOtp,
-          data: <String, dynamic>{'phone': params.phoneNumber},
+          data: <String, dynamic>{
+            'msisdn': _normalizeMsisdn(params.phoneNumber),
+            'channel': params.channel,
+          },
         );
         log('requestOtp response: $response');
       }

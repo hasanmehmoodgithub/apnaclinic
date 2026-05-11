@@ -5,12 +5,16 @@ class AuthMockApi {
 
   Future<Map<String, dynamic>> requestOtpSuccessResponse({
     required String phoneNumber,
+    required String channel,
   }) async {
     return <String, dynamic>{
       'success': true,
       'message': 'OTP sent successfully.',
       'data': <String, dynamic>{
-        'phoneNumber': phoneNumber,
+        'msisdn': phoneNumber,
+        'channel': channel,
+        'expiresIn': 5,
+        'generationAttemptCount': 1,
       },
     };
   }

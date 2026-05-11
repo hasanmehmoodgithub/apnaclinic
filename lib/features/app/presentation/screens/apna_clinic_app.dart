@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:chucker_flutter/chucker_flutter.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import '../../../../core/constants/app_system_ui.dart';
 import '../../../../core/di/dependency_injection.dart';
@@ -7,6 +8,7 @@ import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/flavor/flavor_config.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/router/app_router.dart';
+import '../../../../core/utils/chucker_guard.dart';
 import '../../../customer_support/presentation/cubit/customer_support_cubit.dart';
 import '../../../free_doctor/presentation/cubit/free_doctor_cubit.dart';
 import '../../../pharmacy/presentation/cubit/pharmacy_cubit.dart';
@@ -64,7 +66,39 @@ class _ApnaClinicAppState extends State<ApnaClinicApp> {
             designHeight: MediaQuery.sizeOf(context).height,
             designWidth: MediaQuery.sizeOf(context).width,
             useScaleByDefault: true);
-        return child ?? const SizedBox.shrink();
+        final appChild = child ?? const SizedBox.shrink();
+        if (!ChuckerGuard.isEnabled) return appChild;
+        return Stack(
+          children: [
+            appChild,
+            Positioned(
+              right: 16,
+              bottom: 24,
+              child: Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  onTap: () => ChuckerFlutter.showChuckerScreen(),
+                  borderRadius: BorderRadius.circular(28),
+                  child: Container(
+                    width: 56,
+                    height: 56,
+                    decoration: BoxDecoration(
+                      color: Colors.black.withValues(alpha: 0.6),
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: Colors.white.withValues(alpha: 0.7),
+                      ),
+                    ),
+                    child: const Icon(
+                      Icons.bug_report_rounded,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        );
       },
       theme: ThemeData(
         useMaterial3: true,

@@ -1,4 +1,5 @@
 import 'package:apnaclinic/features/pharmacy/presentation/screens/pharmacy_main_screen.dart';
+import 'package:chucker_flutter/chucker_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -48,6 +49,7 @@ import '../../features/account/presentation/screens/add_account_screen.dart';
 import '../../features/onboarding/presentation/screens/onboarding_screen.dart';
 import '../../features/auth/presentation/screens/login_screen.dart';
 import '../di/dependency_injection.dart';
+import '../utils/chucker_guard.dart';
 import '../../features/profile_setup/presentation/screens/profile_setup_screen.dart';
 import 'app_routes.dart';
 import 'router_observer.dart';
@@ -55,7 +57,10 @@ import 'router_observer.dart';
 class AppRouter {
   static final GoRouter router = GoRouter(
     initialLocation: AppRoutes.path(AppRoutes.splash),
-    observers: [GoRouterObserver()], // Router debug logging
+    observers: [
+      GoRouterObserver(),
+      if (ChuckerGuard.isEnabled) ChuckerFlutter.navigatorObserver,
+    ], // Router debug logging
 
     routes: [
       GoRoute(

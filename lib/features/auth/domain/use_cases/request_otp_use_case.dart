@@ -17,10 +17,14 @@ class RequestOtpUseCase implements UseCase<AuthEntity, RequestOtpParams> {
 }
 
 class RequestOtpParams extends Equatable {
-  const RequestOtpParams({required this.phoneNumber});
+  const RequestOtpParams({
+    required this.phoneNumber,
+    required this.channel,
+  });
 
   final String phoneNumber;
+  final String channel;
 
   @override
-  List<Object?> get props => [phoneNumber];
+  List<Object?> get props => [phoneNumber, channel];
 }

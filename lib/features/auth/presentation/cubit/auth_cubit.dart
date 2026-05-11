@@ -101,7 +101,7 @@ class AuthCubit extends Cubit<AuthState> {
     );
 
     final result = await _requestOtpUseCase(
-      RequestOtpParams(phoneNumber: phoneNumber),
+      RequestOtpParams(phoneNumber: phoneNumber, channel: 'SMS'),
     );
     if (isClosed) return false;
     return result.fold(
@@ -115,9 +115,13 @@ class AuthCubit extends Cubit<AuthState> {
         );
         return false;
       },
-      (_) {
-        _startOtpTimer();
-        _safeEmit(_otpRequestedSuccessState());
+      (entity) {
+        _startOtpTimer(expiresInMinutes: entity.expiresInMinutes);
+        _safeEmit(
+          _otpRequestedSuccessState(
+            expiresInMinutes: entity.expiresInMinutes,
+          ),
+        );
         return true;
       },
     );
@@ -197,14 +201,19 @@ class AuthCubit extends Cubit<AuthState> {
   }
 
   // ---------- Private helpers ----------
-  AuthState _otpRequestedSuccessState() {
+  AuthState _otpRequestedSuccessState({int? expiresInMinutes}) {
     return state.copyWith(
       isLoading: false,
       requestOtpLoadingStateStatus: StateStatus.success,
-      otpSecondsRemaining: 30,
+      otpSecondsRemaining: _resolveOtpExpirySeconds(expiresInMinutes),
       otpRequested: true,
       errorMessage: null,
     );
+  }
+
+  int _resolveOtpExpirySeconds(int? expiresInMinutes) {
+    if (expiresInMinutes == null || expiresInMinutes <= 0) return 30;
+    return expiresInMinutes * 60;
   }
 
   Future<void> _saveUserSession({required AuthEntity entity}) async {
@@ -234,8 +243,10 @@ class AuthCubit extends Cubit<AuthState> {
     }
   }
 
-  void _startOtpTimer() {
+  void _startOtpTimer({int? expiresInMinutes}) {
+    final startingSeconds = _resolveOtpExpirySeconds(expiresInMinutes);
     _timer?.cancel();
+    _safeEmit(state.copyWith(otpSecondsRemaining: startingSeconds));
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       final nextValue = state.otpSecondsRemaining - 1;
       if (nextValue <= 0) {

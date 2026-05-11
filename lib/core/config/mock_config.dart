@@ -13,6 +13,7 @@ class MockConfig {
   );
 
   static bool get enableMocks {
+    return false;
     return _isTruthy(_mockValue) || _isTruthy(_mockTrueValue) || kDebugMode;
   }
 
