@@ -8,6 +8,9 @@ class AppUrls {
   /// Get base URL from flavor configuration
   static String get baseUrl => FlavorConfig.apiBaseUrl;
 
+  static String get _normalizedApiBaseUrl =>
+      baseUrl.endsWith('/') ? baseUrl.substring(0, baseUrl.length - 1) : baseUrl;
+
   // ============================================
   // Auth endpoints (full URLs - baseUrl from flavor)
   // ============================================
@@ -16,12 +19,8 @@ class AppUrls {
   static String get login => '$baseUrl/login';
 
   /// Request OTP endpoint
-  static String get requestOtp {
-    final normalizedBaseUrl = baseUrl.endsWith('/')
-        ? baseUrl.substring(0, baseUrl.length - 1)
-        : baseUrl;
-    return '$normalizedBaseUrl/api/v1.0/user-auth/auth/otp/generate';
-  }
+  static String get requestOtp =>
+      '$_normalizedApiBaseUrl/api/v1.0/user-auth/auth/otp/generate';
 
   /// Sign in endpoint - full URL with custom path
   static String get signIn => '$baseUrl/login_ww';
@@ -32,8 +31,9 @@ class AppUrls {
   /// Refresh token endpoint - full URL
   static String get refreshToken => '$baseUrl/refresh';
 
-  /// Verify OTP endpoint - full URL
-  static String get verifyOtp => '$baseUrl/verify-otp';
+  /// Verify OTP endpoint
+  static String get verifyOtp =>
+      '$_normalizedApiBaseUrl/api/v1.0/user-auth/auth/otp/verify';
 
   // ============================================
   // Products endpoints (full URLs - baseUrl from flavor)

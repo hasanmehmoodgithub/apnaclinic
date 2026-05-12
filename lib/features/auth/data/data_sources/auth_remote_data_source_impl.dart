@@ -82,7 +82,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         response = await apiService.post(
           AppUrls.verifyOtp,
           data: <String, dynamic>{
-            'phone': params.phoneNumber,
+            'msisdn': _normalizeMsisdn(params.phoneNumber),
             'otp': params.otp,
           },
         );
