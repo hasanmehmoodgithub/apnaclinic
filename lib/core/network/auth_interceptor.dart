@@ -128,6 +128,12 @@ class AuthInterceptor extends Interceptor {
       );
 
       final payload = response.data ?? <String, dynamic>{};
+      if (payload['success'] != true) {
+        await _clearSession();
+        completer.complete(false);
+        return false;
+      }
+
       final data = payload['data'];
       final dataMap = data is Map<String, dynamic> ? data : <String, dynamic>{};
       final access = dataMap['accessToken'];
@@ -136,6 +142,7 @@ class AuthInterceptor extends Interceptor {
       final refreshMap = refresh is Map<String, dynamic> ? refresh : <String, dynamic>{};
 
       final newAccessToken = (accessMap['token'] ?? dataMap['token'] ?? '').toString();
+      // Backend may return only a new access token; keep existing refresh token.
       final newRefreshToken =
           (refreshMap['token'] ?? dataMap['refreshToken'] ?? '').toString();
 
@@ -150,13 +157,13 @@ class AuthInterceptor extends Interceptor {
         await _appPref.setRefreshToken(newRefreshToken);
       }
 
-      final accessExpiresIn = accessMap['expiresIn'];
-      if (accessExpiresIn is int) {
-        await _appPref.setAccessTokenExpiresIn(accessExpiresIn);
+      final accessExpiresMs = _toPositiveInt(accessMap['expiresIn']);
+      if (accessExpiresMs != null) {
+        await _appPref.setAccessTokenExpiresIn(accessExpiresMs);
       }
-      final refreshExpiresIn = refreshMap['expiresIn'];
-      if (refreshExpiresIn is int) {
-        await _appPref.setRefreshTokenExpiresIn(refreshExpiresIn);
+      final refreshExpiresMs = _toPositiveInt(refreshMap['expiresIn']);
+      if (refreshExpiresMs != null) {
+        await _appPref.setRefreshTokenExpiresIn(refreshExpiresMs);
       }
 
       completer.complete(true);
@@ -176,5 +183,20 @@ class AuthInterceptor extends Interceptor {
     await _appPref.setAccessTokenExpiresIn(0);
     await _appPref.setRefreshTokenExpiresIn(0);
     await _appPref.setLoginStatus(false);
+  }
+
+  static int? _toPositiveInt(dynamic value) {
+    if (value == null) return null;
+    if (value is int) return value > 0 ? value : null;
+    if (value is num) {
+      final i = value.toInt();
+      return i > 0 ? i : null;
+    }
+    if (value is String) {
+      final parsed = int.tryParse(value);
+      if (parsed == null || parsed <= 0) return null;
+      return parsed;
+    }
+    return null;
   }
 }

@@ -65,12 +65,30 @@ This prevents multiple simultaneous refresh calls.
 
 ## Token Save Rules After Refresh
 
-From refresh response:
+The client requires `success: true` in the JSON body; otherwise the session is cleared.
 
-- `data.accessToken.token` -> save as access token
-- `data.refreshToken.token` -> save as refresh token (if present)
-- `data.accessToken.expiresIn` -> save access expiry millis (if int)
-- `data.refreshToken.expiresIn` -> save refresh expiry millis (if int)
+Typical success body (access token only — **no new refresh token**):
+
+```json
+{
+  "success": true,
+  "message": "Access token refreshed successfully.",
+  "data": {
+    "tokenType": "Bearer",
+    "accessToken": {
+      "token": "<jwt>",
+      "expiresIn": 900000
+    }
+  }
+}
+```
+
+Persisted values:
+
+- `data.accessToken.token` → access token (required)
+- `data.refreshToken.token` → refresh token **only if** the backend returns a new refresh object; otherwise the **existing** stored refresh token is kept
+- `data.accessToken.expiresIn` → access TTL in milliseconds when present (parsed as `int`, `num`, or numeric `string`)
+- `data.refreshToken.expiresIn` → refresh TTL when a new refresh block is returned
 
 ## Retry Protection
 

@@ -48,9 +48,7 @@ class ProfileSetupRemoteDataSourceImpl implements ProfileSetupRemoteDataSource {
       final userId = appPref.getUserId();
       final message = ErrorHandler.handleExceptions(
         e,
-        endpoint: userId.isEmpty
-            ? AppUrls.saveProfileSetup
-            : AppUrls.userProfileById(userId),
+        endpoint:AppUrls.userProfileById(appPref.getUserId()),
       );
       return Future.error(message);
     }
@@ -64,7 +62,7 @@ class ProfileSetupRemoteDataSourceImpl implements ProfileSetupRemoteDataSource {
         response = await mockApi.saveProfileSuccessResponse(data);
       } else {
         response = await apiService.patch(
-          AppUrls.saveProfileSetup+appPref.getUserId(),
+          AppUrls.userProfileById(appPref.getUserId()),
           data: profileSetupSavePayload(data),
         );
         log('saveProfile response: $response');

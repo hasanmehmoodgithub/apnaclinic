@@ -1,3 +1,5 @@
+import 'package:intl/intl.dart';
+
 import '../../domain/models/profile_setup_data.dart';
 
 class ProfileSetupModel {
@@ -76,7 +78,13 @@ Map<String, dynamic> profileSetupSavePayload(
     'gender': data.gender,
     'email': data.email,
     'address': data.address,
-    'dob': data.dateOfBirth.toIso8601String().split('T').first,
+    'dob': DateFormat('dd-MM-yyyy HH:mm:ss').format(
+      DateTime(
+        data.dateOfBirth.year,
+        data.dateOfBirth.month,
+        data.dateOfBirth.day,
+      ),
+    ),
   };
 
   final profileImageBase64 = data.profileImageBase64;

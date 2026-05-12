@@ -38,19 +38,17 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
   final appPref = sl<AppPref>();
   File? _selectedProfileImage;
   bool _hasAppliedInitialData = false;
-  late final bool _isProfileCompleted;
 
   @override
   void initState() {
     super.initState();
-    _isProfileCompleted = appPref.isProfileCompleted();
     context.read<ProfileSetupCubit>().resetState();
     final userLocal = appPref.getUserLocalModel();
     _firstNameController.text = userLocal?.firstName.trim() ?? '';
     _lastNameController.text = userLocal?.lastName.trim() ?? '';
     _emailController.text = userLocal?.email.trim() ?? '';
     _addressController.text = userLocal?.address.trim() ?? '';
-    if (_isProfileCompleted) {
+    if (appPref.getLoginStatus()) {
       context.read<ProfileSetupCubit>().loadProfile();
     }
   }

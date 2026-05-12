@@ -14,6 +14,12 @@ This guide shows you how to create a new feature with:
 
 ---
 
+## 📝 Feature documentation (`FEATURE.md`)
+
+For each feature folder under `lib/features/<feature_name>/`, keep a **`FEATURE.md`** in that same folder. Create it when you add the feature; update it whenever you change APIs, navigation, DI, or important flows so it stays a short, accurate index (purpose, routes, data sources, cubit/state, mocks). Project Cursor rule: `.cursor/rules/feature-md-after-changes.mdc`.
+
+---
+
 ## 📁 Feature Folder Structure
 
 ```

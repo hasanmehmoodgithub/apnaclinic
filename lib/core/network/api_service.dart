@@ -3,6 +3,7 @@ import 'package:chucker_flutter/chucker_flutter.dart';
 import '../di/dependency_injection.dart';
 import '../preference/app_pref.dart';
 import '../flavor/flavor_config.dart';
+import '../utils/api_error_message_utils.dart';
 import '../utils/chucker_guard.dart';
 import 'api_config.dart';
 import 'auth_interceptor.dart';
@@ -225,15 +226,7 @@ class ApiService {
 
   /// Extract error message from response
   String _extractErrorMessage(dynamic responseData) {
-    if (responseData is Map<String, dynamic>) {
-      return responseData['message'] as String? ??
-          responseData['error'] as String? ??
-          'Request failed';
-    }
-    if (responseData is String) {
-      return responseData;
-    }
-    return 'Request failed';
+    return ApiErrorMessageUtils.parseOrDefault(responseData);
   }
 
   /// Handle DioException and convert to ApiException
