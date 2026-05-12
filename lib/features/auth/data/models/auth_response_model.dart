@@ -7,6 +7,9 @@ class AuthResponseModel {
     this.expiresInMinutes,
     this.generationAttemptCount,
     this.token,
+    this.refreshToken,
+    this.accessTokenExpiresIn,
+    this.refreshTokenExpiresIn,
     this.userId,
     this.firstName,
     this.lastName,
@@ -23,6 +26,9 @@ class AuthResponseModel {
   final int? expiresInMinutes;
   final int? generationAttemptCount;
   final String? token;
+  final String? refreshToken;
+  final int? accessTokenExpiresIn;
+  final int? refreshTokenExpiresIn;
   final String? userId;
   final String? firstName;
   final String? lastName;
@@ -37,17 +43,39 @@ class AuthResponseModel {
     return null;
   }
 
+  static bool _toBool(dynamic value) {
+    if (value is bool) return value;
+    if (value is num) return value != 0;
+    if (value is String) {
+      final normalized = value.toLowerCase().trim();
+      return normalized == 'true' || normalized == '1';
+    }
+    return false;
+  }
+
   factory AuthResponseModel.fromJson(Map<String, dynamic> json) {
     final data = json['data'];
     final dataMap = data is Map<String, dynamic> ? data : <String, dynamic>{};
+    final accessToken = dataMap['accessToken'];
+    final refreshToken = dataMap['refreshToken'];
+    final accessTokenMap = accessToken is Map<String, dynamic>
+        ? accessToken
+        : <String, dynamic>{};
+    final refreshTokenMap = refreshToken is Map<String, dynamic>
+        ? refreshToken
+        : <String, dynamic>{};
     final user = dataMap['user'];
     final userMap = user is Map<String, dynamic> ? user : <String, dynamic>{};
     return AuthResponseModel(
       success: json['success'] == true,
       message: (json['message'] ?? '').toString(),
+      // Backend now sends userOnboarding=true when profile setup is still pending.
       isOnboardingCompleted:
-          (dataMap['isOnboardingCompleted'] ?? json['isOnboardingCompleted']) ==
-          true,
+          dataMap.containsKey('userOnboarding') || json.containsKey('userOnboarding')
+          ? !_toBool(dataMap['userOnboarding'] ?? json['userOnboarding'])
+          : _toBool(
+              dataMap['isOnboardingCompleted'] ?? json['isOnboardingCompleted'],
+            ),
       msisdn: (dataMap['msisdn'] ?? json['msisdn'])?.toString(),
       expiresInMinutes: _toInt(
         dataMap['expiresIn'] ??
@@ -58,7 +86,24 @@ class AuthResponseModel {
       generationAttemptCount: _toInt(
         dataMap['generationAttemptCount'] ?? json['generationAttemptCount'],
       ),
-      token: (dataMap['token'] ?? json['token'])?.toString(),
+      token:
+          (dataMap['token'] ?? accessTokenMap['token'] ?? json['token'])
+              ?.toString(),
+      refreshToken:
+          (dataMap['refreshTokenValue'] ??
+                  refreshTokenMap['token'] ??
+                  json['refreshToken'])
+              ?.toString(),
+      accessTokenExpiresIn: _toInt(
+        dataMap['accessTokenExpiresIn'] ??
+            accessTokenMap['expiresIn'] ??
+            json['accessTokenExpiresIn'],
+      ),
+      refreshTokenExpiresIn: _toInt(
+        dataMap['refreshTokenExpiresIn'] ??
+            refreshTokenMap['expiresIn'] ??
+            json['refreshTokenExpiresIn'],
+      ),
       userId: (dataMap['userId'] ?? json['userId'])?.toString(),
       firstName: (userMap['firstName'] ?? dataMap['firstName'])?.toString(),
       lastName: (userMap['lastName'] ?? dataMap['lastName'])?.toString(),

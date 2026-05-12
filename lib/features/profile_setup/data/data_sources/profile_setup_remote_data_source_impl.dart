@@ -3,6 +3,7 @@ import 'dart:developer';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/network/api_service.dart';
 import '../../../../core/network/app_urls.dart';
+import '../../../../core/preference/app_pref.dart';
 import '../../../../core/utils/error_handler.dart';
 import '../../domain/models/profile_setup_data.dart';
 import '../mock/profile_setup_mock_api.dart';
@@ -13,10 +14,12 @@ class ProfileSetupRemoteDataSourceImpl implements ProfileSetupRemoteDataSource {
   ProfileSetupRemoteDataSourceImpl({
     required this.apiService,
     required this.mockApi,
+    required this.appPref,
   });
 
   final ApiService apiService;
   final ProfileSetupMockApi mockApi;
+  final AppPref appPref;
 
   @override
   Future<ProfileSetupResponseModel> getProfileSetupContent() async {
@@ -25,7 +28,11 @@ class ProfileSetupRemoteDataSourceImpl implements ProfileSetupRemoteDataSource {
       if (ProfileSetupMockApi.useMockResponses) {
         response = await mockApi.getProfileSetupSuccessResponse();
       } else {
-        response = await apiService.get(AppUrls.profileSetup);
+        final userId = appPref.getUserId();
+        if (userId.isEmpty) {
+          return Future.error(AppStrings.profileSetupLoadError);
+        }
+        response = await apiService.get(AppUrls.userProfileById(userId));
         log('getProfileSetupContent response: $response');
       }
 
@@ -38,9 +45,12 @@ class ProfileSetupRemoteDataSourceImpl implements ProfileSetupRemoteDataSource {
       return Future.error(message);
     } catch (e) {
       log('getProfileSetupContent error: $e');
+      final userId = appPref.getUserId();
       final message = ErrorHandler.handleExceptions(
         e,
-        endpoint: AppUrls.profileSetup,
+        endpoint: userId.isEmpty
+            ? AppUrls.saveProfileSetup
+            : AppUrls.userProfileById(userId),
       );
       return Future.error(message);
     }
@@ -53,8 +63,8 @@ class ProfileSetupRemoteDataSourceImpl implements ProfileSetupRemoteDataSource {
       if (ProfileSetupMockApi.useMockResponses) {
         response = await mockApi.saveProfileSuccessResponse(data);
       } else {
-        response = await apiService.post(
-          AppUrls.saveProfileSetup,
+        response = await apiService.patch(
+          AppUrls.saveProfileSetup+appPref.getUserId(),
           data: profileSetupSavePayload(data),
         );
         log('saveProfile response: $response');

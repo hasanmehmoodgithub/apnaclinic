@@ -24,7 +24,7 @@ class ProfileSetupModel {
       gender: (json['gender'] ?? '').toString(),
       email: (json['email'] ?? '').toString(),
       address: (json['address'] ?? '').toString(),
-      dateOfBirth: (json['dateOfBirth'] ?? '').toString(),
+      dateOfBirth: (json['dateOfBirth'] ?? json['dob'] ?? '').toString(),
     );
   }
 }
@@ -67,13 +67,22 @@ class ProfileSetupResponseModel {
   }
 }
 
-Map<String, dynamic> profileSetupSavePayload(ProfileSetupData data) {
-  return {
+Map<String, dynamic> profileSetupSavePayload(
+  ProfileSetupData data,
+) {
+  final payload = <String, dynamic>{
     'firstName': data.firstName,
     'lastName': data.lastName,
     'gender': data.gender,
     'email': data.email,
     'address': data.address,
-    'dateOfBirth': data.dateOfBirth.toIso8601String(),
+    'dob': data.dateOfBirth.toIso8601String().split('T').first,
   };
+
+  final profileImageBase64 = data.profileImageBase64;
+  if (profileImageBase64 != null && profileImageBase64.isNotEmpty) {
+    payload['profileImage'] = profileImageBase64;
+  }
+
+  return payload;
 }

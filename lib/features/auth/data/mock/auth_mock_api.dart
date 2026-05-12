@@ -35,9 +35,18 @@ class AuthMockApi {
       'success': true,
       'message': 'Login successful.',
       'data': <String, dynamic>{
-        'token': 'mock-token',
+        'tokenType': 'Bearer',
+        'accessToken': <String, dynamic>{
+          'token': 'mock-token',
+          'expiresIn': 900000,
+        },
+        'refreshToken': <String, dynamic>{
+          'token': 'mock-refresh-token',
+          'expiresIn': 604800000,
+        },
         'userId': phoneNumber,
-        'isOnboardingCompleted': true,
+        'isOnboardingCompleted': isOnboardingCompleted,
+        'userOnboarding': !isOnboardingCompleted,
         'user': <String, dynamic>{
           'firstName': isOnboardingCompleted ? 'Hasan' : '',
           'lastName': isOnboardingCompleted ? 'Ali' : '',

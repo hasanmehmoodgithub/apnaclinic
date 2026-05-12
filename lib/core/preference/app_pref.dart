@@ -6,6 +6,15 @@ abstract class AppPref {
   Future<bool> setToken(String token, {String? defaultValue});
   String getToken();
 
+  Future<bool> setRefreshToken(String token, {String? defaultValue});
+  String getRefreshToken();
+
+  Future<bool> setAccessTokenExpiresIn(int milliseconds, {int? defaultValue});
+  int getAccessTokenExpiresIn();
+
+  Future<bool> setRefreshTokenExpiresIn(int milliseconds, {int? defaultValue});
+  int getRefreshTokenExpiresIn();
+
   Future<bool> setUserId(String userId, {String? defaultValue});
   String getUserId();
 

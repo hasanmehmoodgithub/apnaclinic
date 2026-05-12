@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -220,6 +221,14 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
       return;
     }
 
+    String? profileImageBase64;
+    final selectedImage = _selectedProfileImage;
+    if (selectedImage != null) {
+      final bytes = await selectedImage.readAsBytes();
+      profileImageBase64 = base64Encode(bytes);
+    }
+    if (!mounted) return;
+
     final success = await context.read<ProfileSetupCubit>().saveProfile(
       ProfileSetupData(
         firstName: _firstNameController.text.trim(),
@@ -228,6 +237,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
         email: _emailController.text.trim(),
         address: _addressController.text.trim(),
         dateOfBirth: state.dateOfBirth!,
+        profileImageBase64: profileImageBase64,
       ),
     );
     if (!mounted || !success) return;

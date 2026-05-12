@@ -5,6 +5,7 @@ import '../preference/app_pref.dart';
 import '../flavor/flavor_config.dart';
 import '../utils/chucker_guard.dart';
 import 'api_config.dart';
+import 'auth_interceptor.dart';
 import 'api_logger_interceptor.dart';
 
 /// Simple API Service with automatic token injection and logging
@@ -30,6 +31,8 @@ class ApiService {
            },
          ),
        ) {
+    _dio.interceptors.add(AuthInterceptor(dio: _dio, appPref: _appPref));
+
     // Add logger interceptor if enabled
     final shouldLog = enableLogging ?? FlavorConfig.enableLogging;
     if (shouldLog) {
@@ -49,6 +52,8 @@ class ApiService {
       final token = _appPref.getToken();
       if (token.isNotEmpty) {
         _dio.options.headers['Authorization'] = 'Bearer $token';
+      } else {
+        _dio.options.headers.remove('Authorization');
       }
     } catch (e) {
       // AppPref not initialized yet, skip
@@ -130,6 +135,32 @@ class ApiService {
       _loadAndSetToken();
 
       final response = await _dio.put<Map<String, dynamic>>(
+        endpoint,
+        data: data,
+        options: Options(
+          headers: headers,
+          sendTimeout: timeout,
+          receiveTimeout: timeout,
+        ),
+      );
+
+      return _handleResponse(response);
+    } on DioException catch (e) {
+      throw _handleError(e);
+    }
+  }
+
+  /// PATCH request
+  Future<Map<String, dynamic>> patch(
+    String endpoint, {
+    Map<String, dynamic>? data,
+    Map<String, String>? headers,
+    Duration? timeout,
+  }) async {
+    try {
+      _loadAndSetToken();
+
+      final response = await _dio.patch<Map<String, dynamic>>(
         endpoint,
         data: data,
         options: Options(

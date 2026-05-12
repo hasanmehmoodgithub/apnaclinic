@@ -9,6 +9,9 @@ class AuthEntity extends Equatable {
     this.expiresInMinutes,
     this.generationAttemptCount,
     this.token,
+    this.refreshToken,
+    this.accessTokenExpiresIn,
+    this.refreshTokenExpiresIn,
     this.userId,
     this.firstName,
     this.lastName,
@@ -25,6 +28,9 @@ class AuthEntity extends Equatable {
   final int? expiresInMinutes;
   final int? generationAttemptCount;
   final String? token;
+  final String? refreshToken;
+  final int? accessTokenExpiresIn;
+  final int? refreshTokenExpiresIn;
   final String? userId;
   final String? firstName;
   final String? lastName;
@@ -42,6 +48,9 @@ class AuthEntity extends Equatable {
     expiresInMinutes,
     generationAttemptCount,
     token,
+    refreshToken,
+    accessTokenExpiresIn,
+    refreshTokenExpiresIn,
     userId,
     firstName,
     lastName,

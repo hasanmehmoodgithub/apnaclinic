@@ -1,5 +1,6 @@
 import '../../core/di/dependency_injection.dart';
 import '../../core/network/api_service.dart';
+import '../../core/preference/app_pref.dart';
 import 'data/data_sources/profile_setup_remote_data_source.dart';
 import 'data/data_sources/profile_setup_remote_data_source_impl.dart';
 import 'data/mock/profile_setup_mock_api.dart';
@@ -16,6 +17,7 @@ void initProfileSetupInjector() {
     () => ProfileSetupRemoteDataSourceImpl(
       apiService: sl<ApiService>(),
       mockApi: sl<ProfileSetupMockApi>(),
+      appPref: sl<AppPref>(),
     ),
   );
 

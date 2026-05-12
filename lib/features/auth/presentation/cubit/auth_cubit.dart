@@ -6,6 +6,7 @@ import '../../../../core/enums/app_enums.dart';
 import '../../../../core/enums/state_status.dart';
 import '../../../../core/preference/app_pref.dart';
 import '../../../../core/preference/user_local_model.dart';
+import '../../../../core/utils/jwt_utils.dart';
 import '../../domain/entities/auth_entity.dart';
 import '../../domain/use_cases/request_otp_use_case.dart';
 import '../../domain/use_cases/verify_otp_use_case.dart';
@@ -217,9 +218,16 @@ class AuthCubit extends Cubit<AuthState> {
   }
 
   Future<void> _saveUserSession({required AuthEntity entity}) async {
+    final tokenUserId = JwtUtils.claim<dynamic>(entity.token, 'userId');
+    final resolvedUserId =
+        entity.userId ?? (tokenUserId != null ? tokenUserId.toString() : state.phoneNumber);
+
     await _appPref.setLoginStatus(true);
-    await _appPref.setUserId(entity.userId ?? state.phoneNumber);
+    await _appPref.setUserId(resolvedUserId);
     await _appPref.setToken(entity.token ?? '');
+    await _appPref.setRefreshToken(entity.refreshToken ?? '');
+    await _appPref.setAccessTokenExpiresIn(entity.accessTokenExpiresIn ?? 0);
+    await _appPref.setRefreshTokenExpiresIn(entity.refreshTokenExpiresIn ?? 0);
     await _appPref.setOnboardingCompleted(entity.isOnboardingCompleted == true);
 
     if (entity.isOnboardingCompleted == true) {

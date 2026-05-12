@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Apna Clinic — Backend API reference (draft)</title>
+  <style>
+    :root {
+      --bg: #0f1419;
+      --panel: #1a2332;
+      --text: #e7ecf3;
+      --muted: #9aa8bc;
+      --accent: #3d9cf5;
+      --border: #2a3a52;
+      --get: #22c55e;
+      --post: #f59e0b;
+      --put: #a78bfa;
+      --del: #ef4444;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.55;
+      font-size: 15px;
+    }
+    header {
+      padding: 2rem 1.5rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+      background: linear-gradient(180deg, #152030 0%, var(--bg) 100%);
+    }
+    h1 { margin: 0 0 0.5rem; font-size: 1.5rem; font-weight: 650; }
+    .sub { color: var(--muted); max-width: 56rem; }
+    .layout { display: flex; max-width: 1200px; margin: 0 auto; gap: 0; }
+    nav {
+      width: 220px;
+      flex-shrink: 0;
+      padding: 1rem 0 2rem 1rem;
+      position: sticky;
+      top: 0;
+      align-self: flex-start;
+      max-height: 100vh;
+      overflow-y: auto;
+      border-right: 1px solid var(--border);
+      background: var(--bg);
+    }
+    nav a {
+      display: block;
+      padding: 0.35rem 0.75rem;
+      color: var(--muted);
+      text-decoration: none;
+      border-radius: 6px;
+      font-size: 13px;
+    }
+    nav a:hover { color: var(--text); background: var(--panel); }
+    main { flex: 1; padding: 1.25rem 1.5rem 3rem; min-width: 0; }
+    h2 {
+      margin: 2rem 0 0.75rem;
+      font-size: 1.15rem;
+      padding-bottom: 0.35rem;
+      border-bottom: 1px solid var(--border);
+    }
+    h3 { margin: 1.25rem 0 0.5rem; font-size: 1rem; color: #c5d4eb; }
+    p { margin: 0.5rem 0; color: var(--muted); }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      margin: 0.75rem 0 1.25rem;
+    }
+    th, td {
+      border: 1px solid var(--border);
+      padding: 0.5rem 0.65rem;
+      text-align: left;
+      vertical-align: top;
+    }
+    th { background: var(--panel); color: #cbd5e1; font-weight: 600; }
+    td code { font-size: 12px; }
+    .tag {
+      display: inline-block;
+      padding: 0.12rem 0.45rem;
+      border-radius: 4px;
+      font-weight: 600;
+      font-size: 11px;
+      letter-spacing: 0.02em;
+    }
+    .tag.get { background: rgba(34, 197, 94, 0.2); color: var(--get); }
+    .tag.post { background: rgba(245, 158, 11, 0.2); color: var(--post); }
+    .tag.put { background: rgba(167, 139, 250, 0.2); color: var(--put); }
+    .tag.delete { background: rgba(239, 68, 68, 0.2); color: var(--del); }
+    .pill {
+      font-size: 11px;
+      padding: 0.1rem 0.4rem;
+      border-radius: 999px;
+      background: var(--panel);
+      color: var(--muted);
+    }
+    pre {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.85rem 1rem;
+      overflow-x: auto;
+      font-size: 12px;
+      margin: 0.5rem 0 1rem;
+    }
+    code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, monospace; }
+    .note {
+      border-left: 3px solid var(--accent);
+      padding: 0.5rem 0.85rem;
+      margin: 0.75rem 0;
+      background: rgba(61, 156, 245, 0.08);
+      color: #b8d4f0;
+      font-size: 13px;
+    }
+    footer {
+      padding: 1rem 1.5rem 2rem;
+      color: var(--muted);
+      font-size: 12px;
+      text-align: center;
+      border-top: 1px solid var(--border);
+    }
+    @media (max-width: 860px) {
+      .layout { flex-direction: column; }
+      nav {
+        position: relative;
+        max-height: none;
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Apna Clinic — backend API reference</h1>
+    <p class="sub">
+      Draft specification for backend teams. Paths below use <code>{baseUrl}</code> from app flavor
+      (<code>FlavorConfig.apiBaseUrl</code>). The mobile client expects JSON with a top-level
+      <code>success</code> boolean and usually <code>message</code>; many payloads live under
+      <code>data</code> or feature-specific keys. Authenticated calls use
+      <code>Authorization: Bearer &lt;token&gt;</code> unless noted.
+    </p>
+  </header>
+
+  <div class="layout">
+    <nav>
+      <a href="#conventions">Conventions</a>
+      <a href="#auth">Auth &amp; session</a>
+      <a href="#dashboard">Dashboard &amp; CMS</a>
+      <a href="#profile">Profile &amp; user</a>
+      <a href="#notifications">Notifications</a>
+      <a href="#search">Search</a>
+      <a href="#pharmacy">Pharmacy</a>
+      <a href="#lab">Lab tests</a>
+      <a href="#surgery">Surgery</a>
+      <a href="#consultation">Doctor consultation</a>
+      <a href="#bookings">Bookings &amp; orders</a>
+      <a href="#payments">Payments</a>
+      <a href="#support">Support &amp; content</a>
+      <a href="#admin">Admin &amp; ops (optional)</a>
+    </nav>
+
+    <main>
+      <section id="conventions">
+        <h2>Conventions</h2>
+        <ul style="color: var(--muted); margin-top: 0;">
+          <li><strong>Content-Type</strong>: <code>application/json</code></li>
+          <li><strong>Errors</strong>: HTTP status + JSON body with <code>success: false</code> and human-readable <code>message</code></li>
+          <li><strong>Versioning</strong>: Prefer a prefix such as <code>/api/v1</code> for new routes; the app currently mixes root paths and one versioned OTP path (see Auth).</li>
+          <li><strong>Idempotency</strong>: POST for payments and booking confirmations should support idempotency keys where duplicates are costly.</li>
+        </ul>
+        <pre>{
+  "success": true,
+  "message": "OK",
+  "data": { }
+}</pre>
+      </section>
+
+      <section id="auth">
+        <h2>Auth &amp; session</h2>
+        <p>Implemented or partially referenced in <code>lib/core/network/app_urls.dart</code> and <code>auth_remote_data_source_impl.dart</code>.</p>
+        <table>
+          <thead>
+            <tr>
+              <th>API</th>
+              <th>Method</th>
+              <th>Path (relative to base)</th>
+              <th>Usage</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Generate OTP</td>
+              <td><span class="tag post">POST</span></td>
+              <td><code>/api/v1.0/user-auth/auth/otp/generate</code></td>
+              <td>Body: <code>{ "msisdn": "92…", "channel": "sms"|… }</code>. Response drives OTP expiry and attempt counts (see <code>AuthResponseModel</code>).</td>
+            </tr>
+            <tr>
+              <td>Verify OTP</td>
+              <td><span class="tag post">POST</span></td>
+              <td><code>/verify-otp</code> <span class="pill">full URL</span></td>
+              <td>Body: <code>{ "phone": "…", "otp": "…" }</code>. On success return token, user id, profile fields, <code>isOnboardingCompleted</code>.</td>
+            </tr>
+            <tr>
+              <td>Login (legacy)</td>
+              <td><span class="tag post">POST</span></td>
+              <td><code>/login</code></td>
+              <td>Reserved / alternate auth; align with product before implementing.</td>
+            </tr>
+            <tr>
+              <td>Sign-in variant</td>
+              <td><span class="tag post">POST</span></td>
+              <td><code>/login_ww</code></td>
+              <td>Placeholder path in app; document real contract if used.</td>
+            </tr>
+            <tr>
+              <td>Refresh token</td>
+              <td><span class="tag post">POST</span></td>
+              <td><code>/refresh</code></td>
+              <td>Return new access (and refresh) token; client updates stored bearer token.</td>
+            </tr>
+            <tr>
+              <td>Logout</td>
+              <td><span class="tag post">POST</span></td>
+              <td><code>/logout</code></td>
+              <td>Invalidate refresh token / session server-side; client clears local token.</td>
+            </tr>
+            <tr>
+              <td>Register device (FCM)</td>
+              <td><span class="tag post">POST</span></td>
+              <td><code>/api/v1/users/me/devices</code></td>
+              <td><span class="pill">proposed</span> Body: <code>{ "fcmToken", "platform", "appVersion" }</code> for push notifications.</td>
+            </tr>
+            <tr>
+              <td>Social token exchange</td>
+              <td><span class="tag post">POST</span></td>
+              <td><code>/api/v1/auth/social/google</code> etc.</td>
+              <td><span class="pill">proposed</span> If you add Google/Facebook sign-in beyond current OTP flow.</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="dashboard">
+        <h2>Dashboard &amp; home CMS</h2>
+        <p>Feeds the main navigation and marketing surfaces.</p>
+        <table>
+          <thead>
+            <tr><th>API</th><th>Method</th><th>Path</th><th>Usage</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Our services</td>
+              <td><span class="tag get">GET</span></td>
+              <td><code>/dashboard/services</code></td>
+              <td>Grid of service tiles (icons, titles, deep links). Used by dashboard remote data source.</td>
+            </tr>
+            <tr>
+              <td>Promotional banners</td>
+              <td><span class="tag get">GET</span></td>
+              <td><code>/dashboard/promo-banner</code></td>
+              <td>Carousel / hero content for promotions.</td>
+            </tr>
+            <tr>
+              <td>App config / feature flags</td>
+              <td><span class="tag get">GET</span></td>
+              <td><code>/api/v1/config</code></td>
+              <td><span class="pill">proposed</span> Remote toggles, maintenance mode, min app version.</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="profile">
+        <h2>Profile &amp; user</h2>
+        <table>
+          <thead>
+            <tr><th>API</th><th>Method</th><th>Path</th><th>Usage</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Profile setup (read)</td>
+              <td><span class="tag get">GET</span></td>
+              <td><code>/profile/setup</code></td>
+              <td>Pre-fill onboarding form; accept <code>data.user</code> or flat fields per <code>ProfileSetupResponseModel</code>.</td>
+            </tr>
+            <tr>
+              <td>Profile setup (save)</td>
+              <td><span class="tag post">POST</span></td>
+              <td><code>/profile/setup/save</code></td>
+              <td>Body: <code>firstName</code>, <code>lastName</code>, <code>gender</code>, <code>email</code>, <code>address</code>, <code>dateOfBirth</code> (ISO-8601).</td>
+            </tr>
+            <tr>
+              <td>Current user</td>
+              <td><span class="tag get">GET</span></td>
+              <td><code>/api/v1/users/me</code></td>
+              <td><span class="pill">proposed</span> Canonical profile + preferences after onboarding.</td>
+            </tr>
+            <tr>
+              <td>Update user</td>
+              <td><span class="tag put">PUT</span></td>
+              <td><code>/api/v1/users/me</code></td>
+              <td><span class="pill">proposed</span> Partial updates (phone change flow may re-use OTP).</td>
+            </tr>
+            <tr>
+              <td>Linked accounts (family)</td>
+              <td><span class="tag get">GET</span></td>
+              <td><code>/api/v1/users/me/accounts</code></td>
+              <td><span class="pill">proposed</span> Replaces mock in <code>AccountRemoteDataSourceImpl</code>; list dependent profiles for booking.</td>
+            </tr>
+            <tr>
+              <td>Add linked account</td>
+              <td><span class="tag post">POST</span></td>
+              <td><code>/api/v1/users/me/accounts</code></td>
+              <td><span class="pill">proposed</span> Create child/family member profile.</td>
+            </tr>
+            <tr>
+              <td>Delete linked account</td>
+              <td><span class="tag delete">DELETE</span></td>
+              <td><code>/api/v1/users/me/accounts/{id}</code></td>
+              <td><span class="pill">proposed</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="notifications">
+        <h2>Notifications</h2>
+        <table>
+          <thead>
+            <tr><th>API</th><th>Method</th><th>Path</th><th>Usage</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>List notifications</td>
+              <td><span class="tag get">GET</span></td>
+              <td><code>/notifications</code></td>
+              <td>Paginated inbox; include <code>read</code>, <code>createdAt</code>, <code>actionUrl</code> or deep link payload.</td>
+            </tr>
+            <tr>
+              <td>Mark read</td>
+              <td><span class="tag post">POST</span></td>
+              <td><code>/api/v1/notifications/{id}/read</code></td>
+              <td><span class="pill">proposed</span></td>
+            </tr>
+            <tr>
+              <td>Mark all read</td>
+              <td><span class="tag post">POST</span></td>
+              <td><code>/api/v1/notifications/read-all</code></td>
+              <td><span class="pill">proposed</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="search">
+        <h2>Search</h2>
+        <table>
+          <thead>
+            <tr><th>API</th><th>Method</th><th>Path</th><th>Usage</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Unified search</td>
+              <td><span class="tag get">GET</span></td>
+              <td><code>/search</code></td>
+              <td>Query params: <code>query</code>, <code>listening</code> (bool), <code>submitted</code> (bool). Returns grouped results (doctors, medicines, lab tests, etc.).</td>
+            </tr>
+            <tr>
+              <td>Search suggestions</td>
+              <td><span class="tag get">GET</span></td>
+              <td><code>/api/v1/search/suggestions</code></td>
+              <td><span class="pill">proposed</span> Lightweight typeahead.</td>
+            </tr>
+            <tr>
+              <td>Recent searches</td>
+              <td><span class="tag get">GET</span> / <span class="tag post">POST</span></td>
+              <td><code>/api/v1/users/me/search/recent</code></td>
+              <td><span class="pill">proposed</span> Server-synced recent queries (optional; app may stay local-only).</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="pharmacy">
+        <h2>Pharmacy</h2>
+        <table>
+          <thead>
+            <tr><th>API</th><th>Method</th><th>Path</th><th>Usage</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Medicine catalog</td>
+              <td><span class="tag get">GET</span></td>
+              <td><code>/pharmacy/medicines</code></td>
+              <td>List/browse products; support filters: category, prescription required, in stock.</td>
+            </tr>
+            <tr>
+              <td>Medicine detail</td>
+              <td><span class="tag get">GET</span></td>
+              <td><code>/api/v1/pharmacy/medicines/{id}</code></td>
+              <td><span class="pill">proposed</span> Full detail, substitutes, dosage info.</td>
+            </tr>
+            <tr>
+              <td>Get cart</td>
+              <td><span class="tag get">GET</span></td>
+              <td><code>/pharmacy/cart</code></td>
+              <td>Current user cart lines.</td>
+            </tr>
+            <tr>
+              <td>Add to cart</td>
+              <td><span class="tag post">POST</span></td>
+              <td><code>/pharmacy/cart/add</code></td>
+              <td>Body: <code>{ "medicineId", "quantity" }</code>.</td>
+            </tr>
+            <tr>
+              <td>Update line quantity</td>
+              <td><span class="tag put">PUT</span></td>
+              <td><code>/api/v1/pharmacy/cart/lines/{lineId}</code></td>
+              <td><span class="pill">proposed</span></td>
+            </tr>
+            <tr>
+              <td>Remove line</td>
+              <td><span class="tag delete">DELETE</span></td>
+              <td><code>/api/v1/pharmacy/cart/lines/{lineId}</code></td>
+              <td><span class="pill">proposed</span></td>
+            </tr>
+            <tr>
+              <td>Clear cart</td>
+              <td><span class="tag post">POST</span></td>
+              <td><code>/api/v1/pharmacy/cart/clear</code></td>
+              <td><span class="pill">proposed</span></td>
+            </tr>
+            <tr>
+              <td>Checkout quote</td>
+              <td><span class="tag post">POST</span></td>
+              <td><code>/api/v1/pharmacy/checkout/quote</code></td>
+              <td><span class="pill">proposed</span> Address, delivery slot, fees, prescription validation status.</td>
+            </tr>
+            <tr>
+              <td>Place order</td>
+              <td><span class="tag post">POST</span></td>
+              <td><code>/api/v1/pharmacy/orders</code></td>
+              <td><span class="pill">proposed</span> Creates order; returns order id + payment intent if prepaid.</td>
+            </tr>
+            <tr>
+              <td>Order detail</td>
+              <td><span class="tag get">GET</span></td>
+              <td><code>/api/v1/pharmacy/orders/{id}</code></td>
+              <td><span class="pill">proposed</span> Tracking, rider, ETA.</td>
+            </tr>
+            <tr>
+              <td>Upload prescription</td>
+              <td><span class="tag post">POST</span></td>
+              <td><code>/api/v1/pharmacy/prescriptions</code></td>
+              <td><span class="pill">proposed</span> Multipart image/PDF linked to cart or order.</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="lab">
+        <h2>Lab tests</h2>
+        <table>
+          <thead>
+            <tr><th>API</th><th>Method</th><th>Path</th><th>Usage</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Test catalog</td>
+              <td><span class="tag get">GET</span></td>
+              <td><code>/lab/test</code></td>
+              <td>Packages and individual tests; categories and pricing for catalog UI.</td>
+            </tr>
+            <tr>
+              <td>Test detail</td>
+              <td><span class="tag get">GET</span></td>
+              <td><code>/api/v1/lab/tests/{id}</code></td>
+              <td><span class="pill">proposed</span> Parameters, fasting rules, sample type.</td>
+            </tr>
+            <tr>
+              <td>Lab cart</td>
+              <td><span class="tag get">GET</span></td>
+              <td><code>/api/v1/lab/cart</code></td>
+              <td><span class="pill">proposed</span> Mirrors pharmacy cart pattern.</td>
+            </tr>
+            <tr>
+              <td>Add to lab cart</td>
+              <td><span class="tag post">POST</span></td>
+              <td><code>/api/v1/lab/cart/lines</code></td>
+              <td><span class="pill">proposed</span></td>
+            </tr>
+            <tr>
+              <td>Lab checkout quote</td>
+              <td><span class="tag post">POST</span></td>
+              <td><code>/api/v1/lab/checkout/quote</code></td>
+              <td><span class="pill">proposed</span> Home collection vs lab visit, slot, city.</td>
+            </tr>
+            <tr>
+              <td>Book lab appointment</td>
+              <td><span class="tag post">POST</span></td>
+              <td><code>/api/v1/lab/bookings</code></td>
+              <td><span class="pill">proposed</span> Persist booking after checkout UI.</td>
+            </tr>
+            <tr>
+              <td>Lab booking detail</td>
+              <td><span class="tag get">GET</span></td>
+              <td><code>/api/v1/lab/bookings/{id}</code></td>
+              <td><span class="pill">proposed</span> Status, reports upload link.</td>
+            </tr>
+            <tr>
+              <td>Download report</td>
+              <td><span class="tag get">GET</span></td>
+              <td><code>/api/v1/lab/bookings/{id}/report</code></td>
+              <td><span class="pill">proposed</span> Signed URL or PDF stream.</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="surgery">
+        <h2>Surgery</h2>
+        <table>
+          <thead>
+            <tr><th>API</th><th>Method</th><th>Path</th><th>Usage</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Procedures content</td>
+              <td><span class="tag get">GET</span></td>
+              <td><code>/surgery/procedures</code></td>
+              <td>Marketing / education content and procedure list for surgery module.</td>
+            </tr>
+            <tr>
+              <td>Submit surgery inquiry / booking</td>
+              <td><span class="tag post">POST</span></td>
+              <td><code>/surgery/booking</code></td>
+              <td>Body (current app): <code>patientName</code>, <code>age</code>, <code>contactNumber</code>, <code>emergencyContact</code>, <code>surgeryName</code>, <code>doctorName</code>, <code>hospitalName</code>.</td>
+            </tr>
+            <tr>
+              <td>List surgery requests</td>
+              <td><span class="tag get">GET</span></td>
+              <td><code>/api/v1/surgery/requests</code></td>
+              <td><span class="pill">proposed</span> User’s submitted inquiries with status.</td>
+            </tr>
+            <tr>
+              <td>Request detail</td>
+              <td><span class="tag get">GET</span></td>
+              <td><code>/api/v1/surgery/requests/{id}</code></td>
+              <td><span class="pill">proposed</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="consultation">
+        <h2>Doctor consultation &amp; telehealth</h2>
+        <p class="note">These screens are largely mock-driven today; define REST contracts before wiring <code>ApiService</code>.</p>
+        <table>
+          <thead>
+            <tr><th>API</th><th>Method</th><th>Path</th><th>Usage</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Consultation categories</td>
+              <td><span class="tag get">GET</span></td>
+              <td><code>/api/v1/consultation/categories</code></td>
+              <td><span class="pill">proposed</span> Specialties for doctor listing.</td>
+            </tr>
+            <tr>
+              <td>List doctors</td>
+              <td><span class="tag get">GET</span></td>
+              <td><code>/api/v1/consultation/doctors</code></td>
+              <td><span class="pill">proposed</span> Filters: categoryId, language, gender, price, availableNow.</td>
+            </tr>
+            <tr>
+              <td>Doctor availability</td>
+              <td><span class="tag get">GET</span></td>
+              <td><code>/api/v1/consultation/doctors/{id}/slots</code></td>
+              <td><span class="pill">proposed</span> Date range → time slots.</td>
+            </tr>
+            <tr>
+              <td>Hold slot</td>
+              <td><span class="tag post">POST</span></td>
+              <td><code>/api/v1/consultation/holds</code></td>
+              <td><span class="pill">proposed</span> Short TTL before payment.</td>
+            </tr>
+            <tr>
+              <td>Checkout summary</td>
+              <td><span class="tag get">GET</span></td>
+              <td><code>/api/v1/consultation/checkout/{draftId}</code></td>
+              <td><span class="pill">proposed</span> Fee breakdown for checkout screen.</td>
+            </tr>
+            <tr>
+              <td>Confirm consultation booking</td>
+              <td><span class="tag post">POST</span></td>
+              <td><code>/api/v1/consultation/bookings</code></td>
+              <td><span class="pill">proposed</span> Patient profile id, slot id, payment reference.</td>
+            </tr>
+            <tr>
+              <td>Join call / token</td>
+              <td><span class="tag post">POST</span></td>
+              <td><code>/api/v1/consultation/bookings/{id}/join</code></td>
+              <td><span class="pill">proposed</span> Agora/Jitsi/WebRTC token as needed.</td>
+            </tr>
+            <tr>
+              <td>AI consultation session</td>
+              <td><span class="tag post">POST</span></td>
+              <td><code>/api/v1/ai-consultation/messages</code></td>
+              <td><span class="pill">proposed</span> If product includes AI triage chat.</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="bookings">
+        <h2>Bookings &amp; orders (cross-cutting)</h2>
+        <table>
+          <thead>
+            <tr><th>API</th><th>Method</th><th>Path</th><th>Usage</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>My bookings hub</td>
+              <td><span class="tag get">GET</span></td>
+              <td><code>/api/v1/me/bookings</code></td>
+              <td><span class="pill">proposed</span> Unified list: consultation, lab, surgery, pharmacy with <code>type</code> discriminator.</td>
+            </tr>
+            <tr>
+              <td>Cancel booking</td>
+              <td><span class="tag post">POST</span></td>
+              <td><code>/api/v1/me/bookings/{id}/cancel</code></td>
+              <td><span class="pill">proposed</span> Reason code + refund policy hook.</td>
+            </tr>
+            <tr>
+              <td>Reschedule</td>
+              <td><span class="tag post">POST</span></td>
+              <td><code>/api/v1/me/bookings/{id}/reschedule</code></td>
+              <td><span class="pill">proposed</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="payments">
+        <h2>Payments</h2>
+        <p class="note">No payment URLs are wired in the Flutter client yet; expect these when checkout flows go live.</p>
+        <table>
+          <thead>
+            <tr><th>API</th><th>Method</th><th>Path</th><th>Usage</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Create payment intent</td>
+              <td><span class="tag post">POST</span></td>
+              <td><code>/api/v1/payments/intents</code></td>
+              <td><span class="pill">proposed</span> Amount, currency, order/booking id, provider (Stripe/JazzCash/Easypaisa/etc.).</td>
+            </tr>
+            <tr>
+              <td>Confirm payment</td>
+              <td><span class="tag post">POST</span></td>
+              <td><code>/api/v1/payments/confirm</code></td>
+              <td><span class="pill">proposed</span> Server-side verification of provider callback payload.</td>
+            </tr>
+            <tr>
+              <td>Webhook (provider)</td>
+              <td><span class="tag post">POST</span></td>
+              <td><code>/api/v1/payments/webhooks/{provider}</code></td>
+              <td><span class="pill">proposed</span> HMAC-verified ingress; updates order/booking state.</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="support">
+        <h2>Support, static content &amp; free doctor</h2>
+        <table>
+          <thead>
+            <tr><th>API</th><th>Method</th><th>Path</th><th>Usage</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Free doctor screen</td>
+              <td><span class="tag get">GET</span></td>
+              <td><code>/dashboard/free-doctor</code></td>
+              <td>CMS blocks for the “free doctor” promotional / info screen.</td>
+            </tr>
+            <tr>
+              <td>Customer support</td>
+              <td><span class="tag get">GET</span></td>
+              <td><code>/dashboard/customer-support</code></td>
+              <td>FAQ, WhatsApp/phone links, ticket entry points.</td>
+            </tr>
+            <tr>
+              <td>Create support ticket</td>
+              <td><span class="tag post">POST</span></td>
+              <td><code>/api/v1/support/tickets</code></td>
+              <td><span class="pill">proposed</span> Subject, body, attachments.</td>
+            </tr>
+            <tr>
+              <td>List tickets</td>
+              <td><span class="tag get">GET</span></td>
+              <td><code>/api/v1/support/tickets</code></td>
+              <td><span class="pill">proposed</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="admin">
+        <h2>Admin &amp; operations (optional)</h2>
+        <p>For partner portals or internal tools — not required for the consumer app MVP.</p>
+        <table>
+          <thead>
+            <tr><th>API</th><th>Method</th><th>Path</th><th>Usage</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Admin auth</td>
+              <td><span class="tag post">POST</span></td>
+              <td><code>/api/v1/admin/auth/login</code></td>
+              <td>Separate role claims from patient app.</td>
+            </tr>
+            <tr>
+              <td>Update catalog</td>
+              <td><span class="tag put">PUT</span></td>
+              <td><code>/api/v1/admin/pharmacy/medicines/{id}</code></td>
+              <td>Price, stock, visibility.</td>
+            </tr>
+            <tr>
+              <td>Fulfillment queue</td>
+              <td><span class="tag get">GET</span></td>
+              <td><code>/api/v1/admin/orders</code></td>
+              <td>Operational dashboards.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="note">
+          <strong>Source of truth in code:</strong> sync this document when you change
+          <code>lib/core/network/app_urls.dart</code> or any <code>*_remote_data_source_impl.dart</code>.
+          Third-party catalog (<code>dummyjson.com/products</code>) is demo-only unless product adopts it.
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <footer>
+    Generated for Apna Clinic — draft backend API surface. Paths marked <span class="pill">proposed</span> are not yet called by the app but match likely product needs from existing features and mocks.
+  </footer>
+</body>
+</html>

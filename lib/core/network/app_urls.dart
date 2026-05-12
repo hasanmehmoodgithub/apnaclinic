@@ -29,7 +29,8 @@ class AppUrls {
   static String get logout => '$baseUrl/logout';
 
   /// Refresh token endpoint - full URL
-  static String get refreshToken => '$baseUrl/refresh';
+  static String get refreshToken =>
+      '$_normalizedApiBaseUrl/api/v1.0/user-auth/auth/token/refresh';
 
   /// Verify OTP endpoint
   static String get verifyOtp =>
@@ -55,10 +56,12 @@ class AppUrls {
   static String get customerSupport => '$baseUrl/dashboard/customer-support';
 
   /// Profile setup details endpoint
-  static String get profileSetup => '$baseUrl/profile/setup';
+  static String userProfileById(String userId) =>
+      '$_normalizedApiBaseUrl/api/v1.0/user-auth/users/$userId';
 
   /// Save profile setup endpoint
-  static String get saveProfileSetup => '$baseUrl/profile/setup/save';
+  static String get saveProfileSetup =>
+      '$_normalizedApiBaseUrl/api/v1.0/user-auth/users/';
 
   /// Notifications endpoint
   static String get notifications => '$baseUrl/notifications';
