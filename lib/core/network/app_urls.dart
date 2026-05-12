@@ -25,8 +25,9 @@ class AppUrls {
   /// Sign in endpoint - full URL with custom path
   static String get signIn => '$baseUrl/login_ww';
 
-  /// Logout endpoint - full URL
-  static String get logout => '$baseUrl/logout';
+  /// Logout endpoint — `{userId}` is the authenticated user id from prefs/JWT.
+  static String logout(String userId) =>
+      '$_normalizedApiBaseUrl/api/v1.0/user-auth/auth/logout/$userId';
 
   /// Refresh token endpoint - full URL
   static String get refreshToken =>

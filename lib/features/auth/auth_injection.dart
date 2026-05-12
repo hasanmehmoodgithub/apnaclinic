@@ -6,6 +6,7 @@ import 'data/data_sources/auth_remote_data_source_impl.dart';
 import 'data/mock/auth_mock_api.dart';
 import 'data/repositories/auth_repository_impl.dart';
 import 'domain/repositories/auth_repository.dart';
+import 'domain/use_cases/logout_use_case.dart';
 import 'domain/use_cases/request_otp_use_case.dart';
 import 'domain/use_cases/verify_otp_use_case.dart';
 import 'presentation/cubit/auth_cubit.dart';
@@ -41,6 +42,12 @@ void initAuthInjector() {
   if (!sl.isRegistered<VerifyOtpUseCase>()) {
     sl.registerLazySingleton<VerifyOtpUseCase>(
       () => VerifyOtpUseCase(repository: sl<AuthRepository>()),
+    );
+  }
+
+  if (!sl.isRegistered<LogoutUseCase>()) {
+    sl.registerLazySingleton<LogoutUseCase>(
+      () => LogoutUseCase(repository: sl<AuthRepository>()),
     );
   }
 

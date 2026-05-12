@@ -47,7 +47,8 @@ class AuthInterceptor extends Interceptor {
     final options = err.requestOptions;
     final alreadyRetried = options.extra[_retryKey] == true;
     final isRefreshCall = options.path == AppUrls.refreshToken;
-    if (alreadyRetried || isRefreshCall) {
+    final isLogoutCall = options.path.contains('/user-auth/auth/logout/');
+    if (alreadyRetried || isRefreshCall || isLogoutCall) {
       handler.next(err);
       return;
     }

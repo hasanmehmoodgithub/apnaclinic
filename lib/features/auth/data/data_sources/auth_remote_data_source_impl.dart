@@ -144,4 +144,27 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       return Future.error(message);
     }
   }
+
+  @override
+  Future<void> logout(String userId) async {
+    final trimmed = userId.trim();
+    if (trimmed.isEmpty) {
+      return;
+    }
+    if (AuthMockApi.useMockResponses) {
+      await Future<void>.delayed(const Duration(milliseconds: 200));
+      return;
+    }
+    try {
+      await apiService.post(AppUrls.logout(trimmed));
+      log('logout response ok for userId: $trimmed');
+    } catch (e) {
+      log('logout error: $e');
+      final message = ErrorHandler.handleExceptions(
+        e,
+        endpoint: AppUrls.logout(trimmed),
+      );
+      return Future.error(message);
+    }
+  }
 }

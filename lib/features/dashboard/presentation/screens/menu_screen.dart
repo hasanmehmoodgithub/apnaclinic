@@ -7,8 +7,10 @@ import '../../../../core/constants/app_colors.dart';
 import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
+import '../../../../core/network/api_service.dart';
 import '../../../../core/preference/app_pref.dart';
 import '../../../../core/router/app_routes.dart';
+import '../../../auth/domain/use_cases/logout_use_case.dart';
 import '../../../../core/widgets/app_scaffold_gradient.dart';
 import '../widgets/menu_about_card.dart';
 import '../widgets/menu_action_tile.dart';
@@ -163,6 +165,16 @@ class _MenuScreenState extends State<MenuScreen> {
                                 context,
                               );
                               if (!shouldLogout) return;
+                              final userId = _appPref.getUserId();
+                              if (userId.isNotEmpty) {
+                                await sl<LogoutUseCase>().call(
+                                  LogoutParams(userId: userId),
+                                );
+                              }
+                              sl<ApiService>().removeToken();
+                              await _appPref.setRefreshToken('');
+                              await _appPref.setAccessTokenExpiresIn(0);
+                              await _appPref.setRefreshTokenExpiresIn(0);
                               await _appPref.setLoginStatus(false);
                               await _appPref.setProfileCompleted(false);
                               await _appPref.setToken('');
