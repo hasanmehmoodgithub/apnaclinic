@@ -14,6 +14,7 @@ This document explains how automatic token refresh works in the networking layer
 
 - `lib/core/network/auth_interceptor.dart`
 - `lib/core/network/api_service.dart`
+- `lib/core/network/api_exceptions.dart`
 - `lib/core/network/app_urls.dart`
 - `lib/core/preference/app_pref.dart`
 - `lib/core/preference/app_pref_impl.dart`
