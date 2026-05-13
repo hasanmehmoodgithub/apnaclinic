@@ -27,12 +27,6 @@ class AuthCubit extends Cubit<AuthState> {
   final AppPref _appPref;
   Timer? _timer;
 
-  // ---------- UI helpers ----------
-  void _safeEmit(AuthState newState) {
-    if (isClosed) return;
-    emit(newState);
-  }
-
   String formatPhoneInput(String input) {
     var digits = input.replaceAll(RegExp(r'\D'), '');
     if (digits.startsWith('0')) {
@@ -92,7 +86,7 @@ class AuthCubit extends Cubit<AuthState> {
   }
 
   Future<bool> requestOtp(String phoneNumber) async {
-    _safeEmit(
+    emit(
       state.copyWith(
         isLoading: true,
         phoneNumber: phoneNumber,
@@ -107,7 +101,7 @@ class AuthCubit extends Cubit<AuthState> {
     if (isClosed) return false;
     return result.fold(
       (error) {
-        _safeEmit(
+        emit(
           state.copyWith(
             isLoading: false,
             requestOtpLoadingStateStatus: StateStatus.error,
@@ -118,7 +112,7 @@ class AuthCubit extends Cubit<AuthState> {
       },
       (entity) {
         _startOtpTimer(expiresInMinutes: entity.expiresInMinutes);
-        _safeEmit(
+        emit(
           _otpRequestedSuccessState(
             expiresInMinutes: entity.expiresInMinutes,
           ),
@@ -129,7 +123,7 @@ class AuthCubit extends Cubit<AuthState> {
   }
 
   Future<VerifyOtpOutcome> verifyOtp(String otp) async {
-    _safeEmit(
+    emit(
       state.copyWith(
         isLoading: true,
         verifyOtpLoadingStateStatus: StateStatus.loading,
@@ -145,7 +139,7 @@ class AuthCubit extends Cubit<AuthState> {
     }
     return result.fold(
       (error) {
-        _safeEmit(
+        emit(
           state.copyWith(
             isLoading: false,
             verifyOtpLoadingStateStatus: StateStatus.error,
@@ -159,7 +153,7 @@ class AuthCubit extends Cubit<AuthState> {
         if (isClosed) {
           return const VerifyOtpOutcome(isSuccess: false, goToHome: false);
         }
-        _safeEmit(
+        emit(
           state.copyWith(
             isLoading: false,
             verifyOtpLoadingStateStatus: StateStatus.success,
@@ -176,12 +170,12 @@ class AuthCubit extends Cubit<AuthState> {
 
   void clearError() {
     if (state.errorMessage == null) return;
-    _safeEmit(state.copyWith(errorMessage: null));
+    emit(state.copyWith(errorMessage: null));
   }
 
   void setPhoneNumber(String phoneNumber) {
     if (phoneNumber.isEmpty || phoneNumber == state.phoneNumber) return;
-    _safeEmit(
+    emit(
       state.copyWith(
         phoneNumber: phoneNumber,
         otpRequested: false,
@@ -192,7 +186,7 @@ class AuthCubit extends Cubit<AuthState> {
 
   void hideOtpSection() {
     _timer?.cancel();
-    _safeEmit(
+    emit(
       state.copyWith(
         otpRequested: false,
         otpSecondsRemaining: 30,
@@ -254,14 +248,14 @@ class AuthCubit extends Cubit<AuthState> {
   void _startOtpTimer({int? expiresInMinutes}) {
     final startingSeconds = _resolveOtpExpirySeconds(expiresInMinutes);
     _timer?.cancel();
-    _safeEmit(state.copyWith(otpSecondsRemaining: startingSeconds));
+    emit(state.copyWith(otpSecondsRemaining: startingSeconds));
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       final nextValue = state.otpSecondsRemaining - 1;
       if (nextValue <= 0) {
-        _safeEmit(state.copyWith(otpSecondsRemaining: 0));
+        emit(state.copyWith(otpSecondsRemaining: 0));
         timer.cancel();
       } else {
-        _safeEmit(state.copyWith(otpSecondsRemaining: nextValue));
+        emit(state.copyWith(otpSecondsRemaining: nextValue));
       }
     });
   }
