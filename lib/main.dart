@@ -7,15 +7,18 @@ import 'package:apnaclinic/core/extensions/screen_util_extensions.dart';
 import 'package:apnaclinic/core/flavor/flavor_config.dart';
 
 import 'core/di/dependency_injection.dart';
+import 'core/utils/chucker_guard.dart';
 import 'features/app/presentation/screens/apna_clinic_app.dart';
 
 void main() {
+
   // Run app in a zone with error handling
   runZonedGuarded(
     () async {
 
       // Guard: Ensure Flutter binding is initialized first
       WidgetsFlutterBinding.ensureInitialized();
+      ChuckerGuard.configureIfEnabled();
       AppSystemUi.apply();
 
       try {

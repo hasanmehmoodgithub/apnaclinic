@@ -45,7 +45,6 @@ class ProfileSetupRemoteDataSourceImpl implements ProfileSetupRemoteDataSource {
       return Future.error(message);
     } catch (e) {
       log('getProfileSetupContent error: $e');
-      final userId = appPref.getUserId();
       final message = ErrorHandler.handleExceptions(
         e,
         endpoint:AppUrls.userProfileById(appPref.getUserId()),
@@ -61,9 +60,11 @@ class ProfileSetupRemoteDataSourceImpl implements ProfileSetupRemoteDataSource {
       if (ProfileSetupMockApi.useMockResponses) {
         response = await mockApi.saveProfileSuccessResponse(data);
       } else {
+        final formData = await profileSetupSaveFormData(data);
         response = await apiService.patch(
           AppUrls.userProfileById(appPref.getUserId()),
-          data: profileSetupSavePayload(data),
+          data: formData,
+          headers: const {'Content-Type': 'multipart/form-data'},
         );
         log('saveProfile response: $response');
       }

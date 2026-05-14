@@ -11,7 +11,7 @@ Collect or edit user profile (name, gender, email, address, DOB, optional profil
 ## Data & APIs
 
 - **GET** `AppUrls.userProfileById(userId)` — loads profile; response `data` may include `dob` and/or `dateOfBirth` (strings).
-- **PATCH** `AppUrls.saveProfileSetup` — body includes `dob` as `dd-MM-yyyy HH:mm:ss` (see `profileSetupSavePayload`).
+- **PATCH** `AppUrls.saveProfileSetup` — sends `multipart/form-data` via `profileSetupSaveFormData` with text fields + optional `profileImage` file, and `dob` as `dd-MM-yyyy HH:mm:ss`.
 
 ## Parsing & UI
 

@@ -6,7 +6,7 @@ class ProfileSetupData {
     required this.email,
     required this.address,
     required this.dateOfBirth,
-    this.profileImageBase64,
+    this.profileImagePath,
   });
 
   final String firstName;
@@ -15,5 +15,5 @@ class ProfileSetupData {
   final String email;
   final String address;
   final DateTime dateOfBirth;
-  final String? profileImageBase64;
+  final String? profileImagePath;
 }
