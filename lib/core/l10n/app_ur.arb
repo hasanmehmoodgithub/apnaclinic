@@ -181,6 +181,7 @@
   "commonYes": "ہاں",
   "commonNo": "نہیں",
   "dashboardHello": "ہیلو، {name}",
+  "dashboardGuestName": "مہمان",
   "dashboardSearchHint": "دوائی، ڈاکٹر، ٹیسٹ تلاش کریں....",
   "dashboardOurServicesTitle": "ہماری سروسز",
   "dashboardSecureHealthTitle": "اپنی صحت کو پہلے محفوظ کریں",
