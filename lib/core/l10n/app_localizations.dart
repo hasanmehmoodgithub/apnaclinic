@@ -350,6 +350,12 @@ abstract class AppLocalizations {
   /// **'Enter your personal information'**
   String get profileSetupSubtitle;
 
+  /// No description provided for @profileUpdateSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Update your personal information'**
+  String get profileUpdateSubtitle;
+
   /// No description provided for @profileFirstNameLabel.
   ///
   /// In en, this message translates to:
@@ -481,6 +487,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Save'**
   String get profileSaveCta;
+
+  /// No description provided for @profileUpdateCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Update Profile'**
+  String get profileUpdateCta;
 
   /// No description provided for @profileSetupHeaderTitle.
   ///

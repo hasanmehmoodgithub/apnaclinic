@@ -44,7 +44,9 @@ class _MenuScreenState extends State<MenuScreen> {
     final lastName = userLocal?.lastName.trim() ?? '';
     final fullName = '$firstName $lastName'.trim();
     final phone = userLocal?.phone.trim() ?? '';
-    final displayName = fullName.isEmpty ? l10n.dashboardMenuGuestUser : fullName;
+    final displayName = fullName.isEmpty
+        ? l10n.dashboardMenuGuestUser
+        : fullName;
     final displayPhone = phone.isEmpty
         ? l10n.dashboardMenuSignInManageAccount
         : phone;
@@ -86,120 +88,127 @@ class _MenuScreenState extends State<MenuScreen> {
       end: Alignment.bottomRight,
       child: Column(
         children: [
-            const MenuHeader(),
-            Expanded(
-              child: Container(
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.vertical(
-                    top: Radius.circular(42.r),
-                  ),
-                ),
-                child: Column(
-                  children: [
-                    Expanded(
-                      child: ListView(
-                        padding: EdgeInsets.fromLTRB(22.w, 22.h, 22.w, 18.h),
-                        children: [
-                          MenuProfileCard(
-                            isLoggedIn: _isLoggedIn,
-                            name: _isLoggedIn ? displayName : l10n.dashboardMenuGuestUser,
-                            phone: _isLoggedIn
-                                ? displayPhone
-                                : l10n.dashboardMenuSignInContinue,
-                            onActionTap: () {
-                              if (!_isLoggedIn) {
+          const MenuHeader(),
+          Expanded(
+            child: Container(
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(42.r)),
+              ),
+              child: Column(
+                children: [
+                  Expanded(
+                    child: ListView(
+                      padding: EdgeInsets.fromLTRB(22.w, 22.h, 22.w, 18.h),
+                      children: [
+                        MenuProfileCard(
+                          isLoggedIn: _isLoggedIn,
+                          name: _isLoggedIn
+                              ? displayName
+                              : l10n.dashboardMenuGuestUser,
+                          phone: _isLoggedIn
+                              ? displayPhone
+                              : l10n.dashboardMenuSignInContinue,
+                          onActionTap: () {
+                            if (!_isLoggedIn) {
+                              context.push(AppRoutes.path(AppRoutes.authLogin));
+                              return;
+                            }
+                            context.push(
+                              AppRoutes.path(AppRoutes.profileSetup),
+                            );
+                          },
+                        ),
+                        SizedBox(height: 14.h),
+                        for (final item in mainItems) ...[
+                          MenuActionTile(
+                            onTap: () {
+                              if (item.id == _MenuItemId.customerSupport) {
                                 context.push(
-                                  AppRoutes.path(AppRoutes.authLogin),
+                                  AppRoutes.path(AppRoutes.customerSupport),
                                 );
                                 return;
                               }
-                              context.push(
-                                AppRoutes.path(AppRoutes.profileSetup),
-                              );
-                            },
-                          ),
-                          SizedBox(height: 14.h),
-                          for (final item in mainItems) ...[
-                            MenuActionTile(
-                              onTap: () {
-                                if (item.id == _MenuItemId.customerSupport) {
-                                  context.push(
-                                    AppRoutes.path(AppRoutes.customerSupport),
-                                  );
-                                  return;
-                                }
-                                if (item.id == _MenuItemId.faq) {
-                                  launchUrl(
-                                    Uri.parse('https://apnaclinic.ecnstg.com/faq'),
-                                    mode: LaunchMode.externalApplication,
-                                  );
-                                }
-                              },
-                              title: item.title,
-                              icon: item.icon,
-                              curveOverlayColor: item.curveOverlayColor,
-                            ),
-                            SizedBox(height: 14.h),
-                          ],
-                          MenuAboutCard(
-                            items: aboutItems,
-                            onAboutTap: () => launchUrl(
-                              Uri.parse('https://apnaclinic.ecnstg.com/'),
-                              mode: LaunchMode.externalApplication,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    if (_isLoggedIn)
-                      Padding(
-                        padding: EdgeInsets.fromLTRB(29.w, 0, 29.w, 11.h),
-                        child: SizedBox(
-                          width: double.infinity,
-                          child: AppButton.primary(
-                            text: l10n.dashboardMenuLogout,
-                            onPressed: () async {
-                              final shouldLogout = await showMenuLogoutDialog(
-                                context,
-                              );
-                              if (!shouldLogout) return;
-                              final userId = _appPref.getUserId();
-                              if (userId.isNotEmpty) {
-                                await sl<LogoutUseCase>().call(
-                                  LogoutParams(userId: userId),
+                              if (item.id == _MenuItemId.faq) {
+                                launchUrl(
+                                  Uri.parse(
+                                    'https://apnaclinic.ecnstg.com/faq',
+                                  ),
+                                  mode: LaunchMode.externalApplication,
                                 );
                               }
-                              sl<ApiService>().removeToken();
-                              await _appPref.setRefreshToken('');
-                              await _appPref.setAccessTokenExpiresIn(0);
-                              await _appPref.setRefreshTokenExpiresIn(0);
-                              await _appPref.setLoginStatus(false);
-                              await _appPref.setProfileCompleted(false);
-                              await _appPref.setToken('');
-                              await _appPref.setUserId('');
-                              await _appPref.clearUserLocalModel();
-                              if (!context.mounted) return;
-                              setState(() {
-                                _isLoggedIn = false;
-                              });
                             },
-                            backgroundColor: AppColors.clr40AFA2,
-                            foregroundColor: AppColors.clrWhite,
-                            elevation: 0,
-                            height: 62.h,
-                            borderRadius: 13.r,
-                            fontWeight: FontWeight.w700,
-                            fontSize: 18.sp,
-                            width: double.infinity,
+                            title: item.title,
+                            icon: item.icon,
+                            curveOverlayColor: item.curveOverlayColor,
+                          ),
+                          SizedBox(height: 14.h),
+                        ],
+                        MenuAboutCard(
+                          items: aboutItems,
+                          onAboutTap: () => launchUrl(
+                            Uri.parse('https://apnaclinic.ecnstg.com/'),
+                            mode: LaunchMode.externalApplication,
                           ),
                         ),
+                      ],
+                    ),
+                  ),
+                  if (_isLoggedIn)
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(29.w, 0, 29.w, 11.h),
+                      child: SizedBox(
+                        width: double.infinity,
+                        child: AppButton.primary(
+                          text: l10n.dashboardMenuLogout,
+                          onPressed: () async {
+                            final shouldLogout = await showMenuLogoutDialog(
+                              context,
+                            );
+                            if (!shouldLogout) return;
+                            final userId = _appPref.getUserId();
+                            if (userId.isNotEmpty) {
+                              final result = await sl<LogoutUseCase>().call(
+                                LogoutParams(userId: userId),
+                              );
+                              final logoutFailed = result.fold((error) {
+                                ScaffoldMessenger.of(
+                                  context,
+                                ).showSnackBar(SnackBar(content: Text(error)));
+                                return true;
+                              }, (_) => false);
+                              if (logoutFailed) return;
+                            }
+                            sl<ApiService>().removeToken();
+                            await _appPref.setRefreshToken('');
+                            await _appPref.setAccessTokenExpiresIn(0);
+                            await _appPref.setRefreshTokenExpiresIn(0);
+                            await _appPref.setLoginStatus(false);
+                            await _appPref.setProfileCompleted(false);
+                            await _appPref.setToken('');
+                            await _appPref.setUserId('');
+                            await _appPref.clearUserLocalModel();
+                            if (!context.mounted) return;
+                            setState(() {
+                              _isLoggedIn = false;
+                            });
+                          },
+                          backgroundColor: AppColors.clr40AFA2,
+                          foregroundColor: AppColors.clrWhite,
+                          elevation: 0,
+                          height: 62.h,
+                          borderRadius: 13.r,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 18.sp,
+                          width: double.infinity,
+                        ),
                       ),
-                  ],
-                ),
+                    ),
+                ],
               ),
             ),
+          ),
         ],
       ),
     );
@@ -220,7 +229,4 @@ class _MenuItem {
   final Color curveOverlayColor;
 }
 
-enum _MenuItemId {
-  customerSupport,
-  faq,
-}
+enum _MenuItemId { customerSupport, faq }

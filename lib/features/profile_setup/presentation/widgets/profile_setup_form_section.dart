@@ -19,6 +19,7 @@ class ProfileSetupFormSection extends StatelessWidget {
     required this.onPickGender,
     required this.onPickDate,
     required this.onSave,
+    required this.isUpdateMode,
     required this.inputDecorationBuilder,
   });
 
@@ -32,11 +33,13 @@ class ProfileSetupFormSection extends StatelessWidget {
   final VoidCallback onPickGender;
   final VoidCallback onPickDate;
   final VoidCallback onSave;
+  final bool isUpdateMode;
   final InputDecoration Function({
     required String hintText,
     Widget? suffixIcon,
     bool isValueText,
-  }) inputDecorationBuilder;
+  })
+  inputDecorationBuilder;
 
   @override
   Widget build(BuildContext context) {
@@ -57,7 +60,7 @@ class ProfileSetupFormSection extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Text(
-                  l10n.profileSetupTitle,
+                  isUpdateMode ? l10n.profileTitle : l10n.profileSetupTitle,
                   style: theme.textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.w700,
                     color: AppColors.clr060,
@@ -65,7 +68,9 @@ class ProfileSetupFormSection extends StatelessWidget {
                 ),
                 SizedBox(height: 4.h),
                 Text(
-                  l10n.profileSetupSubtitle,
+                  isUpdateMode
+                      ? l10n.profileUpdateSubtitle
+                      : l10n.profileSetupSubtitle,
                   style: theme.textTheme.bodySmall?.copyWith(
                     color: AppColors.clr98A2B3,
                   ),
@@ -181,7 +186,9 @@ class ProfileSetupFormSection extends StatelessWidget {
                 ],
                 SizedBox(height: 26.h),
                 AppButton.primary(
-                  text: l10n.profileSaveCta,
+                  text: isUpdateMode
+                      ? l10n.profileUpdateCta
+                      : l10n.profileSaveCta,
                   onPressed: state.isSaving ? null : onSave,
                   isLoading: state.isSaving,
                   backgroundColor: AppColors.clr0FAA9A,

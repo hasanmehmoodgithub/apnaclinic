@@ -41,7 +41,7 @@ class ProfileSetupCubit extends Cubit<ProfileSetupState> {
         state.copyWith(
           loadingStateStatus: StateStatus.success,
           profile: profile,
-          selectedGender: profile.gender.isEmpty ? null : profile.gender,
+          selectedGender: _normalizeGender(profile.gender),
           dateOfBirth: profile.dateOfBirth,
           errorMessage: null,
         ),
@@ -57,38 +57,52 @@ class ProfileSetupCubit extends Cubit<ProfileSetupState> {
     emit(state.copyWith(dateOfBirth: date, errorMessage: null));
   }
 
+  String? _normalizeGender(String value) {
+    final normalized = value.trim().toLowerCase();
+    if (normalized.isEmpty) return null;
+    if (normalized == 'male' ||
+        normalized == 'female' ||
+        normalized == 'other') {
+      return normalized;
+    }
+    return null;
+  }
+
   Future<bool> saveProfile(ProfileSetupData data) async {
     emit(state.copyWith(isSaving: true, errorMessage: null));
     final result = await _saveProfileSetupUseCase.call(data);
-    return result.fold((error) {
-      emit(state.copyWith(isSaving: false, errorMessage: error));
-      return false;
-    }, (_) {
-      final updatedProfile =
-          state.profile?.copyWith(
-            firstName: data.firstName,
-            lastName: data.lastName,
-            gender: data.gender,
-            email: data.email,
-            address: data.address,
-            dateOfBirth: data.dateOfBirth,
-          ) ??
-          ProfileSetupEntity(
-            firstName: data.firstName,
-            lastName: data.lastName,
-            gender: data.gender,
-            email: data.email,
-            address: data.address,
-            dateOfBirth: data.dateOfBirth,
-          );
-      emit(
-        state.copyWith(
-          isSaving: false,
-          errorMessage: null,
-          profile: updatedProfile,
-        ),
-      );
-      return true;
-    });
+    return result.fold(
+      (error) {
+        emit(state.copyWith(isSaving: false, errorMessage: error));
+        return false;
+      },
+      (_) {
+        final updatedProfile =
+            state.profile?.copyWith(
+              firstName: data.firstName,
+              lastName: data.lastName,
+              gender: data.gender,
+              email: data.email,
+              address: data.address,
+              dateOfBirth: data.dateOfBirth,
+            ) ??
+            ProfileSetupEntity(
+              firstName: data.firstName,
+              lastName: data.lastName,
+              gender: data.gender,
+              email: data.email,
+              address: data.address,
+              dateOfBirth: data.dateOfBirth,
+            );
+        emit(
+          state.copyWith(
+            isSaving: false,
+            errorMessage: null,
+            profile: updatedProfile,
+          ),
+        );
+        return true;
+      },
+    );
   }
 }

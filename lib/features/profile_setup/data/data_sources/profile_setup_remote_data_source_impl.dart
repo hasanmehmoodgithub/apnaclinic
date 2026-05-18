@@ -40,14 +40,14 @@ class ProfileSetupRemoteDataSourceImpl implements ProfileSetupRemoteDataSource {
         return ProfileSetupResponseModel.fromJson(response);
       }
 
-      final message =
-          (response['message'] ?? AppStrings.profileSetupLoadError).toString();
+      final message = (response['message'] ?? AppStrings.profileSetupLoadError)
+          .toString();
       return Future.error(message);
     } catch (e) {
       log('getProfileSetupContent error: $e');
       final message = ErrorHandler.handleExceptions(
         e,
-        endpoint:AppUrls.userProfileById(appPref.getUserId()),
+        endpoint: AppUrls.userProfileById(appPref.getUserId()),
       );
       return Future.error(message);
     }
@@ -60,9 +60,14 @@ class ProfileSetupRemoteDataSourceImpl implements ProfileSetupRemoteDataSource {
       if (ProfileSetupMockApi.useMockResponses) {
         response = await mockApi.saveProfileSuccessResponse(data);
       } else {
+        final userId = appPref.getUserId();
+        if (userId.isEmpty) {
+          return Future.error(AppStrings.profileSetupSaveError);
+        }
         final formData = await profileSetupSaveFormData(data);
+        final endpoint = AppUrls.userProfileById(userId);
         response = await apiService.patch(
-          AppUrls.userProfileById(appPref.getUserId()),
+          endpoint,
           data: formData,
           headers: const {'Content-Type': 'multipart/form-data'},
         );
@@ -71,14 +76,14 @@ class ProfileSetupRemoteDataSourceImpl implements ProfileSetupRemoteDataSource {
 
       if (response['success'] == true) return;
 
-      final message =
-          (response['message'] ?? AppStrings.profileSetupSaveError).toString();
+      final message = (response['message'] ?? AppStrings.profileSetupSaveError)
+          .toString();
       return Future.error(message);
     } catch (e) {
       log('saveProfile error: $e');
       final message = ErrorHandler.handleExceptions(
         e,
-        endpoint: AppUrls.saveProfileSetup,
+        endpoint: AppUrls.userProfileById(appPref.getUserId()),
       );
       return Future.error(message);
     }

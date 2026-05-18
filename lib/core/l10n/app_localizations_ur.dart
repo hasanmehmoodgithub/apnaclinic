@@ -136,6 +136,9 @@ class AppLocalizationsUr extends AppLocalizations {
   String get profileSetupSubtitle => 'اپنی ذاتی معلومات درج کریں';
 
   @override
+  String get profileUpdateSubtitle => 'اپنی ذاتی معلومات اپ ڈیٹ کریں';
+
+  @override
   String get profileFirstNameLabel => 'پہلا نام';
 
   @override
@@ -200,6 +203,9 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get profileSaveCta => 'محفوظ کریں';
+
+  @override
+  String get profileUpdateCta => 'پروفائل اپ ڈیٹ کریں';
 
   @override
   String get profileSetupHeaderTitle => 'پروفائل سیٹ اپ';

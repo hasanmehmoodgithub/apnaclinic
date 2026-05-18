@@ -113,9 +113,7 @@ class AuthCubit extends Cubit<AuthState> {
       (entity) {
         _startOtpTimer(expiresInMinutes: entity.expiresInMinutes);
         emit(
-          _otpRequestedSuccessState(
-            expiresInMinutes: entity.expiresInMinutes,
-          ),
+          _otpRequestedSuccessState(expiresInMinutes: entity.expiresInMinutes),
         );
         return true;
       },
@@ -212,9 +210,10 @@ class AuthCubit extends Cubit<AuthState> {
   }
 
   Future<void> _saveUserSession({required AuthEntity entity}) async {
-    final tokenUserId = JwtUtils.claim<dynamic>(entity.token, 'userId');
+    final tokenUserId = JwtUtils.claim<dynamic>(entity.token, 'sub');
     final resolvedUserId =
-        entity.userId ?? (tokenUserId != null ? tokenUserId.toString() : state.phoneNumber);
+        entity.userId ??
+        (tokenUserId != null ? tokenUserId.toString() : state.phoneNumber);
 
     await _appPref.setLoginStatus(true);
     await _appPref.setUserId(resolvedUserId);

@@ -70,22 +70,21 @@ class ProfileSetupResponseModel {
   }
 }
 
-Future<FormData> profileSetupSaveFormData(
-  ProfileSetupData data,
-) async {
+Future<FormData> profileSetupSaveFormData(ProfileSetupData data) async {
+  final formattedDob = DateFormat('dd-MM-yyyy').format(
+    DateTime(
+      data.dateOfBirth.year,
+      data.dateOfBirth.month,
+      data.dateOfBirth.day,
+    ),
+  );
   final payload = <String, dynamic>{
     'firstName': data.firstName,
     'lastName': data.lastName,
     'gender': data.gender,
     'email': data.email,
     'address': data.address,
-    'dob': DateFormat('dd-MM-yyyy').format(
-      DateTime(
-        data.dateOfBirth.year,
-        data.dateOfBirth.month,
-        data.dateOfBirth.day,
-      ),
-    ),
+    'dob': formattedDob,
   };
 
   final profileImagePath = data.profileImagePath;

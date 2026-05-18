@@ -47,7 +47,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
     _lastNameController.text = userLocal?.lastName.trim() ?? '';
     _emailController.text = userLocal?.email.trim() ?? '';
     _addressController.text = userLocal?.address.trim() ?? '';
-    if (appPref.getLoginStatus()) {
+    if (appPref.getLoginStatus() && appPref.isProfileCompleted()) {
       context.read<ProfileSetupCubit>().loadProfile();
     }
   }
@@ -119,10 +119,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
               dayStyle: theme.textTheme.bodyMedium?.copyWith(
                 color: AppColors.clr060,
               ),
-              todayBorder: BorderSide(
-                color: AppColors.clr0FAA9A,
-                width: 1.r,
-              ),
+              todayBorder: BorderSide(color: AppColors.clr0FAA9A, width: 1.r),
             ),
             textButtonTheme: TextButtonThemeData(
               style: TextButton.styleFrom(
@@ -161,10 +158,10 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                   title: Text(l10n.profileGenderMale),
                   trailing: selected == 'male'
                       ? Icon(
-                    Icons.check_rounded,
-                    color: AppColors.clr0FAA9A,
-                    size: 20.r,
-                  )
+                          Icons.check_rounded,
+                          color: AppColors.clr0FAA9A,
+                          size: 20.r,
+                        )
                       : null,
                   onTap: () => dialogContext.pop('male'),
                 ),
@@ -172,10 +169,10 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                   title: Text(l10n.profileGenderFemale),
                   trailing: selected == 'female'
                       ? Icon(
-                    Icons.check_rounded,
-                    color: AppColors.clr0FAA9A,
-                    size: 20.r,
-                  )
+                          Icons.check_rounded,
+                          color: AppColors.clr0FAA9A,
+                          size: 20.r,
+                        )
                       : null,
                   onTap: () => dialogContext.pop('female'),
                 ),
@@ -183,10 +180,10 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                   title: Text(l10n.profileGenderOther),
                   trailing: selected == 'other'
                       ? Icon(
-                    Icons.check_rounded,
-                    color: AppColors.clr0FAA9A,
-                    size: 20.r,
-                  )
+                          Icons.check_rounded,
+                          color: AppColors.clr0FAA9A,
+                          size: 20.r,
+                        )
                       : null,
                   onTap: () => dialogContext.pop('other'),
                 ),
@@ -225,6 +222,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
     }
     if (!mounted) return;
 
+    final isUpdateMode = appPref.isProfileCompleted();
     final success = await context.read<ProfileSetupCubit>().saveProfile(
       ProfileSetupData(
         firstName: _firstNameController.text.trim(),
@@ -237,6 +235,10 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
       ),
     );
     if (!mounted || !success) return;
+    if (isUpdateMode && context.canPop()) {
+      context.pop(true);
+      return;
+    }
     context.go(AppRoutes.path(AppRoutes.home));
   }
 
@@ -250,16 +252,14 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
   }
 
   InputDecoration _lineInputDecoration(
-      BuildContext context, {
-        required String hintText,
-        Widget? suffixIcon,
-        bool isValueText = false,
-      }) {
+    BuildContext context, {
+    required String hintText,
+    Widget? suffixIcon,
+    bool isValueText = false,
+  }) {
     return InputDecoration(
       hintText: hintText,
-      hintStyle: Theme.of(
-        context,
-      ).textTheme.bodyMedium?.copyWith(
+      hintStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
         color: isValueText ? AppColors.clr101828 : AppColors.clr667085,
       ),
       isDense: true,
@@ -279,8 +279,8 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
     final l10n = AppLocalizations.of(context)!;
     final topInset = MediaQuery.paddingOf(context).top;
     final isInitialLoading = context.select(
-          (ProfileSetupCubit cubit) =>
-      cubit.state.loadingStateStatus == StateStatus.loading &&
+      (ProfileSetupCubit cubit) =>
+          cubit.state.loadingStateStatus == StateStatus.loading &&
           !_hasAppliedInitialData,
     );
 
@@ -303,7 +303,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
             builder: (context, state) {
               final showInitialLoading =
                   state.loadingStateStatus == StateStatus.loading &&
-                      !_hasAppliedInitialData;
+                  !_hasAppliedInitialData;
               if (showInitialLoading) {
                 return const ProfileSetupLoadingShimmer();
               }
@@ -311,6 +311,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                   ? l10n.profileDobHint
                   : DateFormat('MMM dd yyyy').format(state.dateOfBirth!);
               final avatarProvider = _avatarProvider;
+              final isUpdateMode = appPref.isProfileCompleted();
               return Stack(
                 children: [
                   Column(
@@ -337,18 +338,20 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                         onPickGender: () => _showGenderPicker(context),
                         onPickDate: () => _pickDate(context),
                         onSave: () => _save(state),
-                        inputDecorationBuilder: ({
-                          required String hintText,
-                          Widget? suffixIcon,
-                          bool isValueText = false,
-                        }) {
-                          return _lineInputDecoration(
-                            context,
-                            hintText: hintText,
-                            suffixIcon: suffixIcon,
-                            isValueText: isValueText,
-                          );
-                        },
+                        isUpdateMode: isUpdateMode,
+                        inputDecorationBuilder:
+                            ({
+                              required String hintText,
+                              Widget? suffixIcon,
+                              bool isValueText = false,
+                            }) {
+                              return _lineInputDecoration(
+                                context,
+                                hintText: hintText,
+                                suffixIcon: suffixIcon,
+                                isValueText: isValueText,
+                              );
+                            },
                       ),
                     ],
                   ),

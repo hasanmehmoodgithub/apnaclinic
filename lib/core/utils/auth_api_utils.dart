@@ -16,7 +16,7 @@ class AuthApiUtils {
     return digits;
   }
 
-  /// Resolves user id from auth API JSON: explicit fields first, then JWT `userId` claim.
+  /// Resolves user id from auth API JSON: explicit fields first, then JWT claims.
   static String? extractUserIdFromAuthResponse(Map<String, dynamic> response) {
     final data = response['data'];
     final dataMap = data is Map<String, dynamic> ? data : <String, dynamic>{};
@@ -29,9 +29,11 @@ class AuthApiUtils {
     final accessTokenMap = accessToken is Map<String, dynamic>
         ? accessToken
         : <String, dynamic>{};
-    final token =
-        (dataMap['token'] ?? accessTokenMap['token'] ?? '').toString();
-    final tokenUserId = JwtUtils.claim<dynamic>(token, 'userId');
+    final token = (dataMap['token'] ?? accessTokenMap['token'] ?? '')
+        .toString();
+    final tokenUserId =
+        JwtUtils.claim<dynamic>(token, 'userId') ??
+        JwtUtils.claim<dynamic>(token, 'sub');
     return tokenUserId?.toString();
   }
 }

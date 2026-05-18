@@ -1,3 +1,5 @@
+import '../../../../core/utils/auth_api_utils.dart';
+
 class AuthResponseModel {
   const AuthResponseModel({
     required this.success,
@@ -71,7 +73,8 @@ class AuthResponseModel {
       message: (json['message'] ?? '').toString(),
       // Backend now sends userOnboarding=true when profile setup is still pending.
       isOnboardingCompleted:
-          dataMap.containsKey('userOnboarding') || json.containsKey('userOnboarding')
+          dataMap.containsKey('userOnboarding') ||
+              json.containsKey('userOnboarding')
           ? !_toBool(dataMap['userOnboarding'] ?? json['userOnboarding'])
           : _toBool(
               dataMap['isOnboardingCompleted'] ?? json['isOnboardingCompleted'],
@@ -86,9 +89,8 @@ class AuthResponseModel {
       generationAttemptCount: _toInt(
         dataMap['generationAttemptCount'] ?? json['generationAttemptCount'],
       ),
-      token:
-          (dataMap['token'] ?? accessTokenMap['token'] ?? json['token'])
-              ?.toString(),
+      token: (dataMap['token'] ?? accessTokenMap['token'] ?? json['token'])
+          ?.toString(),
       refreshToken:
           (dataMap['refreshTokenValue'] ??
                   refreshTokenMap['token'] ??
@@ -104,7 +106,9 @@ class AuthResponseModel {
             refreshTokenMap['expiresIn'] ??
             json['refreshTokenExpiresIn'],
       ),
-      userId: (dataMap['userId'] ?? json['userId'])?.toString(),
+      userId:
+          (dataMap['userId'] ?? json['userId'])?.toString() ??
+          AuthApiUtils.extractUserIdFromAuthResponse(json),
       firstName: (userMap['firstName'] ?? dataMap['firstName'])?.toString(),
       lastName: (userMap['lastName'] ?? dataMap['lastName'])?.toString(),
       gender: (userMap['gender'] ?? dataMap['gender'])?.toString(),

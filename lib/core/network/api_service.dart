@@ -10,30 +10,39 @@ import 'api_config.dart';
 import 'api_exceptions.dart';
 import 'api_logger_interceptor.dart';
 import 'auth_interceptor.dart';
+import 'device_headers_provider.dart';
+import 'header_interceptor.dart';
 
 export 'api_exceptions.dart';
 
 /// Dio wrapper: JSON defaults, [AuthInterceptor], optional logging/Chucker.
 /// See `API_SERVICE.md` in this folder for behavior and extension points.
 class ApiService {
-  ApiService({
-    String? baseUrl,
-    Duration? timeout,
-    bool? enableLogging,
-  }) : _appPref = sl<AppPref>(),
-       _dio = Dio(
-         BaseOptions(
-           baseUrl: baseUrl ?? ApiConfig.baseUrl,
-           connectTimeout: timeout ?? const Duration(seconds: 60),
-           receiveTimeout: timeout ?? const Duration(seconds: 60),
-           sendTimeout: timeout ?? const Duration(seconds: 60),
-           headers: const {
-             'Content-Type': 'application/json',
-             'Accept': 'application/json',
-           },
-         ),
-       ) {
-    _dio.interceptors.add(AuthInterceptor(dio: _dio, appPref: _appPref));
+  ApiService({String? baseUrl, Duration? timeout, bool? enableLogging})
+    : _appPref = sl<AppPref>(),
+      _deviceHeadersProvider = sl<DeviceHeadersProvider>(),
+      _dio = Dio(
+        BaseOptions(
+          baseUrl: baseUrl ?? ApiConfig.baseUrl,
+          connectTimeout: timeout ?? const Duration(seconds: 60),
+          receiveTimeout: timeout ?? const Duration(seconds: 60),
+          sendTimeout: timeout ?? const Duration(seconds: 60),
+          headers: const {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+          },
+        ),
+      ) {
+    _dio.interceptors.add(
+      HeaderInterceptor(deviceHeadersProvider: _deviceHeadersProvider),
+    );
+    _dio.interceptors.add(
+      AuthInterceptor(
+        dio: _dio,
+        appPref: _appPref,
+        deviceHeadersProvider: _deviceHeadersProvider,
+      ),
+    );
     if (enableLogging ?? FlavorConfig.enableLogging) {
       _dio.interceptors.add(ApiLoggerInterceptor());
     }
@@ -45,6 +54,7 @@ class ApiService {
 
   final Dio _dio;
   final AppPref _appPref;
+  final DeviceHeadersProvider _deviceHeadersProvider;
 
   void _syncAuthHeader() {
     try {
@@ -188,7 +198,9 @@ class ApiService {
       case DioExceptionType.connectionTimeout:
       case DioExceptionType.sendTimeout:
       case DioExceptionType.receiveTimeout:
-        return ApiTimeoutException(message: 'Request timeout. Please try again.');
+        return ApiTimeoutException(
+          message: 'Request timeout. Please try again.',
+        );
       case DioExceptionType.badResponse:
         final code = error.response?.statusCode ?? 0;
         final body = error.response?.data;

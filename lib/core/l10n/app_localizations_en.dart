@@ -136,6 +136,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get profileSetupSubtitle => 'Enter your personal information';
 
   @override
+  String get profileUpdateSubtitle => 'Update your personal information';
+
+  @override
   String get profileFirstNameLabel => 'First Name';
 
   @override
@@ -200,6 +203,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get profileSaveCta => 'Save';
+
+  @override
+  String get profileUpdateCta => 'Update Profile';
 
   @override
   String get profileSetupHeaderTitle => 'Profile Setup';

@@ -45,8 +45,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         return Future.value(AuthResponseModel.fromJson(response));
       }
 
-      final message =
-          (response['message'] ?? AppStrings.authRequestOtpError).toString();
+      final message = (response['message'] ?? AppStrings.authRequestOtpError)
+          .toString();
       return Future.error(message);
     } catch (e) {
       log('requestOtp error: $e');
@@ -83,8 +83,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         return Future.value(AuthResponseModel.fromJson(response));
       }
 
-      final message =
-          (response['message'] ?? AppStrings.authVerifyOtpError).toString();
+      final message = (response['message'] ?? AppStrings.authVerifyOtpError)
+          .toString();
       return Future.error(message);
     } catch (e) {
       log('verifyOtp error: $e');
@@ -107,10 +107,15 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       return;
     }
     try {
-      await apiService.post(
+      final response = await apiService.post(
         AppUrls.logout(trimmed),
         data: <String, dynamic>{},
       );
+      if (response['success'] != true) {
+        final message = (response['message'] ?? AppStrings.authLogoutError)
+            .toString();
+        return Future.error(message);
+      }
       log('logout response ok for userId: $trimmed');
     } catch (e) {
       log('logout error: $e');
