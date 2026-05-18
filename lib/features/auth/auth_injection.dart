@@ -12,15 +12,12 @@ import 'domain/use_cases/verify_otp_use_case.dart';
 import 'presentation/cubit/auth_cubit.dart';
 
 void initAuthInjector() {
-  if (!sl.isRegistered<AuthMockApi>()) {
-    sl.registerLazySingleton<AuthMockApi>(() => AuthMockApi());
-  }
+
 
   if (!sl.isRegistered<AuthRemoteDataSource>()) {
     sl.registerLazySingleton<AuthRemoteDataSource>(
       () => AuthRemoteDataSourceImpl(
         apiService: sl<ApiService>(),
-        authMockApi: sl<AuthMockApi>(),
       ),
     );
   }

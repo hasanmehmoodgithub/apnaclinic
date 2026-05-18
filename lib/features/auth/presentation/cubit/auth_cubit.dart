@@ -111,9 +111,9 @@ class AuthCubit extends Cubit<AuthState> {
         return false;
       },
       (entity) {
-        _startOtpTimer(expiresInMinutes: entity.expiresInMinutes);
+        _startOtpTimer(expiresInSeconds: entity.expiresInSeconds);
         emit(
-          _otpRequestedSuccessState(expiresInMinutes: entity.expiresInMinutes),
+          _otpRequestedSuccessState(expiresInSeconds: entity.expiresInSeconds),
         );
         return true;
       },
@@ -194,19 +194,19 @@ class AuthCubit extends Cubit<AuthState> {
   }
 
   // ---------- Private helpers ----------
-  AuthState _otpRequestedSuccessState({int? expiresInMinutes}) {
+  AuthState _otpRequestedSuccessState({int? expiresInSeconds}) {
     return state.copyWith(
       isLoading: false,
       requestOtpLoadingStateStatus: StateStatus.success,
-      otpSecondsRemaining: _resolveOtpExpirySeconds(expiresInMinutes),
+      otpSecondsRemaining: _resolveOtpExpirySeconds(expiresInSeconds),
       otpRequested: true,
       errorMessage: null,
     );
   }
 
-  int _resolveOtpExpirySeconds(int? expiresInMinutes) {
-    if (expiresInMinutes == null || expiresInMinutes <= 0) return 30;
-    return expiresInMinutes * 60;
+  int _resolveOtpExpirySeconds(int? expiresInSeconds) {
+    if (expiresInSeconds == null || expiresInSeconds <= 0) return 30;
+    return expiresInSeconds;
   }
 
   Future<void> _saveUserSession({required AuthEntity entity}) async {
@@ -244,8 +244,8 @@ class AuthCubit extends Cubit<AuthState> {
     }
   }
 
-  void _startOtpTimer({int? expiresInMinutes}) {
-    final startingSeconds = _resolveOtpExpirySeconds(expiresInMinutes);
+  void _startOtpTimer({int? expiresInSeconds}) {
+    final startingSeconds = _resolveOtpExpirySeconds(expiresInSeconds);
     _timer?.cancel();
     emit(state.copyWith(otpSecondsRemaining: startingSeconds));
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {

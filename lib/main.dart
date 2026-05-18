@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:apnaclinic/core/constants/app_system_ui.dart';
 import 'package:apnaclinic/core/extensions/screen_util_extensions.dart';
 import 'package:apnaclinic/core/flavor/flavor_config.dart';
+import 'package:flutter/rendering.dart';
 
 import 'core/di/dependency_injection.dart';
 import 'core/utils/chucker_guard.dart';
@@ -18,6 +19,8 @@ void main() {
 
       // Guard: Ensure Flutter binding is initialized first
       WidgetsFlutterBinding.ensureInitialized();
+      debugRepaintRainbowEnabled = true; // 👈
+
       ChuckerGuard.configureIfEnabled();
       AppSystemUi.apply();
 

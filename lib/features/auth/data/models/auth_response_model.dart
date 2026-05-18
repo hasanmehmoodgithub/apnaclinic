@@ -6,7 +6,7 @@ class AuthResponseModel {
     required this.message,
     required this.isOnboardingCompleted,
     this.msisdn,
-    this.expiresInMinutes,
+    this.expiresInSeconds,
     this.generationAttemptCount,
     this.token,
     this.refreshToken,
@@ -25,7 +25,7 @@ class AuthResponseModel {
   final String message;
   final bool isOnboardingCompleted;
   final String? msisdn;
-  final int? expiresInMinutes;
+  final int? expiresInSeconds;
   final int? generationAttemptCount;
   final String? token;
   final String? refreshToken;
@@ -80,7 +80,7 @@ class AuthResponseModel {
               dataMap['isOnboardingCompleted'] ?? json['isOnboardingCompleted'],
             ),
       msisdn: (dataMap['msisdn'] ?? json['msisdn'])?.toString(),
-      expiresInMinutes: _toInt(
+      expiresInSeconds: _toInt(
         dataMap['expiresIn'] ??
             dataMap['expriesIn'] ??
             json['expiresIn'] ??

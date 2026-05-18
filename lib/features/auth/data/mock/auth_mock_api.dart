@@ -1,7 +1,9 @@
+import 'package:flutter/foundation.dart';
+
 import '../../../../core/config/mock_config.dart';
 
 class AuthMockApi {
-  static bool useMockResponses = MockConfig.enableMocks;
+  static bool useMockResponses = MockConfig.enableAuthMocks;
 
   Future<Map<String, dynamic>> requestOtpSuccessResponse({
     required String phoneNumber,
@@ -13,7 +15,7 @@ class AuthMockApi {
       'data': <String, dynamic>{
         'msisdn': phoneNumber,
         'channel': channel,
-        'expiresIn': 5,
+        'expiresIn': 300,
         'generationAttemptCount': 1,
       },
     };

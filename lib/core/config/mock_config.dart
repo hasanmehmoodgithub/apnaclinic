@@ -3,19 +3,20 @@ import 'package:flutter/foundation.dart';
 class MockConfig {
   MockConfig._();
 
-  static const String _mockValue = String.fromEnvironment(
-    'MOCK',
-    defaultValue: '',
-  );
   static const String _mockTrueValue = String.fromEnvironment(
     'MOCKTRUE',
     defaultValue: '',
   );
 
   static bool get enableMocks {
-    return false;
-    return _isTruthy(_mockValue) || _isTruthy(_mockTrueValue) || kDebugMode;
+    return _isTruthy(_mockTrueValue) || kDebugMode;
   }
+  static bool get enableAuthMocks {
+    return false;
+    return _isTruthy(_mockTrueValue)  || kDebugMode;
+  }
+
+
 
   static bool _isTruthy(String value) {
     final normalized = value.trim().toLowerCase();

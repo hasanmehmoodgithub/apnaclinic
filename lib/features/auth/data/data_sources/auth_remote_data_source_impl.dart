@@ -14,11 +14,9 @@ import 'auth_remote_data_source.dart';
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   AuthRemoteDataSourceImpl({
     required this.apiService,
-    required this.authMockApi,
   });
 
   final ApiService apiService;
-  final AuthMockApi authMockApi;
 
   @override
   Future<AuthResponseModel> requestOtp(RequestOtpParams params) async {
@@ -26,7 +24,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       final Map<String, dynamic> response;
       if (AuthMockApi.useMockResponses) {
         await Future<void>.delayed(const Duration(milliseconds: 600));
-        response = await authMockApi.requestOtpSuccessResponse(
+        response = await AuthMockApi().requestOtpSuccessResponse(
           phoneNumber: AuthApiUtils.normalizeMsisdn(params.phoneNumber),
           channel: params.channel,
         );
@@ -64,7 +62,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       final Map<String, dynamic> response;
       if (AuthMockApi.useMockResponses) {
         await Future<void>.delayed(const Duration(milliseconds: 700));
-        response = await authMockApi.verifyOtpSuccessResponse(
+        response = await  AuthMockApi().verifyOtpSuccessResponse(
           phoneNumber: params.phoneNumber,
           otp: params.otp,
         );

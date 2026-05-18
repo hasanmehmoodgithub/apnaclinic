@@ -8,7 +8,7 @@ class AuthMapper {
       message: model.message,
       isOnboardingCompleted: model.isOnboardingCompleted,
       msisdn: model.msisdn,
-      expiresInMinutes: model.expiresInMinutes,
+      expiresInSeconds: model.expiresInSeconds,
       generationAttemptCount: model.generationAttemptCount,
       token: model.token,
       refreshToken: model.refreshToken,
