@@ -1190,6 +1190,12 @@ abstract class AppLocalizations {
   /// **'Hello, {name}'**
   String dashboardHello(String name);
 
+  /// No description provided for @dashboardGuestName.
+  ///
+  /// In en, this message translates to:
+  /// **'Guest'**
+  String get dashboardGuestName;
+
   /// No description provided for @dashboardSearchHint.
   ///
   /// In en, this message translates to:

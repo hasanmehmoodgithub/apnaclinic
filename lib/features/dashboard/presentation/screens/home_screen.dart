@@ -68,7 +68,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       builder: (context, _) {
         final l10n = AppLocalizations.of(context)!;
         _isLoggedIn = sl<AppPref>().getLoginStatus();
-        final greetingName = _resolveGreetingName();
+        final greetingName = _resolveGreetingName(l10n);
         final theme = Theme.of(context);
 
         // Whenever the router rebuilds us (which includes returning from
@@ -221,13 +221,14 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     );
   }
 
-  String _resolveGreetingName() {
-    if (!_isLoggedIn) return '';
+  String _resolveGreetingName(AppLocalizations l10n) {
+    if (!_isLoggedIn) return l10n.dashboardGuestName;
     final appPref = sl<AppPref>();
     final userLocal = appPref.getUserLocalModel();
     final firstName = userLocal?.firstName.trim() ?? '';
     final lastName = userLocal?.lastName.trim() ?? '';
     final fullName = '$firstName $lastName'.trim();
+    if (fullName.isEmpty) return l10n.dashboardGuestName;
     return fullName;
   }
 

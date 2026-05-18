@@ -578,6 +578,9 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get dashboardGuestName => 'Guest';
+
+  @override
   String get dashboardSearchHint => 'Search Medicine, Doctor, Test....';
 
   @override
