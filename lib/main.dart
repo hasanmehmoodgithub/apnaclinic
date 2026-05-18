@@ -12,15 +12,12 @@ import 'core/utils/chucker_guard.dart';
 import 'features/app/presentation/screens/apna_clinic_app.dart';
 
 void main() {
-
   // Run app in a zone with error handling
   runZonedGuarded(
     () async {
-
       // Guard: Ensure Flutter binding is initialized first
       WidgetsFlutterBinding.ensureInitialized();
-      debugRepaintRainbowEnabled = true; // 👈
-
+      debugRepaintRainbowEnabled = true;
       ChuckerGuard.configureIfEnabled();
       AppSystemUi.apply();
 
@@ -44,9 +41,7 @@ void main() {
         // await _initializeNotificationService();
 
         // Run app with security guard in release mode
-        runApp(
-            ApnaClinicApp(),
-        );
+        runApp(ApnaClinicApp());
       } catch (e, stackTrace) {
         // Guard: Handle initialization errors gracefully
         developer.log(
@@ -69,7 +64,10 @@ void main() {
                       SizedBox(height: 16.h),
                       Text(
                         'Initialization Error',
-                        style: TextStyle(fontSize: 24.sp, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                          fontSize: 24.sp,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                       SizedBox(height: 8.h),
                       Padding(
@@ -110,7 +108,10 @@ Future<void> _initializeDependencyInjection() async {
   try {
     developer.log('Initializing dependency injection...', name: 'main');
     await initDependencyInjection();
-    developer.log('Dependency injection initialized successfully', name: 'main');
+    developer.log(
+      'Dependency injection initialized successfully',
+      name: 'main',
+    );
   } catch (e, stackTrace) {
     developer.log(
       'Error initializing dependency injection: $e',

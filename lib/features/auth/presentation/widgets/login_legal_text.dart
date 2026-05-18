@@ -11,25 +11,28 @@ class LoginLegalText extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
 
-    return Text.rich(
-      TextSpan(
-        children: [
-          TextSpan(text: '${l10n.authLegalPrefix} '),
-          TextSpan(
-            text: l10n.authTermsLabel,
-            style: const TextStyle(fontWeight: FontWeight.w700),
-          ),
-          TextSpan(text: ' ${l10n.authLegalConnector} '),
-          TextSpan(
-            text: l10n.authPrivacyLabel,
-            style: const TextStyle(fontWeight: FontWeight.w700),
-          ),
-        ],
-      ),
-      textAlign: TextAlign.center,
-      style: theme.textTheme.bodySmall?.copyWith(
-        color: AppColors.clr667085,
-        height: 1.65,
+    return Padding(
+      padding: const EdgeInsets.all(0.0),
+      child: Text.rich(
+        TextSpan(
+          children: [
+            TextSpan(text: '${l10n.authLegalPrefix} '),
+            TextSpan(
+              text: l10n.authTermsLabel,
+              style: const TextStyle(fontWeight: FontWeight.w700),
+            ),
+            TextSpan(text: ' ${l10n.authLegalConnector} '),
+            TextSpan(
+              text: l10n.authPrivacyLabel,
+              style: const TextStyle(fontWeight: FontWeight.w700),
+            ),
+          ],
+        ),
+        textAlign: TextAlign.center,
+        style: theme.textTheme.bodySmall?.copyWith(
+          color: AppColors.clr667085,
+          height: 1.65,
+        ),
       ),
     );
   }
