@@ -350,6 +350,12 @@ abstract class AppLocalizations {
   /// **'Enter your personal information'**
   String get profileSetupSubtitle;
 
+  /// No description provided for @profileUpdateSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Update your personal information'**
+  String get profileUpdateSubtitle;
+
   /// No description provided for @profileFirstNameLabel.
   ///
   /// In en, this message translates to:
@@ -481,6 +487,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Save'**
   String get profileSaveCta;
+
+  /// No description provided for @profileUpdateCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Update Profile'**
+  String get profileUpdateCta;
 
   /// No description provided for @profileSetupHeaderTitle.
   ///
@@ -769,6 +781,102 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Rs. '**
   String get pharmacyCurrencyPrefix;
+
+  /// No description provided for @pharmacyBookingOrderPrefix.
+  ///
+  /// In en, this message translates to:
+  /// **'Order no'**
+  String get pharmacyBookingOrderPrefix;
+
+  /// No description provided for @pharmacyBookingMedicineName.
+  ///
+  /// In en, this message translates to:
+  /// **'O-ZEETINE Capsules 6/25MG'**
+  String get pharmacyBookingMedicineName;
+
+  /// No description provided for @pharmacyBookingMedicineQty.
+  ///
+  /// In en, this message translates to:
+  /// **'2'**
+  String get pharmacyBookingMedicineQty;
+
+  /// No description provided for @pharmacyBookingCurrencyCompact.
+  ///
+  /// In en, this message translates to:
+  /// **'Rs.'**
+  String get pharmacyBookingCurrencyCompact;
+
+  /// No description provided for @pharmacyBookingInvoiceFileName.
+  ///
+  /// In en, this message translates to:
+  /// **'E-Invoice.pdf'**
+  String get pharmacyBookingInvoiceFileName;
+
+  /// No description provided for @pharmacyBookingDeliveryCity.
+  ///
+  /// In en, this message translates to:
+  /// **'Islamabad'**
+  String get pharmacyBookingDeliveryCity;
+
+  /// No description provided for @pharmacyBookingDeliveryAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Office #7 2nd Floor Plaza 2000, I-8 Markaz Islamabad.'**
+  String get pharmacyBookingDeliveryAddress;
+
+  /// No description provided for @pharmacyBookingOrderStatusTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Order Status'**
+  String get pharmacyBookingOrderStatusTitle;
+
+  /// No description provided for @pharmacyBookingStatusConfirmed.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirmed'**
+  String get pharmacyBookingStatusConfirmed;
+
+  /// No description provided for @pharmacyBookingStatusReadyForDispatch.
+  ///
+  /// In en, this message translates to:
+  /// **'Ready for Dispatch'**
+  String get pharmacyBookingStatusReadyForDispatch;
+
+  /// No description provided for @pharmacyBookingStatusDispatched.
+  ///
+  /// In en, this message translates to:
+  /// **'Dispatched / Shipped'**
+  String get pharmacyBookingStatusDispatched;
+
+  /// No description provided for @pharmacyBookingStatusCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed'**
+  String get pharmacyBookingStatusCompleted;
+
+  /// No description provided for @pharmacyBookingStatusCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Order Cancel'**
+  String get pharmacyBookingStatusCancelled;
+
+  /// No description provided for @pharmacyBookingFeedbackTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Feedback'**
+  String get pharmacyBookingFeedbackTitle;
+
+  /// No description provided for @pharmacyBookingFeedbackSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'We hope your medications have been helpful. Please take a moment to share your feedback on order #PH123456.'**
+  String get pharmacyBookingFeedbackSubtitle;
+
+  /// No description provided for @pharmacyBookingFeedbackHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Write your feedback...'**
+  String get pharmacyBookingFeedbackHint;
 
   /// No description provided for @onboardingSkip.
   ///
@@ -1081,6 +1189,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Hello, {name}'**
   String dashboardHello(String name);
+
+  /// No description provided for @dashboardGuestName.
+  ///
+  /// In en, this message translates to:
+  /// **'Guest'**
+  String get dashboardGuestName;
 
   /// No description provided for @dashboardSearchHint.
   ///

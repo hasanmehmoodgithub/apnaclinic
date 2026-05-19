@@ -6,6 +6,7 @@ import '../../../../core/enums/app_enums.dart';
 import '../../../../core/enums/state_status.dart';
 import '../../../../core/preference/app_pref.dart';
 import '../../../../core/preference/user_local_model.dart';
+import '../../../../core/utils/jwt_utils.dart';
 import '../../domain/entities/auth_entity.dart';
 import '../../domain/use_cases/request_otp_use_case.dart';
 import '../../domain/use_cases/verify_otp_use_case.dart';
@@ -25,12 +26,6 @@ class AuthCubit extends Cubit<AuthState> {
   final VerifyOtpUseCase _verifyOtpUseCase;
   final AppPref _appPref;
   Timer? _timer;
-
-  // ---------- UI helpers ----------
-  void _safeEmit(AuthState newState) {
-    if (isClosed) return;
-    emit(newState);
-  }
 
   String formatPhoneInput(String input) {
     var digits = input.replaceAll(RegExp(r'\D'), '');
@@ -91,7 +86,7 @@ class AuthCubit extends Cubit<AuthState> {
   }
 
   Future<bool> requestOtp(String phoneNumber) async {
-    _safeEmit(
+    emit(
       state.copyWith(
         isLoading: true,
         phoneNumber: phoneNumber,
@@ -101,12 +96,12 @@ class AuthCubit extends Cubit<AuthState> {
     );
 
     final result = await _requestOtpUseCase(
-      RequestOtpParams(phoneNumber: phoneNumber),
+      RequestOtpParams(phoneNumber: phoneNumber, channel: 'SMS'),
     );
     if (isClosed) return false;
     return result.fold(
       (error) {
-        _safeEmit(
+        emit(
           state.copyWith(
             isLoading: false,
             requestOtpLoadingStateStatus: StateStatus.error,
@@ -115,16 +110,18 @@ class AuthCubit extends Cubit<AuthState> {
         );
         return false;
       },
-      (_) {
-        _startOtpTimer();
-        _safeEmit(_otpRequestedSuccessState());
+      (entity) {
+        _startOtpTimer(expiresInSeconds: entity.expiresInSeconds);
+        emit(
+          _otpRequestedSuccessState(expiresInSeconds: entity.expiresInSeconds),
+        );
         return true;
       },
     );
   }
 
   Future<VerifyOtpOutcome> verifyOtp(String otp) async {
-    _safeEmit(
+    emit(
       state.copyWith(
         isLoading: true,
         verifyOtpLoadingStateStatus: StateStatus.loading,
@@ -140,7 +137,7 @@ class AuthCubit extends Cubit<AuthState> {
     }
     return result.fold(
       (error) {
-        _safeEmit(
+        emit(
           state.copyWith(
             isLoading: false,
             verifyOtpLoadingStateStatus: StateStatus.error,
@@ -154,7 +151,7 @@ class AuthCubit extends Cubit<AuthState> {
         if (isClosed) {
           return const VerifyOtpOutcome(isSuccess: false, goToHome: false);
         }
-        _safeEmit(
+        emit(
           state.copyWith(
             isLoading: false,
             verifyOtpLoadingStateStatus: StateStatus.success,
@@ -171,12 +168,12 @@ class AuthCubit extends Cubit<AuthState> {
 
   void clearError() {
     if (state.errorMessage == null) return;
-    _safeEmit(state.copyWith(errorMessage: null));
+    emit(state.copyWith(errorMessage: null));
   }
 
   void setPhoneNumber(String phoneNumber) {
     if (phoneNumber.isEmpty || phoneNumber == state.phoneNumber) return;
-    _safeEmit(
+    emit(
       state.copyWith(
         phoneNumber: phoneNumber,
         otpRequested: false,
@@ -187,7 +184,7 @@ class AuthCubit extends Cubit<AuthState> {
 
   void hideOtpSection() {
     _timer?.cancel();
-    _safeEmit(
+    emit(
       state.copyWith(
         otpRequested: false,
         otpSecondsRemaining: 30,
@@ -197,20 +194,33 @@ class AuthCubit extends Cubit<AuthState> {
   }
 
   // ---------- Private helpers ----------
-  AuthState _otpRequestedSuccessState() {
+  AuthState _otpRequestedSuccessState({int? expiresInSeconds}) {
     return state.copyWith(
       isLoading: false,
       requestOtpLoadingStateStatus: StateStatus.success,
-      otpSecondsRemaining: 30,
+      otpSecondsRemaining: _resolveOtpExpirySeconds(expiresInSeconds),
       otpRequested: true,
       errorMessage: null,
     );
   }
 
+  int _resolveOtpExpirySeconds(int? expiresInSeconds) {
+    if (expiresInSeconds == null || expiresInSeconds <= 0) return 30;
+    return expiresInSeconds;
+  }
+
   Future<void> _saveUserSession({required AuthEntity entity}) async {
+    final tokenUserId = JwtUtils.claim<dynamic>(entity.token, 'sub');
+    final resolvedUserId =
+        entity.userId ??
+        (tokenUserId != null ? tokenUserId.toString() : state.phoneNumber);
+
     await _appPref.setLoginStatus(true);
-    await _appPref.setUserId(entity.userId ?? state.phoneNumber);
+    await _appPref.setUserId(resolvedUserId);
     await _appPref.setToken(entity.token ?? '');
+    await _appPref.setRefreshToken(entity.refreshToken ?? '');
+    await _appPref.setAccessTokenExpiresIn(entity.accessTokenExpiresIn ?? 0);
+    await _appPref.setRefreshTokenExpiresIn(entity.refreshTokenExpiresIn ?? 0);
     await _appPref.setOnboardingCompleted(entity.isOnboardingCompleted == true);
 
     if (entity.isOnboardingCompleted == true) {
@@ -234,15 +244,17 @@ class AuthCubit extends Cubit<AuthState> {
     }
   }
 
-  void _startOtpTimer() {
+  void _startOtpTimer({int? expiresInSeconds}) {
+    final startingSeconds = _resolveOtpExpirySeconds(expiresInSeconds);
     _timer?.cancel();
+    emit(state.copyWith(otpSecondsRemaining: startingSeconds));
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       final nextValue = state.otpSecondsRemaining - 1;
       if (nextValue <= 0) {
-        _safeEmit(state.copyWith(otpSecondsRemaining: 0));
+        emit(state.copyWith(otpSecondsRemaining: 0));
         timer.cancel();
       } else {
-        _safeEmit(state.copyWith(otpSecondsRemaining: nextValue));
+        emit(state.copyWith(otpSecondsRemaining: nextValue));
       }
     });
   }

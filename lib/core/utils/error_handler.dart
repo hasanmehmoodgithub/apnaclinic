@@ -5,6 +5,7 @@ import 'package:dio/dio.dart';
 
 import '../constants/app_strings.dart';
 import '../network/api_service.dart';
+import 'api_error_message_utils.dart';
 
 class ErrorHandler {
   /// Handles exceptions and returns user-friendly messages.
@@ -104,13 +105,9 @@ class ErrorHandler {
   }
 
   static String? _extractBodyMessage(dynamic data) {
-    if (data is Map<String, dynamic>) {
-      final dynamic message = data['message'] ?? data['error'];
-      if (message is String && message.trim().isNotEmpty) {
-        return message.trim();
-      }
-    } else if (data is String && data.trim().isNotEmpty) {
-      return data.trim();
+    final parsed = ApiErrorMessageUtils.tryParse(data);
+    if (parsed != null && parsed.isNotEmpty) {
+      return parsed;
     }
     return null;
   }

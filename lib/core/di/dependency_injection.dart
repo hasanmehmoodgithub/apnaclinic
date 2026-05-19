@@ -14,6 +14,7 @@ import '../../features/auth/auth_injection.dart';
 import '../../features/profile_setup/profile_setup_injection.dart';
 import '../database/app_database.dart';
 import '../network/api_service.dart';
+import '../network/device_headers_provider.dart';
 import '../preference/app_pref.dart';
 import '../preference/app_pref_impl.dart';
 import '../services/encryption_service.dart';
@@ -47,6 +48,9 @@ Future<void> _initCore() async {
   sl.registerLazySingleton<SharedPreferences>(() => sharedPref);
   sl.registerLazySingleton<AppPref>(
     () => AppPrefImpl(encryptionService: sl<EncryptionService>(), sharedPref),
+  );
+  sl.registerLazySingleton<DeviceHeadersProvider>(
+    () => DeviceHeadersProvider(),
   );
   sl.registerLazySingleton<ApiService>(
     () => ApiService(

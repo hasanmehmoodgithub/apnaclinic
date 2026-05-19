@@ -1,0 +1,31 @@
+---
+description: Maintain per-feature FEATURE.md when changing feature code
+alwaysApply: true
+---
+
+# Feature documentation after changes
+
+Whenever you **create or materially change** code under `lib/features/<feature_name>/`, **create or update** that feature’s markdown doc in the **same folder**:
+
+- **Path:** `lib/features/<feature_name>/FEATURE.md`
+- **If the file does not exist:** create it.
+- **If it exists:** update the sections affected by your change (do not leave stale API routes, flows, or DI).
+
+## What to include in `FEATURE.md` (keep it short and accurate)
+
+- **Purpose** — what the feature does for the user.
+- **Routes / entry** — `AppRoutes` or navigation entry points.
+- **Data & APIs** — remote/local data sources, base paths, request/response notes (link to `AppUrls` keys if helpful).
+- **State** — main `Cubit`/Bloc and important states.
+- **DI** — `*_injection.dart` registration highlights.
+- **Mocks** — if `MockConfig` / mock APIs affect behavior, say so.
+
+## Scope outside `lib/features/`
+
+- **Core / shared** changes (e.g. `lib/core/network/`, interceptors, global prefs): update or add the **existing** doc in that area (e.g. `REFRESH_TOKEN_LOGIC.md`, `preference.md`) instead of inventing a feature `FEATURE.md` unless the change is owned by one feature only.
+
+## When you may skip
+
+- **Trivial edits** (formatting only, rename with no behavior change) — skip only if `FEATURE.md` would not change meaningfully; if unsure, add a one-line “Last updated” note with the change type.
+
+Do **not** add large boilerplate or duplicate `FEATURE_CREATION_GUIDE.md`; `FEATURE.md` is a **living index** for that feature, not a second tutorial.

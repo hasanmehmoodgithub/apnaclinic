@@ -32,4 +32,18 @@ class AuthRepositoryImpl implements AuthRepository {
       return Left(e.toString());
     }
   }
+
+  @override
+  Future<Either<ErrorMsg, void>> logout(String userId) async {
+    final trimmed = userId.trim();
+    if (trimmed.isEmpty) {
+      return const Right(null);
+    }
+    try {
+      await _remoteDataSource.logout(trimmed);
+      return const Right(null);
+    } catch (e) {
+      return Left(e.toString());
+    }
+  }
 }

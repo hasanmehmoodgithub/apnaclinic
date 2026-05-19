@@ -5,7 +5,13 @@ class AuthEntity extends Equatable {
     required this.success,
     required this.message,
     required this.isOnboardingCompleted,
+    this.msisdn,
+    this.expiresInSeconds,
+    this.generationAttemptCount,
     this.token,
+    this.refreshToken,
+    this.accessTokenExpiresIn,
+    this.refreshTokenExpiresIn,
     this.userId,
     this.firstName,
     this.lastName,
@@ -18,7 +24,13 @@ class AuthEntity extends Equatable {
   final bool success;
   final String message;
   final bool isOnboardingCompleted;
+  final String? msisdn;
+  final int? expiresInSeconds;
+  final int? generationAttemptCount;
   final String? token;
+  final String? refreshToken;
+  final int? accessTokenExpiresIn;
+  final int? refreshTokenExpiresIn;
   final String? userId;
   final String? firstName;
   final String? lastName;
@@ -32,7 +44,13 @@ class AuthEntity extends Equatable {
     success,
     message,
     isOnboardingCompleted,
+    msisdn,
+    expiresInSeconds,
+    generationAttemptCount,
     token,
+    refreshToken,
+    accessTokenExpiresIn,
+    refreshTokenExpiresIn,
     userId,
     firstName,
     lastName,

@@ -11,6 +11,10 @@ class AppPrefKeys {
       _encryption.obfuscateKey('auth_token$_prefVersion');
   static String get refreshToken =>
       _encryption.obfuscateKey('refresh_token$_prefVersion');
+  static String get accessTokenExpiresIn =>
+      _encryption.obfuscateKey('access_token_expires_in$_prefVersion');
+  static String get refreshTokenExpiresIn =>
+      _encryption.obfuscateKey('refresh_token_expires_in$_prefVersion');
   static String get userId => _encryption.obfuscateKey('user_id$_prefVersion');
   static String get loginStatus =>
       _encryption.obfuscateKey('login_status$_prefVersion');

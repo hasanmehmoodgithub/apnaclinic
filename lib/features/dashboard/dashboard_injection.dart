@@ -1,5 +1,7 @@
 import '../../core/di/dependency_injection.dart';
 import '../../core/network/api_service.dart';
+import '../../core/preference/app_pref.dart';
+import '../profile_setup/domain/use_cases/get_profile_setup_content_use_case.dart';
 import 'data/data_sources/dashboard_remote_data_source.dart';
 import 'data/data_sources/dashboard_remote_data_source_impl.dart';
 import 'data/mock/dashboard_services_mock_api.dart';
@@ -42,6 +44,8 @@ void initDashboardInjector() {
     () => DashboardCubit(
       getOurServicesUseCase: sl<GetOurServicesUseCase>(),
       getPromotionalBannerUseCase: sl<GetPromotionalBannerUseCase>(),
+      getProfileSetupContentUseCase: sl<GetProfileSetupContentUseCase>(),
+      appPref: sl<AppPref>(),
     ),
   );
 

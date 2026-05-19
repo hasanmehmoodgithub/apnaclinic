@@ -136,6 +136,9 @@ class AppLocalizationsUr extends AppLocalizations {
   String get profileSetupSubtitle => 'اپنی ذاتی معلومات درج کریں';
 
   @override
+  String get profileUpdateSubtitle => 'اپنی ذاتی معلومات اپ ڈیٹ کریں';
+
+  @override
   String get profileFirstNameLabel => 'پہلا نام';
 
   @override
@@ -200,6 +203,9 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get profileSaveCta => 'محفوظ کریں';
+
+  @override
+  String get profileUpdateCta => 'پروفائل اپ ڈیٹ کریں';
 
   @override
   String get profileSetupHeaderTitle => 'پروفائل سیٹ اپ';
@@ -353,6 +359,56 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get pharmacyCurrencyPrefix => 'روپے ';
+
+  @override
+  String get pharmacyBookingOrderPrefix => 'آرڈر نمبر';
+
+  @override
+  String get pharmacyBookingMedicineName => 'O-ZEETINE کیپسولز 6/25MG';
+
+  @override
+  String get pharmacyBookingMedicineQty => '2';
+
+  @override
+  String get pharmacyBookingCurrencyCompact => 'روپے';
+
+  @override
+  String get pharmacyBookingInvoiceFileName => 'E-Invoice.pdf';
+
+  @override
+  String get pharmacyBookingDeliveryCity => 'اسلام آباد';
+
+  @override
+  String get pharmacyBookingDeliveryAddress =>
+      'آفس #7، دوسری منزل، پلازہ 2000، آئی-8 مرکز، اسلام آباد۔';
+
+  @override
+  String get pharmacyBookingOrderStatusTitle => 'آرڈر اسٹیٹس';
+
+  @override
+  String get pharmacyBookingStatusConfirmed => 'تصدیق شدہ';
+
+  @override
+  String get pharmacyBookingStatusReadyForDispatch => 'روانگی کے لیے تیار';
+
+  @override
+  String get pharmacyBookingStatusDispatched => 'روانہ / شپ کیا گیا';
+
+  @override
+  String get pharmacyBookingStatusCompleted => 'مکمل';
+
+  @override
+  String get pharmacyBookingStatusCancelled => 'آرڈر منسوخ';
+
+  @override
+  String get pharmacyBookingFeedbackTitle => 'آپ کی رائے';
+
+  @override
+  String get pharmacyBookingFeedbackSubtitle =>
+      'ہم امید کرتے ہیں کہ آپ کی ادویات مفید رہی ہوں گی۔ براہِ کرم آرڈر #PH123456 پر اپنی رائے شیئر کریں۔';
+
+  @override
+  String get pharmacyBookingFeedbackHint => 'اپنی رائے لکھیں...';
 
   @override
   String get onboardingSkip => 'اسکپ';
@@ -522,6 +578,9 @@ class AppLocalizationsUr extends AppLocalizations {
   String dashboardHello(String name) {
     return 'ہیلو، $name';
   }
+
+  @override
+  String get dashboardGuestName => 'مہمان';
 
   @override
   String get dashboardSearchHint => 'دوائی، ڈاکٹر، ٹیسٹ تلاش کریں....';

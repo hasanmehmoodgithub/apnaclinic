@@ -1,10 +1,11 @@
 import 'dart:developer' as developer;
 import 'package:flutter/foundation.dart';
 import '../isolate/isolate_api_service.dart';
+import '../network/device_headers_provider.dart';
 import 'encryption_service.dart';
 
 /// Service for making encrypted API calls in isolates
-/// 
+///
 /// This service:
 /// - Encrypts request data before sending
 /// - Decrypts response data after receiving
@@ -12,11 +13,22 @@ import 'encryption_service.dart';
 class EncryptedIsolateApiService {
   final EncryptionService encryptionService;
   final String baseUrl;
+  final DeviceHeadersProvider deviceHeadersProvider;
 
   EncryptedIsolateApiService({
     required this.encryptionService,
     required this.baseUrl,
-  });
+    DeviceHeadersProvider? deviceHeadersProvider,
+  }) : deviceHeadersProvider = deviceHeadersProvider ?? DeviceHeadersProvider();
+
+  Future<Map<String, dynamic>> _headersWithDevice(
+    Map<String, dynamic>? headers,
+  ) async {
+    return <String, dynamic>{
+      ...await deviceHeadersProvider.headers(),
+      ...?headers,
+    };
+  }
 
   /// Make encrypted GET request in isolate
   Future<Map<String, dynamic>> get(
@@ -36,7 +48,7 @@ class EncryptedIsolateApiService {
       // Make request in isolate (no encryption for GET query params)
       final result = await IsolateApiService.get(
         '$baseUrl$endpoint',
-        headers: headers,
+        headers: await _headersWithDevice(headers),
         queryParameters: queryParameters,
         timeout: timeout,
       );
@@ -120,16 +132,14 @@ class EncryptedIsolateApiService {
       }
 
       // Prepare encrypted payload
-      final encryptedPayload = {
-        'encrypted': encryptedData,
-      };
+      final encryptedPayload = {'encrypted': encryptedData};
 
       // Make request in isolate with encrypted payload
       final result = await IsolateApiService.post(
         '$baseUrl$endpoint',
         data: encryptedPayload,
         headers: {
-          ...?headers,
+          ...await _headersWithDevice(headers),
           'Content-Type': 'application/json',
         },
         queryParameters: queryParameters,
@@ -215,16 +225,14 @@ class EncryptedIsolateApiService {
       }
 
       // Prepare encrypted payload
-      final encryptedPayload = {
-        'encrypted': encryptedData,
-      };
+      final encryptedPayload = {'encrypted': encryptedData};
 
       // Make request in isolate with encrypted payload
       final result = await IsolateApiService.put(
         '$baseUrl$endpoint',
         data: encryptedPayload,
         headers: {
-          ...?headers,
+          ...await _headersWithDevice(headers),
           'Content-Type': 'application/json',
         },
         queryParameters: queryParameters,
@@ -305,7 +313,7 @@ class EncryptedIsolateApiService {
         '$baseUrl$endpoint',
         data: encryptedPayload,
         headers: {
-          ...?headers,
+          ...await _headersWithDevice(headers),
           'Content-Type': 'application/json',
         },
         queryParameters: queryParameters,

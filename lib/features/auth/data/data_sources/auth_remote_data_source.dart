@@ -6,4 +6,6 @@ abstract class AuthRemoteDataSource {
   Future<AuthResponseModel> requestOtp(RequestOtpParams params);
 
   Future<AuthResponseModel> verifyOtp(VerifyOtpParams params);
+
+  Future<void> logout(String userId);
 }

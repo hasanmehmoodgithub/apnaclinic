@@ -136,6 +136,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get profileSetupSubtitle => 'Enter your personal information';
 
   @override
+  String get profileUpdateSubtitle => 'Update your personal information';
+
+  @override
   String get profileFirstNameLabel => 'First Name';
 
   @override
@@ -200,6 +203,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get profileSaveCta => 'Save';
+
+  @override
+  String get profileUpdateCta => 'Update Profile';
 
   @override
   String get profileSetupHeaderTitle => 'Profile Setup';
@@ -353,6 +359,56 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get pharmacyCurrencyPrefix => 'Rs. ';
+
+  @override
+  String get pharmacyBookingOrderPrefix => 'Order no';
+
+  @override
+  String get pharmacyBookingMedicineName => 'O-ZEETINE Capsules 6/25MG';
+
+  @override
+  String get pharmacyBookingMedicineQty => '2';
+
+  @override
+  String get pharmacyBookingCurrencyCompact => 'Rs.';
+
+  @override
+  String get pharmacyBookingInvoiceFileName => 'E-Invoice.pdf';
+
+  @override
+  String get pharmacyBookingDeliveryCity => 'Islamabad';
+
+  @override
+  String get pharmacyBookingDeliveryAddress =>
+      'Office #7 2nd Floor Plaza 2000, I-8 Markaz Islamabad.';
+
+  @override
+  String get pharmacyBookingOrderStatusTitle => 'Order Status';
+
+  @override
+  String get pharmacyBookingStatusConfirmed => 'Confirmed';
+
+  @override
+  String get pharmacyBookingStatusReadyForDispatch => 'Ready for Dispatch';
+
+  @override
+  String get pharmacyBookingStatusDispatched => 'Dispatched / Shipped';
+
+  @override
+  String get pharmacyBookingStatusCompleted => 'Completed';
+
+  @override
+  String get pharmacyBookingStatusCancelled => 'Order Cancel';
+
+  @override
+  String get pharmacyBookingFeedbackTitle => 'Your Feedback';
+
+  @override
+  String get pharmacyBookingFeedbackSubtitle =>
+      'We hope your medications have been helpful. Please take a moment to share your feedback on order #PH123456.';
+
+  @override
+  String get pharmacyBookingFeedbackHint => 'Write your feedback...';
 
   @override
   String get onboardingSkip => 'Skip';
@@ -520,6 +576,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String dashboardHello(String name) {
     return 'Hello, $name';
   }
+
+  @override
+  String get dashboardGuestName => 'Guest';
 
   @override
   String get dashboardSearchHint => 'Search Medicine, Doctor, Test....';

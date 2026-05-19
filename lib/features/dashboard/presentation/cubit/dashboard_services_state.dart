@@ -13,6 +13,9 @@ abstract class DashboardServicesState with _$DashboardServicesState {
     @Default(StateStatus.idle) StateStatus ourServicesLoadingStateStatus,
     @Default(StateStatus.idle) StateStatus promotionalBannerLoadingStateStatus,
 
+    /// Incremented after a successful user-profile sync so the home header can rebuild.
+    @Default(0) int profileSyncNonce,
+
     // Data
     @Default([]) List<OurServiceEntity> servicesList,
     String? servicesErrorMessage,

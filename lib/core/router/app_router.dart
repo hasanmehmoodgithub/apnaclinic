@@ -1,4 +1,5 @@
 import 'package:apnaclinic/features/pharmacy/presentation/screens/pharmacy_main_screen.dart';
+import 'package:chucker_flutter/chucker_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -35,7 +36,9 @@ import '../../features/bookings/presentation/screens/surgery_booking_details_scr
 import '../../features/pharmacy/domain/entities/pharmacy_medicine_entity.dart';
 import '../../features/pharmacy/presentation/screens/pharmacy_cart_screen.dart';
 import '../../features/pharmacy/presentation/screens/pharmacy_checkout_screen.dart';
+import '../../features/pharmacy/presentation/screens/pharmacy_booking_details_screen.dart';
 import '../../features/pharmacy/presentation/screens/pharmacy_screen.dart';
+import '../../features/pharmacy/presentation/widgets/pharmacy_booking_details_body_widget.dart';
 import '../../features/search/presentation/cubit/search_cubit.dart';
 import '../../features/search/presentation/screens/search_screen.dart';
 import '../../features/surgery/presentation/cubit/surgery_cubit.dart';
@@ -46,6 +49,7 @@ import '../../features/account/presentation/screens/add_account_screen.dart';
 import '../../features/onboarding/presentation/screens/onboarding_screen.dart';
 import '../../features/auth/presentation/screens/login_screen.dart';
 import '../di/dependency_injection.dart';
+import '../utils/chucker_guard.dart';
 import '../../features/profile_setup/presentation/screens/profile_setup_screen.dart';
 import 'app_routes.dart';
 import 'router_observer.dart';
@@ -53,7 +57,10 @@ import 'router_observer.dart';
 class AppRouter {
   static final GoRouter router = GoRouter(
     initialLocation: AppRoutes.path(AppRoutes.splash),
-    observers: [GoRouterObserver()], // Router debug logging
+    observers: [
+      GoRouterObserver(),
+      if (ChuckerGuard.isEnabled) ChuckerFlutter.navigatorObserver,
+    ], // Router debug logging
 
     routes: [
       GoRoute(
@@ -220,6 +227,31 @@ class AppRouter {
         path: AppRoutes.path(AppRoutes.pharmacyCheckout),
         name: AppRoutes.pharmacyCheckout,
         builder: (context, state) => const PharmacyCheckoutScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.path(AppRoutes.pharmacyBookingDetails),
+        name: AppRoutes.pharmacyBookingDetails,
+        builder: (context, state) {
+          final extra = state.extra;
+          final data = extra is Map ? Map<String, dynamic>.from(extra) : null;
+          final rawStatus = (data?['status'] as String? ?? '').trim();
+          final status = switch (rawStatus) {
+            'completed' => PharmacyBookingTimelineStatus.completed,
+            'delivered' => PharmacyBookingTimelineStatus.completed,
+            'cancelled' => PharmacyBookingTimelineStatus.cancelled,
+            'shipped' => PharmacyBookingTimelineStatus.shipped,
+            'ready_to_dispatch' => PharmacyBookingTimelineStatus.readyForDispatch,
+            'readyForDispatch' => PharmacyBookingTimelineStatus.readyForDispatch,
+            'confirmed' => PharmacyBookingTimelineStatus.confirmed,
+            _ => PharmacyBookingTimelineStatus.confirmed,
+          };
+          return PharmacyBookingDetailsScreen(
+            orderNo: (data?['orderNo'] as String?)?.trim().isNotEmpty == true
+                ? (data!['orderNo'] as String).trim()
+                : '1223',
+            status: status,
+          );
+        },
       ),
       GoRoute(
         path: AppRoutes.path(AppRoutes.search),

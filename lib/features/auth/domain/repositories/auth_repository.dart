@@ -7,4 +7,6 @@ abstract class AuthRepository {
   Future<Either<ErrorMsg, AuthEntity>> requestOtp(RequestOtpParams params);
 
   Future<Either<ErrorMsg, AuthEntity>> verifyOtp(VerifyOtpParams params);
+
+  Future<Either<ErrorMsg, void>> logout(String userId);
 }

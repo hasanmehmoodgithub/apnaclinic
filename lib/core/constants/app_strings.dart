@@ -28,4 +28,6 @@ class AppStrings {
       'Unable to send OTP right now. Please try again.';
   static const String authVerifyOtpError =
       'Unable to verify OTP right now. Please try again.';
+  static const String authLogoutError =
+      'Unable to logout right now. Please try again.';
 }

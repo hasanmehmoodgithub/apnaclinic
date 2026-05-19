@@ -101,7 +101,7 @@ class _DoctorConsultationCheckoutScreenState
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [Color(0xFFAEE3E3), Color(0xFFF5F7F8)],
-            stops: [0.0, 0.35],
+            stops: [0.5, 1.0],
           ),
         ),
         child: SafeArea(
@@ -124,7 +124,7 @@ class _DoctorConsultationCheckoutScreenState
                 child: Container(
                   width: double.infinity,
                   decoration: BoxDecoration(
-                    color: const Color(0xFFF3F5F7),
+                    color: Colors.white,
                     borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
                   ),
                   child: BlocBuilder<

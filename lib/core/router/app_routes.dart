@@ -24,6 +24,7 @@ class AppRoutes {
   static const String pharmacyMain = 'pharmacyMain';
   static const String pharmacyCart = 'pharmacyCart';
   static const String pharmacyCheckout = 'pharmacyCheckout';
+  static const String pharmacyBookingDetails = 'pharmacy-booking-details';
   static const String search = 'search';
   static const String surgery = 'surgery';
   static const String surgeryBookingDetails = 'surgery-booking-details';

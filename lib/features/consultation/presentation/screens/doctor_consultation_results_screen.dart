@@ -255,13 +255,14 @@ class _DoctorConsultationResultsScreenState
                 title: l10n.consultationSpecialistTitle,
                 onBackTap: context.pop,
               ),
-              SizedBox(height: 8.h),
-              AppShimmerCard(
-                width: 240.w,
-                height: 178.h,
-                borderRadius: 14.r,
+              ConsultationHeroBannerWidget(
+                doctorImage: Image.asset(
+                  ConsultationUiConfig.heroDoctorAsset,
+                  width: 188.w,
+                  height: 177.h,
+                  fit: BoxFit.cover,
+                ),
               ),
-              SizedBox(height: 10.h),
               Expanded(
                 child: Container(
                   width: double.infinity,

@@ -175,7 +175,13 @@ class PharmacyCheckoutBodyWidget extends StatelessWidget {
                           await showPharmacyOrderPlacedDialog(context);
                           if (!context.mounted) return;
                           context.read<PharmacyCubit>().clearCart();
-                          context.goNamed(AppRoutes.pharmacyMain);
+                          context.goNamed(
+                            AppRoutes.pharmacyBookingDetails,
+                            extra: const {
+                              'orderNo': '1223',
+                              'status': 'confirmed',
+                            },
+                          );
                         },
                 ),
               ),

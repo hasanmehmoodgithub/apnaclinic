@@ -50,6 +50,41 @@ class AppPrefImpl implements AppPref {
   String getToken() => _getDecrypted(AppPrefKeys.token, '');
 
   @override
+  Future<bool> setRefreshToken(String token, {String? defaultValue}) async {
+    final val = token.isNotEmpty ? token : (defaultValue ?? '');
+    return _setEncrypted(AppPrefKeys.refreshToken, val);
+  }
+
+  @override
+  String getRefreshToken() => _getDecrypted(AppPrefKeys.refreshToken, '');
+
+  @override
+  Future<bool> setAccessTokenExpiresIn(
+    int milliseconds, {
+    int? defaultValue,
+  }) async {
+    final val = milliseconds > 0 ? milliseconds : (defaultValue ?? 0);
+    return _instance.setInt(AppPrefKeys.accessTokenExpiresIn, val);
+  }
+
+  @override
+  int getAccessTokenExpiresIn() =>
+      _instance.getInt(AppPrefKeys.accessTokenExpiresIn) ?? 0;
+
+  @override
+  Future<bool> setRefreshTokenExpiresIn(
+    int milliseconds, {
+    int? defaultValue,
+  }) async {
+    final val = milliseconds > 0 ? milliseconds : (defaultValue ?? 0);
+    return _instance.setInt(AppPrefKeys.refreshTokenExpiresIn, val);
+  }
+
+  @override
+  int getRefreshTokenExpiresIn() =>
+      _instance.getInt(AppPrefKeys.refreshTokenExpiresIn) ?? 0;
+
+  @override
   Future<bool> setUserId(String userId, {String? defaultValue}) async {
     final val = userId.isNotEmpty ? userId : (defaultValue ?? '');
     return _setEncrypted(AppPrefKeys.userId, val);

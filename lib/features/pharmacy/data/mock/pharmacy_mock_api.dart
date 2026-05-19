@@ -136,4 +136,64 @@ class PharmacyMockApi {
       'quantity': quantity,
     };
   }
+
+  Future<Map<String, dynamic>> getPharmacyBookingsSuccessResponse() async {
+    await Future<void>.delayed(const Duration(milliseconds: 550));
+    return {
+      'success': true,
+      'message': 'Bookings fetched successfully',
+      'bookings': [
+        {
+          'orderNo': '1223',
+          'title': 'O-ZEETINE Capsules 6/25MG',
+          'quantity': 2,
+          'unitPrice': 1900.0,
+          'total': 4040.0,
+          'status': 'confirmed',
+          'imageUrl':
+              'https://bio-labs.net/wp-content/uploads/2024/01/75-72-74-mockup.webp',
+        },
+        {
+          'orderNo': '1241',
+          'title': 'O-ZEETINE Capsules 6/25MG',
+          'quantity': 2,
+          'unitPrice': 1900.0,
+          'total': 4040.0,
+          'status': 'ready_to_dispatch',
+          'imageUrl':
+              'https://bio-labs.net/wp-content/uploads/2024/01/75-72-74-mockup.webp',
+        },
+        {
+          'orderNo': '1265',
+          'title': 'Bio-D3 Ampoule',
+          'quantity': 1,
+          'unitPrice': 900.0,
+          'total': 1078.0,
+          'status': 'shipped',
+          'imageUrl':
+              'https://bio-labs.net/wp-content/uploads/2019/12/13-Bio-D3-Inj_.webp',
+        },
+        {
+          'orderNo': '1281',
+          'title': 'Bio-Col Tablets (Vitamin B12 + Folic Acid)',
+          'quantity': 2,
+          'unitPrice': 450.0,
+          'total': 1078.0,
+          'status': 'completed',
+          'imageUrl':
+              'https://bio-labs.net/wp-content/uploads/2022/10/12-Bio-Col-Tabs.webp',
+        },
+        {
+          'orderNo': '1290',
+          'title': 'O-ZEETINE Capsules 6/25MG',
+          'quantity': 2,
+          'unitPrice': 1900.0,
+          'total': 4040.0,
+          'status': 'cancelled',
+          'imageUrl':
+              'https://bio-labs.net/wp-content/uploads/2024/01/75-72-74-mockup.webp',
+        },
+      ],
+    };
+  }
 }

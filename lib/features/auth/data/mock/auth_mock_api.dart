@@ -1,16 +1,22 @@
+import 'package:flutter/foundation.dart';
+
 import '../../../../core/config/mock_config.dart';
 
 class AuthMockApi {
-  static bool useMockResponses = MockConfig.enableMocks;
+  static bool useMockResponses = MockConfig.enableAuthMocks;
 
   Future<Map<String, dynamic>> requestOtpSuccessResponse({
     required String phoneNumber,
+    required String channel,
   }) async {
     return <String, dynamic>{
       'success': true,
       'message': 'OTP sent successfully.',
       'data': <String, dynamic>{
-        'phoneNumber': phoneNumber,
+        'msisdn': phoneNumber,
+        'channel': channel,
+        'expiresIn': 300,
+        'generationAttemptCount': 1,
       },
     };
   }
@@ -31,9 +37,18 @@ class AuthMockApi {
       'success': true,
       'message': 'Login successful.',
       'data': <String, dynamic>{
-        'token': 'mock-token',
+        'tokenType': 'Bearer',
+        'accessToken': <String, dynamic>{
+          'token': 'mock-token',
+          'expiresIn': 900000,
+        },
+        'refreshToken': <String, dynamic>{
+          'token': 'mock-refresh-token',
+          'expiresIn': 604800000,
+        },
         'userId': phoneNumber,
-        'isOnboardingCompleted': true,
+        'isOnboardingCompleted': isOnboardingCompleted,
+        'userOnboarding': !isOnboardingCompleted,
         'user': <String, dynamic>{
           'firstName': isOnboardingCompleted ? 'Hasan' : '',
           'lastName': isOnboardingCompleted ? 'Ali' : '',

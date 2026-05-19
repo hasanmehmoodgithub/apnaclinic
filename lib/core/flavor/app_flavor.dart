@@ -2,22 +2,24 @@
 enum AppFlavor {
   development(
     name: 'Development',
-    apiBaseUrl: 'https://dev-api.example.com/api',
-    appName: 'My App (Dev)',
+    apiBaseUrl: 'http://apnaclinic-auth.apps.jpocp.jazz.com.pk',
+    //local
+    //apiBaseUrl: 'http://10.124.74.109:3000',
+    appName: 'Apna Clinic(Dev)',
     enableLogging: true,
     enableDebugFeatures: true,
   ),
   staging(
     name: 'Staging',
     apiBaseUrl: 'https://staging-api.example.com/api',
-    appName: 'My App (Staging)',
+    appName: 'Apna Clinic(Staging)',
     enableLogging: true,
     enableDebugFeatures: false,
   ),
   production(
     name: 'Production',
-    apiBaseUrl: 'https://api.example.com/api',
-    appName: 'My App',
+    apiBaseUrl: 'http://apnaclinic-auth.apps.jpocp.jazz.com.pk',
+    appName: 'Apna Clinic',
     enableLogging: false,
     enableDebugFeatures: false,
   );

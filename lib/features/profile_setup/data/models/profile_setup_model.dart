@@ -1,3 +1,6 @@
+import 'package:dio/dio.dart';
+import 'package:intl/intl.dart';
+
 import '../../domain/models/profile_setup_data.dart';
 
 class ProfileSetupModel {
@@ -24,7 +27,7 @@ class ProfileSetupModel {
       gender: (json['gender'] ?? '').toString(),
       email: (json['email'] ?? '').toString(),
       address: (json['address'] ?? '').toString(),
-      dateOfBirth: (json['dateOfBirth'] ?? '').toString(),
+      dateOfBirth: (json['dateOfBirth'] ?? json['dob'] ?? '').toString(),
     );
   }
 }
@@ -67,13 +70,27 @@ class ProfileSetupResponseModel {
   }
 }
 
-Map<String, dynamic> profileSetupSavePayload(ProfileSetupData data) {
-  return {
+Future<FormData> profileSetupSaveFormData(ProfileSetupData data) async {
+  final formattedDob = DateFormat('dd-MM-yyyy').format(
+    DateTime(
+      data.dateOfBirth.year,
+      data.dateOfBirth.month,
+      data.dateOfBirth.day,
+    ),
+  );
+  final payload = <String, dynamic>{
     'firstName': data.firstName,
     'lastName': data.lastName,
     'gender': data.gender,
     'email': data.email,
     'address': data.address,
-    'dateOfBirth': data.dateOfBirth.toIso8601String(),
+    'dob': formattedDob,
   };
+
+  final profileImagePath = data.profileImagePath;
+  if (profileImagePath != null && profileImagePath.isNotEmpty) {
+    payload['image'] = await MultipartFile.fromFile(profileImagePath);
+  }
+
+  return FormData.fromMap(payload);
 }

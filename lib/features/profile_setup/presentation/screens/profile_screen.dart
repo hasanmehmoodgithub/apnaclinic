@@ -17,11 +17,7 @@ import '../widgets/profile_avatar_section.dart';
 import '../widgets/profile_header_bar.dart';
 
 class ProfileScreen extends StatefulWidget {
-  const ProfileScreen({
-    super.key,
-    this.showBackButton = true,
-    this.onBack,
-  });
+  const ProfileScreen({super.key, this.showBackButton = true, this.onBack});
 
   final bool showBackButton;
   final VoidCallback? onBack;
@@ -98,8 +94,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 width: double.infinity,
                 decoration: BoxDecoration(
                   color: AppColors.clrWhite,
-                  borderRadius:
-                      BorderRadius.vertical(top: Radius.circular(42.r)),
+                  borderRadius: BorderRadius.vertical(
+                    top: Radius.circular(42.r),
+                  ),
                 ),
                 child: isLoggedIn
                     ? LoggedInProfileContent(
@@ -113,12 +110,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         isAccountDetailsLoading: _isAccountDetailsLoading,
                         accountDetailsError: _accountDetailsError,
                         onDeleteAccountDetailTap: _onDeleteAccountDetailTap,
-                        onAccountTap: () =>
-                            context.push(AppRoutes.path(AppRoutes.accountDetails)),
-                        onEditTap: () =>
-                            context.push(AppRoutes.path(AppRoutes.profileSetup)),
+                        onAccountTap: () => context.push(
+                          AppRoutes.path(AppRoutes.accountDetails),
+                        ),
+                        onEditTap: () async {
+                          final updated = await context.push<bool>(
+                            AppRoutes.path(AppRoutes.profileSetup),
+                          );
+                          if (mounted && updated == true) {
+                            setState(() {});
+                          }
+                        },
                         onAddAccountTap: () async {
-                          await context.push(AppRoutes.path(AppRoutes.addAccount));
+                          await context.push(
+                            AppRoutes.path(AppRoutes.addAccount),
+                          );
                           if (mounted) setState(() {});
                         },
                         onDeleteAccountTap: _onDeleteAccountTap,
