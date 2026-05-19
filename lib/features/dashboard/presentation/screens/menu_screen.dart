@@ -48,8 +48,8 @@ class _MenuScreenState extends State<MenuScreen> {
     final displayName = fullName.isEmpty
         ? l10n.dashboardMenuGuestUser
         : fullName;
-    final displayPhone = phone.isEmpty
-        ? l10n.dashboardMenuSignInManageAccount
+    final displayPhone = !_isLoggedIn
+        ? l10n.dashboardMenuSignInContinue
         : phone;
     final mainItems = [
       _MenuItem(
@@ -102,9 +102,7 @@ class _MenuScreenState extends State<MenuScreen> {
                           name: _isLoggedIn
                               ? displayName
                               : l10n.dashboardMenuGuestUser,
-                          phone: _isLoggedIn
-                              ? displayPhone
-                              : l10n.dashboardMenuSignInContinue,
+                          phone: displayPhone,
                           imageUrl: _isLoggedIn
                               ? userLocal?.imageUrl
                               : null,

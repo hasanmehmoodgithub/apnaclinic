@@ -61,44 +61,56 @@ class _ApnaClinicAppState extends State<ApnaClinicApp> {
       debugShowCheckedModeBanner: false,
       routerConfig: AppRouter.router,
       builder: (context, child) {
-        final appChild = child ?? const SizedBox.shrink();
-        return ScreenUtilInit(
-          designWidth: 430,
-          designHeight: 932,
-          useScaleByDefault: true,
-          child: ChuckerGuard.isEnabled
-              ? Stack(
-                  children: [
-                    appChild,
-                    Positioned(
-                      right: 16.w,
-                      bottom: 24.h,
-                      child: Material(
-                        color: Colors.transparent,
-                        child: InkWell(
-                          onTap: () => ChuckerFlutter.showChuckerScreen(),
-                          borderRadius: BorderRadius.circular(28.r),
-                          child: Container(
-                            width: 56.w,
-                            height: 56.h,
-                            decoration: BoxDecoration(
-                              color: Colors.black.withValues(alpha: 0.6),
-                              shape: BoxShape.circle,
-                              border: Border.all(
-                                color: Colors.white.withValues(alpha: 0.7),
-                              ),
+        final mediaQueryData = MediaQuery.of(context);
+        final clampedScale = ScreenUtilX.clampedTextScale(mediaQueryData);
+
+        return MediaQuery(
+          data: mediaQueryData.copyWith(
+            textScaler: TextScaler.linear(clampedScale),
+          ),
+          child: Builder(
+            builder: (context) {
+              ScreenUtilX.init(
+                context,
+                designWidth: 430,
+                designHeight: 932,
+                useScaleByDefault: false,
+              );
+              final appChild = child ?? const SizedBox.shrink();
+              if (!ChuckerGuard.isEnabled) return appChild;
+              return Stack(
+                children: [
+                  appChild,
+                  Positioned(
+                    right: 16,
+                    bottom: 24,
+                    child: Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        onTap: () => ChuckerFlutter.showChuckerScreen(),
+                        borderRadius: BorderRadius.circular(28),
+                        child: Container(
+                          width: 56,
+                          height: 56,
+                          decoration: BoxDecoration(
+                            color: Colors.black.withValues(alpha: 0.6),
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: Colors.white.withValues(alpha: 0.7),
                             ),
-                            child: const Icon(
-                              Icons.bug_report_rounded,
-                              color: Colors.white,
-                            ),
+                          ),
+                          child: const Icon(
+                            Icons.bug_report_rounded,
+                            color: Colors.white,
                           ),
                         ),
                       ),
                     ),
-                  ],
-                )
-              : appChild,
+                  ),
+                ],
+              );
+            },
+          ),
         );
       },
       theme: ThemeData(

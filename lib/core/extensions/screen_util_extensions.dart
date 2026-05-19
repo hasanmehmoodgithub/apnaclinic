@@ -1,3 +1,5 @@
+import 'dart:io' show Platform;
+
 import 'package:flutter/widgets.dart';
 
 /// Lightweight ScreenUtil-style helper.
@@ -12,8 +14,16 @@ class ScreenUtilX {
   static double _scaleWidth = 1;
   static double _scaleHeight = 1;
   static double _scaleRadius = 1;
+  static double _textScaleFactor = 1;
   static bool _useScaleByDefault = true;
   static bool _initialized = false;
+
+  /// Platform-specific clamp on [MediaQueryData.textScaler] for consistent UI text.
+  static double clampedTextScale(MediaQueryData mediaQueryData) {
+    return Platform.isIOS
+        ? mediaQueryData.textScaler.scale(1.0).clamp(1.02, 1.25)
+        : mediaQueryData.textScaler.scale(1.0).clamp(0.88, 0.93);
+  }
 
   static void init(
     BuildContext context, {
@@ -21,12 +31,19 @@ class ScreenUtilX {
     double designHeight = 932,
     bool useScaleByDefault = true,
   }) {
-    final size = MediaQuery.sizeOf(context);
+    final mediaQueryData = MediaQuery.of(context);
+    final size = mediaQueryData.size;
+    _textScaleFactor = clampedTextScale(mediaQueryData);
     _designWidth = designWidth;
     _designHeight = designHeight;
     _scaleWidth = size.width / _designWidth;
     _scaleHeight = size.height / _designHeight;
     _scaleRadius = _scaleWidth < _scaleHeight ? _scaleWidth : _scaleHeight;
+    if (useScaleByDefault) {
+      _scaleWidth *= _textScaleFactor;
+      _scaleHeight *= _textScaleFactor;
+      _scaleRadius *= _textScaleFactor;
+    }
     _useScaleByDefault = useScaleByDefault;
     _initialized = true;
   }
@@ -61,8 +78,11 @@ class ScreenUtilX {
   }
 
   /// Font value with optional scaling toggle.
+  ///
+  /// [fromScale] false keeps design px; platform [clampedTextScale] still applies.
   static double font(num value, {bool fromScale = true}) {
-    return fromScale ? scaleFont(value) : value.toDouble();
+    final base = fromScale ? scaleRadius(value) : value.toDouble();
+    return base * _textScaleFactor;
   }
 
   /// Width value respecting app default scale mode.
@@ -123,33 +143,6 @@ extension ScreenUtilNumExtension on num {
   /// Font size with optional scaling control.
   double spv({bool fromScale = true}) {
     return ScreenUtilX.font(this, fromScale: fromScale);
-  }
-}
-
-/// Wraps the app so [ScreenUtilX] scales from [MediaQuery] on every size change.
-class ScreenUtilInit extends StatelessWidget {
-  const ScreenUtilInit({
-    super.key,
-    required this.child,
-    this.designWidth = 430,
-    this.designHeight = 932,
-    this.useScaleByDefault = true,
-  });
-
-  final Widget child;
-  final double designWidth;
-  final double designHeight;
-  final bool useScaleByDefault;
-
-  @override
-  Widget build(BuildContext context) {
-    ScreenUtilX.init(
-      context,
-      designWidth: designWidth,
-      designHeight: designHeight,
-      useScaleByDefault: useScaleByDefault,
-    );
-    return child;
   }
 }
 

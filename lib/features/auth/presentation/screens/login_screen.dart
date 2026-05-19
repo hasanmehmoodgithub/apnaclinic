@@ -66,50 +66,29 @@ class _LoginViewState extends State<_LoginView> {
                   top: Radius.circular(30.r),
                 ),
               ),
-              child: LayoutBuilder(
-                builder: (context, constraints) {
-                  final horizontalPadding = 30.w;
-                  final topPadding = 22.h;
-                  final bottomPadding = 20.h;
-                  return SingleChildScrollView(
-                    padding: EdgeInsets.fromLTRB(
-                      horizontalPadding,
-                      topPadding,
-                      horizontalPadding,
-                      bottomPadding,
-                    ),
-                    keyboardDismissBehavior:
-                        ScrollViewKeyboardDismissBehavior.onDrag,
-                    child: ConstrainedBox(
-                      constraints: BoxConstraints(
-                        minHeight: constraints.maxHeight -
-                            topPadding -
-                            bottomPadding,
+              child: Padding(
+                padding: EdgeInsets.fromLTRB(30.w, 22.h, 30.w, 20.h),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      LoginPhoneInputSection(
+                        controller: _phoneController,
+                        onChanged: _handlePhoneChanged,
                       ),
-                      child: Form(
-                        key: _formKey,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            LoginPhoneInputSection(
-                              controller: _phoneController,
-                              onChanged: _handlePhoneChanged,
-                            ),
-                            LoginOtpSection(
-                              controller: _otpController,
-                              focusNode: _otpFocusNode,
-                              onResendTap: _handleResendOtp,
-                            ),
-                            const Spacer(),
-                            LoginSubmitButton(onPressed: _submit),
-                            SizedBox(height: 20.h),
-                            const LoginLegalText(),
-                          ],
-                        ),
+                      LoginOtpSection(
+                        controller: _otpController,
+                        focusNode: _otpFocusNode,
+                        onResendTap: _handleResendOtp,
                       ),
-                    ),
-                  );
-                },
+                      const Spacer(),
+                      LoginSubmitButton(onPressed: _submit),
+                      SizedBox(height: 20.h),
+                      const LoginLegalText(),
+                    ],
+                  ),
+                ),
               ),
             ),
           ),
