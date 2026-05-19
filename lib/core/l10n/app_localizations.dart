@@ -2084,6 +2084,12 @@ abstract class AppLocalizations {
   /// **'No lab test bookings yet.'**
   String get bookingsLabTestEmptyDescription;
 
+  /// No description provided for @bookingsSurgeryEmptyDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'No surgery bookings yet.'**
+  String get bookingsSurgeryEmptyDescription;
+
   /// No description provided for @bookingsStatusLabel.
   ///
   /// In en, this message translates to:

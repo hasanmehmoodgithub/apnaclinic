@@ -23,20 +23,6 @@ class SurgeryContentViewWidget extends StatefulWidget {
 }
 
 class _SurgeryContentViewWidgetState extends State<SurgeryContentViewWidget> {
-  static const Map<String, String> _procedureInfo = {
-    'acl':
-        'Anterior cruciate ligament (ACL) is in the middle of the knee. It prevents the shin bone from sliding out in front of the thigh bone. Posterior cruciate ligament (PCL) works with the ACL. It prevents the shin bone from sliding backward under the femur.',
-    'cataract-eye': 'Cataract surgery removes the cloudy lens and improves vision.',
-    'c-section': 'C-section is a surgical procedure to deliver a baby.',
-    'fistula': 'Fistula surgery treats abnormal connections between organs.',
-    'lasik-eye': 'Uses a laser to fix vision issues like nearsightedness.',
-    'liposuction': 'Liposuction removes excess fat deposits from selected areas.',
-    'cataract-surgery': 'Cataract surgery replaces the cloudy eye lens.',
-    'stent-procedure': 'Stent procedure opens blocked blood vessels.',
-    'gallbladder-removal': 'Gallbladder removal treats stones or inflammation.',
-    'breast-surgery': 'Breast surgery includes therapeutic and corrective procedures.',
-  };
-
   OverlayEntry? _tooltipEntry;
 
   @override
@@ -98,8 +84,8 @@ class _SurgeryContentViewWidgetState extends State<SurgeryContentViewWidget> {
                     onTap: () => _openSurgeryBooking(context, item.name, state),
                     onInfoTap: (tileContext) => _showProcedureInfo(
                       tileContext,
-                      item.id,
                       item.name,
+                      item.description,
                     ),
                   );
                 },
@@ -133,14 +119,14 @@ class _SurgeryContentViewWidgetState extends State<SurgeryContentViewWidget> {
 
   void _showProcedureInfo(
     BuildContext tileContext,
-    String procedureId,
     String title,
+    String description,
   ) {
     _removeTooltip();
 
-    final description =
-        _procedureInfo[procedureId] ??
-        'Detailed information for this procedure will be shared by our representative.';
+    final effectiveDescription = description.trim().isEmpty
+        ? 'Detailed information for this procedure will be shared by our representative.'
+        : description;
 
     final renderBox = tileContext.findRenderObject() as RenderBox?;
     if (renderBox == null || !renderBox.attached) {
@@ -155,7 +141,7 @@ class _SurgeryContentViewWidgetState extends State<SurgeryContentViewWidget> {
       builder:
           (_) => SurgeryProcedureInfoTooltipWidget(
             title: title,
-            description: description,
+            description: effectiveDescription,
             tileOffset: tileOffset,
             tileSize: tileSize,
             onDismiss: _removeTooltip,

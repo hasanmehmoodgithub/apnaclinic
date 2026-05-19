@@ -3,17 +3,20 @@ class SurgeryProcedureModel {
     required this.id,
     required this.name,
     this.highlighted = false,
+    this.description = '',
   });
 
   final String id;
   final String name;
   final bool highlighted;
+  final String description;
 
   factory SurgeryProcedureModel.fromJson(Map<String, dynamic> json) {
     return SurgeryProcedureModel(
       id: (json['id'] ?? '').toString(),
       name: (json['name'] ?? '').toString(),
       highlighted: json['highlighted'] == true,
+      description: (json['description'] ?? '').toString(),
     );
   }
 }

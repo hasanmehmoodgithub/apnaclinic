@@ -335,6 +335,7 @@
   "bookingsTabLabTest": "لیب ٹیسٹ",
   "bookingsTabPharmacy": "فارمیسی",
   "bookingsLabTestEmptyDescription": "ابھی تک کوئی لیب ٹیسٹ بکنگ نہیں ہے۔",
+  "bookingsSurgeryEmptyDescription": "ابھی تک کوئی سرجری بکنگ نہیں ہے۔",
   "bookingsStatusLabel": "اسٹیٹس",
   "bookingsDateLabel": "تاریخ",
   "bookingsDateCreatedLabel": "بننے کی تاریخ",

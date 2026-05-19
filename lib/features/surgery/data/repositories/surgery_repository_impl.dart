@@ -2,10 +2,14 @@ import 'dart:developer';
 
 import '../../../../core/functional/functional_export.dart';
 import '../../domain/entities/surgery_booking_request_entity.dart';
+import '../../domain/entities/surgery_doctor_entity.dart';
+import '../../domain/entities/surgery_patient_form_entity.dart';
 import '../../domain/entities/surgery_procedure_entity.dart';
 import '../../domain/repositories/surgery_repository.dart';
 import '../data_sources/surgery_remote_data_source.dart';
+import '../mappers/surgery_doctors_mapper.dart';
 import '../mappers/surgery_mapper.dart';
+import '../mappers/surgery_patient_form_mapper.dart';
 
 class SurgeryRepositoryImpl implements SurgeryRepository {
   SurgeryRepositoryImpl({required this.remoteDataSource});
@@ -21,6 +25,38 @@ class SurgeryRepositoryImpl implements SurgeryRepository {
       return Right(entity);
     } catch (e) {
       log('getSurgeryContent repository error: $e');
+      return Left(e.toString());
+    }
+  }
+
+  @override
+  Future<Either<ErrorMsg, SurgeryDoctorsEntity>> getSurgeryDoctors({
+    required String procedureName,
+    required String city,
+  }) async {
+    try {
+      final model = await remoteDataSource.getSurgeryDoctors(
+        procedureName: procedureName,
+        city: city,
+      );
+      return Right(SurgeryDoctorsMapper.toEntity(model));
+    } catch (e) {
+      log('getSurgeryDoctors repository error: $e');
+      return Left(e.toString());
+    }
+  }
+
+  @override
+  Future<Either<ErrorMsg, SurgeryPatientFormEntity>> getSurgeryPatientForm({
+    required String doctorId,
+  }) async {
+    try {
+      final model = await remoteDataSource.getSurgeryPatientForm(
+        doctorId: doctorId,
+      );
+      return Right(SurgeryPatientFormMapper.toEntity(model));
+    } catch (e) {
+      log('getSurgeryPatientForm repository error: $e');
       return Left(e.toString());
     }
   }
