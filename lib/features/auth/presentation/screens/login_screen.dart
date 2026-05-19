@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../../components/widgets/app_button.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/enums/app_enums.dart';
@@ -10,11 +9,11 @@ import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/router/app_routes.dart';
 import '../cubit/auth_cubit.dart';
-import '../cubit/auth_state.dart';
 import '../widgets/auth_top_header_widget.dart';
 import '../widgets/login_legal_text.dart';
 import '../widgets/login_otp_section.dart';
 import '../widgets/login_phone_input_section.dart';
+import '../widgets/login_submit_button.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
@@ -67,89 +66,50 @@ class _LoginViewState extends State<_LoginView> {
                   top: Radius.circular(30.r),
                 ),
               ),
-              child: Padding(
-                padding: EdgeInsets.fromLTRB(30.w, 22.h, 30.w, 20.h),
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      BlocSelector<AuthCubit, AuthState, (bool, String?)>(
-                        selector: (state) =>
-                            (state.otpRequested, state.errorMessage),
-                        builder: (context, values) {
-                          final (otpRequested, errorMessage) = values;
-                          return LoginPhoneInputSection(
-                            controller: _phoneController,
-                            onChanged: _handlePhoneChanged,
-                            errorText:
-                                otpRequested ? null : errorMessage,
-                          );
-                        },
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  final horizontalPadding = 30.w;
+                  final topPadding = 22.h;
+                  final bottomPadding = 20.h;
+                  return SingleChildScrollView(
+                    padding: EdgeInsets.fromLTRB(
+                      horizontalPadding,
+                      topPadding,
+                      horizontalPadding,
+                      bottomPadding,
+                    ),
+                    keyboardDismissBehavior:
+                        ScrollViewKeyboardDismissBehavior.onDrag,
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(
+                        minHeight: constraints.maxHeight -
+                            topPadding -
+                            bottomPadding,
                       ),
-                      BlocSelector<AuthCubit, AuthState, bool>(
-                        selector: (state) => state.otpRequested,
-                        builder: (context, otpRequested) {
-                          if (!otpRequested) {
-                            return const SizedBox.shrink();
-                          }
-                          return BlocSelector<
-                            AuthCubit,
-                            AuthState,
-                            (int, bool, String?)
-                          >(
-                            selector: (state) => (
-                              state.otpSecondsRemaining,
-                              state.canResendOtp,
-                              state.errorMessage,
+                      child: Form(
+                        key: _formKey,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            LoginPhoneInputSection(
+                              controller: _phoneController,
+                              onChanged: _handlePhoneChanged,
                             ),
-                            builder: (context, values) {
-                              final (
-                                otpSecondsRemaining,
-                                canResendOtp,
-                                errorMessage,
-                              ) = values;
-                              return LoginOtpSection(
-                                controller: _otpController,
-                                focusNode: _otpFocusNode,
-                                otpSecondsRemaining: otpSecondsRemaining,
-                                canResendOtp: canResendOtp,
-                                onResendTap: _handleResendOtp,
-                                onOtpChanged: (_) => context
-                                    .read<AuthCubit>()
-                                    .clearError(),
-                                errorText: errorMessage,
-                              );
-                            },
-                          );
-                        },
+                            LoginOtpSection(
+                              controller: _otpController,
+                              focusNode: _otpFocusNode,
+                              onResendTap: _handleResendOtp,
+                            ),
+                            const Spacer(),
+                            LoginSubmitButton(onPressed: _submit),
+                            SizedBox(height: 20.h),
+                            const LoginLegalText(),
+                          ],
+                        ),
                       ),
-                      const Spacer(),
-                      BlocSelector<AuthCubit, AuthState, (bool, bool)>(
-                        selector: (state) =>
-                            (state.otpRequested, state.isLoading),
-                        builder: (context, values) {
-                          final (otpRequested, isLoading) = values;
-                          final l10n = AppLocalizations.of(context)!;
-                          return AppButton.primary(
-                            text: otpRequested
-                                ? l10n.authVerifyCta
-                                : l10n.authSendOtpCta,
-                            onPressed: isLoading ? null : _submit,
-                            isLoading: isLoading,
-                            backgroundColor: AppColors.clr0FAA9A,
-                            foregroundColor: AppColors.clrWhite,
-                            height: 62.h,
-                            borderRadius: 20.r,
-                            fontSize: (30 / 1.65).sp,
-                          );
-                        },
-                      ),
-                      SizedBox(height: 20.h),
-                      const LoginLegalText(),
-                    ],
-                  ),
-                ),
+                    ),
+                  );
+                },
               ),
             ),
           ),
@@ -207,14 +167,14 @@ class _LoginViewState extends State<_LoginView> {
     switch (result) {
       case AuthSubmitResult.otpSent:
         _clearOtpInputs();
-        // ScaffoldMessenger.of(
-        //   context,
-        // ).showSnackBar(SnackBar(content: Text(l10n.authOtpSentMessage)));
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(l10n.authOtpSentMessage)));
         break;
       case AuthSubmitResult.invalidOtp:
-        // ScaffoldMessenger.of(
-        //   context,
-        // ).showSnackBar(SnackBar(content: Text(l10n.authOtpValidationError)));
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(l10n.authOtpValidationError)));
         break;
       case AuthSubmitResult.verifiedGoHome:
         context.go(AppRoutes.path(AppRoutes.home));

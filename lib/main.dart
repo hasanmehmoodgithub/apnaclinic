@@ -17,7 +17,11 @@ void main() {
     () async {
       // Guard: Ensure Flutter binding is initialized first
       WidgetsFlutterBinding.ensureInitialized();
-      debugRepaintRainbowEnabled = true;
+      debugRepaintRainbowEnabled = false;
+      debugPaintSizeEnabled = false;
+      debugPaintBaselinesEnabled = false;
+      debugPaintPointersEnabled = false;
+      debugPaintLayerBordersEnabled = false;
       ChuckerGuard.configureIfEnabled();
       AppSystemUi.apply();
 

@@ -126,3 +126,30 @@ extension ScreenUtilNumExtension on num {
   }
 }
 
+/// Wraps the app so [ScreenUtilX] scales from [MediaQuery] on every size change.
+class ScreenUtilInit extends StatelessWidget {
+  const ScreenUtilInit({
+    super.key,
+    required this.child,
+    this.designWidth = 430,
+    this.designHeight = 932,
+    this.useScaleByDefault = true,
+  });
+
+  final Widget child;
+  final double designWidth;
+  final double designHeight;
+  final bool useScaleByDefault;
+
+  @override
+  Widget build(BuildContext context) {
+    ScreenUtilX.init(
+      context,
+      designWidth: designWidth,
+      designHeight: designHeight,
+      useScaleByDefault: useScaleByDefault,
+    );
+    return child;
+  }
+}
+

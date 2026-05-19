@@ -105,6 +105,9 @@ class _MenuScreenState extends State<MenuScreen> {
                           phone: _isLoggedIn
                               ? displayPhone
                               : l10n.dashboardMenuSignInContinue,
+                          imageUrl: _isLoggedIn
+                              ? userLocal?.imageUrl
+                              : null,
                           onActionTap: () {
                             if (!_isLoggedIn) {
                               context.push(AppRoutes.path(AppRoutes.authLogin));

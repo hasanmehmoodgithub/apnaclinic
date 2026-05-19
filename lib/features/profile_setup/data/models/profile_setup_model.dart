@@ -11,6 +11,7 @@ class ProfileSetupModel {
     required this.email,
     required this.address,
     required this.dateOfBirth,
+    required this.imageUrl,
   });
 
   final String firstName;
@@ -19,6 +20,7 @@ class ProfileSetupModel {
   final String email;
   final String address;
   final String dateOfBirth;
+  final String imageUrl;
 
   factory ProfileSetupModel.fromJson(Map<String, dynamic> json) {
     return ProfileSetupModel(
@@ -28,6 +30,7 @@ class ProfileSetupModel {
       email: (json['email'] ?? '').toString(),
       address: (json['address'] ?? '').toString(),
       dateOfBirth: (json['dateOfBirth'] ?? json['dob'] ?? '').toString(),
+      imageUrl: (json['image'] ?? json['imageUrl'] ?? '').toString(),
     );
   }
 }

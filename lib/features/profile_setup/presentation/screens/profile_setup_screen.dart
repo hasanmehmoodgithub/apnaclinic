@@ -36,6 +36,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
   final ImagePicker _imagePicker = ImagePicker();
   final appPref = sl<AppPref>();
   File? _selectedProfileImage;
+  String? _remoteImageUrl;
   bool _hasAppliedInitialData = false;
 
   @override
@@ -47,16 +48,17 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
     _lastNameController.text = userLocal?.lastName.trim() ?? '';
     _emailController.text = userLocal?.email.trim() ?? '';
     _addressController.text = userLocal?.address.trim() ?? '';
+    final cachedImageUrl = userLocal?.imageUrl.trim() ?? '';
+    _remoteImageUrl = cachedImageUrl.isEmpty ? null : cachedImageUrl;
     if (appPref.getLoginStatus() && appPref.isProfileCompleted()) {
       context.read<ProfileSetupCubit>().loadProfile();
     }
   }
 
-  ImageProvider? get _avatarProvider {
-    if (_selectedProfileImage != null) {
-      return FileImage(_selectedProfileImage!);
-    }
-    return null;
+  String? _resolveAvatarImageUrl(ProfileSetupState state) {
+    final fromProfile = state.profile?.imageUrl?.trim() ?? '';
+    if (fromProfile.isNotEmpty) return fromProfile;
+    return _remoteImageUrl;
   }
 
   Future<void> _pickProfileImage() async {
@@ -224,9 +226,13 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
       ),
     );
     if (!mounted || !success) return;
-    if (isUpdateMode && context.canPop()) {
-      context.pop(true);
-      return;
+    if (isUpdateMode) {
+      await context.read<ProfileSetupCubit>().loadProfile();
+      if (!mounted) return;
+      if (context.canPop()) {
+        context.pop(true);
+        return;
+      }
     }
     context.go(AppRoutes.path(AppRoutes.home));
   }
@@ -287,6 +293,10 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
               _lastNameController.text = profile.lastName;
               _emailController.text = profile.email;
               _addressController.text = profile.address;
+              final imageUrl = profile.imageUrl?.trim() ?? '';
+              if (imageUrl.isNotEmpty) {
+                _remoteImageUrl = imageUrl;
+              }
               _hasAppliedInitialData = true;
             },
             builder: (context, state) {
@@ -299,7 +309,6 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
               final dobLabel = state.dateOfBirth == null
                   ? l10n.profileDobHint
                   : DateFormat('MMM dd yyyy').format(state.dateOfBirth!);
-              final avatarProvider = _avatarProvider;
               final isUpdateMode = appPref.isProfileCompleted();
               return Stack(
                 children: [
@@ -308,12 +317,9 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                       ProfileSetupHeaderBar(topInset: topInset),
                       SizedBox(height: 8.h),
                       ProfileSetupAvatarPicker(
-                        avatarProvider: avatarProvider,
+                        imageUrl: _resolveAvatarImageUrl(state),
+                        selectedImageFile: _selectedProfileImage,
                         onPickImage: _pickProfileImage,
-                        onImageError: () {
-                          if (!mounted) return;
-                          setState(() => _selectedProfileImage = null);
-                        },
                       ),
                       SizedBox(height: 14.h),
                       ProfileSetupFormSection(

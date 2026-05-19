@@ -2,8 +2,9 @@ import 'package:apnaclinic/components/widgets/action_option_card.dart';
 import 'package:apnaclinic/core/constants/app_colors.dart';
 import 'package:apnaclinic/core/extensions/screen_util_extensions.dart';
 import 'package:apnaclinic/core/l10n/app_localizations.dart';
-import 'package:apnaclinic/generated/assets.dart';
 import 'package:flutter/material.dart';
+
+import '../../../../core/widgets/user_profile_avatar.dart';
 
 class MenuProfileCard extends StatelessWidget {
   const MenuProfileCard({
@@ -12,11 +13,13 @@ class MenuProfileCard extends StatelessWidget {
     required this.name,
     required this.phone,
     required this.onActionTap,
+    this.imageUrl,
   });
 
   final bool isLoggedIn;
   final String name;
   final String phone;
+  final String? imageUrl;
   final VoidCallback onActionTap;
 
   @override
@@ -46,8 +49,9 @@ class MenuProfileCard extends StatelessWidget {
         fontSize: 14.sp,
         height: 1,
       ),
-      leading: SizedBox(
-        child: Image.asset(Assets.imgPlaceHolderPerson),
+      leading: UserProfileAvatar(
+        imageUrl: imageUrl,
+        size: 52.r,
       ),
       trailing: OutlinedButton(
         onPressed: onActionTap,
