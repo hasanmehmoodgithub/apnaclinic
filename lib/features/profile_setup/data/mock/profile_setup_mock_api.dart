@@ -3,7 +3,7 @@ import '../../../../core/config/mock_config.dart';
 import '../../domain/models/profile_setup_data.dart';
 
 class ProfileSetupMockApi {
-  static bool useMockResponses = MockConfig.enableMocks;
+  static bool useMockResponses = MockConfig.enableProfileMocks;
 
   Future<Map<String, dynamic>> getProfileSetupSuccessResponse() async {
     await Future<void>.delayed(const Duration(milliseconds: 250));

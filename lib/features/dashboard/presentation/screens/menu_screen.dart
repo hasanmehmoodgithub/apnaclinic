@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
-
 import '../../../../components/widgets/app_button.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/network/api_service.dart';
+import '../../../../core/network/app_urls.dart';
+import '../../../../core/utils/app_url_launcher.dart';
 import '../../../../core/preference/app_pref.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../auth/domain/use_cases/logout_use_case.dart';
@@ -68,17 +69,11 @@ class _MenuScreenState extends State<MenuScreen> {
       MenuAboutItemData(l10n.dashboardMenuAppVersion, subtitle: '1.0'),
       MenuAboutItemData(
         l10n.dashboardMenuTerms,
-        onTap: () => launchUrl(
-          Uri.parse('https://apnaclinic.ecnstg.com/terms'),
-          mode: LaunchMode.externalApplication,
-        ),
+        onTap: () => AppUrlLauncher.open(url:AppUrls.termsAndConditions,lunchMode: LaunchMode.inAppWebView),
       ),
       MenuAboutItemData(
         l10n.dashboardMenuPrivacy,
-        onTap: () => launchUrl(
-          Uri.parse('https://apnaclinic.ecnstg.com/privacy-policy'),
-          mode: LaunchMode.externalApplication,
-        ),
+        onTap: () => AppUrlLauncher.open(url:AppUrls.privacyPolicy,lunchMode: LaunchMode.inAppWebView),
       ),
     ];
 

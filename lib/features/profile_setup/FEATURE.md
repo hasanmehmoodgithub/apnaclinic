@@ -17,7 +17,7 @@ Collect or edit user profile (name, gender, email, address, DOB, optional profil
 
 - `ProfileSetupMapper` maps API strings to `DateTime?` using ISO `DateTime.tryParse` first, then `dd-MM-yyyy HH:mm:ss`, `dd-MM-yyyy`, and `yyyy-MM-dd` via `intl`.
 - GET profile response is read from `data` and supports backend `dob` (for example `02-03-2000 00:00:00`).
-- API gender values are normalized to the form values `male`, `female`, or `other` before binding to the dropdown.
+- API gender values are normalized to `male` or `female` before binding to the picker.
 - `ProfileSetupScreen` calls `loadProfile()` only when the profile is already completed, so edit/update mode hydrates from API while first-time onboarding stays in setup mode.
 - Completed profiles show edit/update wording; pending onboarding shows setup/save wording.
 - On successful update, the PATCH runs first, local `AppPref` profile is updated in the repository, and `ProfileScreen` refreshes after the edit route returns.

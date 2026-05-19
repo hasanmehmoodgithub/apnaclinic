@@ -176,17 +176,6 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                       : null,
                   onTap: () => dialogContext.pop('female'),
                 ),
-                ListTile(
-                  title: Text(l10n.profileGenderOther),
-                  trailing: selected == 'other'
-                      ? Icon(
-                          Icons.check_rounded,
-                          color: AppColors.clr0FAA9A,
-                          size: 20.r,
-                        )
-                      : null,
-                  onTap: () => dialogContext.pop('other'),
-                ),
               ],
             ),
           ),

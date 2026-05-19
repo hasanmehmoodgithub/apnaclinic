@@ -53,83 +53,108 @@ class _LoginViewState extends State<_LoginView> {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-
-    return BlocBuilder<AuthCubit, AuthState>(
-      builder: (context, state) {
-        return Scaffold(
-          backgroundColor: AppColors.clrF4F6F8,
-          body: Column(
-            children: [
-              AuthTopHeaderWidget(
-                onBackTap: () => _handleBackTap(state),
+    return Scaffold(
+      backgroundColor: AppColors.clrF4F6F8,
+      body: Column(
+        children: [
+          AuthTopHeaderWidget(onBackTap: _handleBackTap),
+          Expanded(
+            child: Container(
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: AppColors.clrWhite,
+                borderRadius: BorderRadius.vertical(
+                  top: Radius.circular(30.r),
+                ),
               ),
-              Expanded(
-                child: Container(
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    color: AppColors.clrWhite,
-                    borderRadius: BorderRadius.vertical(
-                      top: Radius.circular(30.r),
-                    ),
-                  ),
-                  child: Padding(
-                    padding: EdgeInsets.fromLTRB(30.w, 22.h, 30.w, 20.h),
-                    child: Form(
-                      key: _formKey,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          LoginPhoneInputSection(
+              child: Padding(
+                padding: EdgeInsets.fromLTRB(30.w, 22.h, 30.w, 20.h),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      BlocSelector<AuthCubit, AuthState, (bool, String?)>(
+                        selector: (state) =>
+                            (state.otpRequested, state.errorMessage),
+                        builder: (context, values) {
+                          final (otpRequested, errorMessage) = values;
+                          return LoginPhoneInputSection(
                             controller: _phoneController,
                             onChanged: _handlePhoneChanged,
-                            errorText: !state.otpRequested
-                                ? state.errorMessage
-                                : null,
-                          ),
-                          if (state.otpRequested) ...[
-                            LoginOtpSection(
-                              controller: _otpController,
-                              focusNode: _otpFocusNode,
-                              otpSecondsRemaining: state.otpSecondsRemaining,
-                              canResendOtp: state.canResendOtp,
-                              onResendTap: () => context.read<AuthCubit>().requestOtp(
-                                context.read<AuthCubit>().formatPhoneInput(
-                                  _phoneController.text.trim(),
-                                ),
-                              ),
-                              onOtpChanged: (_) =>
-                                  context.read<AuthCubit>().clearError(),
-                              errorText: state.errorMessage,
+                            errorText:
+                                otpRequested ? null : errorMessage,
+                          );
+                        },
+                      ),
+                      BlocSelector<AuthCubit, AuthState, bool>(
+                        selector: (state) => state.otpRequested,
+                        builder: (context, otpRequested) {
+                          if (!otpRequested) {
+                            return const SizedBox.shrink();
+                          }
+                          return BlocSelector<
+                            AuthCubit,
+                            AuthState,
+                            (int, bool, String?)
+                          >(
+                            selector: (state) => (
+                              state.otpSecondsRemaining,
+                              state.canResendOtp,
+                              state.errorMessage,
                             ),
-                          ],
-                          const Spacer(),
-                          AppButton.primary(
-                            text: state.otpRequested
+                            builder: (context, values) {
+                              final (
+                                otpSecondsRemaining,
+                                canResendOtp,
+                                errorMessage,
+                              ) = values;
+                              return LoginOtpSection(
+                                controller: _otpController,
+                                focusNode: _otpFocusNode,
+                                otpSecondsRemaining: otpSecondsRemaining,
+                                canResendOtp: canResendOtp,
+                                onResendTap: _handleResendOtp,
+                                onOtpChanged: (_) => context
+                                    .read<AuthCubit>()
+                                    .clearError(),
+                                errorText: errorMessage,
+                              );
+                            },
+                          );
+                        },
+                      ),
+                      const Spacer(),
+                      BlocSelector<AuthCubit, AuthState, (bool, bool)>(
+                        selector: (state) =>
+                            (state.otpRequested, state.isLoading),
+                        builder: (context, values) {
+                          final (otpRequested, isLoading) = values;
+                          final l10n = AppLocalizations.of(context)!;
+                          return AppButton.primary(
+                            text: otpRequested
                                 ? l10n.authVerifyCta
                                 : l10n.authSendOtpCta,
-                            onPressed: state.isLoading
-                                ? null
-                                : () => _submit(state),
-                            isLoading: state.isLoading,
+                            onPressed: isLoading ? null : _submit,
+                            isLoading: isLoading,
                             backgroundColor: AppColors.clr0FAA9A,
                             foregroundColor: AppColors.clrWhite,
                             height: 62.h,
                             borderRadius: 20.r,
                             fontSize: (30 / 1.65).sp,
-                          ),
-                          SizedBox(height: 20.h),
-                          const LoginLegalText(),
-                        ],
+                          );
+                        },
                       ),
-                    ),
+                      SizedBox(height: 20.h),
+                      const LoginLegalText(),
+                    ],
                   ),
                 ),
               ),
-            ],
+            ),
           ),
-        );
-      },
+        ],
+      ),
     );
   }
 
@@ -143,10 +168,19 @@ class _LoginViewState extends State<_LoginView> {
     if (shouldClearOtp) _clearOtpInputs();
   }
 
-  void _handleBackTap(AuthState state) {
+  Future<void> _handleResendOtp() async {
+    final cubit = context.read<AuthCubit>();
+    final success = await cubit.requestOtp(
+      cubit.formatPhoneInput(_phoneController.text.trim()),
+    );
+    if (!mounted || !success) return;
+    _clearOtpInputs();
+  }
+
+  void _handleBackTap() {
     if (!mounted) return;
 
-    if (state.otpRequested) {
+    if (context.read<AuthCubit>().state.otpRequested) {
       context.read<AuthCubit>().hideOtpSection();
       return;
     }
@@ -159,7 +193,7 @@ class _LoginViewState extends State<_LoginView> {
     context.go(AppRoutes.path(AppRoutes.onboarding));
   }
 
-  Future<void> _submit(AuthState state) async {
+  Future<void> _submit() async {
     final l10n = AppLocalizations.of(context)!;
     FocusScope.of(context).unfocus();
     final cubit = context.read<AuthCubit>();
@@ -173,14 +207,14 @@ class _LoginViewState extends State<_LoginView> {
     switch (result) {
       case AuthSubmitResult.otpSent:
         _clearOtpInputs();
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(l10n.authOtpSentMessage)));
+        // ScaffoldMessenger.of(
+        //   context,
+        // ).showSnackBar(SnackBar(content: Text(l10n.authOtpSentMessage)));
         break;
       case AuthSubmitResult.invalidOtp:
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(l10n.authOtpValidationError)));
+        // ScaffoldMessenger.of(
+        //   context,
+        // ).showSnackBar(SnackBar(content: Text(l10n.authOtpValidationError)));
         break;
       case AuthSubmitResult.verifiedGoHome:
         context.go(AppRoutes.path(AppRoutes.home));
