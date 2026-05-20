@@ -11,6 +11,7 @@ import '../../../bookings/presentation/screens/bookings_dashboard_screen.dart';
 import '../../../customer_support/presentation/screens/customer_support_screen.dart';
 import '../../../free_doctor/presentation/screens/free_doctor_screen.dart';
 import '../widgets/apna_bottom_navigation_bar.dart';
+import '../widgets/keep_alive_tab_page.dart';
 import '../cubit/main_navigation_cubit.dart';
 import '../cubit/main_navigation_state.dart';
 import 'home_screen.dart';
@@ -85,12 +86,20 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
               controller: _pageController,
               onPageChanged: _onPageChanged,
               physics: const BouncingScrollPhysics(),
-              children: [
-                const FreeDoctorScreen(showBackButton: false),
-                const CustomerSupportScreen(showBackButton: false),
-                const HomeScreen(),
-                const BookingsDashboardScreen(showBackButton: false),
-                const ProfileScreen(showBackButton: false),
+              children: const [
+                KeepAliveTabPage(
+                  child: FreeDoctorScreen(showBackButton: false),
+                ),
+                KeepAliveTabPage(
+                  child: CustomerSupportScreen(showBackButton: false),
+                ),
+                KeepAliveTabPage(child: HomeScreen()),
+                KeepAliveTabPage(
+                  child: BookingsDashboardScreen(showBackButton: false),
+                ),
+                KeepAliveTabPage(
+                  child: ProfileScreen(showBackButton: false),
+                ),
               ],
             ),
             bottomNavigationBar: SafeArea(
