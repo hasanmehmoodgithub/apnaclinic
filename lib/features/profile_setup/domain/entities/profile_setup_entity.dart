@@ -6,6 +6,7 @@ class ProfileSetupEntity {
     required this.email,
     required this.address,
     this.dateOfBirth,
+    this.imageUrl,
   });
 
   final String firstName;
@@ -14,6 +15,7 @@ class ProfileSetupEntity {
   final String email;
   final String address;
   final DateTime? dateOfBirth;
+  final String? imageUrl;
 
   ProfileSetupEntity copyWith({
     String? firstName,
@@ -22,6 +24,7 @@ class ProfileSetupEntity {
     String? email,
     String? address,
     DateTime? dateOfBirth,
+    String? imageUrl,
   }) {
     return ProfileSetupEntity(
       firstName: firstName ?? this.firstName,
@@ -30,6 +33,7 @@ class ProfileSetupEntity {
       email: email ?? this.email,
       address: address ?? this.address,
       dateOfBirth: dateOfBirth ?? this.dateOfBirth,
+      imageUrl: imageUrl ?? this.imageUrl,
     );
   }
 }

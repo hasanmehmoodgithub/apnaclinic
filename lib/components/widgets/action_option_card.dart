@@ -109,6 +109,7 @@ class ActionOptionCard extends StatelessWidget {
                         child: Padding(
                           padding: contentPadding,
                           child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               leading,
                               SizedBox(width: 12.w),
@@ -178,7 +179,7 @@ class ActionOptionCard extends StatelessWidget {
                 color: _headingDark,
               ),
         ),
-        SizedBox(height: titleSpacing.h),
+        SizedBox(height: titleSpacing),
         Text(
           subtitle!,
           maxLines: 1,

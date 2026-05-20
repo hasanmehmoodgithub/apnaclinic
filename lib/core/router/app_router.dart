@@ -341,7 +341,6 @@ class AppRouter {
           return LabTestViewDetailsScreen(args: extra);
         },
       ),
-
     ],
     errorBuilder: (context, state) =>
         Scaffold(body: Center(child: Text('Page not found: ${state.uri}'))),

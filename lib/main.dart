@@ -7,6 +7,7 @@ import 'package:apnaclinic/core/extensions/screen_util_extensions.dart';
 import 'package:apnaclinic/core/flavor/flavor_config.dart';
 import 'package:flutter/rendering.dart';
 
+import 'core/debug/device_preview_support.dart';
 import 'core/di/dependency_injection.dart';
 import 'core/utils/chucker_guard.dart';
 import 'features/app/presentation/screens/apna_clinic_app.dart';
@@ -17,7 +18,11 @@ void main() {
     () async {
       // Guard: Ensure Flutter binding is initialized first
       WidgetsFlutterBinding.ensureInitialized();
-      debugRepaintRainbowEnabled = true;
+      debugRepaintRainbowEnabled = false;
+      debugPaintSizeEnabled = false;
+      debugPaintBaselinesEnabled = false;
+      debugPaintPointersEnabled = false;
+      debugPaintLayerBordersEnabled = false;
       ChuckerGuard.configureIfEnabled();
       AppSystemUi.apply();
 
@@ -40,8 +45,9 @@ void main() {
         // TODO: Uncomment after Firebase is initialized
         // await _initializeNotificationService();
 
-        // Run app with security guard in release mode
-        runApp(ApnaClinicApp());
+        runApp(
+          wrapWithDevicePreview(child: const ApnaClinicApp()),
+        );
       } catch (e, stackTrace) {
         // Guard: Handle initialization errors gracefully
         developer.log(
@@ -54,7 +60,8 @@ void main() {
         // Show error screen in debug mode
         if (kDebugMode) {
           runApp(
-            MaterialApp(
+            wrapWithDevicePreview(
+              child: MaterialApp(
               home: Scaffold(
                 body: Center(
                   child: Column(
@@ -82,6 +89,7 @@ void main() {
                   ),
                 ),
               ),
+            ),
             ),
           );
         } else {

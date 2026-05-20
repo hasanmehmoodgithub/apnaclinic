@@ -150,6 +150,13 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                     final unreadCount = notificationState.notifications
                         .where((item) => !item.isRead)
                         .length;
+                    final profileImageUrl = _isLoggedIn
+                        ? sl<AppPref>()
+                            .getUserLocalModel()
+                            ?.imageUrl
+                        : null;
+                    // Rebuild avatar when dashboard profile sync completes.
+                    final _ = state.profileSyncNonce;
                     return ApnaClinicAppBar(
                       style: ApnaAppBarStyle.light,
                       systemOverlayStyle:
@@ -171,6 +178,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                       onProfileTap: () => context.push(
                         AppRoutes.path(AppRoutes.profileSetup),
                       ),
+                      profileImageUrl: profileImageUrl,
                     );
                   },
                 ),

@@ -8,7 +8,7 @@ Home services grid, promotional banner, search entry, and shell navigation. Keep
 
 - **`DashboardCubit`** (created when `HomeScreen` loads) calls **`GetProfileSetupContentUseCase`** in **`syncUserProfileFromApi()`** right after services and banner loads start.
 - Skips when **`AppPref.getLoginStatus()`** is false.
-- On success, **`ProfileSetupRepositoryImpl`** already persists **`UserLocalModel`** (name, email, address, gender, DOB, etc.).
+- On success, **`ProfileSetupRepositoryImpl`** already persists **`UserLocalModel`** (name, email, address, gender, DOB, `imageUrl` from API `image`, etc.).
 - **`DashboardServicesState.profileSyncNonce`** increments so **`BlocConsumer`** on home rebuilds and **`SearchHeader`** / greeting reads updated prefs.
 
 ## Data & APIs (dashboard-specific)

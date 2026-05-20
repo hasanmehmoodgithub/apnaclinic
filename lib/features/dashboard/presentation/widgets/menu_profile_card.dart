@@ -2,8 +2,9 @@ import 'package:apnaclinic/components/widgets/action_option_card.dart';
 import 'package:apnaclinic/core/constants/app_colors.dart';
 import 'package:apnaclinic/core/extensions/screen_util_extensions.dart';
 import 'package:apnaclinic/core/l10n/app_localizations.dart';
-import 'package:apnaclinic/generated/assets.dart';
 import 'package:flutter/material.dart';
+
+import '../../../../core/widgets/user_profile_avatar.dart';
 
 class MenuProfileCard extends StatelessWidget {
   const MenuProfileCard({
@@ -12,11 +13,13 @@ class MenuProfileCard extends StatelessWidget {
     required this.name,
     required this.phone,
     required this.onActionTap,
+    this.imageUrl,
   });
 
   final bool isLoggedIn;
   final String name;
   final String phone;
+  final String? imageUrl;
   final VoidCallback onActionTap;
 
   @override
@@ -24,30 +27,33 @@ class MenuProfileCard extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
 
+    final subtitleText = phone.trim();
+
     return ActionOptionCard(
       title: name,
-      subtitle: phone,
+      subtitle: subtitleText.isEmpty ? null : subtitleText,
       onTap: onActionTap,
       onTrailingTap: onActionTap,
+      height: 100.h,
       curveOverlayColor: AppColors.clrEBDFFF.withValues(alpha: 0.6),
       trailingOverlayWidth: 124.w,
-
-      contentPadding: EdgeInsets.fromLTRB(18.w, 25.h, 16.w, 24.h),
-      titleSpacing: 7,
+      contentPadding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 20.h),
+      titleSpacing: 4,
       titleStyle: theme.textTheme.titleMedium?.copyWith(
         color: AppColors.clr0E2D55,
         fontWeight: FontWeight.w500,
         fontSize: 20.sp,
-        height: 1,
+        height: 1.15,
       ),
       subtitleStyle: theme.textTheme.bodyMedium?.copyWith(
         color: AppColors.clr4A4A4A,
         fontWeight: FontWeight.w400,
         fontSize: 14.sp,
-        height: 1,
+        height: 1.15,
       ),
-      leading: SizedBox(
-        child: Image.asset(Assets.imgPlaceHolderPerson),
+      leading: UserProfileAvatar(
+        imageUrl: imageUrl,
+        size: 52,
       ),
       trailing: OutlinedButton(
         onPressed: onActionTap,

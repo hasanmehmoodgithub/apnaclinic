@@ -5,6 +5,7 @@ import '../../generated/assets.dart';
 import '../extensions/screen_util_extensions.dart';
 
 import '../constants/app_system_ui.dart';
+import 'user_profile_avatar.dart';
 
 /// Top bar: menu, brand (logo + wordmark), notification, profile.
 /// Plain [Material] + [Row] (not [AppBar]); still [PreferredSizeWidget] for [Scaffold.appBar].
@@ -27,6 +28,7 @@ class ApnaClinicAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.onProfileTap,
     this.onLoginTap,
     this.showLoginButton = false,
+    this.profileImageUrl,
     this.bottom,
   });
 
@@ -42,6 +44,7 @@ class ApnaClinicAppBar extends StatelessWidget implements PreferredSizeWidget {
   final VoidCallback? onProfileTap;
   final VoidCallback? onLoginTap;
   final bool showLoginButton;
+  final String? profileImageUrl;
   final PreferredSizeWidget? bottom;
 
 
@@ -198,10 +201,12 @@ class ApnaClinicAppBar extends StatelessWidget implements PreferredSizeWidget {
                             onTap: onProfileTap,
                             customBorder: const CircleBorder(),
                             child: Padding(
-                              padding:  EdgeInsets.all(6.sp),
-                              child: Image.asset(Assets.imgPlaceHolderPerson),
+                              padding: EdgeInsets.all(6.sp),
+                              child: UserProfileAvatar(
+                                imageUrl: profileImageUrl,
+                                size: 40.r,
+                              ),
                             ),
-
                           ),
                         ),
                 ),

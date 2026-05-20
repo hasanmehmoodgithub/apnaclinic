@@ -114,9 +114,7 @@ class ProfileSetupFormSection extends StatelessWidget {
                             ? l10n.profileGenderHint
                             : state.selectedGender == 'male'
                             ? l10n.profileGenderMale
-                            : state.selectedGender == 'female'
-                            ? l10n.profileGenderFemale
-                            : l10n.profileGenderOther,
+                            : l10n.profileGenderFemale,
                         suffixIcon: Icon(
                           Icons.keyboard_arrow_down_rounded,
                           color: AppColors.clr0FAA9A,

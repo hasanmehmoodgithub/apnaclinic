@@ -169,9 +169,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get profileGenderFemale => 'Female';
 
   @override
-  String get profileGenderOther => 'Other';
-
-  @override
   String get profileGenderRequired => 'Please select gender.';
 
   @override

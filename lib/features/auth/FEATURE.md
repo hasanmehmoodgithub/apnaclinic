@@ -4,6 +4,9 @@
 
 Phone OTP request/verify, session persistence via `AppPref`, logout API.
 
+Login footer legal links (`LoginLegalText`) open `AppUrls.termsAndConditions` and
+`AppUrls.privacyPolicy` in the device browser via `AppUrlLauncher`.
+
 After OTP verification, users go directly to home when the backend marks
 onboarding/profile complete (`userOnboarding: false`). Profile setup is shown
 when onboarding is still pending (`userOnboarding: true`).

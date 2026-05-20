@@ -107,7 +107,6 @@
   "profileGenderHint": "Select",
   "profileGenderMale": "Male",
   "profileGenderFemale": "Female",
-  "profileGenderOther": "Other",
   "profileGenderRequired": "Please select gender.",
   "profileEmailLabel": "Email",
   "profileEmailHint": "name@example.com",

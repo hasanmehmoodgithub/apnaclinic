@@ -7,6 +7,7 @@ class UserLocalModel {
     this.email = '',
     this.address = '',
     this.dateOfBirth = '',
+    this.imageUrl = '',
   });
 
   final String firstName;
@@ -16,6 +17,7 @@ class UserLocalModel {
   final String email;
   final String address;
   final String dateOfBirth;
+  final String imageUrl;
 
   factory UserLocalModel.fromJson(Map<String, dynamic> json) {
     return UserLocalModel(
@@ -26,6 +28,7 @@ class UserLocalModel {
       email: (json['email'] ?? '').toString(),
       address: (json['address'] ?? '').toString(),
       dateOfBirth: (json['dateOfBirth'] ?? '').toString(),
+      imageUrl: (json['imageUrl'] ?? json['image'] ?? '').toString(),
     );
   }
 
@@ -38,6 +41,7 @@ class UserLocalModel {
       'email': email,
       'address': address,
       'dateOfBirth': dateOfBirth,
+      'imageUrl': imageUrl,
     };
   }
 
@@ -49,6 +53,7 @@ class UserLocalModel {
     String? email,
     String? address,
     String? dateOfBirth,
+    String? imageUrl,
   }) {
     return UserLocalModel(
       firstName: firstName ?? this.firstName,
@@ -58,6 +63,7 @@ class UserLocalModel {
       email: email ?? this.email,
       address: address ?? this.address,
       dateOfBirth: dateOfBirth ?? this.dateOfBirth,
+      imageUrl: imageUrl ?? this.imageUrl,
     );
   }
 }
