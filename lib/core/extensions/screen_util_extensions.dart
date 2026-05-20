@@ -27,8 +27,8 @@ class ScreenUtilX {
 
   static void init(
     BuildContext context, {
-    double designWidth = 430,
-    double designHeight = 932,
+    double designWidth = 410,
+    double designHeight = 720,
     bool useScaleByDefault = true,
   }) {
     final mediaQueryData = MediaQuery.of(context);

@@ -1,6 +1,9 @@
-import 'package:apnaclinic/core/extensions/context_extensions.dart';
+import 'package:apnaclinic/core/extensions/extensions_export.dart';
+import 'package:apnaclinic/generated/assets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+
+import 'onboarding_scale.dart';
 
 class OnboardingBackdrop extends StatelessWidget {
   const OnboardingBackdrop({super.key, required this.scale});
@@ -11,32 +14,41 @@ class OnboardingBackdrop extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        Positioned(
-          top: -context.screenWidth/2,
-          left: -context.screenWidth/2,
-          right:0,
-          child: SvgPicture.asset(
-            'assets/svg/onboarding_bg_top.svg',
-            fit: BoxFit.cover,
-            height: context.screenHeight/1.5,
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final topBgHeight = constraints.maxHeight * 0.6;
 
-          ),
-        ),
-        Positioned(
-          right: -140 * scale,
-          bottom: -130 * scale,
-          child: Container(
-            width: 460 * scale,
-            height: 220 * scale,
-            decoration: const BoxDecoration(
-              shape: BoxShape.circle,
-              color: _bgBottom,
+        return Stack(
+          fit: StackFit.expand,
+          children: [
+            Positioned(
+              top: -MediaQuery.sizeOf(context).height/5,
+              left: -MediaQuery.sizeOf(context).width/1.5,
+              right: -40.w,
+              child: SizedBox(
+                height: topBgHeight,
+                child: SvgPicture.asset(
+                  Assets.svgOnboardingBgTop,
+                  fit: BoxFit.fill,
+                  alignment: Alignment.topCenter,
+                ),
+              ),
             ),
-          ),
-        ),
-      ],
+            Positioned(
+              right: -onboardingScaled(140, scale),
+              bottom: -onboardingScaled(130, scale),
+              child: Container(
+                width: onboardingScaled(460, scale),
+                height: onboardingScaled(220, scale),
+                decoration: const BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: _bgBottom,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }

@@ -1,6 +1,8 @@
+import 'package:apnaclinic/generated/assets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import '../../../../../core/extensions/screen_util_extensions.dart';
+
+import 'onboarding_scale.dart';
 
 class OnboardingHeader extends StatelessWidget {
   const OnboardingHeader({
@@ -16,35 +18,50 @@ class OnboardingHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        Positioned(
-          top: 58.h * scale,
-          right: 26.w * scale,
-          child: TextButton(
-            onPressed: onSkip,
-            style: TextButton.styleFrom(
-              foregroundColor: Colors.black,
-              textStyle: TextStyle(
-                fontSize: 20.sp * scale,
-                fontWeight: FontWeight.w400,
+    final skipFontSize = onboardingScaled(20, scale).clamp(16.0, 20.0);
+    final logoWidth = onboardingScaled(222.58, scale).clamp(160.0, 240.0);
+
+    return Padding(
+      padding: EdgeInsets.fromLTRB(
+        onboardingScaled(16, scale),
+        onboardingScaled(8, scale),
+        onboardingScaled(12, scale),
+        onboardingScaled(4, scale),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Align(
+            alignment: Alignment.centerRight,
+            child: TextButton(
+              onPressed: onSkip,
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.black,
+                padding: EdgeInsets.symmetric(
+                  horizontal: onboardingScaled(8, scale),
+                ),
+                minimumSize: Size(
+                  onboardingScaled(37, scale),
+                  onboardingScaled(36, scale),
+                ),
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
               ),
-              padding: EdgeInsets.zero,
-              minimumSize: Size(37.w * scale, 20.h * scale),
-              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              child: Text(
+                skipLabel,
+                style: TextStyle(
+                  fontSize: skipFontSize,
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
             ),
-            child: Text(skipLabel),
           ),
-        ),
-        Positioned(
-          left: 103.71.w * scale,
-          top: 119.84.h * scale,
-          child: SvgPicture.asset(
-            'assets/svg/brand_apna_clinic.svg',
-            width: 222.58.w * scale,
+          SizedBox(height: onboardingScaled(12, scale)),
+          SvgPicture.asset(
+            Assets.svgBrandApnaClinic,
+            width: logoWidth,
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
