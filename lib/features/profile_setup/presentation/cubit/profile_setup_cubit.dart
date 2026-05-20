@@ -60,9 +60,7 @@ class ProfileSetupCubit extends Cubit<ProfileSetupState> {
   String? _normalizeGender(String value) {
     final normalized = value.trim().toLowerCase();
     if (normalized.isEmpty) return null;
-    if (normalized == 'male' ||
-        normalized == 'female' ||
-        normalized == 'other') {
+    if (normalized == 'male' || normalized == 'female') {
       return normalized;
     }
     return null;

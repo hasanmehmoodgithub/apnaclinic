@@ -104,4 +104,14 @@ class AppUrls {
 
   /// Facebook API endpoint - full 3rd party URL
   static String get facebookApi => 'https://graph.facebook.com';
+
+  // ============================================
+  // Legal / policy pages (full URLs)
+  // ============================================
+
+  static const String termsAndConditions =
+      'https://apnaclinic.ecnstg.com/terms';
+
+  static const String privacyPolicy =
+      'https://apnaclinic.ecnstg.com/privacy-policy';
 }

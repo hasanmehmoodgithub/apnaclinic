@@ -1,21 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
+import '../cubit/auth_cubit.dart';
+import '../cubit/auth_state.dart';
 
 class LoginPhoneInputSection extends StatelessWidget {
   const LoginPhoneInputSection({
     super.key,
     required this.controller,
     required this.onChanged,
-    required this.errorText,
   });
 
   final TextEditingController controller;
   final ValueChanged<String> onChanged;
-  final String? errorText;
 
   @override
   Widget build(BuildContext context) {
@@ -123,16 +124,25 @@ class LoginPhoneInputSection extends StatelessWidget {
             color: AppColors.clr98A2B3,
           ),
         ),
-        if (errorText != null) ...[
-          SizedBox(height: 6.h),
-          Text(
-            errorText!,
-            style: theme.textTheme.bodySmall?.copyWith(
-              color: AppColors.clrE01F26,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ],
+        BlocSelector<AuthCubit, AuthState, (bool, String?)>(
+          selector: (state) => (state.otpRequested, state.errorMessage),
+          builder: (context, values) {
+            final (otpRequested, errorMessage) = values;
+            if (otpRequested || errorMessage == null) {
+              return const SizedBox.shrink();
+            }
+            return Padding(
+              padding: EdgeInsets.only(top: 6.h),
+              child: Text(
+                errorMessage,
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: AppColors.clrE01F26,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            );
+          },
+        ),
       ],
     );
   }

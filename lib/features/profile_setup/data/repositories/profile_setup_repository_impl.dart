@@ -53,6 +53,7 @@ class ProfileSetupRepositoryImpl implements ProfileSetupRepository {
         email: entity.email,
         address: entity.address,
         dateOfBirth: entity.dateOfBirth?.toIso8601String() ?? '',
+        imageUrl: entity.imageUrl ?? '',
       ),
     );
     await appPref.setProfileCompleted(true);

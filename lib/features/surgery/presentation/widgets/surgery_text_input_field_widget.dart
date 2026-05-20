@@ -32,12 +32,12 @@ class SurgeryTextInputFieldWidget extends StatelessWidget {
           title,
           style: theme.textTheme.bodyLarge?.copyWith(
             color: const Color(0xFF061E40),
-            fontSize: 15.sp,
+            fontSize: 13.sp,
           ),
         ),
         SizedBox(height: 8.h),
         Container(
-          height: 48.h,
+          height: 40.h,
           padding: EdgeInsets.only(left: 12.w, right: 8.w),
           decoration: BoxDecoration(
             color: hasError ? const Color(0xFFFFF8F8) : const Color(0xFFF1F1F1),
@@ -54,17 +54,17 @@ class SurgeryTextInputFieldWidget extends StatelessWidget {
             keyboardType: keyboardType,
             style: theme.textTheme.bodyLarge?.copyWith(
               color: hasError ? const Color(0xFFBA2025) : const Color(0xFF4A555F),
-              fontSize: 15.sp,
+              fontSize: 12.sp,
               fontWeight: FontWeight.w500,
             ),
             decoration: InputDecoration(
               border: InputBorder.none,
               isDense: true,
-              contentPadding: EdgeInsets.symmetric(vertical: 14.h),
+              contentPadding: EdgeInsets.symmetric(vertical: 10.h),
               hintText: effectiveHint,
               hintStyle: theme.textTheme.bodyLarge?.copyWith(
                 color: hasError ? const Color(0xFFBA2025) : const Color(0xFFB6BDC8),
-                fontSize: 15.sp,
+                fontSize: 12.sp,
                 fontWeight: FontWeight.w400,
               ),
             ),

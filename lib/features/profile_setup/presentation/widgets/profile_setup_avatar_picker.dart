@@ -1,39 +1,43 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
+import '../../../../core/widgets/user_profile_avatar.dart';
 
 class ProfileSetupAvatarPicker extends StatelessWidget {
   const ProfileSetupAvatarPicker({
     super.key,
-    required this.avatarProvider,
+    this.imageUrl,
+    this.selectedImageFile,
     required this.onPickImage,
-    required this.onImageError,
   });
 
-  final ImageProvider? avatarProvider;
+  final String? imageUrl;
+  final File? selectedImageFile;
   final VoidCallback onPickImage;
-  final VoidCallback onImageError;
+
+  static const double _avatarSize = 112;
 
   @override
   Widget build(BuildContext context) {
+    final hasLocalImage = selectedImageFile != null;
+
     return Stack(
+      clipBehavior: Clip.none,
       children: [
-        CircleAvatar(
-          radius: 56.r,
-          backgroundColor: AppColors.clrWhite.withValues(alpha: 0.95),
-          backgroundImage: avatarProvider,
-          onBackgroundImageError: avatarProvider == null
-              ? null
-              : (_, _) => onImageError(),
-          child: avatarProvider == null
-              ? Icon(
-                  Icons.account_circle_rounded,
-                  size: 56.r,
-                  color: AppColors.clrBFD5D9,
-                )
-              : null,
-        ),
+        if (hasLocalImage)
+          CircleAvatar(
+            radius: 56.r,
+            backgroundColor: AppColors.clrWhite.withValues(alpha: 0.95),
+            backgroundImage: FileImage(selectedImageFile!),
+          )
+        else
+          UserProfileAvatar(
+            imageUrl: imageUrl,
+            size: _avatarSize.r,
+          ),
         Positioned(
           right: 2.w,
           bottom: 4.h,

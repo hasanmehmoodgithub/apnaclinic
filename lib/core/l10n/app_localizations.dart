@@ -416,12 +416,6 @@ abstract class AppLocalizations {
   /// **'Female'**
   String get profileGenderFemale;
 
-  /// No description provided for @profileGenderOther.
-  ///
-  /// In en, this message translates to:
-  /// **'Other'**
-  String get profileGenderOther;
-
   /// No description provided for @profileGenderRequired.
   ///
   /// In en, this message translates to:

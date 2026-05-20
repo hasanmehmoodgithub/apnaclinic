@@ -14,7 +14,13 @@ class ProfileSetupMapper {
       email: model.content.email,
       address: model.content.address,
       dateOfBirth: _tryParseDate(model.content.dateOfBirth),
+      imageUrl: _normalizeImageUrl(model.content.imageUrl),
     );
+  }
+
+  static String? _normalizeImageUrl(String value) {
+    final trimmed = value.trim();
+    return trimmed.isEmpty ? null : trimmed;
   }
 
   static DateTime? _tryParseDate(String value) {

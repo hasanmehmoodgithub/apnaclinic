@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:chucker_flutter/chucker_flutter.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import '../../../../core/constants/app_system_ui.dart';
+import '../../../../core/debug/device_preview_support.dart';
 import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/flavor/flavor_config.dart';
@@ -59,43 +60,60 @@ class _ApnaClinicAppState extends State<ApnaClinicApp> {
       key: _navigatorKey,
       title: FlavorConfig.appName,
       debugShowCheckedModeBanner: false,
+      locale: devicePreviewLocale(context),
       routerConfig: AppRouter.router,
       builder: (context, child) {
-        ScreenUtilX.init(
-            context,
-            useScaleByDefault: false);
-        final appChild = child ?? const SizedBox.shrink();
-        if (!ChuckerGuard.isEnabled) return appChild;
-        return Stack(
-          children: [
-            appChild,
-            Positioned(
-              right: 16,
-              bottom: 24,
-              child: Material(
-                color: Colors.transparent,
-                child: InkWell(
-                  onTap: () => ChuckerFlutter.showChuckerScreen(),
-                  borderRadius: BorderRadius.circular(28),
-                  child: Container(
-                    width: 56,
-                    height: 56,
-                    decoration: BoxDecoration(
-                      color: Colors.black.withValues(alpha: 0.6),
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        color: Colors.white.withValues(alpha: 0.7),
+        final previewChild = applyDevicePreviewBuilder(context, child);
+        final mediaQueryData = MediaQuery.of(context);
+        final clampedScale = ScreenUtilX.clampedTextScale(mediaQueryData);
+
+        return MediaQuery(
+          data: mediaQueryData.copyWith(
+            textScaler: TextScaler.linear(clampedScale),
+          ),
+          child: Builder(
+            builder: (context) {
+              ScreenUtilX.init(
+                context,
+              designWidth :410,
+                 designHeight : 720,
+                useScaleByDefault: false,
+              );
+              final appChild = previewChild ?? const SizedBox.shrink();
+              if (!ChuckerGuard.isEnabled) return appChild;
+              return Stack(
+                children: [
+                  appChild,
+                  Positioned(
+                    right: 16,
+                    bottom: 24,
+                    child: Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        onTap: () => ChuckerFlutter.showChuckerScreen(),
+                        borderRadius: BorderRadius.circular(28),
+                        child: Container(
+                          width: 56,
+                          height: 56,
+                          decoration: BoxDecoration(
+                            color: Colors.black.withValues(alpha: 0.6),
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: Colors.white.withValues(alpha: 0.7),
+                            ),
+                          ),
+                          child: const Icon(
+                            Icons.bug_report_rounded,
+                            color: Colors.white,
+                          ),
+                        ),
                       ),
                     ),
-                    child: const Icon(
-                      Icons.bug_report_rounded,
-                      color: Colors.white,
-                    ),
                   ),
-                ),
-              ),
-            ),
-          ],
+                ],
+              );
+            },
+          ),
         );
       },
       theme: ThemeData(
@@ -111,7 +129,9 @@ class _ApnaClinicAppState extends State<ApnaClinicApp> {
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
-      supportedLocales: AppLocalizations.supportedLocales,
+      supportedLocales: mergeSupportedLocales(
+        AppLocalizations.supportedLocales,
+      ),
 
       // TODO: Uncomment if you want to use theme (without state management)
       // theme: AppTheme.lightTheme,

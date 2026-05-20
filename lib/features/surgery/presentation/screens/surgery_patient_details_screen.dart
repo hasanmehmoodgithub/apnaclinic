@@ -242,7 +242,7 @@ class _SurgeryPatientDetailsScreenState
                               'Surgery',
                               style: theme.textTheme.bodyLarge?.copyWith(
                                 color: const Color(0xFF061E40),
-                                fontSize: 16.sp,
+                                fontSize: 13.sp,
                               ),
                             ),
                             SizedBox(height: 10.h),
@@ -253,7 +253,7 @@ class _SurgeryPatientDetailsScreenState
                                 child: Container(
                                   padding: EdgeInsets.symmetric(
                                     horizontal: 12.w,
-                                    vertical: 14.h,
+                                    vertical: 10.h,
                                   ),
                                   decoration: const BoxDecoration(
                                     borderRadius: BorderRadius.all(
@@ -269,7 +269,7 @@ class _SurgeryPatientDetailsScreenState
                                           style:
                                               theme.textTheme.bodyLarge?.copyWith(
                                             color: const Color(0xFF061E40),
-                                            fontSize: 15.sp,
+                                            fontSize: 13.sp,
                                             fontWeight: FontWeight.w500,
                                           ),
                                         ),
@@ -279,7 +279,7 @@ class _SurgeryPatientDetailsScreenState
                                         style:
                                             theme.textTheme.bodyLarge?.copyWith(
                                           color: const Color(0xFF061E40),
-                                          fontSize: 15.sp,
+                                          fontSize: 13.sp,
                                           fontWeight: FontWeight.w500,
                                         ),
                                       ),
@@ -289,7 +289,7 @@ class _SurgeryPatientDetailsScreenState
                                         child: Icon(
                                           Icons.keyboard_arrow_down_rounded,
                                           color: const Color(0xFFB6BDC8),
-                                          size: 17.r,
+                                          size: 14.r,
                                         ),
                                       ),
                                     ],
@@ -322,7 +322,7 @@ class _SurgeryPatientDetailsScreenState
                                 : _onProceedCheckoutPressed,
                             style: FilledButton.styleFrom(
                               backgroundColor: const Color(0xFF0FAA9A),
-                              minimumSize: Size.fromHeight(54.h),
+                              minimumSize: Size.fromHeight(44.h),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(10.r),
                               ),
@@ -343,7 +343,7 @@ class _SurgeryPatientDetailsScreenState
                                     style: theme.textTheme.titleMedium?.copyWith(
                                       color: Colors.white,
                                       fontWeight: FontWeight.w700,
-                                      fontSize: 17.sp,
+                                      fontSize: 13.sp,
                                     ),
                                   ),
                           ),

@@ -15,7 +15,10 @@ class MockConfig {
     return false;
     return _isTruthy(_mockTrueValue)  || kDebugMode;
   }
-
+  static bool get enableProfileMocks {
+    return false;
+    return _isTruthy(_mockTrueValue)  || kDebugMode;
+  }
 
 
   static bool _isTruthy(String value) {

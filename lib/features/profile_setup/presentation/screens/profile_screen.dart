@@ -7,6 +7,7 @@ import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/preference/app_pref.dart';
 import '../../../../core/router/app_routes.dart';
+import '../../../profile_setup/domain/use_cases/get_profile_setup_content_use_case.dart';
 import '../../../account/domain/entities/account_item_entity.dart';
 import '../../../account/domain/use_cases/get_accounts_list_use_case.dart';
 import '../../../account/data/account_local_store.dart';
@@ -39,6 +40,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
     _appPref = sl<AppPref>();
     _accountStore = AccountLocalStore(_appPref);
     _loadAccountDetails();
+    _refreshProfileFromApi();
+  }
+
+  Future<void> _refreshProfileFromApi() async {
+    if (!_appPref.getLoginStatus()) return;
+    await sl<GetProfileSetupContentUseCase>().call();
+    if (mounted) setState(() {});
   }
 
   Future<void> _loadAccountDetails() async {
@@ -75,6 +83,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ? ''
         : '${dob.day.toString().padLeft(2, '0')} '
               '${_monthShort(dob.month)} ${dob.year}';
+    final imageUrl = userLocal?.imageUrl.trim();
 
     return Scaffold(
       backgroundColor: AppColors.clrC7EFEB,
@@ -86,7 +95,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
               onBack: widget.onBack ?? () => context.pop(),
             ),
             SizedBox(height: 10.h),
-            const ProfileAvatarSection(),
+            ProfileAvatarSection(
+              imageUrl: imageUrl?.isEmpty ?? true ? null : imageUrl,
+            ),
             SizedBox(height: 20.h),
 
             Expanded(
@@ -118,7 +129,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             AppRoutes.path(AppRoutes.profileSetup),
                           );
                           if (mounted && updated == true) {
-                            setState(() {});
+                            await _refreshProfileFromApi();
                           }
                         },
                         onAddAccountTap: () async {

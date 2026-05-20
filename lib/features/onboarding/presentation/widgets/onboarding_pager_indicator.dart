@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../../../core/extensions/screen_util_extensions.dart';
+
+import 'onboarding_scale.dart';
 
 class OnboardingPagerIndicator extends StatelessWidget {
   const OnboardingPagerIndicator({
@@ -15,18 +16,23 @@ class OnboardingPagerIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final dotHeight = onboardingScaled(2, scale).clamp(2.0, 3.0);
+    final activeWidth = onboardingScaled(58.48, scale).clamp(40.0, 58.48);
+    final inactiveWidth = onboardingScaled(16.58, scale).clamp(12.0, 20.0);
+    final gap = onboardingScaled(4, scale);
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: List.generate(count, (index) {
         final active = index == activeIndex;
         return AnimatedContainer(
           duration: const Duration(milliseconds: 220),
-          margin: EdgeInsets.symmetric(horizontal: 4.w * scale),
-          width: active ? 58.48.w * scale : 16.58.w * scale,
-          height: 2.h * scale,
+          margin: EdgeInsets.symmetric(horizontal: gap),
+          width: active ? activeWidth : inactiveWidth,
+          height: dotHeight,
           decoration: BoxDecoration(
             color: active ? const Color(0xFF0E5C97) : const Color(0xFFBCBCBC),
-            borderRadius: BorderRadius.circular(999.r),
+            borderRadius: BorderRadius.circular(999),
           ),
         );
       }),

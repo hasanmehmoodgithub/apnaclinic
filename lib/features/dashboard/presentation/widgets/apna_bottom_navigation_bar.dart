@@ -22,8 +22,9 @@ class ApnaBottomNavigationBar extends StatelessWidget {
     final bottomInset = MediaQuery.paddingOf(context).bottom;
     return Container(
       padding: EdgeInsets.only(bottom: bottomInset),
-      child: SizedBox(
-        height: 108.h,
+      child: Container(
+        height: 66.h,
+        color: Colors.transparent,
         child: Stack(
           clipBehavior: Clip.none,
           alignment: Alignment.bottomCenter,

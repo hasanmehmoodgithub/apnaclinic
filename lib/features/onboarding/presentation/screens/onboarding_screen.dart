@@ -1,5 +1,4 @@
-import 'dart:math' as math;
-
+import 'package:apnaclinic/generated/assets.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -14,6 +13,7 @@ import '../widgets/onboarding_next_button.dart';
 import '../widgets/onboarding_page_data.dart';
 import '../widgets/onboarding_page_view.dart';
 import '../widgets/onboarding_pager_indicator.dart';
+import '../widgets/onboarding_scale.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -43,68 +43,50 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final pages = _buildPages(l10n);
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: LayoutBuilder(
         builder: (context, constraints) {
-          final scale = math.min(
-            constraints.maxWidth / 430,
-            constraints.maxHeight / 932,
-          );
-          final canvasWidth = 430 * scale;
-          final canvasHeight = 932 * scale;
-          final left = (constraints.maxWidth - canvasWidth) / 2;
+          final scale = onboardingScale(constraints);
+          final bottomPad = onboardingScaled(24, scale).clamp(12.0, 32.0);
 
           return Stack(
+            fit: StackFit.expand,
             children: [
-              Positioned(
-                left: left,
-                top: 0,
-                width: canvasWidth,
-                height: canvasHeight,
-                child: ClipRect(
-                  child: Stack(
-                    children: [
-                      OnboardingBackdrop(scale: scale),
-                      OnboardingHeader(
+              OnboardingBackdrop(scale: scale),
+              SafeArea(
+                child: Column(
+                  children: [
+                    OnboardingHeader(
+                      scale: scale,
+                      skipLabel: l10n.onboardingSkip,
+                      onSkip: _finishOnboarding,
+                    ),
+                    Expanded(
+                      child: OnboardingPageView(
+                        controller: _pageController,
+                        pages: pages,
                         scale: scale,
-                        skipLabel: l10n.onboardingSkip,
-                        onSkip: _finishOnboarding,
+                        onPageChanged: (value) =>
+                            setState(() => _currentIndex = value),
                       ),
-                      Positioned(
-                        left: 0,
-                        right: 0,
-                        top: 212 * scale,
-                        height: 560 * scale,
-                        child: OnboardingPageView(
-                          controller: _pageController,
-                          pages: pages,
-                          scale: scale,
-                          onPageChanged: (value) =>
-                              setState(() => _currentIndex = value),
-                        ),
+                    ),
+                    OnboardingPagerIndicator(
+                      count: pages.length,
+                      activeIndex: _currentIndex,
+                      scale: scale,
+                    ),
+                    SizedBox(height: onboardingScaled(16, scale)),
+                    Center(
+                      child: OnboardingNextButton(
+                        scale: scale,
+                        label: l10n.onboardingNext,
+                        onTap: () => _onNext(pages.length),
                       ),
-                      Positioned(
-                        top: 793 * scale,
-                        left: 0,
-                        right: 0,
-                        child: OnboardingPagerIndicator(
-                          count: pages.length,
-                          activeIndex: _currentIndex,
-                          scale: scale,
-                        ),
-                      ),
-                      Positioned(
-                        top: 818 * scale,
-                        left: (430 - 140.97) * 0.5 * scale,
-                        child: OnboardingNextButton(
-                          scale: scale,
-                          label: l10n.onboardingNext,
-                          onTap: () => _onNext(pages.length),
-                        ),
-                      ),
-                    ],
-                  ),
+                    ),
+                    SizedBox(height: bottomPad),
+                  ],
                 ),
               ),
             ],
@@ -119,22 +101,22 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       OnboardingPageData(
         title: l10n.onboardingDoctorConsultationTitle,
         subtitle: l10n.onboardingDoctorConsultationSubtitle,
-        imageAsset: 'assets/img/onboarding/doctor_consultation.webp',
+        imageAsset: Assets.onboardingDoctorConsultation,
       ),
       OnboardingPageData(
         title: l10n.onboardingPharmacyTitle,
         subtitle: l10n.onboardingPharmacySubtitle,
-        imageAsset: 'assets/img/onboarding/pharmacy.webp',
+        imageAsset: Assets.onboardingPharmacy,
       ),
       OnboardingPageData(
         title: l10n.onboardingLaboratoryTitle,
         subtitle: l10n.onboardingLaboratorySubtitle,
-        imageAsset: 'assets/img/onboarding/laboratory.webp',
+        imageAsset: Assets.onboardingLaboratory,
       ),
       OnboardingPageData(
         title: l10n.onboardingSurgeryTitle,
         subtitle: l10n.onboardingSurgerySubtitle,
-        imageAsset: 'assets/img/onboarding/surgery_booking.webp',
+        imageAsset: Assets.onboardingSurgeryBooking,
       ),
     ];
   }
