@@ -25,4 +25,9 @@ Profile uses **`profile_setup`** remote (`GET …/users/{userId}`) — no duplic
 ## UI
 
 - `HomeScreen` — `DashboardCubit` + `NotificationCubit`.
-- `MainNavigationShell` — tab shell around `HomeScreen`.
+- `MainNavigationShell` — tab shell around `HomeScreen`; tabs switch **only via bottom nav tap** (no horizontal swipe between tabs). Listens to `AuthSessionRefresh` (login/logout) to remount all tabs and reload cubits.
+
+## Session refresh
+
+- `AuthSessionRefresh.notifyLoggedIn()` — after OTP login (`AuthCubit`): shell selects **Home** tab (index 2), `ProfileSetupCubit.loadProfile()` (GET user profile), remounts tabs (new `HomeScreen` → new `DashboardCubit` → `syncUserProfileFromApi()` again).
+- `AuthSessionRefresh.notifyLoggedOut()` — logout (`MenuScreen`): guest tabs, `ProfileSetupCubit.resetState()`.

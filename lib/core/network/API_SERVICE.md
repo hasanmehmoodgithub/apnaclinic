@@ -12,6 +12,7 @@ Thin **Dio** facade used across features for JSON REST calls. Lives in `lib/core
 | **Timeouts** | Connect / send / receive default 60s; per-call override via `timeout` on `get`/`post`/… |
 | **Response** | 2xx returns `Map<String, dynamic>` (empty map if body null). Non-2xx throws `ApiException` with parsed message via `ApiErrorMessageUtils`. |
 | **Dio errors** | Mapped to typed `ApiException` subclasses (`ApiUnauthorizedException`, `ApiNetworkException`, …). |
+| **Jazz / HTTP** | `configureDioForAppNetwork` (dev SSL trust). iOS allows HTTP to `*.apps.jpocp.jazz.com.pk` via `NSAppTransportSecurity` in `Info.plist`. |
 
 ## Public API
 

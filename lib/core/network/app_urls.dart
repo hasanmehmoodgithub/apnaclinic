@@ -8,6 +8,16 @@ class AppUrls {
   /// Get base URL from flavor configuration
   static String get baseUrl => FlavorConfig.apiBaseUrl;
 
+  /// CMS backend. Override: `--dart-define=CMS_BASE_URL=...`
+  static const String cmsBaseUrl = String.fromEnvironment(
+    'CMS_BASE_URL',
+    defaultValue: 'https://apnaclinic-cmsbackend.apps.jpocp.jazz.com.pk',
+  );
+
+  static String get _normalizedCmsBaseUrl => cmsBaseUrl.endsWith('/')
+      ? cmsBaseUrl.substring(0, cmsBaseUrl.length - 1)
+      : cmsBaseUrl;
+
   static String get _normalizedApiBaseUrl =>
       baseUrl.endsWith('/') ? baseUrl.substring(0, baseUrl.length - 1) : baseUrl;
 
@@ -44,8 +54,9 @@ class AppUrls {
   /// Products list endpoint - full URL
   static String get products => 'https://dummyjson.com/products';
 
-  /// Our services endpoint
-  static String get ourServices => '$baseUrl/dashboard/services';
+  /// Home services (CMS mobile API).
+  static String get ourServices =>
+      '$_normalizedCmsBaseUrl/api/v1/mobile/services';
 
   /// Promotional banner endpoint
   static String get promotionalBanner => '$baseUrl/dashboard/promo-banner';
@@ -92,11 +103,6 @@ class AppUrls {
   /// Example: AppUrls.thirdPartyUrl('https://api.thirdparty.com/endpoint')
   /// This returns the URL as-is for complete 3rd party integration
 
-  /// Google API endpoint - full 3rd party URL
-  static String get googleApi => 'https://www.googleapis.com';
-
-  /// Facebook API endpoint - full 3rd party URL
-  static String get facebookApi => 'https://graph.facebook.com';
 
   // ============================================
   // Legal / policy pages (full URLs)

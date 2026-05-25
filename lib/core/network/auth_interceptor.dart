@@ -5,6 +5,7 @@ import 'package:dio/dio.dart';
 import '../preference/app_pref.dart';
 import 'app_urls.dart';
 import 'device_headers_provider.dart';
+import 'dio_app_network_config.dart';
 
 /// Handles automatic access token refresh on 401 responses.
 ///
@@ -50,7 +51,9 @@ class AuthInterceptor extends Interceptor {
 
     final options = err.requestOptions;
     final alreadyRetried = options.extra[_retryKey] == true;
-    final isRefreshCall = options.path == AppUrls.refreshToken;
+    final isRefreshCall =
+        options.path == AppUrls.refreshToken ||
+        options.uri.path.contains('/auth/token/refresh');
     final isLogoutCall = options.path.contains('/user-auth/auth/logout/');
     if (alreadyRetried || isRefreshCall || isLogoutCall) {
       handler.next(err);
@@ -138,6 +141,7 @@ class AuthInterceptor extends Interceptor {
           },
         ),
       );
+      configureDioForAppNetwork(refreshDio);
       final deviceHeaders = await _deviceHeadersProvider.headers();
 
       final response = await refreshDio.post<Map<String, dynamic>>(

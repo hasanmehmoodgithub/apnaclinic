@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
-import '../../../../core/router/app_routes.dart';
 import '../../../../core/widgets/app_button_widget.dart';
 import '../cubit/pharmacy_cubit.dart';
 import '../cubit/pharmacy_state.dart';
+import '../pharmacy_navigation.dart';
 import 'pharmacy_checkout_widgets.dart';
 import 'pharmacy_order_placed_dialog.dart';
 import 'pharmacy_payment_option_tile.dart';
@@ -175,8 +174,8 @@ class PharmacyCheckoutBodyWidget extends StatelessWidget {
                           await showPharmacyOrderPlacedDialog(context);
                           if (!context.mounted) return;
                           context.read<PharmacyCubit>().clearCart();
-                          context.goNamed(
-                            AppRoutes.pharmacyBookingDetails,
+                          pharmacyGoToOrderDetailsAfterPlace(
+                            context,
                             extra: const {
                               'orderNo': '1223',
                               'status': 'confirmed',

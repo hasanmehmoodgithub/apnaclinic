@@ -25,9 +25,7 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   Future<void> _navigateToNext() async {
-    await Future<void>.delayed(const Duration(seconds: 3));
-    context.go(AppRoutes.path(AppRoutes.onboarding));
-    return;
+    await Future<void>.delayed(const Duration(seconds: 2));
     if (!mounted) return;
     final nextRoute = _getInitialRouteUseCase();
     context.go(AppRoutes.path(nextRoute));

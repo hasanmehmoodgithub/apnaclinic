@@ -10,6 +10,7 @@ import '../../../../core/network/api_service.dart';
 import '../../../../core/network/app_urls.dart';
 import '../../../../core/utils/app_url_launcher.dart';
 import '../../../../core/preference/app_pref.dart';
+import '../../../../core/session/auth_session_refresh.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../auth/domain/use_cases/logout_use_case.dart';
 import '../../../../core/widgets/app_scaffold_gradient.dart';
@@ -185,6 +186,7 @@ class _MenuScreenState extends State<MenuScreen> {
                             await _appPref.setToken('');
                             await _appPref.setUserId('');
                             await _appPref.clearUserLocalModel();
+                            sl<AuthSessionRefresh>().notifyLoggedOut();
                             if (!context.mounted) return;
                             setState(() {
                               _isLoggedIn = false;

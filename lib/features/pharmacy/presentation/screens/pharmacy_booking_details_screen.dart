@@ -5,6 +5,7 @@ import '../../../../core/constants/app_colors.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/widgets/app_scaffold_gradient.dart';
+import '../pharmacy_navigation.dart';
 import '../widgets/pharmacy_booking_details_body_widget.dart';
 import '../widgets/pharmacy_flow_header_widget.dart';
 
@@ -27,9 +28,7 @@ class PharmacyBookingDetailsScreen extends StatelessWidget {
           PharmacyFlowHeaderWidget(
             title: '${l10n.pharmacyBookingOrderPrefix} $orderNo',
             trailingWidth: 40,
-            onBackTap: () {
-              if (context.canPop()) context.pop();
-            },
+            onBackTap: () => pharmacyPopOrGoHome(context),
           ),
           Expanded(
             child: Container(
