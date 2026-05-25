@@ -124,6 +124,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   Future<void> _finishOnboarding() async {
     await _completeOnboardingUseCase();
     if (!mounted) return;
+    final appPref = sl<AppPref>();
+    if (appPref.getLoginStatus() && !appPref.isProfileCompleted()) {
+      context.go(AppRoutes.path(AppRoutes.profileSetup));
+      return;
+    }
     context.go(AppRoutes.path(AppRoutes.home));
   }
 

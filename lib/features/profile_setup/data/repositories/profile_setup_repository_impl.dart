@@ -56,7 +56,6 @@ class ProfileSetupRepositoryImpl implements ProfileSetupRepository {
         imageUrl: entity.imageUrl ?? '',
       ),
     );
-    await appPref.setProfileCompleted(true);
   }
 
   Future<void> _persistDataLocally(ProfileSetupData data) async {

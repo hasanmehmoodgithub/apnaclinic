@@ -7,12 +7,19 @@ Phone OTP request/verify, session persistence via `AppPref`, logout API.
 Login footer legal links (`LoginLegalText`) open `AppUrls.termsAndConditions` and
 `AppUrls.privacyPolicy` in the device browser via `AppUrlLauncher`.
 
-After OTP verification, users go directly to home when the backend marks
-onboarding/profile complete (`userOnboarding: false`). Profile setup is shown
-when onboarding is still pending (`userOnboarding: true`).
+After OTP verification, users go to **home** when the backend marks profile
+complete (`userOnboarding: false` / `isOnboardingCompleted: true`). Otherwise
+they go to **profile setup** (`userOnboarding: true`).
 
-On successful login, `AuthCubit` calls `AuthSessionRefresh.notifyLoggedIn()` so
-`MainNavigationShell` opens the **Home** tab and runs the profile GET API.
+`AppPref.isOnboardingCompleted` is only for the intro carousel (not overwritten
+on login). `AppPref.isProfileCompleted` tracks whether profile setup is done.
+
+On login, `AuthSessionRefresh.notifyLoggedIn()` runs only when profile is
+already complete (avoids remounting `HomeScreen` under the login route, which
+would open the dashboard promo heart loader). After first-time profile save,
+profile setup calls `notifyLoggedIn()` then navigates home.
+Splash and `/home` redirect logged-in users without a completed profile to
+profile setup.
 
 ## Data layer
 

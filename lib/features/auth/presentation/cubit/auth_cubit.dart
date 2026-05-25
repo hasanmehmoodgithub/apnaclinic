@@ -225,8 +225,6 @@ class AuthCubit extends Cubit<AuthState> {
     await _appPref.setRefreshToken(entity.refreshToken ?? '');
     await _appPref.setAccessTokenExpiresIn(entity.accessTokenExpiresIn ?? 0);
     await _appPref.setRefreshTokenExpiresIn(entity.refreshTokenExpiresIn ?? 0);
-    await _appPref.setOnboardingCompleted(entity.isOnboardingCompleted == true);
-
     if (entity.isOnboardingCompleted == true) {
       await _appPref.setProfileCompleted(true);
       await _appPref.setUserLocalModel(
@@ -247,7 +245,11 @@ class AuthCubit extends Cubit<AuthState> {
       );
     }
 
-    _sessionRefresh.notifyLoggedIn();
+    // Only refresh the dashboard shell when profile is complete. Otherwise
+    // HomeScreen remounts under the login route and opens the promo heart loader.
+    if (entity.isOnboardingCompleted == true) {
+      _sessionRefresh.notifyLoggedIn();
+    }
   }
 
   void _startOtpTimer({int? expiresInSeconds}) {

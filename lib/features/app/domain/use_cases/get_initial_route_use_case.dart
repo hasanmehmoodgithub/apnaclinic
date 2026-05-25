@@ -7,7 +7,12 @@ class GetInitialRouteUseCase {
   final AppPref _appPref;
 
   String call() {
-    final seenOnboarding = _appPref.isOnboardingCompleted();
-    return seenOnboarding ? AppRoutes.home : AppRoutes.onboarding;
+    if (_appPref.getLoginStatus() && !_appPref.isProfileCompleted()) {
+      return AppRoutes.profileSetup;
+    }
+    if (!_appPref.isOnboardingCompleted()) {
+      return AppRoutes.onboarding;
+    }
+    return AppRoutes.home;
   }
 }

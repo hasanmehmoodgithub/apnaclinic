@@ -83,6 +83,10 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
   }
 
   Future<void> _refreshAllTabs() async {
+    final appPref = sl<AppPref>();
+    final isLoggedIn = appPref.getLoginStatus();
+    final profileComplete = appPref.isProfileCompleted();
+
     if (_sessionRefresh.consumeSelectHomeTab()) {
       _goToHomeTab();
     }
@@ -95,14 +99,18 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
     context.read<CustomerSupportCubit>().loadContent();
 
     final profileCubit = context.read<ProfileSetupCubit>();
-    if (sl<AppPref>().getLoginStatus()) {
+    if (isLoggedIn && profileComplete) {
       await profileCubit.loadProfile();
-    } else {
+    } else if (!isLoggedIn) {
       profileCubit.resetState();
     }
 
     if (!mounted) return;
-    setState(() => _tabSessionKey++);
+    // Avoid remounting HomeScreen (new DashboardCubit → heart loader) while
+    // the user still owes profile setup.
+    if (!isLoggedIn || profileComplete) {
+      setState(() => _tabSessionKey++);
+    }
     _applyStatusBar();
   }
 

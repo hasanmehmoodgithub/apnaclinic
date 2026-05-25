@@ -7,9 +7,9 @@ class AuthSessionRefresh extends ChangeNotifier {
 
   int get epoch => _epoch;
 
-  /// After OTP login: remount tabs, fetch profile, and show the Home tab.
-  void notifyLoggedIn() {
-    _selectHomeOnNextRefresh = true;
+  /// After OTP login: remount tabs and optionally open the Home tab.
+  void notifyLoggedIn({bool selectHomeTab = true}) {
+    _selectHomeOnNextRefresh = selectHomeTab;
     _epoch++;
     notifyListeners();
   }

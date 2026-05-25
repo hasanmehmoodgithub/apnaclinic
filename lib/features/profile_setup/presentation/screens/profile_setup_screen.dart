@@ -12,6 +12,8 @@ import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/preference/app_pref.dart';
 import '../../../../core/router/app_routes.dart';
+import '../../../../core/session/auth_session_refresh.dart';
+import '../../../../core/widgets/heart_loader_widget.dart';
 import '../../../notification/presentation/widgets/profile_setup_loading_shimmer.dart';
 import '../../domain/models/profile_setup_data.dart';
 import '../cubit/profile_setup_cubit.dart';
@@ -42,6 +44,11 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
   @override
   void initState() {
     super.initState();
+    HeartLoaderDialogController.closeAll();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      HeartLoaderDialogController.closeAll();
+    });
     context.read<ProfileSetupCubit>().resetState();
     final userLocal = appPref.getUserLocalModel();
     _firstNameController.text = userLocal?.firstName.trim() ?? '';
@@ -234,6 +241,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
         return;
       }
     }
+    sl<AuthSessionRefresh>().notifyLoggedIn();
     context.go(AppRoutes.path(AppRoutes.home));
   }
 

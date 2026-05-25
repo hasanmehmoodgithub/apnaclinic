@@ -29,5 +29,5 @@ Profile uses **`profile_setup`** remote (`GET …/users/{userId}`) — no duplic
 
 ## Session refresh
 
-- `AuthSessionRefresh.notifyLoggedIn()` — after OTP login (`AuthCubit`): shell selects **Home** tab (index 2), `ProfileSetupCubit.loadProfile()` (GET user profile), remounts tabs (new `HomeScreen` → new `DashboardCubit` → `syncUserProfileFromApi()` again).
+- `AuthSessionRefresh.notifyLoggedIn()` — after OTP when profile is already complete, or after first-time profile save: shell selects **Home** tab, loads profile, remounts tabs. Skipped on login when profile is still pending (prevents promo **heart loader** overlay on profile setup). `HomeScreen` only shows the heart loader when `/home` is the active route.
 - `AuthSessionRefresh.notifyLoggedOut()` — logout (`MenuScreen`): guest tabs, `ProfileSetupCubit.resetState()`.

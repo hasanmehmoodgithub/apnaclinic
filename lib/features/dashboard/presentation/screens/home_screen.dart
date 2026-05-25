@@ -47,10 +47,19 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
 
   @override
   void dispose() {
+    HeartLoaderDialogController.close(_bannerLoaderId);
     WidgetsBinding.instance.removeObserver(this);
     _dashboardCubit.close();
     _notificationCubit.close();
     super.dispose();
+  }
+
+  bool _isHomeRouteActive(BuildContext context) {
+    final route = ModalRoute.of(context);
+    if (route?.isCurrent != true) return false;
+    final location =
+        GoRouter.of(context).routerDelegate.currentConfiguration.uri.path;
+    return location == AppRoutes.path(AppRoutes.home);
   }
 
   /// Forces the keyboard to close. Called whenever the home screen comes
@@ -96,7 +105,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       DashboardServicesState state,
       ) {
     if (state.promotionalBannerLoadingStateStatus == StateStatus.loading) {
-      if (!HeartLoaderDialogController.isOpen(_bannerLoaderId)) {
+      if (_isHomeRouteActive(context) &&
+          !HeartLoaderDialogController.isOpen(_bannerLoaderId)) {
         showHeartLoaderDialog(context, id: _bannerLoaderId);
       }
       return;
