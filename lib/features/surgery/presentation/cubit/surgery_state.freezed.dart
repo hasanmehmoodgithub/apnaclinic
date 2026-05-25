@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$SurgeryState {
 
- StateStatus get loadingStateStatus; SurgeryContentEntity get content; String get selectedCity; String get searchQuery; Set<String> get selectedProcedureIds; String? get errorMessage;
+ StateStatus get loadingStateStatus; SurgeryContentEntity get content; String get selectedCity; String get searchQuery; Set<String> get selectedProcedureIds; String? get errorMessage; StateStatus get doctorsLoadingStateStatus; SurgeryDoctorsEntity get doctorsContent; String? get doctorsErrorMessage; StateStatus get patientFormLoadingStateStatus; SurgeryPatientFormEntity get patientForm; String? get patientFormErrorMessage;
 /// Create a copy of SurgeryState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +25,16 @@ $SurgeryStateCopyWith<SurgeryState> get copyWith => _$SurgeryStateCopyWithImpl<S
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SurgeryState&&(identical(other.loadingStateStatus, loadingStateStatus) || other.loadingStateStatus == loadingStateStatus)&&(identical(other.content, content) || other.content == content)&&(identical(other.selectedCity, selectedCity) || other.selectedCity == selectedCity)&&(identical(other.searchQuery, searchQuery) || other.searchQuery == searchQuery)&&const DeepCollectionEquality().equals(other.selectedProcedureIds, selectedProcedureIds)&&(identical(other.errorMessage, errorMessage) || other.errorMessage == errorMessage));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SurgeryState&&(identical(other.loadingStateStatus, loadingStateStatus) || other.loadingStateStatus == loadingStateStatus)&&(identical(other.content, content) || other.content == content)&&(identical(other.selectedCity, selectedCity) || other.selectedCity == selectedCity)&&(identical(other.searchQuery, searchQuery) || other.searchQuery == searchQuery)&&const DeepCollectionEquality().equals(other.selectedProcedureIds, selectedProcedureIds)&&(identical(other.errorMessage, errorMessage) || other.errorMessage == errorMessage)&&(identical(other.doctorsLoadingStateStatus, doctorsLoadingStateStatus) || other.doctorsLoadingStateStatus == doctorsLoadingStateStatus)&&(identical(other.doctorsContent, doctorsContent) || other.doctorsContent == doctorsContent)&&(identical(other.doctorsErrorMessage, doctorsErrorMessage) || other.doctorsErrorMessage == doctorsErrorMessage)&&(identical(other.patientFormLoadingStateStatus, patientFormLoadingStateStatus) || other.patientFormLoadingStateStatus == patientFormLoadingStateStatus)&&(identical(other.patientForm, patientForm) || other.patientForm == patientForm)&&(identical(other.patientFormErrorMessage, patientFormErrorMessage) || other.patientFormErrorMessage == patientFormErrorMessage));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,loadingStateStatus,content,selectedCity,searchQuery,const DeepCollectionEquality().hash(selectedProcedureIds),errorMessage);
+int get hashCode => Object.hash(runtimeType,loadingStateStatus,content,selectedCity,searchQuery,const DeepCollectionEquality().hash(selectedProcedureIds),errorMessage,doctorsLoadingStateStatus,doctorsContent,doctorsErrorMessage,patientFormLoadingStateStatus,patientForm,patientFormErrorMessage);
 
 @override
 String toString() {
-  return 'SurgeryState(loadingStateStatus: $loadingStateStatus, content: $content, selectedCity: $selectedCity, searchQuery: $searchQuery, selectedProcedureIds: $selectedProcedureIds, errorMessage: $errorMessage)';
+  return 'SurgeryState(loadingStateStatus: $loadingStateStatus, content: $content, selectedCity: $selectedCity, searchQuery: $searchQuery, selectedProcedureIds: $selectedProcedureIds, errorMessage: $errorMessage, doctorsLoadingStateStatus: $doctorsLoadingStateStatus, doctorsContent: $doctorsContent, doctorsErrorMessage: $doctorsErrorMessage, patientFormLoadingStateStatus: $patientFormLoadingStateStatus, patientForm: $patientForm, patientFormErrorMessage: $patientFormErrorMessage)';
 }
 
 
@@ -45,7 +45,7 @@ abstract mixin class $SurgeryStateCopyWith<$Res>  {
   factory $SurgeryStateCopyWith(SurgeryState value, $Res Function(SurgeryState) _then) = _$SurgeryStateCopyWithImpl;
 @useResult
 $Res call({
- StateStatus loadingStateStatus, SurgeryContentEntity content, String selectedCity, String searchQuery, Set<String> selectedProcedureIds, String? errorMessage
+ StateStatus loadingStateStatus, SurgeryContentEntity content, String selectedCity, String searchQuery, Set<String> selectedProcedureIds, String? errorMessage, StateStatus doctorsLoadingStateStatus, SurgeryDoctorsEntity doctorsContent, String? doctorsErrorMessage, StateStatus patientFormLoadingStateStatus, SurgeryPatientFormEntity patientForm, String? patientFormErrorMessage
 });
 
 
@@ -62,7 +62,7 @@ class _$SurgeryStateCopyWithImpl<$Res>
 
 /// Create a copy of SurgeryState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? loadingStateStatus = null,Object? content = null,Object? selectedCity = null,Object? searchQuery = null,Object? selectedProcedureIds = null,Object? errorMessage = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? loadingStateStatus = null,Object? content = null,Object? selectedCity = null,Object? searchQuery = null,Object? selectedProcedureIds = null,Object? errorMessage = freezed,Object? doctorsLoadingStateStatus = null,Object? doctorsContent = null,Object? doctorsErrorMessage = freezed,Object? patientFormLoadingStateStatus = null,Object? patientForm = null,Object? patientFormErrorMessage = freezed,}) {
   return _then(_self.copyWith(
 loadingStateStatus: null == loadingStateStatus ? _self.loadingStateStatus : loadingStateStatus // ignore: cast_nullable_to_non_nullable
 as StateStatus,content: null == content ? _self.content : content // ignore: cast_nullable_to_non_nullable
@@ -70,6 +70,12 @@ as SurgeryContentEntity,selectedCity: null == selectedCity ? _self.selectedCity 
 as String,searchQuery: null == searchQuery ? _self.searchQuery : searchQuery // ignore: cast_nullable_to_non_nullable
 as String,selectedProcedureIds: null == selectedProcedureIds ? _self.selectedProcedureIds : selectedProcedureIds // ignore: cast_nullable_to_non_nullable
 as Set<String>,errorMessage: freezed == errorMessage ? _self.errorMessage : errorMessage // ignore: cast_nullable_to_non_nullable
+as String?,doctorsLoadingStateStatus: null == doctorsLoadingStateStatus ? _self.doctorsLoadingStateStatus : doctorsLoadingStateStatus // ignore: cast_nullable_to_non_nullable
+as StateStatus,doctorsContent: null == doctorsContent ? _self.doctorsContent : doctorsContent // ignore: cast_nullable_to_non_nullable
+as SurgeryDoctorsEntity,doctorsErrorMessage: freezed == doctorsErrorMessage ? _self.doctorsErrorMessage : doctorsErrorMessage // ignore: cast_nullable_to_non_nullable
+as String?,patientFormLoadingStateStatus: null == patientFormLoadingStateStatus ? _self.patientFormLoadingStateStatus : patientFormLoadingStateStatus // ignore: cast_nullable_to_non_nullable
+as StateStatus,patientForm: null == patientForm ? _self.patientForm : patientForm // ignore: cast_nullable_to_non_nullable
+as SurgeryPatientFormEntity,patientFormErrorMessage: freezed == patientFormErrorMessage ? _self.patientFormErrorMessage : patientFormErrorMessage // ignore: cast_nullable_to_non_nullable
 as String?,
   ));
 }
@@ -155,10 +161,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( StateStatus loadingStateStatus,  SurgeryContentEntity content,  String selectedCity,  String searchQuery,  Set<String> selectedProcedureIds,  String? errorMessage)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( StateStatus loadingStateStatus,  SurgeryContentEntity content,  String selectedCity,  String searchQuery,  Set<String> selectedProcedureIds,  String? errorMessage,  StateStatus doctorsLoadingStateStatus,  SurgeryDoctorsEntity doctorsContent,  String? doctorsErrorMessage,  StateStatus patientFormLoadingStateStatus,  SurgeryPatientFormEntity patientForm,  String? patientFormErrorMessage)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _SurgeryState() when $default != null:
-return $default(_that.loadingStateStatus,_that.content,_that.selectedCity,_that.searchQuery,_that.selectedProcedureIds,_that.errorMessage);case _:
+return $default(_that.loadingStateStatus,_that.content,_that.selectedCity,_that.searchQuery,_that.selectedProcedureIds,_that.errorMessage,_that.doctorsLoadingStateStatus,_that.doctorsContent,_that.doctorsErrorMessage,_that.patientFormLoadingStateStatus,_that.patientForm,_that.patientFormErrorMessage);case _:
   return orElse();
 
 }
@@ -176,10 +182,10 @@ return $default(_that.loadingStateStatus,_that.content,_that.selectedCity,_that.
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( StateStatus loadingStateStatus,  SurgeryContentEntity content,  String selectedCity,  String searchQuery,  Set<String> selectedProcedureIds,  String? errorMessage)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( StateStatus loadingStateStatus,  SurgeryContentEntity content,  String selectedCity,  String searchQuery,  Set<String> selectedProcedureIds,  String? errorMessage,  StateStatus doctorsLoadingStateStatus,  SurgeryDoctorsEntity doctorsContent,  String? doctorsErrorMessage,  StateStatus patientFormLoadingStateStatus,  SurgeryPatientFormEntity patientForm,  String? patientFormErrorMessage)  $default,) {final _that = this;
 switch (_that) {
 case _SurgeryState():
-return $default(_that.loadingStateStatus,_that.content,_that.selectedCity,_that.searchQuery,_that.selectedProcedureIds,_that.errorMessage);case _:
+return $default(_that.loadingStateStatus,_that.content,_that.selectedCity,_that.searchQuery,_that.selectedProcedureIds,_that.errorMessage,_that.doctorsLoadingStateStatus,_that.doctorsContent,_that.doctorsErrorMessage,_that.patientFormLoadingStateStatus,_that.patientForm,_that.patientFormErrorMessage);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -196,10 +202,10 @@ return $default(_that.loadingStateStatus,_that.content,_that.selectedCity,_that.
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( StateStatus loadingStateStatus,  SurgeryContentEntity content,  String selectedCity,  String searchQuery,  Set<String> selectedProcedureIds,  String? errorMessage)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( StateStatus loadingStateStatus,  SurgeryContentEntity content,  String selectedCity,  String searchQuery,  Set<String> selectedProcedureIds,  String? errorMessage,  StateStatus doctorsLoadingStateStatus,  SurgeryDoctorsEntity doctorsContent,  String? doctorsErrorMessage,  StateStatus patientFormLoadingStateStatus,  SurgeryPatientFormEntity patientForm,  String? patientFormErrorMessage)?  $default,) {final _that = this;
 switch (_that) {
 case _SurgeryState() when $default != null:
-return $default(_that.loadingStateStatus,_that.content,_that.selectedCity,_that.searchQuery,_that.selectedProcedureIds,_that.errorMessage);case _:
+return $default(_that.loadingStateStatus,_that.content,_that.selectedCity,_that.searchQuery,_that.selectedProcedureIds,_that.errorMessage,_that.doctorsLoadingStateStatus,_that.doctorsContent,_that.doctorsErrorMessage,_that.patientFormLoadingStateStatus,_that.patientForm,_that.patientFormErrorMessage);case _:
   return null;
 
 }
@@ -211,7 +217,7 @@ return $default(_that.loadingStateStatus,_that.content,_that.selectedCity,_that.
 
 
 class _SurgeryState implements SurgeryState {
-  const _SurgeryState({this.loadingStateStatus = StateStatus.idle, this.content = const SurgeryContentEntity(cities: [], defaultCity: '', procedures: []), this.selectedCity = '', this.searchQuery = '', final  Set<String> selectedProcedureIds = const {}, this.errorMessage}): _selectedProcedureIds = selectedProcedureIds;
+  const _SurgeryState({this.loadingStateStatus = StateStatus.idle, this.content = const SurgeryContentEntity(cities: [], defaultCity: '', procedures: []), this.selectedCity = '', this.searchQuery = '', final  Set<String> selectedProcedureIds = const {}, this.errorMessage, this.doctorsLoadingStateStatus = StateStatus.idle, this.doctorsContent = const SurgeryDoctorsEntity(procedureName: '', city: '', hospitals: [], specialties: [], doctors: []), this.doctorsErrorMessage, this.patientFormLoadingStateStatus = StateStatus.idle, this.patientForm = SurgeryPatientFormEntity.empty, this.patientFormErrorMessage}): _selectedProcedureIds = selectedProcedureIds;
   
 
 @override@JsonKey() final  StateStatus loadingStateStatus;
@@ -226,6 +232,12 @@ class _SurgeryState implements SurgeryState {
 }
 
 @override final  String? errorMessage;
+@override@JsonKey() final  StateStatus doctorsLoadingStateStatus;
+@override@JsonKey() final  SurgeryDoctorsEntity doctorsContent;
+@override final  String? doctorsErrorMessage;
+@override@JsonKey() final  StateStatus patientFormLoadingStateStatus;
+@override@JsonKey() final  SurgeryPatientFormEntity patientForm;
+@override final  String? patientFormErrorMessage;
 
 /// Create a copy of SurgeryState
 /// with the given fields replaced by the non-null parameter values.
@@ -237,16 +249,16 @@ _$SurgeryStateCopyWith<_SurgeryState> get copyWith => __$SurgeryStateCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SurgeryState&&(identical(other.loadingStateStatus, loadingStateStatus) || other.loadingStateStatus == loadingStateStatus)&&(identical(other.content, content) || other.content == content)&&(identical(other.selectedCity, selectedCity) || other.selectedCity == selectedCity)&&(identical(other.searchQuery, searchQuery) || other.searchQuery == searchQuery)&&const DeepCollectionEquality().equals(other._selectedProcedureIds, _selectedProcedureIds)&&(identical(other.errorMessage, errorMessage) || other.errorMessage == errorMessage));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SurgeryState&&(identical(other.loadingStateStatus, loadingStateStatus) || other.loadingStateStatus == loadingStateStatus)&&(identical(other.content, content) || other.content == content)&&(identical(other.selectedCity, selectedCity) || other.selectedCity == selectedCity)&&(identical(other.searchQuery, searchQuery) || other.searchQuery == searchQuery)&&const DeepCollectionEquality().equals(other._selectedProcedureIds, _selectedProcedureIds)&&(identical(other.errorMessage, errorMessage) || other.errorMessage == errorMessage)&&(identical(other.doctorsLoadingStateStatus, doctorsLoadingStateStatus) || other.doctorsLoadingStateStatus == doctorsLoadingStateStatus)&&(identical(other.doctorsContent, doctorsContent) || other.doctorsContent == doctorsContent)&&(identical(other.doctorsErrorMessage, doctorsErrorMessage) || other.doctorsErrorMessage == doctorsErrorMessage)&&(identical(other.patientFormLoadingStateStatus, patientFormLoadingStateStatus) || other.patientFormLoadingStateStatus == patientFormLoadingStateStatus)&&(identical(other.patientForm, patientForm) || other.patientForm == patientForm)&&(identical(other.patientFormErrorMessage, patientFormErrorMessage) || other.patientFormErrorMessage == patientFormErrorMessage));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,loadingStateStatus,content,selectedCity,searchQuery,const DeepCollectionEquality().hash(_selectedProcedureIds),errorMessage);
+int get hashCode => Object.hash(runtimeType,loadingStateStatus,content,selectedCity,searchQuery,const DeepCollectionEquality().hash(_selectedProcedureIds),errorMessage,doctorsLoadingStateStatus,doctorsContent,doctorsErrorMessage,patientFormLoadingStateStatus,patientForm,patientFormErrorMessage);
 
 @override
 String toString() {
-  return 'SurgeryState(loadingStateStatus: $loadingStateStatus, content: $content, selectedCity: $selectedCity, searchQuery: $searchQuery, selectedProcedureIds: $selectedProcedureIds, errorMessage: $errorMessage)';
+  return 'SurgeryState(loadingStateStatus: $loadingStateStatus, content: $content, selectedCity: $selectedCity, searchQuery: $searchQuery, selectedProcedureIds: $selectedProcedureIds, errorMessage: $errorMessage, doctorsLoadingStateStatus: $doctorsLoadingStateStatus, doctorsContent: $doctorsContent, doctorsErrorMessage: $doctorsErrorMessage, patientFormLoadingStateStatus: $patientFormLoadingStateStatus, patientForm: $patientForm, patientFormErrorMessage: $patientFormErrorMessage)';
 }
 
 
@@ -257,7 +269,7 @@ abstract mixin class _$SurgeryStateCopyWith<$Res> implements $SurgeryStateCopyWi
   factory _$SurgeryStateCopyWith(_SurgeryState value, $Res Function(_SurgeryState) _then) = __$SurgeryStateCopyWithImpl;
 @override @useResult
 $Res call({
- StateStatus loadingStateStatus, SurgeryContentEntity content, String selectedCity, String searchQuery, Set<String> selectedProcedureIds, String? errorMessage
+ StateStatus loadingStateStatus, SurgeryContentEntity content, String selectedCity, String searchQuery, Set<String> selectedProcedureIds, String? errorMessage, StateStatus doctorsLoadingStateStatus, SurgeryDoctorsEntity doctorsContent, String? doctorsErrorMessage, StateStatus patientFormLoadingStateStatus, SurgeryPatientFormEntity patientForm, String? patientFormErrorMessage
 });
 
 
@@ -274,7 +286,7 @@ class __$SurgeryStateCopyWithImpl<$Res>
 
 /// Create a copy of SurgeryState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? loadingStateStatus = null,Object? content = null,Object? selectedCity = null,Object? searchQuery = null,Object? selectedProcedureIds = null,Object? errorMessage = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? loadingStateStatus = null,Object? content = null,Object? selectedCity = null,Object? searchQuery = null,Object? selectedProcedureIds = null,Object? errorMessage = freezed,Object? doctorsLoadingStateStatus = null,Object? doctorsContent = null,Object? doctorsErrorMessage = freezed,Object? patientFormLoadingStateStatus = null,Object? patientForm = null,Object? patientFormErrorMessage = freezed,}) {
   return _then(_SurgeryState(
 loadingStateStatus: null == loadingStateStatus ? _self.loadingStateStatus : loadingStateStatus // ignore: cast_nullable_to_non_nullable
 as StateStatus,content: null == content ? _self.content : content // ignore: cast_nullable_to_non_nullable
@@ -282,6 +294,12 @@ as SurgeryContentEntity,selectedCity: null == selectedCity ? _self.selectedCity 
 as String,searchQuery: null == searchQuery ? _self.searchQuery : searchQuery // ignore: cast_nullable_to_non_nullable
 as String,selectedProcedureIds: null == selectedProcedureIds ? _self._selectedProcedureIds : selectedProcedureIds // ignore: cast_nullable_to_non_nullable
 as Set<String>,errorMessage: freezed == errorMessage ? _self.errorMessage : errorMessage // ignore: cast_nullable_to_non_nullable
+as String?,doctorsLoadingStateStatus: null == doctorsLoadingStateStatus ? _self.doctorsLoadingStateStatus : doctorsLoadingStateStatus // ignore: cast_nullable_to_non_nullable
+as StateStatus,doctorsContent: null == doctorsContent ? _self.doctorsContent : doctorsContent // ignore: cast_nullable_to_non_nullable
+as SurgeryDoctorsEntity,doctorsErrorMessage: freezed == doctorsErrorMessage ? _self.doctorsErrorMessage : doctorsErrorMessage // ignore: cast_nullable_to_non_nullable
+as String?,patientFormLoadingStateStatus: null == patientFormLoadingStateStatus ? _self.patientFormLoadingStateStatus : patientFormLoadingStateStatus // ignore: cast_nullable_to_non_nullable
+as StateStatus,patientForm: null == patientForm ? _self.patientForm : patientForm // ignore: cast_nullable_to_non_nullable
+as SurgeryPatientFormEntity,patientFormErrorMessage: freezed == patientFormErrorMessage ? _self.patientFormErrorMessage : patientFormErrorMessage // ignore: cast_nullable_to_non_nullable
 as String?,
   ));
 }

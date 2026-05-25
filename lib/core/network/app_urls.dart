@@ -92,6 +92,13 @@ class AppUrls {
 
   /// Surgery procedures endpoint
   static String get surgeryProcedures => '$baseUrl/surgery/procedures';
+  static String surgeryDoctors({
+    required String procedureName,
+    required String city,
+  }) =>
+      '$baseUrl/surgery/doctors?procedure=${Uri.encodeComponent(procedureName)}&city=${Uri.encodeComponent(city)}';
+  static String surgeryPatientForm(String doctorId) =>
+      '$baseUrl/surgery/patient-form/$doctorId';
   static String get surgeryBooking => '$baseUrl/surgery/booking';
   static String get labTestCatalog => '$baseUrl/lab/test';
 

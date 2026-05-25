@@ -1046,6 +1046,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bookingsLabTestEmptyDescription => 'No lab test bookings yet.';
 
   @override
+  String get bookingsSurgeryEmptyDescription => 'No surgery bookings yet.';
+
+  @override
   String get bookingsStatusLabel => 'Status';
 
   @override

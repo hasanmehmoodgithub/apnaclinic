@@ -63,21 +63,21 @@ class SurgeryBookingDoctorCardWidget extends StatelessWidget {
                       style: theme.textTheme.titleMedium?.copyWith(
                         color: const Color(0xFF061E40),
                         fontWeight: FontWeight.w500,
-                        fontSize: 16.sp,
+                        fontSize: 14.sp,
                       ),
                     ),
                     Text(
                       data.speciality,
                       style: theme.textTheme.bodyMedium?.copyWith(
                         color: const Color(0xFFA6A6A6),
-                        fontSize: 13.sp,
+                        fontSize: 12.sp,
                       ),
                     ),
                     Text(
                       '${data.experience}  ${data.qualifications}',
                       style: theme.textTheme.bodyMedium?.copyWith(
                         color: const Color(0xFFA6A6A6),
-                        fontSize: 13.sp,
+                        fontSize: 12.sp,
                       ),
                     ),
                   ],
@@ -126,7 +126,7 @@ class SurgeryBookingDoctorCardWidget extends StatelessWidget {
                         style: theme.textTheme.titleSmall?.copyWith(
                           color: const Color(0xFF061E40),
                           fontWeight: FontWeight.w700,
-                          fontSize: 16.sp,
+                          fontSize: 13.sp,
                         ),
                       ),
                       SizedBox(height: 3.h),
@@ -134,7 +134,7 @@ class SurgeryBookingDoctorCardWidget extends StatelessWidget {
                         data.procedureName,
                         style: theme.textTheme.bodyMedium?.copyWith(
                           color: const Color(0xFF061E40),
-                          fontSize: 14.sp,
+                          fontSize: 11.sp,
                           height: 1.2,
                         ),
                       ),
@@ -148,7 +148,7 @@ class SurgeryBookingDoctorCardWidget extends StatelessWidget {
                       'Stating from',
                       style: theme.textTheme.bodySmall?.copyWith(
                         color: const Color(0xFF777272),
-                        fontSize: 12.sp,
+                        fontSize: 10.sp,
                       ),
                     ),
                     Text(
@@ -156,7 +156,7 @@ class SurgeryBookingDoctorCardWidget extends StatelessWidget {
                       style: theme.textTheme.titleMedium?.copyWith(
                         color: const Color(0xFF061E40),
                         fontWeight: FontWeight.w500,
-                        fontSize: 16.sp,
+                        fontSize: 13.sp,
                       ),
                     ),
                     SizedBox(height: 1.h),
@@ -165,7 +165,7 @@ class SurgeryBookingDoctorCardWidget extends StatelessWidget {
                       style: theme.textTheme.bodyMedium?.copyWith(
                         color: const Color(0xFF979797),
                         decoration: TextDecoration.lineThrough,
-                        fontSize: 14.sp,
+                        fontSize: 12.sp,
                       ),
                     ),
                   ],
@@ -180,7 +180,7 @@ class SurgeryBookingDoctorCardWidget extends StatelessWidget {
               onPressed: onBookNowTap,
               style: FilledButton.styleFrom(
                 backgroundColor: const Color(0xFF0FAA9A),
-                minimumSize: Size.fromHeight(40.h),
+                minimumSize: Size.fromHeight(30.h),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8.5.r),
                 ),
@@ -190,7 +190,7 @@ class SurgeryBookingDoctorCardWidget extends StatelessWidget {
                 style: theme.textTheme.titleSmall?.copyWith(
                   color: Colors.white,
                   fontWeight: FontWeight.w700,
-                  fontSize: 16.sp,
+                  fontSize: 13.sp,
                 ),
               ),
             ),

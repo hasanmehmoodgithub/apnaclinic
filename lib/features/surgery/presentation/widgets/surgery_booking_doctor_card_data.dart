@@ -1,5 +1,6 @@
 class SurgeryBookingDoctorCardData {
   const SurgeryBookingDoctorCardData({
+    required this.id,
     required this.doctorName,
     required this.speciality,
     required this.experience,
@@ -12,6 +13,7 @@ class SurgeryBookingDoctorCardData {
     required this.partnerLogoUrl,
   });
 
+  final String id;
   final String doctorName;
   final String speciality;
   final String experience;
