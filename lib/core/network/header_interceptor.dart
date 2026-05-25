@@ -26,7 +26,10 @@ class HeaderInterceptor extends Interceptor {
     options.headers.addAll(headers);
 
     final uri = options.uri.toString();
-    if (!uri.contains('apnaclinic-cmsbackend')) return;
+    if (!uri.contains('apnaclinic-cmsbackend') &&
+        !uri.contains('apnaclinic-aggregator')) {
+      return;
+    }
 
     final token = _appPref.getToken();
     final tenantId = JwtUtils.claim<dynamic>(token, 'tenant_id');

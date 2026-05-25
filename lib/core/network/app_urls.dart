@@ -14,9 +14,20 @@ class AppUrls {
     defaultValue: 'https://apnaclinic-cmsbackend.apps.jpocp.jazz.com.pk',
   );
 
+  /// Aggregator backend. Override: `--dart-define=AGGREGATOR_BASE_URL=...`
+  static const String aggregatorBaseUrl = String.fromEnvironment(
+    'AGGREGATOR_BASE_URL',
+    defaultValue: 'https://apnaclinic-aggregator.apps.jpocp.jazz.com.pk',
+  );
+
   static String get _normalizedCmsBaseUrl => cmsBaseUrl.endsWith('/')
       ? cmsBaseUrl.substring(0, cmsBaseUrl.length - 1)
       : cmsBaseUrl;
+
+  static String get _normalizedAggregatorBaseUrl =>
+      aggregatorBaseUrl.endsWith('/')
+          ? aggregatorBaseUrl.substring(0, aggregatorBaseUrl.length - 1)
+          : aggregatorBaseUrl;
 
   static String get _normalizedApiBaseUrl =>
       baseUrl.endsWith('/') ? baseUrl.substring(0, baseUrl.length - 1) : baseUrl;
@@ -57,6 +68,10 @@ class AppUrls {
   /// Home services (CMS mobile API).
   static String get ourServices =>
       '$_normalizedCmsBaseUrl/api/v1/mobile/services';
+
+  /// Doctor consultation categories (aggregator mobile API).
+  static String get doctorCategories =>
+      '$_normalizedAggregatorBaseUrl/api/v1/mobile/doctor-categories';
 
   /// Promotional banner endpoint
   static String get promotionalBanner => '$baseUrl/dashboard/promo-banner';

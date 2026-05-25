@@ -5,6 +5,7 @@ import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/services/responsive_config_service.dart';
 import '../../domain/entities/consultation_category_entity.dart';
 import '../constants/consultation_ui_config.dart';
+import 'consultation_category_icon_widget.dart';
 
 class ConsultationCategoryCard extends StatelessWidget {
   final ConsultationCategoryEntity category;
@@ -57,7 +58,7 @@ class ConsultationCategoryCard extends StatelessWidget {
                 top: responsive.h(context, 16),
                 right: responsive.w(context, 70),
                 child: Text(
-                  category.title,
+                  category.cardTitle,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: textTheme.titleMedium?.copyWith(
@@ -71,10 +72,10 @@ class ConsultationCategoryCard extends StatelessWidget {
               Positioned(
                 right: responsive.w(context, 10),
                 bottom: responsive.h(context, 8),
-                child: SizedBox(
+                child: ConsultationCategoryIconWidget(
+                  iconUrl: category.iconUrl,
                   width: responsive.w(context, 50),
                   height: responsive.h(context, 50),
-                  child: SvgPicture.asset(category.iconUrl, fit: BoxFit.contain),
                 ),
               ),
               Positioned(
