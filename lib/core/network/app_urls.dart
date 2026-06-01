@@ -73,8 +73,9 @@ class AppUrls {
   static String get doctorCategories =>
       '$_normalizedAggregatorBaseUrl/api/v1/mobile/doctor-categories';
 
-  /// Promotional banner endpoint
-  static String get promotionalBanner => '$baseUrl/dashboard/promo-banner';
+  /// Home promotional banner(s) — CMS mobile API (first active item by displayOrder).
+  static String get promotionalBanner =>
+      '$_normalizedCmsBaseUrl/api/v1/mobile/banners';
 
   /// Free doctor screen content endpoint
   static String get freeDoctor => '$baseUrl/dashboard/free-doctor';

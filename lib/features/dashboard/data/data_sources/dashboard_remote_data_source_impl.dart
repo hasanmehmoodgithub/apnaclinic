@@ -86,7 +86,6 @@ class DashboardRemoteDataSourceImpl implements DashboardRemoteDataSource {
     try {
       final Map<String, dynamic> response;
       if (PromotionalBannerMockApi.useMockResponses) {
-        await Future<void>.delayed(const Duration(seconds: 2));
         response = await promotionalBannerMockApi
             .getPromotionalBannerSuccessResponse();
       } else {
@@ -94,7 +93,7 @@ class DashboardRemoteDataSourceImpl implements DashboardRemoteDataSource {
         log('getPromotionalBanner response: $response');
       }
 
-      if (response['success'] == true) {
+      if (_isSuccessResponse(response)) {
         return PromotionalBannerResponseModel.fromJson(response);
       }
 

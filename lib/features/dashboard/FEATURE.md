@@ -14,7 +14,7 @@ Home services grid, promotional banner, search entry, and shell navigation. Keep
 ## Data & APIs (dashboard-specific)
 
 - Services: `AppUrls.ourServices` (see `DashboardRemoteDataSourceImpl`).
-- Promo: `AppUrls.promotionalBanner`.
+- Promo: `AppUrls.promotionalBanner` → CMS `GET /api/v1/mobile/banners`. Uses first active banner (`isActive`, schedule, `displayOrder`). Maps `imagePath` → dialog image, `ctaUrl` → in-app route or external URL.
 
 Profile uses **`profile_setup`** remote (`GET …/users/{userId}`) — no duplicate URL in dashboard.
 
