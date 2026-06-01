@@ -6,12 +6,20 @@ class CustomerSupportContactEntity extends Equatable {
     required this.dialogTitle,
     required this.dialogMessage,
     required this.dialNumber,
+    this.email = '',
+    this.buttonText = '',
   });
 
   final String cardTitle;
   final String dialogTitle;
   final String dialogMessage;
   final String dialNumber;
+  final String email;
+  final String buttonText;
+
+  bool get hasEmail => email.trim().isNotEmpty;
+
+  bool get hasPhone => dialNumber.trim().isNotEmpty;
 
   @override
   List<Object?> get props => [
@@ -19,6 +27,8 @@ class CustomerSupportContactEntity extends Equatable {
     dialogTitle,
     dialogMessage,
     dialNumber,
+    email,
+    buttonText,
   ];
 }
 

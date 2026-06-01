@@ -77,11 +77,12 @@ class AppUrls {
   static String get promotionalBanner =>
       '$_normalizedCmsBaseUrl/api/v1/mobile/banners';
 
+  /// Customer support settings — CMS mobile API.
+  static String get mobileSupport =>
+      '$_normalizedCmsBaseUrl/api/v1/mobile/support';
+
   /// Free doctor screen content endpoint
   static String get freeDoctor => '$baseUrl/dashboard/free-doctor';
-
-  /// Customer support screen content endpoint
-  static String get customerSupport => '$baseUrl/dashboard/customer-support';
 
   /// Profile setup details endpoint
   static String userProfileById(String userId) =>
