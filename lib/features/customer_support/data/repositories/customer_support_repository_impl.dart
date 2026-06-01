@@ -1,30 +1,30 @@
 import 'dart:developer';
 
 import '../../../../core/functional/functional_export.dart';
-import '../../../dashboard/domain/repositories/dashboard_repository.dart';
 import '../../domain/entities/customer_support_entity.dart';
 import '../../domain/repositories/customer_support_repository.dart';
+import '../data_sources/customer_support_remote_data_source.dart';
 import '../mappers/customer_support_mapper.dart';
 
 class CustomerSupportRepositoryImpl implements CustomerSupportRepository {
-  CustomerSupportRepositoryImpl({required this.dashboardRepository});
+  CustomerSupportRepositoryImpl({required this.remoteDataSource});
 
-  final DashboardRepository dashboardRepository;
+  final CustomerSupportRemoteDataSource remoteDataSource;
 
   @override
   Future<Either<ErrorMsg, CustomerSupportEntity>>
   getCustomerSupportContent() async {
-    final result = await dashboardRepository.getSupportSettings();
-    return result.fold(
-      Left.new,
-      (settings) {
-        final entity = CustomerSupportMapper.fromSupportSettings(settings);
-        log(
-          'Mapped customer support from CMS: phone=${settings.phone.isNotEmpty}, '
-          'email=${settings.hasEmail}',
-        );
-        return Right(entity);
-      },
-    );
+    try {
+      final model = await remoteDataSource.getSupportSettings();
+      final entity = CustomerSupportMapper.toEntity(model);
+      log(
+        'Mapped customer support: phone=${entity.contacts.isNotEmpty && entity.contacts.first.hasPhone}, '
+        'email=${entity.contacts.isNotEmpty && entity.contacts.first.hasEmail}',
+      );
+      return Right(entity);
+    } catch (e) {
+      log('getCustomerSupportContent repository error: $e');
+      return Left(e.toString());
+    }
   }
 }

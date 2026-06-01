@@ -15,7 +15,6 @@ Home services grid, promotional banner, search entry, and shell navigation. Keep
 
 - Services: `AppUrls.ourServices` (see `DashboardRemoteDataSourceImpl`).
 - Promo: `AppUrls.promotionalBanner` → CMS `GET /api/v1/mobile/banners`. Uses first active banner (`isActive`, schedule, `displayOrder`). Maps `imagePath` → dialog image, `ctaUrl` → in-app route or external URL.
-- Support: `AppUrls.mobileSupport` → CMS `GET /api/v1/mobile/support`. Returns `phone`, `email`, `description`, `buttonText`. Consumed by **customer_support** via `DashboardRepository.getSupportSettings()` / `GetSupportSettingsUseCase`.
 
 Profile uses **`profile_setup`** remote (`GET …/users/{userId}`) — no duplicate URL in dashboard.
 

@@ -1,12 +1,12 @@
-import '../../../dashboard/domain/entities/support_settings_entity.dart';
 import '../../domain/entities/customer_support_entity.dart';
+import '../models/support_settings_model.dart';
 
 class CustomerSupportMapper {
-  static CustomerSupportEntity fromSupportSettings(
-    SupportSettingsEntity settings,
-  ) {
-    final hasContactData =
-        settings.hasPhone || settings.hasEmail || settings.description.isNotEmpty;
+  static CustomerSupportEntity toEntity(SupportSettingsResponseModel model) {
+    final settings = model.data;
+    final hasContactData = settings.phone.isNotEmpty ||
+        settings.email.isNotEmpty ||
+        settings.description.isNotEmpty;
 
     final contacts = hasContactData
         ? [

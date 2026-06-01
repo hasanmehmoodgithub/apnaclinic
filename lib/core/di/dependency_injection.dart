@@ -31,8 +31,8 @@ Future<void> initDependencyInjection() async {
   initProfileSetupInjector();
   initConsultationInjector();
   initFreeDoctorInjector();
-  initDashboardInjector();
   initCustomerSupportInjector();
+  initDashboardInjector();
   initNotificationInjector();
   initPharmacyInjector();
   initSearchInjector();

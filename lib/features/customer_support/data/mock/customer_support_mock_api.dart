@@ -1,7 +1,7 @@
 import '../../../../core/config/mock_config.dart';
 
-class SupportSettingsMockApi {
-  static bool useMockResponses = MockConfig.enableDashboardMocks;
+class CustomerSupportMockApi {
+  static bool useMockResponses = MockConfig.enableMocks;
 
   Future<Map<String, dynamic>> getSupportSettingsSuccessResponse() async {
     await Future<void>.delayed(const Duration(milliseconds: 300));

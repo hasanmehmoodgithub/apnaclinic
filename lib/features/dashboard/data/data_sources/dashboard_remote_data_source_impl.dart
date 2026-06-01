@@ -8,10 +8,8 @@ import '../../../../core/utils/error_handler.dart';
 import '../../../../core/utils/jwt_utils.dart';
 import '../mock/dashboard_services_mock_api.dart';
 import '../mock/promotional_banner_mock_api.dart';
-import '../mock/support_settings_mock_api.dart';
 import '../models/promotional_banner_model.dart';
 import '../models/our_service_model.dart';
-import '../models/support_settings_model.dart';
 import 'dashboard_remote_data_source.dart';
 
 class DashboardRemoteDataSourceImpl implements DashboardRemoteDataSource {
@@ -20,14 +18,12 @@ class DashboardRemoteDataSourceImpl implements DashboardRemoteDataSource {
     required this.appPref,
     required this.mockApi,
     required this.promotionalBannerMockApi,
-    required this.supportSettingsMockApi,
   });
 
   final ApiService apiService;
   final AppPref appPref;
   final DashboardServicesMockApi mockApi;
   final PromotionalBannerMockApi promotionalBannerMockApi;
-  final SupportSettingsMockApi supportSettingsMockApi;
 
   static bool _isSuccessResponse(Map<String, dynamic> response) {
     if (response['success'] == true) return true;
@@ -109,36 +105,6 @@ class DashboardRemoteDataSourceImpl implements DashboardRemoteDataSource {
       final message = ErrorHandler.handleExceptions(
         e,
         endpoint: AppUrls.promotionalBanner,
-      );
-      return Future.error(message);
-    }
-  }
-
-  @override
-  Future<SupportSettingsResponseModel> getSupportSettings() async {
-    try {
-      final Map<String, dynamic> response;
-      if (SupportSettingsMockApi.useMockResponses) {
-        response = await supportSettingsMockApi
-            .getSupportSettingsSuccessResponse();
-      } else {
-        response = await apiService.get(AppUrls.mobileSupport);
-        log('getSupportSettings response: $response');
-      }
-
-      if (_isSuccessResponse(response)) {
-        return SupportSettingsResponseModel.fromJson(response);
-      }
-
-      final message =
-          (response['message'] ?? AppStrings.customerSupportLoadError)
-              .toString();
-      return Future.error(message);
-    } catch (e) {
-      log('getSupportSettings error: $e');
-      final message = ErrorHandler.handleExceptions(
-        e,
-        endpoint: AppUrls.mobileSupport,
       );
       return Future.error(message);
     }
