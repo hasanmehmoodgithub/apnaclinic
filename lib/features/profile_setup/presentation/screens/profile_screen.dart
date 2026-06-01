@@ -7,6 +7,7 @@ import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/preference/app_pref.dart';
 import '../../../../core/router/app_routes.dart';
+import '../profile_setup_launch_source.dart';
 import '../../../profile_setup/domain/use_cases/get_profile_setup_content_use_case.dart';
 import '../../../account/domain/entities/account_item_entity.dart';
 import '../../../account/domain/use_cases/get_accounts_list_use_case.dart';
@@ -127,6 +128,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         onEditTap: () async {
                           final updated = await context.push<bool>(
                             AppRoutes.path(AppRoutes.profileSetup),
+                            extra: ProfileSetupLaunchSource.menu,
                           );
                           if (mounted && updated == true) {
                             await _refreshProfileFromApi();

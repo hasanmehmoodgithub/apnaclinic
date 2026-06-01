@@ -51,6 +51,7 @@ import '../../features/auth/presentation/screens/login_screen.dart';
 import '../di/dependency_injection.dart';
 import '../preference/app_pref.dart';
 import '../utils/chucker_guard.dart';
+import '../../features/profile_setup/presentation/profile_setup_launch_source.dart';
 import '../../features/profile_setup/presentation/screens/profile_setup_screen.dart';
 import 'app_routes.dart';
 import 'router_observer.dart';
@@ -86,7 +87,9 @@ class AppRouter {
       GoRoute(
         path: AppRoutes.path(AppRoutes.profileSetup),
         name: AppRoutes.profileSetup,
-        builder: (context, state) => const ProfileSetupScreen(),
+        builder: (context, state) => ProfileSetupScreen(
+          launchSource: profileSetupLaunchSourceFromExtra(state.extra),
+        ),
       ),
       GoRoute(
         path: AppRoutes.path(AppRoutes.home),

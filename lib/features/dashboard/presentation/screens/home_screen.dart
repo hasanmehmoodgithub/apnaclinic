@@ -10,6 +10,7 @@ import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/preference/app_pref.dart';
 import '../../../../core/router/app_routes.dart';
+import '../../../profile_setup/presentation/profile_setup_launch_source.dart';
 import '../../../../core/widgets/apna_clinic_app_bar.dart';
 import '../../../../core/widgets/heart_loader_widget.dart';
 import '../../domain/entities/our_service_entity.dart';
@@ -187,6 +188,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                           context.push(AppRoutes.path(AppRoutes.authLogin)),
                       onProfileTap: () => context.push(
                         AppRoutes.path(AppRoutes.profileSetup),
+                        extra: ProfileSetupLaunchSource.menu,
                       ),
                       profileImageUrl: profileImageUrl,
                     );

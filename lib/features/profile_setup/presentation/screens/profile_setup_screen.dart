@@ -20,10 +20,16 @@ import '../cubit/profile_setup_cubit.dart';
 import '../cubit/profile_setup_state.dart';
 import '../widgets/profile_setup_avatar_picker.dart';
 import '../widgets/profile_setup_form_section.dart';
+import '../profile_setup_launch_source.dart';
 import '../widgets/profile_setup_header_bar.dart';
 
 class ProfileSetupScreen extends StatefulWidget {
-  const ProfileSetupScreen({super.key});
+  const ProfileSetupScreen({
+    super.key,
+    this.launchSource = ProfileSetupLaunchSource.unknown,
+  });
+
+  final ProfileSetupLaunchSource launchSource;
 
   @override
   State<ProfileSetupScreen> createState() => _ProfileSetupScreenState();
@@ -59,6 +65,27 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
     _remoteImageUrl = cachedImageUrl.isEmpty ? null : cachedImageUrl;
     if (appPref.getLoginStatus() && appPref.isProfileCompleted()) {
       context.read<ProfileSetupCubit>().loadProfile();
+    }
+  }
+
+  void _handleBack() {
+    if (context.canPop()) {
+      context.pop();
+      return;
+    }
+    switch (widget.launchSource) {
+      case ProfileSetupLaunchSource.onboarding:
+      case ProfileSetupLaunchSource.splash:
+      case ProfileSetupLaunchSource.menu:
+        context.go(AppRoutes.path(AppRoutes.home));
+      case ProfileSetupLaunchSource.login:
+        context.go(AppRoutes.path(AppRoutes.authLogin));
+      case ProfileSetupLaunchSource.unknown:
+        if (appPref.getLoginStatus()) {
+          context.go(AppRoutes.path(AppRoutes.home));
+        } else {
+          context.go(AppRoutes.path(AppRoutes.authLogin));
+        }
     }
   }
 
@@ -286,8 +313,14 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
           cubit.state.loadingStateStatus == StateStatus.loading &&
           !_hasAppliedInitialData,
     );
+    final showBackButton = appPref.isProfileCompleted();
 
-    return Scaffold(
+    return PopScope(
+      canPop: showBackButton && context.canPop(),
+      onPopInvokedWithResult: (didPop, _) {
+        if (!didPop && showBackButton) _handleBack();
+      },
+      child: Scaffold(
       backgroundColor: isInitialLoading
           ? AppColors.clrWhite
           : AppColors.clrC7EFEB,
@@ -312,7 +345,18 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                   state.loadingStateStatus == StateStatus.loading &&
                   !_hasAppliedInitialData;
               if (showInitialLoading) {
-                return const ProfileSetupLoadingShimmer();
+                return Column(
+                  children: [
+                    ProfileSetupHeaderBar(
+                      topInset: topInset,
+                      showBackButton: showBackButton,
+                      onBack: showBackButton ? _handleBack : null,
+                    ),
+                    const Expanded(
+                      child: ProfileSetupLoadingShimmer(omitTopInset: true),
+                    ),
+                  ],
+                );
               }
               final dobLabel = state.dateOfBirth == null
                   ? l10n.profileDobHint
@@ -322,7 +366,11 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                 children: [
                   Column(
                     children: [
-                      ProfileSetupHeaderBar(topInset: topInset),
+                      ProfileSetupHeaderBar(
+                        topInset: topInset,
+                        showBackButton: showBackButton,
+                        onBack: showBackButton ? _handleBack : null,
+                      ),
                       SizedBox(height: 8.h),
                       ProfileSetupAvatarPicker(
                         imageUrl: _resolveAvatarImageUrl(state),
@@ -364,6 +412,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
           );
         },
       ),
+    ),
     );
   }
 }

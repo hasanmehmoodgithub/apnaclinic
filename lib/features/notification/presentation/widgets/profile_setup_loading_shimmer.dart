@@ -4,7 +4,10 @@ import '../../../../components/shimmer/app_shimmer.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 
 class ProfileSetupLoadingShimmer extends StatelessWidget {
-  const ProfileSetupLoadingShimmer({super.key});
+  const ProfileSetupLoadingShimmer({super.key, this.omitTopInset = false});
+
+  /// When true, a parent header already accounts for the status-bar inset.
+  final bool omitTopInset;
 
   @override
   Widget build(BuildContext context) {
@@ -12,7 +15,7 @@ class ProfileSetupLoadingShimmer extends StatelessWidget {
     return SingleChildScrollView(
       child: Column(
         children: [
-          SizedBox(height: topInset + 8.h),
+          SizedBox(height: omitTopInset ? 8.h : topInset + 8.h),
           SizedBox(height: 18.h),
           AppShimmerCircle(diameter: 112.r),
           SizedBox(height: 14.h),

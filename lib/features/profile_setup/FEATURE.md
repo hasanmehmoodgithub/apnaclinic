@@ -6,7 +6,7 @@ Collect or edit user profile (name, gender, email, address, DOB, optional profil
 
 ## Routes
 
-- `AppRoutes.profileSetup` — entry from menu or post-login onboarding.
+- `AppRoutes.profileSetup` — entry from menu, login (`push`), onboarding/splash (`go` with `ProfileSetupLaunchSource` extra). Back arrow only in **edit** mode (`isProfileCompleted`); first-time setup hides back and blocks system back.
 
 ## Data & APIs
 
