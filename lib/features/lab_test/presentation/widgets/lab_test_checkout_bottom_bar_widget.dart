@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/constants/app_colors.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
+import '../../../../core/widgets/app_button_widget.dart';
 
 class LabTestCheckoutBottomBarWidget extends StatelessWidget {
   const LabTestCheckoutBottomBarWidget({
@@ -46,13 +48,10 @@ class LabTestCheckoutBottomBarWidget extends StatelessWidget {
                   ),
                 ),
               ),
-            SizedBox(
-              width: double.infinity,
-              height: 57,
-              child: FilledButton(
-                onPressed: onProceed,
-                child: Text(AppLocalizations.of(context)!.labTestBookCta),
-              ),
+            AppButtonWidget(
+              title: AppLocalizations.of(context)!.labTestBookCta,
+              bgClr: AppColors.clr1FAFA3,
+              onTap: onProceed,
             ),
           ],
         ),

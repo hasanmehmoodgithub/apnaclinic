@@ -1,6 +1,7 @@
 import '../../core/di/dependency_injection.dart';
 import '../../core/network/api_service.dart';
 import '../../core/preference/app_pref.dart';
+import '../../core/session/auth_session_refresh.dart';
 import 'data/data_sources/auth_remote_data_source.dart';
 import 'data/data_sources/auth_remote_data_source_impl.dart';
 import 'data/mock/auth_mock_api.dart';
@@ -54,6 +55,7 @@ void initAuthInjector() {
         requestOtpUseCase: sl<RequestOtpUseCase>(),
         verifyOtpUseCase: sl<VerifyOtpUseCase>(),
         appPref: sl<AppPref>(),
+        sessionRefresh: sl<AuthSessionRefresh>(),
       ),
     );
   }

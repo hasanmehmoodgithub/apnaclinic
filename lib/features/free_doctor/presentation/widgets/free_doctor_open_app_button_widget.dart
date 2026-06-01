@@ -20,7 +20,7 @@ class FreeDoctorOpenAppButtonWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return SafeArea(
       top: false,
-      minimum: EdgeInsets.fromLTRB(20.w, 0, 20.w, 0),
+      minimum: EdgeInsets.fromLTRB(20.w, 0, 20.w, 60.h),
       child: AppButton.primary(
         text: label,
         isLoading: isLoading,

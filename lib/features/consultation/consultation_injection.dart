@@ -1,6 +1,6 @@
 import '../../core/di/dependency_injection.dart';
-import 'data/data_sources/consultation_local_data_source.dart';
-import 'data/data_sources/consultation_local_data_source_impl.dart';
+import 'data/data_sources/consultation_remote_data_source.dart';
+import 'data/data_sources/consultation_remote_data_source_impl.dart';
 import 'data/mock/consultation_categories_mock_api.dart';
 import 'data/mock/consultation_doctors_mock_api.dart';
 import 'data/repositories/consultation_repository_impl.dart';
@@ -16,15 +16,16 @@ void initConsultationInjector() {
     () => ConsultationDoctorsMockApi(),
   );
 
-  sl.registerLazySingleton<ConsultationLocalDataSource>(
-    () => ConsultationLocalDataSourceImpl(
+  sl.registerLazySingleton<ConsultationRemoteDataSource>(
+    () => ConsultationRemoteDataSourceImpl(
+      apiService: sl(),
       mockApi: sl<ConsultationCategoriesMockApi>(),
     ),
   );
 
   sl.registerLazySingleton<ConsultationRepository>(
     () => ConsultationRepositoryImpl(
-      localDataSource: sl<ConsultationLocalDataSource>(),
+      remoteDataSource: sl<ConsultationRemoteDataSource>(),
     ),
   );
 

@@ -10,6 +10,7 @@ import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/preference/app_pref.dart';
 import '../../../../core/router/app_routes.dart';
+import '../../../profile_setup/presentation/profile_setup_launch_source.dart';
 import '../../../../core/widgets/apna_clinic_app_bar.dart';
 import '../../../../core/widgets/heart_loader_widget.dart';
 import '../../domain/entities/our_service_entity.dart';
@@ -47,10 +48,19 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
 
   @override
   void dispose() {
+    HeartLoaderDialogController.close(_bannerLoaderId);
     WidgetsBinding.instance.removeObserver(this);
     _dashboardCubit.close();
     _notificationCubit.close();
     super.dispose();
+  }
+
+  bool _isHomeRouteActive(BuildContext context) {
+    final route = ModalRoute.of(context);
+    if (route?.isCurrent != true) return false;
+    final location =
+        GoRouter.of(context).routerDelegate.currentConfiguration.uri.path;
+    return location == AppRoutes.path(AppRoutes.home);
   }
 
   /// Forces the keyboard to close. Called whenever the home screen comes
@@ -96,7 +106,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       DashboardServicesState state,
       ) {
     if (state.promotionalBannerLoadingStateStatus == StateStatus.loading) {
-      if (!HeartLoaderDialogController.isOpen(_bannerLoaderId)) {
+      if (_isHomeRouteActive(context) &&
+          !HeartLoaderDialogController.isOpen(_bannerLoaderId)) {
         showHeartLoaderDialog(context, id: _bannerLoaderId);
       }
       return;
@@ -177,6 +188,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                           context.push(AppRoutes.path(AppRoutes.authLogin)),
                       onProfileTap: () => context.push(
                         AppRoutes.path(AppRoutes.profileSetup),
+                        extra: ProfileSetupLaunchSource.menu,
                       ),
                       profileImageUrl: profileImageUrl,
                     );

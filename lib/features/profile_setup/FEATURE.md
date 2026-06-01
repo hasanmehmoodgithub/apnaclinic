@@ -6,7 +6,7 @@ Collect or edit user profile (name, gender, email, address, DOB, optional profil
 
 ## Routes
 
-- `AppRoutes.profileSetup` — entry from menu or post-login onboarding.
+- `AppRoutes.profileSetup` — entry from menu, login (`push`), onboarding/splash (`go` with `ProfileSetupLaunchSource` extra). Back arrow only in **edit** mode (`isProfileCompleted`); first-time setup hides back and blocks system back.
 
 ## Data & APIs
 
@@ -19,7 +19,8 @@ Collect or edit user profile (name, gender, email, address, DOB, optional profil
 - GET profile response is read from `data` and supports backend `dob` (for example `02-03-2000 00:00:00`).
 - API gender values are normalized to `male` or `female` before binding to the picker.
 - `data.image` is stored on `UserLocalModel.imageUrl` and shown on home app bar / profile / menu when non-empty (`UserProfileAvatar` + `CachedNetworkImage`).
-- `ProfileSetupScreen` calls `loadProfile()` only when the profile is already completed, so edit/update mode hydrates from API while first-time onboarding stays in setup mode. Edit avatar shows API/local `imageUrl` via `UserProfileAvatar`; a newly picked file takes priority until save.
+- `ProfileSetupScreen` calls `loadProfile()` only when the profile is already completed, so edit/update mode hydrates from API while first-time onboarding stays in setup mode. `AppPref.isProfileCompleted` is set on **save** only (not on GET).
+- Dismisses any global heart loader overlay on open (home banner loader uses root navigator). Edit avatar shows API/local `imageUrl` via `UserProfileAvatar`; a newly picked file takes priority until save.
 - Completed profiles show edit/update wording; pending onboarding shows setup/save wording.
 - On successful update, the PATCH runs first, local `AppPref` profile is updated in the repository, and `ProfileScreen` refreshes after the edit route returns.
 

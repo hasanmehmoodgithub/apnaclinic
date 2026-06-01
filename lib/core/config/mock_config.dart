@@ -9,6 +9,7 @@ class MockConfig {
   );
 
   static bool get enableMocks {
+    return true;
     return _isTruthy(_mockTrueValue) || kDebugMode;
   }
   static bool get enableAuthMocks {
@@ -20,7 +21,15 @@ class MockConfig {
     return _isTruthy(_mockTrueValue)  || kDebugMode;
   }
 
+  static bool get enableDashboardMocks {
+    return false;
+    return _isTruthy(_mockTrueValue)  || kDebugMode;
+  }
 
+  static bool get enableConsultationMocks {
+    return false;
+    return _isTruthy(_mockTrueValue) || kDebugMode;
+  }
   static bool _isTruthy(String value) {
     final normalized = value.trim().toLowerCase();
     return normalized == 'true' ||

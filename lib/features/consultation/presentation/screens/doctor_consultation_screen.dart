@@ -274,7 +274,7 @@ class _DoctorConsultationScreenState extends State<DoctorConsultationScreen> {
     _tooltipEntry = OverlayEntry(
       builder: (ctx) {
         return _CategoryInfoTooltip(
-          title: category.title,
+          title: category.cardTitle,
           description: category.description,
           tileOffset: tileOffset,
           tileSize: tileSize,

@@ -20,6 +20,7 @@ import '../preference/app_pref_impl.dart';
 import '../services/encryption_service.dart';
 import '../services/connectivity_service.dart';
 import '../services/responsive_config_service.dart';
+import '../session/auth_session_refresh.dart';
 
 final GetIt sl = GetIt.instance;
 
@@ -63,5 +64,6 @@ Future<void> _initCore() async {
   sl.registerLazySingleton<ResponsiveConfigService>(
     () => const ResponsiveConfigService(),
   );
+  sl.registerLazySingleton<AuthSessionRefresh>(() => AuthSessionRefresh());
   // sl.registerLazySingleton<NotificationService>(() => NotificationService());
 }

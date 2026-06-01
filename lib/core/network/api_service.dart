@@ -6,11 +6,11 @@ import '../flavor/flavor_config.dart';
 import '../preference/app_pref.dart';
 import '../utils/api_error_message_utils.dart';
 import '../utils/chucker_guard.dart';
-import 'api_config.dart';
 import 'api_exceptions.dart';
 import 'api_logger_interceptor.dart';
 import 'auth_interceptor.dart';
 import 'device_headers_provider.dart';
+import 'dio_app_network_config.dart';
 import 'header_interceptor.dart';
 
 export 'api_exceptions.dart';
@@ -23,7 +23,7 @@ class ApiService {
       _deviceHeadersProvider = sl<DeviceHeadersProvider>(),
       _dio = Dio(
         BaseOptions(
-          baseUrl: baseUrl ?? ApiConfig.baseUrl,
+          //baseUrl: baseUrl ?? ApiConfig.baseUrl,
           connectTimeout: timeout ?? const Duration(seconds: 60),
           receiveTimeout: timeout ?? const Duration(seconds: 60),
           sendTimeout: timeout ?? const Duration(seconds: 60),
@@ -33,8 +33,12 @@ class ApiService {
           },
         ),
       ) {
+    configureDioForAppNetwork(_dio);
     _dio.interceptors.add(
-      HeaderInterceptor(deviceHeadersProvider: _deviceHeadersProvider),
+      HeaderInterceptor(
+        deviceHeadersProvider: _deviceHeadersProvider,
+        appPref: _appPref,
+      ),
     );
     _dio.interceptors.add(
       AuthInterceptor(
@@ -216,11 +220,13 @@ class ApiService {
         return ApiCancelledException(message: 'Request cancelled');
       case DioExceptionType.connectionError:
         return ApiNetworkException(
-          message: 'No internet connection. Please check your network.',
+          message:
+              'Unable to reach the server. Check your internet or VPN, then try again.',
         );
       case DioExceptionType.badCertificate:
         return ApiCertificateException(
-          message: 'Certificate error. Please check your connection.',
+          message:
+              'Secure connection failed. Use a trusted network or contact support.',
         );
       case DioExceptionType.unknown:
         return ApiException(
