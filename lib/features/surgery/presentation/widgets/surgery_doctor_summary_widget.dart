@@ -74,7 +74,7 @@ class SurgeryDoctorSummaryWidget extends StatelessWidget {
                       doctorName,
                       style: theme.textTheme.titleMedium?.copyWith(
                         color: const Color(0xFF061E40),
-                        fontSize: 16.sp,
+                        fontSize: 13.sp,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -82,14 +82,14 @@ class SurgeryDoctorSummaryWidget extends StatelessWidget {
                       speciality,
                       style: theme.textTheme.bodyMedium?.copyWith(
                         color: const Color(0xFFA6A6A6),
-                        fontSize: 13.sp,
+                        fontSize: 12.sp,
                       ),
                     ),
                     Text(
                       '$experience  $qualifications',
                       style: theme.textTheme.bodyMedium?.copyWith(
                         color: const Color(0xFFA6A6A6),
-                        fontSize: 13.sp,
+                        fontSize: 12.sp,
                       ),
                     ),
                   ],
@@ -130,7 +130,7 @@ class SurgeryDoctorSummaryWidget extends StatelessWidget {
                       style: theme.textTheme.titleSmall?.copyWith(
                         color: const Color(0xFF061E40),
                         fontWeight: FontWeight.w700,
-                        fontSize: 16.sp,
+                        fontSize: 13.sp,
                       ),
                     ),
                     SizedBox(height: 2.h),
@@ -138,7 +138,7 @@ class SurgeryDoctorSummaryWidget extends StatelessWidget {
                       procedureName,
                       style: theme.textTheme.bodyMedium?.copyWith(
                         color: const Color(0xFF061E40),
-                        fontSize: 14.sp,
+                        fontSize: 12.sp,
                       ),
                     ),
                   ],
@@ -151,7 +151,7 @@ class SurgeryDoctorSummaryWidget extends StatelessWidget {
                     'Stating from',
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: const Color(0xFF777272),
-                      fontSize: 12.sp,
+                      fontSize: 10.sp,
                     ),
                   ),
                   Text(
@@ -159,14 +159,14 @@ class SurgeryDoctorSummaryWidget extends StatelessWidget {
                     style: theme.textTheme.titleSmall?.copyWith(
                       color: const Color(0xFF061E40),
                       fontWeight: FontWeight.w600,
-                      fontSize: 16.sp,
+                      fontSize: 13.sp,
                     ),
                   ),
                   Text(
                     oldPrice,
                     style: theme.textTheme.bodyMedium?.copyWith(
                       color: const Color(0xFFB4B4B4),
-                      fontSize: 13.sp,
+                      fontSize: 11.sp,
                       decoration: TextDecoration.lineThrough,
                     ),
                   ),

@@ -53,11 +53,11 @@ class SurgeryProcedureTileWidget extends StatelessWidget {
                   ),
                   Positioned(
                     left: 16.w,
-                    top: 33.h,
-                    right: 76.w,
+                    top: 10.h,
+                    right: 60.w,
                     child: Text(
                       name,
-                      maxLines: 2,
+                      maxLines: 3,
                       overflow: TextOverflow.ellipsis,
                       style: Theme.of(context).textTheme.titleSmall?.copyWith(
                         color: AppColors.clr060,

@@ -3,24 +3,20 @@ import '../../../../core/config/mock_config.dart';
 class CustomerSupportMockApi {
   static bool useMockResponses = MockConfig.enableMocks;
 
-  Future<Map<String, dynamic>> getCustomerSupportSuccessResponse() async {
-    await Future<void>.delayed(const Duration(milliseconds: 250));
+  Future<Map<String, dynamic>> getSupportSettingsSuccessResponse() async {
+    await Future<void>.delayed(const Duration(milliseconds: 300));
     return {
       'success': true,
-      'message': 'Customer support content fetched successfully',
+      'message': 'Support settings retrieved',
+      'code': 200,
       'data': {
-        'helpCentreTitle': 'Help Centre',
-        'helpCentreSubtitle': 'Reach out to Apna Clinic for any support.',
-        'contacts': [
-          {
-            'cardTitle': 'Apna Clinic Support',
-            'dialogTitle': 'Customer Support',
-            'dialogMessage':
-                'Or further support please contact us 24/7 on\n042-111-333-033.',
-            'dialNumber': '042111333033',
-          },
-        ],
+        'phone': '03001118828',
+        'email': 'support@apnaclinic.com.pk',
+        'description':
+            'For further support please contact us 24/7 on 03001118828 or email at support@apnaclinic.com.pk',
+        'buttonText': 'Call Now',
       },
+      'timestamp': DateTime.now().toUtc().toIso8601String(),
     };
   }
 }

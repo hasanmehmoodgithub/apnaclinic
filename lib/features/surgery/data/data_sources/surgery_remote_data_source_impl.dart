@@ -6,19 +6,27 @@ import '../../../../core/network/app_urls.dart';
 import '../../../../core/utils/error_handler.dart';
 import '../../domain/entities/surgery_booking_request_entity.dart';
 import '../mock/surgery_checkout_mock_api.dart';
+import '../mock/surgery_doctors_mock_api.dart';
 import '../mock/surgery_mock_api.dart';
+import '../mock/surgery_patient_form_mock_api.dart';
 import '../models/surgery_content_model.dart';
+import '../models/surgery_doctor_model.dart';
+import '../models/surgery_patient_form_model.dart';
 import 'surgery_remote_data_source.dart';
 
 class SurgeryRemoteDataSourceImpl implements SurgeryRemoteDataSource {
   SurgeryRemoteDataSourceImpl({
     required this.apiService,
     required this.mockApi,
+    required this.doctorsMockApi,
+    required this.patientFormMockApi,
     required this.checkoutMockApi,
   });
 
   final ApiService apiService;
   final SurgeryMockApi mockApi;
+  final SurgeryDoctorsMockApi doctorsMockApi;
+  final SurgeryPatientFormMockApi patientFormMockApi;
   final SurgeryCheckoutMockApi checkoutMockApi;
 
   @override
@@ -33,8 +41,7 @@ class SurgeryRemoteDataSourceImpl implements SurgeryRemoteDataSource {
       }
 
       if (response['success'] == true) {
-        final responseModel = SurgeryContentModel.fromJson(response);
-        return Future.value(responseModel);
+        return SurgeryContentModel.fromJson(response);
       }
 
       final message = (response['message'] ?? AppStrings.surgeryLoadError)
@@ -45,6 +52,77 @@ class SurgeryRemoteDataSourceImpl implements SurgeryRemoteDataSource {
       final message = ErrorHandler.handleExceptions(
         e,
         endpoint: AppUrls.surgeryProcedures,
+      );
+      return Future.error(message);
+    }
+  }
+
+  @override
+  Future<SurgeryDoctorsResponseModel> getSurgeryDoctors({
+    required String procedureName,
+    required String city,
+  }) async {
+    try {
+      final Map<String, dynamic> response;
+      if (SurgeryDoctorsMockApi.useMockResponses) {
+        response = await doctorsMockApi.getSurgeryDoctorsSuccessResponse(
+          procedureName: procedureName,
+          city: city,
+        );
+      } else {
+        response = await apiService.get(
+          AppUrls.surgeryDoctors(procedureName: procedureName, city: city),
+        );
+        log('getSurgeryDoctors response: $response');
+      }
+
+      if (response['success'] == true) {
+        return SurgeryDoctorsResponseModel.fromJson(response);
+      }
+
+      final message = (response['message'] ?? AppStrings.surgeryLoadError)
+          .toString();
+      return Future.error(message);
+    } catch (e) {
+      log('getSurgeryDoctors error: $e');
+      final message = ErrorHandler.handleExceptions(
+        e,
+        endpoint: AppUrls.surgeryDoctors(
+          procedureName: procedureName,
+          city: city,
+        ),
+      );
+      return Future.error(message);
+    }
+  }
+
+  @override
+  Future<SurgeryPatientFormModel> getSurgeryPatientForm({
+    required String doctorId,
+  }) async {
+    try {
+      final Map<String, dynamic> response;
+      if (SurgeryPatientFormMockApi.useMockResponses) {
+        response = await patientFormMockApi.getPatientFormSuccessResponse(
+          doctorId: doctorId,
+        );
+      } else {
+        response = await apiService.get(AppUrls.surgeryPatientForm(doctorId));
+        log('getSurgeryPatientForm response: $response');
+      }
+
+      if (response['success'] == true) {
+        return SurgeryPatientFormModel.fromJson(response);
+      }
+
+      final message = (response['message'] ?? AppStrings.surgeryLoadError)
+          .toString();
+      return Future.error(message);
+    } catch (e) {
+      log('getSurgeryPatientForm error: $e');
+      final message = ErrorHandler.handleExceptions(
+        e,
+        endpoint: AppUrls.surgeryPatientForm(doctorId),
       );
       return Future.error(message);
     }

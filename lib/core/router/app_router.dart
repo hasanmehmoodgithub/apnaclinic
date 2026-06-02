@@ -49,7 +49,9 @@ import '../../features/account/presentation/screens/add_account_screen.dart';
 import '../../features/onboarding/presentation/screens/onboarding_screen.dart';
 import '../../features/auth/presentation/screens/login_screen.dart';
 import '../di/dependency_injection.dart';
+import '../preference/app_pref.dart';
 import '../utils/chucker_guard.dart';
+import '../../features/profile_setup/presentation/profile_setup_launch_source.dart';
 import '../../features/profile_setup/presentation/screens/profile_setup_screen.dart';
 import 'app_routes.dart';
 import 'router_observer.dart';
@@ -85,11 +87,20 @@ class AppRouter {
       GoRoute(
         path: AppRoutes.path(AppRoutes.profileSetup),
         name: AppRoutes.profileSetup,
-        builder: (context, state) => const ProfileSetupScreen(),
+        builder: (context, state) => ProfileSetupScreen(
+          launchSource: profileSetupLaunchSourceFromExtra(state.extra),
+        ),
       ),
       GoRoute(
         path: AppRoutes.path(AppRoutes.home),
         name: AppRoutes.home,
+        redirect: (context, state) {
+          final appPref = sl<AppPref>();
+          if (appPref.getLoginStatus() && !appPref.isProfileCompleted()) {
+            return AppRoutes.path(AppRoutes.profileSetup);
+          }
+          return null;
+        },
         builder: (context, state) => const MainNavigationShell(),
       ),
       GoRoute(

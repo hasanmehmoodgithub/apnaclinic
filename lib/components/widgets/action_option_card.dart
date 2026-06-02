@@ -11,7 +11,7 @@ class ActionOptionCard extends StatelessWidget {
     this.content,
     this.curveOverlayColor = const Color(0xFFE9F9FC),
     this.curveWidthFactor = 0.7206,
-    this.curveHeight = 281.37,
+    this.curveHeight = 251.37,
     this.curveLeftFactor = 0.6290,
     this.subtitle,
     this.trailing,

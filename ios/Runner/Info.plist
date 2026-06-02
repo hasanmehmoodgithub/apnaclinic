@@ -24,8 +24,36 @@
 	<string>????</string>
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSExceptionDomains</key>
+		<dict>
+			<key>apnaclinic-auth.apps.jpocp.jazz.com.pk</key>
+			<dict>
+				<key>NSExceptionAllowsInsecureHTTPLoads</key>
+				<true/>
+				<key>NSIncludesSubdomains</key>
+				<true/>
+			</dict>
+			<key>apnaclinic-cmsbackend.apps.jpocp.jazz.com.pk</key>
+			<dict>
+				<key>NSExceptionAllowsInsecureHTTPLoads</key>
+				<true/>
+				<key>NSIncludesSubdomains</key>
+				<true/>
+			</dict>
+		</dict>
+	</dict>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>Apna Clinic needs camera access so you can take a profile photo and attach images during consultations.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Apna Clinic needs photo library access so you can choose a profile picture and attach images from your gallery during consultations.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Apna Clinic may use your location to show nearby clinics and services relevant to your care.</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>

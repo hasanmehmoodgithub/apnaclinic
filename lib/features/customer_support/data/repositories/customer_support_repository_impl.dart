@@ -15,9 +15,12 @@ class CustomerSupportRepositoryImpl implements CustomerSupportRepository {
   Future<Either<ErrorMsg, CustomerSupportEntity>>
   getCustomerSupportContent() async {
     try {
-      final model = await remoteDataSource.getCustomerSupportContent();
+      final model = await remoteDataSource.getSupportSettings();
       final entity = CustomerSupportMapper.toEntity(model);
-      log('Mapped customer support: ${entity.contacts.length} contacts');
+      log(
+        'Mapped customer support: phone=${entity.contacts.isNotEmpty && entity.contacts.first.hasPhone}, '
+        'email=${entity.contacts.isNotEmpty && entity.contacts.first.hasEmail}',
+      );
       return Right(entity);
     } catch (e) {
       log('getCustomerSupportContent repository error: $e');

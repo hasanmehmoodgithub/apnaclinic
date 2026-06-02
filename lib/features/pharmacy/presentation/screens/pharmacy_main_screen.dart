@@ -8,6 +8,7 @@ import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/router/app_routes.dart';
 import '../cubit/pharmacy_cubit.dart';
 import '../cubit/pharmacy_state.dart';
+import '../pharmacy_navigation.dart';
 import '../widgets/pharmacy_main_medicines_body_widget.dart';
 import '../widgets/pharmacy_main_top_header_widget.dart';
 
@@ -34,9 +35,7 @@ class PharmacyMainScreen extends StatelessWidget {
                   return PharmacyMainTopHeaderWidget(
                     title: l10n.pharmacyScreenTitle,
                     cartCount: cartCount,
-                    onBackTap: () {
-                      if (context.canPop()) context.pop();
-                    },
+                    onBackTap: () => pharmacyPopOrGoHome(context),
                     onCartTap: () => context.pushNamed(AppRoutes.pharmacyCart),
                   );
                 },

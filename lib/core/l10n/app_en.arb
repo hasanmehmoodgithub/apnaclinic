@@ -431,6 +431,7 @@
   "bookingsTabLabTest": "Lab Test",
   "bookingsTabPharmacy": "Pharmacy",
   "bookingsLabTestEmptyDescription": "No lab test bookings yet.",
+  "bookingsSurgeryEmptyDescription": "No surgery bookings yet.",
   "bookingsStatusLabel": "Status",
   "bookingsDateLabel": "Date",
   "bookingsDateCreatedLabel": "Date Created",

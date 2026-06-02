@@ -12,6 +12,7 @@ class SurgeryMapper {
               id: item.id,
               name: item.name,
               highlighted: item.highlighted,
+              description: item.description,
             ),
           )
           .toList(),

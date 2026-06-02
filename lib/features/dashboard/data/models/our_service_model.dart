@@ -1,23 +1,44 @@
+import '../../../../core/router/app_routes.dart';
+
 class OurServiceModel {
   const OurServiceModel({
+    required this.id,
     required this.title,
     required this.subtitle,
     required this.offerUpto,
     required this.thumb,
     required this.route,
     required this.visibility,
+    required this.displayOrder,
   });
 
+  final int id;
   final String title;
   final String subtitle;
   final String offerUpto;
   final String thumb;
   final String route;
   final bool visibility;
+  final int displayOrder;
+
+  static String mapDeepLinkToRoute(String deepLink) {
+    final key = deepLink.trim().toLowerCase();
+    return switch (key) {
+      'consultation' => AppRoutes.consultation,
+      'pharmacy' => AppRoutes.pharmacyMain,
+      'lab-testing' => AppRoutes.labTest,
+      'lab_testing' => AppRoutes.labTest,
+      'labtest' => AppRoutes.labTest,
+      'surgery' => AppRoutes.surgery,
+      _ => deepLink.trim().replaceFirst(RegExp(r'^/'), ''),
+    };
+  }
 
   factory OurServiceModel.fromJson(Map<String, dynamic> json) {
-    final dynamic visibilityRaw =
-        json['visibility'] ?? json['isVisible'] ?? json['visible'];
+    final dynamic visibilityRaw = json['visibility'] ??
+        json['isVisible'] ??
+        json['visible'] ??
+        json['isActive'];
 
     final bool visibility = switch (visibilityRaw) {
       bool value => value,
@@ -26,13 +47,22 @@ class OurServiceModel {
       _ => true,
     };
 
+    final deepLink = (json['deepLink'] ?? json['route'] ?? '').toString();
+
     return OurServiceModel(
+      id: (json['id'] as num?)?.toInt() ?? 0,
       title: (json['title'] ?? '').toString(),
       subtitle: (json['subtitle'] ?? '').toString(),
-      offerUpto: (json['offerUpto'] ?? json['offer_upto'] ?? '').toString(),
-      thumb: (json['thumb'] ?? json['thumbnail'] ?? '').toString(),
-      route: (json['route'] ?? '').toString(),
+      offerUpto: (json['discount'] ??
+              json['offerUpto'] ??
+              json['offer_upto'] ??
+              '')
+          .toString(),
+      thumb: (json['iconPath'] ?? json['thumb'] ?? json['thumbnail'] ?? '')
+          .toString(),
+      route: mapDeepLinkToRoute(deepLink),
       visibility: visibility,
+      displayOrder: (json['displayOrder'] as num?)?.toInt() ?? 0,
     );
   }
 }
@@ -49,11 +79,13 @@ class OurServicesModel {
   final List<OurServiceModel> services;
 
   factory OurServicesModel.fromJson(Map<String, dynamic> json) {
-    final dynamic servicesRaw = json['services'] ?? json['data'] ?? [];
+    final dynamic servicesRaw = json['data'] ?? json['services'] ?? [];
     final list = (servicesRaw is List ? servicesRaw : <dynamic>[])
         .whereType<Map<String, dynamic>>()
         .map(OurServiceModel.fromJson)
-        .toList();
+        .where((service) => service.visibility)
+        .toList()
+      ..sort((a, b) => a.displayOrder.compareTo(b.displayOrder));
 
     return OurServicesModel(
       success: json['success'] == true,
@@ -62,4 +94,3 @@ class OurServicesModel {
     );
   }
 }
-

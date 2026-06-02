@@ -1,15 +1,16 @@
 import '../../../../core/config/mock_config.dart';
 
 class ConsultationCategoriesMockApi {
-  static bool useMockResponses = MockConfig.enableMocks;
+  static bool useMockResponses = MockConfig.enableConsultationMocks;
 
   Future<Map<String, dynamic>>
   getConsultationCategoriesSuccessResponse() async {
     await Future<void>.delayed(const Duration(milliseconds: 600));
     return {
       'success': true,
-      'message': 'Consultation categories fetched successfully',
-      'categories': _mockCategories,
+      'message': 'Doctor categories retrieved',
+      'code': 200,
+      'data': _mockCategories,
     };
   }
 }

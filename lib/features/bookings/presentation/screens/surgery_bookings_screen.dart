@@ -1,60 +1,100 @@
-import 'package:apnaclinic/features/bookings/presentation/screens/surgery_booking_details_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:go_router/go_router.dart';
+
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/router/app_routes.dart';
+import '../../data/mock/surgery_bookings_mock_api.dart';
+import '../../data/models/surgery_booking_list_item_model.dart';
 import '../../data/models/surgery_details_item.dart';
 
-class SurgeryBookingsScreen extends StatelessWidget {
+class SurgeryBookingsScreen extends StatefulWidget {
   const SurgeryBookingsScreen({super.key});
 
-  static const _SurgeryBookingItem _item = _SurgeryBookingItem(
-    procedure: 'LAISK Eye',
-    hospital: 'Al Shifa Hospital',
-    doctor: 'Dr. Sumbal Shahid',
-    specialty: 'Eye Surgeon',
-    qualification: 'MMBS, FCPS',
-    status: 'In Review',
-    dateCreated: '11 Feb,2025',
-  );
+  @override
+  State<SurgeryBookingsScreen> createState() => _SurgeryBookingsScreenState();
+}
+
+class _SurgeryBookingsScreenState extends State<SurgeryBookingsScreen> {
+  late final Future<List<SurgeryBookingListItemModel>> _bookingsFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _bookingsFuture = SurgeryBookingsMockApi().getBookings();
+  }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final textTheme = Theme.of(context).textTheme;
-    return ListView(
-      padding: EdgeInsets.fromLTRB(0, 20.h, 0, 8.h),
-      children: [
-        GestureDetector(
-          behavior: HitTestBehavior.opaque,
-          onTap: () {
-            context.pushNamed(
-              AppRoutes.surgeryBookingDetails,
-              extra: SurgeryBookingDetailsArgs(
-                item: _toDetails(_item, l10n),
-                initialStatus: SurgeryBookingStatus.paymentPending,
+    return FutureBuilder<List<SurgeryBookingListItemModel>>(
+      future: _bookingsFuture,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator(strokeWidth: 2));
+        }
+
+        final items = snapshot.data ?? const <SurgeryBookingListItemModel>[];
+        if (items.isEmpty) {
+          return Center(
+            child: Text(
+              l10n.bookingsSurgeryEmptyDescription,
+              style: textTheme.bodyMedium,
+            ),
+          );
+        }
+
+        return ListView.separated(
+          padding: EdgeInsets.fromLTRB(0, 20.h, 0, 8.h),
+          itemCount: items.length,
+          separatorBuilder: (_, _) => SizedBox(height: 14.h),
+          itemBuilder: (context, index) {
+            final item = items[index];
+            return GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTap: () => _openDetails(context, item, l10n),
+              child: _SurgeryBookingCard(
+                item: item,
+                textTheme: textTheme,
+                l10n: l10n,
+                onViewDetails: () => _openDetails(context, item, l10n),
               ),
             );
           },
-          child: _SurgeryBookingCard(item: _item, textTheme: textTheme, l10n: l10n),
-        ),
-      ],
+        );
+      },
+    );
+  }
+
+  void _openDetails(
+    BuildContext context,
+    SurgeryBookingListItemModel item,
+    AppLocalizations l10n,
+  ) {
+    context.pushNamed(
+      AppRoutes.surgeryBookingDetails,
+      extra: SurgeryBookingDetailsArgs(
+        item: item.toDetailsItem(l10n),
+        initialStatus: item.initialStatus,
+      ),
     );
   }
 }
 
 class _SurgeryBookingCard extends StatelessWidget {
-  final _SurgeryBookingItem item;
-  final TextTheme textTheme;
-  final AppLocalizations l10n;
-
   const _SurgeryBookingCard({
     required this.item,
     required this.textTheme,
     required this.l10n,
+    required this.onViewDetails,
   });
+
+  final SurgeryBookingListItemModel item;
+  final TextTheme textTheme;
+  final AppLocalizations l10n;
+  final VoidCallback onViewDetails;
 
   @override
   Widget build(BuildContext context) {
@@ -274,16 +314,7 @@ class _SurgeryBookingCard extends StatelessWidget {
                         SizedBox(
                           height: 40.h,
                           child: OutlinedButton(
-                            onPressed: () {
-                              // Same destination as tapping the whole card
-                              context.pushNamed(
-                                AppRoutes.surgeryBookingDetails,
-                                extra: SurgeryBookingDetailsArgs(
-                                  item: _toDetails(item, l10n),
-                                  initialStatus: SurgeryBookingStatus.paymentPending,
-                                ),
-                              );
-                            },
+                            onPressed: onViewDetails,
                             style: OutlinedButton.styleFrom(
                               backgroundColor: Colors.transparent,
                               side: const BorderSide(
@@ -317,51 +348,4 @@ class _SurgeryBookingCard extends StatelessWidget {
       ),
     );
   }
-}
-
-class _SurgeryBookingItem {
-  final String procedure;
-  final String hospital;
-  final String doctor;
-  final String specialty;
-  final String qualification;
-  final String status;
-  final String dateCreated;
-
-  const _SurgeryBookingItem({
-    required this.procedure,
-    required this.hospital,
-    required this.doctor,
-    required this.specialty,
-    required this.qualification,
-    required this.status,
-    required this.dateCreated,
-  });
-}
-
-// ── Top-level helper so both the card tap and the "View Details" button
-// ── can share the same mapping logic.
-SurgeryDetailsItem _toDetails(_SurgeryBookingItem b, AppLocalizations l10n) {
-  return SurgeryDetailsItem(
-    procedure: b.procedure,
-    procedureSubtitle: l10n.bookingsSurgeryProcedureSubtitle,
-    hospital: b.hospital,
-    doctor: b.doctor,
-    specialty: b.specialty,
-    qualification: b.qualification,
-    dateCreated: b.dateCreated,
-    patientName: l10n.bookingsSurgeryPatientName,
-    age: 30,
-    contactNumber: '0341-1234567',
-    emergencyContact: '0341-1234567',
-    fee: 80000,
-    discountPercent: 15,
-    discountAmount: 12000,
-    total: 68000,
-    appointmentDay: '15',
-    appointmentMonth: 'May',
-    appointmentWeekday: 'Thursday',
-    appointmentTime: '09am - 10am',
-    appointmentDateFull: '15th May,2025',
-  );
 }

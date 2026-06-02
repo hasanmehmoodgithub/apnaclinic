@@ -23,6 +23,7 @@ void initDashboardInjector() {
   sl.registerLazySingleton<DashboardRemoteDataSource>(
     () => DashboardRemoteDataSourceImpl(
       apiService: sl<ApiService>(),
+      appPref: sl<AppPref>(),
       mockApi: sl<DashboardServicesMockApi>(),
       promotionalBannerMockApi: sl<PromotionalBannerMockApi>(),
     ),
@@ -54,6 +55,4 @@ void initDashboardInjector() {
       repository: sl<DashboardRepository>(),
     ),
   );
-
 }
-

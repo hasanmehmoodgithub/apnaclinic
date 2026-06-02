@@ -3,16 +3,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/enums/state_status.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
+import '../../domain/entities/surgery_patient_form_entity.dart';
 import '../cubit/surgery_cubit.dart';
+import '../cubit/surgery_state.dart';
 import '../widgets/surgery_doctor_summary_widget.dart';
 import '../widgets/surgery_option.dart';
+import '../widgets/surgery_patient_details_shimmer_view_widget.dart';
 import '../widgets/surgery_text_input_field_widget.dart';
 import '../widgets/surgery_type_dialog_widget.dart';
 
 class SurgeryPatientDetailsScreen extends StatefulWidget {
   const SurgeryPatientDetailsScreen({
     super.key,
+    required this.doctorId,
     required this.doctorName,
     required this.speciality,
     required this.experience,
@@ -25,6 +30,7 @@ class SurgeryPatientDetailsScreen extends StatefulWidget {
     required this.partnerLogoUrl,
   });
 
+  final String doctorId;
   final String doctorName;
   final String speciality;
   final String experience;
@@ -43,8 +49,7 @@ class SurgeryPatientDetailsScreen extends StatefulWidget {
 
 class _SurgeryPatientDetailsScreenState
     extends State<SurgeryPatientDetailsScreen> {
-
-  late SurgeryOption selectedSurgery;
+  SurgeryOption? selectedSurgery;
   bool showEmergencyError = false;
   bool isSubmittingBooking = false;
 
@@ -53,21 +58,14 @@ class _SurgeryPatientDetailsScreenState
   late final TextEditingController contactNumberController;
   late final TextEditingController emergencyContactController;
 
-  final List<SurgeryOption> options = const [
-    SurgeryOption('Refractive Surgery', 'Rs. 65,000/-', 'Rs. 100,000/-'),
-    SurgeryOption('Corneal transplant.', 'Rs. 65,000/-', 'Rs. 100,000/-'),
-    SurgeryOption('Glaucoma surgery', 'Rs. 65,000/-', 'Rs. 100,000/-'),
-    SurgeryOption('Trabeculectomy', 'Rs. 65,000/-', 'Rs. 100,000/-'),
-  ];
-
   @override
   void initState() {
     super.initState();
-    selectedSurgery = options.first;
-    patientNameController = TextEditingController(text: "Haseeb Qasim");
-    ageController = TextEditingController(text: "24");
-    contactNumberController = TextEditingController(text: "0341-2211221");
-    emergencyContactController = TextEditingController(text: "0341-2211221");
+    patientNameController = TextEditingController();
+    ageController = TextEditingController();
+    contactNumberController = TextEditingController();
+    emergencyContactController = TextEditingController();
+    context.read<SurgeryCubit>().loadSurgeryPatientForm(doctorId: widget.doctorId);
   }
 
   @override
@@ -77,6 +75,34 @@ class _SurgeryPatientDetailsScreenState
     contactNumberController.dispose();
     emergencyContactController.dispose();
     super.dispose();
+  }
+
+  void _applyPatientForm(SurgeryPatientFormEntity patientForm) {
+    final prefill = patientForm.patientPrefill;
+    if (patientNameController.text.isEmpty && prefill.patientName.isNotEmpty) {
+      patientNameController.text = prefill.patientName;
+    }
+    if (ageController.text.isEmpty && prefill.age.isNotEmpty) {
+      ageController.text = prefill.age;
+    }
+    if (contactNumberController.text.isEmpty && prefill.contactNumber.isNotEmpty) {
+      contactNumberController.text = prefill.contactNumber;
+    }
+    if (emergencyContactController.text.isEmpty &&
+        prefill.emergencyContact.isNotEmpty) {
+      emergencyContactController.text = prefill.emergencyContact;
+    }
+
+    if (selectedSurgery == null && patientForm.surgeryOptions.isNotEmpty) {
+      final first = patientForm.surgeryOptions.first;
+      selectedSurgery = SurgeryOption(first.name, first.price, first.oldPrice);
+    }
+  }
+
+  List<SurgeryOption> _mapOptions(SurgeryPatientFormEntity patientForm) {
+    return patientForm.surgeryOptions
+        .map((option) => SurgeryOption(option.name, option.price, option.oldPrice))
+        .toList();
   }
 
   @override
@@ -112,8 +138,6 @@ class _SurgeryPatientDetailsScreenState
               ],
             ),
           ),
-
-          // ---------- White rounded content area ----------
           Expanded(
             child: Container(
               decoration: BoxDecoration(
@@ -122,178 +146,212 @@ class _SurgeryPatientDetailsScreenState
                   top: Radius.circular(28.r),
                 ),
               ),
-              child: Column(
-                children: [
-                  Expanded(
-                    child: ListView(
-                      padding: EdgeInsets.fromLTRB(25.w, 20.h, 25.w, 20.h),
-                      children: [
-                        Text(
-                          'Patient Details',
-                          style: theme.textTheme.titleMedium?.copyWith(
-                            color: const Color(0xFF061E40),
-                            fontWeight: FontWeight.w500,
-                            fontSize: 16.sp,
-                          ),
-                        ),
-                        SizedBox(height: 14.h),
-                        SurgeryDoctorSummaryWidget(
-                          doctorName: widget.doctorName,
-                          speciality: widget.speciality,
-                          experience: widget.experience,
-                          qualifications: widget.qualifications,
-                          hospitalName: widget.hospitalName,
-                          procedureName: widget.procedureName,
-                          price: widget.price,
-                          oldPrice: widget.oldPrice,
-                          imageUrl: widget.imageUrl,
-                          partnerLogoUrl: widget.partnerLogoUrl,
-                        ),
-                        SizedBox(height: 20.h),
+              child: BlocConsumer<SurgeryCubit, SurgeryState>(
+                listenWhen: (prev, curr) =>
+                    prev.patientForm != curr.patientForm &&
+                    curr.patientFormLoadingStateStatus == StateStatus.success,
+                listener: (context, state) {
+                  setState(() => _applyPatientForm(state.patientForm));
+                },
+                buildWhen: (prev, curr) =>
+                    prev.patientFormLoadingStateStatus !=
+                        curr.patientFormLoadingStateStatus ||
+                    prev.patientForm != curr.patientForm ||
+                    prev.patientFormErrorMessage != curr.patientFormErrorMessage,
+                builder: (context, state) {
+                  if (state.patientFormLoadingStateStatus == StateStatus.loading) {
+                    return const SurgeryPatientDetailsShimmerViewWidget();
+                  }
 
-                        SurgeryTextInputFieldWidget(
-                          title: 'Patient Name',
-                          hintText: 'Patient Name',
-                          controller: patientNameController,
-                          keyboardType: TextInputType.name,
+                  if (state.patientFormLoadingStateStatus == StateStatus.error) {
+                    return Center(
+                      child: Padding(
+                        padding: EdgeInsets.all(24.w),
+                        child: Text(
+                          state.patientFormErrorMessage ??
+                              'Unable to load patient form. Please try again.',
+                          textAlign: TextAlign.center,
                         ),
-                        SizedBox(height: 14.h),
-                        SurgeryTextInputFieldWidget(
-                          title: 'Age',
-                          hintText: 'Patient Age',
-                          controller: ageController,
-                          keyboardType: TextInputType.number,
-                        ),
-                        SizedBox(height: 14.h),
-                        SurgeryTextInputFieldWidget(
-                          title: 'Contact Number',
-                          hintText: 'Patient Contact Number',
-                          controller: contactNumberController,
-                          keyboardType: TextInputType.phone,
-                        ),
-                        SizedBox(height: 14.h),
-                        SurgeryTextInputFieldWidget(
-                          title: 'Emergency Contact',
-                          hintText: 'Patient Emergency Contact',
-                          controller: emergencyContactController,
-                          keyboardType: TextInputType.phone,
-                          hasError: showEmergencyError,
-                          errorText: 'Enter Phone Number',
-                        ),
-                        SizedBox(height: 14.h),
+                      ),
+                    );
+                  }
 
-                        Text(
-                          'Surgery',
-                          style: theme.textTheme.bodyLarge?.copyWith(
-                            color: const Color(0xFF061E40),
-                            fontSize: 16.sp,
-                          ),
-                        ),
-                        SizedBox(height: 10.h),
+                  final options = _mapOptions(state.patientForm);
+                  final currentSelection = selectedSurgery ??
+                      (options.isNotEmpty ? options.first : null);
 
-                        // ---------- Surgery picker (opens dialog on tap) ----------
-                        InkWell(
-                          borderRadius: BorderRadius.circular(10),
-                          onTap: _openSurgeryTypeDialog,
-                          child: Container(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 12.w,
-                              vertical: 14.h,
-                            ),
-                            decoration: const BoxDecoration(
-                              borderRadius: BorderRadius.all(
-                                Radius.circular(10),
+                  return Column(
+                    children: [
+                      Expanded(
+                        child: ListView(
+                          padding: EdgeInsets.fromLTRB(25.w, 20.h, 25.w, 20.h),
+                          children: [
+                            Text(
+                              'Patient Details',
+                              style: theme.textTheme.titleMedium?.copyWith(
+                                color: const Color(0xFF061E40),
+                                fontWeight: FontWeight.w500,
+                                fontSize: 16.sp,
                               ),
-                              color: Color(0xFFF1F1F1),
                             ),
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  child: Text(
-                                    selectedSurgery.name,
-                                    style: theme.textTheme.bodyLarge?.copyWith(
-                                      color: const Color(0xFF061E40),
-                                      fontSize: 15.sp,
-                                      fontWeight: FontWeight.w500,
+                            SizedBox(height: 14.h),
+                            SurgeryDoctorSummaryWidget(
+                              doctorName: widget.doctorName,
+                              speciality: widget.speciality,
+                              experience: widget.experience,
+                              qualifications: widget.qualifications,
+                              hospitalName: widget.hospitalName,
+                              procedureName: widget.procedureName,
+                              price: widget.price,
+                              oldPrice: widget.oldPrice,
+                              imageUrl: widget.imageUrl,
+                              partnerLogoUrl: widget.partnerLogoUrl,
+                            ),
+                            SizedBox(height: 20.h),
+                            SurgeryTextInputFieldWidget(
+                              title: 'Patient Name',
+                              hintText: 'Patient Name',
+                              controller: patientNameController,
+                              keyboardType: TextInputType.name,
+                            ),
+                            SizedBox(height: 14.h),
+                            SurgeryTextInputFieldWidget(
+                              title: 'Age',
+                              hintText: 'Patient Age',
+                              controller: ageController,
+                              keyboardType: TextInputType.number,
+                            ),
+                            SizedBox(height: 14.h),
+                            SurgeryTextInputFieldWidget(
+                              title: 'Contact Number',
+                              hintText: 'Patient Contact Number',
+                              controller: contactNumberController,
+                              keyboardType: TextInputType.phone,
+                            ),
+                            SizedBox(height: 14.h),
+                            SurgeryTextInputFieldWidget(
+                              title: 'Emergency Contact',
+                              hintText: 'Patient Emergency Contact',
+                              controller: emergencyContactController,
+                              keyboardType: TextInputType.phone,
+                              hasError: showEmergencyError,
+                              errorText: 'Enter Phone Number',
+                            ),
+                            SizedBox(height: 14.h),
+                            Text(
+                              'Surgery',
+                              style: theme.textTheme.bodyLarge?.copyWith(
+                                color: const Color(0xFF061E40),
+                                fontSize: 13.sp,
+                              ),
+                            ),
+                            SizedBox(height: 10.h),
+                            if (currentSelection != null)
+                              InkWell(
+                                borderRadius: BorderRadius.circular(10),
+                                onTap: () => _openSurgeryTypeDialog(options),
+                                child: Container(
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: 12.w,
+                                    vertical: 10.h,
+                                  ),
+                                  decoration: const BoxDecoration(
+                                    borderRadius: BorderRadius.all(
+                                      Radius.circular(10),
+                                    ),
+                                    color: Color(0xFFF1F1F1),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                        child: Text(
+                                          currentSelection.name,
+                                          style:
+                                              theme.textTheme.bodyLarge?.copyWith(
+                                            color: const Color(0xFF061E40),
+                                            fontSize: 13.sp,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                      ),
+                                      Text(
+                                        currentSelection.price,
+                                        style:
+                                            theme.textTheme.bodyLarge?.copyWith(
+                                          color: const Color(0xFF061E40),
+                                          fontSize: 13.sp,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                      SizedBox(width: 4.w),
+                                      Transform.scale(
+                                        scale: 1.2,
+                                        child: Icon(
+                                          Icons.keyboard_arrow_down_rounded,
+                                          color: const Color(0xFFB6BDC8),
+                                          size: 14.r,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            SizedBox(height: 8.h),
+                          ],
+                        ),
+                      ),
+                      Container(
+                        width: double.infinity,
+                        padding: EdgeInsets.fromLTRB(20.w, 14.h, 20.w, 20.h),
+                        decoration: const BoxDecoration(
+                          color: Colors.white,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Color.fromRGBO(0, 0, 0, 0.05),
+                              blurRadius: 20,
+                              offset: Offset(0, -4),
+                            ),
+                          ],
+                        ),
+                        child: SizedBox(
+                          width: double.infinity,
+                          child: FilledButton(
+                            onPressed: isSubmittingBooking ||
+                                    currentSelection == null
+                                ? null
+                                : _onProceedCheckoutPressed,
+                            style: FilledButton.styleFrom(
+                              backgroundColor: const Color(0xFF0FAA9A),
+                              minimumSize: Size.fromHeight(44.h),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10.r),
+                              ),
+                            ),
+                            child: isSubmittingBooking
+                                ? SizedBox(
+                                    width: 22.r,
+                                    height: 22.r,
+                                    child: const CircularProgressIndicator(
+                                      strokeWidth: 2.4,
+                                      valueColor: AlwaysStoppedAnimation<Color>(
+                                        Colors.white,
+                                      ),
+                                    ),
+                                  )
+                                : Text(
+                                    'Proceed Checkout',
+                                    style: theme.textTheme.titleMedium?.copyWith(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w700,
+                                      fontSize: 13.sp,
                                     ),
                                   ),
-                                ),
-                                Text(
-                                  selectedSurgery.price,
-                                  style: theme.textTheme.bodyLarge?.copyWith(
-                                    color: const Color(0xFF061E40),
-                                    fontSize: 15.sp,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                                SizedBox(width: 4.w),
-                                Transform.scale(
-                                  scale: 1.2,
-                                  child: Icon(
-                                    Icons.keyboard_arrow_down_rounded,
-                                    color: const Color(0xFFB6BDC8),
-                                    size: 17.r,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        SizedBox(height: 8.h),
-                      ],
-                    ),
-                  ),
-
-                  // ---------- Bottom "Proceed Checkout" button ----------
-                  Container(
-                    width: double.infinity,
-                    padding: EdgeInsets.fromLTRB(20.w, 14.h, 20.w, 20.h),
-                    decoration: const BoxDecoration(
-                      color: Colors.white,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Color.fromRGBO(0, 0, 0, 0.05),
-                          blurRadius: 20,
-                          offset: Offset(0, -4),
-                        ),
-                      ],
-                    ),
-                    child: SizedBox(
-                      width: double.infinity,
-                      child: FilledButton(
-                        onPressed: isSubmittingBooking
-                            ? null
-                            : _onProceedCheckoutPressed,
-                        style: FilledButton.styleFrom(
-                          backgroundColor: const Color(0xFF0FAA9A),
-                          minimumSize: Size.fromHeight(54.h),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10.r),
-                          ),
-                        ),
-                        child: isSubmittingBooking
-                            ? SizedBox(
-                          width: 22.r,
-                          height: 22.r,
-                          child: const CircularProgressIndicator(
-                            strokeWidth: 2.4,
-                            valueColor: AlwaysStoppedAnimation<Color>(
-                              Colors.white,
-                            ),
-                          ),
-                        )
-                            : Text(
-                          'Proceed Checkout',
-                          style: theme.textTheme.titleMedium?.copyWith(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w700,
-                            fontSize: 17.sp,
                           ),
                         ),
                       ),
-                    ),
-                  ),
-                ],
+                    ],
+                  );
+                },
               ),
             ),
           ),
@@ -302,9 +360,9 @@ class _SurgeryPatientDetailsScreenState
     );
   }
 
-  // ======================= Surgery type dialog =======================
-  Future<void> _openSurgeryTypeDialog() async {
-    // Dismiss the keyboard if it's open so the dialog sits centered.
+  Future<void> _openSurgeryTypeDialog(List<SurgeryOption> options) async {
+    if (options.isEmpty || selectedSurgery == null) return;
+
     FocusScope.of(context).unfocus();
 
     final picked = await showDialog<SurgeryOption>(
@@ -313,12 +371,12 @@ class _SurgeryPatientDetailsScreenState
       builder: (dialogContext) {
         return SurgeryTypeDialogWidget(
           options: options,
-          selected: selectedSurgery,
+          selected: selectedSurgery!,
         );
       },
     );
 
-    if (picked != null && picked.name != selectedSurgery.name) {
+    if (picked != null) {
       setState(() => selectedSurgery = picked);
     }
   }
@@ -331,6 +389,9 @@ class _SurgeryPatientDetailsScreenState
       return;
     }
 
+    final surgery = selectedSurgery;
+    if (surgery == null) return;
+
     setState(() {
       showEmergencyError = false;
       isSubmittingBooking = true;
@@ -342,15 +403,15 @@ class _SurgeryPatientDetailsScreenState
         age: ageController.text.trim(),
         contactNumber: contactNumberController.text.trim(),
         emergencyContact: emergency,
-        surgeryName: selectedSurgery.name,
+        surgeryName: surgery.name,
         doctorName: widget.doctorName,
         hospitalName: widget.hospitalName,
       );
 
       if (!mounted) return;
       result.fold(
-            (_) => _showSubmitFailedSnackbar(),
-            (_) => _showBookingSubmittedDialog(),
+        (_) => _showSubmitFailedSnackbar(),
+        (_) => _showBookingSubmittedDialog(),
       );
     } catch (_) {
       if (!mounted) return;
@@ -405,8 +466,8 @@ class _SurgeryPatientDetailsScreenState
                 SizedBox(height: 12.h),
                 Text(
                   'Your surgery request has been received. Our representative '
-                      'will contact you within 24 hours to gather your medical '
-                      'history and relevant details for confirmation.',
+                  'will contact you within 24 hours to gather your medical '
+                  'history and relevant details for confirmation.',
                   textAlign: TextAlign.center,
                   style: theme.textTheme.bodyLarge?.copyWith(
                     color: const Color(0xFF667B99),

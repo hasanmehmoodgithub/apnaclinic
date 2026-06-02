@@ -1047,6 +1047,10 @@ class AppLocalizationsUr extends AppLocalizations {
       'ابھی تک کوئی لیب ٹیسٹ بکنگ نہیں ہے۔';
 
   @override
+  String get bookingsSurgeryEmptyDescription =>
+      'ابھی تک کوئی سرجری بکنگ نہیں ہے۔';
+
+  @override
   String get bookingsStatusLabel => 'اسٹیٹس';
 
   @override

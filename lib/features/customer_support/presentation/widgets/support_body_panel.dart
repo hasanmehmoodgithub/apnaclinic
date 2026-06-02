@@ -82,7 +82,9 @@ class SupportBodyPanel extends StatelessWidget {
                     SizedBox(height: 24.h),
                     for (int i = 0; i < contacts.length; i++) ...[
                       ActionOptionCard(
-                        title: contacts[i].cardTitle,
+                        title: contacts[i].cardTitle.isNotEmpty
+                            ? contacts[i].cardTitle
+                            : l10n.customerSupportFallbackCardTitle,
                         curveOverlayColor: [
                           AppColors.clrE9F4FC,
                           AppColors.clrE9EEF3,
@@ -143,29 +145,70 @@ class SupportBodyPanel extends StatelessWidget {
                 ),
                 SizedBox(height: 16.h),
                 Text(
-                  contact.dialogTitle,
+                  contact.dialogTitle.isNotEmpty
+                      ? contact.dialogTitle
+                      : l10n.customerSupportFallbackDialogTitle,
                   style: theme.textTheme.headlineSmall?.copyWith(
                     color: AppColors.clr0E2D55,
                     fontWeight: FontWeight.w500,
                     fontSize: 20.sp,
                   ),
                 ),
-                SizedBox(height: 8.h),
-                Text(
-                  contact.dialogMessage,
-                  textAlign: TextAlign.center,
-                  style: theme.textTheme.bodyLarge?.copyWith(
-                    color: AppColors.clr6C82A2,
-                    height: 1.25,
-                    fontSize: 13.sp,
+                if (contact.hasPhone || contact.hasEmail) ...[
+                  SizedBox(height: 12.h),
+                  if (contact.hasEmail) ...[
+                    if (contact.hasPhone)
+                      Text(
+                        contact.dialNumber,
+                        textAlign: TextAlign.center,
+                        style: theme.textTheme.bodyLarge?.copyWith(
+                          color: AppColors.clr0E2D55,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 13.sp,
+                        ),
+                      ),
+                    if (contact.hasPhone && contact.hasEmail)
+                      SizedBox(height: 2.h),
+                    Text(
+                      contact.email,
+                      textAlign: TextAlign.center,
+                      style: theme.textTheme.bodyLarge?.copyWith(
+                        color: AppColors.clr0E2D55,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 13.sp,
+                      ),
+                    ),
+                  ] else if (contact.hasPhone)
+                    Text(
+                      contact.dialNumber,
+                      textAlign: TextAlign.center,
+                      style: theme.textTheme.bodyLarge?.copyWith(
+                        color: AppColors.clr0E2D55,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 15.sp,
+                      ),
+                    ),
+                ],
+                if (contact.dialogMessage.trim().isNotEmpty) ...[
+                  SizedBox(height: 8.h),
+                  Text(
+                    contact.dialogMessage,
+                    textAlign: TextAlign.center,
+                    style: theme.textTheme.bodyLarge?.copyWith(
+                      color: AppColors.clr6C82A2,
+                      height: 1.25,
+                      fontSize: 13.sp,
+                    ),
                   ),
-                ),
+                ],
                 SizedBox(height: 14.h),
                 SizedBox(
                   width: double.infinity,
                   height: 52.h,
                   child: AppButton.primary(
-                    text: l10n.customerSupportCallNowCta,
+                    text: contact.buttonText.trim().isNotEmpty
+                        ? contact.buttonText
+                        : l10n.customerSupportCallNowCta,
                     onPressed: () async {
                       if (!dialogContext.mounted) return;
                       if (contact.dialNumber.trim().isEmpty) {

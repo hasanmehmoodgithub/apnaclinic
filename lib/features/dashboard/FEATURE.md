@@ -14,7 +14,7 @@ Home services grid, promotional banner, search entry, and shell navigation. Keep
 ## Data & APIs (dashboard-specific)
 
 - Services: `AppUrls.ourServices` (see `DashboardRemoteDataSourceImpl`).
-- Promo: `AppUrls.promotionalBanner`.
+- Promo: `AppUrls.promotionalBanner` → CMS `GET /api/v1/mobile/banners`. Uses first active banner (`isActive`, schedule, `displayOrder`). Maps `imagePath` → dialog image, `ctaUrl` → in-app route or external URL.
 
 Profile uses **`profile_setup`** remote (`GET …/users/{userId}`) — no duplicate URL in dashboard.
 
@@ -25,4 +25,9 @@ Profile uses **`profile_setup`** remote (`GET …/users/{userId}`) — no duplic
 ## UI
 
 - `HomeScreen` — `DashboardCubit` + `NotificationCubit`.
-- `MainNavigationShell` — tab shell around `HomeScreen`.
+- `MainNavigationShell` — tab shell around `HomeScreen`; tabs switch **only via bottom nav tap** (no horizontal swipe between tabs). Listens to `AuthSessionRefresh` (login/logout) to remount all tabs and reload cubits.
+
+## Session refresh
+
+- `AuthSessionRefresh.notifyLoggedIn()` — after OTP when profile is already complete, or after first-time profile save: shell selects **Home** tab, loads profile, remounts tabs. Skipped on login when profile is still pending (prevents promo **heart loader** overlay on profile setup). `HomeScreen` only shows the heart loader when `/home` is the active route.
+- `AuthSessionRefresh.notifyLoggedOut()` — logout (`MenuScreen`): guest tabs, `ProfileSetupCubit.resetState()`.

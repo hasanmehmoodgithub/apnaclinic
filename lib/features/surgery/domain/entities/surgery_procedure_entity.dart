@@ -3,11 +3,13 @@ class SurgeryProcedureEntity {
     required this.id,
     required this.name,
     this.highlighted = false,
+    this.description = '',
   });
 
   final String id;
   final String name;
   final bool highlighted;
+  final String description;
 }
 
 class SurgeryContentEntity {

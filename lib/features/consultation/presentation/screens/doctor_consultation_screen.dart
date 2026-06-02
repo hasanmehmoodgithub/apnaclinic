@@ -129,7 +129,7 @@ class _DoctorConsultationScreenState extends State<DoctorConsultationScreen> {
                 ),
               ),
 
-              // ───── White sheet: fixed header + scrollable grid ─────
+              // ───── White sheet: fixed assistant + scroll from categories ─────
               Expanded(
                 child: Container(
                   width: double.infinity,
@@ -146,7 +146,6 @@ class _DoctorConsultationScreenState extends State<DoctorConsultationScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            // Assistant card (fixed)
                             state.isLoading
                                 ? AppShimmerCard(
                                     height: 150.h,
@@ -154,40 +153,17 @@ class _DoctorConsultationScreenState extends State<DoctorConsultationScreen> {
                                   )
                                 : _AssistantCard(textTheme: textTheme),
                             SizedBox(height: 21.h),
-
-                            // Section title (fixed)
-                            state.isLoading
-                                ? AppShimmerText(
-                                    width: 180.w,
-                                    height: 18.h,
-                                    borderRadius: 6.r,
-                                  )
-                                : Text(
-                                    ConsultationUiConfig.chooseCategories,
-                                    style: textTheme.titleMedium?.copyWith(
-                                      fontSize: 16.sp,
-                                      fontWeight: FontWeight.w500,
-                                      color: ConsultationUiConfig.primaryText,
-                                    ),
-                                  ),
-                            SizedBox(height: 14.h),
-
-                            // Search field (fixed)
-                            state.isLoading
-                                ? AppShimmerCard(
-                                    height: 44.565.h,
-                                    borderRadius: 12.r,
-                                  )
-                                : _SearchField(
-                                    onChanged: context
-                                        .read<ConsultationCubit>()
-                                        .onSearchChanged,
-                                  ),
-                            SizedBox(height: 14.h),
-
-                            // Only the grid scrolls
                             Expanded(
-                              child: _buildGridContent(context, state),
+                              child: Padding(
+                                padding: EdgeInsets.only(bottom: 22.h),
+                                child: CustomScrollView(
+                                  slivers: _buildScrollableSlivers(
+                                    context,
+                                    state,
+                                    textTheme,
+                                  ),
+                                ),
+                              ),
                             ),
                           ],
                         ),
@@ -203,57 +179,96 @@ class _DoctorConsultationScreenState extends State<DoctorConsultationScreen> {
     );
   }
 
-  Widget _buildGridContent(BuildContext context, ConsultationState state) {
-    final textTheme = Theme.of(context).textTheme;
+  List<Widget> _buildScrollableSlivers(
+    BuildContext context,
+    ConsultationState state,
+    TextTheme textTheme,
+  ) {
+    final slivers = <Widget>[
+      SliverToBoxAdapter(
+        child: state.isLoading
+            ? AppShimmerText(width: 180.w, height: 18.h, borderRadius: 6.r)
+            : Text(
+                ConsultationUiConfig.chooseCategories,
+                style: textTheme.titleMedium?.copyWith(
+                  fontSize: 16.sp,
+                  fontWeight: FontWeight.w500,
+                  color: ConsultationUiConfig.primaryText,
+                ),
+              ),
+      ),
+      SliverToBoxAdapter(child: SizedBox(height: 14.h)),
+      SliverToBoxAdapter(
+        child: state.isLoading
+            ? AppShimmerCard(height: 44.565.h, borderRadius: 12.r)
+            : _SearchField(
+                onChanged: context.read<ConsultationCubit>().onSearchChanged,
+              ),
+      ),
+      SliverToBoxAdapter(child: SizedBox(height: 14.h)),
+    ];
 
     if (state.isLoading) {
-      return SingleChildScrollView(
-        padding: EdgeInsets.only(bottom: 22.h),
-        child: AppShimmerGrid(
-          itemCount: 8,
-          crossAxisCount: 2,
-          mainAxisSpacing: 8.h,
-          crossAxisSpacing: 6.w,
-          childAspectRatio: 189.4 / 81.7,
-          borderRadius: 10.7.r,
+      slivers.add(
+        SliverToBoxAdapter(
+          child: AppShimmerGrid(
+            itemCount: 8,
+            crossAxisCount: 2,
+            mainAxisSpacing: 8.h,
+            crossAxisSpacing: 6.w,
+            childAspectRatio: 189.4 / 81.7,
+            borderRadius: 10.7.r,
+          ),
         ),
       );
+      return slivers;
     }
 
     if ((state.errorMessage ?? '').isNotEmpty) {
-      return Center(
-        child: Text(
-          state.errorMessage!,
-          style: textTheme.bodySmall?.copyWith(color: Colors.red),
+      slivers.add(
+        SliverFillRemaining(
+          hasScrollBody: false,
+          child: Center(
+            child: Text(
+              state.errorMessage!,
+              style: textTheme.bodySmall?.copyWith(color: Colors.red),
+            ),
+          ),
         ),
       );
+      return slivers;
     }
 
-    return GridView.builder(
-      padding: EdgeInsets.only(bottom: 22.h),
-      itemCount: state.filteredCategories.length,
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        mainAxisSpacing: 8,
-        crossAxisSpacing: 6,
-        childAspectRatio: 189.4 / 81.7,
-      ),
-      itemBuilder: (context, index) {
-        final category = state.filteredCategories[index];
-        return Builder(
-          builder: (tileContext) {
-            return ConsultationCategoryCard(
-              category: category,
-              onTap: () => context.pushNamed(
-                AppRoutes.consultationDoctors,
-                extra: {'category': category.title},
-              ),
-              onInfoTap: (_) => _showProcedureInfo(tileContext, category),
+    slivers.add(
+      SliverGrid(
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          mainAxisSpacing: 8,
+          crossAxisSpacing: 6,
+          childAspectRatio: 189.4 / 81.7,
+        ),
+        delegate: SliverChildBuilderDelegate(
+          (context, index) {
+            final category = state.filteredCategories[index];
+            return Builder(
+              builder: (tileContext) {
+                return ConsultationCategoryCard(
+                  category: category,
+                  onTap: () => context.pushNamed(
+                    AppRoutes.consultationDoctors,
+                    extra: {'category': category.title},
+                  ),
+                  onInfoTap: (_) => _showProcedureInfo(tileContext, category),
+                );
+              },
             );
           },
-        );
-      },
+          childCount: state.filteredCategories.length,
+        ),
+      ),
     );
+
+    return slivers;
   }
 
   /// Shows the tooltip positioned exactly above the tapped tile,
@@ -274,7 +289,7 @@ class _DoctorConsultationScreenState extends State<DoctorConsultationScreen> {
     _tooltipEntry = OverlayEntry(
       builder: (ctx) {
         return _CategoryInfoTooltip(
-          title: category.title,
+          title: category.cardTitle,
           description: category.description,
           tileOffset: tileOffset,
           tileSize: tileSize,

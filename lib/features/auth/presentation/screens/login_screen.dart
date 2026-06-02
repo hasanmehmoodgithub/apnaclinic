@@ -8,6 +8,8 @@ import '../../../../core/enums/app_enums.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/router/app_routes.dart';
+import '../../../../core/widgets/heart_loader_widget.dart';
+import '../../../profile_setup/presentation/profile_setup_launch_source.dart';
 import '../cubit/auth_cubit.dart';
 import '../widgets/auth_top_header_widget.dart';
 import '../widgets/login_legal_text.dart';
@@ -159,7 +161,11 @@ class _LoginViewState extends State<_LoginView> {
         context.go(AppRoutes.path(AppRoutes.home));
         break;
       case AuthSubmitResult.verifiedGoProfileSetup:
-        context.go(AppRoutes.path(AppRoutes.profileSetup));
+        HeartLoaderDialogController.closeAll();
+        context.push(
+          AppRoutes.path(AppRoutes.profileSetup),
+          extra: ProfileSetupLaunchSource.login,
+        );
         break;
       case AuthSubmitResult.validationFailed:
       case AuthSubmitResult.failed:

@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/enums/app_enums.dart';
 import '../../../../core/enums/state_status.dart';
 import '../../../../core/preference/app_pref.dart';
+import '../../../../core/session/auth_session_refresh.dart';
 import '../../../../core/preference/user_local_model.dart';
 import '../../../../core/utils/jwt_utils.dart';
 import '../../domain/entities/auth_entity.dart';
@@ -17,14 +18,17 @@ class AuthCubit extends Cubit<AuthState> {
     required RequestOtpUseCase requestOtpUseCase,
     required VerifyOtpUseCase verifyOtpUseCase,
     required AppPref appPref,
+    required AuthSessionRefresh sessionRefresh,
   }) : _requestOtpUseCase = requestOtpUseCase,
        _verifyOtpUseCase = verifyOtpUseCase,
        _appPref = appPref,
+       _sessionRefresh = sessionRefresh,
        super(const AuthState());
 
   final RequestOtpUseCase _requestOtpUseCase;
   final VerifyOtpUseCase _verifyOtpUseCase;
   final AppPref _appPref;
+  final AuthSessionRefresh _sessionRefresh;
   Timer? _timer;
 
   String formatPhoneInput(String input) {
@@ -221,8 +225,6 @@ class AuthCubit extends Cubit<AuthState> {
     await _appPref.setRefreshToken(entity.refreshToken ?? '');
     await _appPref.setAccessTokenExpiresIn(entity.accessTokenExpiresIn ?? 0);
     await _appPref.setRefreshTokenExpiresIn(entity.refreshTokenExpiresIn ?? 0);
-    await _appPref.setOnboardingCompleted(entity.isOnboardingCompleted == true);
-
     if (entity.isOnboardingCompleted == true) {
       await _appPref.setProfileCompleted(true);
       await _appPref.setUserLocalModel(
@@ -241,6 +243,12 @@ class AuthCubit extends Cubit<AuthState> {
       await _appPref.setUserLocalModel(
         UserLocalModel(phone: state.phoneNumber),
       );
+    }
+
+    // Only refresh the dashboard shell when profile is complete. Otherwise
+    // HomeScreen remounts under the login route and opens the promo heart loader.
+    if (entity.isOnboardingCompleted == true) {
+      _sessionRefresh.notifyLoggedIn();
     }
   }
 

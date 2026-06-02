@@ -44,6 +44,12 @@ class HeartLoaderDialogController {
     if (entry == null) return;
     entry.navigatorState.removeRoute(entry.route);
   }
+
+  static void closeAll() {
+    for (final id in _activeDialogs.keys.toList()) {
+      close(id);
+    }
+  }
 }
 
 Future<void> showHeartLoaderDialog(

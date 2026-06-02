@@ -6,6 +6,7 @@ import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/preference/app_pref.dart';
 import '../../../../core/router/app_routes.dart';
+import '../../../profile_setup/presentation/profile_setup_launch_source.dart';
 import '../../domain/use_cases/complete_onboarding_use_case.dart';
 import '../widgets/onboarding_backdrop.dart';
 import '../widgets/onboarding_header.dart';
@@ -124,6 +125,14 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   Future<void> _finishOnboarding() async {
     await _completeOnboardingUseCase();
     if (!mounted) return;
+    final appPref = sl<AppPref>();
+    if (appPref.getLoginStatus() && !appPref.isProfileCompleted()) {
+      context.go(
+        AppRoutes.path(AppRoutes.profileSetup),
+        extra: ProfileSetupLaunchSource.onboarding,
+      );
+      return;
+    }
     context.go(AppRoutes.path(AppRoutes.home));
   }
 
