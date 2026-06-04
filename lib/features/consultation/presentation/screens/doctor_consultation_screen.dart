@@ -258,7 +258,11 @@ class _DoctorConsultationScreenState extends State<DoctorConsultationScreen> {
                     AppRoutes.consultationDoctors,
                     extra: {'category': category.title},
                   ),
-                  onInfoTap: (_) => _showProcedureInfo(tileContext, category),
+                  onInfoTap: (_) => ()
+
+                      // _showProcedureInfo(tileContext, category),
+
+
                 );
               },
             );
@@ -631,7 +635,7 @@ class _SearchField extends StatelessWidget {
             fontSize: 14.sp,
           ),
           suffixIcon: Padding(
-            padding: EdgeInsets.all(12.r),
+            padding: EdgeInsets.all(15.r),
             child: SvgPicture.asset(
               ConsultationUiConfig.searchIconAsset,
               width: 18.6.w,

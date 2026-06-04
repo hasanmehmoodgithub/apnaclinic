@@ -62,7 +62,7 @@ class ConsultationCategoryCard extends StatelessWidget {
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: textTheme.titleMedium?.copyWith(
-                    fontSize: responsive.sp(context, 15.3),
+                    fontSize: responsive.sp(context, 12.5),
                     height: 1.0,
                     fontWeight: FontWeight.w500,
                     color: ConsultationUiConfig.primaryText,
@@ -115,34 +115,34 @@ class _InfoIcon extends StatelessWidget {
     return Stack(
       fit: StackFit.expand,
       children: [
-        SvgPicture.asset(
-          ConsultationUiConfig.infoCircleAsset,
-          fit: BoxFit.contain,
-        ),
-        Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                width: responsive.w(context, 1.4),
-                height: responsive.h(context, 4.8),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF374957),
-                  borderRadius: BorderRadius.circular(responsive.r(context, 2)),
-                ),
-              ),
-              SizedBox(height: responsive.h(context, 1.8)),
-              Container(
-                width: responsive.w(context, 1.5),
-                height: responsive.h(context, 1.5),
-                decoration: const BoxDecoration(
-                  color: Color(0xFF374957),
-                  shape: BoxShape.circle,
-                ),
-              ),
-            ],
-          ),
-        ),
+        // SvgPicture.asset(
+        //   ConsultationUiConfig.infoCircleAsset,
+        //   fit: BoxFit.contain,
+        // ),
+        // Center(
+        //   child: Column(
+        //     mainAxisSize: MainAxisSize.min,
+        //     children: [
+        //       Container(
+        //         width: responsive.w(context, 1.4),
+        //         height: responsive.h(context, 4.8),
+        //         decoration: BoxDecoration(
+        //           color: const Color(0xFF374957),
+        //           borderRadius: BorderRadius.circular(responsive.r(context, 2)),
+        //         ),
+        //       ),
+        //       SizedBox(height: responsive.h(context, 1.8)),
+        //       Container(
+        //         width: responsive.w(context, 1.5),
+        //         height: responsive.h(context, 1.5),
+        //         decoration: const BoxDecoration(
+        //           color: Color(0xFF374957),
+        //           shape: BoxShape.circle,
+        //         ),
+        //       ),
+        //     ],
+        //   ),
+        // ),
       ],
     );
   }

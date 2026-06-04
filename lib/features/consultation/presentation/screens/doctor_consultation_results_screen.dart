@@ -185,41 +185,25 @@ class _DoctorConsultationResultsScreenState
                           ],
                         ),
                         SizedBox(height: 14.h),
-                        ResultsDoctorCategoryCard(
-                          category: _selectedCategory,
-                          textTheme: textTheme,
-                          onChangeTap: _openSelectCategoryDialog,
-                        ),
-                        SizedBox(height: 14.h),
                         Expanded(
-                          child: _isLoading
-                              ? SingleChildScrollView(
-                                  child: Column(
-                                    children: List.generate(
-                                      4,
-                                      (index) => Padding(
-                                        padding: EdgeInsets.only(
-                                          bottom: index < 3 ? 10.h : 0,
-                                        ),
-                                        child: AppShimmerCard(
-                                          height: 104.h,
-                                          borderRadius: 12.r,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                )
-                              : ListView.separated(
-                                  padding: EdgeInsets.zero,
-                                  itemCount: doctors.length,
-                                  separatorBuilder: (_, _) => SizedBox(height: 10.h),
-                                  itemBuilder: (context, index) {
-                                    return ResultsDoctorCard(
-                                      doctor: doctors[index],
-                                      textTheme: textTheme,
-                                    );
-                                  },
+                          child: ListView(
+                            padding: EdgeInsets.zero,
+                            children: [
+                              ResultsDoctorCategoryCard(
+                                category: _selectedCategory,
+                                textTheme: textTheme,
+                                onChangeTap: _openSelectCategoryDialog,
+                              ),
+                              SizedBox(height: 14.h),
+                              for (var index = 0; index < doctors.length; index++) ...[
+                                if (index > 0) SizedBox(height: 10.h),
+                                ResultsDoctorCard(
+                                  doctor: doctors[index],
+                                  textTheme: textTheme,
                                 ),
+                              ],
+                            ],
+                          ),
                         ),
                       ],
                     ),

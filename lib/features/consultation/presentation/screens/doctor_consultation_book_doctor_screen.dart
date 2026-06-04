@@ -138,7 +138,7 @@ class _DoctorConsultationBookDoctorScreenState
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.vertical(
-                      top: Radius.circular(42.r),
+                      top: Radius.circular(30.r),
                     ),
                   ),
                   child: Column(
