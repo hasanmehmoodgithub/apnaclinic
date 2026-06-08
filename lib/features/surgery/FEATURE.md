@@ -16,7 +16,7 @@ Browse surgical procedures by city, select a doctor/hospital offer, complete pat
 | Patient form | GET | `surgeryPatientForm(doctorId)` | `SurgeryPatientFormMockApi` |
 | Submit booking | POST | `surgeryBooking` | `SurgeryCheckoutMockApi` |
 
-Aggregator list maps `data[]` items: `id`, `name`, `slug`, `image`, `description`, optional `displayOrder` / `isActive`. City picker uses local defaults until a cities API exists.
+Aggregator list maps `data[]` items: `id`, `name`, `slug`, `image`, `description`, optional `displayOrder` / `isActive`. City picker uses **`CitiesRepository`** (prefetched at app open from `AppUrls.cities` → `/api/v1/mobile/cities`).
 
 Bookings list/details: `SurgeryBookingsMockApi` in `lib/features/bookings/data/mock/` (used by `SurgeryBookingsScreen`).
 

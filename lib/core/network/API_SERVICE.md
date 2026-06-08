@@ -32,6 +32,7 @@ Thin **Dio** facade used across features for JSON REST calls. Lives in `lib/core
 - `DEVICE_HEADERS_CONTRACT.md` — backend-facing contract for app/device headers.
 - `api_error_message_utils.dart` — nested `message` / validation arrays from APIs.
 - `api_exceptions.dart` — exception hierarchy for `ErrorHandler` and callers.
+- `../cities/` — `CitiesRepository` fetches `AppUrls.cities` once at app startup (`main.dart`); lab and surgery city pickers read the cached list.
 
 ## Constructor flags
 

@@ -84,6 +84,10 @@ class AppUrls {
   static String doctorConsultationDoctors(String mainCategoryId) =>
       '$_normalizedAggregatorBaseUrl/api/v1/mobile/doctor-consultation/doctors?mainCategoryId=${Uri.encodeComponent(mainCategoryId)}';
 
+  /// Supported cities for lab and surgery (aggregator mobile API).
+  static String get cities =>
+      '$_normalizedAggregatorBaseUrl/api/v1/mobile/cities';
+
   /// Home promotional banner(s) — CMS mobile API (first active item by displayOrder).
   static String get promotionalBanner =>
       '$_normalizedCmsBaseUrl/api/v1/mobile/banners';

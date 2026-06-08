@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import '../../../../core/cities/domain/repositories/cities_repository.dart';
 import '../../../../core/functional/functional_export.dart';
 import '../../domain/entities/surgery_booking_request_entity.dart';
 import '../../domain/entities/surgery_doctor_entity.dart';
@@ -12,17 +13,30 @@ import '../mappers/surgery_mapper.dart';
 import '../mappers/surgery_patient_form_mapper.dart';
 
 class SurgeryRepositoryImpl implements SurgeryRepository {
-  SurgeryRepositoryImpl({required this.remoteDataSource});
+  SurgeryRepositoryImpl({
+    required this.remoteDataSource,
+    required this.citiesRepository,
+  });
 
   final SurgeryRemoteDataSource remoteDataSource;
+  final CitiesRepository citiesRepository;
 
   @override
   Future<Either<ErrorMsg, SurgeryContentEntity>> getSurgeryContent() async {
     try {
       final model = await remoteDataSource.getSurgeryContent();
       final entity = SurgeryMapper.toEntity(model);
+      await citiesRepository.loadCities();
+      final cityNames = citiesRepository.cityNames;
+      final defaultCity = citiesRepository.defaultCityName;
       log('Mapped surgery procedures count: ${entity.procedures.length}');
-      return Right(entity);
+      return Right(
+        SurgeryContentEntity(
+          cities: cityNames.isNotEmpty ? cityNames : entity.cities,
+          defaultCity: defaultCity.isNotEmpty ? defaultCity : entity.defaultCity,
+          procedures: entity.procedures,
+        ),
+      );
     } catch (e) {
       log('getSurgeryContent repository error: $e');
       return Left(e.toString());
