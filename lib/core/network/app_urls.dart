@@ -20,6 +20,13 @@ class AppUrls {
     defaultValue: 'https://apnaclinic-aggregator.apps.jpocp.jazz.com.pk',
   );
 
+  /// Mobile API key for CMS/aggregator guest access. Override: `--dart-define=MOBILE_API_KEY=...`
+  static const String mobileApiKey = String.fromEnvironment(
+    'MOBILE_API_KEY',
+    defaultValue:
+        'apk_426baebf7f6eeb2962d120583b66827f354da3f09c86ac27c4d673e5823dd772',
+  );
+
   static String get _normalizedCmsBaseUrl => cmsBaseUrl.endsWith('/')
       ? cmsBaseUrl.substring(0, cmsBaseUrl.length - 1)
       : cmsBaseUrl;
@@ -73,6 +80,10 @@ class AppUrls {
   static String get doctorCategories =>
       '$_normalizedAggregatorBaseUrl/api/v1/mobile/doctor-categories';
 
+  /// Doctor consultation doctors for a main category (aggregator mobile API).
+  static String doctorConsultationDoctors(String mainCategoryId) =>
+      '$_normalizedAggregatorBaseUrl/api/v1/mobile/doctor-consultation/doctors?mainCategoryId=${Uri.encodeComponent(mainCategoryId)}';
+
   /// Home promotional banner(s) — CMS mobile API (first active item by displayOrder).
   static String get promotionalBanner =>
       '$_normalizedCmsBaseUrl/api/v1/mobile/banners';
@@ -107,13 +118,13 @@ class AppUrls {
   /// Search endpoint
   static String get search => '$baseUrl/search';
 
-  /// Surgery procedures endpoint
-  static String get surgeryProcedures => '$baseUrl/surgery/procedures';
-  static String surgeryDoctors({
-    required String procedureName,
-    required String city,
-  }) =>
-      '$baseUrl/surgery/doctors?procedure=${Uri.encodeComponent(procedureName)}&city=${Uri.encodeComponent(city)}';
+  /// Surgery procedures list (aggregator mobile API).
+  static String get surgeryProcedures =>
+      '$_normalizedAggregatorBaseUrl/api/v1/mobile/surgery/list';
+
+  /// Surgery providers for a procedure (aggregator mobile API).
+  static String surgeryProviders(String surgeryId) =>
+      '$_normalizedAggregatorBaseUrl/api/v1/mobile/surgery/providers?surgeryId=${Uri.encodeComponent(surgeryId)}';
   static String surgeryPatientForm(String doctorId) =>
       '$baseUrl/surgery/patient-form/$doctorId';
   static String get surgeryBooking => '$baseUrl/surgery/booking';

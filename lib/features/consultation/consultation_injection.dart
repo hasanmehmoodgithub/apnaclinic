@@ -6,6 +6,7 @@ import 'data/mock/consultation_doctors_mock_api.dart';
 import 'data/repositories/consultation_repository_impl.dart';
 import 'domain/repositories/consultation_repository.dart';
 import 'domain/use_cases/get_consultation_categories_use_case.dart';
+import 'domain/use_cases/get_consultation_doctors_use_case.dart';
 import 'presentation/cubit/consultation_cubit.dart';
 
 void initConsultationInjector() {
@@ -20,6 +21,7 @@ void initConsultationInjector() {
     () => ConsultationRemoteDataSourceImpl(
       apiService: sl(),
       mockApi: sl<ConsultationCategoriesMockApi>(),
+      doctorsMockApi: sl<ConsultationDoctorsMockApi>(),
     ),
   );
 
@@ -31,6 +33,12 @@ void initConsultationInjector() {
 
   sl.registerLazySingleton<GetConsultationCategoriesUseCase>(
     () => GetConsultationCategoriesUseCase(
+      repository: sl<ConsultationRepository>(),
+    ),
+  );
+
+  sl.registerLazySingleton<GetConsultationDoctorsUseCase>(
+    () => GetConsultationDoctorsUseCase(
       repository: sl<ConsultationRepository>(),
     ),
   );

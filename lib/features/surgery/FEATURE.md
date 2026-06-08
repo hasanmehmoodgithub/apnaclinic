@@ -11,14 +11,16 @@ Browse surgical procedures by city, select a doctor/hospital offer, complete pat
 ## Data & APIs
 | Screen | Method | `AppUrls` key | Mock class |
 |--------|--------|---------------|------------|
-| Procedures list | GET | `surgeryProcedures` | `SurgeryMockApi` |
-| Doctor offers | GET | `surgeryDoctors(procedure, city)` | `SurgeryDoctorsMockApi` |
+| Procedures list | GET | `surgeryProcedures` → `/api/v1/mobile/surgery/list` | `SurgeryMockApi` |
+| Doctor offers | GET | `surgeryProviders(surgeryId)` → `/api/v1/mobile/surgery/providers?surgeryId=` | `SurgeryDoctorsMockApi` |
 | Patient form | GET | `surgeryPatientForm(doctorId)` | `SurgeryPatientFormMockApi` |
 | Submit booking | POST | `surgeryBooking` | `SurgeryCheckoutMockApi` |
 
+Aggregator list maps `data[]` items: `id`, `name`, `slug`, `image`, `description`, optional `displayOrder` / `isActive`. City picker uses local defaults until a cities API exists.
+
 Bookings list/details: `SurgeryBookingsMockApi` in `lib/features/bookings/data/mock/` (used by `SurgeryBookingsScreen`).
 
-All surgery mocks use `MockConfig.enableMocks` (`useMockResponses` static on each mock class). On in debug or with `--dart-define=MOCKTRUE=true`.
+Surgery mocks use `MockConfig.enableSurgeryMocks` (default false).
 
 ## State
 - `SurgeryCubit` / `SurgeryState`: content load, city/search, doctors load, patient form load, `submitSurgeryBooking`
@@ -28,7 +30,7 @@ All surgery mocks use `MockConfig.enableMocks` (`useMockResponses` static on eac
 `initSurgeryInjector()` registers mocks, `SurgeryRemoteDataSourceImpl`, repository, use cases, factory `SurgeryCubit`.
 
 ## Mocks
-- `SurgeryMockApi` — cities, procedures (with descriptions)
+- `SurgeryMockApi` — aggregator-shaped surgery list
 - `SurgeryDoctorsMockApi` — doctors filtered by procedure + city
 - `SurgeryPatientFormMockApi` — surgery options + patient prefill per doctor
 - `SurgeryCheckoutMockApi` — booking submit success + `bookingId`

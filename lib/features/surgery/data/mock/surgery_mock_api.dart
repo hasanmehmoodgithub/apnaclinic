@@ -1,82 +1,73 @@
 import '../../../../core/config/mock_config.dart';
 
 class SurgeryMockApi {
-  static bool useMockResponses = MockConfig.enableMocks;
+  static bool useMockResponses = MockConfig.enableSurgeryMocks;
 
   Future<Map<String, dynamic>> getSurgeryContentSuccessResponse() async {
     await Future<void>.delayed(const Duration(milliseconds: 500));
     return {
       'success': true,
-      'message': 'Surgery content fetched successfully',
-      'defaultCity': 'Islamabad',
-      'cities': ['Islamabad', 'Lahore', 'Peshawar', 'Rawalpindi', 'Karachi'],
-      'procedures': [
+      'message': 'Surgeries retrieved',
+      'code': 200,
+      'data': [
         {
-          'id': 'acl',
+          'id': 1,
           'name': 'ACL',
-          'highlighted': true,
+          'slug': 'acl',
+          'image': 'https://placehold.co/400x300/2563eb/ffffff?text=ACL',
           'description':
-              'Anterior cruciate ligament (ACL) is in the middle of the knee. It prevents the shin bone from sliding out in front of the thigh bone. Posterior cruciate ligament (PCL) works with the ACL. It prevents the shin bone from sliding backward under the femur.',
+              'Anterior cruciate ligament (ACL) is in the middle of the knee. It prevents the shin bone from sliding out in front of the thigh bone.',
+          'displayOrder': 1,
+          'isActive': true,
         },
         {
-          'id': 'cataract-eye',
+          'id': 2,
           'name': 'Cataract Eye',
-          'highlighted': true,
+          'slug': 'cataract-eye',
+          'image': 'https://placehold.co/400x300/2563eb/ffffff?text=Cataract',
           'description':
               'Cataract surgery removes the cloudy lens and improves vision.',
+          'displayOrder': 2,
+          'isActive': true,
         },
         {
-          'id': 'c-section',
+          'id': 3,
           'name': 'C-Section',
-          'highlighted': true,
+          'slug': 'c-section',
+          'image': 'https://placehold.co/400x300/2563eb/ffffff?text=C-Section',
           'description': 'C-section is a surgical procedure to deliver a baby.',
+          'displayOrder': 3,
+          'isActive': true,
         },
         {
-          'id': 'fistula',
-          'name': 'Fitsula',
-          'highlighted': true,
-          'description':
-              'Fistula surgery treats abnormal connections between organs.',
-        },
-        {
-          'id': 'lasik-eye',
-          'name': 'LASIK Eye',
-          'highlighted': true,
-          'description':
-              'Uses a laser to fix vision issues like nearsightedness.',
-        },
-        {
-          'id': 'liposuction',
-          'name': 'Liposuction',
-          'highlighted': true,
-          'description':
-              'Liposuction removes excess fat deposits from selected areas.',
-        },
-        {
-          'id': 'cataract-surgery',
-          'name': 'Cataract Surgery',
-          'highlighted': true,
-          'description': 'Cataract surgery replaces the cloudy eye lens.',
-        },
-        {
-          'id': 'stent-procedure',
-          'name': 'Stent Procedure',
-          'highlighted': true,
-          'description': 'Stent procedure opens blocked blood vessels.',
-        },
-        {
-          'id': 'gallbladder-removal',
+          'id': 4,
           'name': 'Gallbladder Removal',
-          'highlighted': true,
-          'description':
-              'Gallbladder removal treats stones or inflammation.',
+          'slug': 'gallbladder-removal',
+          'image':
+              'https://placehold.co/400x300/2563eb/ffffff?text=Gallbladder',
+          'description': 'Surgical removal of the gallbladder.',
+          'displayOrder': 4,
+          'isActive': true,
         },
         {
-          'id': 'breast-surgery',
-          'name': 'Breast Surgery',
-          'highlighted': true,
+          'id': 5,
+          'name': 'LASIK Eye Surgery',
+          'slug': 'lasik-eye-surgery',
+          'image': 'https://placehold.co/400x300/2563eb/ffffff?text=LASIK',
+          'description': 'Laser vision correction surgery.',
+          'displayOrder': 5,
+          'isActive': true,
+        },
+        {
+          'id': 6,
+          'name': 'Knee Replacement',
+          'slug': 'knee-replacement',
+          'image':
+              'https://placehold.co/400x300/2563eb/ffffff?text=Knee+Replacement',
           'description':
-              'Breast surgery includes therapeutic and corrective procedures.',
+              'Replacing worn knee joint surfaces with artificial parts.',
+          'displayOrder': 6,
+          'isActive': true,
         },
       ],
     };

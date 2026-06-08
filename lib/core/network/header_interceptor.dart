@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 
 import '../preference/app_pref.dart';
 import '../utils/jwt_utils.dart';
+import 'app_urls.dart';
 import 'device_headers_provider.dart';
 
 class HeaderInterceptor extends Interceptor {
@@ -26,9 +27,13 @@ class HeaderInterceptor extends Interceptor {
     options.headers.addAll(headers);
 
     final uri = options.uri.toString();
-    if (!uri.contains('apnaclinic-cmsbackend') &&
-        !uri.contains('apnaclinic-aggregator')) {
+    if (!_isMobileBackendUri(uri)) {
       return;
+    }
+
+    final apiKey = AppUrls.mobileApiKey.trim();
+    if (apiKey.isNotEmpty) {
+      options.headers['x-api-key'] = apiKey;
     }
 
     final token = _appPref.getToken();
@@ -36,5 +41,14 @@ class HeaderInterceptor extends Interceptor {
     if (tenantId != null) {
       options.headers['x-tenant-id'] = tenantId.toString();
     }
+  }
+
+  bool _isMobileBackendUri(String uri) {
+    final cmsHost = Uri.tryParse(AppUrls.cmsBaseUrl)?.host ?? '';
+    final aggregatorHost = Uri.tryParse(AppUrls.aggregatorBaseUrl)?.host ?? '';
+    if (cmsHost.isNotEmpty && uri.contains(cmsHost)) return true;
+    if (aggregatorHost.isNotEmpty && uri.contains(aggregatorHost)) return true;
+    return uri.contains('apnaclinic-cmsbackend') ||
+        uri.contains('apnaclinic-aggregator');
   }
 }

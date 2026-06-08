@@ -6,6 +6,7 @@ import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../cubit/surgery_cubit.dart';
 import '../cubit/surgery_state.dart';
+import '../../domain/entities/surgery_procedure_entity.dart';
 import '../screens/surgery_booking_screen.dart';
 import 'city_bottom_sheet.dart';
 import 'surgery_location_row_widget.dart';
@@ -81,7 +82,7 @@ class _SurgeryContentViewWidgetState extends State<SurgeryContentViewWidget> {
                   return SurgeryProcedureTileWidget(
                     name: item.name,
                     index: index,
-                    onTap: () => _openSurgeryBooking(context, item.name, state),
+                    onTap: () => _openSurgeryBooking(context, item, state),
                     onInfoTap: (tileContext) => _showProcedureInfo(
                       tileContext,
                       item.name,
@@ -99,7 +100,7 @@ class _SurgeryContentViewWidgetState extends State<SurgeryContentViewWidget> {
 
   void _openSurgeryBooking(
     BuildContext context,
-    String procedureName,
+    SurgeryProcedureEntity item,
     SurgeryState state,
   ) {
     final surgeryCubit = context.read<SurgeryCubit>();
@@ -108,7 +109,8 @@ class _SurgeryContentViewWidgetState extends State<SurgeryContentViewWidget> {
         builder: (_) => BlocProvider.value(
           value: surgeryCubit,
           child: SurgeryBookingScreen(
-            procedureName: procedureName,
+            surgeryId: item.id,
+            procedureName: item.name,
             city: state.selectedCity,
             cities: state.content.cities,
           ),

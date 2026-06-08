@@ -31,11 +31,13 @@ class SurgeryRepositoryImpl implements SurgeryRepository {
 
   @override
   Future<Either<ErrorMsg, SurgeryDoctorsEntity>> getSurgeryDoctors({
+    required String surgeryId,
     required String procedureName,
     required String city,
   }) async {
     try {
       final model = await remoteDataSource.getSurgeryDoctors(
+        surgeryId: surgeryId,
         procedureName: procedureName,
         city: city,
       );

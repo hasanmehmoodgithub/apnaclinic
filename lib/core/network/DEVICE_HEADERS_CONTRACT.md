@@ -17,6 +17,11 @@ This document defines the request headers automatically added by the app for API
 - `x-app-package` - Application package/bundle id (example: `com.mobileapp.simhealth`)
 - `x-device-platform` - Client platform (`android`, `ios`, `macos`, `web`, etc.)
 
+### CMS / aggregator mobile APIs (guest + logged-in)
+
+- `x-api-key` - Mobile client API key (`AppUrls.mobileApiKey`, override via `--dart-define=MOBILE_API_KEY=...`). Sent on CMS and aggregator hosts so guest users can call mobile endpoints (services, banners, doctor categories, etc.).
+- `x-tenant-id` - JWT `tenant_id` claim when the user is logged in (aggregator/CMS only).
+
 ### Platform-specific (when available)
 
 - `x-device-id` - Device identifier from platform APIs

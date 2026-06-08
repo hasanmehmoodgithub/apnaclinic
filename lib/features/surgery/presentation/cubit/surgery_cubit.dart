@@ -67,6 +67,7 @@ class SurgeryCubit extends Cubit<SurgeryState> {
   }
 
   Future<void> loadSurgeryDoctors({
+    required String surgeryId,
     required String procedureName,
     bool refresh = false,
   }) async {
@@ -81,6 +82,7 @@ class SurgeryCubit extends Cubit<SurgeryState> {
 
     final result = await getSurgeryDoctorsUseCase(
       GetSurgeryDoctorsParams(
+        surgeryId: surgeryId,
         procedureName: procedureName,
         city: state.selectedCity,
       ),

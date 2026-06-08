@@ -1,7 +1,7 @@
 import '../../../../core/config/mock_config.dart';
 
 class SurgeryPatientFormMockApi {
-  static bool useMockResponses = MockConfig.enableMocks;
+  static bool useMockResponses = MockConfig.enableSurgeryMocks;
 
   Future<Map<String, dynamic>> getPatientFormSuccessResponse({
     required String doctorId,

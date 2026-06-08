@@ -7,7 +7,7 @@ Thin **Dio** facade used across features for JSON REST calls. Lives in `lib/core
 | Area | Behavior |
 |------|----------|
 | **Base URL** | `ApiConfig.baseUrl` → `FlavorConfig.apiBaseUrl` (override via constructor `baseUrl`). |
-| **Headers** | Default `Content-Type` / `Accept`: `application/json`. Device/app metadata is added by `HeaderInterceptor` (see `DEVICE_HEADERS_CONTRACT.md`). Bearer token is synced from `AppPref` before each request. |
+| **Headers** | Default `Content-Type` / `Accept`: `application/json`. Device/app metadata is added by `HeaderInterceptor` (see `DEVICE_HEADERS_CONTRACT.md`). CMS/aggregator calls include `x-api-key` (`AppUrls.mobileApiKey`) for guest access; `x-tenant-id` when logged in. Bearer token is synced from `AppPref` before each request. |
 | **Interceptors** | `HeaderInterceptor`, `AuthInterceptor` (401 → refresh + retry, see `REFRESH_TOKEN_LOGIC.md`), optional `ApiLoggerInterceptor`, optional `ChuckerDioInterceptor`. |
 | **Timeouts** | Connect / send / receive default 60s; per-call override via `timeout` on `get`/`post`/… |
 | **Response** | 2xx returns `Map<String, dynamic>` (empty map if body null). Non-2xx throws `ApiException` with parsed message via `ApiErrorMessageUtils`. |
