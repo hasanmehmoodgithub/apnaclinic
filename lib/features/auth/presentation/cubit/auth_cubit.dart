@@ -2,9 +2,12 @@ import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/enums/app_enums.dart';
 import '../../../../core/enums/state_status.dart';
 import '../../../../core/preference/app_pref.dart';
+import '../../../../core/preference/app_pref_keys.dart';
+import '../../../../core/services/notification_service.dart';
 import '../../../../core/session/auth_session_refresh.dart';
 import '../../../../core/preference/user_local_model.dart';
 import '../../../../core/utils/jwt_utils.dart';
@@ -134,7 +137,11 @@ class AuthCubit extends Cubit<AuthState> {
     );
 
     final result = await _verifyOtpUseCase(
-      VerifyOtpParams(phoneNumber: state.phoneNumber, otp: otp),
+      VerifyOtpParams(
+        phoneNumber: state.phoneNumber,
+        otp: otp,
+        fcmToken: _resolveFcmToken(),
+      ),
     );
     if (isClosed) {
       return const VerifyOtpOutcome(isSuccess: false, goToHome: false);
@@ -211,6 +218,16 @@ class AuthCubit extends Cubit<AuthState> {
   int _resolveOtpExpirySeconds(int? expiresInSeconds) {
     if (expiresInSeconds == null || expiresInSeconds <= 0) return 30;
     return expiresInSeconds;
+  }
+
+  String? _resolveFcmToken() {
+    if (sl.isRegistered<NotificationService>()) {
+      final live = sl<NotificationService>().fcmToken?.trim();
+      if (live != null && live.isNotEmpty) return live;
+    }
+    final stored = _appPref.getString(AppPrefKeys.fcmToken)?.trim();
+    if (stored != null && stored.isNotEmpty) return stored;
+    return null;
   }
 
   Future<void> _saveUserSession({required AuthEntity entity}) async {

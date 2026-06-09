@@ -24,7 +24,7 @@ profile setup.
 ## Data layer
 
 - **Remote:** `data/data_sources/auth_remote_data_source_impl.dart`
-  - OTP: `AppUrls.requestOtp`, `AppUrls.verifyOtp` (full URL from `FlavorConfig.apiBaseUrl`, currently **HTTP** Jazz auth host)
+  - OTP verify: `AppUrls.verifyOtp` — body includes `msisdn`, `otp`, and `fcmToken` when the device token is available (`NotificationService` / `AppPref`).
   - If login shows “unable to reach server”, check device network/VPN, iOS ATS (HTTP allowed for Jazz domains), and dev SSL config (`dio_app_network_config.dart`).
   - Request OTP `data.expiresIn` is in **seconds** (e.g. `300` → 5 min resend timer).
   - Logout: `AppUrls.logout(userId)` (POST with `{}` body), expects `success: true` before local session is cleared.

@@ -20,12 +20,13 @@ class VerifyOtpParams extends Equatable {
   const VerifyOtpParams({
     required this.phoneNumber,
     required this.otp,
+    this.fcmToken,
   });
 
   final String phoneNumber;
-
   final String otp;
+  final String? fcmToken;
 
   @override
-  List<Object?> get props => [phoneNumber, otp];
+  List<Object?> get props => [phoneNumber, otp, fcmToken];
 }

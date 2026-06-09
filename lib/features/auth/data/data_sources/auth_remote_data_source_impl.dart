@@ -67,12 +67,17 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
           otp: params.otp,
         );
       } else {
+        final payload = <String, dynamic>{
+          'msisdn': AuthApiUtils.normalizeMsisdn(params.phoneNumber),
+          'otp': params.otp,
+        };
+        final fcmToken = params.fcmToken?.trim();
+        if (fcmToken != null && fcmToken.isNotEmpty) {
+          payload['fcmToken'] = fcmToken;
+        }
         response = await apiService.post(
           AppUrls.verifyOtp,
-          data: <String, dynamic>{
-            'msisdn': AuthApiUtils.normalizeMsisdn(params.phoneNumber),
-            'otp': params.otp,
-          },
+          data: payload,
         );
         log('verifyOtp response: $response');
       }
