@@ -254,6 +254,7 @@ class _DoctorConsultationScreenState extends State<DoctorConsultationScreen> {
               builder: (tileContext) {
                 return ConsultationCategoryCard(
                   category: category,
+                  index: index,
                   onTap: () => context.pushNamed(
                     AppRoutes.consultationDoctors,
                     extra: {
@@ -261,7 +262,11 @@ class _DoctorConsultationScreenState extends State<DoctorConsultationScreen> {
                       'mainCategoryId': category.id,
                     },
                   ),
-                  onInfoTap: (_) => _showProcedureInfo(tileContext, category),
+                  onInfoTap: (_) => ()
+
+                      // _showProcedureInfo(tileContext, category),
+
+
                 );
               },
             );
@@ -634,7 +639,7 @@ class _SearchField extends StatelessWidget {
             fontSize: 14.sp,
           ),
           suffixIcon: Padding(
-            padding: EdgeInsets.all(12.r),
+            padding: EdgeInsets.all(15.r),
             child: SvgPicture.asset(
               ConsultationUiConfig.searchIconAsset,
               width: 18.6.w,

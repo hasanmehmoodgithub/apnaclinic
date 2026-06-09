@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/router/app_routes.dart';
 import '../constants/consultation_ui_config.dart';
+import '../doctor_consultation_book_doctor_args.dart';
 import 'rating_progress_badge.dart';
 import 'results_doctor_item.dart';
 import 'results_doctor_thumb.dart';
@@ -165,13 +166,7 @@ class ResultsDoctorCard extends StatelessWidget {
                       child: ElevatedButton(
                         onPressed: () => context.pushNamed(
                           AppRoutes.consultationBookDoctor,
-                          extra: {
-                            'doctorId': doctor.id,
-                            'doctorName': doctor.name,
-                            'specialty': doctor.specialty,
-                            'fee': doctor.fee,
-                            'imageUrl': doctor.imageUrl,
-                          },
+                          extra: DoctorConsultationBookDoctorArgs(doctor: doctor),
                         ),
                         style: ElevatedButton.styleFrom(
                           elevation: 0,

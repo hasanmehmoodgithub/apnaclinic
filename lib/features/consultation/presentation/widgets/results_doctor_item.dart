@@ -12,6 +12,7 @@ class ResultsDoctorItem {
   final String verifiedPatientsCount;
   final String satisfiedText;
   final String description;
+  final String partnerLogoUrl;
 
   const ResultsDoctorItem({
     required this.id,
@@ -27,6 +28,7 @@ class ResultsDoctorItem {
     this.verifiedPatientsCount = '0',
     this.satisfiedText = '0',
     this.description = '',
+    this.partnerLogoUrl = '',
   });
 
   factory ResultsDoctorItem.fromMap(Map<String, dynamic> map) {
@@ -43,7 +45,8 @@ class ResultsDoctorItem {
       imageUrl: map['imageUrl'] as String? ?? '',
       verifiedPatientsCount: map['verifiedPatientsCount'] as String? ?? '0',
       satisfiedText: map['satisfiedText'] as String? ?? '0',
-      description: map['description'] as String? ?? '',
+      description: (map['description'] ?? map['bio'] ?? '').toString(),
+      partnerLogoUrl: (map['partnerLogoUrl'] ?? '').toString(),
     );
   }
 }

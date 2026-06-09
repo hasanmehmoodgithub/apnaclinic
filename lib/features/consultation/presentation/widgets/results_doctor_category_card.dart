@@ -45,7 +45,7 @@ class ResultsDoctorCategoryCard extends StatelessWidget {
                 category,
                 style: textTheme.titleMedium?.copyWith(
                   color: const Color(0xFF1A2533),
-                  fontSize: 16.sp,
+                  fontSize: 14.sp,
                   fontWeight: FontWeight.w500,
                 ),
               ),

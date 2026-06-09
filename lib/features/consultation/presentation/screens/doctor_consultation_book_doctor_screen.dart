@@ -2,17 +2,12 @@ import 'package:file_picker/file_picker.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart' as p;
-import '../../../../components/shimmer/app_shimmer.dart';
-import '../../../../core/di/dependency_injection.dart';
-
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/router/app_routes.dart';
-import '../../data/mock/consultation_doctors_mock_api.dart';
 import '../constants/consultation_ui_config.dart';
 import '../widgets/results_doctor_item.dart';
 import '../widgets/consultation_hero_banner_widget.dart';
@@ -22,19 +17,11 @@ import '../widgets/consultation_upload_document_sheet_widget.dart';
 import '../doctor_consultation_checkout_args.dart';
 
 class DoctorConsultationBookDoctorScreen extends StatefulWidget {
-  final String? doctorId;
-  final String doctorName;
-  final String specialty;
-  final String fee;
-  final String imageUrl;
+  final ResultsDoctorItem doctor;
 
   const DoctorConsultationBookDoctorScreen({
     super.key,
-    this.doctorId,
-    required this.doctorName,
-    required this.specialty,
-    required this.fee,
-    required this.imageUrl,
+    required this.doctor,
   });
 
   @override
@@ -44,43 +31,11 @@ class DoctorConsultationBookDoctorScreen extends StatefulWidget {
 
 class _DoctorConsultationBookDoctorScreenState
     extends State<DoctorConsultationBookDoctorScreen> {
-  final ConsultationDoctorsMockApi _doctorsApi = sl<ConsultationDoctorsMockApi>();
   final ImagePicker _imagePicker = ImagePicker();
   final TextEditingController _issueController = TextEditingController();
-  ResultsDoctorItem? _doctorDetail;
-  bool _isLoading = true;
   String? _attachedMediaName;
   String? _selectedTimeSlot;
   String? _validationErrorMessage;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadDoctorDetail();
-  }
-
-  Future<void> _loadDoctorDetail() async {
-    final doctorId = widget.doctorId;
-    if (doctorId == null || doctorId.isEmpty) {
-      setState(() => _isLoading = false);
-      return;
-    }
-    try {
-      final response = await _doctorsApi.getDoctorDetailResponse(doctorId);
-      final rawDoctor = response['doctor'];
-      if (rawDoctor is Map<String, dynamic> && mounted) {
-        setState(() {
-          _doctorDetail = ResultsDoctorItem.fromMap(rawDoctor);
-          _isLoading = false;
-        });
-      } else if (mounted) {
-        setState(() => _isLoading = false);
-      }
-    } catch (_) {
-      if (!mounted) return;
-      setState(() => _isLoading = false);
-    }
-  }
 
   @override
   void dispose() {
@@ -91,24 +46,23 @@ class _DoctorConsultationBookDoctorScreenState
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    if (_isLoading) {
-      return _buildFullScreenShimmer(context);
-    }
-
     final textTheme = Theme.of(context).textTheme;
-    final doctorName = _doctorDetail?.name ?? widget.doctorName;
-    final specialty = _doctorDetail?.specialty ?? widget.specialty;
-    final imageUrl = _doctorDetail?.imageUrl ?? widget.imageUrl;
-    final qualification = _doctorDetail?.qualification ?? 'MBBS';
-    final verifiedPatientsCount = _doctorDetail?.verifiedPatientsCount ?? '35';
-    final experience = _doctorDetail?.experience ?? '2 Years';
-    final satisfiedText = _doctorDetail?.satisfiedText ?? '4% (35)';
-    final description = (_doctorDetail?.description ?? '').isNotEmpty
-        ? _doctorDetail!.description
-        : 'Doctor details are currently unavailable.';
+    final doctor = widget.doctor;
+    final qualification =
+        doctor.qualification.isNotEmpty ? doctor.qualification : 'MBBS';
+    final verifiedPatientsCount = doctor.verifiedPatientsCount != '0'
+        ? doctor.verifiedPatientsCount
+        : '35';
+    final experience =
+        doctor.experience.isNotEmpty ? doctor.experience : '2 Years';
+    final satisfiedText =
+        doctor.satisfiedText != '0' ? doctor.satisfiedText : '4% (35)';
     final ratingValue =
-        double.tryParse((_doctorDetail?.rating ?? '4.5').split('/').first.trim()) ??
-            4.5;
+        double.tryParse(doctor.rating.split('/').first.trim()) ?? 4.5;
+    final description = doctor.description.isNotEmpty
+        ? doctor.description
+        : 'Doctor details are currently unavailable.';
+
     return Scaffold(
       body: DecoratedBox(
         decoration: const BoxDecoration(
@@ -130,7 +84,7 @@ class _DoctorConsultationBookDoctorScreenState
                 onBackTap: context.pop,
               ),
               ConsultationHeroBannerWidget(
-                doctorImage: _buildDoctorHeroImage(imageUrl),
+                doctorImage: _buildDoctorHeroImage(doctor.imageUrl),
               ),
               Expanded(
                 child: Container(
@@ -138,15 +92,15 @@ class _DoctorConsultationBookDoctorScreenState
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.vertical(
-                      top: Radius.circular(42.r),
+                      top: Radius.circular(30.r),
                     ),
                   ),
                   child: Column(
                     children: [
                       DoctorConsultationBookingBodyWidget(
-                        doctorName: doctorName,
-                        specialty: specialty,
-                        imageUrl: imageUrl,
+                        doctorName: doctor.name,
+                        specialty: doctor.specialty,
+                        imageUrl: doctor.imageUrl,
                         qualification: qualification,
                         verifiedPatientsCount: verifiedPatientsCount,
                         experience: experience,
@@ -226,10 +180,10 @@ class _DoctorConsultationBookDoctorScreenState
                               context.pushNamed(
                                 AppRoutes.consultationCheckout,
                                 extra: DoctorConsultationCheckoutArgs(
-                                  doctorName: doctorName,
-                                  specialty: specialty,
+                                  doctorName: doctor.name,
+                                  specialty: doctor.specialty,
                                   qualification: qualification,
-                                  doctorImageUrl: imageUrl,
+                                  doctorImageUrl: doctor.imageUrl,
                                 ),
                               );
                             },
@@ -382,127 +336,6 @@ class _DoctorConsultationBookDoctorScreenState
       width: width,
       height: height,
       fit: BoxFit.cover,
-    );
-  }
-
-  Widget _buildFullScreenShimmer(BuildContext context) {
-    return Scaffold(
-      body: DecoratedBox(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              ConsultationUiConfig.pageTopGradient,
-              ConsultationUiConfig.pageBottomGradient,
-            ],
-            stops: [0.5, 1.0],
-          ),
-        ),
-        child: SafeArea(
-          child: Column(
-            children: [
-              Padding(
-                padding: EdgeInsets.fromLTRB(22.w, 8.h, 22.w, 8.h),
-                child: Row(
-                  children: [
-                    GestureDetector(
-                      behavior: HitTestBehavior.opaque,
-                      onTap: () => context.pop(),
-                      child: SizedBox(
-                        width: 24.w,
-                        height: 24.h,
-                        child: Center(
-                          child: SvgPicture.asset(
-                            ConsultationUiConfig.backArrowAsset,
-                            width: 18.w,
-                            height: 18.h,
-                            fit: BoxFit.contain,
-                            colorFilter: const ColorFilter.mode(
-                              ConsultationUiConfig.primaryText,
-                              BlendMode.srcIn,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      child: Text(
-                        ConsultationUiConfig.screenTitle,
-                        textAlign: TextAlign.center,
-                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                          color: ConsultationUiConfig.primaryText,
-                          fontWeight: FontWeight.w700,
-                          fontSize: 20.sp,
-                        ),
-                      ),
-                    ),
-                    SizedBox(width: 24.w),
-                  ],
-                ),
-              ),
-              ConsultationHeroBannerWidget(
-                doctorImage: _buildDoctorHeroImage(widget.imageUrl),
-              ),
-              Expanded(
-                child: Container(
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.vertical(
-                      top: Radius.circular(42.r),
-                    ),
-                  ),
-                  child: Column(
-                    children: [
-                      Expanded(
-                        child: SingleChildScrollView(
-                          padding: EdgeInsets.fromLTRB(20.w, 16.h, 20.w, 16.h),
-                          child: Column(
-                            children: [
-                              AppShimmerCard(
-                                height: 300.h,
-                                borderRadius: 12.r,
-                              ),
-                              SizedBox(height: 14.h),
-                              AppShimmerCard(
-                                height: 74.h,
-                                borderRadius: 12.r,
-                              ),
-                              SizedBox(height: 14.h),
-                              AppShimmerCard(
-                                height: 116.h,
-                                borderRadius: 10.r,
-                              ),
-                              SizedBox(height: 14.h),
-                              AppShimmerCard(
-                                height: 52.h,
-                                borderRadius: 10.r,
-                              ),
-                              SizedBox(height: 14.h),
-                              AppShimmerCard(
-                                height: 78.h,
-                                borderRadius: 10.r,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 12.h),
-                        child: AppShimmerCard(
-                          height: 58.h,
-                          borderRadius: 18.r,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
     );
   }
 }
