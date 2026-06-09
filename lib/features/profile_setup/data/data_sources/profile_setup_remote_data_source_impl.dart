@@ -66,7 +66,7 @@ class ProfileSetupRemoteDataSourceImpl implements ProfileSetupRemoteDataSource {
         }
         final formData = await profileSetupSaveFormData(data);
         final endpoint = AppUrls.userProfileById(userId);
-        response = await apiService.patch(
+        response = await apiService.put(
           endpoint,
           data: formData,
           headers: const {'Content-Type': 'multipart/form-data'},

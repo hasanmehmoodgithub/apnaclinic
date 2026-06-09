@@ -109,7 +109,7 @@ class SurgeryRemoteDataSourceImpl implements SurgeryRemoteDataSource {
   }) async {
     try {
       final Map<String, dynamic> response;
-      if (SurgeryPatientFormMockApi.useMockResponses) {
+      if (true) {
         response = await patientFormMockApi.getPatientFormSuccessResponse(
           doctorId: doctorId,
         );
