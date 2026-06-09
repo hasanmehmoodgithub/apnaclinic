@@ -94,7 +94,7 @@ class SupportBodyPanel extends StatelessWidget {
                       AppColors.clrFCF5E9,
                       AppColors.clrF5FBFA,
                     ][i % 4],
-                    height: 74.h,
+                    height: 80.h,
                     radius: 4.r,
                     contentPadding: EdgeInsets.symmetric(horizontal: 12.w),
                     titleStyle: theme.textTheme.titleSmall?.copyWith(
