@@ -953,31 +953,31 @@ abstract class AppLocalizations {
   /// No description provided for @freeDoctorTitle.
   ///
   /// In en, this message translates to:
-  /// **'Free Doctor'**
+  /// **'Instant Doctor'**
   String get freeDoctorTitle;
 
   /// No description provided for @freeDoctorOpenAppCta.
   ///
   /// In en, this message translates to:
-  /// **'Open Fikrfree app'**
+  /// **'Subscribe Now!'**
   String get freeDoctorOpenAppCta;
 
   /// No description provided for @freeDoctorOpenAppError.
   ///
   /// In en, this message translates to:
-  /// **'Could not open FikrFree right now.'**
+  /// **'Could not open subscription page right now.'**
   String get freeDoctorOpenAppError;
 
   /// No description provided for @freeDoctorConsultationTitle.
   ///
   /// In en, this message translates to:
-  /// **'24/7 Free Doctor Consultation'**
+  /// **'24/7 Instant Doctor Consultation'**
   String get freeDoctorConsultationTitle;
 
   /// No description provided for @freeDoctorPoint1.
   ///
   /// In en, this message translates to:
-  /// **'This service is available exclusively for Bima m-Health subscribers.'**
+  /// **'This service is available exclusively for M-Health subscribers.'**
   String get freeDoctorPoint1;
 
   /// No description provided for @freeDoctorPoint2.
@@ -985,12 +985,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Get 24/7 access to qualified doctors for general medical support and much more.'**
   String get freeDoctorPoint2;
-
-  /// No description provided for @freeDoctorPoint3.
-  ///
-  /// In en, this message translates to:
-  /// **'To avail the service, subscribe to BIMA m-Health via FikrFree.'**
-  String get freeDoctorPoint3;
 
   /// No description provided for @customerSupportTitle.
   ///
@@ -1217,7 +1211,7 @@ abstract class AppLocalizations {
   /// No description provided for @dashboardBottomFreeDoctor.
   ///
   /// In en, this message translates to:
-  /// **'Free Doctor'**
+  /// **'Instant Doctor'**
   String get dashboardBottomFreeDoctor;
 
   /// No description provided for @dashboardBottomSupport.

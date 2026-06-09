@@ -450,28 +450,25 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pharmacyAddToCartLower => 'Add to cart';
 
   @override
-  String get freeDoctorTitle => 'Free Doctor';
+  String get freeDoctorTitle => 'Instant Doctor';
 
   @override
-  String get freeDoctorOpenAppCta => 'Open Fikrfree app';
+  String get freeDoctorOpenAppCta => 'Subscribe Now!';
 
   @override
-  String get freeDoctorOpenAppError => 'Could not open FikrFree right now.';
+  String get freeDoctorOpenAppError =>
+      'Could not open subscription page right now.';
 
   @override
-  String get freeDoctorConsultationTitle => '24/7 Free Doctor Consultation';
+  String get freeDoctorConsultationTitle => '24/7 Instant Doctor Consultation';
 
   @override
   String get freeDoctorPoint1 =>
-      'This service is available exclusively for Bima m-Health subscribers.';
+      'This service is available exclusively for M-Health subscribers.';
 
   @override
   String get freeDoctorPoint2 =>
       'Get 24/7 access to qualified doctors for general medical support and much more.';
-
-  @override
-  String get freeDoctorPoint3 =>
-      'To avail the service, subscribe to BIMA m-Health via FikrFree.';
 
   @override
   String get customerSupportTitle => 'Customer Support';
@@ -591,7 +588,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'Sehat aur insurance ab apke hath mei!';
 
   @override
-  String get dashboardBottomFreeDoctor => 'Free Doctor';
+  String get dashboardBottomFreeDoctor => 'Instant Doctor';
 
   @override
   String get dashboardBottomSupport => 'Support';
