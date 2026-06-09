@@ -11,7 +11,7 @@ Collect or edit user profile (name, gender, email, address, DOB, optional profil
 ## Data & APIs
 
 - **GET** `AppUrls.userProfileById(userId)` — loads profile; response `data` may include `dob` and/or `dateOfBirth` (strings) and `image` (profile photo URL).
-- **PATCH** `AppUrls.userProfileById(userId)` — same `/api/v1.0/user-auth/users/{id}` endpoint as GET; sends `multipart/form-data` via `profileSetupSaveFormData` with text fields + optional `image` file. DOB is sent as `dd-MM-yyyy` under `dob`.
+- **PUT** `AppUrls.userProfileById(userId)` — same `/api/v1.0/user-auth/users/{id}` endpoint as GET; sends `multipart/form-data` via `profileSetupSaveFormData` with text fields + optional `image` file. DOB is sent as `dd-MM-yyyy` under `dob`.
 
 ## Parsing & UI
 
@@ -22,7 +22,7 @@ Collect or edit user profile (name, gender, email, address, DOB, optional profil
 - `ProfileSetupScreen` calls `loadProfile()` only when the profile is already completed, so edit/update mode hydrates from API while first-time onboarding stays in setup mode. `AppPref.isProfileCompleted` is set on **save** only (not on GET).
 - Dismisses any global heart loader overlay on open (home banner loader uses root navigator). Edit avatar shows API/local `imageUrl` via `UserProfileAvatar`; a newly picked file takes priority until save.
 - Completed profiles show edit/update wording; pending onboarding shows setup/save wording.
-- On successful update, the PATCH runs first, local `AppPref` profile is updated in the repository, and `ProfileScreen` refreshes after the edit route returns.
+- On successful update, the PUT runs first, local `AppPref` profile is updated in the repository, and `ProfileScreen` refreshes after the edit route returns.
 
 ## State
 
