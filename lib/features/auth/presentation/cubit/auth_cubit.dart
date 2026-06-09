@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer' as developer;
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -136,11 +137,12 @@ class AuthCubit extends Cubit<AuthState> {
       ),
     );
 
+    final fcmToken = await _resolveFcmToken();
     final result = await _verifyOtpUseCase(
       VerifyOtpParams(
         phoneNumber: state.phoneNumber,
         otp: otp,
-        fcmToken: _resolveFcmToken(),
+        fcmToken: fcmToken,
       ),
     );
     if (isClosed) {
@@ -220,13 +222,40 @@ class AuthCubit extends Cubit<AuthState> {
     return expiresInSeconds;
   }
 
-  String? _resolveFcmToken() {
+  Future<String?> _resolveFcmToken() async {
+    developer.log('Resolving FCM token for login', name: 'AuthCubit');
+
     if (sl.isRegistered<NotificationService>()) {
-      final live = sl<NotificationService>().fcmToken?.trim();
-      if (live != null && live.isNotEmpty) return live;
+      final service = sl<NotificationService>();
+      developer.log(
+        'NotificationService registered '
+        '(initialized=${service.isInitialized}, '
+        'permissionsPrepared=${service.permissionsPrepared})',
+        name: 'AuthCubit',
+      );
+      final token = await service.ensureFcmTokenForLogin();
+      if (token != null && token.isNotEmpty) {
+        developer.log(
+          'Using FCM token for login (length=${token.length})  (token=${token})',
+          name: 'AuthCubit',
+        );
+        return token;
+      }
+      developer.log('FCM token still empty after ensure', name: 'AuthCubit');
+    } else {
+      developer.log('NotificationService not registered', name: 'AuthCubit');
     }
+
     final stored = _appPref.getString(AppPrefKeys.fcmToken)?.trim();
-    if (stored != null && stored.isNotEmpty) return stored;
+    if (stored != null && stored.isNotEmpty) {
+      developer.log(
+        'Using stored FCM token from prefs (length=${stored.length})',
+        name: 'AuthCubit',
+      );
+      return stored;
+    }
+
+    developer.log('No FCM token available for login', name: 'AuthCubit');
     return null;
   }
 

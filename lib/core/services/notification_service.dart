@@ -5,6 +5,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
+import '../../firebase_options.dart';
 import '../firebase/firebase_bootstrap.dart';
 import '../flavor/flavor_config.dart';
 import '../preference/app_pref.dart';
@@ -63,6 +64,42 @@ class NotificationService {
   bool get isInitialized => _initialized;
 
   String? get fcmToken => _fcmToken;
+
+  /// Ensures Firebase/FCM are ready and returns the best token for login API.
+  Future<String?> ensureFcmTokenForLogin() async {
+    final existing = _fcmToken?.trim();
+    if (existing != null && existing.isNotEmpty) return existing;
+
+    final stored = _readStoredToken();
+    if (stored != null) return stored;
+
+    if (!DefaultFirebaseOptions.isConfigured) {
+      developer.log(
+        'FCM token unavailable: firebase_options not configured',
+        name: 'NotificationService',
+      );
+      return null;
+    }
+
+    if (!FirebaseBootstrap.isInitialized) {
+      final ready = await FirebaseBootstrap.initialize();
+      if (!ready) return null;
+    }
+
+    if (!_initialized) {
+      await initializeFcm();
+    } else {
+      await _getFCMToken();
+    }
+
+    final token = _fcmToken?.trim();
+    return (token != null && token.isNotEmpty) ? token : _readStoredToken();
+  }
+
+  String? _readStoredToken() {
+    final stored = _appPref.getString(AppPrefKeys.fcmToken)?.trim();
+    return (stored != null && stored.isNotEmpty) ? stored : null;
+  }
 
   /// Local notification setup + OS permission prompt. Runs without Firebase.
   Future<void> ensurePermissionsOnStart() async {
@@ -194,7 +231,22 @@ class NotificationService {
 
   Future<void> _getFCMToken() async {
     try {
+      if (defaultTargetPlatform == TargetPlatform.iOS) {
+        final apnsToken = await _firebaseMessaging?.getAPNSToken();
+        developer.log(
+          'APNS token ${apnsToken != null ? "available" : "not yet available"}',
+          name: 'NotificationService',
+        );
+      }
       _fcmToken = await _firebaseMessaging?.getToken();
+      if (_fcmToken == null || _fcmToken!.isEmpty) {
+        developer.log('FCM getToken returned empty', name: 'NotificationService');
+      } else {
+        developer.log(
+          'FCM token acquired (length=${_fcmToken!.length})',
+          name: 'NotificationService',
+        );
+      }
       await _persistToken(_fcmToken);
     } catch (e) {
       developer.log('FCM token error: $e', name: 'NotificationService');
