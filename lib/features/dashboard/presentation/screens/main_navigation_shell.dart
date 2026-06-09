@@ -11,6 +11,7 @@ import '../../../../core/network/api_service.dart';
 import '../../../../core/preference/app_pref.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/session/auth_session_refresh.dart';
+import '../../domain/services/promotional_banner_session.dart';
 import '../../../bookings/presentation/screens/bookings_dashboard_screen.dart';
 import '../../../customer_support/presentation/cubit/customer_support_cubit.dart';
 import '../../../customer_support/presentation/screens/customer_support_screen.dart';
@@ -48,11 +49,9 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
     _pageController = PageController(initialPage: _homeIndex);
     _navigationCubit = MainNavigationCubit(initialIndex: _homeIndex);
     _sessionRefresh = sl<AuthSessionRefresh>();
+    _appliedSessionEpoch = _sessionRefresh.epoch;
     _sessionRefresh.addListener(_onAuthSessionChanged);
     _applyStatusBar();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _syncTabsWithSessionIfNeeded();
-    });
   }
 
   @override
@@ -92,6 +91,12 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
     }
 
     sl<ApiService>().refreshToken();
+
+    if (_sessionRefresh.consumeReloadPromotionalBanner()) {
+      final bannerSession = sl<PromotionalBannerSession>();
+      bannerSession.prepareForLoginRefresh();
+      await bannerSession.reload();
+    }
 
     if (!mounted) return;
 

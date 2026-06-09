@@ -11,6 +11,7 @@ import 'core/debug/device_preview_support.dart';
 import 'core/di/dependency_injection.dart';
 import 'core/cities/domain/repositories/cities_repository.dart';
 import 'core/utils/chucker_guard.dart';
+import 'features/dashboard/domain/services/promotional_banner_session.dart';
 import 'features/app/presentation/screens/apna_clinic_app.dart';
 
 void main() {
@@ -34,7 +35,7 @@ void main() {
         // Initialize dependency injection (includes AppPref initialization)
         // Encryption can be enabled/configured through AppPref methods after initialization
         await _initializeDependencyInjection();
-        await _prefetchCities();
+        await _prefetchStartupData();
 
         // Initialize Firebase (required for notifications)
         // TODO: Add your firebase_options.dart file after running:
@@ -134,6 +135,13 @@ Future<void> _initializeDependencyInjection() async {
   }
 }
 
+Future<void> _prefetchStartupData() async {
+  await Future.wait([
+    _prefetchCities(),
+    _prefetchPromotionalBanner(),
+  ]);
+}
+
 Future<void> _prefetchCities() async {
   try {
     developer.log('Prefetching cities...', name: 'main');
@@ -142,6 +150,21 @@ Future<void> _prefetchCities() async {
   } catch (e, stackTrace) {
     developer.log(
       'Cities prefetch failed, features will use fallback list: $e',
+      name: 'main',
+      error: e,
+      stackTrace: stackTrace,
+    );
+  }
+}
+
+Future<void> _prefetchPromotionalBanner() async {
+  try {
+    developer.log('Prefetching promotional banner...', name: 'main');
+    await sl<PromotionalBannerSession>().ensureLoaded();
+    developer.log('Promotional banner prefetched successfully', name: 'main');
+  } catch (e, stackTrace) {
+    developer.log(
+      'Promotional banner prefetch failed: $e',
       name: 'main',
       error: e,
       stackTrace: stackTrace,

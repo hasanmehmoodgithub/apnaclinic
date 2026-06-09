@@ -14,6 +14,7 @@ import '../../../profile_setup/presentation/profile_setup_launch_source.dart';
 import '../../../../core/widgets/apna_clinic_app_bar.dart';
 import '../../../../core/widgets/heart_loader_widget.dart';
 import '../../domain/entities/our_service_entity.dart';
+import '../../domain/services/promotional_banner_session.dart';
 import '../cubit/dashboard_services_cubit.dart';
 import '../cubit/dashboard_services_state.dart';
 import '../widgets/fikrfree_health_banner.dart';
@@ -36,12 +37,15 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   bool _isPromoDialogShown = false;
   late final DashboardCubit _dashboardCubit;
   late final NotificationCubit _notificationCubit;
+  late final PromotionalBannerSession _bannerSession;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     _isLoggedIn = sl<AppPref>().getLoginStatus();
+    _bannerSession = sl<PromotionalBannerSession>();
+    _isPromoDialogShown = _bannerSession.dialogShown;
     _dashboardCubit = sl<DashboardCubit>();
     _notificationCubit = sl<NotificationCubit>();
   }
@@ -120,10 +124,14 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     }
 
     final banner = state.promotionalBanner;
-    if (banner == null || !banner.showBanner || _isPromoDialogShown) {
+    if (banner == null ||
+        !banner.showBanner ||
+        _isPromoDialogShown ||
+        _bannerSession.dialogShown) {
       return;
     }
     _isPromoDialogShown = true;
+    _bannerSession.markDialogShown();
     showPromotionalBannerDialog(context, banner: banner);
   }
 
