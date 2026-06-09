@@ -27,10 +27,14 @@ class SupportBodyPanel extends StatelessWidget {
     const radius = BorderRadius.vertical(top: Radius.circular(32));
 
     final content = state.content;
-    final helpTitle =
-        content?.helpCentreTitle ?? l10n.customerSupportHelpCentreTitle;
-    final helpSubtitle =
-        content?.helpCentreSubtitle ?? l10n.customerSupportHelpCentreSubtitle;
+    final helpTitle = _textOrFallback(
+      content?.helpCentreTitle,
+      l10n.customerSupportHelpCentreTitle,
+    );
+    final helpSubtitle = _textOrFallback(
+      content?.helpCentreSubtitle,
+      l10n.customerSupportHelpCentreSubtitle,
+    );
     final isLoading = state.loadingStateStatus == StateStatus.loading;
     final rawContacts =
         content?.contacts ?? const <CustomerSupportContactEntity>[];
@@ -46,68 +50,89 @@ class SupportBodyPanel extends StatelessWidget {
         : rawContacts;
 
     return DecoratedBox(
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         color: AppColors.clrWhite,
         borderRadius: radius,
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.clrBlack.withValues(alpha: 0.07),
-            blurRadius: 24.r,
-            offset: Offset(0, -6.h),
-          ),
-        ],
       ),
       child: ClipRRect(
         borderRadius: radius,
-        child: isLoading
-            ? const SupportPanelShimmer()
-            : SingleChildScrollView(
-                padding: EdgeInsets.fromLTRB(20.w, 15.h, 20.w, 24.h),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      helpTitle,
-                      style: theme.textTheme.bodyLarge?.copyWith(
-                        color: AppColors.clr111827,
-                      ),
-                    ),
-                    Text(
-                      helpSubtitle,
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: AppColors.clr6B7280,
-                        height: 1.4,
-                      ),
-                    ),
-                    SizedBox(height: 24.h),
-                    for (int i = 0; i < contacts.length; i++) ...[
-                      ActionOptionCard(
-                        title: contacts[i].cardTitle.isNotEmpty
-                            ? contacts[i].cardTitle
-                            : l10n.customerSupportFallbackCardTitle,
-                        curveOverlayColor: [
-                          AppColors.clrE9F4FC,
-                          AppColors.clrE9EEF3,
-                          AppColors.clrFCF5E9,
-                          AppColors.clrF5FBFA,
-                        ][i % 4],
-                        leading: SizedBox(
-                          width: 60.r,
-                          height: 60.r,
-                          child: SvgPicture.asset(
-                            Assets.svgNavHomeLogo,
-                            fit: BoxFit.contain,
-                          ),
-                        ),
-                        onTap: () => _showSupportDialog(context, contacts[i]),
-                      ),
-                      if (i != contacts.length - 1) SizedBox(height: 16.h),
-                    ],
-                  ],
+        child: SingleChildScrollView(
+          padding: EdgeInsets.fromLTRB(24.w, 20.h, 24.w, 24.h),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                helpTitle,
+                style: theme.textTheme.titleMedium?.copyWith(
+                  color: AppColors.clr111827,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 16.sp,
+                  height: 1.2,
                 ),
               ),
+              SizedBox(height: 4.h),
+              Text(
+                helpSubtitle,
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: AppColors.clr6B7280,
+                  fontSize: 13.sp,
+                  height: 1.35,
+                ),
+              ),
+              SizedBox(height: 20.h),
+              if (isLoading)
+                const SupportPanelShimmer(showHeader: false)
+              else
+                for (int i = 0; i < contacts.length; i++) ...[
+                  ActionOptionCard(
+                    title: contacts[i].cardTitle.isNotEmpty
+                        ? contacts[i].cardTitle
+                        : l10n.customerSupportFallbackCardTitle,
+                    curveOverlayColor: AppColors.clrE9F4FC,
+                    height: 76.h,
+                    radius: 4.r,
+                    contentPadding: EdgeInsets.symmetric(horizontal: 10.w),
+                    trailingOverlayWidth: 40.w,
+                    trailingOverlayHeight: 40.h,
+                    titleStyle: theme.textTheme.titleSmall?.copyWith(
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.clr111827,
+                      fontSize: 14.sp,
+                    ),
+                    leading: Container(
+                      width: 48.r,
+                      height: 48.r,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: AppColors.clrWhite,
+                        border: Border.all(color: AppColors.clrF3F4F6),
+                      ),
+                      padding: EdgeInsets.all(6.r),
+                      child: SvgPicture.asset(
+                        Assets.svgNavHomeLogo,
+                        fit: BoxFit.contain,
+                      ),
+                    ),
+                    trailing: SvgPicture.asset(
+                      Assets.svgIcSupportCardArrow,
+                      width: 40.w,
+                      height: 40.h,
+                      fit: BoxFit.contain,
+                    ),
+                    onTap: () => _showSupportDialog(context, contacts[i]),
+                  ),
+                  if (i != contacts.length - 1) SizedBox(height: 16.h),
+                ],
+            ],
+          ),
+        ),
       ),
     );
+  }
+
+  String _textOrFallback(String? value, String fallback) {
+    final trimmed = value?.trim() ?? '';
+    return trimmed.isNotEmpty ? trimmed : fallback;
   }
 
   void _showSupportDialog(

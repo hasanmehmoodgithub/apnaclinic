@@ -31,7 +31,7 @@ class SupportTopHeader extends StatelessWidget {
             AppColors.clrE2F5F7,
             AppColors.clrF0FAFB,
           ],
-          stops: [0.0, 0.5, 1.0],
+          stops: [0.0, 0.55, 1.0],
         ),
       ),
       child: SafeArea(
@@ -39,7 +39,7 @@ class SupportTopHeader extends StatelessWidget {
         child: Column(
           children: [
             SizedBox(
-              height: kToolbarHeight,
+              height: 50.h,
               child: Stack(
                 alignment: Alignment.center,
                 children: [
@@ -53,7 +53,7 @@ class SupportTopHeader extends StatelessWidget {
                                   if (context.canPop()) context.pop();
                                 },
                             icon: const Icon(Icons.arrow_back_rounded),
-                            color: AppColors.clr0B2239,
+                            color: AppColors.clr060,
                           )
                         : SizedBox(width: 48.w),
                   ),
@@ -61,7 +61,9 @@ class SupportTopHeader extends StatelessWidget {
                     l10n.customerSupportTitle,
                     style: theme.textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.w700,
-                      color: AppColors.clr0B2239,
+                      color: AppColors.clr060,
+                      fontSize: 20.sp,
+                      height: 1.2,
                     ),
                   ),
                 ],
@@ -69,11 +71,11 @@ class SupportTopHeader extends StatelessWidget {
             ),
             Expanded(
               child: Padding(
-                padding: EdgeInsets.fromLTRB(0, 1.h, 0, 30.h),
+                padding: EdgeInsets.fromLTRB(24.w, 4.h, 24.w, 8.h),
                 child: Image.asset(
                   Assets.supportSupportHero,
-                  fit: BoxFit.fill,
-                  alignment: Alignment.topCenter,
+                  fit: BoxFit.contain,
+                  alignment: Alignment.bottomCenter,
                 ),
               ),
             ),
