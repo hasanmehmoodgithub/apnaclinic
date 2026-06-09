@@ -107,6 +107,8 @@ class _DoctorConsultationBookDoctorScreenState
                         satisfiedText: satisfiedText,
                         rating: ratingValue,
                         description: description,
+                        partner: doctor.partner,
+                        partnerLogoUrl: doctor.partnerLogoUrl,
                         textTheme: textTheme,
                         attachedMediaName: _attachedMediaName,
                         onBrowseTap: _openUploadDocumentSheet,

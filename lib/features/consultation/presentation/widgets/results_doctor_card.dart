@@ -117,7 +117,7 @@ class ResultsDoctorCard extends StatelessWidget {
                       ),
                     ),
                     SizedBox(width: 4.w),
-                    ResultsPartnerBadge(partner: doctor.partner, textTheme: textTheme),
+                    ResultsPartnerBadge(partnerLogoUrl: doctor.partnerLogoUrl),
                   ],
                 ),
                 SizedBox(height: 8.h),
