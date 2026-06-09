@@ -10,6 +10,8 @@ import 'package:flutter/rendering.dart';
 import 'core/debug/device_preview_support.dart';
 import 'core/di/dependency_injection.dart';
 import 'core/cities/domain/repositories/cities_repository.dart';
+import 'core/firebase/firebase_bootstrap.dart';
+import 'core/services/notification_service.dart';
 import 'core/utils/chucker_guard.dart';
 import 'features/dashboard/domain/services/promotional_banner_session.dart';
 import 'features/app/presentation/screens/apna_clinic_app.dart';
@@ -36,17 +38,7 @@ void main() {
         // Encryption can be enabled/configured through AppPref methods after initialization
         await _initializeDependencyInjection();
         await _prefetchStartupData();
-
-        // Initialize Firebase (required for notifications)
-        // TODO: Add your firebase_options.dart file after running:
-        // flutter pub add firebase_core
-        // flutterfire configure
-        // Then uncomment:
-        // await _initializeFirebase();
-
-        // Initialize notification service
-        // TODO: Uncomment after Firebase is initialized
-        // await _initializeNotificationService();
+        await _initializePushNotifications();
 
         runApp(
           wrapWithDevicePreview(child: const ApnaClinicApp()),
@@ -172,42 +164,28 @@ Future<void> _prefetchPromotionalBanner() async {
   }
 }
 
-// TODO: Uncomment and use after running flutterfire configure
-// /// Initialize Firebase with error handling
-// Future<void> _initializeFirebase() async {
-//   try {
-//     developer.log('Initializing Firebase...', name: 'main');
-//     await Firebase.initializeApp(
-//       options: DefaultFirebaseOptions.currentPlatform,
-//     );
-//     developer.log('Firebase initialized successfully', name: 'main');
-//   } catch (e, stackTrace) {
-//     developer.log(
-//       'Error initializing Firebase: $e',
-//       name: 'main',
-//       error: e,
-//       stackTrace: stackTrace,
-//     );
-//     // Don't rethrow - Firebase is optional for basic app functionality
-//   }
-// }
+Future<void> _initializePushNotifications() async {
+  final firebaseReady = await FirebaseBootstrap.initialize();
+  if (!firebaseReady) {
+    developer.log(
+      'Push notifications disabled until Firebase is configured.',
+      name: 'main',
+    );
+    return;
+  }
 
-// TODO: Uncomment and use after Firebase is initialized
-// /// Initialize notification service with error handling
-// Future<void> _initializeNotificationService() async {
-//   try {
-//     developer.log('Initializing notification service...', name: 'main');
-//     final notificationService = NotificationService();
-//     await notificationService.initialize();
-//     notificationService.setupBackgroundMessageHandler();
-//     developer.log('Notification service initialized successfully', name: 'main');
-//   } catch (e, stackTrace) {
-//     developer.log(
-//       'Error initializing notification service: $e',
-//       name: 'main',
-//       error: e,
-//       stackTrace: stackTrace,
-//     );
-//     // Don't rethrow - Notifications are optional
-//   }
-// }
+  try {
+    developer.log('Initializing notification service...', name: 'main');
+    final notificationService = sl<NotificationService>();
+    await notificationService.initialize();
+    notificationService.setupBackgroundMessageHandler();
+    developer.log('Notification service initialized', name: 'main');
+  } catch (e, stackTrace) {
+    developer.log(
+      'Notification service init failed: $e',
+      name: 'main',
+      error: e,
+      stackTrace: stackTrace,
+    );
+  }
+}

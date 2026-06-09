@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:chucker_flutter/chucker_flutter.dart';
@@ -7,8 +8,11 @@ import '../../../../core/debug/device_preview_support.dart';
 import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/flavor/flavor_config.dart';
+import 'dart:async';
+
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/router/app_router.dart';
+import '../../../../core/services/notification_service.dart';
 import '../../../../core/utils/chucker_guard.dart';
 import '../../../customer_support/presentation/cubit/customer_support_cubit.dart';
 import '../../../free_doctor/presentation/cubit/free_doctor_cubit.dart';
@@ -25,18 +29,32 @@ class ApnaClinicApp extends StatefulWidget {
 
 class _ApnaClinicAppState extends State<ApnaClinicApp> {
   final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
+  StreamSubscription<NotificationPayload>? _pushSubscription;
 
   @override
   void initState() {
     super.initState();
-    // Set navigator key for notification service
-    // NotificationService.setNavigatorKey(_navigatorKey);
-    //
-    // // Listen to notification stream
-    // NotificationService().notificationStream.listen((payload) {
-    //   // Handle notification when app is open (foreground)
-    //   _handleNotification(payload);
-    // });
+    _bindPushNotificationStream();
+  }
+
+  @override
+  void dispose() {
+    _pushSubscription?.cancel();
+    super.dispose();
+  }
+
+  void _bindPushNotificationStream() {
+    if (!sl.isRegistered<NotificationService>()) return;
+    final service = sl<NotificationService>();
+    if (!service.isInitialized) return;
+
+    _pushSubscription = service.notificationStream.listen((payload) {
+      if (kDebugMode) {
+        debugPrint(
+          'Push received: ${payload.title} route=${payload.route}',
+        );
+      }
+    });
   }
 
 
