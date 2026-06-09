@@ -11,7 +11,8 @@ In-app notification list and Firebase Cloud Messaging (FCM) push notifications.
 
 ## Push (Firebase)
 
-- Initialized in `main.dart` via `FirebaseBootstrap` + `NotificationService`.
+- OS notification permission: `NotificationService.ensurePermissionsOnStart()` on first app frame (works without Firebase).
+- FCM: `main.dart` via `FirebaseBootstrap` + `NotificationService.initializeFcm()` when Firebase is configured.
 - Foreground: FCM → local notification via `flutter_local_notifications`.
 - Background / terminated: `firebaseMessagingBackgroundHandler`; tap opens route from `data.route` / `data.deepLink`.
 - FCM token stored in `AppPref` (`AppPrefKeys.fcmToken`); cleared on logout.

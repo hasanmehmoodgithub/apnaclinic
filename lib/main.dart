@@ -168,21 +168,21 @@ Future<void> _initializePushNotifications() async {
   final firebaseReady = await FirebaseBootstrap.initialize();
   if (!firebaseReady) {
     developer.log(
-      'Push notifications disabled until Firebase is configured.',
+      'FCM disabled until Firebase is configured. Local permission runs on first frame.',
       name: 'main',
     );
     return;
   }
 
   try {
-    developer.log('Initializing notification service...', name: 'main');
+    developer.log('Initializing FCM...', name: 'main');
     final notificationService = sl<NotificationService>();
-    await notificationService.initialize();
+    await notificationService.initializeFcm();
     notificationService.setupBackgroundMessageHandler();
-    developer.log('Notification service initialized', name: 'main');
+    developer.log('FCM initialized', name: 'main');
   } catch (e, stackTrace) {
     developer.log(
-      'Notification service init failed: $e',
+      'FCM init failed: $e',
       name: 'main',
       error: e,
       stackTrace: stackTrace,

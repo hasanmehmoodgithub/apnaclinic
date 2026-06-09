@@ -55,26 +55,51 @@ class NotificationService {
       _notificationController.stream;
 
   String? _fcmToken;
+  bool _permissionsPrepared = false;
   bool _initialized = false;
+
+  bool get permissionsPrepared => _permissionsPrepared;
 
   bool get isInitialized => _initialized;
 
   String? get fcmToken => _fcmToken;
 
-  Future<void> initialize() async {
+  /// Local notification setup + OS permission prompt. Runs without Firebase.
+  Future<void> ensurePermissionsOnStart() async {
+    if (_permissionsPrepared) return;
+    try {
+      await _initializeLocalNotifications();
+      await _requestLocalPermissions();
+      _permissionsPrepared = true;
+      developer.log(
+        'Notification permissions requested',
+        name: 'NotificationService',
+      );
+    } catch (e, stackTrace) {
+      developer.log(
+        'Notification permission setup failed: $e',
+        name: 'NotificationService',
+        error: e,
+        stackTrace: stackTrace,
+      );
+    }
+  }
+
+  /// FCM handlers and token — requires [FirebaseBootstrap.initialize] first.
+  Future<void> initializeFcm() async {
     if (_initialized) return;
     if (!FirebaseBootstrap.isInitialized) {
       developer.log(
-        'NotificationService skipped: Firebase is not initialized.',
+        'FCM skipped: Firebase is not initialized.',
         name: 'NotificationService',
       );
       return;
     }
 
     try {
+      await ensurePermissionsOnStart();
       _firebaseMessaging = FirebaseMessaging.instance;
-      await _initializeLocalNotifications();
-      await _requestPermissions();
+      await _requestFcmPermissions();
       await _getFCMToken();
       _setupForegroundHandler();
       FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
@@ -82,13 +107,10 @@ class NotificationService {
       _firebaseMessaging?.onTokenRefresh.listen(_persistToken);
       await _subscribeDebugTopicIfNeeded();
       _initialized = true;
-      developer.log(
-        'NotificationService initialized',
-        name: 'NotificationService',
-      );
+      developer.log('FCM initialized', name: 'NotificationService');
     } catch (e, stackTrace) {
       developer.log(
-        'NotificationService init failed: $e',
+        'FCM init failed: $e',
         name: 'NotificationService',
         error: e,
         stackTrace: stackTrace,
@@ -140,24 +162,34 @@ class NotificationService {
         ?.createNotificationChannel(androidChannel);
   }
 
-  Future<void> _requestPermissions() async {
+  Future<void> _requestLocalPermissions() async {
+    final iosPlugin = _localNotifications
+        .resolvePlatformSpecificImplementation<
+          IOSFlutterLocalNotificationsPlugin
+        >();
+    if (iosPlugin != null) {
+      await iosPlugin.requestPermissions(
+        alert: true,
+        badge: true,
+        sound: true,
+      );
+    }
+
+    final androidPlugin = _localNotifications
+        .resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin
+        >();
+    if (androidPlugin != null) {
+      await androidPlugin.requestNotificationsPermission();
+    }
+  }
+
+  Future<void> _requestFcmPermissions() async {
     await _firebaseMessaging?.requestPermission(
       alert: true,
       badge: true,
       sound: true,
     );
-
-    await _localNotifications
-        .resolvePlatformSpecificImplementation<
-          IOSFlutterLocalNotificationsPlugin
-        >()
-        ?.requestPermissions(alert: true, badge: true, sound: true);
-
-    await _localNotifications
-        .resolvePlatformSpecificImplementation<
-          AndroidFlutterLocalNotificationsPlugin
-        >()
-        ?.requestNotificationsPermission();
   }
 
   Future<void> _getFCMToken() async {
