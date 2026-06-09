@@ -17,7 +17,7 @@ Doctor consultation category browse, doctor results, booking, and checkout.
   - Maps to `ConsultationCategoryEntity`; inactive entries filtered; sorted by `displayOrder`.
 - **GET** `AppUrls.doctorConsultationDoctors(mainCategoryId)` — `/api/v1/mobile/doctor-consultation/doctors?mainCategoryId=`.
   - Response `data.data[]`: `id`, `publicId`, `displayName`, `specialtyName`, `yearsOfExperience`, `profileImageUrl`, `consultationFee`, `discountPercent`, `isFree`, `ratingScore` (string or number), `bio`, `education`, `qualifications`, `partner`.
-  - Maps to `ResultsDoctorItem` via `ConsultationDoctorModel` (`bio` → description, `education` when `qualifications` is empty).
+  - Maps to `ResultsDoctorItem` via `ConsultationDoctorModel` (`bio` → description, `education` when `qualifications` is empty, `partner.logoUrl` for logo; partner name only if API sends `partner.name` / `displayName`).
 - `HeaderInterceptor` adds `x-api-key` and `x-tenant-id` (when logged in) on aggregator host.
 
 ## State

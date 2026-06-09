@@ -22,6 +22,8 @@ class DoctorConsultationBookingBodyWidget extends StatelessWidget {
     required this.satisfiedText,
     required this.rating,
     required this.description,
+    required this.partner,
+    required this.partnerLogoUrl,
     required this.textTheme,
     required this.attachedMediaName,
     required this.onBrowseTap,
@@ -38,6 +40,8 @@ class DoctorConsultationBookingBodyWidget extends StatelessWidget {
   final String satisfiedText;
   final double rating;
   final String description;
+  final String partner;
+  final String partnerLogoUrl;
   final TextTheme textTheme;
   final String? attachedMediaName;
   final VoidCallback onBrowseTap;
@@ -63,6 +67,8 @@ class DoctorConsultationBookingBodyWidget extends StatelessWidget {
               satisfiedText: satisfiedText,
               rating: rating,
               description: description,
+              partner: partner,
+              partnerLogoUrl: partnerLogoUrl,
               textTheme: textTheme,
             ),
             SizedBox(height: 16.h),

@@ -131,12 +131,13 @@ class ConsultationDoctorModel {
 
   static String _partnerLabel(Map<String, dynamic>? partner) {
     if (partner == null) return '';
-    final tenantId = partner['tenantId'];
-    return switch (tenantId) {
-      1 => 'MedIQ',
-      2 => 'Doctors World',
-      _ => 'Partner',
-    };
+    return (partner['name'] ??
+            partner['displayName'] ??
+            partner['label'] ??
+            partner['title'] ??
+            '')
+        .toString()
+        .trim();
   }
 }
 
