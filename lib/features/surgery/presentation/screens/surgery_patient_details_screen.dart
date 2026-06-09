@@ -3,14 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../../core/enums/state_status.dart';
+import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
-import '../../domain/entities/surgery_patient_form_entity.dart';
+import '../../../../core/preference/app_pref.dart';
 import '../cubit/surgery_cubit.dart';
-import '../cubit/surgery_state.dart';
 import '../widgets/surgery_doctor_summary_widget.dart';
 import '../widgets/surgery_option.dart';
-import '../widgets/surgery_patient_details_shimmer_view_widget.dart';
 import '../widgets/surgery_text_input_field_widget.dart';
 import '../widgets/surgery_type_dialog_widget.dart';
 
@@ -49,6 +47,8 @@ class SurgeryPatientDetailsScreen extends StatefulWidget {
 
 class _SurgeryPatientDetailsScreenState
     extends State<SurgeryPatientDetailsScreen> {
+  final AppPref _appPref = sl<AppPref>();
+
   SurgeryOption? selectedSurgery;
   bool showEmergencyError = false;
   bool isSubmittingBooking = false;
@@ -65,7 +65,12 @@ class _SurgeryPatientDetailsScreenState
     ageController = TextEditingController();
     contactNumberController = TextEditingController();
     emergencyContactController = TextEditingController();
-    context.read<SurgeryCubit>().loadSurgeryPatientForm(doctorId: widget.doctorId);
+    _prefillPatientDetailsFromSavedProfile();
+    selectedSurgery = SurgeryOption(
+      widget.procedureName,
+      widget.price,
+      widget.oldPrice,
+    );
   }
 
   @override
@@ -77,37 +82,50 @@ class _SurgeryPatientDetailsScreenState
     super.dispose();
   }
 
-  void _applyPatientForm(SurgeryPatientFormEntity patientForm) {
-    final prefill = patientForm.patientPrefill;
-    if (patientNameController.text.isEmpty && prefill.patientName.isNotEmpty) {
-      patientNameController.text = prefill.patientName;
+  void _prefillPatientDetailsFromSavedProfile() {
+    final userLocal = _appPref.getUserLocalModel();
+    final firstName = userLocal?.firstName.trim() ?? '';
+    final lastName = userLocal?.lastName.trim() ?? '';
+    final fullName = '$firstName $lastName'.trim();
+    final phone = userLocal?.phone.trim() ?? '';
+
+    if (fullName.isNotEmpty) {
+      patientNameController.text = fullName;
     }
-    if (ageController.text.isEmpty && prefill.age.isNotEmpty) {
-      ageController.text = prefill.age;
-    }
-    if (contactNumberController.text.isEmpty && prefill.contactNumber.isNotEmpty) {
-      contactNumberController.text = prefill.contactNumber;
-    }
-    if (emergencyContactController.text.isEmpty &&
-        prefill.emergencyContact.isNotEmpty) {
-      emergencyContactController.text = prefill.emergencyContact;
+    if (phone.isNotEmpty) {
+      contactNumberController.text = phone;
     }
 
-    if (selectedSurgery == null && patientForm.surgeryOptions.isNotEmpty) {
-      final first = patientForm.surgeryOptions.first;
-      selectedSurgery = SurgeryOption(first.name, first.price, first.oldPrice);
+    final age = _ageFromDateOfBirth(userLocal?.dateOfBirth ?? '');
+    if (age != null && age > 0) {
+      ageController.text = age.toString();
     }
   }
 
-  List<SurgeryOption> _mapOptions(SurgeryPatientFormEntity patientForm) {
-    return patientForm.surgeryOptions
-        .map((option) => SurgeryOption(option.name, option.price, option.oldPrice))
-        .toList();
+  int? _ageFromDateOfBirth(String rawDob) {
+    final value = rawDob.trim();
+    if (value.isEmpty) return null;
+    final dob = DateTime.tryParse(value);
+    if (dob == null) return null;
+    final now = DateTime.now();
+    var age = now.year - dob.year;
+    final hasHadBirthday =
+        now.month > dob.month ||
+        (now.month == dob.month && now.day >= dob.day);
+    if (!hasHadBirthday) age -= 1;
+    return age;
   }
+
+  List<SurgeryOption> get _surgeryOptions => [
+    SurgeryOption(widget.procedureName, widget.price, widget.oldPrice),
+  ];
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final options = _surgeryOptions;
+    final currentSelection =
+        selectedSurgery ?? (options.isNotEmpty ? options.first : null);
 
     return AppScaffoldGradient(
       child: Column(
@@ -146,42 +164,8 @@ class _SurgeryPatientDetailsScreenState
                   top: Radius.circular(28.r),
                 ),
               ),
-              child: BlocConsumer<SurgeryCubit, SurgeryState>(
-                listenWhen: (prev, curr) =>
-                    prev.patientForm != curr.patientForm &&
-                    curr.patientFormLoadingStateStatus == StateStatus.success,
-                listener: (context, state) {
-                  setState(() => _applyPatientForm(state.patientForm));
-                },
-                buildWhen: (prev, curr) =>
-                    prev.patientFormLoadingStateStatus !=
-                        curr.patientFormLoadingStateStatus ||
-                    prev.patientForm != curr.patientForm ||
-                    prev.patientFormErrorMessage != curr.patientFormErrorMessage,
-                builder: (context, state) {
-                  if (state.patientFormLoadingStateStatus == StateStatus.loading) {
-                    return const SurgeryPatientDetailsShimmerViewWidget();
-                  }
-
-                  if (state.patientFormLoadingStateStatus == StateStatus.error) {
-                    return Center(
-                      child: Padding(
-                        padding: EdgeInsets.all(24.w),
-                        child: Text(
-                          state.patientFormErrorMessage ??
-                              'Unable to load patient form. Please try again.',
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                    );
-                  }
-
-                  final options = _mapOptions(state.patientForm);
-                  final currentSelection = selectedSurgery ??
-                      (options.isNotEmpty ? options.first : null);
-
-                  return Column(
-                    children: [
+              child: Column(
+                children: [
                       Expanded(
                         child: ListView(
                           padding: EdgeInsets.fromLTRB(25.w, 20.h, 25.w, 20.h),
@@ -349,9 +333,7 @@ class _SurgeryPatientDetailsScreenState
                           ),
                         ),
                       ),
-                    ],
-                  );
-                },
+                ],
               ),
             ),
           ),
