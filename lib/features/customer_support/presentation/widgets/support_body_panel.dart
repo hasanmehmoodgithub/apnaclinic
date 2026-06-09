@@ -103,14 +103,12 @@ class SupportBodyPanel extends StatelessWidget {
                       fontSize: 14.sp,
                     ),
                     leading: Container(
-                      width: 54.r,
-                      height: 54.r,
+                      width: 55.r,
+                      height: 55.r,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         color: AppColors.clrWhite,
-                        border: Border.all(color: AppColors.clrF3F4F6),
                       ),
-                      padding: EdgeInsets.all(8.r),
                       child: SvgPicture.asset(
                         Assets.svgNavHomeLogo,
                         fit: BoxFit.contain,
