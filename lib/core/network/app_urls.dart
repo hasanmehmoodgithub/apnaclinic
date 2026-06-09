@@ -8,17 +8,7 @@ class AppUrls {
   /// Get base URL from flavor configuration
   static String get baseUrl => FlavorConfig.apiBaseUrl;
 
-  /// CMS backend. Override: `--dart-define=CMS_BASE_URL=...`
-  static const String cmsBaseUrl = String.fromEnvironment(
-    'CMS_BASE_URL',
-    defaultValue: 'https://apnaclinic-cmsbackend.apps.jpocp.jazz.com.pk',
-  );
 
-  /// Aggregator backend. Override: `--dart-define=AGGREGATOR_BASE_URL=...`
-  static const String aggregatorBaseUrl = String.fromEnvironment(
-    'AGGREGATOR_BASE_URL',
-    defaultValue: 'https://apnaclinic-aggregator.apps.jpocp.jazz.com.pk',
-  );
 
   /// Mobile API key for CMS/aggregator guest access. Override: `--dart-define=MOBILE_API_KEY=...`
   static const String mobileApiKey = String.fromEnvironment(
@@ -27,14 +17,6 @@ class AppUrls {
         'apk_426baebf7f6eeb2962d120583b66827f354da3f09c86ac27c4d673e5823dd772',
   );
 
-  static String get _normalizedCmsBaseUrl => cmsBaseUrl.endsWith('/')
-      ? cmsBaseUrl.substring(0, cmsBaseUrl.length - 1)
-      : cmsBaseUrl;
-
-  static String get _normalizedAggregatorBaseUrl =>
-      aggregatorBaseUrl.endsWith('/')
-          ? aggregatorBaseUrl.substring(0, aggregatorBaseUrl.length - 1)
-          : aggregatorBaseUrl;
 
   static String get _normalizedApiBaseUrl =>
       baseUrl.endsWith('/') ? baseUrl.substring(0, baseUrl.length - 1) : baseUrl;
@@ -44,26 +26,23 @@ class AppUrls {
   // ============================================
 
   /// Login endpoint - full URL using baseUrl from flavor
-  static String get login => '$baseUrl/login';
+  static String get login => '$baseUrl/acs-auth/login';
 
   /// Request OTP endpoint
   static String get requestOtp =>
-      '$_normalizedApiBaseUrl/api/v1.0/user-auth/auth/otp/generate';
-
-  /// Sign in endpoint - full URL with custom path
-  static String get signIn => '$baseUrl/login_ww';
+      '$_normalizedApiBaseUrl/acs-auth/api/v1/auth/otp/generate';
 
   /// Logout endpoint — `{userId}` is the authenticated user id from prefs/JWT.
   static String logout(String userId) =>
-      '$_normalizedApiBaseUrl/api/v1.0/user-auth/auth/logout/$userId';
+      '$_normalizedApiBaseUrl/acs-auth/api/v1/auth/logout/$userId';
 
   /// Refresh token endpoint - full URL
   static String get refreshToken =>
-      '$_normalizedApiBaseUrl/api/v1.0/user-auth/auth/token/refresh';
+      '$_normalizedApiBaseUrl/acs-auth/api/v1/auth/token/refresh';
 
   /// Verify OTP endpoint
   static String get verifyOtp =>
-      '$_normalizedApiBaseUrl/api/v1.0/user-auth/auth/otp/verify';
+      '$_normalizedApiBaseUrl/acs-auth/api/v1/auth/otp/verify';
 
   // ============================================
   // Products endpoints (full URLs - baseUrl from flavor)
@@ -74,38 +53,38 @@ class AppUrls {
 
   /// Home services (CMS mobile API).
   static String get ourServices =>
-      '$_normalizedCmsBaseUrl/api/v1/mobile/services';
+      '$baseUrl/acs-cmsbe/api/v1/mobile/services';
 
   /// Doctor consultation categories (aggregator mobile API).
   static String get doctorCategories =>
-      '$_normalizedAggregatorBaseUrl/api/v1/mobile/doctor-categories';
+      '$baseUrl/acs-aggregator/api/v1/mobile/doctor-categories';
 
   /// Doctor consultation doctors for a main category (aggregator mobile API).
   static String doctorConsultationDoctors(String mainCategoryId) =>
-      '$_normalizedAggregatorBaseUrl/api/v1/mobile/doctor-consultation/doctors?mainCategoryId=${Uri.encodeComponent(mainCategoryId)}';
+      '$baseUrl/acs-aggregator/api/v1/mobile/doctor-consultation/doctors?mainCategoryId=${Uri.encodeComponent(mainCategoryId)}';
 
   /// Supported cities for lab and surgery (aggregator mobile API).
   static String get cities =>
-      '$_normalizedAggregatorBaseUrl/api/v1/mobile/cities';
+      '$baseUrl/acs-aggregator/api/v1/mobile/cities';
 
   /// Home promotional banner(s) — CMS mobile API (first active item by displayOrder).
   static String get promotionalBanner =>
-      '$_normalizedCmsBaseUrl/api/v1/mobile/banners';
+      '$baseUrl/acs-cmsbe/api/v1/mobile/banners';
 
   /// Customer support settings — CMS mobile API.
   static String get mobileSupport =>
-      '$_normalizedCmsBaseUrl/api/v1/mobile/support';
+      '$baseUrl/acs-cmsbe/api/v1/mobile/support';
 
   /// Free doctor screen content endpoint
   static String get freeDoctor => '$baseUrl/dashboard/free-doctor';
 
   /// Profile setup details endpoint
   static String userProfileById(String userId) =>
-      '$_normalizedApiBaseUrl/api/v1.0/user-auth/users/$userId';
+      '$_normalizedApiBaseUrl/acs-auth/api/v1/users/$userId';
 
   /// Save profile setup endpoint
   static String get saveProfileSetup =>
-      '$_normalizedApiBaseUrl/api/v1.0/user-auth/users/';
+      '$_normalizedApiBaseUrl/acs-auth/api/v1/users/';
 
   /// Notifications endpoint
   static String get notifications => '$baseUrl/notifications';
@@ -124,11 +103,11 @@ class AppUrls {
 
   /// Surgery procedures list (aggregator mobile API).
   static String get surgeryProcedures =>
-      '$_normalizedAggregatorBaseUrl/api/v1/mobile/surgery/list';
+      '$baseUrl/acs-aggregator/api/v1/mobile/surgery/list';
 
   /// Surgery providers for a procedure (aggregator mobile API).
   static String surgeryProviders(String surgeryId) =>
-      '$_normalizedAggregatorBaseUrl/api/v1/mobile/surgery/providers?surgeryId=${Uri.encodeComponent(surgeryId)}';
+      '$baseUrl/acs-aggregator/api/v1/mobile/surgery/providers?surgeryId=${Uri.encodeComponent(surgeryId)}';
   static String surgeryPatientForm(String doctorId) =>
       '$baseUrl/surgery/patient-form/$doctorId';
   static String get surgeryBooking => '$baseUrl/surgery/booking';

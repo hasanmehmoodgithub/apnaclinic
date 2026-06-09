@@ -44,8 +44,8 @@ class HeaderInterceptor extends Interceptor {
   }
 
   bool _isMobileBackendUri(String uri) {
-    final cmsHost = Uri.tryParse(AppUrls.cmsBaseUrl)?.host ?? '';
-    final aggregatorHost = Uri.tryParse(AppUrls.aggregatorBaseUrl)?.host ?? '';
+    final cmsHost = Uri.tryParse(AppUrls.baseUrl)?.host ?? '';
+    final aggregatorHost = Uri.tryParse(AppUrls.baseUrl)?.host ?? '';
     if (cmsHost.isNotEmpty && uri.contains(cmsHost)) return true;
     if (aggregatorHost.isNotEmpty && uri.contains(aggregatorHost)) return true;
     return uri.contains('apnaclinic-cmsbackend') ||
