@@ -9,6 +9,8 @@ import '../constants/consultation_ui_config.dart';
 import 'consultation_category_icon_widget.dart';
 
 class ConsultationCategoryCard extends StatelessWidget {
+  static const int gridCrossAxisCount = 2;
+
   final ConsultationCategoryEntity category;
   final int index;
   final ValueChanged<Offset> onInfoTap;
@@ -21,6 +23,12 @@ class ConsultationCategoryCard extends StatelessWidget {
     required this.onInfoTap,
     required this.onTap,
   });
+
+  bool get _usePatternD2 {
+    final row = index ~/ gridCrossAxisCount;
+    final column = index % gridCrossAxisCount;
+    return (row + column).isEven;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -44,8 +52,8 @@ class ConsultationCategoryCard extends StatelessWidget {
                 right: 0,
                 child: IgnorePointer(
                   child: Opacity(
-                    opacity: 0.45,
-                    child: index.isEven
+                    opacity: 0.9,
+                    child: _usePatternD2
                         ? const _CardPatternD2()
                         : const _CardPatternD1(),
                   ),
