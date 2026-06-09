@@ -22,11 +22,13 @@ import 'surgery_patient_details_screen.dart';
 class SurgeryBookingScreen extends StatefulWidget {
   const SurgeryBookingScreen({
     super.key,
+    required this.surgeryId,
     required this.procedureName,
     required this.city,
     required this.cities,
   });
 
+  final String surgeryId;
   final String procedureName;
   final String city;
   final List<String> cities;
@@ -44,6 +46,7 @@ class _SurgeryBookingScreenState extends State<SurgeryBookingScreen> {
   void initState() {
     super.initState();
     context.read<SurgeryCubit>().loadSurgeryDoctors(
+      surgeryId: widget.surgeryId,
       procedureName: widget.procedureName,
     );
   }
@@ -94,20 +97,11 @@ class _SurgeryBookingScreenState extends State<SurgeryBookingScreen> {
                 color: Colors.white,
                 borderRadius: BorderRadius.vertical(top: Radius.circular(42.r)),
               ),
-              child: BlocConsumer<SurgeryCubit, SurgeryState>(
-                listenWhen: (prev, curr) =>
-                    prev.selectedCity != curr.selectedCity,
-                listener: (context, state) {
-                  context.read<SurgeryCubit>().loadSurgeryDoctors(
-                    procedureName: widget.procedureName,
-                    refresh: true,
-                  );
-                },
+              child: BlocBuilder<SurgeryCubit, SurgeryState>(
                 buildWhen: (prev, curr) =>
                     prev.doctorsLoadingStateStatus !=
                         curr.doctorsLoadingStateStatus ||
                     prev.doctorsContent != curr.doctorsContent ||
-                    prev.selectedCity != curr.selectedCity ||
                     prev.doctorsErrorMessage != curr.doctorsErrorMessage,
                 builder: (context, state) {
                   if (state.doctorsLoadingStateStatus == StateStatus.loading ||
@@ -180,7 +174,7 @@ class _SurgeryBookingScreenState extends State<SurgeryBookingScreen> {
                         Padding(
                           padding: EdgeInsets.symmetric(vertical: 32.h),
                           child: Text(
-                            'No doctors found for this procedure in ${state.selectedCity}.',
+                            'No providers found for this procedure.',
                             textAlign: TextAlign.center,
                             style: theme.textTheme.bodyMedium?.copyWith(
                               color: const Color(0xFF667B99),

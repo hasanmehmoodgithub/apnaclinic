@@ -256,7 +256,10 @@ class _DoctorConsultationScreenState extends State<DoctorConsultationScreen> {
                   category: category,
                   onTap: () => context.pushNamed(
                     AppRoutes.consultationDoctors,
-                    extra: {'category': category.title},
+                    extra: {
+                      'category': category.title,
+                      'mainCategoryId': category.id,
+                    },
                   ),
                   onInfoTap: (_) => ()
 

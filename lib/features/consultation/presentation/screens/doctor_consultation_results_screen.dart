@@ -5,8 +5,9 @@ import '../../../../core/di/dependency_injection.dart';
 
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
-import '../../data/mock/consultation_categories_mock_api.dart';
-import '../../data/mock/consultation_doctors_mock_api.dart';
+import '../../domain/entities/consultation_category_entity.dart';
+import '../../domain/use_cases/get_consultation_categories_use_case.dart';
+import '../../domain/use_cases/get_consultation_doctors_use_case.dart';
 import '../constants/consultation_ui_config.dart';
 import '../widgets/results_doctor_card.dart';
 import '../widgets/results_doctor_category_card.dart';
@@ -19,10 +20,12 @@ import '../widgets/consultation_hero_banner_widget.dart';
 
 class DoctorConsultationResultsScreen extends StatefulWidget {
   final String selectedCategory;
+  final String mainCategoryId;
 
   const DoctorConsultationResultsScreen({
     super.key,
     required this.selectedCategory,
+    required this.mainCategoryId,
   });
 
   @override
@@ -32,45 +35,39 @@ class DoctorConsultationResultsScreen extends StatefulWidget {
 
 class _DoctorConsultationResultsScreenState
     extends State<DoctorConsultationResultsScreen> {
-  final ConsultationCategoriesMockApi _categoriesApi =
-      sl<ConsultationCategoriesMockApi>();
-  final ConsultationDoctorsMockApi _doctorsApi = sl<ConsultationDoctorsMockApi>();
+  final GetConsultationCategoriesUseCase _getCategoriesUseCase =
+      sl<GetConsultationCategoriesUseCase>();
+  final GetConsultationDoctorsUseCase _getDoctorsUseCase =
+      sl<GetConsultationDoctorsUseCase>();
   final TextEditingController _searchController = TextEditingController();
-  List<String> _categoryOptions = const [];
+  List<ConsultationCategoryEntity> _categoryOptions = const [];
 
   List<ResultsDoctorItem> _allDoctors = const [];
   bool _isLoading = false;
   String _query = '';
   late String _selectedCategory;
+  late String _mainCategoryId;
 
   @override
   void initState() {
     super.initState();
     _selectedCategory = widget.selectedCategory;
+    _mainCategoryId = widget.mainCategoryId;
     _loadCategories();
     _loadDoctors();
   }
 
   Future<void> _loadCategories() async {
-    try {
-      final response = await _categoriesApi.getConsultationCategoriesSuccessResponse();
-      final categories =
-          (response['categories'] as List<dynamic>? ?? const <dynamic>[])
-              .whereType<Map<String, dynamic>>()
-              .map((item) => (item['title'] as String? ?? '').trim())
-              .where((item) => item.isNotEmpty)
-              .toList(growable: false);
-      if (!mounted) return;
-      setState(() {
-        _categoryOptions = categories;
-      });
-    } catch (_) {
-      // Keep fallback behavior if mock category API fails.
-    }
+    final result = await _getCategoriesUseCase();
+    if (!mounted) return;
+    result.fold(
+      (_) {},
+      (categories) => setState(() => _categoryOptions = categories),
+    );
   }
 
   Future<void> _openSelectCategoryDialog() async {
-    final category = await showDialog<String>(
+    final category = await showDialog<ConsultationCategoryEntity>(
       context: context,
       barrierColor: Colors.black.withValues(alpha: 0.28),
       builder: (context) => ResultsSelectCategoriesDialog(
@@ -78,34 +75,34 @@ class _DoctorConsultationResultsScreenState
         categories: _categoryOptions,
       ),
     );
-    if (category == null || category == _selectedCategory) return;
-    setState(() => _selectedCategory = category);
+    if (category == null ||
+        category.title == _selectedCategory &&
+            category.id == _mainCategoryId) {
+      return;
+    }
+    setState(() {
+      _selectedCategory = category.title;
+      _mainCategoryId = category.id;
+    });
     await _loadDoctors();
   }
 
   Future<void> _loadDoctors() async {
     setState(() => _isLoading = true);
-    try {
-      final response = await _doctorsApi.getDoctorsResponse(
-        category: _selectedCategory,
-      );
-      final doctors =
-          (response['doctors'] as List<dynamic>? ?? const <dynamic>[])
-              .whereType<Map<String, dynamic>>()
-              .map(ResultsDoctorItem.fromMap)
-              .toList(growable: false);
-      if (!mounted) return;
-      setState(() {
-        _allDoctors = doctors;
-        _isLoading = false;
-      });
-    } catch (_) {
-      if (!mounted) return;
-      setState(() {
+    final result = await _getDoctorsUseCase(
+      GetConsultationDoctorsParams(mainCategoryId: _mainCategoryId),
+    );
+    if (!mounted) return;
+    result.fold(
+      (_) => setState(() {
         _allDoctors = const [];
         _isLoading = false;
-      });
-    }
+      }),
+      (doctors) => setState(() {
+        _allDoctors = doctors;
+        _isLoading = false;
+      }),
+    );
   }
 
   @override

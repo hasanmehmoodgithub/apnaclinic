@@ -35,8 +35,10 @@ void initSurgeryInjector() {
   );
 
   sl.registerLazySingleton<SurgeryRepository>(
-    () =>
-        SurgeryRepositoryImpl(remoteDataSource: sl<SurgeryRemoteDataSource>()),
+    () => SurgeryRepositoryImpl(
+      remoteDataSource: sl<SurgeryRemoteDataSource>(),
+      citiesRepository: sl(),
+    ),
   );
 
   sl.registerLazySingleton<GetSurgeryContentUseCase>(
