@@ -25,8 +25,6 @@ class AppUrls {
   // Auth endpoints (full URLs - baseUrl from flavor)
   // ============================================
 
-  /// Login endpoint - full URL using baseUrl from flavor
-  static String get login => '$baseUrl/acs-auth/login';
 
   /// Request OTP endpoint
   static String get requestOtp =>
