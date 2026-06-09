@@ -19,8 +19,8 @@ class CustomerSupportScreen extends StatelessWidget {
   final bool showBackButton;
   final VoidCallback? onBack;
 
-  static const double _topBannerFraction = 0.36;
-  static const double _cardOverlap = 36;
+  static const double _topBannerFraction = 0.39;
+  static const double _cardOverlap = 32;
 
   @override
   Widget build(BuildContext context) {

@@ -71,7 +71,7 @@ class SupportTopHeader extends StatelessWidget {
             ),
             Expanded(
               child: Padding(
-                padding: EdgeInsets.fromLTRB(24.w, 4.h, 24.w, 8.h),
+                padding: EdgeInsets.fromLTRB(24.w, 4.h, 24.w, 35.h),
                 child: Image.asset(
                   Assets.supportSupportHero,
                   fit: BoxFit.contain,
