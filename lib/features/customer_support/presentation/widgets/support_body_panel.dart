@@ -88,26 +88,29 @@ class SupportBodyPanel extends StatelessWidget {
                     title: contacts[i].cardTitle.isNotEmpty
                         ? contacts[i].cardTitle
                         : l10n.customerSupportFallbackCardTitle,
-                    curveOverlayColor: AppColors.clrE9F4FC,
-                    height: 76.h,
+                    curveOverlayColor: [
+                      AppColors.clrE9F4FC,
+                      AppColors.clrE9EEF3,
+                      AppColors.clrFCF5E9,
+                      AppColors.clrF5FBFA,
+                    ][i % 4],
+                    height: 74.h,
                     radius: 4.r,
-                    contentPadding: EdgeInsets.symmetric(horizontal: 10.w),
-                    trailingOverlayWidth: 40.w,
-                    trailingOverlayHeight: 40.h,
+                    contentPadding: EdgeInsets.symmetric(horizontal: 12.w),
                     titleStyle: theme.textTheme.titleSmall?.copyWith(
                       fontWeight: FontWeight.w700,
                       color: AppColors.clr111827,
                       fontSize: 14.sp,
                     ),
                     leading: Container(
-                      width: 48.r,
-                      height: 48.r,
+                      width: 54.r,
+                      height: 54.r,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         color: AppColors.clrWhite,
                         border: Border.all(color: AppColors.clrF3F4F6),
                       ),
-                      padding: EdgeInsets.all(6.r),
+                      padding: EdgeInsets.all(8.r),
                       child: SvgPicture.asset(
                         Assets.svgNavHomeLogo,
                         fit: BoxFit.contain,
@@ -115,8 +118,6 @@ class SupportBodyPanel extends StatelessWidget {
                     ),
                     trailing: SvgPicture.asset(
                       Assets.svgIcSupportCardArrow,
-                      width: 40.w,
-                      height: 40.h,
                       fit: BoxFit.contain,
                     ),
                     onTap: () => _showSupportDialog(context, contacts[i]),

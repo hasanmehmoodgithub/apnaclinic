@@ -18,7 +18,7 @@ class SupportPanelShimmer extends StatelessWidget {
           AppShimmerText(height: 14.h, borderRadius: 6.r, width: 280.w),
           SizedBox(height: 20.h),
         ],
-        AppShimmerText(height: 76.h, borderRadius: 4.r),
+        AppShimmerText(height: 84.h, borderRadius: 4.r),
       ],
     );
   }
