@@ -1,3 +1,4 @@
+import 'package:apnaclinic/core/constants/app_colors.dart';
 import 'package:apnaclinic/core/enums/state_status.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -18,8 +19,8 @@ class CustomerSupportScreen extends StatelessWidget {
   final bool showBackButton;
   final VoidCallback? onBack;
 
-  static const double _topBannerFraction = 0.39;
-  static const double _cardOverlap = 32;
+  static const double _topBannerFraction = 0.36;
+  static const double _cardOverlap = 36;
 
   @override
   Widget build(BuildContext context) {
@@ -36,8 +37,10 @@ class CustomerSupportScreen extends StatelessWidget {
         }
       },
       builder: (context, state) {
-        return Scaffold(
-          body: Column(
+        return ColoredBox(
+          color: AppColors.clrWhite,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               SizedBox(
                 height: bannerHeight,
