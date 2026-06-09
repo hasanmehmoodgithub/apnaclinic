@@ -13,6 +13,8 @@ class ConsultationDoctorModel {
     required this.isFree,
     required this.ratingScore,
     required this.qualifications,
+    required this.education,
+    required this.bio,
     required this.partnerLabel,
     required this.partnerLogoUrl,
   });
@@ -28,6 +30,8 @@ class ConsultationDoctorModel {
   final bool isFree;
   final double? ratingScore;
   final List<String> qualifications;
+  final String education;
+  final String bio;
   final String partnerLabel;
   final String partnerLogoUrl;
 
@@ -58,8 +62,10 @@ class ConsultationDoctorModel {
           .map((item) => item.toString().trim())
           .where((item) => item.isNotEmpty)
           .toList(growable: false),
+      education: (json['education'] ?? '').toString().trim(),
+      bio: (json['bio'] ?? json['description'] ?? '').toString().trim(),
       partnerLabel: _partnerLabel(partner),
-      partnerLogoUrl: (partner?['logoUrl'] ?? '').toString(),
+      partnerLogoUrl: (partner?['logoUrl'] ?? '').toString().trim(),
     );
   }
 
@@ -68,12 +74,12 @@ class ConsultationDoctorModel {
     final experienceText = yearsOfExperience == null
         ? ''
         : '$yearsOfExperience ${yearsOfExperience == 1 ? 'Year' : 'Years'} Experience';
-    final qualificationText = qualifications.isEmpty
-        ? ''
-        : qualifications.join(', ');
+    final qualificationText = qualifications.isNotEmpty
+        ? qualifications.join(', ')
+        : education;
     final ratingText = ratingScore == null
         ? '0 / 5'
-        : '${ratingScore!.toStringAsFixed(1)} / 5';
+        : '${_formatRatingScore(ratingScore!)} / 5';
 
     return ResultsDoctorItem(
       id: publicId.isNotEmpty ? publicId : id,
@@ -86,6 +92,8 @@ class ConsultationDoctorModel {
       partner: partnerLabel,
       rating: ratingText,
       imageUrl: profileImageUrl,
+      description: bio,
+      partnerLogoUrl: partnerLogoUrl,
     );
   }
 
@@ -100,6 +108,14 @@ class ConsultationDoctorModel {
   }
 
   static String _formatRs(double amount) => 'Rs. ${amount.round()}/-';
+
+  static String _formatRatingScore(double value) {
+    if (value % 1 == 0) return value.toInt().toString();
+    return value
+        .toStringAsFixed(2)
+        .replaceAll(RegExp(r'0+$'), '')
+        .replaceAll(RegExp(r'\.$'), '');
+  }
 
   static int? _readInt(dynamic value) {
     if (value == null) return null;

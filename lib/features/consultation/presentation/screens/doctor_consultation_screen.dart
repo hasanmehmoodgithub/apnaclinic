@@ -254,6 +254,7 @@ class _DoctorConsultationScreenState extends State<DoctorConsultationScreen> {
               builder: (tileContext) {
                 return ConsultationCategoryCard(
                   category: category,
+                  index: index,
                   onTap: () => context.pushNamed(
                     AppRoutes.consultationDoctors,
                     extra: {
