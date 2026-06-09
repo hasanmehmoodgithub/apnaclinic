@@ -34,6 +34,9 @@ class _ApnaClinicAppState extends State<ApnaClinicApp> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      unawaited(sl<NotificationService>().ensurePermissionsOnStart());
+    });
     _bindPushNotificationStream();
   }
 
