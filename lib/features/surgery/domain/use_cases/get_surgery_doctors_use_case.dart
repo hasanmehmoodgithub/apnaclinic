@@ -5,10 +5,12 @@ import '../repositories/surgery_repository.dart';
 
 class GetSurgeryDoctorsParams {
   const GetSurgeryDoctorsParams({
+    required this.surgeryId,
     required this.procedureName,
     required this.city,
   });
 
+  final String surgeryId;
   final String procedureName;
   final String city;
 }
@@ -24,6 +26,7 @@ class GetSurgeryDoctorsUseCase
     GetSurgeryDoctorsParams params,
   ) async {
     return repository.getSurgeryDoctors(
+      surgeryId: params.surgeryId,
       procedureName: params.procedureName,
       city: params.city,
     );

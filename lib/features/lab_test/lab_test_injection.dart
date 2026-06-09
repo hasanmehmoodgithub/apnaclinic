@@ -22,8 +22,10 @@ void initLabTestInjector() {
   );
 
   sl.registerLazySingleton<LabTestRepository>(
-    () =>
-        LabTestRepositoryImpl(remoteDataSource: sl<LabTestRemoteDataSource>()),
+    () => LabTestRepositoryImpl(
+      remoteDataSource: sl<LabTestRemoteDataSource>(),
+      citiesRepository: sl(),
+    ),
   );
 
   sl.registerLazySingleton<LabTestCartRepository>(

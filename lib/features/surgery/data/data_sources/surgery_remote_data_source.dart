@@ -6,6 +6,7 @@ import '../models/surgery_patient_form_model.dart';
 abstract class SurgeryRemoteDataSource {
   Future<SurgeryContentModel> getSurgeryContent();
   Future<SurgeryDoctorsResponseModel> getSurgeryDoctors({
+    required String surgeryId,
     required String procedureName,
     required String city,
   });

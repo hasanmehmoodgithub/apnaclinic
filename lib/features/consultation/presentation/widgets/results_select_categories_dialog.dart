@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
+import '../../domain/entities/consultation_category_entity.dart';
 
 class ResultsSelectCategoriesDialog extends StatelessWidget {
   const ResultsSelectCategoriesDialog({
@@ -12,7 +13,7 @@ class ResultsSelectCategoriesDialog extends StatelessWidget {
   });
 
   final String selectedCategory;
-  final List<String> categories;
+  final List<ConsultationCategoryEntity> categories;
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +44,7 @@ class ResultsSelectCategoriesDialog extends StatelessWidget {
                   ),
                   InkWell(
                     borderRadius: BorderRadius.circular(14.r),
-                    onTap: () => context.pop(selectedCategory),
+                    onTap: () => context.pop(),
                     child: Padding(
                       padding: EdgeInsets.all(2.r),
                       child: Icon(
@@ -62,7 +63,9 @@ class ResultsSelectCategoriesDialog extends StatelessWidget {
                 child: SingleChildScrollView(
                   child: Column(
                     children: categories.map((category) {
-                      final isSelected = category == selectedCategory;
+                      final label = category.cardTitle;
+                      final isSelected = category.title == selectedCategory ||
+                          label == selectedCategory;
                       return InkWell(
                         onTap: () => context.pop(category),
                         borderRadius: BorderRadius.circular(7.r),
@@ -79,7 +82,7 @@ class ResultsSelectCategoriesDialog extends StatelessWidget {
                             children: [
                               Expanded(
                                 child: Text(
-                                  category,
+                                  label,
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                   style: textTheme.bodyMedium?.copyWith(

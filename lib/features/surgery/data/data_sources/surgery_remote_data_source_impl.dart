@@ -29,6 +29,12 @@ class SurgeryRemoteDataSourceImpl implements SurgeryRemoteDataSource {
   final SurgeryPatientFormMockApi patientFormMockApi;
   final SurgeryCheckoutMockApi checkoutMockApi;
 
+  static bool _isSuccessResponse(Map<String, dynamic> response) {
+    if (response['success'] == true) return true;
+    final code = response['code'];
+    return code is num && code.toInt() == 200;
+  }
+
   @override
   Future<SurgeryContentModel> getSurgeryContent() async {
     try {
@@ -40,7 +46,7 @@ class SurgeryRemoteDataSourceImpl implements SurgeryRemoteDataSource {
         log('getSurgeryContent response: $response');
       }
 
-      if (response['success'] == true) {
+      if (_isSuccessResponse(response)) {
         return SurgeryContentModel.fromJson(response);
       }
 
@@ -59,6 +65,7 @@ class SurgeryRemoteDataSourceImpl implements SurgeryRemoteDataSource {
 
   @override
   Future<SurgeryDoctorsResponseModel> getSurgeryDoctors({
+    required String surgeryId,
     required String procedureName,
     required String city,
   }) async {
@@ -66,18 +73,21 @@ class SurgeryRemoteDataSourceImpl implements SurgeryRemoteDataSource {
       final Map<String, dynamic> response;
       if (SurgeryDoctorsMockApi.useMockResponses) {
         response = await doctorsMockApi.getSurgeryDoctorsSuccessResponse(
+          surgeryId: surgeryId,
           procedureName: procedureName,
           city: city,
         );
       } else {
-        response = await apiService.get(
-          AppUrls.surgeryDoctors(procedureName: procedureName, city: city),
-        );
+        response = await apiService.get(AppUrls.surgeryProviders(surgeryId));
         log('getSurgeryDoctors response: $response');
       }
 
-      if (response['success'] == true) {
-        return SurgeryDoctorsResponseModel.fromJson(response);
+      if (_isSuccessResponse(response)) {
+        return SurgeryDoctorsResponseModel.fromJson(
+          response,
+          procedureName: procedureName,
+          city: city,
+        );
       }
 
       final message = (response['message'] ?? AppStrings.surgeryLoadError)
@@ -87,10 +97,7 @@ class SurgeryRemoteDataSourceImpl implements SurgeryRemoteDataSource {
       log('getSurgeryDoctors error: $e');
       final message = ErrorHandler.handleExceptions(
         e,
-        endpoint: AppUrls.surgeryDoctors(
-          procedureName: procedureName,
-          city: city,
-        ),
+        endpoint: AppUrls.surgeryProviders(surgeryId),
       );
       return Future.error(message);
     }
@@ -102,7 +109,7 @@ class SurgeryRemoteDataSourceImpl implements SurgeryRemoteDataSource {
   }) async {
     try {
       final Map<String, dynamic> response;
-      if (SurgeryPatientFormMockApi.useMockResponses) {
+      if (true) {
         response = await patientFormMockApi.getPatientFormSuccessResponse(
           doctorId: doctorId,
         );

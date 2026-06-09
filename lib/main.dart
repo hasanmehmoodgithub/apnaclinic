@@ -9,6 +9,7 @@ import 'package:flutter/rendering.dart';
 
 import 'core/debug/device_preview_support.dart';
 import 'core/di/dependency_injection.dart';
+import 'core/cities/domain/repositories/cities_repository.dart';
 import 'core/utils/chucker_guard.dart';
 import 'features/app/presentation/screens/apna_clinic_app.dart';
 
@@ -33,6 +34,7 @@ void main() {
         // Initialize dependency injection (includes AppPref initialization)
         // Encryption can be enabled/configured through AppPref methods after initialization
         await _initializeDependencyInjection();
+        await _prefetchCities();
 
         // Initialize Firebase (required for notifications)
         // TODO: Add your firebase_options.dart file after running:
@@ -129,6 +131,21 @@ Future<void> _initializeDependencyInjection() async {
     );
     // Re-throw to be caught by main guard
     rethrow;
+  }
+}
+
+Future<void> _prefetchCities() async {
+  try {
+    developer.log('Prefetching cities...', name: 'main');
+    await sl<CitiesRepository>().loadCities();
+    developer.log('Cities prefetched successfully', name: 'main');
+  } catch (e, stackTrace) {
+    developer.log(
+      'Cities prefetch failed, features will use fallback list: $e',
+      name: 'main',
+      error: e,
+      stackTrace: stackTrace,
+    );
   }
 }
 

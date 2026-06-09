@@ -5,17 +5,21 @@ import '../../../../core/network/api_service.dart';
 import '../../../../core/network/app_urls.dart';
 import '../../../../core/utils/error_handler.dart';
 import '../mock/consultation_categories_mock_api.dart';
+import '../mock/consultation_doctors_mock_api.dart';
 import '../models/consultation_category_model.dart';
+import '../models/consultation_doctor_model.dart';
 import 'consultation_remote_data_source.dart';
 
 class ConsultationRemoteDataSourceImpl implements ConsultationRemoteDataSource {
   ConsultationRemoteDataSourceImpl({
     required this.apiService,
     required this.mockApi,
+    required this.doctorsMockApi,
   });
 
   final ApiService apiService;
   final ConsultationCategoriesMockApi mockApi;
+  final ConsultationDoctorsMockApi doctorsMockApi;
 
   static bool _isSuccessResponse(Map<String, dynamic> response) {
     if (response['success'] == true) return true;
@@ -46,6 +50,40 @@ class ConsultationRemoteDataSourceImpl implements ConsultationRemoteDataSource {
       final message = ErrorHandler.handleExceptions(
         e,
         endpoint: AppUrls.doctorCategories,
+      );
+      return Future.error(message);
+    }
+  }
+
+  @override
+  Future<List<ConsultationDoctorModel>> getDoctors({
+    required String mainCategoryId,
+  }) async {
+    try {
+      final Map<String, dynamic> response;
+      if (ConsultationDoctorsMockApi.useMockResponses) {
+        response = await doctorsMockApi.getDoctorsResponse(
+          mainCategoryId: mainCategoryId,
+        );
+      } else {
+        response = await apiService.get(
+          AppUrls.doctorConsultationDoctors(mainCategoryId),
+        );
+        log('getDoctors response: $response');
+      }
+
+      if (_isSuccessResponse(response)) {
+        return ConsultationDoctorsResponseModel.fromJson(response).doctors;
+      }
+
+      final message =
+          (response['message'] ?? AppStrings.genericErrorMessage).toString();
+      return Future.error(message);
+    } catch (e) {
+      log('getDoctors error: $e');
+      final message = ErrorHandler.handleExceptions(
+        e,
+        endpoint: AppUrls.doctorConsultationDoctors(mainCategoryId),
       );
       return Future.error(message);
     }

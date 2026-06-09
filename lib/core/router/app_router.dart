@@ -158,10 +158,13 @@ class AppRouter {
           final extra = state.extra;
           final data = extra is Map ? Map<String, dynamic>.from(extra) : null;
           final selectedCategory = (data?['category'] as String?)?.trim();
+          final mainCategoryId =
+              (data?['mainCategoryId'] as String?)?.trim() ?? '1';
           return DoctorConsultationResultsScreen(
             selectedCategory: (selectedCategory?.isNotEmpty ?? false)
                 ? selectedCategory!
                 : 'Neurologist',
+            mainCategoryId: mainCategoryId,
           );
         },
       ),
