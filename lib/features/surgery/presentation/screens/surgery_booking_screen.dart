@@ -60,141 +60,155 @@ class _SurgeryBookingScreenState extends State<SurgeryBookingScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return AppScaffoldGradient(
-      child: Column(
-        children: [
-          Padding(
-            padding: EdgeInsets.fromLTRB(12.w, 12.h, 12.w, 18.h),
-            child: Row(
-              children: [
-                IconButton(
-                  onPressed: () => context.pop(),
-                  icon: const Icon(
-                    Icons.arrow_back_rounded,
-                    color: Color(0xFF061E40),
-                  ),
-                ),
-                Expanded(
-                  child: Text(
-                    'Surgery Booking',
-                    textAlign: TextAlign.center,
-                    style: theme.textTheme.titleLarge?.copyWith(
-                      color: const Color(0xFF061E40),
-                      fontWeight: FontWeight.w700,
-                      fontSize: 20.sp,
-                      height: 1.2,
+    return BlocListener<SurgeryCubit, SurgeryState>(
+      listenWhen: (previous, current) =>
+          previous.selectedCity != current.selectedCity &&
+          previous.selectedCity.isNotEmpty,
+      listener: (context, state) {
+        context.read<SurgeryCubit>().loadSurgeryDoctors(
+          surgeryId: widget.surgeryId,
+          procedureName: widget.procedureName,
+          refresh: true,
+        );
+      },
+      child: AppScaffoldGradient(
+        child: Column(
+          children: [
+            Padding(
+              padding: EdgeInsets.fromLTRB(12.w, 12.h, 12.w, 18.h),
+              child: Row(
+                children: [
+                  IconButton(
+                    onPressed: () => context.pop(),
+                    icon: const Icon(
+                      Icons.arrow_back_rounded,
+                      color: Color(0xFF061E40),
                     ),
                   ),
+                  Expanded(
+                    child: Text(
+                      'Surgery Booking',
+                      textAlign: TextAlign.center,
+                      style: theme.textTheme.titleLarge?.copyWith(
+                        color: const Color(0xFF061E40),
+                        fontWeight: FontWeight.w700,
+                        fontSize: 20.sp,
+                        height: 1.2,
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 40.w),
+                ],
+              ),
+            ),
+            Expanded(
+              child: Container(
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius:
+                      BorderRadius.vertical(top: Radius.circular(42.r)),
                 ),
-                SizedBox(width: 40.w),
-              ],
-            ),
-          ),
-          Expanded(
-            child: Container(
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(42.r)),
-              ),
-              child: BlocBuilder<SurgeryCubit, SurgeryState>(
-                buildWhen: (prev, curr) =>
-                    prev.doctorsLoadingStateStatus !=
-                        curr.doctorsLoadingStateStatus ||
-                    prev.doctorsContent != curr.doctorsContent ||
-                    prev.doctorsErrorMessage != curr.doctorsErrorMessage,
-                builder: (context, state) {
-                  if (state.doctorsLoadingStateStatus == StateStatus.loading ||
-                      state.doctorsLoadingStateStatus ==
-                          StateStatus.refreshing) {
-                    return const SurgeryBookingShimmerViewWidget();
-                  }
+                child: BlocBuilder<SurgeryCubit, SurgeryState>(
+                  buildWhen: (prev, curr) =>
+                      prev.doctorsLoadingStateStatus !=
+                          curr.doctorsLoadingStateStatus ||
+                      prev.doctorsContent != curr.doctorsContent ||
+                      prev.doctorsErrorMessage != curr.doctorsErrorMessage,
+                  builder: (context, state) {
+                    if (state.doctorsLoadingStateStatus ==
+                            StateStatus.loading ||
+                        state.doctorsLoadingStateStatus ==
+                            StateStatus.refreshing) {
+                      return const SurgeryBookingShimmerViewWidget();
+                    }
 
-                  if (state.doctorsLoadingStateStatus == StateStatus.error) {
-                    return Center(
-                      child: Padding(
-                        padding: EdgeInsets.all(24.w),
-                        child: Text(
-                          state.doctorsErrorMessage ??
-                              'Unable to load doctors. Please try again.',
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                    );
-                  }
-
-                  final cards = _mapDoctors(state.doctorsContent.doctors);
-                  final filteredCards = _filteredCards(cards);
-
-                  return ListView(
-                    padding: EdgeInsets.fromLTRB(24.w, 22.h, 24.w, 16.h),
-                    children: [
-                      Text(
-                        widget.procedureName,
-                        style: theme.textTheme.titleMedium?.copyWith(
-                          color: const Color(0xFF061E40),
-                          fontWeight: FontWeight.w500,
-                          fontSize: 16.sp,
-                        ),
-                      ),
-                      SizedBox(height: 12.h),
-                      SurgeryBookingLocationRowWidget(
-                        city: state.selectedCity,
-                        onChangeTap: () => showCityPickerSheet(context),
-                      ),
-                      SizedBox(height: 12.h),
-                      Text(
-                        'Select for Surgery',
-                        style: theme.textTheme.titleMedium?.copyWith(
-                          color: const Color(0xFF061E40),
-                          fontWeight: FontWeight.w500,
-                          fontSize: 14.sp,
-                        ),
-                      ),
-                      SizedBox(height: 12.h),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: SurgeryBookingSearchFieldWidget(
-                              controller: _searchController,
-                              onChanged: (_) => setState(() {}),
-                            ),
-                          ),
-                          SizedBox(width: 8.w),
-                          SurgeryBookingFilterButtonWidget(
-                            isActive:
-                                _selectedHospitalFilter != null ||
-                                _selectedSpecialtyFilter != null,
-                            onTap: () => _showFilterSheet(cards),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 14.h),
-                      if (filteredCards.isEmpty)
-                        Padding(
-                          padding: EdgeInsets.symmetric(vertical: 32.h),
+                    if (state.doctorsLoadingStateStatus == StateStatus.error) {
+                      return Center(
+                        child: Padding(
+                          padding: EdgeInsets.all(24.w),
                           child: Text(
-                            'No providers found for this procedure.',
+                            state.doctorsErrorMessage ??
+                                'Unable to load doctors. Please try again.',
                             textAlign: TextAlign.center,
-                            style: theme.textTheme.bodyMedium?.copyWith(
-                              color: const Color(0xFF667B99),
-                            ),
-                          ),
-                        )
-                      else
-                        ...filteredCards.map(
-                          (card) => SurgeryBookingDoctorCardWidget(
-                            data: card,
-                            onBookNowTap: () => _openPatientDetails(card),
                           ),
                         ),
-                    ],
-                  );
-                },
+                      );
+                    }
+
+                    final cards = _mapDoctors(state.doctorsContent.doctors);
+                    final filteredCards = _filteredCards(cards);
+
+                    return ListView(
+                      padding: EdgeInsets.fromLTRB(24.w, 22.h, 24.w, 16.h),
+                      children: [
+                        Text(
+                          widget.procedureName,
+                          style: theme.textTheme.titleMedium?.copyWith(
+                            color: const Color(0xFF061E40),
+                            fontWeight: FontWeight.w500,
+                            fontSize: 16.sp,
+                          ),
+                        ),
+                        SizedBox(height: 12.h),
+                        SurgeryBookingLocationRowWidget(
+                          city: state.selectedCity,
+                          onChangeTap: () => showCityPickerSheet(context),
+                        ),
+                        SizedBox(height: 12.h),
+                        Text(
+                          'Select for Surgery',
+                          style: theme.textTheme.titleMedium?.copyWith(
+                            color: const Color(0xFF061E40),
+                            fontWeight: FontWeight.w500,
+                            fontSize: 14.sp,
+                          ),
+                        ),
+                        SizedBox(height: 12.h),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: SurgeryBookingSearchFieldWidget(
+                                controller: _searchController,
+                                onChanged: (_) => setState(() {}),
+                              ),
+                            ),
+                            SizedBox(width: 8.w),
+                            SurgeryBookingFilterButtonWidget(
+                              isActive:
+                                  _selectedHospitalFilter != null ||
+                                  _selectedSpecialtyFilter != null,
+                              onTap: () => _showFilterSheet(cards),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 14.h),
+                        if (filteredCards.isEmpty)
+                          Padding(
+                            padding: EdgeInsets.symmetric(vertical: 32.h),
+                            child: Text(
+                              'No providers found for this procedure.',
+                              textAlign: TextAlign.center,
+                              style: theme.textTheme.bodyMedium?.copyWith(
+                                color: const Color(0xFF667B99),
+                              ),
+                            ),
+                          )
+                        else
+                          ...filteredCards.map(
+                            (card) => SurgeryBookingDoctorCardWidget(
+                              data: card,
+                              onBookNowTap: () => _openPatientDetails(card),
+                            ),
+                          ),
+                      ],
+                    );
+                  },
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

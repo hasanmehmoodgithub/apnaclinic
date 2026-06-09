@@ -104,8 +104,11 @@ class AppUrls {
       '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/surgery/list';
 
   /// Surgery providers for a procedure (aggregator mobile API).
-  static String surgeryProviders(String surgeryId) =>
-      '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/surgery/providers?surgeryId=${Uri.encodeComponent(surgeryId)}';
+  static String surgeryProviders({
+    required String surgeryId,
+    required String cityId,
+  }) =>
+      '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/surgery/providers?surgeryId=${Uri.encodeComponent(surgeryId)}&cityId=${Uri.encodeComponent(cityId)}';
   static String surgeryPatientForm(String doctorId) =>
       '$_normalizedApiBaseUrl/surgery/patient-form/$doctorId';
   static String get surgeryBooking => '$_normalizedApiBaseUrl/surgery/booking';

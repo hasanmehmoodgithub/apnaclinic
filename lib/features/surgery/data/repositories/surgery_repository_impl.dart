@@ -50,10 +50,17 @@ class SurgeryRepositoryImpl implements SurgeryRepository {
     required String city,
   }) async {
     try {
+      await citiesRepository.loadCities();
+      final cityId = citiesRepository.cityIdForName(city);
+      if (cityId == null || cityId.isEmpty) {
+        return Left('Please select a valid city.');
+      }
+
       final model = await remoteDataSource.getSurgeryDoctors(
         surgeryId: surgeryId,
         procedureName: procedureName,
         city: city,
+        cityId: cityId,
       );
       return Right(SurgeryDoctorsMapper.toEntity(model));
     } catch (e) {
