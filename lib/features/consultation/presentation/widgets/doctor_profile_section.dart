@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../../core/extensions/screen_util_extensions.dart';
-import '../../../../generated/assets.dart';
-import '../../../lab_test/presentation/widgets/lab_test_figma_image.dart';
 import '../constants/consultation_ui_config.dart';
+import 'consultation_partner_logo_widget.dart';
 import 'rating_progress_badge.dart';
 
 class DoctorProfileSection extends StatelessWidget {
@@ -17,6 +16,8 @@ class DoctorProfileSection extends StatelessWidget {
   final String satisfiedText;
   final double rating;
   final String description;
+  final String partner;
+  final String partnerLogoUrl;
   final TextTheme textTheme;
 
   const DoctorProfileSection({
@@ -30,6 +31,8 @@ class DoctorProfileSection extends StatelessWidget {
     required this.satisfiedText,
     required this.rating,
     required this.description,
+    required this.partner,
+    required this.partnerLogoUrl,
     required this.textTheme,
   });
 
@@ -186,22 +189,24 @@ class DoctorProfileSection extends StatelessWidget {
                   border: Border.all(color: const Color(0xFFE2E6EB), width: 1),
                 ),
                 alignment: Alignment.center,
-                child: LabTestFigmaImage(
-                  url: Assets.labTestMedIQLogo,
+                child: ConsultationPartnerLogoWidget(
+                  logoUrl: partnerLogoUrl,
                   width: 24.w,
                   height: 24.h,
-                  fit: BoxFit.contain,
+                  compact: true,
                 ),
               ),
-              SizedBox(width: 8.w),
-              Text(
-                'MedIQ',
-                style: textTheme.bodyMedium?.copyWith(
-                  color: const Color(0xFF1E2D3F),
-                  fontSize: 14.sp,
-                  fontWeight: FontWeight.w500,
+              if (partner.trim().isNotEmpty) ...[
+                SizedBox(width: 8.w),
+                Text(
+                  partner,
+                  style: textTheme.bodyMedium?.copyWith(
+                    color: const Color(0xFF1E2D3F),
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
-              ),
+              ],
             ],
           ),
         ),

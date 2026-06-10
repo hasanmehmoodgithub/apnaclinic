@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../components/shimmer/app_shimmer.dart';
 import '../../../../core/di/dependency_injection.dart';
+import '../../../../core/preference/app_pref.dart';
+import '../../../../core/router/app_routes.dart';
 
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
@@ -17,6 +19,7 @@ import '../widgets/results_search_field.dart';
 import '../widgets/results_select_categories_dialog.dart';
 import '../widgets/consultation_screen_header_widget.dart';
 import '../widgets/consultation_hero_banner_widget.dart';
+import '../doctor_consultation_book_doctor_args.dart';
 
 class DoctorConsultationResultsScreen extends StatefulWidget {
   final String selectedCategory;
@@ -85,6 +88,17 @@ class _DoctorConsultationResultsScreenState
       _mainCategoryId = category.id;
     });
     await _loadDoctors();
+  }
+
+  void _onBookNowTap(ResultsDoctorItem doctor) {
+    if (!sl<AppPref>().getLoginStatus()) {
+      context.push(AppRoutes.path(AppRoutes.authLogin));
+      return;
+    }
+    context.pushNamed(
+      AppRoutes.consultationBookDoctor,
+      extra: DoctorConsultationBookDoctorArgs(doctor: doctor),
+    );
   }
 
   Future<void> _loadDoctors() async {
@@ -182,41 +196,26 @@ class _DoctorConsultationResultsScreenState
                           ],
                         ),
                         SizedBox(height: 14.h),
-                        ResultsDoctorCategoryCard(
-                          category: _selectedCategory,
-                          textTheme: textTheme,
-                          onChangeTap: _openSelectCategoryDialog,
-                        ),
-                        SizedBox(height: 14.h),
                         Expanded(
-                          child: _isLoading
-                              ? SingleChildScrollView(
-                                  child: Column(
-                                    children: List.generate(
-                                      4,
-                                      (index) => Padding(
-                                        padding: EdgeInsets.only(
-                                          bottom: index < 3 ? 10.h : 0,
-                                        ),
-                                        child: AppShimmerCard(
-                                          height: 104.h,
-                                          borderRadius: 12.r,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                )
-                              : ListView.separated(
-                                  padding: EdgeInsets.zero,
-                                  itemCount: doctors.length,
-                                  separatorBuilder: (_, _) => SizedBox(height: 10.h),
-                                  itemBuilder: (context, index) {
-                                    return ResultsDoctorCard(
-                                      doctor: doctors[index],
-                                      textTheme: textTheme,
-                                    );
-                                  },
+                          child: ListView(
+                            padding: EdgeInsets.zero,
+                            children: [
+                              ResultsDoctorCategoryCard(
+                                category: _selectedCategory,
+                                textTheme: textTheme,
+                                onChangeTap: _openSelectCategoryDialog,
+                              ),
+                              SizedBox(height: 14.h),
+                              for (var index = 0; index < doctors.length; index++) ...[
+                                if (index > 0) SizedBox(height: 10.h),
+                                ResultsDoctorCard(
+                                  doctor: doctors[index],
+                                  textTheme: textTheme,
+                                  onBookNowTap: () => _onBookNowTap(doctors[index]),
                                 ),
+                              ],
+                            ],
+                          ),
                         ),
                       ],
                     ),

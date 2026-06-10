@@ -68,6 +68,7 @@ class SurgeryRemoteDataSourceImpl implements SurgeryRemoteDataSource {
     required String surgeryId,
     required String procedureName,
     required String city,
+    required String cityId,
   }) async {
     try {
       final Map<String, dynamic> response;
@@ -76,9 +77,12 @@ class SurgeryRemoteDataSourceImpl implements SurgeryRemoteDataSource {
           surgeryId: surgeryId,
           procedureName: procedureName,
           city: city,
+          cityId: cityId,
         );
       } else {
-        response = await apiService.get(AppUrls.surgeryProviders(surgeryId));
+        response = await apiService.get(
+          AppUrls.surgeryProviders(surgeryId: surgeryId, cityId: cityId),
+        );
         log('getSurgeryDoctors response: $response');
       }
 
@@ -97,7 +101,10 @@ class SurgeryRemoteDataSourceImpl implements SurgeryRemoteDataSource {
       log('getSurgeryDoctors error: $e');
       final message = ErrorHandler.handleExceptions(
         e,
-        endpoint: AppUrls.surgeryProviders(surgeryId),
+        endpoint: AppUrls.surgeryProviders(
+          surgeryId: surgeryId,
+          cityId: cityId,
+        ),
       );
       return Future.error(message);
     }

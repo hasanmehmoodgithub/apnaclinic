@@ -7,6 +7,7 @@ class SurgeryDoctorsMockApi {
     required String surgeryId,
     required String procedureName,
     required String city,
+    required String cityId,
   }) async {
     await Future<void>.delayed(const Duration(milliseconds: 600));
 

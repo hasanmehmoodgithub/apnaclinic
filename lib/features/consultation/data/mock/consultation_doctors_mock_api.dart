@@ -26,8 +26,11 @@ class ConsultationDoctorsMockApi {
             'consultationFee': '500.00',
             'discountPercent': '30.00',
             'isFree': false,
-            'ratingScore': 4.5,
-            'qualifications': ['MBBS'],
+            'ratingScore': '4.5',
+            'bio':
+                'Dr. Saadiya Akhtar Janjua is a skilled General Practitioner with over 2 years of clinical experience.',
+            'education': 'MBBS',
+            'qualifications': [],
             'partner': {'tenantId': 1, 'logoUrl': null},
           },
           {
@@ -41,8 +44,11 @@ class ConsultationDoctorsMockApi {
             'consultationFee': '15000.00',
             'discountPercent': '0.00',
             'isFree': false,
-            'ratingScore': 4.8,
-            'qualifications': ['MBBS', 'FCPS'],
+            'ratingScore': '4.8',
+            'bio':
+                'Dr. Sumbal Shahid is a skilled Neurologist with over 6 years of clinical experience.',
+            'education': 'MBBS, FCPS',
+            'qualifications': [],
             'partner': {'tenantId': 2, 'logoUrl': null},
           },
         ],
@@ -92,6 +98,7 @@ class ConsultationDoctorsMockApi {
       'verifiedPatientsCount': item.verifiedPatientsCount,
       'satisfiedText': item.satisfiedText,
       'description': item.description,
+      'partnerLogoUrl': item.partnerLogoUrl,
     };
   }
 }

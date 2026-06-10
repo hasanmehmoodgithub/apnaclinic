@@ -1,10 +1,14 @@
 import 'dart:async';
+import 'dart:developer' as developer;
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/enums/app_enums.dart';
 import '../../../../core/enums/state_status.dart';
 import '../../../../core/preference/app_pref.dart';
+import '../../../../core/preference/app_pref_keys.dart';
+import '../../../../core/services/notification_service.dart';
 import '../../../../core/session/auth_session_refresh.dart';
 import '../../../../core/preference/user_local_model.dart';
 import '../../../../core/utils/jwt_utils.dart';
@@ -133,8 +137,13 @@ class AuthCubit extends Cubit<AuthState> {
       ),
     );
 
+    final fcmToken = await _resolveFcmToken();
     final result = await _verifyOtpUseCase(
-      VerifyOtpParams(phoneNumber: state.phoneNumber, otp: otp),
+      VerifyOtpParams(
+        phoneNumber: state.phoneNumber,
+        otp: otp,
+        fcmToken: fcmToken,
+      ),
     );
     if (isClosed) {
       return const VerifyOtpOutcome(isSuccess: false, goToHome: false);
@@ -211,6 +220,43 @@ class AuthCubit extends Cubit<AuthState> {
   int _resolveOtpExpirySeconds(int? expiresInSeconds) {
     if (expiresInSeconds == null || expiresInSeconds <= 0) return 30;
     return expiresInSeconds;
+  }
+
+  Future<String?> _resolveFcmToken() async {
+    developer.log('Resolving FCM token for login', name: 'AuthCubit');
+
+    if (sl.isRegistered<NotificationService>()) {
+      final service = sl<NotificationService>();
+      developer.log(
+        'NotificationService registered '
+        '(initialized=${service.isInitialized}, '
+        'permissionsPrepared=${service.permissionsPrepared})',
+        name: 'AuthCubit',
+      );
+      final token = await service.ensureFcmTokenForLogin();
+      if (token != null && token.isNotEmpty) {
+        developer.log(
+          'Using FCM token for login (length=${token.length})  (token=${token})',
+          name: 'AuthCubit',
+        );
+        return token;
+      }
+      developer.log('FCM token still empty after ensure', name: 'AuthCubit');
+    } else {
+      developer.log('NotificationService not registered', name: 'AuthCubit');
+    }
+
+    final stored = _appPref.getString(AppPrefKeys.fcmToken)?.trim();
+    if (stored != null && stored.isNotEmpty) {
+      developer.log(
+        'Using stored FCM token from prefs (length=${stored.length})',
+        name: 'AuthCubit',
+      );
+      return stored;
+    }
+
+    developer.log('No FCM token available for login', name: 'AuthCubit');
+    return null;
   }
 
   Future<void> _saveUserSession({required AuthEntity entity}) async {

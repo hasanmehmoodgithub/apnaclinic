@@ -33,6 +33,7 @@ Thin **Dio** facade used across features for JSON REST calls. Lives in `lib/core
 - `api_error_message_utils.dart` — nested `message` / validation arrays from APIs.
 - `api_exceptions.dart` — exception hierarchy for `ErrorHandler` and callers.
 - `../cities/` — `CitiesRepository` fetches `AppUrls.cities` once at app startup (`main.dart`); lab and surgery city pickers read the cached list.
+- `API_INTEGRATION_STATUS.html` — visual matrix of integrated vs remaining APIs (open in browser).
 
 ## Constructor flags
 

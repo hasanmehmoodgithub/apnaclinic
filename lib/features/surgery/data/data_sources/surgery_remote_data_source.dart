@@ -9,6 +9,7 @@ abstract class SurgeryRemoteDataSource {
     required String surgeryId,
     required String procedureName,
     required String city,
+    required String cityId,
   });
   Future<SurgeryPatientFormModel> getSurgeryPatientForm({
     required String doctorId,

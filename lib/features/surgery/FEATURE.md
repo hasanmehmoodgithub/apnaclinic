@@ -12,7 +12,7 @@ Browse surgical procedures by city, select a doctor/hospital offer, complete pat
 | Screen | Method | `AppUrls` key | Mock class |
 |--------|--------|---------------|------------|
 | Procedures list | GET | `surgeryProcedures` → `/api/v1/mobile/surgery/list` | `SurgeryMockApi` |
-| Doctor offers | GET | `surgeryProviders(surgeryId)` → `/api/v1/mobile/surgery/providers?surgeryId=` | `SurgeryDoctorsMockApi` |
+| Doctor offers | GET | `surgeryProviders(surgeryId, cityId)` → `/api/v1/mobile/surgery/providers?surgeryId=&cityId=` | `SurgeryDoctorsMockApi` |
 | Patient form | GET | `surgeryPatientForm(doctorId)` | `SurgeryPatientFormMockApi` |
 | Submit booking | POST | `surgeryBooking` | `SurgeryCheckoutMockApi` |
 

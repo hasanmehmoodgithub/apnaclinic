@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 
 import '../../../../core/extensions/screen_util_extensions.dart';
-import '../../../../core/router/app_routes.dart';
 import '../constants/consultation_ui_config.dart';
 import 'rating_progress_badge.dart';
 import 'results_doctor_item.dart';
@@ -14,10 +12,12 @@ class ResultsDoctorCard extends StatelessWidget {
     super.key,
     required this.doctor,
     required this.textTheme,
+    required this.onBookNowTap,
   });
 
   final ResultsDoctorItem doctor;
   final TextTheme textTheme;
+  final VoidCallback onBookNowTap;
 
   @override
   Widget build(BuildContext context) {
@@ -116,7 +116,7 @@ class ResultsDoctorCard extends StatelessWidget {
                       ),
                     ),
                     SizedBox(width: 4.w),
-                    ResultsPartnerBadge(partner: doctor.partner, textTheme: textTheme),
+                    ResultsPartnerBadge(partnerLogoUrl: doctor.partnerLogoUrl),
                   ],
                 ),
                 SizedBox(height: 8.h),
@@ -163,16 +163,7 @@ class ResultsDoctorCard extends StatelessWidget {
                       height: 40.h,
                       width: 114.w,
                       child: ElevatedButton(
-                        onPressed: () => context.pushNamed(
-                          AppRoutes.consultationBookDoctor,
-                          extra: {
-                            'doctorId': doctor.id,
-                            'doctorName': doctor.name,
-                            'specialty': doctor.specialty,
-                            'fee': doctor.fee,
-                            'imageUrl': doctor.imageUrl,
-                          },
-                        ),
+                        onPressed: onBookNowTap,
                         style: ElevatedButton.styleFrom(
                           elevation: 0,
                           backgroundColor: ConsultationUiConfig.ctaColor,

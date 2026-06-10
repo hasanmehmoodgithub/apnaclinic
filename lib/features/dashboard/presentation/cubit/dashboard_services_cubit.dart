@@ -3,24 +3,24 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/enums/state_status.dart';
 import '../../../../core/preference/app_pref.dart';
 import '../../../profile_setup/domain/use_cases/get_profile_setup_content_use_case.dart';
-import '../../domain/use_cases/promotional_banner_use_case.dart';
+import '../../domain/services/promotional_banner_session.dart';
 import '../../domain/use_cases/get_dashboard_services_use_case.dart';
 import 'dashboard_services_state.dart';
 
 class DashboardCubit extends Cubit<DashboardServicesState> {
   DashboardCubit({
     required this.getOurServicesUseCase,
-    required this.getPromotionalBannerUseCase,
+    required this.promotionalBannerSession,
     required this.getProfileSetupContentUseCase,
     required this.appPref,
   }) : super(const DashboardServicesState()) {
     loadOurServices();
-    loadPromotionalBanner();
+    syncPromotionalBannerFromSession();
     syncUserProfileFromApi();
   }
 
   final GetOurServicesUseCase getOurServicesUseCase;
-  final GetPromotionalBannerUseCase getPromotionalBannerUseCase;
+  final PromotionalBannerSession promotionalBannerSession;
   final GetProfileSetupContentUseCase getProfileSetupContentUseCase;
   final AppPref appPref;
 
@@ -30,7 +30,6 @@ class DashboardCubit extends Cubit<DashboardServicesState> {
   }
 
   Future<void> loadOurServices() async {
-
     _safeEmit(
       state.copyWith(
         ourServicesLoadingStateStatus: StateStatus.loading,
@@ -59,31 +58,13 @@ class DashboardCubit extends Cubit<DashboardServicesState> {
     );
   }
 
-  Future<void> loadPromotionalBanner() async {
+  void syncPromotionalBannerFromSession() {
+    final session = promotionalBannerSession;
     _safeEmit(
       state.copyWith(
-        promotionalBannerLoadingStateStatus: StateStatus.loading,
-        promotionalBannerErrorMessage: null,
-      ),
-    );
-
-    final result = await getPromotionalBannerUseCase.call();
-    if (isClosed) return;
-    result.fold(
-      (error) => _safeEmit(
-        state.copyWith(
-          promotionalBannerLoadingStateStatus: StateStatus.error,
-          promotionalBannerErrorMessage: error,
-        ),
-      ),
-      (banner) => _safeEmit(
-        state.copyWith(
-          promotionalBannerLoadingStateStatus: banner.showBanner
-              ? StateStatus.success
-              : StateStatus.empty,
-          promotionalBanner: banner,
-          promotionalBannerErrorMessage: null,
-        ),
+        promotionalBannerLoadingStateStatus: session.loadingStateStatus,
+        promotionalBanner: session.banner,
+        promotionalBannerErrorMessage: session.errorMessage,
       ),
     );
   }

@@ -34,6 +34,18 @@ class CitiesRepositoryImpl implements CitiesRepository {
   String get defaultCityName => _resolveDefaultCity(cityNames);
 
   @override
+  String? cityIdForName(String cityName) {
+    final normalized = cityName.trim().toLowerCase();
+    if (normalized.isEmpty) return null;
+    for (final city in cities) {
+      if (city.name.trim().toLowerCase() == normalized) {
+        return city.id;
+      }
+    }
+    return null;
+  }
+
+  @override
   Future<void> loadCities() {
     if (_cache != null) {
       return Future.value();

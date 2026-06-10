@@ -31,6 +31,7 @@ class ConsultationUiConfig {
   static const Color secondaryText = Color(0xFF919191);
   static const Color tertiaryText = Color(0xFF667B99);
   static const Color cardBackground = Color(0xFFF8F8F8);
+  static const Color cardPatternColor = Color(0xD2C3B7B7);
   static const Color borderColor = Color(0xFFECECEC);
   static const Color ctaColor = Color(0xFF0FAA9A);
   static const Color overlayColor = Color(0x59000000);

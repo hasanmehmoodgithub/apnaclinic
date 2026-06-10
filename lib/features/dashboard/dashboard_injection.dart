@@ -8,6 +8,7 @@ import 'data/mock/dashboard_services_mock_api.dart';
 import 'data/mock/promotional_banner_mock_api.dart';
 import 'data/repositories/dashboard_repository_impl.dart';
 import 'domain/repositories/dashboard_repository.dart';
+import 'domain/services/promotional_banner_session.dart';
 import 'domain/use_cases/promotional_banner_use_case.dart';
 import 'domain/use_cases/get_dashboard_services_use_case.dart';
 import 'presentation/cubit/dashboard_services_cubit.dart';
@@ -41,18 +42,24 @@ void initDashboardInjector() {
     ),
   );
 
-  sl.registerFactory<DashboardCubit>(
-    () => DashboardCubit(
-      getOurServicesUseCase: sl<GetOurServicesUseCase>(),
-      getPromotionalBannerUseCase: sl<GetPromotionalBannerUseCase>(),
-      getProfileSetupContentUseCase: sl<GetProfileSetupContentUseCase>(),
-      appPref: sl<AppPref>(),
-    ),
-  );
-
   sl.registerLazySingleton<GetPromotionalBannerUseCase>(
     () => GetPromotionalBannerUseCase(
       repository: sl<DashboardRepository>(),
+    ),
+  );
+
+  sl.registerLazySingleton<PromotionalBannerSession>(
+    () => PromotionalBannerSession(
+      getPromotionalBannerUseCase: sl<GetPromotionalBannerUseCase>(),
+    ),
+  );
+
+  sl.registerFactory<DashboardCubit>(
+    () => DashboardCubit(
+      getOurServicesUseCase: sl<GetOurServicesUseCase>(),
+      promotionalBannerSession: sl<PromotionalBannerSession>(),
+      getProfileSetupContentUseCase: sl<GetProfileSetupContentUseCase>(),
+      appPref: sl<AppPref>(),
     ),
   );
 }

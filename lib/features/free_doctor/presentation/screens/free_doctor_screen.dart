@@ -63,7 +63,6 @@ class FreeDoctorScreen extends StatelessWidget {
                         defaultPoints: [
                           l10n.freeDoctorPoint1,
                           l10n.freeDoctorPoint2,
-                          l10n.freeDoctorPoint3,
                         ],
                       ),
                     ),
@@ -73,7 +72,7 @@ class FreeDoctorScreen extends StatelessWidget {
               FreeDoctorOpenAppButtonWidget(
                 label: l10n.freeDoctorOpenAppCta,
                 isLoading: state.isOpeningApp,
-                onPressed: () => _openFikrfreeApp(context, l10n),
+                onPressed: () => _openSubscribePage(context, l10n),
               ),
             ],
           ),
@@ -82,11 +81,11 @@ class FreeDoctorScreen extends StatelessWidget {
     );
   }
 
-  Future<void> _openFikrfreeApp(
+  Future<void> _openSubscribePage(
     BuildContext context,
     AppLocalizations l10n,
   ) async {
-    final opened = await context.read<FreeDoctorCubit>().openFikrfreeApp();
+    final opened = await context.read<FreeDoctorCubit>().openSubscribePage();
     if (!opened && context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(

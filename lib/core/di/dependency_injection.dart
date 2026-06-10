@@ -19,6 +19,7 @@ import '../preference/app_pref.dart';
 import '../preference/app_pref_impl.dart';
 import '../services/encryption_service.dart';
 import '../services/connectivity_service.dart';
+import '../services/notification_service.dart';
 import '../services/responsive_config_service.dart';
 import '../session/auth_session_refresh.dart';
 import '../cities/cities_injection.dart';
@@ -66,6 +67,8 @@ Future<void> _initCore() async {
     () => const ResponsiveConfigService(),
   );
   sl.registerLazySingleton<AuthSessionRefresh>(() => AuthSessionRefresh());
-  // sl.registerLazySingleton<NotificationService>(() => NotificationService());
+  sl.registerLazySingleton<NotificationService>(
+    () => NotificationService(appPref: sl<AppPref>()),
+  );
   initCitiesInjector();
 }

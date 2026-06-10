@@ -17,6 +17,7 @@ import '../../features/consultation/presentation/screens/doctor_consultation_res
 import '../../features/consultation/presentation/screens/doctor_consultation_screen.dart';
 import '../../features/consultation/presentation/cubit/doctor_consultation_checkout_cubit.dart';
 import '../../features/consultation/data/mock/doctor_consultation_checkout_mock_api.dart';
+import '../../features/consultation/presentation/doctor_consultation_book_doctor_args.dart';
 import '../../features/consultation/presentation/doctor_consultation_checkout_args.dart';
 import '../../features/customer_support/presentation/screens/customer_support_screen.dart';
 import '../../features/dashboard/presentation/screens/menu_screen.dart';
@@ -173,14 +174,10 @@ class AppRouter {
         name: AppRoutes.consultationBookDoctor,
         builder: (context, state) {
           final extra = state.extra;
-          final data = extra is Map ? Map<String, dynamic>.from(extra) : null;
-          return DoctorConsultationBookDoctorScreen(
-            doctorId: (data?['doctorId'] as String?),
-            doctorName: (data?['doctorName'] as String?) ?? 'Dr. Sumbal Shahid',
-            specialty: (data?['specialty'] as String?) ?? 'Neurologist',
-            fee: (data?['fee'] as String?) ?? 'Rs. 15,000/-',
-            imageUrl: (data?['imageUrl'] as String?) ?? '',
-          );
+          if (extra is! DoctorConsultationBookDoctorArgs) {
+            return const SizedBox.shrink();
+          }
+          return DoctorConsultationBookDoctorScreen(doctor: extra.doctor);
         },
       ),
       GoRoute(

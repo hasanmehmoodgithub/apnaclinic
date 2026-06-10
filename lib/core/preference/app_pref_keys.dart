@@ -34,4 +34,6 @@ class AppPrefKeys {
       _encryption.obfuscateKey('encryption_key$_prefVersion');
   static String get encryptionIV =>
       _encryption.obfuscateKey('encryption_iv$_prefVersion');
+  static String get fcmToken =>
+      _encryption.obfuscateKey('fcm_token$_prefVersion');
 }

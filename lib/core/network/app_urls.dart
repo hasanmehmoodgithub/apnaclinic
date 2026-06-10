@@ -25,8 +25,6 @@ class AppUrls {
   // Auth endpoints (full URLs - baseUrl from flavor)
   // ============================================
 
-  /// Login endpoint - full URL using baseUrl from flavor
-  static String get login => '$baseUrl/acs-auth/login';
 
   /// Request OTP endpoint
   static String get requestOtp =>
@@ -53,30 +51,30 @@ class AppUrls {
 
   /// Home services (CMS mobile API).
   static String get ourServices =>
-      '$baseUrl/acs-cmsbe/api/v1/mobile/services';
+      '$_normalizedApiBaseUrl/acs-cmsbe/api/v1/mobile/services';
 
   /// Doctor consultation categories (aggregator mobile API).
   static String get doctorCategories =>
-      '$baseUrl/acs-aggregator/api/v1/mobile/doctor-categories';
+      '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/doctor-categories';
 
   /// Doctor consultation doctors for a main category (aggregator mobile API).
   static String doctorConsultationDoctors(String mainCategoryId) =>
-      '$baseUrl/acs-aggregator/api/v1/mobile/doctor-consultation/doctors?mainCategoryId=${Uri.encodeComponent(mainCategoryId)}';
+      '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/doctor-consultation/doctors?mainCategoryId=${Uri.encodeComponent(mainCategoryId)}';
 
   /// Supported cities for lab and surgery (aggregator mobile API).
   static String get cities =>
-      '$baseUrl/acs-aggregator/api/v1/mobile/cities';
+      '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/cities';
 
   /// Home promotional banner(s) — CMS mobile API (first active item by displayOrder).
   static String get promotionalBanner =>
-      '$baseUrl/acs-cmsbe/api/v1/mobile/banners';
+      '$_normalizedApiBaseUrl/acs-cmsbe/api/v1/mobile/banners';
 
   /// Customer support settings — CMS mobile API.
   static String get mobileSupport =>
-      '$baseUrl/acs-cmsbe/api/v1/mobile/support';
+      '$_normalizedApiBaseUrl/acs-cmsbe/api/v1/mobile/support';
 
   /// Free doctor screen content endpoint
-  static String get freeDoctor => '$baseUrl/dashboard/free-doctor';
+  static String get freeDoctor => '$_normalizedApiBaseUrl/dashboard/free-doctor';
 
   /// Profile setup details endpoint
   static String userProfileById(String userId) =>
@@ -87,31 +85,34 @@ class AppUrls {
       '$_normalizedApiBaseUrl/acs-auth/api/v1/users/';
 
   /// Notifications endpoint
-  static String get notifications => '$baseUrl/notifications';
+  static String get notifications => '$_normalizedApiBaseUrl/notifications';
 
   /// Pharmacy medicines endpoint
-  static String get pharmacyMedicines => '$baseUrl/pharmacy/medicines';
+  static String get pharmacyMedicines => '$_normalizedApiBaseUrl/pharmacy/medicines';
 
   /// Pharmacy cart endpoint
-  static String get pharmacyCart => '$baseUrl/pharmacy/cart';
+  static String get pharmacyCart => '$_normalizedApiBaseUrl/pharmacy/cart';
 
   /// Pharmacy add-to-cart endpoint
-  static String get pharmacyAddToCart => '$baseUrl/pharmacy/cart/add';
+  static String get pharmacyAddToCart => '$_normalizedApiBaseUrl/pharmacy/cart/add';
 
   /// Search endpoint
-  static String get search => '$baseUrl/search';
+  static String get search => '$_normalizedApiBaseUrl/search';
 
   /// Surgery procedures list (aggregator mobile API).
   static String get surgeryProcedures =>
-      '$baseUrl/acs-aggregator/api/v1/mobile/surgery/list';
+      '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/surgery/list';
 
   /// Surgery providers for a procedure (aggregator mobile API).
-  static String surgeryProviders(String surgeryId) =>
-      '$baseUrl/acs-aggregator/api/v1/mobile/surgery/providers?surgeryId=${Uri.encodeComponent(surgeryId)}';
+  static String surgeryProviders({
+    required String surgeryId,
+    required String cityId,
+  }) =>
+      '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/surgery/providers?surgeryId=${Uri.encodeComponent(surgeryId)}&cityId=${Uri.encodeComponent(cityId)}';
   static String surgeryPatientForm(String doctorId) =>
-      '$baseUrl/surgery/patient-form/$doctorId';
-  static String get surgeryBooking => '$baseUrl/surgery/booking';
-  static String get labTestCatalog => '$baseUrl/lab/test';
+      '$_normalizedApiBaseUrl/surgery/patient-form/$doctorId';
+  static String get surgeryBooking => '$_normalizedApiBaseUrl/surgery/booking';
+  static String get labTestCatalog => '$_normalizedApiBaseUrl/lab/test';
 
   // ============================================
   // 3rd Party Integration Support (Full URLs)

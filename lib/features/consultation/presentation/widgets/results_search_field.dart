@@ -26,10 +26,10 @@ class ResultsSearchField extends StatelessWidget {
           hintStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
             color: const Color(0xFF9E9E9E),
             fontWeight: FontWeight.w400,
-            fontSize: 13.sp,
+            fontSize: 12.sp,
           ),
           suffixIcon: Padding(
-            padding: EdgeInsets.all(12.r),
+            padding: EdgeInsets.all(16.r),
             child: SvgPicture.asset(
               ConsultationUiConfig.searchIconAsset,
               width: 18.w,

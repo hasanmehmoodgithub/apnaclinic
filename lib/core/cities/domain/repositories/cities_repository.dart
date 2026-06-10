@@ -11,4 +11,7 @@ abstract class CitiesRepository {
   List<String> get cityNames;
 
   String get defaultCityName;
+
+  /// Returns the aggregator city id for [cityName], or null if not found.
+  String? cityIdForName(String cityName);
 }
