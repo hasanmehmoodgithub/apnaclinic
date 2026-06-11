@@ -81,17 +81,15 @@ class LabTestItemBookingHelper {
     return vendorsById.values.toList(growable: false);
   }
 
-  /// All labs for a partner regardless of walk-in / home sampling.
-  static List<LabTestVendorEntity> vendorsForPartnerAll({
+  static Set<String> partnerIdsForBookingMethod({
     required List<LabTestLabOfferEntity> labOffers,
-    required String partnerId,
+    required bool labVisit,
   }) {
-    final vendorsById = <int, LabTestVendorEntity>{};
-    for (final offer in labOffers) {
-      if (offer.partnerId != partnerId) continue;
-      vendorsById.putIfAbsent(offer.labId, () => _vendorFromOffer(offer));
-    }
-    return vendorsById.values.toList(growable: false);
+    final orderType = orderTypeFor(labVisit: labVisit);
+    return labOffers
+        .where((offer) => offer.orderType == orderType)
+        .map((offer) => offer.partnerId)
+        .toSet();
   }
 
   static LabTestVendorEntity _vendorFromOffer(LabTestLabOfferEntity offer) {
