@@ -71,6 +71,7 @@ class _LoginLegalTextState extends State<LoginLegalText> {
         ),
         textAlign: TextAlign.center,
         style: theme.textTheme.bodySmall?.copyWith(
+          fontSize: (theme.textTheme.bodySmall?.fontSize ?? 12) - 2,
           color: AppColors.clr667085,
           height: 1.65,
         ),

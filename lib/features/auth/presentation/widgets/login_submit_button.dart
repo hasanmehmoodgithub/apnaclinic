@@ -31,7 +31,7 @@ class LoginSubmitButton extends StatelessWidget {
           foregroundColor: AppColors.clrWhite,
           height: 62.h,
           borderRadius: 20.r,
-          fontSize: (30 / 1.65).sp,
+          fontSize: ((30 / 1.65) - 2).sp,
         );
       },
     );

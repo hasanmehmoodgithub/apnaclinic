@@ -60,7 +60,7 @@ class _LoginOtpSectionBody extends StatelessWidget {
       width: 82.w,
       height: 68.h,
       textStyle: theme.textTheme.titleLarge?.copyWith(
-        fontSize: 24.sp,
+        fontSize: 22.sp,
         fontWeight: FontWeight.w700,
         color: AppColors.clr4A555F,
       ),
@@ -78,7 +78,7 @@ class _LoginOtpSectionBody extends StatelessWidget {
         Text(
           l10n.authOtpVerificationTitle,
           style: theme.textTheme.titleLarge?.copyWith(
-            fontSize: (30 / 1.65).sp,
+            fontSize: ((30 / 1.65) - 2).sp,
             fontWeight: FontWeight.w700,
             color: AppColors.clr060,
           ),
@@ -132,6 +132,7 @@ class _LoginOtpResendRow extends StatelessWidget {
                 ? Text(
                     l10n.authResendOtp,
                     style: theme.textTheme.bodyMedium?.copyWith(
+                      fontSize: (theme.textTheme.bodyMedium?.fontSize ?? 14) - 2,
                       color: AppColors.clr5D758F,
                     ),
                   )
@@ -147,6 +148,7 @@ class _LoginOtpResendRow extends StatelessWidget {
                       ],
                     ),
                     style: theme.textTheme.bodyMedium?.copyWith(
+                      fontSize: (theme.textTheme.bodyMedium?.fontSize ?? 14) - 2,
                       color: AppColors.clr5D758F,
                     ),
                   ),
@@ -175,6 +177,7 @@ class _LoginOtpErrorText extends StatelessWidget {
           child: Text(
             errorMessage,
             style: theme.textTheme.bodySmall?.copyWith(
+              fontSize: (theme.textTheme.bodySmall?.fontSize ?? 12) - 2,
               color: AppColors.clrE01F26,
               fontWeight: FontWeight.w500,
             ),
