@@ -2,7 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../../../../core/constants/app_colors.dart';
+import '../../../../core/constants/app_text_styles.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/network/app_urls.dart';
 import '../../../../core/utils/app_url_launcher.dart';
@@ -22,9 +22,15 @@ class _LoginLegalTextState extends State<LoginLegalText> {
   void initState() {
     super.initState();
     _termsRecognizer = TapGestureRecognizer()
-      ..onTap = () => AppUrlLauncher.open(url:AppUrls.termsAndConditions,lunchMode: LaunchMode.inAppWebView);
+      ..onTap = () => AppUrlLauncher.open(
+        url: AppUrls.termsAndConditions,
+        lunchMode: LaunchMode.inAppWebView,
+      );
     _privacyRecognizer = TapGestureRecognizer()
-      ..onTap = () => AppUrlLauncher.open(url:AppUrls.privacyPolicy,lunchMode: LaunchMode.inAppWebView);
+      ..onTap = () => AppUrlLauncher.open(
+        url: AppUrls.privacyPolicy,
+        lunchMode: LaunchMode.inAppWebView,
+      );
   }
 
   @override
@@ -37,7 +43,6 @@ class _LoginLegalTextState extends State<LoginLegalText> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final theme = Theme.of(context);
 
     return Padding(
       padding: const EdgeInsets.only(
@@ -52,29 +57,19 @@ class _LoginLegalTextState extends State<LoginLegalText> {
             TextSpan(text: '${l10n.authLegalPrefix} '),
             TextSpan(
               text: l10n.authTermsLabel,
-              style: const TextStyle(
-                fontWeight: FontWeight.w700,
-                color: AppColors.clr09,
-              ),
+              style: AppTextStyles.loginLegalLink,
               recognizer: _termsRecognizer,
             ),
             TextSpan(text: ' ${l10n.authLegalConnector} '),
             TextSpan(
               text: l10n.authPrivacyLabel,
-              style: const TextStyle(
-                fontWeight: FontWeight.w700,
-                color: AppColors.clr09,
-              ),
+              style: AppTextStyles.loginLegalLink,
               recognizer: _privacyRecognizer,
             ),
           ],
         ),
         textAlign: TextAlign.center,
-        style: theme.textTheme.bodySmall?.copyWith(
-          fontSize: (theme.textTheme.bodySmall?.fontSize ?? 12) - 2,
-          color: AppColors.clr667085,
-          height: 1.65,
-        ),
+        style: AppTextStyles.loginLegal,
       ),
     );
   }

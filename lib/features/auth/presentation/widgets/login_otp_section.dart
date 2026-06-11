@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pinput/pinput.dart';
 
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/constants/app_text_styles.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../cubit/auth_cubit.dart';
@@ -54,16 +55,11 @@ class _LoginOtpSectionBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final theme = Theme.of(context);
     final itemSpacing = 10.w;
     final defaultPinTheme = PinTheme(
       width: 82.w,
       height: 68.h,
-      textStyle: theme.textTheme.titleLarge?.copyWith(
-        fontSize: 22.sp,
-        fontWeight: FontWeight.w700,
-        color: AppColors.clr4A555F,
-      ),
+      textStyle: AppTextStyles.loginOtpDigit,
       decoration: BoxDecoration(
         color: Colors.transparent,
         borderRadius: BorderRadius.circular(9.r),
@@ -75,14 +71,7 @@ class _LoginOtpSectionBody extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         SizedBox(height: 18.h),
-        Text(
-          l10n.authOtpVerificationTitle,
-          style: theme.textTheme.titleLarge?.copyWith(
-            fontSize: ((30 / 1.65) - 2).sp,
-            fontWeight: FontWeight.w700,
-            color: AppColors.clr060,
-          ),
-        ),
+        Text(l10n.authOtpVerificationTitle, style: AppTextStyles.loginOtpTitle),
         const SizedBox(height: 8),
         Pinput(
           controller: controller,
@@ -104,7 +93,7 @@ class _LoginOtpSectionBody extends StatelessWidget {
         ),
         SizedBox(height: 8.h),
         _LoginOtpResendRow(onResendTap: onResendTap),
-        _LoginOtpErrorText(theme: theme),
+        const _LoginOtpErrorText(),
       ],
     );
   }
@@ -118,7 +107,6 @@ class _LoginOtpResendRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final theme = Theme.of(context);
 
     return BlocSelector<AuthCubit, AuthState, (int, bool)>(
       selector: (state) =>
@@ -129,13 +117,7 @@ class _LoginOtpResendRow extends StatelessWidget {
           child: TextButton(
             onPressed: canResendOtp ? onResendTap : null,
             child: canResendOtp
-                ? Text(
-                    l10n.authResendOtp,
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      fontSize: (theme.textTheme.bodyMedium?.fontSize ?? 14) - 2,
-                      color: AppColors.clr5D758F,
-                    ),
-                  )
+                ? Text(l10n.authResendOtp, style: AppTextStyles.loginResend)
                 : Text.rich(
                     TextSpan(
                       children: [
@@ -147,10 +129,7 @@ class _LoginOtpResendRow extends StatelessWidget {
                         ),
                       ],
                     ),
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      fontSize: (theme.textTheme.bodyMedium?.fontSize ?? 14) - 2,
-                      color: AppColors.clr5D758F,
-                    ),
+                    style: AppTextStyles.loginResend,
                   ),
           ),
         );
@@ -160,9 +139,7 @@ class _LoginOtpResendRow extends StatelessWidget {
 }
 
 class _LoginOtpErrorText extends StatelessWidget {
-  const _LoginOtpErrorText({required this.theme});
-
-  final ThemeData theme;
+  const _LoginOtpErrorText();
 
   @override
   Widget build(BuildContext context) {
@@ -174,14 +151,7 @@ class _LoginOtpErrorText extends StatelessWidget {
         }
         return Padding(
           padding: EdgeInsets.only(top: 6.h),
-          child: Text(
-            errorMessage,
-            style: theme.textTheme.bodySmall?.copyWith(
-              fontSize: (theme.textTheme.bodySmall?.fontSize ?? 12) - 2,
-              color: AppColors.clrE01F26,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
+          child: Text(errorMessage, style: AppTextStyles.loginError),
         );
       },
     );

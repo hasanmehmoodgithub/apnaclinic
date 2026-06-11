@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../components/widgets/app_button.dart';
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/constants/app_sizes.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../cubit/auth_cubit.dart';
@@ -30,8 +31,9 @@ class LoginSubmitButton extends StatelessWidget {
           backgroundColor: AppColors.clr0FAA9A,
           foregroundColor: AppColors.clrWhite,
           height: 62.h,
-          borderRadius: 20.r,
-          fontSize: ((30 / 1.65) - 2).sp,
+          borderRadius: AppSizes.radiusXL,
+          fontSize: AppSizes.textSizeL,
+          fontWeight: FontWeight.w700,
         );
       },
     );
