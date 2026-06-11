@@ -7,6 +7,7 @@ class SurgeryBookingRequestEntity {
     required this.surgeryName,
     required this.doctorName,
     required this.hospitalName,
+    required this.gender,
   });
 
   final String patientName;
@@ -16,4 +17,5 @@ class SurgeryBookingRequestEntity {
   final String surgeryName;
   final String doctorName;
   final String hospitalName;
+  final String gender;
 }

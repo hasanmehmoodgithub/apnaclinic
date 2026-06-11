@@ -1412,6 +1412,30 @@ abstract class AppLocalizations {
   /// **'No surgery procedures available right now.'**
   String get surgeryNoProceduresMessage;
 
+  /// No description provided for @surgeryNoDataFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No data found'**
+  String get surgeryNoDataFound;
+
+  /// No description provided for @commonReset.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset'**
+  String get commonReset;
+
+  /// No description provided for @surgeryPatientValidationMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Please fill in all required fields.'**
+  String get surgeryPatientValidationMessage;
+
+  /// No description provided for @surgeryEmergencyContactRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Please add emergency contact number.'**
+  String get surgeryEmergencyContactRequired;
+
   /// No description provided for @surgerySelectForSurgery.
   ///
   /// In en, this message translates to:

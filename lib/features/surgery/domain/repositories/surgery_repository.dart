@@ -5,7 +5,9 @@ import '../entities/surgery_patient_form_entity.dart';
 import '../entities/surgery_procedure_entity.dart';
 
 abstract class SurgeryRepository {
-  Future<Either<ErrorMsg, SurgeryContentEntity>> getSurgeryContent();
+  Future<Either<ErrorMsg, SurgeryContentEntity>> getSurgeryContent({
+    String? city,
+  });
   Future<Either<ErrorMsg, SurgeryDoctorsEntity>> getSurgeryDoctors({
     required String surgeryId,
     required String procedureName,

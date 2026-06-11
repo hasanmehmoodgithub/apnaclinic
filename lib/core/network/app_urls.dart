@@ -100,8 +100,12 @@ class AppUrls {
   static String get search => '$_normalizedApiBaseUrl/search';
 
   /// Surgery procedures list (aggregator mobile API).
-  static String get surgeryProcedures =>
-      '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/surgery/list';
+  static String surgeryProcedures({String? cityId}) {
+    final base =
+        '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/surgery/list';
+    if (cityId == null || cityId.isEmpty) return base;
+    return '$base?cityId=${Uri.encodeComponent(cityId)}';
+  }
 
   /// Surgery providers for a procedure (aggregator mobile API).
   static String surgeryProviders({

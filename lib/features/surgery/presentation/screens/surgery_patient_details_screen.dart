@@ -5,9 +5,12 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
+import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/preference/app_pref.dart';
 import '../cubit/surgery_cubit.dart';
 import '../widgets/surgery_doctor_summary_widget.dart';
+import '../widgets/surgery_form_error_banner_widget.dart';
+import '../widgets/surgery_gender_field_widget.dart';
 import '../widgets/surgery_option.dart';
 import '../widgets/surgery_text_input_field_widget.dart';
 import '../widgets/surgery_type_dialog_widget.dart';
@@ -50,7 +53,13 @@ class _SurgeryPatientDetailsScreenState
   final AppPref _appPref = sl<AppPref>();
 
   SurgeryOption? selectedSurgery;
+  String? selectedGender;
+  bool showNameError = false;
+  bool showAgeError = false;
+  bool showContactError = false;
   bool showEmergencyError = false;
+  bool showGenderError = false;
+  String? validationBannerMessage;
   bool isSubmittingBooking = false;
 
   late final TextEditingController patientNameController;
@@ -96,10 +105,22 @@ class _SurgeryPatientDetailsScreenState
       contactNumberController.text = phone;
     }
 
+    final gender = _normalizeGender(userLocal?.gender ?? '');
+    if (gender != null) {
+      selectedGender = gender;
+    }
+
     final age = _ageFromDateOfBirth(userLocal?.dateOfBirth ?? '');
     if (age != null && age > 0) {
       ageController.text = age.toString();
     }
+  }
+
+  String? _normalizeGender(String value) {
+    final normalized = value.trim().toLowerCase();
+    if (normalized == 'male' || normalized == 'm') return 'male';
+    if (normalized == 'female' || normalized == 'f') return 'female';
+    return null;
   }
 
   int? _ageFromDateOfBirth(String rawDob) {
@@ -122,6 +143,7 @@ class _SurgeryPatientDetailsScreenState
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final options = _surgeryOptions;
     final currentSelection =
@@ -197,6 +219,8 @@ class _SurgeryPatientDetailsScreenState
                               hintText: 'Patient Name',
                               controller: patientNameController,
                               keyboardType: TextInputType.name,
+                              hasError: showNameError,
+                              errorText: 'Enter patient name',
                             ),
                             SizedBox(height: 14.h),
                             SurgeryTextInputFieldWidget(
@@ -204,6 +228,14 @@ class _SurgeryPatientDetailsScreenState
                               hintText: 'Patient Age',
                               controller: ageController,
                               keyboardType: TextInputType.number,
+                              hasError: showAgeError,
+                              errorText: 'Enter patient age',
+                            ),
+                            SizedBox(height: 14.h),
+                            SurgeryGenderFieldWidget(
+                              selectedGender: selectedGender,
+                              hasError: showGenderError,
+                              onTap: _showGenderPicker,
                             ),
                             SizedBox(height: 14.h),
                             SurgeryTextInputFieldWidget(
@@ -211,6 +243,8 @@ class _SurgeryPatientDetailsScreenState
                               hintText: 'Patient Contact Number',
                               controller: contactNumberController,
                               keyboardType: TextInputType.phone,
+                              hasError: showContactError,
+                              errorText: 'Enter contact number',
                             ),
                             SizedBox(height: 14.h),
                             SurgeryTextInputFieldWidget(
@@ -297,40 +331,51 @@ class _SurgeryPatientDetailsScreenState
                             ),
                           ],
                         ),
-                        child: SizedBox(
-                          width: double.infinity,
-                          child: FilledButton(
-                            onPressed: isSubmittingBooking ||
-                                    currentSelection == null
-                                ? null
-                                : _onProceedCheckoutPressed,
-                            style: FilledButton.styleFrom(
-                              backgroundColor: const Color(0xFF0FAA9A),
-                              minimumSize: Size.fromHeight(44.h),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10.r),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            if (validationBannerMessage != null)
+                              SurgeryFormErrorBannerWidget(
+                                message: validationBannerMessage!,
+                              ),
+                            SizedBox(
+                              width: double.infinity,
+                              child: FilledButton(
+                                onPressed: isSubmittingBooking ||
+                                        currentSelection == null
+                                    ? null
+                                    : _onProceedCheckoutPressed,
+                                style: FilledButton.styleFrom(
+                                  backgroundColor: const Color(0xFF0FAA9A),
+                                  minimumSize: Size.fromHeight(44.h),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10.r),
+                                  ),
+                                ),
+                                child: isSubmittingBooking
+                                    ? SizedBox(
+                                        width: 22.r,
+                                        height: 22.r,
+                                        child: const CircularProgressIndicator(
+                                          strokeWidth: 2.4,
+                                          valueColor:
+                                              AlwaysStoppedAnimation<Color>(
+                                            Colors.white,
+                                          ),
+                                        ),
+                                      )
+                                    : Text(
+                                        'Proceed Checkout',
+                                        style:
+                                            theme.textTheme.titleMedium?.copyWith(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.w700,
+                                          fontSize: 13.sp,
+                                        ),
+                                      ),
                               ),
                             ),
-                            child: isSubmittingBooking
-                                ? SizedBox(
-                                    width: 22.r,
-                                    height: 22.r,
-                                    child: const CircularProgressIndicator(
-                                      strokeWidth: 2.4,
-                                      valueColor: AlwaysStoppedAnimation<Color>(
-                                        Colors.white,
-                                      ),
-                                    ),
-                                  )
-                                : Text(
-                                    'Proceed Checkout',
-                                    style: theme.textTheme.titleMedium?.copyWith(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w700,
-                                      fontSize: 13.sp,
-                                    ),
-                                  ),
-                          ),
+                          ],
                         ),
                       ),
                 ],
@@ -340,6 +385,44 @@ class _SurgeryPatientDetailsScreenState
         ],
       ),
     );
+  }
+
+  Future<void> _showGenderPicker() async {
+    final l10n = AppLocalizations.of(context)!;
+    FocusScope.of(context).unfocus();
+
+    final picked = await showModalBottomSheet<String>(
+      context: context,
+      backgroundColor: Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(14.r)),
+      ),
+      builder: (sheetContext) {
+        return SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                title: Text(l10n.commonMale),
+                onTap: () => Navigator.of(sheetContext).pop('male'),
+              ),
+              ListTile(
+                title: Text(l10n.commonFemale),
+                onTap: () => Navigator.of(sheetContext).pop('female'),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+
+    if (picked != null) {
+      setState(() {
+        selectedGender = picked;
+        showGenderError = false;
+        validationBannerMessage = null;
+      });
+    }
   }
 
   Future<void> _openSurgeryTypeDialog(List<SurgeryOption> options) async {
@@ -364,10 +447,34 @@ class _SurgeryPatientDetailsScreenState
   }
 
   Future<void> _onProceedCheckoutPressed() async {
+    final l10n = AppLocalizations.of(context)!;
+    final name = patientNameController.text.trim();
+    final age = ageController.text.trim();
+    final contact = contactNumberController.text.trim();
     final emergency = emergencyContactController.text.trim();
-    if (emergency.isEmpty) {
-      setState(() => showEmergencyError = true);
-      _showEmergencyContactSnackbar();
+    final gender = selectedGender ?? '';
+
+    final nameMissing = name.isEmpty;
+    final ageMissing = age.isEmpty;
+    final genderMissing = gender.isEmpty;
+    final contactMissing = contact.isEmpty;
+    final emergencyMissing = emergency.isEmpty;
+
+    if (nameMissing ||
+        ageMissing ||
+        genderMissing ||
+        contactMissing ||
+        emergencyMissing) {
+      setState(() {
+        showNameError = nameMissing;
+        showAgeError = ageMissing;
+        showGenderError = genderMissing;
+        showContactError = contactMissing;
+        showEmergencyError = emergencyMissing;
+        validationBannerMessage = emergencyMissing
+            ? l10n.surgeryEmergencyContactRequired
+            : l10n.surgeryPatientValidationMessage;
+      });
       return;
     }
 
@@ -375,19 +482,25 @@ class _SurgeryPatientDetailsScreenState
     if (surgery == null) return;
 
     setState(() {
+      showNameError = false;
+      showAgeError = false;
+      showGenderError = false;
+      showContactError = false;
       showEmergencyError = false;
+      validationBannerMessage = null;
       isSubmittingBooking = true;
     });
 
     try {
       final result = await context.read<SurgeryCubit>().submitSurgeryBooking(
-        patientName: patientNameController.text.trim(),
-        age: ageController.text.trim(),
-        contactNumber: contactNumberController.text.trim(),
+        patientName: name,
+        age: age,
+        contactNumber: contact,
         emergencyContact: emergency,
         surgeryName: surgery.name,
         doctorName: widget.doctorName,
         hospitalName: widget.hospitalName,
+        gender: gender,
       );
 
       if (!mounted) return;
@@ -492,41 +605,6 @@ class _SurgeryPatientDetailsScreenState
         );
       },
     );
-  }
-
-  void _showEmergencyContactSnackbar() {
-    ScaffoldMessenger.of(context)
-      ..hideCurrentSnackBar()
-      ..showSnackBar(
-        SnackBar(
-          behavior: SnackBarBehavior.floating,
-          margin: EdgeInsets.fromLTRB(0, 0, 0, 98.h),
-          backgroundColor: const Color(0xFFFFF8F8),
-          elevation: 0,
-          shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.zero,
-            side: BorderSide(color: Color(0xFFFFEBEA)),
-          ),
-          content: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(
-                Icons.info_outline_rounded,
-                size: 16.r,
-                color: const Color(0xFFBA2025),
-              ),
-              SizedBox(width: 8.w),
-              Text(
-                'Please add emergency contact number.',
-                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  color: const Color(0xFFBA2025),
-                  fontSize: 16.sp,
-                ),
-              ),
-            ],
-          ),
-        ),
-      );
   }
 
   void _showSubmitFailedSnackbar() {

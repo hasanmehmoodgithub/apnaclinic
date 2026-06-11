@@ -35,7 +35,9 @@ class SurgeryDoctorModel {
     final hospitalSlug = (json['hospitalSlug'] ?? json['hospital_slug'] ?? '')
         .toString()
         .trim();
-    final rawId = (json['id'] ?? '').toString().trim();
+    final rawId = (json['id'] ?? json['doctorId'] ?? json['doctor_id'] ?? '')
+        .toString()
+        .trim();
     final id = rawId.isNotEmpty
         ? rawId
         : (doctorSlug.isNotEmpty
@@ -49,8 +51,9 @@ class SurgeryDoctorModel {
       id: id,
       doctorName: (json['doctorName'] ?? json['doctor_name'] ?? '').toString(),
       speciality: (json['speciality'] ?? json['specialty'] ?? '').toString(),
-      experience: (json['experience'] ?? json['tatMessage'] ?? '').toString(),
-      qualifications: (json['qualifications'] ?? '').toString(),
+      experience: _formatExperience(json),
+      qualifications:
+          (json['qualifications'] ?? json['education'] ?? '').toString(),
       hospitalName: (json['hospitalName'] ?? json['hospital_name'] ?? '')
           .toString(),
       procedureName: procedureName.isNotEmpty
@@ -60,6 +63,8 @@ class SurgeryDoctorModel {
       oldPrice: _formatOriginalPrice(original, discounted),
       imageUrl: (json['imageUrl'] ??
               json['image_url'] ??
+              json['profileImageUrl'] ??
+              json['profile_image_url'] ??
               json['image'] ??
               json['imagePath'] ??
               '')
@@ -67,6 +72,21 @@ class SurgeryDoctorModel {
       partnerLogoUrl:
           (json['partnerLogoUrl'] ?? json['partner_logo_url'] ?? '').toString(),
     );
+  }
+
+  static String _formatExperience(Map<String, dynamic> json) {
+    final years = json['yearsOfExperience'] ?? json['years_of_experience'];
+    if (years != null) {
+      if (years is num) {
+        final value = years.toInt();
+        return value == 1 ? '1 year' : '$value years';
+      }
+      final text = years.toString().trim();
+      if (text.isNotEmpty) {
+        return text.toLowerCase().contains('year') ? text : '$text years';
+      }
+    }
+    return (json['experience'] ?? json['tatMessage'] ?? '').toString();
   }
 
   static String _formatPrice(dynamic amount) {
@@ -115,62 +135,70 @@ class SurgeryDoctorsResponseModel {
     final success = json['success'] == true || (code is num && code.toInt() == 200);
     final dataRaw = json['data'];
 
+    final List<SurgeryDoctorModel> doctors;
+    String resolvedProcedureName = procedureName;
+    String resolvedCity = city;
+    List<String> payloadHospitals = const [];
+    List<String> payloadSpecialties = const [];
+
     if (dataRaw is List) {
-      final doctors = (dataRaw)
-          .whereType<Map<String, dynamic>>()
-          .map(
-            (item) => SurgeryDoctorModel.fromJson(
-              item,
-              procedureName: procedureName,
-            ),
-          )
-          .where((doctor) => doctor.doctorName.isNotEmpty)
-          .toList();
-
-      final hospitals = doctors
-          .map((doctor) => doctor.hospitalName.trim())
-          .where((name) => name.isNotEmpty)
-          .toSet()
-          .toList();
-      final specialties = doctors
-          .map((doctor) => doctor.speciality.trim())
-          .where((name) => name.isNotEmpty)
-          .toSet()
-          .toList();
-
-      return SurgeryDoctorsResponseModel(
-        success: success,
-        message: (json['message'] ?? '').toString(),
+      doctors = _parseDoctorList(dataRaw, procedureName: procedureName);
+    } else {
+      final payload = _payloadMap(json);
+      final rawDoctors =
+          payload['doctors'] ?? payload['providers'] ?? payload['items'];
+      doctors = _parseDoctorList(
+        rawDoctors is List ? rawDoctors : const <dynamic>[],
         procedureName: procedureName,
-        city: city,
-        hospitals: hospitals,
-        specialties: specialties,
-        doctors: doctors,
       );
+      resolvedProcedureName =
+          (payload['procedureName'] ?? procedureName).toString();
+      resolvedCity = (payload['city'] ?? city).toString();
+      payloadHospitals = _toStringList(payload['hospitals']);
+      payloadSpecialties =
+          _toStringList(payload['specialties'] ?? payload['specialities']);
     }
 
-    final payload = _payloadMap(json);
-    final rawDoctors = payload['doctors'] ?? payload['providers'];
-    final rawHospitals = payload['hospitals'];
-    final rawSpecialties = payload['specialties'] ?? payload['specialities'];
+    final hospitals = payloadHospitals.isNotEmpty
+        ? payloadHospitals
+        : _uniqueNonEmpty(doctors.map((doctor) => doctor.hospitalName));
+    final specialties = payloadSpecialties.isNotEmpty
+        ? payloadSpecialties
+        : _uniqueNonEmpty(doctors.map((doctor) => doctor.speciality));
 
     return SurgeryDoctorsResponseModel(
       success: success,
       message: (json['message'] ?? '').toString(),
-      procedureName: (payload['procedureName'] ?? procedureName).toString(),
-      city: (payload['city'] ?? city).toString(),
-      hospitals: _toStringList(rawHospitals),
-      specialties: _toStringList(rawSpecialties),
-      doctors: (rawDoctors is List ? rawDoctors : const <dynamic>[])
-          .whereType<Map<String, dynamic>>()
-          .map(
-            (item) => SurgeryDoctorModel.fromJson(
-              item,
-              procedureName: procedureName,
-            ),
-          )
-          .toList(),
+      procedureName: resolvedProcedureName,
+      city: resolvedCity,
+      hospitals: hospitals,
+      specialties: specialties,
+      doctors: doctors,
     );
+  }
+
+  static List<SurgeryDoctorModel> _parseDoctorList(
+    List<dynamic> rawDoctors, {
+    required String procedureName,
+  }) {
+    return rawDoctors
+        .whereType<Map<String, dynamic>>()
+        .map(
+          (item) => SurgeryDoctorModel.fromJson(
+            item,
+            procedureName: procedureName,
+          ),
+        )
+        .where((doctor) => doctor.doctorName.isNotEmpty)
+        .toList();
+  }
+
+  static List<String> _uniqueNonEmpty(Iterable<String> values) {
+    return values
+        .map((value) => value.trim())
+        .where((value) => value.isNotEmpty)
+        .toSet()
+        .toList();
   }
 
   static Map<String, dynamic> _payloadMap(Map<String, dynamic> json) {

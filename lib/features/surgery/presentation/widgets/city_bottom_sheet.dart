@@ -153,9 +153,9 @@ class _CityBottomSheetState extends State<CityBottomSheet> {
                 SizedBox(
                   width: double.infinity,
                   child: FilledButton(
-                    onPressed: () {
-                      context.read<SurgeryCubit>().changeCity(selectedCity);
-                      context.pop();
+                    onPressed: () async {
+                      await context.read<SurgeryCubit>().changeCity(selectedCity);
+                      if (context.mounted) context.pop();
                     },
                     style: FilledButton.styleFrom(
                       backgroundColor: AppColors.clr0FAA9A,

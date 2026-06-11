@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/extensions/screen_util_extensions.dart';
+import '../../../../core/l10n/app_localizations.dart';
 import 'surgery_booking_filter_row_widget.dart';
 import 'surgery_booking_filter_selection.dart';
 import 'surgery_booking_filter_selection_sheet_widget.dart';
@@ -39,39 +40,54 @@ class _SurgeryBookingFilterSheetWidgetState
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
-    return SafeArea(
-      top: false,
+    return Dialog(
+      insetPadding: EdgeInsets.symmetric(horizontal: 20.w),
+      backgroundColor: Colors.white,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14.r)),
+      clipBehavior: Clip.antiAlias,
       child: Padding(
-        padding: EdgeInsets.fromLTRB(20.w, 14.h, 20.w, 20.h),
+        padding: EdgeInsets.fromLTRB(20.w, 20.h, 20.w, 20.h),
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Center(
-              child: Container(
-                width: 40.w,
-                height: 4.h,
-                decoration: BoxDecoration(
-                  color: const Color(0xFFCACACA),
-                  borderRadius: BorderRadius.circular(100.r),
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    'Filter',
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      color: const Color(0xFF061E40),
+                      fontWeight: FontWeight.w700,
+                      fontSize: 17.sp,
+                    ),
+                  ),
                 ),
-              ),
+                GestureDetector(
+                  onTap: () => context.pop(
+                    const SurgeryBookingFilterSelection(
+                      selectedHospital: null,
+                      selectedSpecialty: null,
+                    ),
+                  ),
+                  child: Text(
+                    l10n.commonReset,
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: const Color(0xFF0FAA9A),
+                      fontWeight: FontWeight.w600,
+                      fontSize: 14.sp,
+                    ),
+                  ),
+                ),
+              ],
             ),
             SizedBox(height: 16.h),
-            Text(
-              'Filter',
-              style: theme.textTheme.titleMedium?.copyWith(
-                color: Colors.black,
-                fontWeight: FontWeight.w700,
-                fontSize: 14.sp,
-              ),
-            ),
-            SizedBox(height: 14.h),
             SurgeryBookingFilterRowWidget(
               label: selectedHospital ?? 'Hospital',
               onTap: () async {
-                final selected = await _showSelectionSheet(
+                final selected = await _showSelectionDialog(
                   title: 'Hospital',
                   options: widget.hospitals,
                   selected: selectedHospital,
@@ -84,7 +100,7 @@ class _SurgeryBookingFilterSheetWidgetState
             SurgeryBookingFilterRowWidget(
               label: selectedSpecialty ?? 'Speciality',
               onTap: () async {
-                final selected = await _showSelectionSheet(
+                final selected = await _showSelectionDialog(
                   title: 'Speciality',
                   options: widget.specialties,
                   selected: selectedSpecialty,
@@ -93,7 +109,7 @@ class _SurgeryBookingFilterSheetWidgetState
                 setState(() => selectedSpecialty = selected);
               },
             ),
-            SizedBox(height: 15.h),
+            SizedBox(height: 18.h),
             SizedBox(
               width: double.infinity,
               child: FilledButton(
@@ -105,13 +121,13 @@ class _SurgeryBookingFilterSheetWidgetState
                 ),
                 style: FilledButton.styleFrom(
                   backgroundColor: const Color(0xFF0FAA9A),
-                  minimumSize: Size.fromHeight(54.h),
+                  minimumSize: Size.fromHeight(50.h),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12.909.r),
+                    borderRadius: BorderRadius.circular(12.r),
                   ),
                 ),
                 child: Text(
-                  'Proceed',
+                  l10n.commonProceed,
                   style: theme.textTheme.titleSmall?.copyWith(
                     color: Colors.white,
                     fontWeight: FontWeight.w700,
@@ -126,16 +142,14 @@ class _SurgeryBookingFilterSheetWidgetState
     );
   }
 
-  Future<String?> _showSelectionSheet({
+  Future<String?> _showSelectionDialog({
     required String title,
     required List<String> options,
     required String? selected,
   }) {
-    return showModalBottomSheet<String>(
+    return showDialog<String>(
       context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.white,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(3.r)),
+      barrierColor: Colors.black.withValues(alpha: 0.45),
       builder: (context) {
         return SurgeryBookingFilterSelectionSheetWidget(
           title: title,

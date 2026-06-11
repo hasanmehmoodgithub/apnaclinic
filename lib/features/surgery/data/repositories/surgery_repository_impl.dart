@@ -22,9 +22,20 @@ class SurgeryRepositoryImpl implements SurgeryRepository {
   final CitiesRepository citiesRepository;
 
   @override
-  Future<Either<ErrorMsg, SurgeryContentEntity>> getSurgeryContent() async {
+  Future<Either<ErrorMsg, SurgeryContentEntity>> getSurgeryContent({
+    String? city,
+  }) async {
     try {
-      final model = await remoteDataSource.getSurgeryContent();
+      String? cityId;
+      if (city != null && city.trim().isNotEmpty) {
+        await citiesRepository.loadCities();
+        cityId = citiesRepository.cityIdForName(city.trim());
+        if (cityId == null || cityId.isEmpty) {
+          return const Left('Please select a valid city.');
+        }
+      }
+
+      final model = await remoteDataSource.getSurgeryContent(cityId: cityId);
       final entity = SurgeryMapper.toEntity(model);
       await citiesRepository.loadCities();
       final cityNames = citiesRepository.cityNames;

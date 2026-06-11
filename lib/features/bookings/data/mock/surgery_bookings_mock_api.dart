@@ -45,6 +45,7 @@ class SurgeryBookingsMockApi {
       'appointmentWeekday': 'Thursday',
       'appointmentTime': '09am - 10am',
       'appointmentDateFull': '15th May,2025',
+      'partnerLogoUrl': 'https://placehold.co/80x80/F39A2E/ffffff?text=ola',
     },
     {
       'bookingId': 'sb-2026-0002',
@@ -70,6 +71,7 @@ class SurgeryBookingsMockApi {
       'appointmentWeekday': 'Tuesday',
       'appointmentTime': '11am - 12pm',
       'appointmentDateFull': '20th May,2025',
+      'partnerLogoUrl': 'https://placehold.co/80x80/1F3A8A/ffffff?text=doc',
     },
     {
       'bookingId': 'sb-2026-0003',
@@ -95,6 +97,7 @@ class SurgeryBookingsMockApi {
       'appointmentWeekday': 'Sunday',
       'appointmentTime': '02pm - 03pm',
       'appointmentDateFull': '25th May,2025',
+      'partnerLogoUrl': 'https://placehold.co/80x80/0FAA9A/ffffff?text=AKU',
     },
   ];
 }

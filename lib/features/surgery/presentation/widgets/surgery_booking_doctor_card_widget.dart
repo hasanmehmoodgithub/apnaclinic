@@ -1,4 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../../core/extensions/screen_util_extensions.dart';
 import 'surgery_booking_doctor_card_data.dart';
@@ -83,25 +85,19 @@ class SurgeryBookingDoctorCardWidget extends StatelessWidget {
                   ],
                 ),
               ),
-              Container(
+              SizedBox(
                 width: 35.r,
                 height: 35.r,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    color: Colors.black.withValues(alpha: 0.21),
-                    width: 1,
-                  ),
-                ),
-                clipBehavior: Clip.antiAlias,
-                child: ClipOval(
-                  child: Image.network(
-                    data.partnerLogoUrl,
-                    fit: BoxFit.cover,
-                    errorBuilder:
-                        (context, error, stackTrace) => const SizedBox.shrink(),
-                  ),
+                child: SvgPicture.network(
+                  data.partnerLogoUrl,
+                  width: 35.r,
+                  height: 35.r,
+                  fit: BoxFit.contain,
+                  placeholderBuilder: (context) => const CupertinoActivityIndicator(),
+                  errorBuilder: (context, error, stackTrace) {
+                    debugPrint("SVG ERROR: $error");
+                    return const Icon(Icons.image_not_supported);
+                  },
                 ),
               ),
             ],

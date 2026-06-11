@@ -696,6 +696,20 @@ class AppLocalizationsUr extends AppLocalizations {
       'اس وقت کوئی سرجری پروسیجر دستیاب نہیں۔';
 
   @override
+  String get surgeryNoDataFound => 'کوئی ڈیٹا نہیں ملا';
+
+  @override
+  String get commonReset => 'ری سیٹ';
+
+  @override
+  String get surgeryPatientValidationMessage =>
+      'براہ کرم تمام ضروری فیلڈز پُر کریں۔';
+
+  @override
+  String get surgeryEmergencyContactRequired =>
+      'براہ کرم ایمرجنسی رابطہ نمبر شامل کریں۔';
+
+  @override
   String get surgerySelectForSurgery => 'سرجری کے لیے منتخب کریں';
 
   @override

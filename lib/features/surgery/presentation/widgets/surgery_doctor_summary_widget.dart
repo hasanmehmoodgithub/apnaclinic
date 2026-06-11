@@ -1,4 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 
 import '../../../../core/extensions/screen_util_extensions.dart';
 
@@ -95,24 +97,19 @@ class SurgeryDoctorSummaryWidget extends StatelessWidget {
                   ],
                 ),
               ),
-              Container(
-                width: 30.r,
-                height: 30.r,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    color: Colors.black.withValues(alpha: 0.21),
-                    width: 1,
-                  ),
-                ),
-                clipBehavior: Clip.antiAlias,
-                child: ClipOval(
-                  child: Image.network(
-                    partnerLogoUrl,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) => const SizedBox.shrink(),
-                  ),
+              SizedBox(
+                width: 35.r,
+                height: 35.r,
+                child: SvgPicture.network(
+                  partnerLogoUrl,
+                  width: 35.r,
+                  height: 35.r,
+                  fit: BoxFit.contain,
+                  placeholderBuilder: (context) => const CupertinoActivityIndicator(),
+                  errorBuilder: (context, error, stackTrace) {
+                    debugPrint("SVG ERROR: $error");
+                    return const Icon(Icons.image_not_supported);
+                  },
                 ),
               ),
             ],

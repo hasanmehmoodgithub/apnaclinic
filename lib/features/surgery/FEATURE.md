@@ -5,14 +5,14 @@ Browse surgical procedures by city, select a doctor/hospital offer, complete pat
 
 ## Routes / entry
 - `AppRoutes.surgery` → `/surgery` (`SurgeryScreen` with `BlocProvider<SurgeryCubit>`)
-- Booking flow: `SurgeryBookingScreen` → `SurgeryPatientDetailsScreen` (Navigator push, shares `SurgeryCubit`)
+- Booking flow: `SurgeryBookingScreen` → `SurgeryPatientDetailsScreen` (Navigator push, shares `SurgeryCubit`). Book Now requires login (`AppPref.getLoginStatus()`); guests go to `AppRoutes.authLogin`.
 - Bookings: `SurgeryBookingsScreen` (Bookings dashboard tab) → `AppRoutes.surgeryBookingDetails`
 
 ## Data & APIs
 | Screen | Method | `AppUrls` key | Mock class |
 |--------|--------|---------------|------------|
-| Procedures list | GET | `surgeryProcedures` → `/api/v1/mobile/surgery/list` | `SurgeryMockApi` |
-| Doctor offers | GET | `surgeryProviders(surgeryId, cityId)` → `/api/v1/mobile/surgery/providers?surgeryId=&cityId=` | `SurgeryDoctorsMockApi` |
+| Procedures list | GET | `surgeryProcedures(cityId?)` → `/api/v1/mobile/surgery/list?cityId=` (optional city filter) | `SurgeryMockApi` |
+| Doctor offers | GET | `surgeryProviders(surgeryId, cityId)` → `/api/v1/mobile/surgery/providers?surgeryId=&cityId=` — response `data.items[]` (`doctorId`, `doctorName`, `profileImageUrl`, `specialty`, `yearsOfExperience`, `education`, `hospitalName`, `price`, `discountedPrice`, `partnerLogoUrl`, …) | `SurgeryDoctorsMockApi` |
 | Patient form | GET | `surgeryPatientForm(doctorId)` | `SurgeryPatientFormMockApi` |
 | Submit booking | POST | `surgeryBooking` | `SurgeryCheckoutMockApi` |
 
@@ -23,7 +23,7 @@ Bookings list/details: `SurgeryBookingsMockApi` in `lib/features/bookings/data/m
 Surgery mocks use `MockConfig.enableSurgeryMocks` (default false).
 
 ## State
-- `SurgeryCubit` / `SurgeryState`: content load, city/search, doctors load, patient form load, `submitSurgeryBooking`
+- `SurgeryCubit` / `SurgeryState`: content load (re-fetches procedures when city changes), city/search, doctors load, patient form load, `submitSurgeryBooking` (includes `gender`)
 - Status fields: `loadingStateStatus`, `doctorsLoadingStateStatus`, `patientFormLoadingStateStatus`
 
 ## DI
