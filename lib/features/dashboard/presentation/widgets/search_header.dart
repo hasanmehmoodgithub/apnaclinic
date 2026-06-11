@@ -109,88 +109,44 @@ class _SearchHeaderState extends State<SearchHeader> {
               left: 24.w,
               right: 24.w,
               bottom: -24.h,
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Expanded(
-                    child: Container(
-                      height: 54.h,
-                      decoration: BoxDecoration(
-                        color: AppColors.clrF3F4F6,
-                        borderRadius: BorderRadius.circular(10.r),
-                      ),
-                      alignment: Alignment.center,
-                      child: TextField(
-                        controller: _controller,
-                        focusNode: _focusNode,
-                        onSubmitted: _handleSubmitted,
-                        textInputAction: TextInputAction.search,
-                        style: theme.textTheme.bodyMedium?.copyWith(
-                          color: AppColors.clr111827,
-                        ),
-                        decoration: InputDecoration(
-                          isDense: true,
-                          hintText: l10n.dashboardSearchHint,
-                          hintStyle: theme.textTheme.bodyMedium?.copyWith(
-                            color: AppColors.clr1D4E89,
-                            fontWeight: FontWeight.w500,
-                            fontSize: 14.sp,
-                          ),
-                          border: InputBorder.none,
-                          contentPadding: EdgeInsets.symmetric(
-                            horizontal: 20.w,
-                            vertical: 14.h,
-                          ),
-                          suffixIcon: Material(
-                            color: Colors.transparent,
-                            child: InkWell(
-                              onTap: () {
-                                _dismissKeyboard();
-                                widget.onVoiceTap?.call();
-                              },
-                              borderRadius: BorderRadius.circular(22.r),
-                              child: Padding(
-                                padding: EdgeInsets.all(12.r),
-                                child: SizedBox(
-                                  width: 17.w,
-                                  height: 23.h,
-                                  child: SvgPicture.asset(
-                                    Assets.svgIcSearchMic,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
+              child: Container(
+                height: 54.h,
+                decoration: BoxDecoration(
+                  color: AppColors.clrF3F4F6,
+                  borderRadius: BorderRadius.circular(10.r),
+                ),
+                alignment: Alignment.center,
+                child: TextField(
+                  controller: _controller,
+                  focusNode: _focusNode,
+                  onSubmitted: _handleSubmitted,
+                  textInputAction: TextInputAction.search,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: AppColors.clr111827,
+                  ),
+                  decoration: InputDecoration(
+                    isDense: true,
+                    hintText: l10n.dashboardSearchHint,
+                    hintStyle: theme.textTheme.bodyMedium?.copyWith(
+                      color: AppColors.clr1D4E89.withOpacity(0.7),
+                      fontWeight: FontWeight.w500,
+                      fontSize: 14.sp,
+                    ),
+                    border: InputBorder.none,
+                    contentPadding: EdgeInsets.symmetric(
+                      horizontal: 20.w,
+                      vertical: 14.h,
+                    ),
+                    prefixIcon: Padding(
+                      padding: EdgeInsets.all(12.r),
+                      child: Icon(
+                        Icons.search_rounded,
+                        color: AppColors.clr024886,
+                        size: (34 / 1.35).r,
                       ),
                     ),
                   ),
-                  SizedBox(width: 6.w),
-                  Container(
-                    width: 54.r,
-                    height: 54.r,
-                    decoration: BoxDecoration(
-                      color: AppColors.clrF3F4F6,
-                      borderRadius: BorderRadius.circular(12.r),
-                    ),
-                    child: Material(
-                      color: Colors.transparent,
-                      borderRadius: BorderRadius.circular(12.r),
-                      clipBehavior: Clip.antiAlias,
-                      child: InkWell(
-                        onTap: _handleSearchTap,
-                        borderRadius: BorderRadius.circular(12.r),
-                        child: Center(
-                          child: Icon(
-                            Icons.search_rounded,
-                            color: AppColors.clr024886,
-                            size: (34 / 1.35).r,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
+                ),
               ),
             ),
           ],
