@@ -5,39 +5,38 @@ class LabTestLabOfferEntity extends Equatable {
     required this.labId,
     required this.labName,
     required this.labSlug,
+    required this.partnerId,
     required this.orderType,
     required this.price,
-    this.finalPrice,
+    required this.finalPrice,
     required this.discountPct,
     required this.supportsWalkIn,
     required this.homeSamplingFee,
     required this.supportsHomeSampling,
+    this.labLogoUrl = '',
   });
 
   final int labId;
   final String labName;
   final String labSlug;
+  final String partnerId;
   final String orderType;
   final int price;
-  final int? finalPrice;
+  final int finalPrice;
+  final String labLogoUrl;
   final int discountPct;
   final bool supportsWalkIn;
   final int homeSamplingFee;
   final bool supportsHomeSampling;
 
-  int get effectivePrice {
-    if (finalPrice != null) return finalPrice!;
-    if (discountPct > 0) {
-      return (price * (100 - discountPct) / 100).round();
-    }
-    return price;
-  }
+  int get effectivePrice => finalPrice;
 
   @override
   List<Object?> get props => [
     labId,
     labName,
     labSlug,
+    partnerId,
     orderType,
     price,
     finalPrice,
@@ -45,5 +44,6 @@ class LabTestLabOfferEntity extends Equatable {
     supportsWalkIn,
     homeSamplingFee,
     supportsHomeSampling,
+    labLogoUrl,
   ];
 }

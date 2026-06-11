@@ -744,6 +744,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get labTestSampleTypeLabel => 'Sample Type';
 
   @override
+  String get labTestSampleTypeNotAvailable => 'N/A';
+
+  @override
   String get labTestPleaseSelectCityFirst => 'Please select a city first.';
 
   @override

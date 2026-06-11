@@ -6,6 +6,7 @@ import '../../../../core/network/app_urls.dart';
 import '../../../../core/utils/error_handler.dart';
 import '../mock/lab_test_mock_api.dart';
 import '../models/lab_test_catalog_model.dart';
+import '../models/lab_test_detail_response_model.dart';
 import '../models/lab_test_mobile_tests_response_model.dart';
 import 'lab_test_remote_data_source.dart';
 
@@ -84,6 +85,38 @@ class LabTestRemoteDataSourceImpl implements LabTestRemoteDataSource {
 
       if (_isSuccessResponse(response)) {
         return LabTestMobileTestsResponseModel.fromJson(response);
+      }
+
+      final message = (response['message'] ?? AppStrings.ourServicesLoadError)
+          .toString();
+      return Future.error(message);
+    } catch (e) {
+      final message = ErrorHandler.handleExceptions(e, endpoint: endpoint);
+      return Future.error(message);
+    }
+  }
+
+  @override
+  Future<LabTestDetailResponseModel> getLabTestDetail({
+    required int testId,
+    required String cityId,
+  }) async {
+    final endpoint = AppUrls.labTestDetail(testId: testId, cityId: cityId);
+
+    try {
+      final Map<String, dynamic> response;
+      if (LabTestMockApi.useMockResponses) {
+        response = await mockApi.getLabTestDetailSuccessResponse(
+          testId: testId,
+          cityId: cityId,
+        );
+      } else {
+        response = await apiService.get(endpoint);
+        log('getLabTestDetail response: $response');
+      }
+
+      if (_isSuccessResponse(response)) {
+        return LabTestDetailResponseModel.fromJson(response);
       }
 
       final message = (response['message'] ?? AppStrings.ourServicesLoadError)

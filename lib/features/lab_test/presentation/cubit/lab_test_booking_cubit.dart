@@ -2,6 +2,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../domain/entities/lab_test_cart_item.dart';
 import '../../domain/repositories/lab_test_cart_repository.dart';
+import '../../domain/use_cases/get_lab_test_detail_use_case.dart';
 import '../lab_test_route_args.dart';
 import 'lab_test_booking_state.dart';
 
@@ -9,14 +10,53 @@ class LabTestBookingCubit extends Cubit<LabTestBookingState> {
   LabTestBookingCubit({
     required LabTestBookingArgs args,
     required LabTestCartRepository cartRepository,
+    required GetLabTestDetailUseCase getLabTestDetailUseCase,
   })  : _cartRepository = cartRepository,
+        _getLabTestDetailUseCase = getLabTestDetailUseCase,
         super(LabTestBookingState(args: args));
 
   final LabTestCartRepository _cartRepository;
+  final GetLabTestDetailUseCase _getLabTestDetailUseCase;
 
   Future<void> hydrate() async {
     final items = await _cartRepository.readCart();
     emit(state.copyWith(cartItems: items));
+  }
+
+  Future<void> loadDetailIfNeeded() async {
+    final args = state.args;
+    if (!args.isPending || args.testId == null) return;
+
+    final result = await _getLabTestDetailUseCase(
+      GetLabTestDetailParams(testId: args.testId!, cityName: args.city),
+    );
+
+    result.fold(
+      (message) => emit(state.copyWith(loadError: message)),
+      (detail) {
+        if (detail.partners.isEmpty || detail.labOffers.isEmpty) {
+          emit(
+            state.copyWith(
+              loadError: 'Lab test data unavailable',
+            ),
+          );
+          return;
+        }
+
+        emit(
+          state.copyWith(
+            args: LabTestBookingArgs.fromDetail(
+              detail: detail,
+              city: args.city,
+              requirementLines: args.requirementLines,
+            ),
+            clearLoadError: true,
+            partnerTab: 0,
+            selectedVendorIndex: 0,
+          ),
+        );
+      },
+    );
   }
 
   Future<void> clearCart() async {
@@ -25,6 +65,7 @@ class LabTestBookingCubit extends Cubit<LabTestBookingState> {
   }
 
   Future<void> addCurrentSelectionToCart() async {
+    if (!state.canAddSelectionToCart) return;
     final vendor = state.selectedVendor;
     final partner = state.selectedPartner;
     if (vendor == null || partner == null) return;
@@ -36,7 +77,8 @@ class LabTestBookingCubit extends Cubit<LabTestBookingState> {
 
   void setLabVisit(bool value) => emit(state.copyWith(labVisit: value));
 
-  void setPartnerTab(int index) => emit(state.copyWith(partnerTab: index));
+  void setPartnerTab(int index) =>
+      emit(state.copyWith(partnerTab: index, selectedVendorIndex: 0));
 
   void setVendorIndex(int index) =>
       emit(state.copyWith(selectedVendorIndex: index));
@@ -46,6 +88,7 @@ class LabTestBookingCubit extends Cubit<LabTestBookingState> {
     required LabTestBookingPartnerOption partner,
   }) {
     final a = state.args;
+    final pricing = state.currentPricing;
     return LabTestCartItem(
       testTitle: a.testTitle,
       city: a.city,
@@ -57,12 +100,12 @@ class LabTestBookingCubit extends Cubit<LabTestBookingState> {
       sampleType: a.sampleType,
       requirementLabel: a.requirementLabel,
       requirementLines: a.requirementLines,
-      discountedFee: a.discountedFee,
-      originalFee: a.originalFee,
-      discountPercent: a.discountPercent,
-      discountAmount: a.discountAmount,
-      discountCode: a.discountCode,
-      totalAmount: a.totalAmount,
+      discountedFee: pricing.discountedFee,
+      originalFee: pricing.originalFee,
+      discountPercent: pricing.discountPercent,
+      discountAmount: pricing.discountAmount,
+      discountCode: pricing.discountCode,
+      totalAmount: pricing.totalAmount,
       bookingMethodIsHomeSample: !state.labVisit,
     );
   }

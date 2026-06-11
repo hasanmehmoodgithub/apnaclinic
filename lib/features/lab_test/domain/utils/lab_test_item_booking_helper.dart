@@ -8,8 +8,17 @@ import 'lab_test_price_formatter.dart';
 class LabTestItemBookingHelper {
   LabTestItemBookingHelper._();
 
+  static const String orderTypeWalkIn = 'WALK_IN';
+  static const String orderTypeHomeSampling = 'HOME_SAMPLING';
+
+  static String orderTypeFor({required bool labVisit}) =>
+      labVisit ? orderTypeWalkIn : orderTypeHomeSampling;
+
   static LabTestPricingEntity pricingForItem(LabTestItemEntity item) {
-    final offer = _cheapestOffer(item.labOffers);
+    return pricingForOffer(_cheapestOffer(item.labOffers));
+  }
+
+  static LabTestPricingEntity pricingForOffer(LabTestLabOfferEntity? offer) {
     if (offer == null) {
       return const LabTestPricingEntity(
         discountedFee: '',
@@ -43,14 +52,76 @@ class LabTestItemBookingHelper {
         () => LabTestVendorEntity(
           id: offer.labId.toString(),
           name: offer.labName,
-          logoUrl: LabTestLabLogoResolver.logoUrlForLab(
-            labSlug: offer.labSlug,
-            labName: offer.labName,
-          ),
+          logoUrl: offer.labLogoUrl.isNotEmpty
+              ? offer.labLogoUrl
+              : LabTestLabLogoResolver.logoUrlForLab(
+                  labSlug: offer.labSlug,
+                  labName: offer.labName,
+                ),
         ),
       );
     }
     return vendorsById.values.toList(growable: false);
+  }
+
+  static List<LabTestVendorEntity> vendorsForPartner({
+    required List<LabTestLabOfferEntity> labOffers,
+    required String partnerId,
+    required bool labVisit,
+  }) {
+    final orderType = orderTypeFor(labVisit: labVisit);
+    final vendorsById = <int, LabTestVendorEntity>{};
+    for (final offer in labOffers) {
+      if (offer.partnerId != partnerId || offer.orderType != orderType) continue;
+      vendorsById.putIfAbsent(
+        offer.labId,
+        () => _vendorFromOffer(offer),
+      );
+    }
+    return vendorsById.values.toList(growable: false);
+  }
+
+  /// All labs for a partner regardless of walk-in / home sampling.
+  static List<LabTestVendorEntity> vendorsForPartnerAll({
+    required List<LabTestLabOfferEntity> labOffers,
+    required String partnerId,
+  }) {
+    final vendorsById = <int, LabTestVendorEntity>{};
+    for (final offer in labOffers) {
+      if (offer.partnerId != partnerId) continue;
+      vendorsById.putIfAbsent(offer.labId, () => _vendorFromOffer(offer));
+    }
+    return vendorsById.values.toList(growable: false);
+  }
+
+  static LabTestVendorEntity _vendorFromOffer(LabTestLabOfferEntity offer) {
+    return LabTestVendorEntity(
+      id: offer.labId.toString(),
+      name: offer.labName,
+      logoUrl: offer.labLogoUrl.isNotEmpty
+          ? offer.labLogoUrl
+          : LabTestLabLogoResolver.logoUrlForLab(
+              labSlug: offer.labSlug,
+              labName: offer.labName,
+            ),
+    );
+  }
+
+  static LabTestLabOfferEntity? offerForSelection({
+    required List<LabTestLabOfferEntity> labOffers,
+    required String partnerId,
+    required int labId,
+    required bool labVisit,
+  }) {
+    final orderType = orderTypeFor(labVisit: labVisit);
+    for (final offer in labOffers) {
+      if (offer.partnerId == partnerId &&
+          offer.labId == labId &&
+          offer.orderType == orderType) {
+        return offer;
+      }
+    }
+    return null;
   }
 
   static LabTestLabOfferEntity? _cheapestOffer(

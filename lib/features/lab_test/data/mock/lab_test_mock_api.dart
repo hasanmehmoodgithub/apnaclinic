@@ -1,7 +1,7 @@
 import '../../../../core/config/mock_config.dart';
 
 class LabTestMockApi {
-  static bool useMockResponses = MockConfig.enableMocks;
+  static bool useMockResponses = MockConfig.enableLabTestMocks;
 
   Future<Map<String, dynamic>> getLabTestCatalogSuccessResponse() async {
     await Future<void>.delayed(const Duration(milliseconds: 600));
@@ -255,6 +255,192 @@ class LabTestMockApi {
         'page': page,
         'limit': limit,
         'totalPages': 1,
+      },
+      'timestamp': DateTime.now().toUtc().toIso8601String(),
+    };
+  }
+
+  Future<Map<String, dynamic>> getLabTestDetailSuccessResponse({
+    required int testId,
+    required String cityId,
+  }) async {
+    await Future<void>.delayed(const Duration(milliseconds: 600));
+
+    return {
+      'success': true,
+      'message': 'Test detail retrieved',
+      'code': 200,
+      'data': {
+        'id': testId,
+        'name': 'Hemoglobin (Hb)',
+        'description':
+            'Measures the amount of hemoglobin in blood to detect anemia or polycythemia.',
+        'sampleType': 'BLOOD',
+        'fastingRequired': false,
+        'fastingHours': null,
+        'prescriptionRequired': false,
+        'turnaroundHours': 4,
+        'partners': [
+          {
+            'partnerId': 1,
+            'partnerName': 'MedIQ',
+            'partnerLogoUrl': 'ff835808-dd12-40c0-b1ca-25c1e3c84942.svg',
+            'labs': [
+              {
+                'labId': 4,
+                'labName': 'Chughtai Lab (CLL)',
+                'labSlug': 'chughtai-lab-mediq',
+                'logoUrl':
+                    'http://bucket-route-minio.apps.jpocp.jazz.com.pk/apna-clinic/8d545fcc5545152eb461f346e5.svg',
+                'rating': '4.50',
+                'estimatedReportHours': 24,
+                'supportsHomeSampling': true,
+                'supportsWalkIn': true,
+                'homeSamplingFee': '250.00',
+                'pricing': {
+                  'HOME_SAMPLING': {
+                    'price': 470,
+                    'discountPct': 0,
+                    'finalPrice': 470,
+                  },
+                  'WALK_IN': {
+                    'price': 320,
+                    'discountPct': 0,
+                    'finalPrice': 320,
+                  },
+                },
+              },
+              {
+                'labId': 3,
+                'labName': 'Nayab Labs',
+                'labSlug': 'nayab-labs',
+                'logoUrl':
+                    'http://bucket-route-minio.apps.jpocp.jazz.com.pk/apna-clinic/a9db7b8c3b5ef31adeefdfacc2.svg',
+                'rating': '4.30',
+                'estimatedReportHours': 24,
+                'supportsHomeSampling': true,
+                'supportsWalkIn': true,
+                'homeSamplingFee': '300.00',
+                'pricing': {
+                  'HOME_SAMPLING': {
+                    'price': 400,
+                    'discountPct': 5,
+                    'finalPrice': 380,
+                  },
+                  'WALK_IN': {
+                    'price': 250,
+                    'discountPct': 5,
+                    'finalPrice': 238,
+                  },
+                },
+              },
+            ],
+          },
+          {
+            'partnerId': 2,
+            'partnerName': 'Oladoc',
+            'partnerLogoUrl': '8b64541a-a887-4689-bf40-7894fcfb515d.svg',
+            'labs': [
+              {
+                'labId': 1,
+                'labName': 'Chughtai Lab (CLL)',
+                'labSlug': 'chughtai-lab',
+                'logoUrl':
+                    'http://bucket-route-minio.apps.jpocp.jazz.com.pk/apna-clinic/c4991fae115edbfb40d8b6bfb8.svg',
+                'rating': '4.50',
+                'estimatedReportHours': 24,
+                'supportsHomeSampling': true,
+                'supportsWalkIn': true,
+                'homeSamplingFee': '250.00',
+                'pricing': {
+                  'HOME_SAMPLING': {
+                    'price': 450,
+                    'discountPct': 0,
+                    'finalPrice': 450,
+                  },
+                  'WALK_IN': {
+                    'price': 300,
+                    'discountPct': 0,
+                    'finalPrice': 300,
+                  },
+                },
+              },
+              {
+                'labId': 2,
+                'labName': 'Excel Lab',
+                'labSlug': 'excel-lab',
+                'logoUrl':
+                    'http://bucket-route-minio.apps.jpocp.jazz.com.pk/apna-clinic/c9d22260aad9586a15ee41e325.svg',
+                'rating': '4.20',
+                'estimatedReportHours': 36,
+                'supportsHomeSampling': true,
+                'supportsWalkIn': true,
+                'homeSamplingFee': '200.00',
+                'pricing': {
+                  'HOME_SAMPLING': {
+                    'price': 420,
+                    'discountPct': 10,
+                    'finalPrice': 378,
+                  },
+                  'WALK_IN': {
+                    'price': 280,
+                    'discountPct': 10,
+                    'finalPrice': 252,
+                  },
+                },
+              },
+            ],
+          },
+          {
+            'partnerId': 3,
+            'partnerName': 'Jazz',
+            'partnerLogoUrl': null,
+            'labs': [
+              {
+                'labId': 7,
+                'labName': 'IDC',
+                'labSlug': 'idc',
+                'logoUrl':
+                    'http://bucket-route-minio.apps.jpocp.jazz.com.pk/apna-clinic/c87fb89e69fccbe1121d2ed1f5.svg',
+                'rating': '4.20',
+                'estimatedReportHours': 36,
+                'supportsHomeSampling': true,
+                'supportsWalkIn': true,
+                'homeSamplingFee': '200.00',
+                'pricing': {
+                  'HOME_SAMPLING': {
+                    'price': 390,
+                    'discountPct': 8,
+                    'finalPrice': 359,
+                  },
+                  'WALK_IN': {
+                    'price': 240,
+                    'discountPct': 8,
+                    'finalPrice': 221,
+                  },
+                },
+              },
+              {
+                'labId': 6,
+                'labName': 'Shaukat Khanum Labs',
+                'labSlug': 'shaukat-khanum-labs',
+                'logoUrl': null,
+                'rating': '4.70',
+                'estimatedReportHours': 48,
+                'supportsHomeSampling': false,
+                'supportsWalkIn': true,
+                'homeSamplingFee': '0.00',
+                'pricing': {
+                  'WALK_IN': {
+                    'price': 350,
+                    'discountPct': 0,
+                    'finalPrice': 350,
+                  },
+                },
+              },
+            ],
+          },
+        ],
       },
       'timestamp': DateTime.now().toUtc().toIso8601String(),
     };

@@ -135,6 +135,13 @@ class AppUrls {
     return '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/lab/tests?$encoded';
   }
 
+  /// Lab test detail with per-partner labs and pricing for a city.
+  static String labTestDetail({
+    required int testId,
+    required String cityId,
+  }) =>
+      '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/lab/tests/$testId?cityId=${Uri.encodeComponent(cityId)}';
+
   // ============================================
   // 3rd Party Integration Support (Full URLs)
   // ============================================

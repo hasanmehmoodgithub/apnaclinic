@@ -16,7 +16,6 @@ import '../../../../core/preference/app_pref_keys.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/widgets/app_scaffold_gradient.dart';
 import '../../domain/entities/lab_test_item_entity.dart';
-import '../../domain/utils/lab_test_item_booking_helper.dart';
 import '../cubit/lab_test_cubit.dart';
 import '../cubit/lab_test_state.dart';
 import '../lab_test_route_args.dart';
@@ -53,13 +52,6 @@ class _LabTestScreenState extends State<LabTestScreen> {
         ? null
         : rawSavedCity;
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted) return;
-      _resolveInitialCitySelection(
-        context,
-        context.read<LabTestCubit>().state,
-      );
-    });
   }
 
   @override
@@ -161,9 +153,8 @@ class _LabTestScreenState extends State<LabTestScreen> {
     );
     _isCityDialogOpen = false;
     if (picked != null && context.mounted) {
-      context.read<LabTestCubit>().selectCity(picked);
       _savedCity = picked;
-      await _appPref.setString(AppPrefKeys.labTestSelectedCity, picked);
+      await context.read<LabTestCubit>().selectCity(picked);
     }
   }
 
@@ -172,34 +163,32 @@ class _LabTestScreenState extends State<LabTestScreen> {
     LabTestState state,
   ) {
     if (_hasResolvedInitialCity) return;
-    if (state.catalogLoadingStateStatus == StateStatus.loading) return;
+    if (state.catalogLoadingStateStatus == StateStatus.loading ||
+        state.catalogLoadingStateStatus == StateStatus.refreshing) {
+      return;
+    }
 
     final savedCity = _savedCity?.trim();
     final hasSavedCity = savedCity != null && savedCity.isNotEmpty;
 
-    if (hasSavedCity) {
-      if (state.cities.isNotEmpty && !state.cities.contains(savedCity)) {
-        _savedCity = null;
-        _appPref.remove(AppPrefKeys.labTestSelectedCity);
-      } else if (state.cities.isEmpty &&
-          state.catalogLoadingStateStatus != StateStatus.error) {
-        return;
-      } else {
-        if (state.selectedCity != savedCity) {
-          context.read<LabTestCubit>().selectCity(savedCity);
-        }
-        _hasResolvedInitialCity = true;
-        return;
-      }
+    final cubit = context.read<LabTestCubit>();
+    if (hasSavedCity &&
+        state.cities.isNotEmpty &&
+        !cubit.isCityInList(savedCity)) {
+      _savedCity = null;
+      _appPref.remove(AppPrefKeys.labTestSelectedCity);
     }
 
-    if (state.selectedCity != null && state.selectedCity!.isNotEmpty) {
+    final selectedCity = state.selectedCity;
+    if (selectedCity != null && selectedCity.isNotEmpty) {
       _hasResolvedInitialCity = true;
       return;
     }
 
     if (state.cities.isEmpty) {
-      if (state.catalogLoadingStateStatus == StateStatus.error) return;
+      if (state.catalogLoadingStateStatus == StateStatus.error) {
+        _hasResolvedInitialCity = true;
+      }
       return;
     }
 
@@ -229,48 +218,21 @@ class _LabTestScreenState extends State<LabTestScreen> {
       return;
     }
 
-    final vendors = LabTestItemBookingHelper.vendorsForItem(item);
-    if (vendors.isEmpty || state.partners.isEmpty) {
+    final testId = int.tryParse(item.id);
+    if (testId == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.labTestDataStillLoading)),
+        SnackBar(content: Text(l10n.labTestBookingDataUnavailable)),
       );
       return;
     }
 
-    final pricing = LabTestItemBookingHelper.pricingForItem(item);
     context.pushNamed(
       AppRoutes.labTestBooking,
-      extra: LabTestBookingArgs(
+      extra: LabTestBookingArgs.pending(
+        testId: testId,
         city: selectedCity,
-        testTitle: item.title,
-        sampleType: item.sampleType,
-        requirementLabel: item.requirement,
         requirementLines: state.requirementLines,
-        partners: state.partners
-            .map(
-              (p) => LabTestBookingPartnerOption(
-                id: p.id,
-                name: p.name,
-                logoUrl: p.logoUrl,
-              ),
-            )
-            .toList(growable: false),
-        vendors: vendors
-            .map(
-              (v) => LabTestBookingVendorOption(
-                id: v.id,
-                name: v.name,
-                logoUrl: v.logoUrl,
-                markUrl: v.markUrl,
-              ),
-            )
-            .toList(growable: false),
-        discountedFee: item.discountedFee ?? pricing.discountedFee,
-        originalFee: item.originalFee ?? pricing.originalFee,
-        discountPercent: pricing.discountPercent,
-        discountAmount: pricing.discountAmount,
-        discountCode: pricing.discountCode,
-        totalAmount: pricing.totalAmount,
+        testTitle: item.title,
       ),
     );
   }

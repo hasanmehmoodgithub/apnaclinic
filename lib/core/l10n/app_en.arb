@@ -331,6 +331,7 @@
   "labTestSelectCitySheetSearchHint": "Search by name",
   "labTestRequirementLabel": "Requirement",
   "labTestSampleTypeLabel": "Sample Type",
+  "labTestSampleTypeNotAvailable": "N/A",
   "labTestPleaseSelectCityFirst": "Please select a city first.",
   "labTestDataStillLoading": "Lab test data is still loading.",
   "labTestCatalogLoadFailed": "Failed to load lab tests.",

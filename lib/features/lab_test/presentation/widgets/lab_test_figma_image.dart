@@ -1,10 +1,11 @@
 import 'dart:convert';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-/// Displays a local SVG asset exported from Figma.
+/// Displays a local SVG asset or remote image for lab-test UI.
 class LabTestFigmaImage extends StatelessWidget {
   const LabTestFigmaImage({
     super.key,
@@ -25,6 +26,8 @@ class LabTestFigmaImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final normalized = url.trim();
+
     Widget fallback() => Container(
       width: width,
       height: height,
@@ -40,9 +43,38 @@ class LabTestFigmaImage extends StatelessWidget {
       ),
     );
 
-    final child = _needsEmbeddedPngFallback
+    if (normalized.isEmpty) {
+      return fallback();
+    }
+
+    if (normalized.startsWith('http')) {
+      final lower = normalized.toLowerCase();
+      // Remote SVG parsing is unreliable; known labs/partners use bundled assets.
+      if (lower.endsWith('.svg')) {
+        return fallback();
+      }
+
+      final networkChild = CachedNetworkImage(
+        imageUrl: normalized,
+        width: width,
+        height: height,
+        fit: fit,
+        placeholder: (_, _) => fallback(),
+        errorWidget: (_, _, _) => fallback(),
+      );
+      if (borderRadius != null) {
+        return ClipRRect(borderRadius: borderRadius!, child: networkChild);
+      }
+      return networkChild;
+    }
+
+    if (!normalized.startsWith('assets/')) {
+      return fallback();
+    }
+
+    final child = _needsEmbeddedPngFallback(normalized)
         ? FutureBuilder<Uint8List?>(
-            future: _loadEmbeddedPng(url),
+            future: _loadEmbeddedPng(normalized),
             builder: (context, snapshot) {
               final bytes = snapshot.data;
               if (bytes == null) {
@@ -58,23 +90,23 @@ class LabTestFigmaImage extends StatelessWidget {
             },
           )
         : SvgPicture.asset(
-      url,
-      width: width,
-      height: height,
-      fit: fit,
-      placeholderBuilder: (_) => SizedBox(
-        width: width,
-        height: height,
-        child: const Center(
-          child: SizedBox(
-            width: 18,
-            height: 18,
-            child: CircularProgressIndicator(strokeWidth: 2),
-          ),
-        ),
-      ),
-      errorBuilder: (_, _, _) => fallback(),
-    );
+            normalized,
+            width: width,
+            height: height,
+            fit: fit,
+            placeholderBuilder: (_) => SizedBox(
+              width: width,
+              height: height,
+              child: const Center(
+                child: SizedBox(
+                  width: 18,
+                  height: 18,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                ),
+              ),
+            ),
+            errorBuilder: (_, _, _) => fallback(),
+          );
 
     if (borderRadius != null) {
       return ClipRRect(borderRadius: borderRadius!, child: child);
@@ -82,8 +114,8 @@ class LabTestFigmaImage extends StatelessWidget {
     return child;
   }
 
-  bool get _needsEmbeddedPngFallback {
-    final lower = url.toLowerCase();
+  static bool _needsEmbeddedPngFallback(String assetPath) {
+    final lower = assetPath.toLowerCase();
     return lower.endsWith('/idc_logo.svg') ||
         lower.endsWith('/naya_lab_logo.svg') ||
         lower.endsWith('/mediq_logo.svg') ||

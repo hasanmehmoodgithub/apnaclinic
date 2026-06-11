@@ -1508,6 +1508,12 @@ abstract class AppLocalizations {
   /// **'Sample Type'**
   String get labTestSampleTypeLabel;
 
+  /// No description provided for @labTestSampleTypeNotAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'N/A'**
+  String get labTestSampleTypeNotAvailable;
+
   /// No description provided for @labTestPleaseSelectCityFirst.
   ///
   /// In en, this message translates to:

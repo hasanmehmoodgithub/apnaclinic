@@ -316,6 +316,7 @@ class AppRouter {
             create: (_) => LabTestBookingCubit(
               args: extra,
               cartRepository: sl<LabTestCartRepository>(),
+              getLabTestDetailUseCase: sl(),
             ),
             child: const LabTestBookingScreen(),
           );

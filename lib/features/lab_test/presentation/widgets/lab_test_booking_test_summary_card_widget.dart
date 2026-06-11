@@ -15,6 +15,7 @@ class LabTestBookingTestSummaryCardWidget extends StatelessWidget {
     required this.requirementLabel,
     required this.sampleTypeLabel,
     this.requirement,
+    this.showPricing = true,
   });
 
   final String title;
@@ -25,6 +26,7 @@ class LabTestBookingTestSummaryCardWidget extends StatelessWidget {
   final String requirementLabel;
   final String sampleTypeLabel;
   final String? requirement;
+  final bool showPricing;
 
   @override
   Widget build(BuildContext context) {
@@ -63,16 +65,18 @@ class LabTestBookingTestSummaryCardWidget extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  labName,
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    fontFamily: 'Afacad',
-                    fontSize: 14.sp,
-                    height: 1.2,
-                    color: Colors.black,
+                if (labName.isNotEmpty) ...[
+                  Text(
+                    labName,
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      fontFamily: 'Afacad',
+                      fontSize: 14.sp,
+                      height: 1.2,
+                      color: Colors.black,
+                    ),
                   ),
-                ),
-                SizedBox(height: 8.h),
+                  SizedBox(height: 8.h),
+                ],
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
@@ -175,28 +179,31 @@ class LabTestBookingTestSummaryCardWidget extends StatelessWidget {
                         ],
                       ),
                     ),
-                    SizedBox(width: 8.w),
-                    LabTestPricePill(
-                      originalFee: originalFee,
-                      discountedFee: discountedFee,
-                      borderColor: const Color(0xFFF1F1F1),
-                      outerBorderRadius: 26,
-                      discountedBorderRadius: 24.444,
-                      originalPadding: const EdgeInsets.all(6.984),
-                      discountedPadding: const EdgeInsets.all(6.984),
-                      discountedBackgroundColor: const Color(0xFF0FAA9A),
-                      originalTextColor: const Color(0xFF979797),
-                      originalTextStyle: theme.textTheme.bodySmall?.copyWith(
-                        fontFamily: 'Afacad',
-                        fontSize: 12.sp,
-                        height: 1.3,
+                    if (showPricing) ...[
+                      SizedBox(width: 8.w),
+                      LabTestPricePill(
+                        originalFee: originalFee,
+                        discountedFee: discountedFee,
+                        borderColor: const Color(0xFFF1F1F1),
+                        outerBorderRadius: 26,
+                        discountedBorderRadius: 24.444,
+                        originalPadding: const EdgeInsets.all(6.984),
+                        discountedPadding: const EdgeInsets.all(6.984),
+                        discountedBackgroundColor: const Color(0xFF0FAA9A),
+                        originalTextColor: const Color(0xFF979797),
+                        originalTextStyle: theme.textTheme.bodySmall?.copyWith(
+                          fontFamily: 'Afacad',
+                          fontSize: 12.sp,
+                          height: 1.3,
+                        ),
+                        discountedTextStyle:
+                            theme.textTheme.bodyMedium?.copyWith(
+                          fontFamily: 'Afacad',
+                          fontSize: 12.sp,
+                          height: 1.3,
+                        ),
                       ),
-                      discountedTextStyle: theme.textTheme.bodyMedium?.copyWith(
-                        fontFamily: 'Afacad',
-                        fontSize: 12.sp,
-                        height: 1.3,
-                      ),
-                    ),
+                    ],
                   ],
                 ),
               ],

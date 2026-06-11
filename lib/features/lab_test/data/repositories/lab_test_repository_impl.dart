@@ -1,10 +1,13 @@
 import '../../../../core/cities/domain/repositories/cities_repository.dart';
 import '../../../../core/functional/functional_export.dart';
 import '../../domain/entities/lab_test_catalog_entity.dart';
+import '../../domain/entities/lab_test_detail_entity.dart';
 import '../../domain/repositories/lab_test_repository.dart';
 import '../../domain/use_cases/get_lab_test_catalog_use_case.dart';
+import '../../domain/use_cases/get_lab_test_detail_use_case.dart';
 import '../constants/lab_test_catalog_defaults.dart';
 import '../data_sources/lab_test_remote_data_source.dart';
+import '../mappers/lab_test_detail_mapper.dart';
 import '../mappers/lab_test_mobile_tests_mapper.dart';
 
 class LabTestRepositoryImpl implements LabTestRepository {
@@ -60,6 +63,27 @@ class LabTestRepositoryImpl implements LabTestRepository {
           pricing: mapped.pricing,
         ),
       );
+    } catch (e) {
+      return Left(e.toString());
+    }
+  }
+
+  @override
+  Future<Either<ErrorMsg, LabTestDetailEntity>> getLabTestDetail(
+    GetLabTestDetailParams params,
+  ) async {
+    try {
+      await citiesRepository.loadCities();
+      final cityId = citiesRepository.cityIdForName(params.cityName);
+      if (cityId == null || cityId.isEmpty) {
+        return const Left('Please select a valid city.');
+      }
+
+      final model = await remoteDataSource.getLabTestDetail(
+        testId: params.testId,
+        cityId: cityId,
+      );
+      return Right(LabTestDetailMapper.toEntity(model));
     } catch (e) {
       return Left(e.toString());
     }

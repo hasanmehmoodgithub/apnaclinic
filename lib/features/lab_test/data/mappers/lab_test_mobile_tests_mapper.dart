@@ -5,6 +5,7 @@ import '../../domain/entities/lab_test_pricing_entity.dart';
 import '../../domain/entities/lab_test_vendor_entity.dart';
 import '../../domain/utils/lab_test_item_booking_helper.dart';
 import '../../domain/utils/lab_test_lab_logo_resolver.dart';
+import '../../domain/utils/lab_test_partner_resolver.dart';
 import '../../domain/utils/lab_test_price_formatter.dart';
 import '../constants/lab_test_catalog_defaults.dart';
 import '../models/lab_test_mobile_tests_response_model.dart';
@@ -59,13 +60,21 @@ class LabTestMobileTestsMapper {
       labId: model.labId,
       labName: model.labName,
       labSlug: model.labSlug,
+      partnerId: LabTestPartnerResolver.partnerIdForLabSlug(model.labSlug),
       orderType: model.orderType,
       price: model.price,
-      finalPrice: model.finalPrice,
+      finalPrice: model.finalPrice ??
+          (model.discountPct > 0
+              ? (model.price * (100 - model.discountPct) / 100).round()
+              : model.price),
       discountPct: model.discountPct,
       supportsWalkIn: model.supportsWalkIn,
       homeSamplingFee: model.homeSamplingFee,
       supportsHomeSampling: model.supportsHomeSampling,
+      labLogoUrl: LabTestLabLogoResolver.logoUrlForLab(
+        labSlug: model.labSlug,
+        labName: model.labName,
+      ),
     );
   }
 
