@@ -696,6 +696,20 @@ class AppLocalizationsEn extends AppLocalizations {
       'No surgery procedures available right now.';
 
   @override
+  String get surgeryNoDataFound => 'No data found';
+
+  @override
+  String get commonReset => 'Reset';
+
+  @override
+  String get surgeryPatientValidationMessage =>
+      'Please fill in all required fields.';
+
+  @override
+  String get surgeryEmergencyContactRequired =>
+      'Please add emergency contact number.';
+
+  @override
   String get surgerySelectForSurgery => 'Select for Surgery';
 
   @override

@@ -26,6 +26,7 @@ class SurgeryBookingListItemModel {
     required this.appointmentWeekday,
     required this.appointmentTime,
     required this.appointmentDateFull,
+    required this.partnerLogoUrl,
   });
 
   final String bookingId;
@@ -51,6 +52,7 @@ class SurgeryBookingListItemModel {
   final String appointmentWeekday;
   final String appointmentTime;
   final String appointmentDateFull;
+  final String partnerLogoUrl;
 
   factory SurgeryBookingListItemModel.fromJson(Map<String, dynamic> json) {
     return SurgeryBookingListItemModel(
@@ -99,6 +101,8 @@ class SurgeryBookingListItemModel {
               json['appointment_date_full'] ??
               '')
           .toString(),
+      partnerLogoUrl:
+          (json['partnerLogoUrl'] ?? json['partner_logo_url'] ?? '').toString(),
     );
   }
 
@@ -125,6 +129,7 @@ class SurgeryBookingListItemModel {
       appointmentWeekday: appointmentWeekday,
       appointmentTime: appointmentTime,
       appointmentDateFull: appointmentDateFull,
+      partnerLogoUrl: partnerLogoUrl,
     );
   }
 

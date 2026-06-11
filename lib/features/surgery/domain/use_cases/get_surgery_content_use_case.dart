@@ -4,7 +4,9 @@ import '../entities/surgery_procedure_entity.dart';
 import '../repositories/surgery_repository.dart';
 
 class GetSurgeryContentParams {
-  const GetSurgeryContentParams();
+  const GetSurgeryContentParams({this.city});
+
+  final String? city;
 }
 
 class GetSurgeryContentUseCase
@@ -17,6 +19,6 @@ class GetSurgeryContentUseCase
   Future<Either<ErrorMsg, SurgeryContentEntity>> call(
     GetSurgeryContentParams params,
   ) async {
-    return await repository.getSurgeryContent();
+    return await repository.getSurgeryContent(city: params.city);
   }
 }

@@ -29,7 +29,8 @@ class SurgeryCubit extends Cubit<SurgeryState> {
     emit(newState);
   }
 
-  Future<void> loadSurgeryContent({bool refresh = false}) async {
+  Future<void> loadSurgeryContent({bool refresh = false, String? city}) async {
+    final resolvedCity = (city ?? state.selectedCity).trim();
     _safeEmit(
       state.copyWith(
         loadingStateStatus: refresh
@@ -40,7 +41,9 @@ class SurgeryCubit extends Cubit<SurgeryState> {
     );
 
     final result = await getSurgeryContentUseCase(
-      const GetSurgeryContentParams(),
+      GetSurgeryContentParams(
+        city: resolvedCity.isNotEmpty ? resolvedCity : null,
+      ),
     );
     if (isClosed) return;
 
@@ -51,18 +54,22 @@ class SurgeryCubit extends Cubit<SurgeryState> {
           errorMessage: error,
         ),
       ),
-      (content) => _safeEmit(
-        state.copyWith(
-          loadingStateStatus: content.procedures.isEmpty
-              ? StateStatus.empty
-              : StateStatus.success,
-          content: content,
-          selectedCity: content.defaultCity.isNotEmpty
-              ? content.defaultCity
-              : state.selectedCity,
-          errorMessage: null,
-        ),
-      ),
+      (content) {
+        final nextCity = resolvedCity.isNotEmpty
+            ? resolvedCity
+            : (content.defaultCity.isNotEmpty
+                ? content.defaultCity
+                : state.selectedCity);
+        _safeEmit(
+          state.copyWith(
+            loadingStateStatus: StateStatus.success,
+            content: content,
+            selectedCity: nextCity,
+            searchQuery: refresh ? '' : state.searchQuery,
+            errorMessage: null,
+          ),
+        );
+      },
     );
   }
 
@@ -140,8 +147,10 @@ class SurgeryCubit extends Cubit<SurgeryState> {
     );
   }
 
-  void changeCity(String city) {
-    _safeEmit(state.copyWith(selectedCity: city));
+  Future<void> changeCity(String city) async {
+    if (city.isEmpty || city == state.selectedCity) return;
+    _safeEmit(state.copyWith(selectedCity: city, searchQuery: ''));
+    await loadSurgeryContent(refresh: true, city: city);
   }
 
   void updateSearchQuery(String query) {
@@ -174,6 +183,7 @@ class SurgeryCubit extends Cubit<SurgeryState> {
     required String surgeryName,
     required String doctorName,
     required String hospitalName,
+    required String gender,
   }) async {
     return await submitSurgeryBookingUseCase(
       SubmitSurgeryBookingParams(
@@ -184,6 +194,7 @@ class SurgeryCubit extends Cubit<SurgeryState> {
         surgeryName: surgeryName,
         doctorName: doctorName,
         hospitalName: hospitalName,
+        gender: gender,
       ),
     );
   }

@@ -32,6 +32,7 @@ class SurgeryDetailsItem {
   final String appointmentWeekday;
   final String appointmentTime;
   final String appointmentDateFull; // e.g. "15th May,2025"
+  final String partnerLogoUrl;
 
   const SurgeryDetailsItem({
     required this.procedure,
@@ -54,5 +55,6 @@ class SurgeryDetailsItem {
     required this.appointmentWeekday,
     required this.appointmentTime,
     required this.appointmentDateFull,
+    required this.partnerLogoUrl,
   });
 }

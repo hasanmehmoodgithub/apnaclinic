@@ -12,6 +12,7 @@ class SubmitSurgeryBookingParams {
     required this.surgeryName,
     required this.doctorName,
     required this.hospitalName,
+    required this.gender,
   });
 
   final String patientName;
@@ -21,6 +22,7 @@ class SubmitSurgeryBookingParams {
   final String surgeryName;
   final String doctorName;
   final String hospitalName;
+  final String gender;
 
   SurgeryBookingRequestEntity toEntity() {
     return SurgeryBookingRequestEntity(
@@ -31,6 +33,7 @@ class SubmitSurgeryBookingParams {
       surgeryName: surgeryName,
       doctorName: doctorName,
       hospitalName: hospitalName,
+      gender: gender,
     );
   }
 }

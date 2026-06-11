@@ -36,13 +36,15 @@ class SurgeryRemoteDataSourceImpl implements SurgeryRemoteDataSource {
   }
 
   @override
-  Future<SurgeryContentModel> getSurgeryContent() async {
+  Future<SurgeryContentModel> getSurgeryContent({String? cityId}) async {
     try {
       final Map<String, dynamic> response;
       if (SurgeryMockApi.useMockResponses) {
-        response = await mockApi.getSurgeryContentSuccessResponse();
+        response = await mockApi.getSurgeryContentSuccessResponse(
+          cityId: cityId,
+        );
       } else {
-        response = await apiService.get(AppUrls.surgeryProcedures);
+        response = await apiService.get(AppUrls.surgeryProcedures(cityId: cityId));
         log('getSurgeryContent response: $response');
       }
 
@@ -57,7 +59,7 @@ class SurgeryRemoteDataSourceImpl implements SurgeryRemoteDataSource {
       log('getSurgeryContent error: $e');
       final message = ErrorHandler.handleExceptions(
         e,
-        endpoint: AppUrls.surgeryProcedures,
+        endpoint: AppUrls.surgeryProcedures(cityId: cityId),
       );
       return Future.error(message);
     }
@@ -167,6 +169,7 @@ class SurgeryRemoteDataSourceImpl implements SurgeryRemoteDataSource {
             'surgeryName': request.surgeryName,
             'doctorName': request.doctorName,
             'hospitalName': request.hospitalName,
+            'gender': request.gender,
           },
         );
         log('submitSurgeryBooking response: $response');

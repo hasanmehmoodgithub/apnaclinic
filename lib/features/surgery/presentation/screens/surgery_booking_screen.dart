@@ -2,8 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/enums/state_status.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
+import '../../../../core/l10n/app_localizations.dart';
+import '../../../../core/preference/app_pref.dart';
+import '../../../../core/router/app_routes.dart';
 import '../../../../core/widgets/app_scaffold_gradient.dart';
 import '../../domain/entities/surgery_doctor_entity.dart';
 import '../cubit/surgery_cubit.dart';
@@ -136,71 +140,89 @@ class _SurgeryBookingScreenState extends State<SurgeryBookingScreen> {
                       );
                     }
 
+                    final l10n = AppLocalizations.of(context)!;
                     final cards = _mapDoctors(state.doctorsContent.doctors);
                     final filteredCards = _filteredCards(cards);
 
-                    return ListView(
-                      padding: EdgeInsets.fromLTRB(24.w, 22.h, 24.w, 16.h),
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        Text(
-                          widget.procedureName,
-                          style: theme.textTheme.titleMedium?.copyWith(
-                            color: const Color(0xFF061E40),
-                            fontWeight: FontWeight.w500,
-                            fontSize: 16.sp,
-                          ),
-                        ),
-                        SizedBox(height: 12.h),
-                        SurgeryBookingLocationRowWidget(
-                          city: state.selectedCity,
-                          onChangeTap: () => showCityPickerSheet(context),
-                        ),
-                        SizedBox(height: 12.h),
-                        Text(
-                          'Select for Surgery',
-                          style: theme.textTheme.titleMedium?.copyWith(
-                            color: const Color(0xFF061E40),
-                            fontWeight: FontWeight.w500,
-                            fontSize: 14.sp,
-                          ),
-                        ),
-                        SizedBox(height: 12.h),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: SurgeryBookingSearchFieldWidget(
-                                controller: _searchController,
-                                onChanged: (_) => setState(() {}),
+                        Padding(
+                          padding: EdgeInsets.fromLTRB(24.w, 22.h, 24.w, 0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              Text(
+                                widget.procedureName,
+                                style: theme.textTheme.titleMedium?.copyWith(
+                                  color: const Color(0xFF061E40),
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 16.sp,
+                                ),
                               ),
-                            ),
-                            SizedBox(width: 8.w),
-                            SurgeryBookingFilterButtonWidget(
-                              isActive:
-                                  _selectedHospitalFilter != null ||
-                                  _selectedSpecialtyFilter != null,
-                              onTap: () => _showFilterSheet(cards),
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: 14.h),
-                        if (filteredCards.isEmpty)
-                          Padding(
-                            padding: EdgeInsets.symmetric(vertical: 32.h),
-                            child: Text(
-                              'No providers found for this procedure.',
-                              textAlign: TextAlign.center,
-                              style: theme.textTheme.bodyMedium?.copyWith(
-                                color: const Color(0xFF667B99),
+                              SizedBox(height: 12.h),
+                              SurgeryBookingLocationRowWidget(
+                                city: state.selectedCity,
+                                onChangeTap: () => showCityPickerSheet(context),
                               ),
-                            ),
-                          )
-                        else
-                          ...filteredCards.map(
-                            (card) => SurgeryBookingDoctorCardWidget(
-                              data: card,
-                              onBookNowTap: () => _openPatientDetails(card),
-                            ),
+                              SizedBox(height: 12.h),
+                              Text(
+                                l10n.surgerySelectForSurgery,
+                                style: theme.textTheme.titleMedium?.copyWith(
+                                  color: const Color(0xFF061E40),
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 14.sp,
+                                ),
+                              ),
+                              SizedBox(height: 12.h),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: SurgeryBookingSearchFieldWidget(
+                                      controller: _searchController,
+                                      onChanged: (_) => setState(() {}),
+                                    ),
+                                  ),
+                                  SizedBox(width: 8.w),
+                                  SurgeryBookingFilterButtonWidget(
+                                    isActive:
+                                        _selectedHospitalFilter != null ||
+                                        _selectedSpecialtyFilter != null,
+                                    onTap: () => _showFilterDialog(state),
+                                  ),
+                                ],
+                              ),
+                            ],
                           ),
+                        ),
+                        Expanded(
+                          child: filteredCards.isEmpty
+                              ? Center(
+                                  child: Text(
+                                    l10n.surgeryNoDataFound,
+                                    textAlign: TextAlign.center,
+                                    style: theme.textTheme.bodyMedium?.copyWith(
+                                      color: const Color(0xFF667B99),
+                                    ),
+                                  ),
+                                )
+                              : ListView(
+                                  padding: EdgeInsets.fromLTRB(
+                                    24.w,
+                                    14.h,
+                                    24.w,
+                                    16.h,
+                                  ),
+                                  children: [
+                                    for (final card in filteredCards)
+                                      SurgeryBookingDoctorCardWidget(
+                                        data: card,
+                                        onBookNowTap: () =>
+                                            _openPatientDetails(card),
+                                      ),
+                                  ],
+                                ),
+                        ),
                       ],
                     );
                   },
@@ -260,6 +282,11 @@ class _SurgeryBookingScreenState extends State<SurgeryBookingScreen> {
   }
 
   void _openPatientDetails(SurgeryBookingDoctorCardData card) {
+    if (!sl<AppPref>().getLoginStatus()) {
+      context.push(AppRoutes.path(AppRoutes.authLogin));
+      return;
+    }
+
     final surgeryCubit = context.read<SurgeryCubit>();
     Navigator.of(context).push(
       MaterialPageRoute<void>(
@@ -283,16 +310,14 @@ class _SurgeryBookingScreenState extends State<SurgeryBookingScreen> {
     );
   }
 
-  Future<void> _showFilterSheet(List<SurgeryBookingDoctorCardData> cards) async {
-    final result = await showModalBottomSheet<SurgeryBookingFilterSelection>(
+  Future<void> _showFilterDialog(SurgeryState state) async {
+    final result = await showDialog<SurgeryBookingFilterSelection>(
       context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.white,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(3.r)),
+      barrierColor: Colors.black.withValues(alpha: 0.45),
       builder: (context) {
         return SurgeryBookingFilterSheetWidget(
-          hospitals: cards.map((e) => e.hospitalName).toSet().toList(),
-          specialties: cards.map((e) => e.speciality).toSet().toList(),
+          hospitals: state.doctorsContent.hospitals,
+          specialties: state.doctorsContent.specialties,
           selectedHospital: _selectedHospitalFilter,
           selectedSpecialty: _selectedSpecialtyFilter,
         );

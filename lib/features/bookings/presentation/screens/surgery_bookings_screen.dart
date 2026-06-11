@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/router/app_routes.dart';
+import '../../../consultation/presentation/widgets/consultation_partner_logo_widget.dart';
 import '../../data/mock/surgery_bookings_mock_api.dart';
 import '../../data/models/surgery_booking_list_item_model.dart';
 import '../../data/models/surgery_details_item.dart';
@@ -183,25 +184,14 @@ class _SurgeryBookingCard extends StatelessWidget {
                                 width: 0.4,
                               ),
                             ),
+                            clipBehavior: Clip.antiAlias,
                             child: Center(
-                              child: RichText(
-                                text: TextSpan(
-                                  style: TextStyle(
-                                    fontSize: 9.sp,
-                                    fontWeight: FontWeight.w700,
-                                    height: 1,
-                                  ),
-                                  children: const [
-                                    TextSpan(
-                                      text: 'ola',
-                                      style: TextStyle(color: Color(0xFFF39A2E)),
-                                    ),
-                                    TextSpan(
-                                      text: 'doc',
-                                      style: TextStyle(color: Color(0xFF1F3A8A)),
-                                    ),
-                                  ],
-                                ),
+                              child: ConsultationPartnerLogoWidget(
+                                logoUrl: item.partnerLogoUrl,
+                                width: 30.w,
+                                height: 30.h,
+                                fit: BoxFit.contain,
+                                compact: true,
                               ),
                             ),
                           ),

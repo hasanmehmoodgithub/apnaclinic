@@ -3,13 +3,12 @@ import '../../../../core/config/mock_config.dart';
 class SurgeryMockApi {
   static bool useMockResponses = MockConfig.enableSurgeryMocks;
 
-  Future<Map<String, dynamic>> getSurgeryContentSuccessResponse() async {
+  Future<Map<String, dynamic>> getSurgeryContentSuccessResponse({
+    String? cityId,
+  }) async {
     await Future<void>.delayed(const Duration(milliseconds: 500));
-    return {
-      'success': true,
-      'message': 'Surgeries retrieved',
-      'code': 200,
-      'data': [
+
+    final allProcedures = <Map<String, dynamic>>[
         {
           'id': 1,
           'name': 'ACL',
@@ -69,7 +68,18 @@ class SurgeryMockApi {
           'displayOrder': 6,
           'isActive': true,
         },
-      ],
+    ];
+
+    // Mock: Peshawar returns no procedures to exercise empty-state UI.
+    final procedures = cityId == 'peshawar' || cityId == '4'
+        ? <Map<String, dynamic>>[]
+        : allProcedures;
+
+    return {
+      'success': true,
+      'message': 'Surgeries retrieved',
+      'code': 200,
+      'data': procedures,
     };
   }
 }

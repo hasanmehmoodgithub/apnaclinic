@@ -85,16 +85,10 @@ class SurgeryScreen extends StatelessWidget {
       );
     }
 
-    if (state.loadingStateStatus == StateStatus.empty) {
-      return Center(
-        child: Text(
-          AppLocalizations.of(context)!.surgeryNoProceduresMessage,
-          textAlign: TextAlign.center,
-        ),
-      );
-    }
-
-    return SurgeryContentViewWidget(state: state);
+    return SurgeryContentViewWidget(
+      state: state,
+      isRefreshing: state.loadingStateStatus == StateStatus.refreshing,
+    );
   }
 }
 

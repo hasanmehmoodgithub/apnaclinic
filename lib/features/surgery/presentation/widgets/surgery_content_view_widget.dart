@@ -15,9 +15,14 @@ import 'surgery_procedure_tile_widget.dart';
 import 'surgery_search_field_widget.dart';
 
 class SurgeryContentViewWidget extends StatefulWidget {
-  const SurgeryContentViewWidget({super.key, required this.state});
+  const SurgeryContentViewWidget({
+    super.key,
+    required this.state,
+    this.isRefreshing = false,
+  });
 
   final SurgeryState state;
+  final bool isRefreshing;
 
   @override
   State<SurgeryContentViewWidget> createState() => _SurgeryContentViewWidgetState();
@@ -39,14 +44,16 @@ class _SurgeryContentViewWidgetState extends State<SurgeryContentViewWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final cubit = context.read<SurgeryCubit>();
     final procedures = cubit.filteredProcedures;
     final state = widget.state;
     return Column(
       children: [
-        Expanded(
-          child: ListView(
-            padding: EdgeInsets.fromLTRB(24.w, 22.h, 24.w, 12.h),
+        Padding(
+          padding: EdgeInsets.fromLTRB(24.w, 22.h, 24.w, 0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               SurgeryLocationRowWidget(
                 city: state.selectedCity,
@@ -54,7 +61,7 @@ class _SurgeryContentViewWidgetState extends State<SurgeryContentViewWidget> {
               ),
               SizedBox(height: 22.h),
               Text(
-                AppLocalizations.of(context)!.surgerySelectForSurgery,
+                l10n.surgerySelectForSurgery,
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
                   color: AppColors.clr060,
                   fontWeight: FontWeight.w500,
@@ -66,33 +73,45 @@ class _SurgeryContentViewWidgetState extends State<SurgeryContentViewWidget> {
                 query: state.searchQuery,
                 onChanged: cubit.updateSearchQuery,
               ),
-              SizedBox(height: 14.h),
-              GridView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: procedures.length,
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  mainAxisSpacing: 8.h,
-                  crossAxisSpacing: 8.w,
-                  childAspectRatio: 189.4 / 81.7,
-                ),
-                itemBuilder: (context, index) {
-                  final item = procedures[index];
-                  return SurgeryProcedureTileWidget(
-                    name: item.name,
-                    index: index,
-                    onTap: () => _openSurgeryBooking(context, item, state),
-                    onInfoTap: (tileContext) => _showProcedureInfo(
-                      tileContext,
-                      item.name,
-                      item.description,
-                    ),
-                  );
-                },
-              ),
             ],
           ),
+        ),
+        Expanded(
+          child: widget.isRefreshing
+              ? const Center(child: CircularProgressIndicator(strokeWidth: 2))
+              : procedures.isEmpty
+              ? Center(
+                  child: Text(
+                    l10n.surgeryNoDataFound,
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: AppColors.clr667B99,
+                    ),
+                  ),
+                )
+              : GridView.builder(
+                  padding: EdgeInsets.fromLTRB(24.w, 14.h, 24.w, 12.h),
+                  itemCount: procedures.length,
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    mainAxisSpacing: 8.h,
+                    crossAxisSpacing: 8.w,
+                    childAspectRatio: 189.4 / 81.7,
+                  ),
+                  itemBuilder: (context, index) {
+                    final item = procedures[index];
+                    return SurgeryProcedureTileWidget(
+                      name: item.name,
+                      index: index,
+                      onTap: () => _openSurgeryBooking(context, item, state),
+                      onInfoTap: (tileContext) => _showProcedureInfo(
+                        tileContext,
+                        item.name,
+                        item.description,
+                      ),
+                    );
+                  },
+                ),
         ),
       ],
     );
