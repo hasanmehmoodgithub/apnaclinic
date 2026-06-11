@@ -746,16 +746,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get labTestSearchFieldHint => 'Search';
 
   @override
-  String get labTestSelectCitySheetTitle => 'Select a City';
+  String get labTestSelectCitySheetTitle => 'Select a city';
 
   @override
-  String get labTestSelectCitySheetSearchHint => 'Search for City';
+  String get labTestSelectCitySheetSearchHint => 'Search by name';
 
   @override
   String get labTestRequirementLabel => 'Requirement';
 
   @override
   String get labTestSampleTypeLabel => 'Sample Type';
+
+  @override
+  String get labTestSampleTypeNotAvailable => 'N/A';
 
   @override
   String get labTestPleaseSelectCityFirst => 'Please select a city first.';

@@ -12,6 +12,7 @@ import '../../../../core/enums/state_status.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/preference/app_pref.dart';
+import '../../../../core/preference/app_pref_keys.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/widgets/app_scaffold_gradient.dart';
 import '../../domain/entities/lab_test_item_entity.dart';
@@ -23,7 +24,7 @@ import '../widgets/lab_test_browse_search_field_widget.dart';
 import '../widgets/lab_test_browse_white_panel_widget.dart';
 import '../widgets/lab_test_catalog_list_block_widget.dart';
 import '../widgets/lab_test_city_selector_field_widget.dart';
-import '../widgets/lab_test_select_city_bottom_sheet_widget.dart';
+import '../widgets/lab_test_select_city_dialog_widget.dart';
 
 class LabTestScreen extends StatefulWidget {
   const LabTestScreen({super.key});
@@ -36,21 +37,21 @@ class _LabTestScreenState extends State<LabTestScreen> {
   final TextEditingController _searchController = TextEditingController();
   final AppPref _appPref = sl<AppPref>();
 
-  static const String _cityPrefKey = 'lab_test_selected_city';
   static const String _cartPrefKey = 'lab_test_cart_items';
 
   bool _hasResolvedInitialCity = false;
   bool _hasPromptedCitySelection = false;
-  bool _isCitySheetOpen = false;
+  bool _isCityDialogOpen = false;
   String? _savedCity;
 
   @override
   void initState() {
     super.initState();
-    final rawSavedCity = _appPref.getString(_cityPrefKey)?.trim();
+    final rawSavedCity = _appPref.getString(AppPrefKeys.labTestSelectedCity)?.trim();
     _savedCity = (rawSavedCity == null || rawSavedCity.isEmpty)
         ? null
         : rawSavedCity;
+
   }
 
   @override
@@ -94,7 +95,7 @@ class _LabTestScreenState extends State<LabTestScreen> {
                       selectCityPlaceholder: l10n.labTestSelectCityPlaceholder,
                       cityFieldLabel: l10n.labTestCityFieldLabel,
                       changeCityCta: l10n.labTestChangeCityCta,
-                      onTap: () => _openCitySheet(
+                      onTap: () => _openCityDialog(
                         context,
                         context.read<LabTestCubit>().state.cities,
                         l10n,
@@ -119,6 +120,7 @@ class _LabTestScreenState extends State<LabTestScreen> {
                       child: LabTestCatalogListBlockWidget(
                         loadFailedMessage: l10n.labTestCatalogLoadFailed,
                         emptyMessage: l10n.labTestNoTestsFound,
+                        selectCityFirstMessage: l10n.labTestPleaseSelectCityFirst,
                         requirementLabel: l10n.labTestRequirementLabel,
                         sampleTypeLabel: l10n.labTestSampleTypeLabel,
                         feeFallbackText: l10n.labTestBrowseItemFeeFallback,
@@ -135,31 +137,24 @@ class _LabTestScreenState extends State<LabTestScreen> {
     );
   }
 
-  Future<void> _openCitySheet(
+  Future<void> _openCityDialog(
     BuildContext context,
     List<String> cities,
     AppLocalizations l10n,
   ) async {
-    if (_isCitySheetOpen) return;
-    _isCitySheetOpen = true;
-    final picked = await showModalBottomSheet<String>(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (ctx) => Padding(
-        padding: EdgeInsets.only(top: MediaQuery.sizeOf(ctx).height * 0.1),
-        child: LabTestSelectCityBottomSheetWidget(
-          cities: cities,
-          sheetTitle: l10n.labTestSelectCitySheetTitle,
-          searchHint: l10n.labTestSelectCitySheetSearchHint,
-        ),
-      ),
+    if (_isCityDialogOpen) return;
+    _isCityDialogOpen = true;
+    final picked = await showLabTestSelectCityDialog(
+      context,
+      cities: cities,
+      title: l10n.labTestSelectCitySheetTitle,
+      searchHint: l10n.labTestSelectCitySheetSearchHint,
+      initialSelectedCity: context.read<LabTestCubit>().state.selectedCity,
     );
-    _isCitySheetOpen = false;
+    _isCityDialogOpen = false;
     if (picked != null && context.mounted) {
-      context.read<LabTestCubit>().selectCity(picked);
       _savedCity = picked;
-      await _appPref.setString(_cityPrefKey, picked);
+      await context.read<LabTestCubit>().selectCity(picked);
     }
   }
 
@@ -172,17 +167,28 @@ class _LabTestScreenState extends State<LabTestScreen> {
         state.catalogLoadingStateStatus == StateStatus.refreshing) {
       return;
     }
-    if (state.cities.isEmpty) return;
 
-    if (state.selectedCity != null && state.selectedCity!.isNotEmpty) {
+    final savedCity = _savedCity?.trim();
+    final hasSavedCity = savedCity != null && savedCity.isNotEmpty;
+
+    final cubit = context.read<LabTestCubit>();
+    if (hasSavedCity &&
+        state.cities.isNotEmpty &&
+        !cubit.isCityInList(savedCity)) {
+      _savedCity = null;
+      _appPref.remove(AppPrefKeys.labTestSelectedCity);
+    }
+
+    final selectedCity = state.selectedCity;
+    if (selectedCity != null && selectedCity.isNotEmpty) {
       _hasResolvedInitialCity = true;
       return;
     }
 
-    final savedCity = _savedCity;
-    if (savedCity != null && state.cities.contains(savedCity)) {
-      context.read<LabTestCubit>().selectCity(savedCity);
-      _hasResolvedInitialCity = true;
+    if (state.cities.isEmpty) {
+      if (state.catalogLoadingStateStatus == StateStatus.error) {
+        _hasResolvedInitialCity = true;
+      }
       return;
     }
 
@@ -193,7 +199,8 @@ class _LabTestScreenState extends State<LabTestScreen> {
         if (!context.mounted) return;
         final l10n = AppLocalizations.of(context)!;
         final cities = context.read<LabTestCubit>().state.cities;
-        _openCitySheet(context, cities, l10n);
+        if (cities.isEmpty) return;
+        _openCityDialog(context, cities, l10n);
       });
     }
   }
@@ -207,49 +214,25 @@ class _LabTestScreenState extends State<LabTestScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(l10n.labTestPleaseSelectCityFirst)),
       );
-      _openCitySheet(context, state.cities, l10n);
+      _openCityDialog(context, state.cities, l10n);
       return;
     }
-    final pricing = state.pricing;
-    if (pricing == null || state.partners.isEmpty || state.vendors.isEmpty) {
+
+    final testId = int.tryParse(item.id);
+    if (testId == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.labTestDataStillLoading)),
+        SnackBar(content: Text(l10n.labTestBookingDataUnavailable)),
       );
       return;
     }
+
     context.pushNamed(
       AppRoutes.labTestBooking,
-      extra: LabTestBookingArgs(
+      extra: LabTestBookingArgs.pending(
+        testId: testId,
         city: selectedCity,
-        testTitle: item.title,
-        sampleType: item.sampleType,
-        requirementLabel: item.requirement,
         requirementLines: state.requirementLines,
-        partners: state.partners
-            .map(
-              (p) => LabTestBookingPartnerOption(
-                id: p.id,
-                name: p.name,
-                logoUrl: p.logoUrl,
-              ),
-            )
-            .toList(growable: false),
-        vendors: state.vendors
-            .map(
-              (v) => LabTestBookingVendorOption(
-                id: v.id,
-                name: v.name,
-                logoUrl: v.logoUrl,
-                markUrl: v.markUrl,
-              ),
-            )
-            .toList(growable: false),
-        discountedFee: item.discountedFee ?? pricing.discountedFee,
-        originalFee: item.originalFee ?? pricing.originalFee,
-        discountPercent: pricing.discountPercent,
-        discountAmount: pricing.discountAmount,
-        discountCode: pricing.discountCode,
-        totalAmount: pricing.totalAmount,
+        testTitle: item.title,
       ),
     );
   }

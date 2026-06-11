@@ -1511,13 +1511,13 @@ abstract class AppLocalizations {
   /// No description provided for @labTestSelectCitySheetTitle.
   ///
   /// In en, this message translates to:
-  /// **'Select a City'**
+  /// **'Select a city'**
   String get labTestSelectCitySheetTitle;
 
   /// No description provided for @labTestSelectCitySheetSearchHint.
   ///
   /// In en, this message translates to:
-  /// **'Search for City'**
+  /// **'Search by name'**
   String get labTestSelectCitySheetSearchHint;
 
   /// No description provided for @labTestRequirementLabel.
@@ -1531,6 +1531,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Sample Type'**
   String get labTestSampleTypeLabel;
+
+  /// No description provided for @labTestSampleTypeNotAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'N/A'**
+  String get labTestSampleTypeNotAvailable;
 
   /// No description provided for @labTestPleaseSelectCityFirst.
   ///

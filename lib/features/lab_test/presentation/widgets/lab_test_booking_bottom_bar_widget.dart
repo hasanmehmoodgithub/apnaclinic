@@ -11,10 +11,12 @@ class LabTestBookingBottomBarWidget extends StatelessWidget {
     required this.showLeadingCartCount,
     required this.cartCount,
     required this.cartCountOverflowLabel,
+    this.enabled = true,
   });
 
   final String buttonLabel;
-  final VoidCallback onPressed;
+  final VoidCallback? onPressed;
+  final bool enabled;
   final bool showLeadingCartCount;
   final int cartCount;
   final String cartCountOverflowLabel;
@@ -44,8 +46,12 @@ class LabTestBookingBottomBarWidget extends StatelessWidget {
               height: 57.h,
               child: FilledButton(
                 style: FilledButton.styleFrom(
-                  backgroundColor: const Color(0xFF0FAA9A),
+                  backgroundColor: enabled
+                      ? const Color(0xFF0FAA9A)
+                      : const Color(0xFF9BA6A7),
                   foregroundColor: Colors.white,
+                  disabledBackgroundColor: const Color(0xFF9BA6A7),
+                  disabledForegroundColor: Colors.white,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12.909.r),
                   ),
@@ -54,7 +60,7 @@ class LabTestBookingBottomBarWidget extends StatelessWidget {
                     fontSize: 16.sp,
                   ),
                 ),
-                onPressed: onPressed,
+                onPressed: enabled ? onPressed : null,
                 child: Stack(
                   children: [
                     Center(child: Text(buttonLabel)),

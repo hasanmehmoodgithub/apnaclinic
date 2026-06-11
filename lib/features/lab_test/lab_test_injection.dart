@@ -1,5 +1,7 @@
 import '../../core/di/dependency_injection.dart';
 import '../../core/network/api_service.dart';
+import '../../core/preference/app_pref.dart';
+import '../../core/cities/domain/repositories/cities_repository.dart';
 import 'data/data_sources/lab_test_remote_data_source.dart';
 import 'data/data_sources/lab_test_remote_data_source_impl.dart';
 import 'data/mock/lab_test_mock_api.dart';
@@ -8,6 +10,7 @@ import 'data/repositories/lab_test_repository_impl.dart';
 import 'domain/repositories/lab_test_cart_repository.dart';
 import 'domain/repositories/lab_test_repository.dart';
 import 'domain/use_cases/get_lab_test_catalog_use_case.dart';
+import 'domain/use_cases/get_lab_test_detail_use_case.dart';
 import 'presentation/cubit/lab_test_cart_cubit.dart';
 import 'presentation/cubit/lab_test_cubit.dart';
 
@@ -36,9 +39,16 @@ void initLabTestInjector() {
     () => GetLabTestCatalogUseCase(repository: sl<LabTestRepository>()),
   );
 
+  sl.registerLazySingleton<GetLabTestDetailUseCase>(
+    () => GetLabTestDetailUseCase(repository: sl<LabTestRepository>()),
+  );
+
   sl.registerFactory<LabTestCubit>(
-    () =>
-        LabTestCubit(getLabTestCatalogUseCase: sl<GetLabTestCatalogUseCase>()),
+    () => LabTestCubit(
+      getLabTestCatalogUseCase: sl<GetLabTestCatalogUseCase>(),
+      appPref: sl<AppPref>(),
+      citiesRepository: sl<CitiesRepository>(),
+    ),
   );
 
   sl.registerFactory<LabTestCartCubit>(

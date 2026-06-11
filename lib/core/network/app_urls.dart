@@ -118,6 +118,34 @@ class AppUrls {
   static String get surgeryBooking => '$_normalizedApiBaseUrl/surgery/booking';
   static String get labTestCatalog => '$_normalizedApiBaseUrl/lab/test';
 
+  /// Paginated lab tests with available labs, sample type, and pricing.
+  static String labTests({
+    required String cityId,
+    int page = 1,
+    int limit = 20,
+    String? search,
+    String? labId,
+  }) {
+    final query = <String, String>{
+      'cityId': cityId,
+      'page': page.toString(),
+      'limit': limit.clamp(1, 50).toString(),
+      if (search != null && search.trim().isNotEmpty) 'search': search.trim(),
+      if (labId != null && labId.trim().isNotEmpty) 'labId': labId.trim(),
+    };
+    final encoded = query.entries
+        .map((e) => '${Uri.encodeQueryComponent(e.key)}=${Uri.encodeQueryComponent(e.value)}')
+        .join('&');
+    return '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/lab/tests?$encoded';
+  }
+
+  /// Lab test detail with per-partner labs and pricing for a city.
+  static String labTestDetail({
+    required int testId,
+    required String cityId,
+  }) =>
+      '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/lab/tests/$testId?cityId=${Uri.encodeComponent(cityId)}';
+
   // ============================================
   // 3rd Party Integration Support (Full URLs)
   // ============================================

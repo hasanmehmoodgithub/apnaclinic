@@ -18,6 +18,7 @@ class LabTestCatalogListBlockWidget extends StatelessWidget {
     required this.onItemTap,
     required this.loadFailedMessage,
     required this.emptyMessage,
+    required this.selectCityFirstMessage,
     required this.requirementLabel,
     required this.sampleTypeLabel,
     required this.feeFallbackText,
@@ -26,6 +27,7 @@ class LabTestCatalogListBlockWidget extends StatelessWidget {
   final ValueChanged<LabTestItemEntity> onItemTap;
   final String loadFailedMessage;
   final String emptyMessage;
+  final String selectCityFirstMessage;
   final String requirementLabel;
   final String sampleTypeLabel;
   final String feeFallbackText;
@@ -37,8 +39,17 @@ class LabTestCatalogListBlockWidget extends StatelessWidget {
           previous.catalogLoadingStateStatus !=
               current.catalogLoadingStateStatus ||
           previous.filteredItems != current.filteredItems ||
+          previous.selectedCity != current.selectedCity ||
           previous.errorMessage != current.errorMessage,
       builder: (context, state) {
+        final selectedCity = state.selectedCity;
+        if (selectedCity == null || selectedCity.isEmpty) {
+          if (state.catalogLoadingStateStatus == StateStatus.loading) {
+            return const LabTestCatalogShimmerWidget();
+          }
+          return LabTestCatalogEmptyWidget(message: selectCityFirstMessage);
+        }
+
         if (state.catalogLoadingStateStatus == StateStatus.loading ||
             state.catalogLoadingStateStatus == StateStatus.refreshing) {
           return const LabTestCatalogShimmerWidget();

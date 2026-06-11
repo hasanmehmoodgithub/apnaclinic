@@ -1,3 +1,6 @@
+import '../domain/entities/lab_test_detail_entity.dart';
+import '../domain/entities/lab_test_lab_offer_entity.dart';
+
 class LabTestBookingPartnerOption {
   const LabTestBookingPartnerOption({
     required this.id,
@@ -25,6 +28,17 @@ class LabTestBookingVendorOption {
 }
 
 class LabTestBookingArgs {
+  const LabTestBookingArgs.pending({
+    required this.testId,
+    required this.city,
+    required this.requirementLines,
+    this.testTitle = '',
+  })  : isPending = true,
+        sampleType = '',
+        requirementLabel = null,
+        partners = const [],
+        labOffers = const [];
+
   const LabTestBookingArgs({
     required this.city,
     required this.testTitle,
@@ -32,28 +46,43 @@ class LabTestBookingArgs {
     this.requirementLabel,
     required this.requirementLines,
     required this.partners,
-    required this.vendors,
-    required this.discountedFee,
-    required this.originalFee,
-    required this.discountPercent,
-    required this.discountAmount,
-    required this.discountCode,
-    required this.totalAmount,
-  });
+    required this.labOffers,
+  })  : isPending = false,
+        testId = null;
 
+  factory LabTestBookingArgs.fromDetail({
+    required LabTestDetailEntity detail,
+    required String city,
+    required List<String> requirementLines,
+  }) {
+    return LabTestBookingArgs(
+      city: city,
+      testTitle: detail.name,
+      sampleType: detail.sampleType,
+      requirementLabel: detail.fastingRequired ? 'Fasting' : null,
+      requirementLines: requirementLines,
+      partners: detail.partners
+          .map(
+            (p) => LabTestBookingPartnerOption(
+              id: p.id,
+              name: p.name,
+              logoUrl: p.logoUrl,
+            ),
+          )
+          .toList(growable: false),
+      labOffers: detail.labOffers,
+    );
+  }
+
+  final bool isPending;
+  final int? testId;
   final String city;
   final String testTitle;
   final String sampleType;
   final String? requirementLabel;
   final List<String> requirementLines;
   final List<LabTestBookingPartnerOption> partners;
-  final List<LabTestBookingVendorOption> vendors;
-  final String discountedFee;
-  final String originalFee;
-  final int discountPercent;
-  final String discountAmount;
-  final String discountCode;
-  final String totalAmount;
+  final List<LabTestLabOfferEntity> labOffers;
 }
 
 class LabTestCheckoutArgs {
