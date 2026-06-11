@@ -75,7 +75,13 @@ class LabTestBookingCubit extends Cubit<LabTestBookingState> {
     emit(state.copyWith(cartItems: next));
   }
 
-  void setLabVisit(bool value) => emit(state.copyWith(labVisit: value));
+  void setLabVisit(bool value) => emit(
+        state.copyWith(
+          labVisit: value,
+          partnerTab: 0,
+          selectedVendorIndex: 0,
+        ),
+      );
 
   void setPartnerTab(int index) =>
       emit(state.copyWith(partnerTab: index, selectedVendorIndex: 0));

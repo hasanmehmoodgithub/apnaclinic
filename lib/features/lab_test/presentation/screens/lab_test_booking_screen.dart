@@ -94,7 +94,7 @@ class _LabTestBookingScreenState extends State<LabTestBookingScreen> {
                         return _buildLoadingBody(context, state, l10n);
                       }
 
-                      final partners = state.args.partners;
+                      final partners = state.filteredPartners;
                       final vendors = state.filteredVendors;
                       final pricing = state.currentPricing;
                       final partnerIndex = partners.isEmpty
@@ -185,32 +185,34 @@ class _LabTestBookingScreenState extends State<LabTestBookingScreen> {
                                     sampleTypeLabel: l10n.labTestSampleTypeLabel,
                                     showPricing: !state.isHomeSamplingUnavailable,
                                   ),
-                                  SizedBox(height: 16.h),
-                                  LabTestBookingPartnerTabsWidget(
-                                    partners: partners,
-                                    selectedIndex: partnerIndex,
-                                    onChanged: (i) {
-                                      if (i == state.partnerTab) return;
-                                      _guardAndApply(
-                                        context,
-                                        (c) async => c.setPartnerTab(i),
-                                      );
-                                    },
-                                  ),
-                                  SizedBox(height: 12.h),
-                                  LabTestBookingVendorGridWidget(
-                                    vendors: vendors,
-                                    selectedIndex: vendorIndex,
-                                    onSelect: (i) {
-                                      if (i == state.selectedVendorIndex) {
-                                        return;
-                                      }
-                                      _guardAndApply(
-                                        context,
-                                        (c) async => c.setVendorIndex(i),
-                                      );
-                                    },
-                                  ),
+                                  if (!state.isHomeSamplingUnavailable) ...[
+                                    SizedBox(height: 16.h),
+                                    LabTestBookingPartnerTabsWidget(
+                                      partners: partners,
+                                      selectedIndex: partnerIndex,
+                                      onChanged: (i) {
+                                        if (i == state.partnerTab) return;
+                                        _guardAndApply(
+                                          context,
+                                          (c) async => c.setPartnerTab(i),
+                                        );
+                                      },
+                                    ),
+                                    SizedBox(height: 12.h),
+                                    LabTestBookingVendorGridWidget(
+                                      vendors: vendors,
+                                      selectedIndex: vendorIndex,
+                                      onSelect: (i) {
+                                        if (i == state.selectedVendorIndex) {
+                                          return;
+                                        }
+                                        _guardAndApply(
+                                          context,
+                                          (c) async => c.setVendorIndex(i),
+                                        );
+                                      },
+                                    ),
+                                  ],
                                 ],
                               ),
                             ),

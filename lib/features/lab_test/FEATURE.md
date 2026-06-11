@@ -24,7 +24,7 @@ Browse lab tests, booking/cart flow, payment details checkout, and order view de
 - **Lab test detail (booking):** `GET AppUrls.labTestDetail` → `/acs-aggregator/api/v1/mobile/lab/tests/{id}?cityId=...`
   - On test tap, app navigates to booking with `LabTestBookingArgs.pending`; `LabTestBookingCubit.loadDetailIfNeeded()` fetches detail on that screen (shimmer → content, same route).
   - Response: `data.partners[]` each with `labs[]` and `pricing.HOME_SAMPLING` / `pricing.WALK_IN` (`price`, `discountPct`, `finalPrice`).
-  - Booking screen shows all partner labs; when Home Sample is selected for a lab without `HOME_SAMPLING` pricing, sample type shows **N/A**, price is hidden, and **Add to Cart** is disabled.
+  - Booking screen filters partners/labs by booking method (`WALK_IN` / `HOME_SAMPLING`); when no lab supports home sampling, partner/lab grids are hidden, sample type shows **N/A**, and **Add to Cart** is disabled.
 - Search debounces (400ms) and re-fetches from the API when a city is selected.
 
 ## State
