@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/enums/state_status.dart';
@@ -8,12 +10,55 @@ import 'lab_test_state.dart';
 class LabTestCubit extends Cubit<LabTestState> {
   LabTestCubit({required this.getLabTestCatalogUseCase})
     : super(const LabTestState()) {
-    loadCatalog();
+    loadCities();
   }
 
   final GetLabTestCatalogUseCase getLabTestCatalogUseCase;
+  Timer? _searchDebounce;
 
-  Future<void> loadCatalog({bool refresh = false}) async {
+  @override
+  Future<void> close() {
+    _searchDebounce?.cancel();
+    return super.close();
+  }
+
+  Future<void> loadCities() async {
+    emit(
+      state.copyWith(
+        catalogLoadingStateStatus: StateStatus.loading,
+        clearErrorMessage: true,
+      ),
+    );
+
+    final result = await getLabTestCatalogUseCase(
+      const GetLabTestCatalogParams.citiesOnly(),
+    );
+    if (isClosed) return;
+
+    result.fold(
+      (error) => emit(
+        state.copyWith(
+          catalogLoadingStateStatus: StateStatus.error,
+          errorMessage: error,
+        ),
+      ),
+      (catalog) => emit(
+        state.copyWith(
+          catalogLoadingStateStatus: StateStatus.idle,
+          cities: catalog.cities,
+          requirementLines: catalog.requirementLines,
+          partners: catalog.partners,
+          clearErrorMessage: true,
+        ),
+      ),
+    );
+  }
+
+  Future<void> loadCatalog({
+    required String cityName,
+    bool refresh = false,
+    String? search,
+  }) async {
     emit(
       state.copyWith(
         catalogLoadingStateStatus: refresh
@@ -24,7 +69,10 @@ class LabTestCubit extends Cubit<LabTestState> {
     );
 
     final result = await getLabTestCatalogUseCase(
-      const GetLabTestCatalogParams(),
+      GetLabTestCatalogParams.forCity(
+        cityName: cityName,
+        search: search,
+      ),
     );
     if (isClosed) return;
 
@@ -44,7 +92,7 @@ class LabTestCubit extends Cubit<LabTestState> {
                 : StateStatus.success,
             cities: catalog.cities,
             items: items,
-            filteredItems: _filter(items, state.searchQuery),
+            filteredItems: items,
             requirementLines: catalog.requirementLines,
             partners: catalog.partners,
             vendors: catalog.vendors,
@@ -57,18 +105,42 @@ class LabTestCubit extends Cubit<LabTestState> {
   }
 
   void onSearchChanged(String value) {
-    final normalized = value.trim();
-    emit(
-      state.copyWith(
-        searchQuery: value,
-        filteredItems: _filter(state.items, normalized),
-      ),
-    );
+    emit(state.copyWith(searchQuery: value));
+    _searchDebounce?.cancel();
+
+    final city = state.selectedCity;
+    if (city == null || city.isEmpty) {
+      emit(
+        state.copyWith(
+          filteredItems: _filter(state.items, value),
+        ),
+      );
+      return;
+    }
+
+    _searchDebounce = Timer(const Duration(milliseconds: 400), () {
+      loadCatalog(cityName: city, search: value.trim());
+    });
   }
 
-  void selectCity(String city) {
+  Future<void> selectCity(String city) async {
     if (city.isEmpty) return;
-    emit(state.copyWith(selectedCity: city));
+
+    final shouldReload =
+        state.selectedCity != city ||
+        state.items.isEmpty ||
+        state.catalogLoadingStateStatus == StateStatus.idle;
+
+    emit(state.copyWith(selectedCity: city, clearErrorMessage: true));
+
+    if (shouldReload) {
+      await loadCatalog(
+        cityName: city,
+        search: state.searchQuery.trim().isEmpty
+            ? null
+            : state.searchQuery.trim(),
+      );
+    }
   }
 
   static List<LabTestItemEntity> _filter(

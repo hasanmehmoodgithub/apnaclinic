@@ -7,7 +7,7 @@ Doctor consultation category browse, doctor results, booking, and checkout.
 ## Routes / entry
 
 - `AppRoutes.consultation` — category grid (`DoctorConsultationScreen`); tiles use surgery `Assets.iconsD1` / `Assets.iconsD2` background vectors on `ConsultationUiConfig.cardBackground`.
-- `AppRoutes.consultationDoctors` — doctor results; extra: `category` (title), `mainCategoryId`. Book Now requires login (`AppPref.getLoginStatus()`); guests go to `AppRoutes.authLogin`.
+- `AppRoutes.consultationDoctors` — doctor results; extra: `DoctorConsultationResultsArgs` (`selectedCategory`, `mainCategoryId`, preloaded `categoryOptions` from category grid — avoids duplicate categories API call). Book Now requires login (`AppPref.getLoginStatus()`); guests go to `AppRoutes.authLogin`.
 - `AppRoutes.consultationBookDoctor` — booking screen; extra: `DoctorConsultationBookDoctorArgs` (`ResultsDoctorItem` from results list).
 
 ## Data & APIs

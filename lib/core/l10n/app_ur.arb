@@ -231,7 +231,7 @@
   "labTestSelectTestHeading": "ٹیسٹ منتخب کریں",
   "labTestSearchFieldHint": "تلاش",
   "labTestSelectCitySheetTitle": "شہر منتخب کریں",
-  "labTestSelectCitySheetSearchHint": "شہر تلاش کریں",
+  "labTestSelectCitySheetSearchHint": "نام سے تلاش کریں",
   "labTestRequirementLabel": "ضروریات",
   "labTestSampleTypeLabel": "نمونے کی قسم",
   "labTestPleaseSelectCityFirst": "براہ کرم پہلے شہر منتخب کریں۔",

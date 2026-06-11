@@ -24,11 +24,13 @@ import '../doctor_consultation_book_doctor_args.dart';
 class DoctorConsultationResultsScreen extends StatefulWidget {
   final String selectedCategory;
   final String mainCategoryId;
+  final List<ConsultationCategoryEntity> categoryOptions;
 
   const DoctorConsultationResultsScreen({
     super.key,
     required this.selectedCategory,
     required this.mainCategoryId,
+    this.categoryOptions = const [],
   });
 
   @override
@@ -56,7 +58,10 @@ class _DoctorConsultationResultsScreenState
     super.initState();
     _selectedCategory = widget.selectedCategory;
     _mainCategoryId = widget.mainCategoryId;
-    _loadCategories();
+    _categoryOptions = widget.categoryOptions;
+    if (_categoryOptions.isEmpty) {
+      _loadCategories();
+    }
     _loadDoctors();
   }
 
@@ -70,6 +75,10 @@ class _DoctorConsultationResultsScreenState
   }
 
   Future<void> _openSelectCategoryDialog() async {
+    if (_categoryOptions.isEmpty) {
+      await _loadCategories();
+    }
+    if (!mounted) return;
     final category = await showDialog<ConsultationCategoryEntity>(
       context: context,
       barrierColor: Colors.black.withValues(alpha: 0.28),

@@ -14,6 +14,7 @@ import '../../features/consultation/presentation/screens/ai_consultation_screen.
 import '../../features/consultation/presentation/screens/doctor_consultation_book_doctor_screen.dart';
 import '../../features/consultation/presentation/screens/doctor_consultation_checkout_screen.dart';
 import '../../features/consultation/presentation/screens/doctor_consultation_results_screen.dart';
+import '../../features/consultation/presentation/doctor_consultation_results_args.dart';
 import '../../features/consultation/presentation/screens/doctor_consultation_screen.dart';
 import '../../features/consultation/presentation/cubit/doctor_consultation_checkout_cubit.dart';
 import '../../features/consultation/data/mock/doctor_consultation_checkout_mock_api.dart';
@@ -157,16 +158,14 @@ class AppRouter {
         name: AppRoutes.consultationDoctors,
         builder: (context, state) {
           final extra = state.extra;
-          final data = extra is Map ? Map<String, dynamic>.from(extra) : null;
-          final selectedCategory = (data?['category'] as String?)?.trim();
-          final mainCategoryId =
-              (data?['mainCategoryId'] as String?)?.trim() ?? '1';
-          return DoctorConsultationResultsScreen(
-            selectedCategory: (selectedCategory?.isNotEmpty ?? false)
-                ? selectedCategory!
-                : 'Neurologist',
-            mainCategoryId: mainCategoryId,
-          );
+          if (extra is DoctorConsultationResultsArgs) {
+            return DoctorConsultationResultsScreen(
+              selectedCategory: extra.selectedCategory,
+              mainCategoryId: extra.mainCategoryId,
+              categoryOptions: extra.categoryOptions,
+            );
+          }
+          return const SizedBox.shrink();
         },
       ),
       GoRoute(

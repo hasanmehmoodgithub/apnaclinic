@@ -12,7 +12,7 @@ class LabTestCatalogEntity extends Equatable {
     required this.requirementLines,
     required this.partners,
     required this.vendors,
-    required this.pricing,
+    this.pricing,
   });
 
   final List<String> cities;
@@ -20,7 +20,7 @@ class LabTestCatalogEntity extends Equatable {
   final List<String> requirementLines;
   final List<LabTestPartnerEntity> partners;
   final List<LabTestVendorEntity> vendors;
-  final LabTestPricingEntity pricing;
+  final LabTestPricingEntity? pricing;
 
   @override
   List<Object?> get props => [

@@ -1,5 +1,7 @@
 import 'package:equatable/equatable.dart';
 
+import 'lab_test_lab_offer_entity.dart';
+
 class LabTestItemEntity extends Equatable {
   const LabTestItemEntity({
     required this.id,
@@ -9,6 +11,9 @@ class LabTestItemEntity extends Equatable {
     this.requirement,
     this.discountedFee,
     this.originalFee,
+    this.labOffers = const [],
+    this.description,
+    this.turnaroundHours,
   });
 
   final String id;
@@ -18,6 +23,9 @@ class LabTestItemEntity extends Equatable {
   final String? requirement;
   final String? discountedFee;
   final String? originalFee;
+  final List<LabTestLabOfferEntity> labOffers;
+  final String? description;
+  final int? turnaroundHours;
 
   @override
   List<Object?> get props => [
@@ -28,5 +36,8 @@ class LabTestItemEntity extends Equatable {
     requirement,
     discountedFee,
     originalFee,
+    labOffers,
+    description,
+    turnaroundHours,
   ];
 }

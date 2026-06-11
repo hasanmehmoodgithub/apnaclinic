@@ -10,6 +10,7 @@ import '../../domain/entities/consultation_category_entity.dart';
 import '../constants/consultation_ui_config.dart';
 import '../cubit/consultation_cubit.dart';
 import '../cubit/consultation_state.dart';
+import '../doctor_consultation_results_args.dart';
 import '../widgets/consultation_category_card.dart';
 
 class DoctorConsultationScreen extends StatefulWidget {
@@ -257,10 +258,11 @@ class _DoctorConsultationScreenState extends State<DoctorConsultationScreen> {
                   index: index,
                   onTap: () => context.pushNamed(
                     AppRoutes.consultationDoctors,
-                    extra: {
-                      'category': category.title,
-                      'mainCategoryId': category.id,
-                    },
+                    extra: DoctorConsultationResultsArgs(
+                      selectedCategory: category.title,
+                      mainCategoryId: category.id,
+                      categoryOptions: state.categories,
+                    ),
                   ),
                   onInfoTap: (_) => ()
 

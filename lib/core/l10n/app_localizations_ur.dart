@@ -735,7 +735,7 @@ class AppLocalizationsUr extends AppLocalizations {
   String get labTestSelectCitySheetTitle => 'شہر منتخب کریں';
 
   @override
-  String get labTestSelectCitySheetSearchHint => 'شہر تلاش کریں';
+  String get labTestSelectCitySheetSearchHint => 'نام سے تلاش کریں';
 
   @override
   String get labTestRequirementLabel => 'ضروریات';
