@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:dio/dio.dart';
 
 import '../preference/app_pref.dart';
+import '../session/auth_session_refresh.dart';
 import 'app_urls.dart';
 import 'device_headers_provider.dart';
 import 'dio_app_network_config.dart';
@@ -16,13 +17,16 @@ class AuthInterceptor extends Interceptor {
     required Dio dio,
     required AppPref appPref,
     required DeviceHeadersProvider deviceHeadersProvider,
+    required AuthSessionRefresh sessionRefresh,
   }) : _dio = dio,
        _appPref = appPref,
-       _deviceHeadersProvider = deviceHeadersProvider;
+       _deviceHeadersProvider = deviceHeadersProvider,
+       _sessionRefresh = sessionRefresh;
 
   final Dio _dio;
   final AppPref _appPref;
   final DeviceHeadersProvider _deviceHeadersProvider;
+  final AuthSessionRefresh _sessionRefresh;
   Completer<bool>? _refreshCompleter;
 
   static const _retryKey = 'auth_retry';
@@ -213,6 +217,9 @@ class AuthInterceptor extends Interceptor {
     await _appPref.setAccessTokenExpiresIn(0);
     await _appPref.setRefreshTokenExpiresIn(0);
     await _appPref.setLoginStatus(false);
+    await _appPref.setUserId('');
+    await _appPref.clearUserLocalModel();
+    _sessionRefresh.notifyLoggedOut();
   }
 
   static int? _toPositiveInt(dynamic value) {

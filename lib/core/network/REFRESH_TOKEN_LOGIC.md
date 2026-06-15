@@ -50,7 +50,7 @@ When `onError` receives `401`:
    - retry original request with new access token
 4. On failure:
    - propagate original error
-   - session is cleared
+   - session is cleared and `AuthSessionRefresh.notifyLoggedOut()` runs so tabs/menu update immediately
 
 ## Single-Flight Refresh (No Multiple Refresh Calls)
 

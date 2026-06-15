@@ -6,6 +6,7 @@ import '../flavor/flavor_config.dart';
 import '../preference/app_pref.dart';
 import '../utils/api_error_message_utils.dart';
 import '../utils/chucker_guard.dart';
+import '../session/auth_session_refresh.dart';
 import 'api_exceptions.dart';
 import 'api_logger_interceptor.dart';
 import 'auth_interceptor.dart';
@@ -45,6 +46,7 @@ class ApiService {
         dio: _dio,
         appPref: _appPref,
         deviceHeadersProvider: _deviceHeadersProvider,
+        sessionRefresh: sl<AuthSessionRefresh>(),
       ),
     );
     if (enableLogging ?? FlavorConfig.enableLogging) {

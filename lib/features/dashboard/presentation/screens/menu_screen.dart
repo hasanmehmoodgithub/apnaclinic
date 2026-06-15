@@ -31,13 +31,29 @@ class MenuScreen extends StatefulWidget {
 
 class _MenuScreenState extends State<MenuScreen> {
   late final AppPref _appPref;
+  late final AuthSessionRefresh _sessionRefresh;
   bool _isLoggedIn = false;
 
   @override
   void initState() {
     super.initState();
     _appPref = sl<AppPref>();
+    _sessionRefresh = sl<AuthSessionRefresh>();
     _isLoggedIn = _appPref.getLoginStatus();
+    _sessionRefresh.addListener(_onAuthSessionChanged);
+  }
+
+  @override
+  void dispose() {
+    _sessionRefresh.removeListener(_onAuthSessionChanged);
+    super.dispose();
+  }
+
+  void _onAuthSessionChanged() {
+    if (!mounted) return;
+    final loggedIn = _appPref.getLoginStatus();
+    if (loggedIn == _isLoggedIn) return;
+    setState(() => _isLoggedIn = loggedIn);
   }
 
   @override
