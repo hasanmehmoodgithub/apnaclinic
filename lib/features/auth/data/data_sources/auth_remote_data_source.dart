@@ -1,4 +1,5 @@
 import '../models/auth_response_model.dart';
+import '../../domain/use_cases/logout_use_case.dart';
 import '../../domain/use_cases/request_otp_use_case.dart';
 import '../../domain/use_cases/verify_otp_use_case.dart';
 
@@ -7,5 +8,5 @@ abstract class AuthRemoteDataSource {
 
   Future<AuthResponseModel> verifyOtp(VerifyOtpParams params);
 
-  Future<void> logout(String userId);
+  Future<void> logout(LogoutParams params);
 }

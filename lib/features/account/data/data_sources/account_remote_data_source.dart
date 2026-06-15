@@ -5,5 +5,5 @@ abstract class AccountRemoteDataSource {
 
   Future<void> addUserPhone({required String phone});
 
-  Future<void> deleteUserPhone({required String phone});
+  Future<void> deleteUserPhone({required String phoneId});
 }

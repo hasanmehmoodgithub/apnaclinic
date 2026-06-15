@@ -4,17 +4,21 @@ import 'account_item_model.dart';
 
 class UserPhoneModel {
   const UserPhoneModel({
+    required this.id,
     required this.msisdn,
     required this.jazzCashVerified,
     required this.primary,
   });
 
+  final String id;
   final String msisdn;
   final bool jazzCashVerified;
   final bool primary;
 
   factory UserPhoneModel.fromJson(Map<String, dynamic> json) {
+    final rawId = json['id'] ?? json['phoneId'];
     return UserPhoneModel(
+      id: rawId != null ? rawId.toString() : '',
       msisdn: (json['msisdn'] ?? '').toString(),
       jazzCashVerified: json['jazzCashVerified'] == true,
       primary: json['primary'] == true,
@@ -23,7 +27,7 @@ class UserPhoneModel {
 
   AccountItemModel toAccountItem() {
     return AccountItemModel(
-      id: msisdn,
+      id: id,
       number: PhoneFormatUtils.toLocalDisplay(msisdn),
       isDefault: primary,
       msisdn: msisdn,

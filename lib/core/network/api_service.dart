@@ -142,13 +142,55 @@ class ApiService {
     Map<String, String>? headers,
     Duration? timeout,
   }) {
-    return _send(
+    if (data != null) {
+      return _send(
+        'DELETE',
+        endpoint,
+        data: data,
+        headers: headers,
+        timeout: timeout,
+      );
+    }
+
+    return _sendWithoutBody(
       'DELETE',
       endpoint,
-      data: data,
       headers: headers,
       timeout: timeout,
     );
+  }
+
+  /// Bodyless requests must not send `Content-Type: application/json` from defaults.
+  Future<Map<String, dynamic>> _sendWithoutBody(
+    String method,
+    String endpoint, {
+    Map<String, String>? headers,
+    Duration? timeout,
+  }) async {
+    try {
+      _syncAuthHeader();
+      final requestHeaders = Map<String, dynamic>.from(_dio.options.headers);
+      requestHeaders.removeWhere((key, _) => key.toLowerCase() == 'content-type');
+      if (headers != null) {
+        requestHeaders.addAll(headers);
+      }
+
+      final requestOptions = RequestOptions(
+        path: endpoint,
+        method: method,
+        headers: requestHeaders,
+        contentType: null,
+        sendTimeout: timeout,
+        receiveTimeout: timeout,
+        responseType: ResponseType.json,
+      );
+      requestOptions.contentType = null;
+
+      final response = await _dio.fetch<Map<String, dynamic>>(requestOptions);
+      return _handleResponse(response);
+    } on DioException catch (e) {
+      throw _mapDioException(e);
+    }
   }
 
   Future<Map<String, dynamic>> _send(

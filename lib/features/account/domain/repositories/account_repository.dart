@@ -6,5 +6,5 @@ abstract class AccountRepository {
 
   Future<Either<ErrorMsg, void>> addUserPhone({required String phone});
 
-  Future<Either<ErrorMsg, void>> deleteUserPhone({required String phone});
+  Future<Either<ErrorMsg, void>> deleteUserPhone({required String phoneId});
 }

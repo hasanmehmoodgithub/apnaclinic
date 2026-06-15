@@ -27,7 +27,7 @@ profile setup.
   - OTP verify: `AppUrls.verifyOtp` — body includes `msisdn`, `otp`, and `fcmToken` when the device token is available (`NotificationService` / `AppPref`).
   - If login shows “unable to reach server”, check device network/VPN, iOS ATS (HTTP allowed for Jazz domains), and dev SSL config (`dio_app_network_config.dart`).
   - Request OTP `data.expiresIn` is in **seconds** (e.g. `300` → 5 min resend timer).
-  - Logout: `AppUrls.logout(userId)` (POST with `{}` body), expects `success: true` before local session is cleared.
+  - Logout: `AppUrls.logout` (POST body `{ "refreshToken": "<stored refresh token>" }`), expects `success: true` before local session is cleared.
   - After successful OTP when onboarding is complete, may fetch `AppUrls.userProfileById` and merge into response.
 
 ## Shared core helpers

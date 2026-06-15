@@ -170,7 +170,10 @@ class _MenuScreenState extends State<MenuScreen> {
                             final userId = _appPref.getUserId();
                             if (userId.isNotEmpty) {
                               final result = await sl<LogoutUseCase>().call(
-                                LogoutParams(userId: userId),
+                                LogoutParams(
+                                  userId: userId,
+                                  refreshToken: _appPref.getRefreshToken(),
+                                ),
                               );
                               final logoutFailed = result.fold((error) {
                                 ScaffoldMessenger.of(

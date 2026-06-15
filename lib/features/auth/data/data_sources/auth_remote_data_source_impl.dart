@@ -5,6 +5,7 @@ import '../../../../core/network/api_service.dart';
 import '../../../../core/network/app_urls.dart';
 import '../../../../core/utils/auth_api_utils.dart';
 import '../../../../core/utils/error_handler.dart';
+import '../../domain/use_cases/logout_use_case.dart';
 import '../../domain/use_cases/request_otp_use_case.dart';
 import '../../domain/use_cases/verify_otp_use_case.dart';
 import '../mock/auth_mock_api.dart';
@@ -100,8 +101,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   }
 
   @override
-  Future<void> logout(String userId) async {
-    final trimmed = userId.trim();
+  Future<void> logout(LogoutParams params) async {
+    final trimmed = params.userId.trim();
     if (trimmed.isEmpty) {
       return;
     }
@@ -111,8 +112,10 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     }
     try {
       final response = await apiService.post(
-        AppUrls.logout(trimmed),
-        data: <String, dynamic>{},
+        AppUrls.logout,
+        data: <String, dynamic>{
+          'refreshToken': params.refreshToken.trim(),
+        },
       );
       if (response['success'] != true) {
         final message = (response['message'] ?? AppStrings.authLogoutError)
@@ -124,7 +127,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       log('logout error: $e');
       final message = ErrorHandler.handleExceptions(
         e,
-        endpoint: AppUrls.logout(trimmed),
+        endpoint: AppUrls.logout,
       );
       return Future.error(message);
     }

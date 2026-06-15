@@ -5,11 +5,13 @@ class AccountMockApi {
 
   static final List<Map<String, dynamic>> _phones = [
     {
+      'id': 1,
       'msisdn': '923012123411',
       'jazzCashVerified': false,
       'primary': true,
     },
     {
+      'id': 2,
       'msisdn': '923012123412',
       'jazzCashVerified': false,
       'primary': false,
@@ -40,7 +42,16 @@ class AccountMockApi {
     required String phone,
   }) async {
     await Future<void>.delayed(const Duration(milliseconds: 300));
+    final nextId = _phones.fold<int>(
+      0,
+      (maxId, entry) {
+        final rawId = entry['id'];
+        final id = rawId is num ? rawId.toInt() : int.tryParse('$rawId') ?? 0;
+        return id > maxId ? id : maxId;
+      },
+    );
     _phones.add({
+      'id': nextId + 1,
       'msisdn': phone,
       'jazzCashVerified': false,
       'primary': false,
@@ -52,13 +63,14 @@ class AccountMockApi {
   }
 
   Future<Map<String, dynamic>> deleteUserPhoneResponse({
-    required String phone,
+    required String phoneId,
   }) async {
     await Future<void>.delayed(const Duration(milliseconds: 300));
-    _phones.removeWhere((entry) => entry['msisdn'] == phone);
+    _phones.removeWhere((entry) => entry['id'].toString() == phoneId);
     return {
       'success': true,
-      'message': 'Phone removed successfully.',
+      'message': 'User account removed successfully.',
+      'data': null,
     };
   }
 }

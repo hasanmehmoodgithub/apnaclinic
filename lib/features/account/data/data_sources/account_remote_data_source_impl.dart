@@ -97,23 +97,23 @@ class AccountRemoteDataSourceImpl implements AccountRemoteDataSource {
   }
 
   @override
-  Future<void> deleteUserPhone({required String phone}) async {
-    final msisdn = PhoneFormatUtils.toMsisdn(phone);
+  Future<void> deleteUserPhone({required String phoneId}) async {
+    final trimmedPhoneId = phoneId.trim();
     try {
       final Map<String, dynamic> response;
       if (AccountMockApi.useMockResponses) {
-        response = await mockApi.deleteUserPhoneResponse(phone: msisdn);
+        response = await mockApi.deleteUserPhoneResponse(phoneId: trimmedPhoneId);
       } else {
         final userId = await _resolveApiUserId();
         if (userId.isEmpty || !_isNumericId(userId)) {
           return Future.error(AppStrings.profileSetupLoadError);
         }
-        final endpoint = AppUrls.userPhone(userId);
-        log('deleteUserPhone DELETE $endpoint phone=$msisdn userId=$userId');
-        response = await apiService.delete(
-          endpoint,
-          data: <String, dynamic>{'phone': msisdn},
-        );
+        if (trimmedPhoneId.isEmpty || !_isNumericId(trimmedPhoneId)) {
+          return Future.error(AppStrings.genericErrorMessage);
+        }
+        final endpoint = AppUrls.deleteUserPhone(userId, trimmedPhoneId);
+        log('deleteUserPhone DELETE $endpoint userId=$userId phoneId=$trimmedPhoneId');
+        response = await apiService.delete(endpoint);
         log('deleteUserPhone response: $response');
       }
 

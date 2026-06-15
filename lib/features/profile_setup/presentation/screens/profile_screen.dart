@@ -9,6 +9,7 @@ import '../../../../core/preference/app_pref.dart';
 import '../../../../core/router/app_routes.dart';
 import '../profile_setup_launch_source.dart';
 import '../../../profile_setup/domain/use_cases/get_profile_setup_content_use_case.dart';
+import '../../../account/presentation/add_account_launch_source.dart';
 import '../../../account/domain/entities/account_item_entity.dart';
 import '../../../account/domain/models/account_method.dart';
 import '../../../account/domain/use_cases/delete_user_phone_use_case.dart';
@@ -49,7 +50,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future<void> _refreshAccountDataFromProfile() async {
-    await _refreshProfileFromApi();
     await _loadAccountDetails();
   }
 
@@ -143,10 +143,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           }
                         },
                         onAddAccountTap: () async {
-                          await context.push(
+                          final added = await context.push<bool>(
                             AppRoutes.path(AppRoutes.addAccount),
+                            extra: AddAccountLaunchSource.profile,
                           );
-                          if (mounted) {
+                          if (mounted && added == true) {
                             await _refreshAccountDataFromProfile();
                           }
                         },
@@ -179,7 +180,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     if (shouldDelete != true || !mounted) return;
 
     final result = await sl<DeleteUserPhoneUseCase>()(
-      DeleteUserPhoneParams(phone: item.id),
+      DeleteUserPhoneParams(phoneId: item.id),
     );
     if (!mounted) return;
 

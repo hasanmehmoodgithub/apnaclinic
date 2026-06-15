@@ -7,14 +7,19 @@ import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/widgets/app_scaffold_gradient.dart';
-import '../../../profile_setup/domain/use_cases/get_profile_setup_content_use_case.dart';
 import '../../domain/use_cases/add_user_phone_use_case.dart';
 import '../../domain/use_cases/get_accounts_list_use_case.dart';
+import '../add_account_launch_source.dart';
 import '../widgets/account_app_bar_widget.dart';
 import '../widgets/add_account_form_widget.dart';
 
 class AddAccountScreen extends StatefulWidget {
-  const AddAccountScreen({super.key});
+  const AddAccountScreen({
+    super.key,
+    this.launchSource = AddAccountLaunchSource.accountDetails,
+  });
+
+  final AddAccountLaunchSource launchSource;
 
   @override
   State<AddAccountScreen> createState() => _AddAccountScreenState();
@@ -69,6 +74,11 @@ class _AddAccountScreenState extends State<AddAccountScreen> {
         );
       },
       (_) async {
+        if (!mounted) return;
+        if (widget.launchSource == AddAccountLaunchSource.profile) {
+          context.pop(true);
+          return;
+        }
         await _refreshProfileAndAccounts();
         if (!mounted) return;
         context.pushReplacement(
@@ -83,7 +93,6 @@ class _AddAccountScreenState extends State<AddAccountScreen> {
   }
 
   Future<void> _refreshProfileAndAccounts() async {
-    await sl<GetProfileSetupContentUseCase>().call();
     await sl<GetAccountsListUseCase>().call();
   }
 

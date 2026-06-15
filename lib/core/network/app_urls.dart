@@ -30,9 +30,9 @@ class AppUrls {
   static String get requestOtp =>
       '$_normalizedApiBaseUrl/acs-auth/api/v1/auth/otp/generate';
 
-  /// Logout endpoint — `{userId}` is the authenticated user id from prefs/JWT.
-  static String logout(String userId) =>
-      '$_normalizedApiBaseUrl/acs-auth/api/v1/auth/logout/$userId';
+  /// Logout endpoint.
+  static String get logout =>
+      '$_normalizedApiBaseUrl/acs-auth/api/v1/auth/logout';
 
   /// Refresh token endpoint - full URL
   static String get refreshToken =>
@@ -80,9 +80,13 @@ class AppUrls {
   static String userProfileById(String userId) =>
       '$_normalizedApiBaseUrl/acs-auth/api/v1/users/$userId';
 
-  /// Add or remove a linked phone on the user profile.
+  /// Add a linked phone on the user profile.
   static String userPhone(String userId) =>
       '$_normalizedApiBaseUrl/acs-auth/api/v1/users/$userId/phone';
+
+  /// Delete a linked phone by record id.
+  static String deleteUserPhone(String userId, String phoneId) =>
+      '$_normalizedApiBaseUrl/acs-auth/api/v1/users/$userId/phone/$phoneId';
 
   /// Save profile setup endpoint
   static String get saveProfileSetup =>

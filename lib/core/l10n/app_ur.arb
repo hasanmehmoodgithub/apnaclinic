@@ -26,6 +26,7 @@
   "authSendOtpCta": "OTP بھیجیں",
   "authOtpVerificationTitle": "OTP تصدیق",
   "authOtpHintCode": "1 2 3 4",
+  "authOtpSecondsShort": "سیکنڈ",
   "authProceedCta": "آگے بڑھیں",
   "authVerifyCta": "تصدیق کریں",
   "authResendOtp": "OTP دوبارہ بھیجیں",

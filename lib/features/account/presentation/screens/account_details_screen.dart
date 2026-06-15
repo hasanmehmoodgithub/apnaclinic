@@ -5,7 +5,6 @@ import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../domain/entities/account_item_entity.dart';
 import '../../domain/models/account_method.dart';
-import '../../../profile_setup/domain/use_cases/get_profile_setup_content_use_case.dart';
 import '../../domain/use_cases/delete_user_phone_use_case.dart';
 import '../../domain/use_cases/get_accounts_list_use_case.dart';
 import '../widgets/account_added_success_dialog_widget.dart';
@@ -45,7 +44,6 @@ class _AccountDetailsScreenState extends State<AccountDetailsScreen> {
       _errorMessage = null;
     });
 
-    await sl<GetProfileSetupContentUseCase>().call();
     final result = await sl<GetAccountsListUseCase>().call();
     if (!mounted) return;
 
@@ -72,7 +70,7 @@ class _AccountDetailsScreenState extends State<AccountDetailsScreen> {
 
   Future<void> _deleteAccount(AccountItemEntity item) async {
     final result = await sl<DeleteUserPhoneUseCase>()(
-      DeleteUserPhoneParams(phone: item.id),
+      DeleteUserPhoneParams(phoneId: item.id),
     );
     if (!mounted) return;
 

@@ -3,9 +3,9 @@ import '../../../../core/use_case/base_use_case.dart';
 import '../repositories/account_repository.dart';
 
 class DeleteUserPhoneParams {
-  const DeleteUserPhoneParams({required this.phone});
+  const DeleteUserPhoneParams({required this.phoneId});
 
-  final String phone;
+  final String phoneId;
 }
 
 class DeleteUserPhoneUseCase implements UseCase<void, DeleteUserPhoneParams> {
@@ -15,6 +15,6 @@ class DeleteUserPhoneUseCase implements UseCase<void, DeleteUserPhoneParams> {
 
   @override
   Future<Either<ErrorMsg, void>> call(DeleteUserPhoneParams params) {
-    return repository.deleteUserPhone(phone: params.phone);
+    return repository.deleteUserPhone(phoneId: params.phoneId);
   }
 }

@@ -47,6 +47,7 @@ import '../../features/surgery/presentation/cubit/surgery_cubit.dart';
 import '../../features/surgery/presentation/screens/surgery_screen.dart';
 import '../../features/dashboard/presentation/screens/main_navigation_shell.dart';
 import '../../features/account/presentation/screens/account_details_screen.dart';
+import '../../features/account/presentation/add_account_launch_source.dart';
 import '../../features/account/presentation/screens/add_account_screen.dart';
 import '../../features/onboarding/presentation/screens/onboarding_screen.dart';
 import '../../features/auth/presentation/screens/login_screen.dart';
@@ -126,7 +127,9 @@ class AppRouter {
       GoRoute(
         path: AppRoutes.path(AppRoutes.addAccount),
         name: AppRoutes.addAccount,
-        builder: (context, state) => const AddAccountScreen(),
+        builder: (context, state) => AddAccountScreen(
+          launchSource: addAccountLaunchSourceFromExtra(state.extra),
+        ),
       ),
       GoRoute(
         path: AppRoutes.path(AppRoutes.accountDetails),

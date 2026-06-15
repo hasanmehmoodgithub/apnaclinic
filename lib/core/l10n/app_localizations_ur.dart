@@ -96,7 +96,7 @@ class AppLocalizationsUr extends AppLocalizations {
   String get authResendOtp => 'OTP دوبارہ بھیجیں';
 
   @override
-  String get authOtpSecondsShort => 'Sec';
+  String get authOtpSecondsShort => 'سیکنڈ';
 
   @override
   String get authOtpSentTo => 'OTP بھیجا گیا';

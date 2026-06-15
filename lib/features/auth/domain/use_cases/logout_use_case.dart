@@ -11,15 +11,19 @@ class LogoutUseCase implements UseCaseVoid<LogoutParams> {
 
   @override
   Future<Either<ErrorMsg, void>> call(LogoutParams params) async {
-    return repository.logout(params.userId);
+    return repository.logout(params);
   }
 }
 
 class LogoutParams extends Equatable {
-  const LogoutParams({required this.userId});
+  const LogoutParams({
+    required this.userId,
+    required this.refreshToken,
+  });
 
   final String userId;
+  final String refreshToken;
 
   @override
-  List<Object?> get props => [userId];
+  List<Object?> get props => [userId, refreshToken];
 }

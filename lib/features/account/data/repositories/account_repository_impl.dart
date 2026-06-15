@@ -33,9 +33,9 @@ class AccountRepositoryImpl implements AccountRepository {
   }
 
   @override
-  Future<Either<ErrorMsg, void>> deleteUserPhone({required String phone}) async {
+  Future<Either<ErrorMsg, void>> deleteUserPhone({required String phoneId}) async {
     try {
-      await remoteDataSource.deleteUserPhone(phone: phone);
+      await remoteDataSource.deleteUserPhone(phoneId: phoneId);
       return const Right(null);
     } catch (e) {
       log('deleteUserPhone repository error: $e');

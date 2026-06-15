@@ -7,7 +7,7 @@ Manage linked JazzCash phone numbers on the user profile (account details).
 ## Routes / entry
 
 - `AppRoutes.accountDetails` — list linked phones from profile API.
-- `AppRoutes.addAccount` — add a new phone number.
+- `AppRoutes.addAccount` — add a new phone number (`AddAccountLaunchSource.profile` from profile tab pops back and refreshes; default flow opens account details with success dialog).
 
 ## Data & APIs
 
@@ -15,9 +15,11 @@ Manage linked JazzCash phone numbers on the user profile (account details).
 |--------|--------|-----------|------|
 | List phones | GET | `userProfileById(userId)` → `/acs-auth/api/v1/users/{id}` | — (`data.phones[]`) |
 | Add phone | POST | `userPhone(userId)` → `/acs-auth/api/v1/users/{id}/phone` | `{ "phone": "923012123412" }` |
-| Delete phone | DELETE | `userPhone(userId)` | `{ "phone": "923012123412" }` |
+| Delete phone | DELETE | `deleteUserPhone(userId, phoneId)` → `/acs-auth/api/v1/users/{id}/phone/{phoneId}` | — (no body) |
 
-Phone entries: `msisdn`, `jazzCashVerified`, `primary`. UI shows `03…` local format; API uses `92…` MSISDN.
+Delete success response: `{ "success": true, "message": "User account removed successfully.", "data": null }`.
+
+Phone entries: `id`, `msisdn`, `jazzCashVerified`, `primary`. UI shows `03…` local format; API uses `92…` MSISDN. Delete uses the phone record `id` from profile `data.phones[]`.
 
 `userId` for phone endpoints prefers `UserLocalModel.apiUserId` (`data.id` from profile), falling back to `AppPref.getUserId()`.
 
@@ -36,4 +38,4 @@ Phone entries: `msisdn`, `jazzCashVerified`, `primary`. UI shows `03…` local f
 
 Before add/delete phone, the app resolves numeric `data.id` via cached profile (`apiUserId`) or a profile GET using the session user id.
 
-After add/delete, account details refresh via `GetProfileSetupContentUseCase` + `GetAccountsListUseCase` (GET profile → `data.phones`).
+After add/delete, account details refresh via `GetAccountsListUseCase` (GET profile → `data.phones`). Profile tab uses the same single call after phone changes; full profile fields reload separately via `GetProfileSetupContentUseCase` on screen open / edit.
