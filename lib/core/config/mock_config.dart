@@ -39,6 +39,11 @@ class MockConfig {
     return false;
     return _isTruthy(_mockTrueValue) || kDebugMode;
   }
+
+  static bool get enableAccountMocks {
+    return false;
+    return _isTruthy(_mockTrueValue) || kDebugMode;
+  }
   static bool _isTruthy(String value) {
     final normalized = value.trim().toLowerCase();
     return normalized == 'true' ||

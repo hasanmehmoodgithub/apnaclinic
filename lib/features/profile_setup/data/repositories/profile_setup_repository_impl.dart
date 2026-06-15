@@ -4,6 +4,7 @@ import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/functional/functional_export.dart';
 import '../../../../core/preference/app_pref.dart';
 import '../../../../core/preference/user_local_model.dart';
+import '../../../../core/utils/phone_format_utils.dart';
 import '../../domain/entities/profile_setup_entity.dart';
 import '../../domain/models/profile_setup_data.dart';
 import '../../domain/repositories/profile_setup_repository.dart';
@@ -23,7 +24,11 @@ class ProfileSetupRepositoryImpl implements ProfileSetupRepository {
     try {
       final model = await _remoteDataSource.getProfileSetupContent();
       final entity = ProfileSetupMapper.toEntity(model);
-      await _persistEntityLocally(entity);
+      await _persistEntityLocally(
+        entity,
+        apiUserId: model.content.apiUserId,
+        primaryMsisdn: model.content.primaryMsisdn,
+      );
       return Right(entity);
     } catch (e) {
       log('getProfileSetupContent repository error: $e');
@@ -43,8 +48,13 @@ class ProfileSetupRepositoryImpl implements ProfileSetupRepository {
     }
   }
 
-  Future<void> _persistEntityLocally(ProfileSetupEntity entity) async {
+  Future<void> _persistEntityLocally(
+    ProfileSetupEntity entity, {
+    String apiUserId = '',
+    String? primaryMsisdn,
+  }) async {
     final existing = appPref.getUserLocalModel() ?? const UserLocalModel();
+    final resolvedPhone = primaryMsisdn?.trim();
     await appPref.setUserLocalModel(
       existing.copyWith(
         firstName: entity.firstName,
@@ -54,6 +64,10 @@ class ProfileSetupRepositoryImpl implements ProfileSetupRepository {
         address: entity.address,
         dateOfBirth: entity.dateOfBirth?.toIso8601String() ?? '',
         imageUrl: entity.imageUrl ?? '',
+        apiUserId: apiUserId.isNotEmpty ? apiUserId : existing.apiUserId,
+        phone: resolvedPhone != null && resolvedPhone.isNotEmpty
+            ? PhoneFormatUtils.toLocalDisplay(resolvedPhone)
+            : existing.phone,
       ),
     );
   }

@@ -16,7 +16,6 @@ class LoggedInProfileContent extends StatelessWidget {
     required this.gender,
     required this.dob,
     required this.email,
-    required this.accounts,
     required this.accountDetails,
     required this.isAccountDetailsLoading,
     required this.accountDetailsError,
@@ -24,7 +23,6 @@ class LoggedInProfileContent extends StatelessWidget {
     required this.onAccountTap,
     required this.onEditTap,
     required this.onAddAccountTap,
-    required this.onDeleteAccountTap,
   });
 
   final String fullName;
@@ -32,7 +30,6 @@ class LoggedInProfileContent extends StatelessWidget {
   final String gender;
   final String dob;
   final String email;
-  final List<AccountMethod> accounts;
   final List<AccountItemEntity> accountDetails;
   final bool isAccountDetailsLoading;
   final String? accountDetailsError;
@@ -40,7 +37,6 @@ class LoggedInProfileContent extends StatelessWidget {
   final VoidCallback onAccountTap;
   final VoidCallback onEditTap;
   final VoidCallback onAddAccountTap;
-  final void Function(int index, AccountMethod account) onDeleteAccountTap;
 
   @override
   Widget build(BuildContext context) {
@@ -162,7 +158,9 @@ class LoggedInProfileContent extends StatelessWidget {
                 child: AccountTile(
                   account: AccountMethod(
                     bankName: l10n.accountMethodJazzCash,
-                    accountHolderName: l10n.accountHolderFallback,
+                    accountHolderName: fullName.isEmpty
+                        ? l10n.accountHolderFallback
+                        : fullName,
                     accountNumber: entry.value.number,
                     isDefault: entry.value.isDefault,
                   ),

@@ -5,6 +5,8 @@ import '../../domain/models/profile_setup_data.dart';
 
 class ProfileSetupModel {
   const ProfileSetupModel({
+    required this.apiUserId,
+    required this.publicId,
     required this.firstName,
     required this.lastName,
     required this.gender,
@@ -12,8 +14,11 @@ class ProfileSetupModel {
     required this.address,
     required this.dateOfBirth,
     required this.imageUrl,
+    required this.phones,
   });
 
+  final String apiUserId;
+  final String publicId;
   final String firstName;
   final String lastName;
   final String gender;
@@ -21,9 +26,12 @@ class ProfileSetupModel {
   final String address;
   final String dateOfBirth;
   final String imageUrl;
+  final List<ProfileUserPhoneModel> phones;
 
   factory ProfileSetupModel.fromJson(Map<String, dynamic> json) {
     return ProfileSetupModel(
+      apiUserId: (json['id'] ?? '').toString(),
+      publicId: (json['publicId'] ?? '').toString(),
       firstName: (json['firstName'] ?? '').toString(),
       lastName: (json['lastName'] ?? '').toString(),
       gender: (json['gender'] ?? '').toString(),
@@ -31,7 +39,48 @@ class ProfileSetupModel {
       address: (json['address'] ?? '').toString(),
       dateOfBirth: (json['dateOfBirth'] ?? json['dob'] ?? '').toString(),
       imageUrl: (json['image'] ?? json['imageUrl'] ?? '').toString(),
+      phones: ProfileUserPhoneModel.parseList(json['phones']),
     );
+  }
+
+  String? get primaryMsisdn {
+    for (final phone in phones) {
+      if (phone.primary) return phone.msisdn;
+    }
+    return phones.isNotEmpty ? phones.first.msisdn : null;
+  }
+}
+
+class ProfileUserPhoneModel {
+  const ProfileUserPhoneModel({
+    required this.msisdn,
+    required this.jazzCashVerified,
+    required this.primary,
+  });
+
+  final String msisdn;
+  final bool jazzCashVerified;
+  final bool primary;
+
+  factory ProfileUserPhoneModel.fromJson(Map<String, dynamic> json) {
+    return ProfileUserPhoneModel(
+      msisdn: (json['msisdn'] ?? '').toString(),
+      jazzCashVerified: json['jazzCashVerified'] == true,
+      primary: json['primary'] == true,
+    );
+  }
+
+  static List<ProfileUserPhoneModel> parseList(dynamic raw) {
+    if (raw is! List) return const [];
+    return raw
+        .whereType<Map>()
+        .map(
+          (item) => ProfileUserPhoneModel.fromJson(
+            Map<String, dynamic>.from(item),
+          ),
+        )
+        .where((phone) => phone.msisdn.isNotEmpty)
+        .toList(growable: false);
   }
 }
 

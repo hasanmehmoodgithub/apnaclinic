@@ -3,6 +3,7 @@ class UserLocalModel {
     this.firstName = '',
     this.lastName = '',
     this.phone = '',
+    this.apiUserId = '',
     this.gender = '',
     this.email = '',
     this.address = '',
@@ -13,6 +14,8 @@ class UserLocalModel {
   final String firstName;
   final String lastName;
   final String phone;
+  /// Numeric user id from profile API (`data.id`), used for phone endpoints.
+  final String apiUserId;
   final String gender;
   final String email;
   final String address;
@@ -24,6 +27,7 @@ class UserLocalModel {
       firstName: (json['firstName'] ?? '').toString(),
       lastName: (json['lastName'] ?? '').toString(),
       phone: (json['phone'] ?? '').toString(),
+      apiUserId: (json['apiUserId'] ?? '').toString(),
       gender: (json['gender'] ?? '').toString(),
       email: (json['email'] ?? '').toString(),
       address: (json['address'] ?? '').toString(),
@@ -37,6 +41,7 @@ class UserLocalModel {
       'firstName': firstName,
       'lastName': lastName,
       'phone': phone,
+      'apiUserId': apiUserId,
       'gender': gender,
       'email': email,
       'address': address,
@@ -49,6 +54,7 @@ class UserLocalModel {
     String? firstName,
     String? lastName,
     String? phone,
+    String? apiUserId,
     String? gender,
     String? email,
     String? address,
@@ -59,6 +65,7 @@ class UserLocalModel {
       firstName: firstName ?? this.firstName,
       lastName: lastName ?? this.lastName,
       phone: phone ?? this.phone,
+      apiUserId: apiUserId ?? this.apiUserId,
       gender: gender ?? this.gender,
       email: email ?? this.email,
       address: address ?? this.address,

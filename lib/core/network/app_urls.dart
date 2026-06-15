@@ -80,6 +80,10 @@ class AppUrls {
   static String userProfileById(String userId) =>
       '$_normalizedApiBaseUrl/acs-auth/api/v1/users/$userId';
 
+  /// Add or remove a linked phone on the user profile.
+  static String userPhone(String userId) =>
+      '$_normalizedApiBaseUrl/acs-auth/api/v1/users/$userId/phone';
+
   /// Save profile setup endpoint
   static String get saveProfileSetup =>
       '$_normalizedApiBaseUrl/acs-auth/api/v1/users/';

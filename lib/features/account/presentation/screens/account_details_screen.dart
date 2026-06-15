@@ -1,92 +1,103 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
-import '../../../../core/preference/app_pref.dart';
-import '../../data/account_local_store.dart';
+import '../../domain/entities/account_item_entity.dart';
 import '../../domain/models/account_method.dart';
+import '../../../profile_setup/domain/use_cases/get_profile_setup_content_use_case.dart';
+import '../../domain/use_cases/delete_user_phone_use_case.dart';
+import '../../domain/use_cases/get_accounts_list_use_case.dart';
 import '../widgets/account_added_success_dialog_widget.dart';
 import '../widgets/account_app_bar_widget.dart';
+import '../widgets/account_details_loading_shimmer_widget.dart';
 import '../widgets/account_method_card_widget.dart';
 
 class AccountDetailsScreen extends StatefulWidget {
-  //
   const AccountDetailsScreen({
     super.key,
-    this.initialAccountIndex,
     this.showSuccessDialog = false,
+    this.addedPhone,
   });
 
-  final int? initialAccountIndex;
   final bool showSuccessDialog;
+  final String? addedPhone;
 
   @override
   State<AccountDetailsScreen> createState() => _AccountDetailsScreenState();
 }
 
 class _AccountDetailsScreenState extends State<AccountDetailsScreen> {
-  late List<AccountMethod> _accounts;
+  bool _isLoading = true;
+  String? _errorMessage;
+  List<AccountItemEntity> _accounts = const [];
   bool _didShowInitialSuccessDialog = false;
 
   @override
   void initState() {
     super.initState();
-    _reloadAccounts();
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      if (!mounted ||
-          !widget.showSuccessDialog ||
-          _didShowInitialSuccessDialog ||
-          _accounts.isEmpty) {
-        return;
-      }
-      _didShowInitialSuccessDialog = true;
-      await _showSuccessDialog(_accounts.first);
+    _loadAccounts();
+  }
+
+  Future<void> _loadAccounts() async {
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
     });
-  }
 
-  void _reloadAccounts() {
-    final allAccounts = AccountLocalStore(sl<AppPref>()).getAccounts();
-    final index = widget.initialAccountIndex;
-    if (index != null && index >= 0 && index < allAccounts.length) {
-      _accounts = [allAccounts[index]];
-      return;
-    }
-    _accounts = allAccounts;
-  }
-
-  Future<void> _deleteAccount(int index) async {
-    final store = AccountLocalStore(sl<AppPref>());
-    final sourceIndex = widget.initialAccountIndex ?? index;
-    await store.deleteAccount(sourceIndex);
+    await sl<GetProfileSetupContentUseCase>().call();
+    final result = await sl<GetAccountsListUseCase>().call();
     if (!mounted) return;
-    if (widget.initialAccountIndex != null) {
-      context.pop();
-      return;
-    }
-    setState(_reloadAccounts);
+
+    result.fold(
+      (error) => setState(() {
+        _errorMessage = error;
+        _isLoading = false;
+      }),
+      (accounts) async {
+        setState(() {
+          _accounts = accounts;
+          _isLoading = false;
+        });
+        if (!widget.showSuccessDialog ||
+            _didShowInitialSuccessDialog ||
+            widget.addedPhone == null) {
+          return;
+        }
+        _didShowInitialSuccessDialog = true;
+        await _showSuccessDialog(widget.addedPhone!.trim());
+      },
+    );
   }
 
-  Future<void> _showSuccessDialog(AccountMethod account) async {
+  Future<void> _deleteAccount(AccountItemEntity item) async {
+    final result = await sl<DeleteUserPhoneUseCase>()(
+      DeleteUserPhoneParams(phone: item.id),
+    );
+    if (!mounted) return;
+
+    result.fold(
+      (error) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(error)),
+        );
+      },
+      (_) => _loadAccounts(),
+    );
+  }
+
+  Future<void> _showSuccessDialog(String accountNumber) async {
     await showDialog<void>(
       context: context,
       barrierColor: Colors.black.withValues(alpha: 0.35),
       builder: (context) {
         final l10n = AppLocalizations.of(context)!;
         return AccountAddedSuccessDialogWidget(
-          displayBankName: _displayBankName(account.bankName, l10n),
-          accountNumber: account.accountNumber,
+          displayBankName: l10n.accountMethodJazzCash,
+          accountNumber: accountNumber,
         );
       },
     );
-  }
-
-  String _displayBankName(String bankName, AppLocalizations l10n) {
-    if (bankName.trim().isEmpty) return l10n.accountMethodJazzCash;
-    final normalized = bankName.replaceAll(' ', '').toLowerCase();
-    if (normalized == 'jazzcash') return l10n.accountMethodJazzCash;
-    return bankName;
   }
 
   @override
@@ -95,19 +106,47 @@ class _AccountDetailsScreenState extends State<AccountDetailsScreen> {
     return Scaffold(
       backgroundColor: AppColors.clrWhite,
       appBar: AccountAppBarWidget(title: l10n.accountDetailsTitle),
-      body: ListView.separated(
-        padding: EdgeInsets.fromLTRB(18.w, 20.h, 18.w, 24.h),
-        itemCount: _accounts.length,
-        separatorBuilder: (_, _) => SizedBox(height: 12.h),
-        itemBuilder: (context, index) {
-          final item = _accounts[index];
-          return AccountMethodCardWidget(
-            account: item,
-            displayBankName: _displayBankName(item.bankName, l10n),
-            onDeleteTap: () => _deleteAccount(index),
-          );
-        },
-      ),
+      body: _isLoading
+          ? const AccountDetailsLoadingShimmerWidget()
+          : _errorMessage != null
+          ? Center(
+              child: Padding(
+                padding: EdgeInsets.all(24.w),
+                child: Text(
+                  _errorMessage!,
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            )
+          : _accounts.isEmpty
+          ? Center(
+              child: Text(
+                l10n.accountNoAccountsMessage,
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: AppColors.clr7A91AE,
+                ),
+              ),
+            )
+          : ListView.separated(
+              padding: EdgeInsets.fromLTRB(18.w, 20.h, 18.w, 24.h),
+              itemCount: _accounts.length,
+              separatorBuilder: (_, _) => SizedBox(height: 12.h),
+              itemBuilder: (context, index) {
+                final item = _accounts[index];
+                return AccountMethodCardWidget(
+                  account: AccountMethod(
+                    bankName: l10n.accountMethodJazzCash,
+                    accountHolderName: l10n.accountHolderFallback,
+                    accountNumber: item.number,
+                    isDefault: item.isDefault,
+                  ),
+                  displayBankName: l10n.accountMethodJazzCash,
+                  onDeleteTap: item.isDefault
+                      ? null
+                      : () => _deleteAccount(item),
+                );
+              },
+            ),
     );
   }
 }

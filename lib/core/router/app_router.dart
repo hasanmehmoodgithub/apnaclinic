@@ -135,8 +135,8 @@ class AppRouter {
           final extra = state.extra;
           final data = extra is Map ? Map<String, dynamic>.from(extra) : null;
           return AccountDetailsScreen(
-            initialAccountIndex: data?['accountIndex'] as int?,
             showSuccessDialog: data?['showSuccessDialog'] == true,
+            addedPhone: data?['addedPhone'] as String?,
           );
         },
       ),

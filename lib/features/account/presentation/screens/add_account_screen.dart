@@ -5,11 +5,11 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
-import '../../../../core/preference/app_pref.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/widgets/app_scaffold_gradient.dart';
-import '../../data/account_local_store.dart';
-import '../../domain/models/account_method.dart';
+import '../../../profile_setup/domain/use_cases/get_profile_setup_content_use_case.dart';
+import '../../domain/use_cases/add_user_phone_use_case.dart';
+import '../../domain/use_cases/get_accounts_list_use_case.dart';
 import '../widgets/account_app_bar_widget.dart';
 import '../widgets/add_account_form_widget.dart';
 
@@ -26,6 +26,14 @@ class _AddAccountScreenState extends State<AddAccountScreen> {
   late List<String> _accountMethods;
   late String _selectedAccountMethod;
   bool _didInitializeMethods = false;
+  bool _isSaving = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // Warm profile cache so numeric user id is available for POST /users/{id}/phone.
+    sl<GetAccountsListUseCase>().call();
+  }
 
   @override
   void didChangeDependencies() {
@@ -44,31 +52,39 @@ class _AddAccountScreenState extends State<AddAccountScreen> {
   }
 
   Future<void> _saveAccount() async {
-    if (!_formKey.currentState!.validate()) return;
-    final pref = sl<AppPref>();
-    final userLocal = pref.getUserLocalModel();
-    final firstName = userLocal?.firstName.trim() ?? '';
-    final lastName = userLocal?.lastName.trim() ?? '';
-    final fullName = '$firstName $lastName'.trim();
+    if (!_formKey.currentState!.validate() || _isSaving) return;
 
-    final store = AccountLocalStore(pref);
-    final newIndex = await store.addAccount(
-      AccountMethod(
-        bankName: _selectedAccountMethod,
-        accountHolderName: fullName.isEmpty
-            ? AppLocalizations.of(context)!.accountHolderFallback
-            : fullName,
-        accountNumber: _accountNumberController.text.trim(),
-      ),
+    setState(() => _isSaving = true);
+    final phone = _accountNumberController.text.trim();
+    final result = await sl<AddUserPhoneUseCase>()(
+      AddUserPhoneParams(phone: phone),
     );
     if (!mounted) return;
-    context.pushReplacement(
-      AppRoutes.path(AppRoutes.accountDetails),
-      extra: <String, dynamic>{
-        'accountIndex': newIndex,
-        'showSuccessDialog': true,
+    setState(() => _isSaving = false);
+
+    result.fold(
+      (error) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(error)),
+        );
+      },
+      (_) async {
+        await _refreshProfileAndAccounts();
+        if (!mounted) return;
+        context.pushReplacement(
+          AppRoutes.path(AppRoutes.accountDetails),
+          extra: <String, dynamic>{
+            'showSuccessDialog': true,
+            'addedPhone': phone,
+          },
+        );
       },
     );
+  }
+
+  Future<void> _refreshProfileAndAccounts() async {
+    await sl<GetProfileSetupContentUseCase>().call();
+    await sl<GetAccountsListUseCase>().call();
   }
 
   @override
@@ -94,6 +110,7 @@ class _AddAccountScreenState extends State<AddAccountScreen> {
             accountNumberController: _accountNumberController,
             accountNumberValidator: _validatePakistanAccountNumber,
             onSavePressed: _saveAccount,
+            isLoading: _isSaving,
           ),
         ),
       ),

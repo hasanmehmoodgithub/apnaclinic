@@ -9,14 +9,29 @@ class ProfileSetupMockApi {
     await Future<void>.delayed(const Duration(milliseconds: 250));
     return {
       'success': true,
-      'message': 'Profile setup fetched successfully',
+      'message': 'User fetched successfully.',
       'data': {
-        'firstName': 'Siddeeq',
-        'lastName': 'Khan',
-        'gender': 'male',
-        'email': 'siddeeqkhan@example.com',
-        'address': 'Islamabad, Pakistan',
-        'dateOfBirth': '2001-01-01',
+        'id': 3,
+        'publicId': '6eb5e735d13e1fc3f6c8630b26',
+        'phones': [
+          {
+            'msisdn': '923012123411',
+            'jazzCashVerified': false,
+            'primary': true,
+          },
+          {
+            'msisdn': '923012123412',
+            'jazzCashVerified': false,
+            'primary': false,
+          },
+        ],
+        'email': 'bilal@gmail.com',
+        'firstName': 'bilal',
+        'lastName': 'ahmad',
+        'dob': '11-06-2006 00:00:00',
+        'gender': 'Male',
+        'address': 'raw',
+        'image': null,
       },
     };
   }

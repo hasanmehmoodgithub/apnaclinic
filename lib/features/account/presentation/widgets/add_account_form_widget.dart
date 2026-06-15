@@ -16,6 +16,7 @@ class AddAccountFormWidget extends StatelessWidget {
     required this.accountNumberController,
     required this.accountNumberValidator,
     required this.onSavePressed,
+    this.isLoading = false,
   });
 
   final GlobalKey<FormState> formKey;
@@ -25,6 +26,7 @@ class AddAccountFormWidget extends StatelessWidget {
   final TextEditingController accountNumberController;
   final FormFieldValidator<String> accountNumberValidator;
   final VoidCallback onSavePressed;
+  final bool isLoading;
 
   @override
   Widget build(BuildContext context) {
@@ -92,7 +94,8 @@ class AddAccountFormWidget extends StatelessWidget {
           const Spacer(),
           AppButton.primary(
             text: l10n.accountSaveCta,
-            onPressed: onSavePressed,
+            onPressed: isLoading ? null : onSavePressed,
+            isLoading: isLoading,
             backgroundColor: AppColors.clr40AFA2,
             foregroundColor: AppColors.clrWhite,
             height: 56.h,

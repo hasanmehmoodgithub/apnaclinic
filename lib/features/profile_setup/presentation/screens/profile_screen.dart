@@ -10,9 +10,9 @@ import '../../../../core/router/app_routes.dart';
 import '../profile_setup_launch_source.dart';
 import '../../../profile_setup/domain/use_cases/get_profile_setup_content_use_case.dart';
 import '../../../account/domain/entities/account_item_entity.dart';
-import '../../../account/domain/use_cases/get_accounts_list_use_case.dart';
-import '../../../account/data/account_local_store.dart';
 import '../../../account/domain/models/account_method.dart';
+import '../../../account/domain/use_cases/delete_user_phone_use_case.dart';
+import '../../../account/domain/use_cases/get_accounts_list_use_case.dart';
 import '../widgets/guest_profile_content.dart';
 import '../widgets/logged_in_profile_content.dart';
 import '../widgets/profile_avatar_section.dart';
@@ -30,7 +30,6 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   late final AppPref _appPref;
-  late final AccountLocalStore _accountStore;
   bool _isAccountDetailsLoading = true;
   String? _accountDetailsError;
   List<AccountItemEntity> _accountDetails = const [];
@@ -39,7 +38,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   void initState() {
     super.initState();
     _appPref = sl<AppPref>();
-    _accountStore = AccountLocalStore(_appPref);
     _loadAccountDetails();
     _refreshProfileFromApi();
   }
@@ -50,21 +48,30 @@ class _ProfileScreenState extends State<ProfileScreen> {
     if (mounted) setState(() {});
   }
 
+  Future<void> _refreshAccountDataFromProfile() async {
+    await _refreshProfileFromApi();
+    await _loadAccountDetails();
+  }
+
   Future<void> _loadAccountDetails() async {
-    try {
-      final items = await sl<GetAccountsListUseCase>().call();
-      if (!mounted) return;
-      setState(() {
+    setState(() {
+      _isAccountDetailsLoading = true;
+      _accountDetailsError = null;
+    });
+
+    final result = await sl<GetAccountsListUseCase>().call();
+    if (!mounted) return;
+
+    result.fold(
+      (error) => setState(() {
+        _accountDetailsError = error;
+        _isAccountDetailsLoading = false;
+      }),
+      (items) => setState(() {
         _accountDetails = items;
         _isAccountDetailsLoading = false;
-      });
-    } catch (e) {
-      if (!mounted) return;
-      setState(() {
-        _accountDetailsError = e.toString();
-        _isAccountDetailsLoading = false;
-      });
-    }
+      }),
+    );
   }
 
   @override
@@ -75,7 +82,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final lastName = userLocal?.lastName.trim() ?? '';
     final fullName = '$firstName $lastName'.trim();
     final phone = userLocal?.phone.trim() ?? '';
-    final accounts = _accountStore.getAccounts();
     final gender = userLocal?.gender.trim() ?? '';
     final email = userLocal?.email.trim() ?? '';
     final dobIso = userLocal?.dateOfBirth.trim() ?? '';
@@ -117,14 +123,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         gender: gender.isEmpty ? '--' : gender,
                         dob: dobLabel.isEmpty ? '--' : dobLabel,
                         email: email.isEmpty ? '--' : email,
-                        accounts: accounts,
                         accountDetails: _accountDetails,
                         isAccountDetailsLoading: _isAccountDetailsLoading,
                         accountDetailsError: _accountDetailsError,
                         onDeleteAccountDetailTap: _onDeleteAccountDetailTap,
-                        onAccountTap: () => context.push(
-                          AppRoutes.path(AppRoutes.accountDetails),
-                        ),
+                        onAccountTap: () async {
+                          await context.push(
+                            AppRoutes.path(AppRoutes.accountDetails),
+                          );
+                          if (mounted) await _refreshAccountDataFromProfile();
+                        },
                         onEditTap: () async {
                           final updated = await context.push<bool>(
                             AppRoutes.path(AppRoutes.profileSetup),
@@ -138,9 +146,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           await context.push(
                             AppRoutes.path(AppRoutes.addAccount),
                           );
-                          if (mounted) setState(() {});
+                          if (mounted) {
+                            await _refreshAccountDataFromProfile();
+                          }
                         },
-                        onDeleteAccountTap: _onDeleteAccountTap,
                       )
                     : GuestProfileContent(
                         onLoginTap: () =>
@@ -154,20 +163,34 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  Future<void> _onDeleteAccountTap(int index, AccountMethod account) async {
+  Future<void> _onDeleteAccountDetailTap(
+    int index,
+    AccountItemEntity item,
+  ) async {
+    if (item.isDefault) return;
+
+    final account = AccountMethod(
+      bankName: AppLocalizations.of(context)!.accountMethodJazzCash,
+      accountHolderName: AppLocalizations.of(context)!.accountHolderFallback,
+      accountNumber: item.number,
+      isDefault: item.isDefault,
+    );
     final shouldDelete = await _showRemoveAccountDialog(account);
     if (shouldDelete != true || !mounted) return;
-    await _accountStore.deleteAccount(index);
-    if (mounted) {
-      setState(() {});
-    }
-  }
 
-  void _onDeleteAccountDetailTap(int index, AccountItemEntity item) {
-    if (item.isDefault) return;
-    setState(() {
-      _accountDetails = [..._accountDetails]..removeAt(index);
-    });
+    final result = await sl<DeleteUserPhoneUseCase>()(
+      DeleteUserPhoneParams(phone: item.id),
+    );
+    if (!mounted) return;
+
+    result.fold(
+      (error) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(error)),
+        );
+      },
+      (_) => _refreshAccountDataFromProfile(),
+    );
   }
 
   Future<bool?> _showRemoveAccountDialog(AccountMethod account) {
