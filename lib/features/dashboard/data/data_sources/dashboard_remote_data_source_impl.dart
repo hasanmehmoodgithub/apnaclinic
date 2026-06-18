@@ -55,11 +55,6 @@ class DashboardRemoteDataSourceImpl implements DashboardRemoteDataSource {
       return Future.error(message);
     } on ApiUnauthorizedException catch (e) {
       log('getOurServices unauthorized: $e');
-      if (!appPref.getLoginStatus()) {
-        return OurServicesModel.fromJson(
-          await mockApi.getGuestFallbackServicesResponse(),
-        );
-      }
       final msg = e.message.trim();
       return Future.error(
         msg.isNotEmpty
@@ -68,11 +63,6 @@ class DashboardRemoteDataSourceImpl implements DashboardRemoteDataSource {
       );
     } catch (e) {
       log('getOurServices error: $e');
-      if (!appPref.getLoginStatus()) {
-        return OurServicesModel.fromJson(
-          await mockApi.getGuestFallbackServicesResponse(),
-        );
-      }
       final message = ErrorHandler.handleExceptions(
         e,
         endpoint: AppUrls.ourServices,

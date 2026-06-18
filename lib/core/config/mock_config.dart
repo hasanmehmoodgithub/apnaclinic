@@ -25,10 +25,7 @@ class MockConfig {
     return _isTruthy(_mockTrueValue)  || kDebugMode;
   }
 
-  static bool get enableDashboardMocks {
-    return false;
-    return _isTruthy(_mockTrueValue)  || kDebugMode;
-  }
+  static bool get enableDashboardMocks => false;
 
   static bool get enableConsultationMocks {
     return false;

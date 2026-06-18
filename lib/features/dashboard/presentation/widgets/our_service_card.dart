@@ -6,7 +6,7 @@ import '../constants/dashboard_ui_config.dart';
 import 'service_card_image.dart';
 import 'service_discount_badge.dart';
 
-/// Home grid service tile matching the dashboard 2x2 card design.
+/// Home grid service tile — Figma 195×122 card, 63×72 icon.
 class OurServiceCardWidget extends StatelessWidget {
   const OurServiceCardWidget({
     super.key,
@@ -34,12 +34,13 @@ class OurServiceCardWidget extends StatelessWidget {
         DashboardUiConfig.serviceCardBorderRadius.r,
       ),
       child: Container(
+        width: double.infinity,
+        height: DashboardUiConfig.serviceCardHeight.h,
         decoration: BoxDecoration(
           color: AppColors.clrWhite,
           borderRadius: BorderRadius.circular(
             DashboardUiConfig.serviceCardBorderRadius.r,
           ),
-          border: Border.all(color: AppColors.clrE3E8EE),
         ),
         child: Stack(
           clipBehavior: Clip.none,
@@ -52,10 +53,10 @@ class OurServiceCardWidget extends StatelessWidget {
                 DashboardUiConfig.serviceCardBottomPadding.h,
               ),
               child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Align(
-                    alignment: Alignment.topCenter,
+                  Center(
                     child: ServiceCardImage(
                       imageUrl: imageAsset,
                       fallbackRoute: route,
@@ -63,22 +64,19 @@ class OurServiceCardWidget extends StatelessWidget {
                       height: DashboardUiConfig.serviceIconHeight.h,
                     ),
                   ),
-                  SizedBox(height: DashboardUiConfig.serviceCardIconTitleGap.h),
-                  Expanded(
-                    child: Align(
-                      alignment: Alignment.topCenter,
-                      child: Text(
-                        title,
-                        textAlign: TextAlign.center,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: theme.textTheme.titleSmall?.copyWith(
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.clr09,
-                          fontSize: 13.sp,
-                          height: 1.25,
-                        ),
-                      ),
+                  SizedBox(
+                    height: DashboardUiConfig.serviceCardIconTitleGap.h,
+                  ),
+                  Text(
+                    title,
+                    textAlign: TextAlign.center,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: theme.textTheme.titleSmall?.copyWith(
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.clr09,
+                      fontSize: 12.sp,
+                      height: 1.2,
                     ),
                   ),
                 ],
