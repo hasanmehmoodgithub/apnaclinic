@@ -117,6 +117,7 @@ class Assets {
   static const String svgFrame1171275326 = 'assets/svg/frame_1171275326.svg';
   static const String svgIcMenu = 'assets/svg/ic_menu.svg';
   static const String svgIcNotification = 'assets/svg/ic_notification.svg';
+  static const String svgIcSearch = 'assets/svg/ic_search.svg';
   static const String svgIcSearchMic = 'assets/svg/ic_search_mic.svg';
   static const String svgIcServiceCardArrow = 'assets/svg/ic_service_card_arrow.svg';
   static const String svgIcServiceOffer = 'assets/svg/ic_service_offer.svg';

@@ -8,7 +8,7 @@ import '../../../../core/widgets/apna_clinic_app_bar.dart';
 import '../constants/dashboard_ui_config.dart';
 import 'home_header_search_field.dart';
 
-class HomeHeaderSection extends StatefulWidget {
+class HomeHeaderSection extends StatelessWidget {
   const HomeHeaderSection({
     super.key,
     required this.userName,
@@ -19,9 +19,8 @@ class HomeHeaderSection extends StatefulWidget {
     this.onNotificationTap,
     this.onLoginTap,
     this.onProfileTap,
-    this.onSearchSubmitted,
+    this.onSearchTap,
     this.onVoiceTap,
-    this.onSearchButtonTap,
   });
 
   final String userName;
@@ -32,64 +31,14 @@ class HomeHeaderSection extends StatefulWidget {
   final VoidCallback? onNotificationTap;
   final VoidCallback? onLoginTap;
   final VoidCallback? onProfileTap;
-  final ValueChanged<String>? onSearchSubmitted;
+  final VoidCallback? onSearchTap;
   final VoidCallback? onVoiceTap;
-  final VoidCallback? onSearchButtonTap;
 
   static const SystemUiOverlayStyle _headerOverlay = SystemUiOverlayStyle(
     statusBarColor: Colors.transparent,
     statusBarIconBrightness: Brightness.dark,
     statusBarBrightness: Brightness.light,
   );
-
-  @override
-  State<HomeHeaderSection> createState() => _HomeHeaderSectionState();
-}
-
-class _HomeHeaderSectionState extends State<HomeHeaderSection> {
-  late final TextEditingController _controller;
-  late final FocusNode _focusNode;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = TextEditingController();
-    _focusNode = FocusNode();
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    _focusNode.dispose();
-    super.dispose();
-  }
-
-  void _dismissKeyboard() {
-    _focusNode.unfocus();
-    FocusManager.instance.primaryFocus?.unfocus();
-  }
-
-  void _handleSearchTap() {
-    final text = _controller.text.trim();
-    _dismissKeyboard();
-    if (text.isEmpty) {
-      widget.onSearchButtonTap?.call();
-    } else {
-      widget.onSearchSubmitted?.call(text);
-      _controller.clear();
-    }
-  }
-
-  void _handleSubmitted(String value) {
-    final text = value.trim();
-    _dismissKeyboard();
-    if (text.isEmpty) {
-      widget.onSearchButtonTap?.call();
-    } else {
-      widget.onSearchSubmitted?.call(text);
-      _controller.clear();
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -127,16 +76,16 @@ class _HomeHeaderSectionState extends State<HomeHeaderSection> {
                     ApnaClinicAppBar(
                       style: ApnaAppBarStyle.greenHome,
                       transparentBackground: true,
-                      onMenuTap: widget.onMenuTap,
-                      onNotificationTap: widget.onNotificationTap,
+                      onMenuTap: onMenuTap,
+                      onNotificationTap: onNotificationTap,
                       notificationCount:
-                          widget.isLoggedIn ? widget.notificationCount : 0,
-                      showNotificationDot: !widget.isLoggedIn,
-                      showLoginButton: !widget.isLoggedIn,
+                          isLoggedIn ? notificationCount : 0,
+                      showNotificationDot: !isLoggedIn,
+                      showLoginButton: !isLoggedIn,
                       filledLoginButton: true,
-                      onLoginTap: widget.onLoginTap,
-                      onProfileTap: widget.onProfileTap,
-                      profileImageUrl: widget.profileImageUrl,
+                      onLoginTap: onLoginTap,
+                      onProfileTap: onProfileTap,
+                      profileImageUrl: profileImageUrl,
                     ),
                     Padding(
                       padding: EdgeInsets.symmetric(
@@ -150,7 +99,7 @@ class _HomeHeaderSectionState extends State<HomeHeaderSection> {
                             height: DashboardUiConfig.homeHeaderGreetingTopGap.h,
                           ),
                           Text(
-                            l10n.dashboardHello(widget.userName),
+                            l10n.dashboardHello(userName),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: theme.textTheme.titleLarge?.copyWith(
@@ -166,12 +115,9 @@ class _HomeHeaderSectionState extends State<HomeHeaderSection> {
                                 DashboardUiConfig.homeHeaderGreetingSearchGap.h,
                           ),
                           HomeHeaderSearchField(
-                            controller: _controller,
-                            focusNode: _focusNode,
                             hintText: l10n.dashboardSearchHint,
-                            onSubmitted: _handleSubmitted,
-                            onVoiceTap: widget.onVoiceTap,
-                            onSearchTap: _handleSearchTap,
+                            onTap: onSearchTap ?? () {},
+                            onVoiceTap: onVoiceTap,
                           ),
                         ],
                       ),

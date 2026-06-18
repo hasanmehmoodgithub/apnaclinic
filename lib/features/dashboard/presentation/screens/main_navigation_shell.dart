@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_system_ui.dart';
 import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/network/api_service.dart';
@@ -24,6 +25,15 @@ import '../widgets/keep_alive_tab_page.dart';
 import '../cubit/main_navigation_cubit.dart';
 import '../cubit/main_navigation_state.dart';
 import 'home_screen.dart';
+
+/// Matches bottom nav so no strip shows below the bar (system gesture area).
+const _shellSystemUi = SystemUiOverlayStyle(
+  statusBarColor: AppSystemUi.statusBarColor,
+  statusBarIconBrightness: Brightness.light,
+  statusBarBrightness: Brightness.dark,
+  systemNavigationBarColor: AppColors.clrWhite,
+  systemNavigationBarIconBrightness: Brightness.dark,
+);
 
 /// Root shell: [PageView] body + custom bottom navigation.
 class MainNavigationShell extends StatefulWidget {
@@ -162,7 +172,7 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
           bloc: _navigationCubit,
           builder: (context, state) {
             return AnnotatedRegion<SystemUiOverlayStyle>(
-              value: AppSystemUi.overlayStyle,
+              value: _shellSystemUi,
               child: Scaffold(
                 backgroundColor: Colors.white,
                 body: PageView(
@@ -188,11 +198,9 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
                     ),
                   ],
                 ),
-                bottomNavigationBar: SafeArea(
-                  child: ApnaBottomNavigationBar(
-                    currentIndex: state.currentIndex,
-                    onTap: _onNavTap,
-                  ),
+                bottomNavigationBar: ApnaBottomNavigationBar(
+                  currentIndex: state.currentIndex,
+                  onTap: _onNavTap,
                 ),
               ),
             );
