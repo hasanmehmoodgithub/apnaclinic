@@ -39,10 +39,11 @@ class HomeHeaderSearchField extends StatelessWidget {
               SizedBox(
                 width: 48.w,
                 child: Center(
-                  child: Icon(
-                    Icons.search_rounded,
-                    color: AppColors.clr52A898,
-                    size: 28.r,
+                  child: SvgPicture.asset(
+                    Assets.svgIcSearch,
+                    width: 24.r,
+                    height: 24.r,
+                    fit: BoxFit.contain,
                   ),
                 ),
               ),
