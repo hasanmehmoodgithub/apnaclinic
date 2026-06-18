@@ -42,8 +42,8 @@ class ServiceDiscountBadge extends StatelessWidget {
         horizontal: DashboardUiConfig.serviceDiscountBadgeHorizontalPadding.w,
         vertical: verticalPadding,
       ),
-      decoration: const ShapeDecoration(
-        color: AppColors.clrE0F7F6,
+      decoration:  ShapeDecoration(
+        color: AppColors.clrE0F7F6.withValues(alpha: 0.5),
         shape: StadiumBorder(),
       ),
       child: Text(

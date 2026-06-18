@@ -212,6 +212,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                 );
               },
             ),
+
             Expanded(
               child: CustomScrollView(
                 key: const ValueKey('dashboard_content'),

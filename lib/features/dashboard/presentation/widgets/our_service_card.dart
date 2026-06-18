@@ -60,8 +60,7 @@ class OurServiceCardWidget extends StatelessWidget {
                     child: ServiceCardImage(
                       imageUrl: imageAsset,
                       fallbackRoute: route,
-                      width: DashboardUiConfig.serviceIconWidth.w,
-                      height: DashboardUiConfig.serviceIconHeight.h,
+
                     ),
                   ),
                   SizedBox(
