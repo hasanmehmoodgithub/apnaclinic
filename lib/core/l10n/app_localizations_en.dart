@@ -421,18 +421,32 @@ class AppLocalizationsEn extends AppLocalizations {
       'Access to PMDC certified doctors';
 
   @override
-  String get onboardingPharmacyTitle => 'Pharmacy';
+  String get onboardingInstantDoctorTitle => '24/7 Instant Doctor';
+
+  @override
+  String get onboardingInstantDoctorSubtitle =>
+      'Get instant doctor consultation 24/7 round the clock.';
+
+  @override
+  String get onboardingBookConsultationTitle => 'Book Consultation';
+
+  @override
+  String get onboardingBookConsultationSubtitle =>
+      'Book online consultation with PMDC certified specialist doctors';
+
+  @override
+  String get onboardingPharmacyTitle => 'Order Medicine';
 
   @override
   String get onboardingPharmacySubtitle =>
-      'Get authentic medicines at your doorstep.';
+      'Get authentic medicines delivered at your doorstep.';
 
   @override
-  String get onboardingLaboratoryTitle => 'Laboratory Testing';
+  String get onboardingLaboratoryTitle => 'Book Lab Test';
 
   @override
   String get onboardingLaboratorySubtitle =>
-      'Access reliable lab tests with accurate results.';
+      'Access reliable lab tests from reputable labs with accurate results.';
 
   @override
   String get onboardingSurgeryTitle => 'Surgery Booking';

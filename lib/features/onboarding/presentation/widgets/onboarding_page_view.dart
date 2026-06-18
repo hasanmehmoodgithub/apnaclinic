@@ -62,20 +62,7 @@ class OnboardingPageView extends StatelessWidget {
                         alignment: Alignment.bottomCenter,
                         clipBehavior: Clip.none,
                         children: [
-                          Positioned(
-                            top: onboardingScaled(10, scale),
-                            child: Container(
-                              width: ringSize,
-                              height: ringSize * (324 / 360),
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                border: Border.all(
-                                  color: _mint,
-                                  width: ringBorder,
-                                ),
-                              ),
-                            ),
-                          ),
+
                           Positioned.fill(
                             child: Image.asset(
                               pages[index].imageAsset,

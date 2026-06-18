@@ -78,8 +78,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       activeIndex: _currentIndex,
                       scale: scale,
                     ),
-                    SizedBox(height: onboardingScaled(16, scale)),
-                    Center(
+                    SizedBox(height: onboardingScaled(20, scale)),
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: onboardingScaled(50, scale),
+                      ),
                       child: OnboardingNextButton(
                         scale: scale,
                         label: l10n.onboardingNext,
@@ -100,10 +103,20 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   List<OnboardingPageData> _buildPages(AppLocalizations l10n) {
     return [
       OnboardingPageData(
-        title: l10n.onboardingDoctorConsultationTitle,
-        subtitle: l10n.onboardingDoctorConsultationSubtitle,
-        imageAsset: Assets.onboardingDoctorConsultation,
+        title: l10n.onboardingInstantDoctorTitle,
+        subtitle: l10n.onboardingInstantDoctorSubtitle,
+        imageAsset: Assets.onboardingInstantDoctor,
       ),
+      OnboardingPageData(
+        title: l10n.onboardingBookConsultationTitle,
+        subtitle: l10n.onboardingBookConsultationSubtitle,
+        imageAsset: Assets.onboardingBookConsultation,
+      ),
+      // OnboardingPageData(
+      //   title: l10n.onboardingDoctorConsultationTitle,
+      //   subtitle: l10n.onboardingDoctorConsultationSubtitle,
+      //   imageAsset: Assets.onboardingDoctorConsultation,
+      // ),
       OnboardingPageData(
         title: l10n.onboardingPharmacyTitle,
         subtitle: l10n.onboardingPharmacySubtitle,
@@ -114,11 +127,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         subtitle: l10n.onboardingLaboratorySubtitle,
         imageAsset: Assets.onboardingLaboratory,
       ),
-      OnboardingPageData(
-        title: l10n.onboardingSurgeryTitle,
-        subtitle: l10n.onboardingSurgerySubtitle,
-        imageAsset: Assets.onboardingSurgeryBooking,
-      ),
+      // OnboardingPageData(
+      //   title: l10n.onboardingSurgeryTitle,
+      //   subtitle: l10n.onboardingSurgerySubtitle,
+      //   imageAsset: Assets.onboardingSurgeryBooking,
+      // ),
     ];
   }
 

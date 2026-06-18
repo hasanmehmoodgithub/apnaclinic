@@ -1,7 +1,7 @@
 # Onboarding
 
 ## Purpose
-Intro carousel (4 pages) before first use; skip or finish stores intro completion
+Intro carousel (6 pages) before first use; skip or finish stores intro completion
 in `AppPref.isOnboardingCompleted` and navigates to home, or to profile setup
 when logged in without a completed profile.
 

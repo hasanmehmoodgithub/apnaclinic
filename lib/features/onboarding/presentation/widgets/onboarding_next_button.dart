@@ -18,13 +18,12 @@ class OnboardingNextButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final width = onboardingScaled(141, scale).clamp(120.0, 160.0);
-    final height = onboardingScaled(42, scale).clamp(40.0, 48.0);
+    final height = onboardingScaled(65, scale).clamp(56.0, 72.0);
     final fontSize = onboardingScaled(18, scale).clamp(15.0, 18.0);
     final iconSize = onboardingScaled(24, scale).clamp(20.0, 24.0);
 
     return SizedBox(
-      width: width,
+      width: double.infinity,
       height: height,
       child: FilledButton.icon(
         onPressed: onTap,
@@ -32,9 +31,6 @@ class OnboardingNextButton extends StatelessWidget {
           backgroundColor: _mint,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(onboardingScaled(120, scale)),
-          ),
-          padding: EdgeInsets.symmetric(
-            horizontal: onboardingScaled(20, scale),
           ),
         ),
         label: Text(

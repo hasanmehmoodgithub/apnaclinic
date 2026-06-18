@@ -421,18 +421,32 @@ class AppLocalizationsUr extends AppLocalizations {
       'PMDC تصدیق شدہ ڈاکٹروں تک رسائی';
 
   @override
-  String get onboardingPharmacyTitle => 'فارمیسی';
+  String get onboardingInstantDoctorTitle => '24/7 انسٹنٹ ڈاکٹر';
+
+  @override
+  String get onboardingInstantDoctorSubtitle =>
+      '24/7 فوری ڈاکٹر مشاورت کسی بھی وقت حاصل کریں۔';
+
+  @override
+  String get onboardingBookConsultationTitle => 'مشاورت بک کریں';
+
+  @override
+  String get onboardingBookConsultationSubtitle =>
+      'PMDC تصدیق شدہ ماہر ڈاکٹروں سے آن لائن مشاورت بک کریں۔';
+
+  @override
+  String get onboardingPharmacyTitle => 'دوائی منگوائیں';
 
   @override
   String get onboardingPharmacySubtitle =>
-      'مستند ادویات گھر کی دہلیز پر حاصل کریں۔';
+      'مستند ادویات اپنے گھر تک پہنچوائیں۔';
 
   @override
-  String get onboardingLaboratoryTitle => 'لیبارٹری ٹیسٹنگ';
+  String get onboardingLaboratoryTitle => 'لیب ٹیسٹ بک کریں';
 
   @override
   String get onboardingLaboratorySubtitle =>
-      'درست نتائج کے ساتھ قابلِ اعتماد لیب ٹیسٹس حاصل کریں۔';
+      'قابلِ اعتماد لیبارٹریوں سے درست نتائج کے ساتھ لیب ٹیسٹس حاصل کریں۔';
 
   @override
   String get onboardingSurgeryTitle => 'سرجری بکنگ';

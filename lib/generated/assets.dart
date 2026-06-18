@@ -100,9 +100,11 @@ class Assets {
   static const String labTestSuccessCheckmark = 'assets/svg/lab_test/success_checkmark.svg';
   static const String labTestWalkin = 'assets/svg/lab_test/walkin.svg';
   static const String licenseFFL = 'assets/fonts/satoshi/Satoshi_Complete/License/FFL.txt';
+  static const String onboardingBookConsultation = 'assets/img/onboarding/book_consultation.png';
   static const String onboardingDoctorConsultation = 'assets/img/onboarding/doctor_consultation.webp';
-  static const String onboardingLaboratory = 'assets/img/onboarding/laboratory.webp';
-  static const String onboardingPharmacy = 'assets/img/onboarding/pharmacy.webp';
+  static const String onboardingInstantDoctor = 'assets/img/onboarding/instant_doctor.png';
+  static const String onboardingLaboratory = 'assets/img/onboarding/book_lab_test.png';
+  static const String onboardingPharmacy = 'assets/img/onboarding/order_medicine.png';
   static const String onboardingSurgeryBooking = 'assets/img/onboarding/surgery_booking.webp';
   static const String servicesLaboratory = 'assets/img/services/laboratory.webp';
   static const String servicesOnlineConsultation = 'assets/img/services/online_consultation.webp';

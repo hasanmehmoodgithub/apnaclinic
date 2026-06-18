@@ -896,28 +896,52 @@ abstract class AppLocalizations {
   /// **'Access to PMDC certified doctors'**
   String get onboardingDoctorConsultationSubtitle;
 
+  /// No description provided for @onboardingInstantDoctorTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'24/7 Instant Doctor'**
+  String get onboardingInstantDoctorTitle;
+
+  /// No description provided for @onboardingInstantDoctorSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Get instant doctor consultation 24/7 round the clock.'**
+  String get onboardingInstantDoctorSubtitle;
+
+  /// No description provided for @onboardingBookConsultationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Book Consultation'**
+  String get onboardingBookConsultationTitle;
+
+  /// No description provided for @onboardingBookConsultationSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Book online consultation with PMDC certified specialist doctors'**
+  String get onboardingBookConsultationSubtitle;
+
   /// No description provided for @onboardingPharmacyTitle.
   ///
   /// In en, this message translates to:
-  /// **'Pharmacy'**
+  /// **'Order Medicine'**
   String get onboardingPharmacyTitle;
 
   /// No description provided for @onboardingPharmacySubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Get authentic medicines at your doorstep.'**
+  /// **'Get authentic medicines delivered at your doorstep.'**
   String get onboardingPharmacySubtitle;
 
   /// No description provided for @onboardingLaboratoryTitle.
   ///
   /// In en, this message translates to:
-  /// **'Laboratory Testing'**
+  /// **'Book Lab Test'**
   String get onboardingLaboratoryTitle;
 
   /// No description provided for @onboardingLaboratorySubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Access reliable lab tests with accurate results.'**
+  /// **'Access reliable lab tests from reputable labs with accurate results.'**
   String get onboardingLaboratorySubtitle;
 
   /// No description provided for @onboardingSurgeryTitle.
