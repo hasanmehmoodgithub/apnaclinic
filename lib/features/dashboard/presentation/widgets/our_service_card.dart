@@ -6,7 +6,7 @@ import '../constants/dashboard_ui_config.dart';
 import 'service_card_image.dart';
 import 'service_discount_badge.dart';
 
-/// Home grid service tile — Figma 195×122 card, 63×72 icon.
+/// Home grid service tile — height follows icon + title content.
 class OurServiceCardWidget extends StatelessWidget {
   const OurServiceCardWidget({
     super.key,
@@ -35,7 +35,6 @@ class OurServiceCardWidget extends StatelessWidget {
       ),
       child: Container(
         width: double.infinity,
-        height: DashboardUiConfig.serviceCardHeight.h,
         decoration: BoxDecoration(
           color: AppColors.clrWhite,
           borderRadius: BorderRadius.circular(
@@ -46,13 +45,9 @@ class OurServiceCardWidget extends StatelessWidget {
           clipBehavior: Clip.none,
           children: [
             Padding(
-              padding: EdgeInsets.fromLTRB(
-                DashboardUiConfig.serviceCardTitleHorizontalPadding.w,
-                DashboardUiConfig.serviceCardTopPadding.h,
-                DashboardUiConfig.serviceCardTitleHorizontalPadding.w,
-                DashboardUiConfig.serviceCardBottomPadding.h,
-              ),
+              padding: EdgeInsets.symmetric(vertical: 18,horizontal: 8),
               child: Column(
+                mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
@@ -60,8 +55,6 @@ class OurServiceCardWidget extends StatelessWidget {
                     child: ServiceCardImage(
                       imageUrl: imageAsset,
                       fallbackRoute: route,
-                      width: DashboardUiConfig.serviceIconWidth.w,
-                      height: DashboardUiConfig.serviceIconHeight.h,
                     ),
                   ),
                   SizedBox(

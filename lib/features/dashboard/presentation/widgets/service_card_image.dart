@@ -28,28 +28,6 @@ class ServiceCardImage extends StatelessWidget {
     final fallbackAsset = serviceIconFallbackAsset(fallbackRoute);
     final source = imageUrl.trim();
 
-    if (source.isEmpty) {
-      return _fallbackOrPlaceholder(
-        resolvedWidth,
-        resolvedHeight,
-        fallbackAsset,
-      );
-    }
-
-    if (!source.startsWith('http')) {
-      return Image.asset(
-        source,
-        width: resolvedWidth,
-        height: resolvedHeight,
-        fit: BoxFit.contain,
-        errorBuilder: (_, _, _) => _fallbackOrPlaceholder(
-          resolvedWidth,
-          resolvedHeight,
-          fallbackAsset,
-        ),
-      );
-    }
-
     return CachedNetworkImage(
       imageUrl: source,
       width: resolvedWidth,

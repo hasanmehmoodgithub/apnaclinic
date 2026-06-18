@@ -85,6 +85,7 @@ class ApnaClinicAppBar extends StatelessWidget implements PreferredSizeWidget {
             height: kToolbarHeight,
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 SizedBox(
                   width: 52.w,
@@ -117,7 +118,7 @@ class ApnaClinicAppBar extends StatelessWidget implements PreferredSizeWidget {
                   child: Align(
                     alignment: Alignment.centerLeft,
                     child: Padding(
-                      padding: EdgeInsets.only(left: 6.w, top: 4.h),
+                      padding: EdgeInsets.only(left: 8.w),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
@@ -159,8 +160,8 @@ class ApnaClinicAppBar extends StatelessWidget implements PreferredSizeWidget {
                     children: [
                       SvgPicture.asset(
                         Assets.svgIcNotification,
-                        width: 26.r,
-                        height: 26.r,
+                        width: 30.r,
+                        height: 30.r,
                         fit: BoxFit.contain,
                         colorFilter: svgFilter,
                       ),
@@ -217,14 +218,14 @@ class ApnaClinicAppBar extends StatelessWidget implements PreferredSizeWidget {
                                 child: Padding(
                                   padding: EdgeInsets.symmetric(
                                     horizontal: 16.w,
-                                    vertical: 7.h,
+                                    vertical: 12.h,
                                   ),
                                   child: Text(
                                     'Login',
                                     style: TextStyle(
                                       color: _green,
                                       fontWeight: FontWeight.w600,
-                                      fontSize: 13.sp,
+                                      fontSize: 16.sp,
                                       height: 1.0,
                                     ),
                                   ),

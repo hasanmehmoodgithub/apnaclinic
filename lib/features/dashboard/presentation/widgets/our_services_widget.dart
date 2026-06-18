@@ -21,30 +21,32 @@ class OurServicesWidget extends StatelessWidget {
 
   static const int _gridCrossAxisCount = 2;
 
-  static SliverGridDelegate get _gridDelegate =>
-      SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: _gridCrossAxisCount,
-        mainAxisSpacing: DashboardUiConfig.serviceGridSpacing.h,
-        crossAxisSpacing: DashboardUiConfig.serviceGridSpacing.w,
-        childAspectRatio: DashboardUiConfig.serviceCardAspectRatio,
-      );
+  int _rowCount(int itemCount) => (itemCount + _gridCrossAxisCount - 1) ~/ _gridCrossAxisCount;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final horizontalPadding = DashboardUiConfig.serviceGridHorizontalPadding.w;
+    final gridSpacing = DashboardUiConfig.serviceGridSpacing;
 
     if (state.ourServicesLoadingStateStatus == StateStatus.loading) {
       return SliverPadding(
-        padding: EdgeInsets.symmetric(
-          horizontal: DashboardUiConfig.serviceGridHorizontalPadding.w,
-        ),
-        sliver: SliverGrid(
-          gridDelegate: _gridDelegate,
+        padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
+        sliver: SliverList(
           delegate: SliverChildBuilderDelegate(
-            (_, _) => AppShimmerCard(
-              borderRadius: DashboardUiConfig.serviceCardBorderRadius.r,
+            (_, rowIndex) => _ServiceGridRow(
+              spacing: gridSpacing.w,
+              bottomSpacing: rowIndex < 1 ? gridSpacing.h : 0,
+              left: AppShimmerCard(
+                height: DashboardUiConfig.serviceCardShimmerHeight.h,
+                borderRadius: DashboardUiConfig.serviceCardBorderRadius.r,
+              ),
+              right: AppShimmerCard(
+                height: DashboardUiConfig.serviceCardShimmerHeight.h,
+                borderRadius: DashboardUiConfig.serviceCardBorderRadius.r,
+              ),
             ),
-            childCount: 4,
+            childCount: 2,
           ),
         ),
       );
@@ -54,9 +56,9 @@ class OurServicesWidget extends StatelessWidget {
       return SliverToBoxAdapter(
         child: Padding(
           padding: EdgeInsets.fromLTRB(
-            DashboardUiConfig.serviceGridHorizontalPadding.w,
+            horizontalPadding,
             8.h,
-            DashboardUiConfig.serviceGridHorizontalPadding.w,
+            horizontalPadding,
             8.h,
           ),
           child: Text(
@@ -69,24 +71,72 @@ class OurServicesWidget extends StatelessWidget {
       );
     }
 
+    final services = state.servicesList;
+    final rows = _rowCount(services.length);
+
     return SliverPadding(
-      padding: EdgeInsets.symmetric(
-        horizontal: DashboardUiConfig.serviceGridHorizontalPadding.w,
-      ),
-      sliver: SliverGrid(
-        gridDelegate: _gridDelegate,
+      padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
+      sliver: SliverList(
         delegate: SliverChildBuilderDelegate(
-          (context, index) {
-            final service = state.servicesList[index];
-            return OurServiceCardWidget(
-              title: service.title,
-              discountLabel: service.offerUpto,
-              imageAsset: service.thumb,
-              route: service.route,
-              onTap: () => onServiceTap(service),
+          (context, rowIndex) {
+            final leftIndex = rowIndex * _gridCrossAxisCount;
+            final rightIndex = leftIndex + 1;
+
+            return _ServiceGridRow(
+              spacing: gridSpacing.w,
+              bottomSpacing: rowIndex < rows - 1 ? gridSpacing.h : 0,
+              left: OurServiceCardWidget(
+                title: services[leftIndex].title,
+                discountLabel: services[leftIndex].offerUpto,
+                imageAsset: services[leftIndex].thumb,
+                route: services[leftIndex].route,
+                onTap: () => onServiceTap(services[leftIndex]),
+              ),
+              right: rightIndex < services.length
+                  ? OurServiceCardWidget(
+                      title: services[rightIndex].title,
+                      discountLabel: services[rightIndex].offerUpto,
+                      imageAsset: services[rightIndex].thumb,
+                      route: services[rightIndex].route,
+                      onTap: () => onServiceTap(services[rightIndex]),
+                    )
+                  : null,
             );
           },
-          childCount: state.servicesList.length,
+          childCount: rows,
+        ),
+      ),
+    );
+  }
+}
+
+class _ServiceGridRow extends StatelessWidget {
+  const _ServiceGridRow({
+    required this.left,
+    this.right,
+    required this.spacing,
+    required this.bottomSpacing,
+  });
+
+  final Widget left;
+  final Widget? right;
+  final double spacing;
+  final double bottomSpacing;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.only(bottom: bottomSpacing),
+      child: IntrinsicHeight(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Expanded(child: left),
+            SizedBox(width: spacing),
+            Expanded(
+              child: right ?? const SizedBox.shrink(),
+            ),
+          ],
         ),
       ),
     );

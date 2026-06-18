@@ -4,11 +4,8 @@ abstract final class DashboardUiConfig {
   static const double serviceGridHorizontalPadding = 20;
   static const double serviceGridSpacing = 12;
 
-  /// Service card frame (Figma: 195×122).
+  /// Service card frame (Figma reference width; height is content-driven).
   static const double serviceCardWidth = 195;
-  static const double serviceCardHeight = 122;
-  static const double serviceCardAspectRatio =
-      serviceCardWidth / serviceCardHeight;
 
   /// Service card chrome.
   static const double serviceCardBorderRadius = 20;
@@ -16,6 +13,17 @@ abstract final class DashboardUiConfig {
   static const double serviceCardBottomPadding = 8;
   static const double serviceCardTitleHorizontalPadding = 8;
   static const double serviceCardIconTitleGap = 4;
+
+  /// Approximate title block for shimmer placeholders (2 lines @ 12sp).
+  static const double serviceCardTitleBlockHeight = 30;
+
+  /// Minimum shimmer height while service cards load (icon + title + padding).
+  static double get serviceCardShimmerHeight =>
+      serviceCardTopPadding +
+      serviceIconHeight +
+      serviceCardIconTitleGap +
+      serviceCardTitleBlockHeight +
+      serviceCardBottomPadding;
 
   /// CMS / Figma icon frame (`viewBox="0 0 63 72"`).
   static const double serviceIconWidth = 63;
@@ -32,7 +40,6 @@ abstract final class DashboardUiConfig {
   static const double instantDoctorArtworkHeight = 101;
 
   /// Instant Doctor home banner card.
-  static const double instantDoctorCardHeight = 104;
   static const double instantDoctorCardBorderRadius = 14;
   static const double instantDoctorCardPaddingLeft = 16;
   static const double instantDoctorCardPaddingVertical = 14;

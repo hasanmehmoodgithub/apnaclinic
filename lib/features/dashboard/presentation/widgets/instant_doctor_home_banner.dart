@@ -24,75 +24,67 @@ class InstantDoctorHomeBanner extends StatelessWidget {
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: onTap,
-        child: SizedBox(
-          height: DashboardUiConfig.instantDoctorCardHeight.h,
-          child: Padding(
-            padding: EdgeInsets.fromLTRB(
-              DashboardUiConfig.instantDoctorCardPaddingLeft.w,
-              DashboardUiConfig.instantDoctorCardPaddingVertical.h,
-              0,
-              0,
-            ),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Expanded(
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: Padding(
-                      padding: EdgeInsets.only(
-                        right: DashboardUiConfig.instantDoctorTextImageGap.w,
-                        bottom: DashboardUiConfig.instantDoctorCardPaddingVertical.h,
-                      ),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(
-                                l10n.freeDoctorTitle,
-                                style: theme.textTheme.titleMedium?.copyWith(
-                                  fontWeight: FontWeight.w700,
-                                  fontSize: 18.sp,
-                                  color: AppColors.clr09,
-                                  height: 1.2,
-                                ),
-                              ),
-                              SizedBox(
-                                width: DashboardUiConfig.instantDoctorTitleArrowGap.w,
-                              ),
-                              Icon(
-                                Icons.arrow_forward_rounded,
-                                size: 20.r,
-                                color: AppColors.clr09,
-                              ),
-                            ],
-                          ),
-                          SizedBox(
-                            height: DashboardUiConfig.instantDoctorTitleBodyGap.h,
-                          ),
-                          Text(
-                            l10n.dashboardInstantDoctorDescription,
-                            style: theme.textTheme.bodySmall?.copyWith(
-                              color: AppColors.clr8A8A8A,
-                              fontWeight: FontWeight.w500,
-                              fontSize: 13.sp,
-                              height: 1.4,
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(
+            DashboardUiConfig.instantDoctorCardPaddingLeft.w,
+            DashboardUiConfig.instantDoctorCardPaddingVertical.h,
+            DashboardUiConfig.instantDoctorCardPaddingVertical.w,
+            DashboardUiConfig.instantDoctorCardPaddingVertical.h,
+          ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Expanded(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Flexible(
+                          child: Text(
+                            l10n.freeDoctorTitle,
+                            style: theme.textTheme.titleMedium?.copyWith(
+                              fontWeight: FontWeight.w700,
+                              fontSize: 18.sp,
+                              color: AppColors.clr09,
+                              height: 1.2,
                             ),
                           ),
-                        ],
+                        ),
+                        SizedBox(
+                          width: DashboardUiConfig.instantDoctorTitleArrowGap.w,
+                        ),
+                        Icon(
+                          Icons.arrow_forward_rounded,
+                          size: 20.r,
+                          color: AppColors.clr09,
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: DashboardUiConfig.instantDoctorTitleBodyGap.h,
+                    ),
+                    Text(
+                      l10n.dashboardInstantDoctorDescription,
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: AppColors.clr8A8A8A,
+                        fontWeight: FontWeight.w500,
+                        fontSize: 13.sp,
+                        height: 1.4,
                       ),
                     ),
-                  ),
+                  ],
                 ),
-                 Align(
-                  alignment: Alignment.bottomRight,
-                  child: Image.asset(Assets.imgInstantDocBanner),
-                ),
-              ],
-            ),
+              ),
+              SizedBox(width: DashboardUiConfig.instantDoctorTextImageGap.w),
+              Image.asset(
+                Assets.imgInstantDocBanner,
+                width: DashboardUiConfig.instantDoctorArtworkWidth.w,
+                fit: BoxFit.contain,
+              ),
+            ],
           ),
         ),
       ),

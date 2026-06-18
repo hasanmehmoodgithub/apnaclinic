@@ -104,7 +104,7 @@ class _HomeHeaderSectionState extends State<HomeHeaderSection> {
           Container(
             width: double.infinity,
             decoration: BoxDecoration(
-              color: AppColors.clr52A898,
+              color: AppColors.clr0FAA9A,
               borderRadius: BorderRadius.only(
                 bottomLeft: Radius.circular(
                   DashboardUiConfig.homeHeaderBottomRadius.r,
