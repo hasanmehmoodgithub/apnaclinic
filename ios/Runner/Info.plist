@@ -51,7 +51,9 @@
 	<key>NSCameraUsageDescription</key>
 	<string>Apna Clinic needs camera access for video consultations and to take or attach profile photos.</string>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>Apna Clinic needs microphone access for audio and video consultations with doctors.</string>
+	<string>Apna Clinic needs microphone access for voice search and audio or video consultations with doctors.</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>Apna Clinic uses speech recognition so you can search by voice.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Apna Clinic needs photo library access so you can choose a profile picture and attach images from your gallery during consultations.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>

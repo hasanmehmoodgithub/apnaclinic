@@ -6,6 +6,7 @@ import '../../../../core/constants/app_colors.dart';
 import '../../../../core/enums/state_status.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
+import '../../../../core/services/speech_to_text_service.dart';
 import '../../../../core/widgets/app_scaffold_gradient.dart';
 import '../cubit/search_cubit.dart';
 import '../cubit/search_state.dart';
@@ -16,9 +17,14 @@ import '../widgets/search_shimmer_view_widget.dart';
 import '../widgets/search_suggestions_list_widget.dart';
 
 class SearchScreen extends StatefulWidget {
-  const SearchScreen({super.key, this.initialQuery});
+  const SearchScreen({
+    super.key,
+    this.initialQuery,
+    this.startVoiceSearch = false,
+  });
 
   final String? initialQuery;
+  final bool startVoiceSearch;
 
   @override
   State<SearchScreen> createState() => _SearchScreenState();
@@ -42,6 +48,43 @@ class _SearchScreenState extends State<SearchScreen> {
     } else {
       _didSubmitInitialQuery = true;
     }
+
+    if (widget.startVoiceSearch) {
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        await Future<void>.delayed(const Duration(milliseconds: 400));
+        if (!mounted) return;
+        await _startVoiceSearch();
+      });
+    }
+  }
+
+  Future<void> _startVoiceSearch() async {
+    if (!mounted) return;
+    final locale = Localizations.localeOf(context);
+    final localeId = locale.countryCode == null || locale.countryCode!.isEmpty
+        ? locale.languageCode
+        : '${locale.languageCode}_${locale.countryCode}';
+    final failure = await context.read<SearchCubit>().startListening(
+          localeId: localeId,
+        );
+    if (!mounted || failure == null) return;
+
+    final l10n = AppLocalizations.of(context)!;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(_voiceFailureMessage(l10n, failure))),
+    );
+  }
+
+  String _voiceFailureMessage(
+    AppLocalizations l10n,
+    VoiceSearchFailure failure,
+  ) {
+    return switch (failure) {
+      VoiceSearchFailure.notAvailable => l10n.searchVoiceNotAvailable,
+      VoiceSearchFailure.permissionDenied => l10n.searchVoicePermissionDenied,
+      VoiceSearchFailure.pluginNotLinked => l10n.searchVoiceRebuildRequired,
+      VoiceSearchFailure.failed => l10n.searchVoiceFailed,
+    };
   }
 
   @override
@@ -115,11 +158,11 @@ class _SearchScreenState extends State<SearchScreen> {
                               .submitSearch(_controller.text),
                           onClear: () =>
                               context.read<SearchCubit>().clearQuery(),
-                          onMicTap: () {
+                          onMicTap: () async {
                             if (state.isListening) {
-                              context.read<SearchCubit>().stopListening();
+                              await context.read<SearchCubit>().stopListening();
                             } else {
-                              context.read<SearchCubit>().startListening();
+                              await _startVoiceSearch();
                             }
                           },
                           onSearchTap: () => context

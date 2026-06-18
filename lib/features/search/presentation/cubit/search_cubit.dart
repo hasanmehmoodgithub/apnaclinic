@@ -1,29 +1,35 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/enums/state_status.dart';
+import '../../../../core/services/speech_to_text_service.dart';
 import '../../domain/entities/search_entity.dart';
 import '../../domain/use_cases/get_search_content_use_case.dart';
 import '../screens/recent_search_store.dart';
 import 'search_state.dart';
 
-
 class SearchCubit extends Cubit<SearchState> {
   SearchCubit({
     required this.getSearchContentUseCase,
     required RecentSearchesStore recentSearchesStore,
+    required SpeechToTextService speechToTextService,
   })  : _recentSearchesStore = recentSearchesStore,
+        _speechToTextService = speechToTextService,
         super(const SearchState()) {
     loadInitial();
   }
 
   final GetSearchContentUseCase getSearchContentUseCase;
   final RecentSearchesStore _recentSearchesStore;
+  final SpeechToTextService _speechToTextService;
 
   Future<void> loadInitial() async {
     await _loadContent(query: '', listening: false, submitted: false);
   }
 
   Future<void> onQueryChanged(String query) async {
+    if (state.isListening) {
+      await stopListening();
+    }
     emit(
       state.copyWith(
         query: query,
@@ -34,31 +40,72 @@ class SearchCubit extends Cubit<SearchState> {
     await _loadContent(query: query, listening: false, submitted: false);
   }
 
-  Future<void> startListening() async {
-    emit(state.copyWith(isListening: true, isSubmitted: false));
-    await _loadContent(
-      query: state.query,
-      listening: true,
-      submitted: false,
+  Future<VoiceSearchFailure?> startListening({String? localeId}) async {
+    if (state.isListening) return null;
+
+    emit(
+      state.copyWith(
+        isListening: true,
+        isSubmitted: false,
+      ),
     );
+
+    final failure = await _speechToTextService.startListening(
+      localeId: localeId,
+      onResult: (text, isFinal) async {
+        if (isClosed) return;
+
+        emit(state.copyWith(query: text));
+
+        if (isFinal) {
+          await stopListening();
+          final trimmed = text.trim();
+          if (trimmed.isNotEmpty) {
+            await submitSearch(trimmed);
+          }
+        }
+      },
+    );
+
+    if (isClosed) return failure;
+
+    if (failure != null) {
+      emit(state.copyWith(isListening: false));
+      return failure;
+    }
+
+    if (!_speechToTextService.isListening) {
+      emit(state.copyWith(isListening: false));
+    }
+    return null;
   }
 
   Future<void> stopListening() async {
+    if (!state.isListening && !_speechToTextService.isListening) return;
+
+    await _speechToTextService.stop();
+    if (isClosed) return;
+
+    final query = state.query;
     emit(state.copyWith(isListening: false));
-    await _loadContent(
-      query: state.query,
-      listening: false,
-      submitted: false,
-    );
+
+    if (query.trim().isNotEmpty && !state.isSubmitted) {
+      await _loadContent(
+        query: query,
+        listening: false,
+        submitted: false,
+      );
+    }
   }
 
   Future<void> submitSearch([String? query]) async {
+    if (state.isListening) {
+      await _speechToTextService.stop();
+    }
+
     final resolvedQuery = (query ?? state.query).trim();
     if (resolvedQuery.isEmpty) return;
 
-    // Persist this submission to the local recent searches store BEFORE
-    // we fetch results, so when the next initial-state render happens the
-    // term is already there.
     await _recentSearchesStore.add(resolvedQuery);
 
     emit(
@@ -76,6 +123,10 @@ class SearchCubit extends Cubit<SearchState> {
   }
 
   Future<void> clearQuery() async {
+    if (state.isListening) {
+      await _speechToTextService.cancel();
+    }
+
     emit(
       state.copyWith(
         query: '',
@@ -87,7 +138,6 @@ class SearchCubit extends Cubit<SearchState> {
   }
 
   Future<void> removeRecentSearch(String title) async {
-    // Remove from the local store first, then mirror the change in state.
     final updated = await _recentSearchesStore.remove(title);
 
     emit(
@@ -100,6 +150,12 @@ class SearchCubit extends Cubit<SearchState> {
         ),
       ),
     );
+  }
+
+  @override
+  Future<void> close() async {
+    await _speechToTextService.cancel();
+    return super.close();
   }
 
   Future<void> _loadContent({
@@ -124,20 +180,17 @@ class SearchCubit extends Cubit<SearchState> {
     if (isClosed) return;
 
     result.fold(
-          (error) => emit(
+      (error) => emit(
         state.copyWith(
           loadingStateStatus: StateStatus.error,
           errorMessage: error,
         ),
       ),
-          (content) {
-        // Always overlay the locally-persisted recents on top of whatever
-        // the use case returned. This keeps the user's real history
-        // visible regardless of whether the backend/use case provides it.
+      (content) {
         final localRecents = _recentSearchesStore.load();
         final merged = SearchContentEntity(
           recentSearches:
-          localRecents.isNotEmpty ? localRecents : content.recentSearches,
+              localRecents.isNotEmpty ? localRecents : content.recentSearches,
           popularSearches: content.popularSearches,
           suggestions: content.suggestions,
           sections: content.sections,

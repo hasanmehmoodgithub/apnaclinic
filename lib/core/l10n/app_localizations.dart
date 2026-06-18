@@ -1370,6 +1370,30 @@ abstract class AppLocalizations {
   /// **'Listening...'**
   String get searchListeningHint;
 
+  /// No description provided for @searchVoicePermissionDenied.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow microphone access in Settings to use voice search.'**
+  String get searchVoicePermissionDenied;
+
+  /// No description provided for @searchVoiceNotAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Voice search is not available on this emulator. Use a physical phone with Google speech services.'**
+  String get searchVoiceNotAvailable;
+
+  /// No description provided for @searchVoiceRebuildRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Voice search needs a full app restart. Stop the app, then run flutter run (not hot restart).'**
+  String get searchVoiceRebuildRequired;
+
+  /// No description provided for @searchVoiceFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not start voice search. Please try again.'**
+  String get searchVoiceFailed;
+
   /// No description provided for @searchRecentSearchesTitle.
   ///
   /// In en, this message translates to:

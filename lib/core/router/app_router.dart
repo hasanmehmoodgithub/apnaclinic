@@ -42,6 +42,7 @@ import '../../features/pharmacy/presentation/screens/pharmacy_booking_details_sc
 import '../../features/pharmacy/presentation/screens/pharmacy_screen.dart';
 import '../../features/pharmacy/presentation/widgets/pharmacy_booking_details_body_widget.dart';
 import '../../features/search/presentation/cubit/search_cubit.dart';
+import '../../features/search/presentation/models/search_launch_args.dart';
 import '../../features/search/presentation/screens/search_screen.dart';
 import '../../features/surgery/presentation/cubit/surgery_cubit.dart';
 import '../../features/surgery/presentation/screens/surgery_screen.dart';
@@ -270,10 +271,23 @@ class AppRouter {
         path: AppRoutes.path(AppRoutes.search),
         name: AppRoutes.search,
         builder: (context, state) {
-          final initialQuery = state.extra is String ? state.extra as String : null;
+          final extra = state.extra;
+          String? initialQuery;
+          var startVoiceSearch = false;
+
+          if (extra is SearchLaunchArgs) {
+            initialQuery = extra.initialQuery;
+            startVoiceSearch = extra.startVoiceSearch;
+          } else if (extra is String) {
+            initialQuery = extra;
+          }
+
           return BlocProvider<SearchCubit>(
             create: (_) => sl<SearchCubit>(),
-            child: SearchScreen(initialQuery: initialQuery),
+            child: SearchScreen(
+              initialQuery: initialQuery,
+              startVoiceSearch: startVoiceSearch,
+            ),
           );
         },
       ),

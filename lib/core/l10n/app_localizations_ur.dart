@@ -673,6 +673,22 @@ class AppLocalizationsUr extends AppLocalizations {
   String get searchListeningHint => 'سن رہا ہے...';
 
   @override
+  String get searchVoicePermissionDenied =>
+      'وائس سرچ کے لیے سیٹنگز میں مائیکروفون کی اجازت دیں۔';
+
+  @override
+  String get searchVoiceNotAvailable =>
+      'وائس سرچ اس ایمولیٹر پر دستیاب نہیں۔ Google speech services والا فزیکل فون استعمال کریں۔';
+
+  @override
+  String get searchVoiceRebuildRequired =>
+      'وائس سرچ کے لیے مکمل ری اسٹارٹ ضروری ہے۔ ایپ بند کریں اور flutter run چلائیں (hot restart نہیں)۔';
+
+  @override
+  String get searchVoiceFailed =>
+      'وائس سرچ شروع نہیں ہو سکی۔ دوبارہ کوشش کریں۔';
+
+  @override
   String get searchRecentSearchesTitle => 'حالیہ تلاشیں';
 
   @override

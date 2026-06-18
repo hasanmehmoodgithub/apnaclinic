@@ -21,6 +21,7 @@ import '../services/encryption_service.dart';
 import '../services/connectivity_service.dart';
 import '../services/notification_service.dart';
 import '../services/responsive_config_service.dart';
+import '../services/speech_to_text_service.dart';
 import '../session/auth_session_refresh.dart';
 import '../cities/cities_injection.dart';
 
@@ -67,6 +68,7 @@ Future<void> _initCore() async {
     () => const ResponsiveConfigService(),
   );
   sl.registerLazySingleton<AuthSessionRefresh>(() => AuthSessionRefresh());
+  sl.registerLazySingleton<SpeechToTextService>(() => SpeechToTextService());
   sl.registerLazySingleton<NotificationService>(
     () => NotificationService(appPref: sl<AppPref>()),
   );

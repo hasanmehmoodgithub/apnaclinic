@@ -26,6 +26,7 @@ import '../widgets/our_services_widget.dart';
 import '../widgets/promotional_banner_dialog.dart';
 import '../constants/main_navigation_tabs.dart';
 import '../cubit/main_navigation_cubit.dart';
+import '../../../search/presentation/models/search_launch_args.dart';
 import '../../../notification/presentation/cubit/notification_cubit.dart';
 import '../../../notification/presentation/cubit/notification_state.dart';
 
@@ -159,7 +160,17 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     _dismissKeyboard();
     context.push(
       AppRoutes.path(AppRoutes.search),
-      extra: (query == null || query.trim().isEmpty) ? null : query.trim(),
+      extra: (query == null || query.trim().isEmpty)
+          ? null
+          : SearchLaunchArgs(initialQuery: query.trim()),
+    );
+  }
+
+  void _openVoiceSearch(BuildContext context) {
+    _dismissKeyboard();
+    context.push(
+      AppRoutes.path(AppRoutes.search),
+      extra: const SearchLaunchArgs(startVoiceSearch: true),
     );
   }
 
@@ -209,6 +220,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                   onSearchSubmitted: (query) =>
                       _openSearch(context, query: query),
                   onSearchButtonTap: () => _openSearch(context),
+                  onVoiceTap: () => _openVoiceSearch(context),
                 );
               },
             ),

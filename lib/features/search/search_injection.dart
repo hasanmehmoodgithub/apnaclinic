@@ -2,6 +2,7 @@ import 'package:apnaclinic/features/search/presentation/screens/recent_search_st
 
 import '../../core/di/dependency_injection.dart';
 import '../../core/network/api_service.dart';
+import '../../core/services/speech_to_text_service.dart';
 import 'data/data_sources/search_remote_data_source.dart';
 import 'data/data_sources/search_remote_data_source_impl.dart';
 import 'data/mock/search_mock_api.dart';
@@ -39,6 +40,7 @@ void initSearchInjector() {
         () => SearchCubit(
       getSearchContentUseCase: sl<GetSearchContentUseCase>(),
       recentSearchesStore: sl<RecentSearchesStore>(),
+      speechToTextService: sl<SpeechToTextService>(),
     ),
   );
 }

@@ -673,6 +673,22 @@ class AppLocalizationsEn extends AppLocalizations {
   String get searchListeningHint => 'Listening...';
 
   @override
+  String get searchVoicePermissionDenied =>
+      'Allow microphone access in Settings to use voice search.';
+
+  @override
+  String get searchVoiceNotAvailable =>
+      'Voice search is not available on this emulator. Use a physical phone with Google speech services.';
+
+  @override
+  String get searchVoiceRebuildRequired =>
+      'Voice search needs a full app restart. Stop the app, then run flutter run (not hot restart).';
+
+  @override
+  String get searchVoiceFailed =>
+      'Could not start voice search. Please try again.';
+
+  @override
   String get searchRecentSearchesTitle => 'Recent Searches';
 
   @override
