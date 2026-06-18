@@ -28,7 +28,7 @@ class InstantDoctorHomeBanner extends StatelessWidget {
           padding: EdgeInsets.fromLTRB(
             DashboardUiConfig.instantDoctorCardPaddingLeft.w,
             DashboardUiConfig.instantDoctorCardPaddingVertical.h,
-            DashboardUiConfig.instantDoctorCardPaddingVertical.w,
+            0,
             0,
           ),
           child: Row(
