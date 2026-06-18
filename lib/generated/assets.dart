@@ -66,6 +66,7 @@ class Assets {
   static const String imgFikrfreeLogo = 'assets/img/fikrfree_logo.png';
   static const String imgFreedoctorTitleIcon = 'assets/img/freedoctorTitleIcon.png';
   static const String imgHeroFamily = 'assets/img/hero_family.webp';
+  static const String imgInstantDocBanner = 'assets/img/instantDocBanner.png';
   static const String imgPartner = 'assets/img/partner.png';
   static const String imgPharmacyBanner = 'assets/img/pharmacyBanner.webp';
   static const String imgPlaceHolderPerson = 'assets/img/placeHolderPerson.webp';
@@ -118,7 +119,6 @@ class Assets {
   static const String svgIcServiceCardArrow = 'assets/svg/ic_service_card_arrow.svg';
   static const String svgIcServiceOffer = 'assets/svg/ic_service_offer.svg';
   static const String svgIcSupportCardArrow = 'assets/svg/ic_support_card_arrow.svg';
-  static const String svgInstantDoc = 'assets/svg/instant_doc.svg';
   static const String svgJazzCash = 'assets/svg/jazzCash.svg';
   static const String svgNavBookings = 'assets/svg/nav_bookings.svg';
   static const String svgNavFreeDoctor = 'assets/svg/nav_free_doctor.svg';

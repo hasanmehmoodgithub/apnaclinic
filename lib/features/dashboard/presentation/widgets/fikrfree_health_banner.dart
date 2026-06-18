@@ -23,7 +23,7 @@ class FikrfreeHealthBanner extends StatelessWidget {
           l10n.dashboardSecureHealthTitle,
           style: theme.textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.w700,
-            fontSize: 16.sp,
+            fontSize: 18.sp,
             color: AppColors.clr111827,
           ),
         ),
@@ -35,7 +35,7 @@ class FikrfreeHealthBanner extends StatelessWidget {
           child: InkWell(
             onTap: onTap,
             child: Padding(
-                padding: EdgeInsets.fromLTRB(14.w, 14.h, 12.w, 14.h),
+                padding: EdgeInsets.fromLTRB(14.w, 24.h, 12.w, 24.h),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -43,22 +43,13 @@ class FikrfreeHealthBanner extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Row(
-                            children: [
-                              Text(
-                                'FikrFree',
-                                style: theme.textTheme.titleMedium?.copyWith(
-                                  fontWeight: FontWeight.w700,
-                                  fontSize: 16.sp,
-                                  color: AppColors.clr09,
-                                ),
-                              ),
-                              Icon(
-                                Icons.chevron_right_rounded,
-                                color: AppColors.clr0D9488,
-                                size: 22.r,
-                              ),
-                            ],
+                          Text(
+                            'FikrFree',
+                            style: theme.textTheme.titleMedium?.copyWith(
+                              fontWeight: FontWeight.w700,
+                              fontSize: 16.sp,
+                              color: AppColors.clr09,
+                            ),
                           ),
                           SizedBox(height: 6.h),
                           Text(

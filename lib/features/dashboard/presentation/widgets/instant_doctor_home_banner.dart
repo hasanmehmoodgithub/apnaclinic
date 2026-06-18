@@ -1,10 +1,10 @@
 import 'package:apnaclinic/core/constants/app_colors.dart';
 import 'package:apnaclinic/core/l10n/app_localizations.dart';
+import 'package:apnaclinic/generated/assets.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../constants/dashboard_ui_config.dart';
-import 'instant_doctor_banner_artwork.dart';
 
 class InstantDoctorHomeBanner extends StatelessWidget {
   const InstantDoctorHomeBanner({super.key, this.onTap});
@@ -55,7 +55,7 @@ class InstantDoctorHomeBanner extends StatelessWidget {
                                 l10n.freeDoctorTitle,
                                 style: theme.textTheme.titleMedium?.copyWith(
                                   fontWeight: FontWeight.w700,
-                                  fontSize: 16.sp,
+                                  fontSize: 18.sp,
                                   color: AppColors.clr09,
                                   height: 1.2,
                                 ),
@@ -65,7 +65,7 @@ class InstantDoctorHomeBanner extends StatelessWidget {
                               ),
                               Icon(
                                 Icons.arrow_forward_rounded,
-                                size: 18.r,
+                                size: 20.r,
                                 color: AppColors.clr09,
                               ),
                             ],
@@ -76,8 +76,9 @@ class InstantDoctorHomeBanner extends StatelessWidget {
                           Text(
                             l10n.dashboardInstantDoctorDescription,
                             style: theme.textTheme.bodySmall?.copyWith(
-                              color: AppColors.clr6B7280,
-                              fontSize: 12.sp,
+                              color: AppColors.clr8A8A8A,
+                              fontWeight: FontWeight.w500,
+                              fontSize: 13.sp,
                               height: 1.4,
                             ),
                           ),
@@ -86,9 +87,9 @@ class InstantDoctorHomeBanner extends StatelessWidget {
                     ),
                   ),
                 ),
-                const Align(
+                 Align(
                   alignment: Alignment.bottomRight,
-                  child: InstantDoctorBannerArtwork(),
+                  child: Image.asset(Assets.imgInstantDocBanner),
                 ),
               ],
             ),
