@@ -25,7 +25,7 @@ Profile uses **`profile_setup`** remote (`GET …/users/{userId}`) — no duplic
 ## UI
 
 - `HomeScreen` — teal `HomeHeaderSection` (rounded bottom `30.r`, menu + `apna clinic` logo + notification + Login, greeting, white pill search with teal search icon and mic), light gray body, 2×2 services grid (`DashboardUiConfig`: **195×122** cards, **63×72** icons, 12px gap, `20.r` radius), `ServiceDiscountBadge`, `InstantDoctorHomeBanner` (`assets/svg/instant_doc.svg` via `InstantDoctorBannerArtwork`), `FikrfreeHealthBanner`. `DashboardCubit` + `NotificationCubit`.
-- `MainNavigationShell` — four-tab bar (Home, Instant Doctor, Bookings, Support) matching Figma; custom SVGs `nav_home_bottom_bar.svg`, `nav_bookings.svg`. No raised center button. Tab order in `MainNavigationTabs`. Profile is not a bottom tab (header/menu). Exposes `MainNavigationCubit` for in-shell tab switches. Tabs switch **only via bottom nav tap** (no horizontal swipe). Listens to `AuthSessionRefresh` (login/logout) to remount tabs and reload cubits.
+- `MainNavigationShell` — four-tab bar (Home, Instant Doctor, Bookings, Support). Nav icons use filled/outline SVG pairs (`nav_*_filled.svg` / `nav_*_outline.svg`); selected tab shows filled icon. Tab order in `MainNavigationTabs`. Profile is not a bottom tab (header/menu). Exposes `MainNavigationCubit` for in-shell tab switches. Tabs switch **only via bottom nav tap** (no horizontal swipe). Listens to `AuthSessionRefresh` (login/logout) to remount tabs and reload cubits.
 
 ## Session refresh
 

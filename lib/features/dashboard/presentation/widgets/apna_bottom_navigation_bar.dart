@@ -42,7 +42,8 @@ class ApnaBottomNavigationBar extends StatelessWidget {
             Expanded(
               child: _NavTab(
                 label: l10n.dashboardBottomHome,
-                asset: Assets.svgNavHomeBottomBar,
+                filledAsset: Assets.svgNavHomeFilled,
+                outlineAsset: Assets.svgNavHomeOutline,
                 selected: currentIndex == MainNavigationTabs.home,
                 onTap: () => onTap(MainNavigationTabs.home),
               ),
@@ -50,7 +51,8 @@ class ApnaBottomNavigationBar extends StatelessWidget {
             Expanded(
               child: _NavTab(
                 label: l10n.dashboardBottomFreeDoctor,
-                asset: Assets.svgNavFreeDoctor,
+                filledAsset: Assets.svgNavInstantDoctorFilled,
+                outlineAsset: Assets.svgNavInstantDoctorOutline,
                 selected: currentIndex == MainNavigationTabs.instantDoctor,
                 onTap: () => onTap(MainNavigationTabs.instantDoctor),
               ),
@@ -58,7 +60,8 @@ class ApnaBottomNavigationBar extends StatelessWidget {
             Expanded(
               child: _NavTab(
                 label: l10n.dashboardBottomBookings,
-                asset: Assets.svgNavBookings,
+                filledAsset: Assets.svgNavBookingsFilled,
+                outlineAsset: Assets.svgNavBookingsOutline,
                 selected: currentIndex == MainNavigationTabs.bookings,
                 onTap: () => onTap(MainNavigationTabs.bookings),
               ),
@@ -66,7 +69,8 @@ class ApnaBottomNavigationBar extends StatelessWidget {
             Expanded(
               child: _NavTab(
                 label: l10n.dashboardBottomSupport,
-                asset: Assets.svgNavSupport,
+                filledAsset: Assets.svgNavSupportFilled,
+                outlineAsset: Assets.svgNavSupportOutline,
                 selected: currentIndex == MainNavigationTabs.support,
                 onTap: () => onTap(MainNavigationTabs.support),
               ),
@@ -81,15 +85,17 @@ class ApnaBottomNavigationBar extends StatelessWidget {
 class _NavTab extends StatelessWidget {
   const _NavTab({
     required this.label,
+    required this.filledAsset,
+    required this.outlineAsset,
     required this.selected,
     required this.onTap,
-    this.asset,
   });
 
   final String label;
+  final String filledAsset;
+  final String outlineAsset;
   final bool selected;
   final VoidCallback onTap;
-  final String? asset;
 
   @override
   Widget build(BuildContext context) {
@@ -104,14 +110,13 @@ class _NavTab extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              if (asset != null)
-                SvgPicture.asset(
-                  asset!,
-                  width: 24.r,
-                  height: 24.r,
-                  fit: BoxFit.contain,
-                  colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
-                ),
+              SvgPicture.asset(
+                selected ? filledAsset : outlineAsset,
+                width: 24.r,
+                height: 24.r,
+                fit: BoxFit.contain,
+                colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
+              ),
               SizedBox(height: 4.h),
               Text(
                 label,

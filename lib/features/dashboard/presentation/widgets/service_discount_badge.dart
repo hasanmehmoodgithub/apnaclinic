@@ -2,6 +2,7 @@ import 'package:apnaclinic/core/constants/app_colors.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../core/extensions/screen_util_extensions.dart';
+import '../constants/dashboard_ui_config.dart';
 
 /// Normalizes API/mock copy (e.g. `Up to 20% off`) to `20% OFF`.
 String formatServiceDiscountBadge(String raw) {
@@ -19,7 +20,7 @@ String formatServiceDiscountBadge(String raw) {
   return trimmed;
 }
 
-/// Light-teal discount tag for home service grid cards (top-right).
+/// Pill-shaped discount tag for home service grid cards (top-right).
 class ServiceDiscountBadge extends StatelessWidget {
   const ServiceDiscountBadge({
     super.key,
@@ -33,20 +34,25 @@ class ServiceDiscountBadge extends StatelessWidget {
     final formatted = formatServiceDiscountBadge(label);
     if (formatted.isEmpty) return const SizedBox.shrink();
 
+    final verticalPadding =
+        DashboardUiConfig.serviceDiscountBadgeVerticalPadding.h;
+
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
-      decoration: BoxDecoration(
-        color: AppColors.clrB8EDE5,
-        borderRadius: BorderRadius.circular(4.r),
+      padding: EdgeInsets.symmetric(
+        horizontal: DashboardUiConfig.serviceDiscountBadgeHorizontalPadding.w,
+        vertical: verticalPadding,
+      ),
+      decoration: const ShapeDecoration(
+        color: AppColors.clrE0F7F6,
+        shape: StadiumBorder(),
       ),
       child: Text(
         formatted,
         style: TextStyle(
-          color: AppColors.clr40AFA2,
-          fontSize: 10.sp,
+          color: AppColors.clr00897B,
+          fontSize: DashboardUiConfig.serviceDiscountBadgeFontSize.sp,
           fontWeight: FontWeight.w700,
           height: 1.0,
-          letterSpacing: 0.1,
         ),
       ),
     );
