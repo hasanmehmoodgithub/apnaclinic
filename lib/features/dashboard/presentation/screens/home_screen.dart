@@ -13,7 +13,6 @@ import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/preference/app_pref.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../profile_setup/presentation/profile_setup_launch_source.dart';
-import '../../../../core/widgets/apna_clinic_app_bar.dart';
 import '../../../../core/services/notification_service.dart';
 import '../../../../core/widgets/heart_loader_widget.dart';
 import '../../domain/entities/our_service_entity.dart';
@@ -21,9 +20,12 @@ import '../../domain/services/promotional_banner_session.dart';
 import '../cubit/dashboard_services_cubit.dart';
 import '../cubit/dashboard_services_state.dart';
 import '../widgets/fikrfree_health_banner.dart';
+import '../widgets/home_header_section.dart';
+import '../widgets/instant_doctor_home_banner.dart';
 import '../widgets/our_services_widget.dart';
 import '../widgets/promotional_banner_dialog.dart';
-import '../widgets/search_header.dart';
+import '../constants/main_navigation_tabs.dart';
+import '../cubit/main_navigation_cubit.dart';
 import '../../../notification/presentation/cubit/notification_cubit.dart';
 import '../../../notification/presentation/cubit/notification_state.dart';
 
@@ -100,7 +102,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
         final l10n = AppLocalizations.of(context)!;
         _isLoggedIn = sl<AppPref>().getLoginStatus();
         final greetingName = _resolveGreetingName(l10n);
-        final theme = Theme.of(context);
 
         // Whenever the router rebuilds us (which includes returning from
         // the search screen), defer a keyboard-dismiss to the next frame
@@ -115,7 +116,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
           child: BlocConsumer<DashboardCubit, DashboardServicesState>(
             listener: _onDashboardStateChanged,
             builder: (context, state) =>
-                _buildHomeBody(context, state, greetingName, theme, l10n),
+                _buildHomeBody(context, state, greetingName),
           ),
         );
       },
@@ -166,91 +167,72 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       BuildContext context,
       DashboardServicesState state,
       String greetingName,
-      ThemeData theme,
-      AppLocalizations l10n,
       ) {
     return Scaffold(
-      backgroundColor: AppColors.clrWhite,
+      backgroundColor: AppColors.clrf4f4f4,
       // Tapping anywhere outside the text field dismisses the keyboard.
       body: GestureDetector(
         behavior: HitTestBehavior.translucent,
         onTap: _dismissKeyboard,
         child: Column(
           children: [
-            Container(
-              color: AppColors.clr52A898,
-              child: SafeArea(
-                child: BlocBuilder<NotificationCubit, NotificationState>(
-                  bloc: _notificationCubit,
-                  builder: (context, notificationState) {
-                    final unreadCount = notificationState.notifications
-                        .where((item) => !item.isRead)
-                        .length;
-                    final profileImageUrl = _isLoggedIn
-                        ? sl<AppPref>()
-                            .getUserLocalModel()
-                            ?.imageUrl
-                        : null;
-                    // Rebuild avatar when dashboard profile sync completes.
-                    final _ = state.profileSyncNonce;
-                    return ApnaClinicAppBar(
-                      style: ApnaAppBarStyle.light,
-                      systemOverlayStyle:
-                      ApnaClinicAppBar.lightBarColoredStatus,
-                      onMenuTap: () => context.push(
-                        AppRoutes.path(AppRoutes.dashboardMenu),
-                      ),
-                      onNotificationTap: () {
-                        if (!_isLoggedIn) {
-                          context.push(AppRoutes.path(AppRoutes.authLogin));
-                          return;
-                        }
-                        context.push(AppRoutes.path(AppRoutes.notifications));
-                      },
-                      notificationCount: _isLoggedIn ? unreadCount : 0,
-                      showLoginButton: !_isLoggedIn,
-                      onLoginTap: () =>
-                          context.push(AppRoutes.path(AppRoutes.authLogin)),
-                      onProfileTap: () => context.push(
-                        AppRoutes.path(AppRoutes.profileSetup),
-                        extra: ProfileSetupLaunchSource.menu,
-                      ),
-                      profileImageUrl: profileImageUrl,
-                    );
+            BlocBuilder<NotificationCubit, NotificationState>(
+              bloc: _notificationCubit,
+              builder: (context, notificationState) {
+                final unreadCount = notificationState.notifications
+                    .where((item) => !item.isRead)
+                    .length;
+                final profileImageUrl = _isLoggedIn
+                    ? sl<AppPref>().getUserLocalModel()?.imageUrl
+                    : null;
+                final _ = state.profileSyncNonce;
+                return HomeHeaderSection(
+                  userName: greetingName,
+                  isLoggedIn: _isLoggedIn,
+                  notificationCount: unreadCount,
+                  profileImageUrl: profileImageUrl,
+                  onMenuTap: () => context.push(
+                    AppRoutes.path(AppRoutes.dashboardMenu),
+                  ),
+                  onNotificationTap: () {
+                    if (!_isLoggedIn) {
+                      context.push(AppRoutes.path(AppRoutes.authLogin));
+                      return;
+                    }
+                    context.push(AppRoutes.path(AppRoutes.notifications));
                   },
-                ),
-              ),
-            ),
-            SearchHeader(
-              userName: greetingName,
-              onSearchSubmitted: (query) => _openSearch(context, query: query),
-              onVoiceTap: () {},
-              onSearchButtonTap: () => _openSearch(context),
+                  onLoginTap: () =>
+                      context.push(AppRoutes.path(AppRoutes.authLogin)),
+                  onProfileTap: () => context.push(
+                    AppRoutes.path(AppRoutes.profileSetup),
+                    extra: ProfileSetupLaunchSource.menu,
+                  ),
+                  onSearchSubmitted: (query) =>
+                      _openSearch(context, query: query),
+                  onSearchButtonTap: () => _openSearch(context),
+                );
+              },
             ),
             Expanded(
               child: CustomScrollView(
                 key: const ValueKey('dashboard_content'),
                 slivers: [
-                  SliverPadding(
-                    padding: EdgeInsets.fromLTRB(20.w, 12.h, 20.w, 0),
-                    sliver: SliverToBoxAdapter(
-                      child: Text(
-                        l10n.dashboardOurServicesTitle,
-                        style: theme.textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.clr111827,
-                        ),
-                      ),
-                    ),
-                  ),
-                  SliverPadding(padding: EdgeInsets.only(top: 14.h)),
+                  SliverPadding(padding: EdgeInsets.only(top: 8.h)),
                   OurServicesWidget(
                     state: state,
                     onServiceTap: (service) =>
                         _onServiceTap(context, service),
                   ),
                   SliverPadding(
-                    padding: EdgeInsets.fromLTRB(20.w, 24.h, 20.w, 32.h),
+                    padding: EdgeInsets.fromLTRB(20.w, 20.h, 20.w, 0),
+                    sliver: SliverToBoxAdapter(
+                      child: InstantDoctorHomeBanner(
+                        onTap: () => _openInstantDoctorTab(context),
+                      ),
+                    ),
+                  ),
+                  SliverPadding(
+                    padding: EdgeInsets.fromLTRB(20.w, 20.h, 20.w, 32.h),
                     sliver: SliverToBoxAdapter(
                       child: FikrfreeHealthBanner(
                         onTap: () {},
@@ -283,5 +265,9 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     if (normalizedRoute.isEmpty) return;
 
     context.push(AppRoutes.path(normalizedRoute));
+  }
+
+  void _openInstantDoctorTab(BuildContext context) {
+    context.read<MainNavigationCubit>().setIndex(MainNavigationTabs.instantDoctor);
   }
 }

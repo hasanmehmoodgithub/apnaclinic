@@ -575,7 +575,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get dashboardGuestName => 'Guest';
 
   @override
-  String get dashboardSearchHint => 'Search Medicine, Doctor, Test....';
+  String get dashboardSearchHint => 'Search doctor, medicine, lab tests...';
+
+  @override
+  String get dashboardInstantDoctorDescription =>
+      'Consult a certified doctor any time of the day instantly without appointment';
 
   @override
   String get dashboardOurServicesTitle => 'Our Services';
@@ -594,7 +598,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get dashboardBottomSupport => 'Support';
 
   @override
-  String get dashboardBottomBookings => 'My Bookings';
+  String get dashboardBottomBookings => 'Bookings';
 
   @override
   String get dashboardBottomProfile => 'Profile';

@@ -1187,8 +1187,14 @@ abstract class AppLocalizations {
   /// No description provided for @dashboardSearchHint.
   ///
   /// In en, this message translates to:
-  /// **'Search Medicine, Doctor, Test....'**
+  /// **'Search doctor, medicine, lab tests...'**
   String get dashboardSearchHint;
+
+  /// No description provided for @dashboardInstantDoctorDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Consult a certified doctor any time of the day instantly without appointment'**
+  String get dashboardInstantDoctorDescription;
 
   /// No description provided for @dashboardOurServicesTitle.
   ///
@@ -1223,7 +1229,7 @@ abstract class AppLocalizations {
   /// No description provided for @dashboardBottomBookings.
   ///
   /// In en, this message translates to:
-  /// **'My Bookings'**
+  /// **'Bookings'**
   String get dashboardBottomBookings;
 
   /// No description provided for @dashboardBottomProfile.

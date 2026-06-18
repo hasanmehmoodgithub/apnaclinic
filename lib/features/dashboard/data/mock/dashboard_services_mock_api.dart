@@ -16,9 +16,9 @@ class DashboardServicesMockApi {
       'data': [
         {
           'id': 1,
-          'title': 'Online Consultation',
+          'title': 'Doctor Consultation',
           'subtitle': 'PMDC certified doctors',
-          'discount': 'Up to 20% off',
+          'discount': '20% OFF',
           'iconPath': 'assets/img/services/online_consultation.webp',
           'deepLink': 'consultation',
           'displayOrder': 1,
@@ -26,9 +26,9 @@ class DashboardServicesMockApi {
         },
         {
           'id': 2,
-          'title': 'Pharmacy',
+          'title': 'Online Pharmacy',
           'subtitle': 'Authentic medicines at your doorstep',
-          'discount': 'Up to 10% off',
+          'discount': '',
           'iconPath': 'assets/img/services/pharmacy.webp',
           'deepLink': 'pharmacy',
           'displayOrder': 2,
@@ -36,9 +36,9 @@ class DashboardServicesMockApi {
         },
         {
           'id': 3,
-          'title': 'Laboratory Testing',
+          'title': 'Book Lab Test',
           'subtitle': 'Reliable lab tests with accurate results',
-          'discount': 'Up to 40% off',
+          'discount': '40% OFF',
           'iconPath': 'assets/img/services/laboratory.webp',
           'deepLink': 'lab-testing',
           'displayOrder': 3,
@@ -46,9 +46,9 @@ class DashboardServicesMockApi {
         },
         {
           'id': 4,
-          'title': 'Surgery Booking',
+          'title': 'Book Surgery',
           'subtitle': 'Hassle-free surgery scheduling',
-          'discount': 'Up to 40% off',
+          'discount': '40% OFF',
           'iconPath': 'assets/img/services/surgery_booking.webp',
           'deepLink': 'surgery',
           'displayOrder': 4,

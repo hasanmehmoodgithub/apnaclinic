@@ -1,9 +1,10 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../constants/main_navigation_tabs.dart';
 import 'main_navigation_state.dart';
 
 class MainNavigationCubit extends Cubit<MainNavigationState> {
-  MainNavigationCubit({int initialIndex = 2})
+  MainNavigationCubit({int initialIndex = MainNavigationTabs.home})
     : super(MainNavigationState(currentIndex: initialIndex));
 
   void setIndex(int index) {
@@ -11,4 +12,3 @@ class MainNavigationCubit extends Cubit<MainNavigationState> {
     emit(state.copyWith(currentIndex: index));
   }
 }
-

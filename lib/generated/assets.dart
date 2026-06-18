@@ -104,6 +104,7 @@ class Assets {
   static const String servicesSurgeryBooking = 'assets/img/services/surgery_booking.webp';
   static const String supportSupportHero = 'assets/img/support/support_hero.png';
   static const String svgAppbarbackground = 'assets/svg/appbarbackground.svg';
+  static const String svgApnaClinicLogo = 'assets/svg/apna_clinic_logo.svg';
   static const String svgBrandApnaClinic = 'assets/svg/brand_apna_clinic.svg';
   static const String svgFrame1171275326 = 'assets/svg/frame_1171275326.svg';
   static const String svgIcMenu = 'assets/svg/ic_menu.svg';
@@ -112,9 +113,11 @@ class Assets {
   static const String svgIcServiceCardArrow = 'assets/svg/ic_service_card_arrow.svg';
   static const String svgIcServiceOffer = 'assets/svg/ic_service_offer.svg';
   static const String svgIcSupportCardArrow = 'assets/svg/ic_support_card_arrow.svg';
+  static const String svgInstantDoc = 'assets/svg/instant_doc.svg';
   static const String svgJazzCash = 'assets/svg/jazzCash.svg';
   static const String svgNavBookings = 'assets/svg/nav_bookings.svg';
   static const String svgNavFreeDoctor = 'assets/svg/nav_free_doctor.svg';
+  static const String svgNavHomeBottomBar = 'assets/svg/nav_home_bottom_bar.svg';
   static const String svgNavHomeLogo = 'assets/svg/nav_home_logo.svg';
   static const String svgNavProfile = 'assets/svg/nav_profile.svg';
   static const String svgNavSupport = 'assets/svg/nav_support.svg';

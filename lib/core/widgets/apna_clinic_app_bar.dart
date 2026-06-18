@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../../generated/assets.dart';
+import '../constants/app_colors.dart';
 import '../extensions/screen_util_extensions.dart';
 
 import '../constants/app_system_ui.dart';
@@ -22,12 +23,15 @@ class ApnaClinicAppBar extends StatelessWidget implements PreferredSizeWidget {
     super.key,
     this.style = ApnaAppBarStyle.light,
     this.systemOverlayStyle,
+    this.transparentBackground = false,
     this.onMenuTap,
     this.onNotificationTap,
     this.notificationCount,
+    this.showNotificationDot = false,
     this.onProfileTap,
     this.onLoginTap,
     this.showLoginButton = false,
+    this.filledLoginButton = false,
     this.profileImageUrl,
     this.bottom,
   });
@@ -38,12 +42,15 @@ class ApnaClinicAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   final ApnaAppBarStyle style;
   final SystemUiOverlayStyle? systemOverlayStyle;
+  final bool transparentBackground;
   final VoidCallback? onMenuTap;
   final VoidCallback? onNotificationTap;
   final int? notificationCount;
+  final bool showNotificationDot;
   final VoidCallback? onProfileTap;
   final VoidCallback? onLoginTap;
   final bool showLoginButton;
+  final bool filledLoginButton;
   final String? profileImageUrl;
   final PreferredSizeWidget? bottom;
 
@@ -59,10 +66,13 @@ class ApnaClinicAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bg = _isGreen ? _green : Colors.white;
+    final bg = transparentBackground
+        ? Colors.transparent
+        : (_isGreen ? _green : Colors.white);
     final svgFilter = _isGreen
         ? const ColorFilter.mode(Colors.white, BlendMode.srcIn)
-        : null;
+        : const ColorFilter.mode(AppColors.clr52A898, BlendMode.srcIn);
+    final wordmarkColor = _isGreen ? Colors.white : AppColors.clr52A898;
 
     final bar = Material(
       color: bg,
@@ -107,13 +117,29 @@ class ApnaClinicAppBar extends StatelessWidget implements PreferredSizeWidget {
                   child: Align(
                     alignment: Alignment.centerLeft,
                     child: Padding(
-                      padding: EdgeInsets.only(left:6.w,top: 4.h),
-                      child: SvgPicture.asset(
-                        Assets.svgBrandApnaClinic,
-                        height: 32.h,
-                        fit: BoxFit.contain,
-                        alignment: Alignment.centerLeft,
-                        colorFilter: svgFilter,
+                      padding: EdgeInsets.only(left: 6.w, top: 4.h),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          SvgPicture.asset(
+                            Assets.svgApnaClinicLogo,
+                            height: 28.h,
+                            width: 28.h,
+                            fit: BoxFit.contain,
+                            colorFilter: svgFilter,
+                          ),
+                          SizedBox(width: 8.w),
+                          Text(
+                            'apna clinic',
+                            style: TextStyle(
+                              color: wordmarkColor,
+                              fontSize: 18.sp,
+                              fontWeight: FontWeight.w600,
+                              height: 1.0,
+                              letterSpacing: -0.2,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
@@ -133,22 +159,22 @@ class ApnaClinicAppBar extends StatelessWidget implements PreferredSizeWidget {
                     children: [
                       SvgPicture.asset(
                         Assets.svgIcNotification,
-                        width: 18.w,
-                        height: 22.h,
+                        width: 28.r,
+                        height: 28.r,
                         fit: BoxFit.contain,
                         colorFilter: svgFilter,
                       ),
                       if ((notificationCount ?? 0) > 0)
                         Positioned(
-                          right: -8.w,
-                          top: -4.h,
+                          right: 0,
+                          top: 0,
                           child: Container(
                             padding: EdgeInsets.symmetric(
                               horizontal: 4.w,
                               vertical: 1.h,
                             ),
                             decoration: BoxDecoration(
-                              color: const Color(0xFFE53935),
+                              color: const Color(0xFFFF5353),
                               borderRadius: BorderRadius.circular(8.r),
                             ),
                             child: Text(
@@ -161,6 +187,19 @@ class ApnaClinicAppBar extends StatelessWidget implements PreferredSizeWidget {
                               ),
                             ),
                           ),
+                        )
+                      else if (showNotificationDot)
+                        Positioned(
+                          right: 2.w,
+                          top: 2.h,
+                          child: Container(
+                            width: 9.r,
+                            height: 9.r,
+                            decoration: const BoxDecoration(
+                              color: Color(0xFFFF5353),
+                              shape: BoxShape.circle,
+                            ),
+                          ),
                         ),
                     ],
                   ),
@@ -168,33 +207,59 @@ class ApnaClinicAppBar extends StatelessWidget implements PreferredSizeWidget {
                 Padding(
                   padding: EdgeInsets.only(right: 12.w, left: 4.w),
                   child: showLoginButton
-                      ? SizedBox(
-                          height: 36.h,
-                          child: OutlinedButton(
-                            onPressed: onLoginTap,
-                            style: OutlinedButton.styleFrom(
-                              side: BorderSide(
-                                color: _isGreen
-                                    ? Colors.white
-                                    : const Color(0xFF0FAA9A),
+                      ? filledLoginButton
+                          ? Material(
+                              color: AppColors.clrWhite,
+                              borderRadius: BorderRadius.circular(8.r),
+                              child: InkWell(
+                                onTap: onLoginTap,
+                                borderRadius: BorderRadius.circular(8.r),
+                                child: Padding(
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: 14.w,
+                                    vertical: 8.h,
+                                  ),
+                                  child: Text(
+                                    'Login',
+                                    style: TextStyle(
+                                      color: _green,
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 13.sp,
+                                      height: 1.0,
+                                    ),
+                                  ),
+                                ),
                               ),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(18.r),
+                            )
+                          : SizedBox(
+                              height: 36.h,
+                              child: OutlinedButton(
+                                onPressed: onLoginTap,
+                                style: OutlinedButton.styleFrom(
+                                  side: BorderSide(
+                                    color: _isGreen
+                                        ? Colors.white
+                                        : const Color(0xFF0FAA9A),
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8.r),
+                                  ),
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: 14.w,
+                                  ),
+                                ),
+                                child: Text(
+                                  'Login',
+                                  style: TextStyle(
+                                    color: _isGreen
+                                        ? Colors.white
+                                        : const Color(0xFF0FAA9A),
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 13.sp,
+                                  ),
+                                ),
                               ),
-                              padding: EdgeInsets.symmetric(horizontal: 14.w),
-                            ),
-                            child: Text(
-                              'Login',
-                              style: TextStyle(
-                                color: _isGreen
-                                    ? Colors.white
-                                    : const Color(0xFF0FAA9A),
-                                fontWeight: FontWeight.w600,
-                                fontSize: 13.sp,
-                              ),
-                            ),
-                          ),
-                        )
+                            )
                       : Material(
                           color: Colors.transparent,
                           child: InkWell(

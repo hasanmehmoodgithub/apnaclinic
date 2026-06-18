@@ -1,111 +1,96 @@
 import 'package:apnaclinic/core/constants/app_colors.dart';
-import 'package:apnaclinic/generated/assets.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import '../../../../core/extensions/screen_util_extensions.dart';
 
-/// Service card: service image as the only background; text and offer on top.
+import '../../../../core/extensions/screen_util_extensions.dart';
+import '../constants/dashboard_ui_config.dart';
+import 'service_card_image.dart';
+import 'service_discount_badge.dart';
+
+/// Home grid service tile matching the dashboard 2x2 card design.
 class OurServiceCardWidget extends StatelessWidget {
   const OurServiceCardWidget({
     super.key,
     required this.title,
-    required this.subtitle,
     required this.discountLabel,
     required this.imageAsset,
+    this.route,
     this.onTap,
   });
 
   final String title;
-  final String subtitle;
   final String discountLabel;
   final String imageAsset;
+  final String? route;
   final VoidCallback? onTap;
-
-  static  final double _cardHeight = 100.h;
-
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final ImageProvider serviceImageProvider = imageAsset.startsWith('http')
-        ? CachedNetworkImageProvider(imageAsset)
-        : AssetImage(imageAsset) as ImageProvider;
+    final showDiscount = formatServiceDiscountBadge(discountLabel).isNotEmpty;
 
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(16.r),
+      borderRadius: BorderRadius.circular(
+        DashboardUiConfig.serviceCardBorderRadius.r,
+      ),
       child: Container(
-        height: _cardHeight.h,
-        width: double.infinity,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16.r),
-          image: DecorationImage(
-            image: serviceImageProvider,
-            fit: BoxFit.cover, // better than contain for background
-            alignment: Alignment.centerRight, // tweak based on design
+          color: AppColors.clrWhite,
+          borderRadius: BorderRadius.circular(
+            DashboardUiConfig.serviceCardBorderRadius.r,
           ),
+          border: Border.all(color: AppColors.clrE3E8EE),
         ),
-        child: Container(
-
-          padding: EdgeInsets.fromLTRB(8.w, 8.h, 8.w, 8.h),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Text(
-                title,
-                style: theme.textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.w700,
-                  color: AppColors.clr09,
-                  fontSize: 16.sp,
-                ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
+        child: Stack(
+          clipBehavior: Clip.none,
+          children: [
+            Padding(
+              padding: EdgeInsets.fromLTRB(
+                DashboardUiConfig.serviceCardTitleHorizontalPadding.w,
+                DashboardUiConfig.serviceCardTopPadding.h,
+                DashboardUiConfig.serviceCardTitleHorizontalPadding.w,
+                DashboardUiConfig.serviceCardBottomPadding.h,
               ),
-              SizedBox(height: 5.h),
-              Text(
-                subtitle,
-                style: theme.textTheme.bodySmall?.copyWith(
-                  color: AppColors.clr43,
-                  fontWeight: FontWeight.w400,
-                  fontSize: 12.sp,
-                ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-              SizedBox(height: 6.h),
-              Container(
-                padding: EdgeInsets.symmetric(
-                  horizontal: 8.w,
-                  vertical: 4.h,
-                ),
-                decoration: BoxDecoration(
-                  color: AppColors.clrFFFFDB61,
-                  borderRadius: BorderRadius.circular(20.r),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    SvgPicture.asset(
-                      Assets.svgIcServiceOffer,
-                      width: 14.r,
-                      height: 14.r,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Align(
+                    alignment: Alignment.topCenter,
+                    child: ServiceCardImage(
+                      imageUrl: imageAsset,
+                      fallbackRoute: route,
+                      width: DashboardUiConfig.serviceIconWidth.w,
+                      height: DashboardUiConfig.serviceIconHeight.h,
                     ),
-                    SizedBox(width: 4.w),
-                    Text(
-                      discountLabel,
-                      style: theme.textTheme.labelSmall?.copyWith(
-                        fontWeight: FontWeight.w800,
-                        fontSize: 14.sp,
-                        color: AppColors.clrBlack,
+                  ),
+                  SizedBox(height: DashboardUiConfig.serviceCardIconTitleGap.h),
+                  Expanded(
+                    child: Align(
+                      alignment: Alignment.topCenter,
+                      child: Text(
+                        title,
+                        textAlign: TextAlign.center,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: theme.textTheme.titleSmall?.copyWith(
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.clr09,
+                          fontSize: 13.sp,
+                          height: 1.25,
+                        ),
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-            ],
-          ),
+            ),
+            if (showDiscount)
+              Positioned(
+                top: DashboardUiConfig.serviceDiscountBadgeTop.h,
+                right: DashboardUiConfig.serviceDiscountBadgeRight.w,
+                child: ServiceDiscountBadge(label: discountLabel),
+              ),
+          ],
         ),
       ),
     );

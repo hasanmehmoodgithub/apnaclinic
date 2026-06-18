@@ -576,7 +576,11 @@ class AppLocalizationsUr extends AppLocalizations {
   String get dashboardGuestName => 'مہمان';
 
   @override
-  String get dashboardSearchHint => 'دوائی، ڈاکٹر، ٹیسٹ تلاش کریں....';
+  String get dashboardSearchHint => 'ڈاکٹر، دوائی، لیب ٹیسٹ تلاش کریں...';
+
+  @override
+  String get dashboardInstantDoctorDescription =>
+      'بغیر اپائنٹمنٹ کسی بھی وقت سرٹیفائیڈ ڈاکٹر سے مشورہ کریں';
 
   @override
   String get dashboardOurServicesTitle => 'ہماری سروسز';

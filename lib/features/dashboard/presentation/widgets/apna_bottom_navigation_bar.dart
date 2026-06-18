@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../generated/assets.dart';
+import '../constants/main_navigation_tabs.dart';
 
-/// White bar with four side tabs and a raised center Home button.
+/// Flat four-tab bottom bar: Home, Instant Doctor, Bookings, Support.
 class ApnaBottomNavigationBar extends StatelessWidget {
   const ApnaBottomNavigationBar({
     super.key,
@@ -20,79 +22,53 @@ class ApnaBottomNavigationBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final bottomInset = MediaQuery.paddingOf(context).bottom;
+
     return Container(
       padding: EdgeInsets.only(bottom: bottomInset),
-      child: Container(
-        height: 66.h,
-        color: Colors.transparent,
-        child: Stack(
-          clipBehavior: Clip.none,
-          alignment: Alignment.bottomCenter,
+      decoration: BoxDecoration(
+        color: AppColors.clrWhite,
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.clrBlack.withValues(alpha: 0.06),
+            blurRadius: 12.r,
+            offset: Offset(0, -2.h),
+          ),
+        ],
+      ),
+      child: SizedBox(
+        height: 58.h,
+        child: Row(
           children: [
-            Positioned(
-              left: 0,
-              right: 0,
-              bottom: 0,
-              height: 66.h,
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  color: AppColors.clrWhite,
-                  boxShadow: [
-                    BoxShadow(
-                      color: AppColors.clrBlack.withValues(alpha: 0.08),
-                      blurRadius: 16.r,
-                      offset: Offset(0, -4.h),
-                    ),
-                  ],
-                ),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    SizedBox(width: 8.w,),
-                    Expanded(
-                      child: _SideTab(
-                        label: l10n.dashboardBottomFreeDoctor,
-                        asset: Assets.svgNavFreeDoctor,
-                        selected: currentIndex == 0,
-                        onTap: () => onTap(0),
-                      ),
-                    ),
-                    Expanded(
-                      child: _SideTab(
-                        label: l10n.dashboardBottomSupport,
-                        asset: Assets.svgNavSupport,
-                        selected: currentIndex == 1,
-                        onTap: () => onTap(1),
-                      ),
-                    ),
-                    SizedBox(width: 66.w),
-                    Expanded(
-                      child: _SideTab(
-                        label: l10n.dashboardBottomBookings,
-                        asset: Assets.svgNavBookings,
-                        selected: currentIndex == 3,
-                        onTap: () => onTap(3),
-                      ),
-                    ),
-                    Expanded(
-                      child: _SideTab(
-                        label: l10n.dashboardBottomProfile,
-                        asset: Assets.svgNavProfile,
-                        selected: currentIndex == 4,
-                        onTap: () => onTap(4),
-                      ),
-                    ),
-                    SizedBox(width: 8.w,),
-                  ],
-                ),
-              ),
-            ),
-            Positioned(
-              bottom: 12.h,
-              child: _HomeCenterButton(
+            Expanded(
+              child: _NavTab(
                 label: l10n.dashboardBottomHome,
-                selected: currentIndex == 2,
-                onTap: () => onTap(2),
+                asset: Assets.svgNavHomeBottomBar,
+                selected: currentIndex == MainNavigationTabs.home,
+                onTap: () => onTap(MainNavigationTabs.home),
+              ),
+            ),
+            Expanded(
+              child: _NavTab(
+                label: l10n.dashboardBottomFreeDoctor,
+                asset: Assets.svgNavFreeDoctor,
+                selected: currentIndex == MainNavigationTabs.instantDoctor,
+                onTap: () => onTap(MainNavigationTabs.instantDoctor),
+              ),
+            ),
+            Expanded(
+              child: _NavTab(
+                label: l10n.dashboardBottomBookings,
+                asset: Assets.svgNavBookings,
+                selected: currentIndex == MainNavigationTabs.bookings,
+                onTap: () => onTap(MainNavigationTabs.bookings),
+              ),
+            ),
+            Expanded(
+              child: _NavTab(
+                label: l10n.dashboardBottomSupport,
+                asset: Assets.svgNavSupport,
+                selected: currentIndex == MainNavigationTabs.support,
+                onTap: () => onTap(MainNavigationTabs.support),
               ),
             ),
           ],
@@ -102,101 +78,55 @@ class ApnaBottomNavigationBar extends StatelessWidget {
   }
 }
 
-class _SideTab extends StatelessWidget {
-  const _SideTab({
-    required this.label,
-    required this.asset,
-    required this.selected,
-    required this.onTap,
-  });
-
-  final String label;
-  final String asset;
-  final bool selected;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final color = selected
-        ? AppColors.clr26A69A
-        : AppColors.clr024886;
-
-    return InkWell(
-      onTap: onTap,
-      child: Padding(
-        padding: EdgeInsets.only(bottom: 10.h, top: 8.h),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            SvgPicture.asset(
-              asset,
-              width: 24.r,
-              height: 24.r,
-              colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
-            ),
-            SizedBox(height: 6.h),
-            Text(
-              label,
-              textAlign: TextAlign.center,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                fontSize: 11.sp,
-                fontWeight: FontWeight.w400,
-                height: 1.1,
-                color: color,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _HomeCenterButton extends StatelessWidget {
-  const _HomeCenterButton({
+class _NavTab extends StatelessWidget {
+  const _NavTab({
     required this.label,
     required this.selected,
     required this.onTap,
+    this.asset,
   });
 
   final String label;
   final bool selected;
   final VoidCallback onTap;
+  final String? asset;
 
   @override
   Widget build(BuildContext context) {
-    final labelColor = selected
-        ? AppColors.clr26A69A
-        : AppColors.clr024886;
+    final color = selected ? AppColors.clr09 : AppColors.clr6B7280;
 
     return Material(
       color: Colors.transparent,
       child: InkWell(
         onTap: onTap,
-        customBorder: const CircleBorder(),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            SizedBox(
-              width: 64.r,
-              height: 64.r,
-              child: SvgPicture.asset(
-                Assets.svgNavHomeLogo,
-                fit: BoxFit.contain,
+        child: Padding(
+          padding: EdgeInsets.symmetric(vertical: 6.h),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              if (asset != null)
+                SvgPicture.asset(
+                  asset!,
+                  width: 24.r,
+                  height: 24.r,
+                  fit: BoxFit.contain,
+                  colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
+                ),
+              SizedBox(height: 4.h),
+              Text(
+                label,
+                textAlign: TextAlign.center,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontSize: 11.sp,
+                  fontWeight: selected ? FontWeight.w700 : FontWeight.w400,
+                  height: 1.1,
+                  color: color,
+                ),
               ),
-            ),
-            SizedBox(height: 4.h),
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: 11.sp,
-                fontWeight: FontWeight.w700,
-                color: labelColor,
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

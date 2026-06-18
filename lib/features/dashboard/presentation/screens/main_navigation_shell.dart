@@ -18,12 +18,12 @@ import '../../../customer_support/presentation/screens/customer_support_screen.d
 import '../../../free_doctor/presentation/cubit/free_doctor_cubit.dart';
 import '../../../free_doctor/presentation/screens/free_doctor_screen.dart';
 import '../../../profile_setup/presentation/cubit/profile_setup_cubit.dart';
+import '../constants/main_navigation_tabs.dart';
 import '../widgets/apna_bottom_navigation_bar.dart';
 import '../widgets/keep_alive_tab_page.dart';
 import '../cubit/main_navigation_cubit.dart';
 import '../cubit/main_navigation_state.dart';
 import 'home_screen.dart';
-import '../../../profile_setup/presentation/screens/profile_screen.dart';
 
 /// Root shell: [PageView] body + custom bottom navigation.
 class MainNavigationShell extends StatefulWidget {
@@ -34,8 +34,8 @@ class MainNavigationShell extends StatefulWidget {
 }
 
 class _MainNavigationShellState extends State<MainNavigationShell> {
-  static const int _homeIndex = 2;
-  static const int _bookingsIndex = 3;
+  static const int _homeIndex = MainNavigationTabs.home;
+  static const int _bookingsIndex = MainNavigationTabs.bookings;
 
   late final PageController _pageController;
   late final MainNavigationCubit _navigationCubit;
@@ -132,6 +132,12 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
 
     _navigationCubit.setIndex(index);
     _applyStatusBar();
+  }
+
+  void _syncPageToNavIndex(int index) {
+    if (!_pageController.hasClients) return;
+    final current = _pageController.page?.round();
+    if (current == index) return;
     _pageController.animateToPage(
       index,
       duration: const Duration(milliseconds: 320),
@@ -146,49 +152,53 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<MainNavigationCubit, MainNavigationState>(
-      bloc: _navigationCubit,
-      builder: (context, state) {
-        return AnnotatedRegion<SystemUiOverlayStyle>(
-          value: AppSystemUi.overlayStyle,
-          child: Scaffold(
-            backgroundColor: Colors.white,
-            body: PageView(
-              controller: _pageController,
-              onPageChanged: _onPageChanged,
-              physics: const NeverScrollableScrollPhysics(),
-              children: [
-                KeepAliveTabPage(
-                  key: ValueKey('free_doctor_$_tabSessionKey'),
-                  child: const FreeDoctorScreen(showBackButton: false),
+    return BlocProvider.value(
+      value: _navigationCubit,
+      child: BlocListener<MainNavigationCubit, MainNavigationState>(
+        listenWhen: (previous, current) =>
+            previous.currentIndex != current.currentIndex,
+        listener: (context, state) => _syncPageToNavIndex(state.currentIndex),
+        child: BlocBuilder<MainNavigationCubit, MainNavigationState>(
+          bloc: _navigationCubit,
+          builder: (context, state) {
+            return AnnotatedRegion<SystemUiOverlayStyle>(
+              value: AppSystemUi.overlayStyle,
+              child: Scaffold(
+                backgroundColor: Colors.white,
+                body: PageView(
+                  controller: _pageController,
+                  onPageChanged: _onPageChanged,
+                  physics: const NeverScrollableScrollPhysics(),
+                  children: [
+                    KeepAliveTabPage(
+                      key: ValueKey('home_$_tabSessionKey'),
+                      child: const HomeScreen(),
+                    ),
+                    KeepAliveTabPage(
+                      key: ValueKey('free_doctor_$_tabSessionKey'),
+                      child: const FreeDoctorScreen(showBackButton: false),
+                    ),
+                    KeepAliveTabPage(
+                      key: ValueKey('bookings_$_tabSessionKey'),
+                      child: const BookingsDashboardScreen(showBackButton: false),
+                    ),
+                    KeepAliveTabPage(
+                      key: ValueKey('support_$_tabSessionKey'),
+                      child: const CustomerSupportScreen(showBackButton: false),
+                    ),
+                  ],
                 ),
-                KeepAliveTabPage(
-                  key: ValueKey('support_$_tabSessionKey'),
-                  child: const CustomerSupportScreen(showBackButton: false),
+                bottomNavigationBar: SafeArea(
+                  child: ApnaBottomNavigationBar(
+                    currentIndex: state.currentIndex,
+                    onTap: _onNavTap,
+                  ),
                 ),
-                KeepAliveTabPage(
-                  key: ValueKey('home_$_tabSessionKey'),
-                  child: const HomeScreen(),
-                ),
-                KeepAliveTabPage(
-                  key: ValueKey('bookings_$_tabSessionKey'),
-                  child: const BookingsDashboardScreen(showBackButton: false),
-                ),
-                KeepAliveTabPage(
-                  key: ValueKey('profile_$_tabSessionKey'),
-                  child: const ProfileScreen(showBackButton: false),
-                ),
-              ],
-            ),
-            bottomNavigationBar: SafeArea(
-              child: ApnaBottomNavigationBar(
-                currentIndex: state.currentIndex,
-                onTap: _onNavTap,
               ),
-            ),
-          ),
-        );
-      },
+            );
+          },
+        ),
+      ),
     );
   }
 }

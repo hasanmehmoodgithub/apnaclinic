@@ -9,11 +9,11 @@ Home services grid, promotional banner, search entry, and shell navigation. Keep
 - **`DashboardCubit`** (created when `HomeScreen` loads) calls **`GetProfileSetupContentUseCase`** in **`syncUserProfileFromApi()`** after services load. Promo banner is read from **`PromotionalBannerSession`** (not fetched per cubit).
 - Skips when **`AppPref.getLoginStatus()`** is false.
 - On success, **`ProfileSetupRepositoryImpl`** already persists **`UserLocalModel`** (name, email, address, gender, DOB, `imageUrl` from API `image`, etc.).
-- **`DashboardServicesState.profileSyncNonce`** increments so **`BlocConsumer`** on home rebuilds and **`SearchHeader`** / greeting reads updated prefs.
+- **`DashboardServicesState.profileSyncNonce`** increments so **`BlocConsumer`** on home rebuilds and **`HomeHeaderSection`** / greeting reads updated prefs.
 
 ## Data & APIs (dashboard-specific)
 
-- Services: `AppUrls.ourServices` (see `DashboardRemoteDataSourceImpl`).
+- Services: `AppUrls.ourServices` (see `DashboardRemoteDataSourceImpl`). API `iconPath` is often a MinIO `.svg` that embeds a base64 PNG; `ServiceCardImage` fetches bytes, extracts embedded raster when present, and falls back to bundled `assets/img/services/*.webp` via `service.route` (`service_icon_fallbacks.dart`).
 - Promo: `AppUrls.promotionalBanner` → CMS `GET /api/v1/mobile/banners`. Fetched once at **app open** (`main.dart`) and again only after **login** (`AuthSessionRefresh.consumeReloadPromotionalBanner`). Not called on logout tab remount. `PromotionalBannerSession` caches result and tracks whether the dialog was already shown this session.
 
 Profile uses **`profile_setup`** remote (`GET …/users/{userId}`) — no duplicate URL in dashboard.
@@ -24,8 +24,8 @@ Profile uses **`profile_setup`** remote (`GET …/users/{userId}`) — no duplic
 
 ## UI
 
-- `HomeScreen` — `DashboardCubit` + `NotificationCubit`.
-- `MainNavigationShell` — tab shell around `HomeScreen`; tabs switch **only via bottom nav tap** (no horizontal swipe between tabs). Listens to `AuthSessionRefresh` (login/logout) to remount all tabs and reload cubits.
+- `HomeScreen` — teal `HomeHeaderSection` (app bar + greeting + search), light gray (`clrF3F4F6`) body, 2×2 services grid (`DashboardUiConfig`: 163×130 card ratio, 63×72 icons, 12px gap), `ServiceDiscountBadge`, `InstantDoctorHomeBanner` (`assets/svg/instant_doc.svg` via `InstantDoctorBannerArtwork`), `FikrfreeHealthBanner`. `DashboardCubit` + `NotificationCubit`.
+- `MainNavigationShell` — four-tab bar (Home, Instant Doctor, Bookings, Support) matching Figma; custom SVGs `nav_home_bottom_bar.svg`, `nav_bookings.svg`. No raised center button. Tab order in `MainNavigationTabs`. Profile is not a bottom tab (header/menu). Exposes `MainNavigationCubit` for in-shell tab switches. Tabs switch **only via bottom nav tap** (no horizontal swipe). Listens to `AuthSessionRefresh` (login/logout) to remount tabs and reload cubits.
 
 ## Session refresh
 
