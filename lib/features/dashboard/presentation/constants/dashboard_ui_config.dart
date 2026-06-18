@@ -23,6 +23,9 @@ abstract final class DashboardUiConfig {
 
   static const double serviceDiscountBadgeTop = 8;
   static const double serviceDiscountBadgeRight = 8;
+  static const double serviceDiscountBadgeHorizontalPadding = 12;
+  static const double serviceDiscountBadgeVerticalPadding = 4;
+  static const double serviceDiscountBadgeFontSize = 10;
 
   /// `instant_doc.svg` viewBox (doctor + 24 badge artwork).
   static const double instantDoctorArtworkWidth = 112;
