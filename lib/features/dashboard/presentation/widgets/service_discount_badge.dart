@@ -39,8 +39,8 @@ class ServiceDiscountBadge extends StatelessWidget {
 
     return Container(
       padding: EdgeInsets.symmetric(
-        horizontal: DashboardUiConfig.serviceDiscountBadgeHorizontalPadding.w,
-        vertical: verticalPadding,
+        horizontal:4,
+        vertical:4,
       ),
       decoration:  ShapeDecoration(
         color: AppColors.clrE0F7F6.withValues(alpha: 0.5),
