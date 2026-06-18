@@ -40,12 +40,12 @@ class HomeHeaderSearchField extends StatelessWidget {
       child: Row(
         children: [
           SizedBox(
-            width: 44.w,
+            width: 48.w,
             child: Center(
               child: Icon(
                 Icons.search_rounded,
                 color: AppColors.clr52A898,
-                size: 22.r,
+                size: 28.r,
               ),
             ),
           ),
@@ -82,8 +82,8 @@ class HomeHeaderSearchField extends StatelessWidget {
             ),
             icon: SvgPicture.asset(
               Assets.svgIcSearchMic,
-              width: 20.r,
-              height: 20.r,
+              width: 28.r,
+              height: 28.r,
               colorFilter: const ColorFilter.mode(
                 AppColors.clr09,
                 BlendMode.srcIn,
