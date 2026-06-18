@@ -18,6 +18,7 @@ class Assets {
   static const String consultationHeroVector = 'assets/img/consultation/hero_vector.svg';
   static const String consultationInfoIcon = 'assets/img/consultation/info_icon.svg';
   static const String consultationSearchIcon = 'assets/img/consultation/search_icon.svg';
+  static const String consultationTimeDateAsset = 'assets/img/consultation/time_date_asset.svg';
   static const String consultationUpload = 'assets/img/consultation/upload.svg';
   static const String consultationVerified = 'assets/img/consultation/verified.svg';
   static const String consultationVideo = 'assets/img/consultation/video.svg';
@@ -53,6 +54,8 @@ class Assets {
   static const String iconsPharmacy = 'assets/icons/pharmacy.svg';
   static const String iconsPlaceholder = 'assets/icons/placeholder.txt';
   static const String iconsSurgery = 'assets/icons/surgery.svg';
+  static const String iconsSurgerybooking = 'assets/icons/surgerybooking.svg';
+  static const String iconsSurgerymessage = 'assets/icons/surgerymessage.svg';
   static const String iconsTest = 'assets/icons/test.svg';
   static const String iconsTick = 'assets/icons/tick.svg';
   static const String imagesDashboardLoader = 'assets/images/dashboard_loader.json';
@@ -61,7 +64,9 @@ class Assets {
   static const String imgEmptyBox = 'assets/img/emptyBox.png';
   static const String imgFikarFree = 'assets/img/fikar_free.png';
   static const String imgFikrfreeLogo = 'assets/img/fikrfree_logo.png';
+  static const String imgFreedoctorTitleIcon = 'assets/img/freedoctorTitleIcon.png';
   static const String imgHeroFamily = 'assets/img/hero_family.webp';
+  static const String imgInstantDocBanner = 'assets/img/instantDocBanner.png';
   static const String imgPartner = 'assets/img/partner.png';
   static const String imgPharmacyBanner = 'assets/img/pharmacyBanner.webp';
   static const String imgPlaceHolderPerson = 'assets/img/placeHolderPerson.webp';
@@ -76,6 +81,7 @@ class Assets {
   static const String labTestBookingMediqLogo = 'assets/svg/lab_test/booking_mediq_logo.svg';
   static const String labTestBookingNayaLogo = 'assets/svg/lab_test/booking_naya_logo.svg';
   static const String labTestBookingOladocLogo = 'assets/svg/lab_test/booking_oladoc_logo.svg';
+  static const String labTestCardBgVector = 'assets/svg/lab_test/card_bg_vector.svg';
   static const String labTestCheckoutPartnerLogo = 'assets/svg/lab_test/checkout_partner_logo.svg';
   static const String labTestChughtaiLabLogo = 'assets/svg/lab_test/chughtai_lab_logo.svg';
   static const String labTestCityChevron = 'assets/svg/lab_test/city_chevron.svg';
@@ -103,8 +109,8 @@ class Assets {
   static const String servicesPharmacy = 'assets/img/services/pharmacy.webp';
   static const String servicesSurgeryBooking = 'assets/img/services/surgery_booking.webp';
   static const String supportSupportHero = 'assets/img/support/support_hero.png';
-  static const String svgAppbarbackground = 'assets/svg/appbarbackground.svg';
   static const String svgApnaClinicLogo = 'assets/svg/apna_clinic_logo.svg';
+  static const String svgAppbarbackground = 'assets/svg/appbarbackground.svg';
   static const String svgBrandApnaClinic = 'assets/svg/brand_apna_clinic.svg';
   static const String svgFrame1171275326 = 'assets/svg/frame_1171275326.svg';
   static const String svgIcMenu = 'assets/svg/ic_menu.svg';
@@ -113,7 +119,6 @@ class Assets {
   static const String svgIcServiceCardArrow = 'assets/svg/ic_service_card_arrow.svg';
   static const String svgIcServiceOffer = 'assets/svg/ic_service_offer.svg';
   static const String svgIcSupportCardArrow = 'assets/svg/ic_support_card_arrow.svg';
-  static const String svgInstantDoc = 'assets/svg/instant_doc.svg';
   static const String svgJazzCash = 'assets/svg/jazzCash.svg';
   static const String svgNavBookings = 'assets/svg/nav_bookings.svg';
   static const String svgNavBookingsFilled = 'assets/svg/nav_bookings_filled.svg';

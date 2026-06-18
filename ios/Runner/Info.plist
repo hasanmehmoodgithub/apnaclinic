@@ -49,7 +49,9 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSCameraUsageDescription</key>
-	<string>Apna Clinic needs camera access so you can take a profile photo and attach images during consultations.</string>
+	<string>Apna Clinic needs camera access for video consultations and to take or attach profile photos.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Apna Clinic needs microphone access for audio and video consultations with doctors.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Apna Clinic needs photo library access so you can choose a profile picture and attach images from your gallery during consultations.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
