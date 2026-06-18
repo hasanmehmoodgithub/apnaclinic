@@ -70,8 +70,7 @@ class FreeDoctorConsultationInfoCardWidget extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Image.asset(
-                          Assets.iconsNurse,
-                          color: AppColors.clr0FAA9A,
+                          Assets.imgFreedoctorTitleIcon,
                           height: 16.h,
                         ),
                         SizedBox(width: 8.w),
@@ -92,12 +91,13 @@ class FreeDoctorConsultationInfoCardWidget extends StatelessWidget {
                       _Bullet(
                         text: points[i],
                         style: theme.textTheme.bodyMedium?.copyWith(
-                          color: AppColors.clrBlack,
-                          height: 1.45,
+                          color: AppColors.clr43,
+                          height: 1,
+                          fontSize: 16.sp,
                           fontWeight: FontWeight.w500,
                         ),
                       ),
-                      if (i != points.length - 1) SizedBox(height: 12.h),
+                      if (i != points.length - 1) SizedBox(height: 6.h),
                     ],
                   ],
                 ),
