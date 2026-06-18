@@ -1,7 +1,7 @@
 import '../../../../core/config/mock_config.dart';
 
 class PromotionalBannerMockApi {
-  static bool useMockResponses = MockConfig.enableDashboardMocks;
+  static bool get useMockResponses => MockConfig.enableDashboardMocks;
 
   Future<Map<String, dynamic>> getPromotionalBannerSuccessResponse() async {
     await Future<void>.delayed(const Duration(milliseconds: 500));

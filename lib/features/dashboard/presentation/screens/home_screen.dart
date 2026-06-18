@@ -170,7 +170,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       ) {
     return Scaffold(
       backgroundColor: AppColors.clrf4f4f4,
-      // Tapping anywhere outside the text field dismisses the keyboard.
       body: GestureDetector(
         behavior: HitTestBehavior.translucent,
         onTap: _dismissKeyboard,

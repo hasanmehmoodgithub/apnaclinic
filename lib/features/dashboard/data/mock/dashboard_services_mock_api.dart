@@ -1,7 +1,7 @@
 import '../../../../core/config/mock_config.dart';
 
 class DashboardServicesMockApi {
-  static bool useMockResponses = MockConfig.enableDashboardMocks;
+  static bool get useMockResponses => MockConfig.enableDashboardMocks;
 
   Future<Map<String, dynamic>> getGuestFallbackServicesResponse() async {
     return getDashboardServicesSuccessResponse();

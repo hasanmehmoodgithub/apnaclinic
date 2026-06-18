@@ -123,20 +123,20 @@ class ApnaClinicAppBar extends StatelessWidget implements PreferredSizeWidget {
                         children: [
                           SvgPicture.asset(
                             Assets.svgApnaClinicLogo,
-                            height: 28.h,
-                            width: 28.h,
+                            height: 26.h,
+                            width: 26.h,
                             fit: BoxFit.contain,
                             colorFilter: svgFilter,
                           ),
-                          SizedBox(width: 8.w),
+                          SizedBox(width: 7.w),
                           Text(
                             'apna clinic',
                             style: TextStyle(
                               color: wordmarkColor,
-                              fontSize: 18.sp,
+                              fontSize: 17.sp,
                               fontWeight: FontWeight.w600,
                               height: 1.0,
-                              letterSpacing: -0.2,
+                              letterSpacing: -0.3,
                             ),
                           ),
                         ],
@@ -159,8 +159,8 @@ class ApnaClinicAppBar extends StatelessWidget implements PreferredSizeWidget {
                     children: [
                       SvgPicture.asset(
                         Assets.svgIcNotification,
-                        width: 28.r,
-                        height: 28.r,
+                        width: 26.r,
+                        height: 26.r,
                         fit: BoxFit.contain,
                         colorFilter: svgFilter,
                       ),
@@ -210,14 +210,14 @@ class ApnaClinicAppBar extends StatelessWidget implements PreferredSizeWidget {
                       ? filledLoginButton
                           ? Material(
                               color: AppColors.clrWhite,
-                              borderRadius: BorderRadius.circular(8.r),
+                              borderRadius: BorderRadius.circular(10.r),
                               child: InkWell(
                                 onTap: onLoginTap,
-                                borderRadius: BorderRadius.circular(8.r),
+                                borderRadius: BorderRadius.circular(10.r),
                                 child: Padding(
                                   padding: EdgeInsets.symmetric(
-                                    horizontal: 14.w,
-                                    vertical: 8.h,
+                                    horizontal: 16.w,
+                                    vertical: 7.h,
                                   ),
                                   child: Text(
                                     'Login',
