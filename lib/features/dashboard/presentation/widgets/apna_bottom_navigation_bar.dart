@@ -34,7 +34,7 @@ class ApnaBottomNavigationBar extends StatelessWidget {
           ),
         ],
       ),
-      padding: EdgeInsets.only(bottom: bottomInset),
+      padding: EdgeInsets.only(bottom:8),
       child: SizedBox(
         height: 58.h,
         child: Row(
