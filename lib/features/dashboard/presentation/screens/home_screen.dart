@@ -217,9 +217,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                     AppRoutes.path(AppRoutes.profileSetup),
                     extra: ProfileSetupLaunchSource.menu,
                   ),
-                  onSearchSubmitted: (query) =>
-                      _openSearch(context, query: query),
-                  onSearchButtonTap: () => _openSearch(context),
+                  onSearchTap: () => _openSearch(context),
                   onVoiceTap: () => _openVoiceSearch(context),
                 );
               },

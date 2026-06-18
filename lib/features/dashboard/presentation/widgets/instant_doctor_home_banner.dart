@@ -29,7 +29,7 @@ class InstantDoctorHomeBanner extends StatelessWidget {
             DashboardUiConfig.instantDoctorCardPaddingLeft.w,
             DashboardUiConfig.instantDoctorCardPaddingVertical.h,
             DashboardUiConfig.instantDoctorCardPaddingVertical.w,
-            DashboardUiConfig.instantDoctorCardPaddingVertical.h,
+            0,
           ),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
