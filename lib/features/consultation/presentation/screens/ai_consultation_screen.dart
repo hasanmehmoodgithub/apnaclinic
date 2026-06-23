@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
-import '../constants/consultation_ui_config.dart';
+import '../widgets/consultation_screen_header_widget.dart';
 
 class AiScreeningScreen extends StatelessWidget {
   const AiScreeningScreen({super.key});
@@ -21,42 +20,9 @@ class AiScreeningScreen extends StatelessWidget {
             // ───── Top bar ─────
             Container(
               color: const Color(0xFFF2F4F7),
-              padding: EdgeInsets.fromLTRB(16.w, 10.h, 16.w, 10.h),
-              child: Row(
-                children: [
-                  GestureDetector(
-                    behavior: HitTestBehavior.opaque,
-                    onTap: () => context.pop(),
-                    child: SizedBox(
-                      width: 15.w,
-                      height: 15.h,
-                      child: Center(
-                        child: SvgPicture.asset(
-                          ConsultationUiConfig.backArrowAsset,
-                          width: 15.w,
-                          height: 15.h,
-                          fit: BoxFit.contain,
-                          colorFilter: const ColorFilter.mode(
-                            ConsultationUiConfig.primaryText,
-                            BlendMode.srcIn,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    child: Text(
-                      l10n.consultationAiScreeningTitle,
-                      textAlign: TextAlign.center,
-                      style: textTheme.titleLarge?.copyWith(
-                        color: ConsultationUiConfig.primaryText,
-                        fontWeight: FontWeight.w700,
-                        fontSize: 18.sp,
-                      ),
-                    ),
-                  ),
-                  SizedBox(width: 24.w),
-                ],
+              child: ConsultationScreenHeaderWidget(
+                title: l10n.consultationAiScreeningTitle,
+                onBackTap: () => context.pop(),
               ),
             ),
 

@@ -12,6 +12,7 @@ import '../cubit/consultation_cubit.dart';
 import '../cubit/consultation_state.dart';
 import '../doctor_consultation_results_args.dart';
 import '../widgets/consultation_category_card.dart';
+import '../widgets/consultation_screen_header_widget.dart';
 
 class DoctorConsultationScreen extends StatefulWidget {
   const DoctorConsultationScreen({super.key});
@@ -54,45 +55,9 @@ class _DoctorConsultationScreenState extends State<DoctorConsultationScreen> {
         child: SafeArea(
           child: Column(
             children: [
-              // ───── App bar (fixed) ─────
-              Padding(
-                padding: EdgeInsets.fromLTRB(22.w, 8.h, 22.w, 8.h),
-                child: Row(
-                  children: [
-                    GestureDetector(
-                      behavior: HitTestBehavior.opaque,
-                      onTap: () => context.pop(),
-                      child: SizedBox(
-                        width: 15.w,
-                        height: 15.h,
-                        child: Center(
-                          child: SvgPicture.asset(
-                            ConsultationUiConfig.backArrowAsset,
-                            width: 15.w,
-                            height: 15.h,
-                            fit: BoxFit.contain,
-                            colorFilter: const ColorFilter.mode(
-                              ConsultationUiConfig.primaryText,
-                              BlendMode.srcIn,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      child: Text(
-                        ConsultationUiConfig.screenTitle,
-                        textAlign: TextAlign.center,
-                        style: textTheme.titleLarge?.copyWith(
-                          color: ConsultationUiConfig.primaryText,
-                          fontWeight: FontWeight.w700,
-                          fontSize: 20.sp,
-                        ),
-                      ),
-                    ),
-                    SizedBox(width: 24.w),
-                  ],
-                ),
+              ConsultationScreenHeaderWidget(
+                title: ConsultationUiConfig.screenTitle,
+                onBackTap: () => context.pop(),
               ),
 
               // ───── Hero illustration (fixed) ─────

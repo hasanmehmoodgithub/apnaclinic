@@ -10,7 +10,8 @@ import '../../../../core/router/app_routes.dart';
 import '../../../account/data/account_local_store.dart';
 import '../../../account/domain/models/account_method.dart';
 import '../../../../core/di/dependency_injection.dart';
-import '../../../bookings/presentation/widgets/surgery_booking_details_header_widget.dart';
+import '../constants/consultation_ui_config.dart';
+import '../widgets/consultation_screen_header_widget.dart';
 import '../cubit/doctor_consultation_checkout_cubit.dart';
 import '../cubit/doctor_consultation_checkout_state.dart';
 import '../doctor_consultation_checkout_args.dart';
@@ -107,7 +108,10 @@ class _DoctorConsultationCheckoutScreenState
         child: SafeArea(
           child: Column(
             children: [
-              const SurgeryBookingDetailsHeaderWidget(),
+              ConsultationScreenHeaderWidget(
+                title: ConsultationUiConfig.screenTitle,
+                onBackTap: () => context.pop(),
+              ),
               Center(
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(12.r),

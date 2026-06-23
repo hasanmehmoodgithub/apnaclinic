@@ -21,7 +21,6 @@ class ConsultationUiConfig {
   static const String cardPatternAsset =
       'assets/img/consultation/card_pattern.svg';
   static const String infoCircleAsset = 'assets/img/consultation/info_icon.svg';
-  static const String backArrowAsset = 'assets/img/consultation/back_arrow.svg';
   static const String searchIconAsset =
       'assets/img/consultation/search_icon.svg';
 
