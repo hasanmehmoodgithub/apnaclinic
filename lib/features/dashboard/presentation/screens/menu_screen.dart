@@ -6,12 +6,11 @@ import '../../../../core/constants/app_colors.dart';
 import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
-import '../../../../core/network/api_service.dart';
 import '../../../../core/network/app_urls.dart';
 import '../../../../core/utils/app_url_launcher.dart';
 import '../../../../core/preference/app_pref.dart';
-import '../../../../core/services/notification_service.dart';
 import '../../../../core/session/auth_session_refresh.dart';
+import '../../../../core/session/local_logout_service.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../profile_setup/presentation/profile_setup_launch_source.dart';
 import '../../../auth/domain/use_cases/logout_use_case.dart';
@@ -183,6 +182,8 @@ class _MenuScreenState extends State<MenuScreen> {
                               context,
                             );
                             if (!shouldLogout) return;
+
+                            String? logoutApiError;
                             final userId = _appPref.getUserId();
                             if (userId.isNotEmpty) {
                               final result = await sl<LogoutUseCase>().call(
@@ -191,31 +192,18 @@ class _MenuScreenState extends State<MenuScreen> {
                                   refreshToken: _appPref.getRefreshToken(),
                                 ),
                               );
-                              final logoutFailed = result.fold((error) {
-                                ScaffoldMessenger.of(
-                                  context,
-                                ).showSnackBar(SnackBar(content: Text(error)));
-                                return true;
-                              }, (_) => false);
-                              if (logoutFailed) return;
+                              logoutApiError = result.fold((error) => error, (_) => null);
                             }
-                            sl<ApiService>().removeToken();
-                            await _appPref.setRefreshToken('');
-                            await _appPref.setAccessTokenExpiresIn(0);
-                            await _appPref.setRefreshTokenExpiresIn(0);
-                            await _appPref.setLoginStatus(false);
-                            await _appPref.setProfileCompleted(false);
-                            await _appPref.setToken('');
-                            await _appPref.setUserId('');
-                            await _appPref.clearUserLocalModel();
-                            if (sl.isRegistered<NotificationService>()) {
-                              final pushService = sl<NotificationService>();
-                              if (pushService.isInitialized) {
-                                await pushService.deleteToken();
-                              }
-                            }
-                            sl<AuthSessionRefresh>().notifyLoggedOut();
+
+                            await sl<LocalLogoutService>().clearAll();
+
                             if (!context.mounted) return;
+                            if (logoutApiError != null &&
+                                logoutApiError.isNotEmpty) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text(logoutApiError)),
+                              );
+                            }
                             setState(() {
                               _isLoggedIn = false;
                             });

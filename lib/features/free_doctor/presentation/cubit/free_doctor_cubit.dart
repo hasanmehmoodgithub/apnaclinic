@@ -2,26 +2,57 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../core/enums/state_status.dart';
-import '../../domain/constants/free_doctor_constants.dart';
+import '../../../../core/preference/app_pref.dart';
+import '../../../../core/utils/phone_format_utils.dart';
+import '../../domain/use_cases/get_free_doctor_content_params.dart';
 import '../../domain/use_cases/get_free_doctor_content_use_case.dart';
 import 'free_doctor_state.dart';
 
 class FreeDoctorCubit extends Cubit<FreeDoctorState> {
-  FreeDoctorCubit({required this.getContentUseCase})
-    : super(const FreeDoctorState()) {
+  FreeDoctorCubit({
+    required this.getContentUseCase,
+    required this.appPref,
+  }) : super(const FreeDoctorState()) {
     loadContent();
   }
 
   final GetFreeDoctorContentUseCase getContentUseCase;
+  final AppPref appPref;
 
   Future<void> loadContent() async {
+    if (!appPref.getLoginStatus()) {
+      emit(
+        state.copyWith(
+          loadingStateStatus: StateStatus.idle,
+          content: null,
+          errorMessage: null,
+        ),
+      );
+      return;
+    }
+
     emit(
       state.copyWith(
         loadingStateStatus: StateStatus.loading,
         errorMessage: null,
       ),
     );
-    final result = await getContentUseCase.call();
+
+    final phone = appPref.getUserLocalModel()?.phone ?? '';
+    final msisdn = PhoneFormatUtils.toMsisdn(phone);
+    if (msisdn.isEmpty) {
+      emit(
+        state.copyWith(
+          loadingStateStatus: StateStatus.error,
+          errorMessage: 'Phone number is required for instant doctor.',
+        ),
+      );
+      return;
+    }
+
+    final result = await getContentUseCase(
+      GetFreeDoctorContentParams(msisdn: msisdn),
+    );
     result.fold(
       (error) => emit(
         state.copyWith(
@@ -31,7 +62,7 @@ class FreeDoctorCubit extends Cubit<FreeDoctorState> {
       ),
       (content) => emit(
         state.copyWith(
-          loadingStateStatus: content.descriptionPoints.isEmpty
+          loadingStateStatus: content.bulletPoints.isEmpty
               ? StateStatus.empty
               : StateStatus.success,
           content: content,
@@ -41,10 +72,15 @@ class FreeDoctorCubit extends Cubit<FreeDoctorState> {
     );
   }
 
-  Future<bool> openSubscribePage() async {
+  Future<bool> openConsultationPage() async {
+    final redirectUrl = state.content?.redirectUrl ?? '';
+    if (redirectUrl.isEmpty) {
+      return false;
+    }
+
     emit(state.copyWith(isOpeningApp: true));
     try {
-      final uri = Uri.parse(FreeDoctorConstants.mHealthSubscribeUrl);
+      final uri = Uri.parse(redirectUrl);
       return await launchUrl(uri, mode: LaunchMode.inAppWebView);
     } catch (_) {
       return false;

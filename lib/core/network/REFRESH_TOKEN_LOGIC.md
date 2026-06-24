@@ -45,6 +45,7 @@ When `onError` receives `401`:
 1. Skip refresh for:
    - requests already retried once
    - refresh endpoint request itself
+   - **guest requests** when there is no refresh token (fail fast; avoids logout-notification loops)
 2. Call `_refreshAccessTokenSingleFlight()`.
 3. On success:
    - retry original request with new access token
@@ -105,6 +106,9 @@ If refresh token is missing or refresh call fails:
 - clear access expiry
 - clear refresh expiry
 - set login status to false
+- `notifyLoggedOut()` runs **once** when a session was active (`_clearSession` is idempotent)
+
+Guest `401` responses (no refresh token) do not clear session or notify the shell.
 
 ## Notes
 

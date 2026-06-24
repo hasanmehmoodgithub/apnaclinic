@@ -17,20 +17,28 @@ class FreeDoctorRemoteDataSourceImpl implements FreeDoctorRemoteDataSource {
   final ApiService apiService;
   final FreeDoctorMockApi mockApi;
 
+  static bool _isSuccessResponse(Map<String, dynamic> response) {
+    if (response['success'] == true) return true;
+    final code = response['code'];
+    return code is num && code.toInt() == 200;
+  }
+
   @override
-  Future<FreeDoctorResponseModel> getFreeDoctorContent() async {
+  Future<FreeDoctorResponseModel> getFreeDoctorContent({
+    required String msisdn,
+  }) async {
     try {
       final Map<String, dynamic> response;
       if (FreeDoctorMockApi.useMockResponses) {
-        response = await mockApi.getFreeDoctorSuccessResponse();
+        response = await mockApi.getFreeDoctorSuccessResponse(msisdn: msisdn);
       } else {
-        response = await apiService.get(AppUrls.freeDoctor);
+        final endpoint = AppUrls.instantDoctorConsultation(msisdn);
+        response = await apiService.get(endpoint);
         log('getFreeDoctorContent response: $response');
       }
 
-      if (response['success'] == true) {
-        final responseModel = FreeDoctorResponseModel.fromJson(response);
-        return Future.value(responseModel);
+      if (_isSuccessResponse(response)) {
+        return FreeDoctorResponseModel.fromJson(response);
       }
 
       final message = (response['message'] ?? AppStrings.freeDoctorLoadError)
@@ -40,7 +48,7 @@ class FreeDoctorRemoteDataSourceImpl implements FreeDoctorRemoteDataSource {
       log('getFreeDoctorContent error: $e');
       final message = ErrorHandler.handleExceptions(
         e,
-        endpoint: AppUrls.freeDoctor,
+        endpoint: AppUrls.instantDoctorConsultation(msisdn),
       );
       return Future.error(message);
     }

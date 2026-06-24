@@ -70,9 +70,9 @@ class FreeDoctorScreen extends StatelessWidget {
                 ),
               ),
               FreeDoctorOpenAppButtonWidget(
-                label: l10n.freeDoctorOpenAppCta,
+                label: state.content?.buttonText ?? l10n.freeDoctorOpenAppCta,
                 isLoading: state.isOpeningApp,
-                onPressed: () => _openSubscribePage(context, l10n),
+                onPressed: () => _openConsultationPage(context, l10n),
               ),
             ],
           ),
@@ -81,11 +81,11 @@ class FreeDoctorScreen extends StatelessWidget {
     );
   }
 
-  Future<void> _openSubscribePage(
+  Future<void> _openConsultationPage(
     BuildContext context,
     AppLocalizations l10n,
   ) async {
-    final opened = await context.read<FreeDoctorCubit>().openSubscribePage();
+    final opened = await context.read<FreeDoctorCubit>().openConsultationPage();
     if (!opened && context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(

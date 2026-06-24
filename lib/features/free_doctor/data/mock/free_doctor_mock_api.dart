@@ -1,24 +1,25 @@
 import '../../../../core/config/mock_config.dart';
 
 class FreeDoctorMockApi {
-  /// Toggle mock responses for free doctor API.
-  static bool useMockResponses = MockConfig.enableMocks;
+  /// Toggle mock responses for instant doctor API.
+  static bool useMockResponses = MockConfig.enableFreeDoctorMocks;
 
-  Future<Map<String, dynamic>> getFreeDoctorSuccessResponse() async {
+  Future<Map<String, dynamic>> getFreeDoctorSuccessResponse({
+    required String msisdn,
+  }) async {
     await Future<void>.delayed(const Duration(milliseconds: 250));
     return {
       'success': true,
-      'message': 'Instant doctor content fetched successfully',
+      'message': 'Instant consultation info retrieved',
+      'code': 200,
       'data': {
-        'title': '24/7 Instant Doctor Consultation',
-        'descriptionPoints': [
-          'This service is available exclusively for M-Health subscribers.',
-          'Get 24/7 access to qualified doctors for general medical support and much more.',
+        'isSubscribed': true,
+        'bulletText': [
+          'You have an active Jazz Health subscription.',
+          'Connect with a doctor instantly.',
         ],
-        'fikrfreeAndroidPackage': 'com.fikrfree.android',
-        'fikrfreeIosAppStoreUrl':
-            'https://apps.apple.com/pk/app/fikrfree/id6738691924',
-        'fikrfreeWebUrl': 'https://www.fikrfree.com',
+        'buttonText': 'Start Consultation',
+        'redirectUrl': 'https://vidconsult.milvikpakistan.com',
       },
     };
   }

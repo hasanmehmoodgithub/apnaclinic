@@ -66,6 +66,13 @@ class AuthInterceptor extends Interceptor {
       return;
     }
 
+    // Guest with no refresh token: fail fast — do not clear session again or
+    // notify the shell (that would remount tabs and re-fire APIs in a loop).
+    if (!_hasRefreshableSession()) {
+      handler.next(err);
+      return;
+    }
+
     final refreshed = await _refreshAccessTokenSingleFlight();
     if (!refreshed) {
       handler.next(err);
@@ -131,7 +138,9 @@ class AuthInterceptor extends Interceptor {
     try {
       final refreshToken = _appPref.getRefreshToken();
       if (refreshToken.isEmpty) {
-        await _clearSession();
+        if (_hasActiveSession()) {
+          await _clearSession();
+        }
         completer.complete(false);
         return false;
       }
@@ -211,7 +220,19 @@ class AuthInterceptor extends Interceptor {
     }
   }
 
+  bool _hasActiveSession() {
+    return _appPref.getLoginStatus() ||
+        _appPref.getToken().isNotEmpty ||
+        _appPref.getRefreshToken().isNotEmpty;
+  }
+
+  bool _hasRefreshableSession() => _appPref.getRefreshToken().isNotEmpty;
+
   Future<void> _clearSession() async {
+    if (!_hasActiveSession()) {
+      return;
+    }
+
     await _appPref.setToken('');
     await _appPref.setRefreshToken('');
     await _appPref.setAccessTokenExpiresIn(0);

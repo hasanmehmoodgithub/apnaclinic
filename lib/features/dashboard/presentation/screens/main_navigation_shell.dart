@@ -45,6 +45,7 @@ class MainNavigationShell extends StatefulWidget {
 
 class _MainNavigationShellState extends State<MainNavigationShell> {
   static const int _homeIndex = MainNavigationTabs.home;
+  static const int _instantDoctorIndex = MainNavigationTabs.instantDoctor;
   static const int _bookingsIndex = MainNavigationTabs.bookings;
 
   late final PageController _pageController;
@@ -110,7 +111,9 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
 
     if (!mounted) return;
 
-    context.read<FreeDoctorCubit>().loadContent();
+    if (isLoggedIn) {
+      context.read<FreeDoctorCubit>().loadContent();
+    }
     context.read<CustomerSupportCubit>().loadContent();
 
     final profileCubit = context.read<ProfileSetupCubit>();
@@ -135,7 +138,12 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
   }
 
   void _onNavTap(int index) {
-    if (index == _bookingsIndex && !sl<AppPref>().getLoginStatus()) {
+    final appPref = sl<AppPref>();
+    if (index == _instantDoctorIndex && !appPref.getLoginStatus()) {
+      context.push(AppRoutes.path(AppRoutes.authLogin));
+      return;
+    }
+    if (index == _bookingsIndex && !appPref.getLoginStatus()) {
       context.push(AppRoutes.path(AppRoutes.authLogin));
       return;
     }

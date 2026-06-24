@@ -1,37 +1,35 @@
 class FreeDoctorModel {
   const FreeDoctorModel({
-    required this.title,
-    required this.descriptionPoints,
-    required this.fikrfreeAndroidPackage,
-    required this.fikrfreeIosAppStoreUrl,
-    required this.fikrfreeWebUrl,
+    required this.isSubscribed,
+    required this.bulletPoints,
+    required this.buttonText,
+    required this.redirectUrl,
   });
 
-  final String title;
-  final List<String> descriptionPoints;
-  final String fikrfreeAndroidPackage;
-  final String fikrfreeIosAppStoreUrl;
-  final String fikrfreeWebUrl;
+  final bool isSubscribed;
+  final List<String> bulletPoints;
+  final String buttonText;
+  final String redirectUrl;
 
   factory FreeDoctorModel.fromJson(Map<String, dynamic> json) {
+    final bullets = json['bulletText'] ?? json['descriptionPoints'];
     return FreeDoctorModel(
-      title: (json['title'] ?? '').toString(),
-      descriptionPoints: (json['descriptionPoints'] as List<dynamic>? ?? [])
+      isSubscribed: json['isSubscribed'] == true,
+      bulletPoints: (bullets as List<dynamic>? ?? [])
           .map((e) => e.toString())
+          .where((e) => e.isNotEmpty)
           .toList(),
-      fikrfreeAndroidPackage: (json['fikrfreeAndroidPackage'] ?? '').toString(),
-      fikrfreeIosAppStoreUrl: (json['fikrfreeIosAppStoreUrl'] ?? '').toString(),
-      fikrfreeWebUrl: (json['fikrfreeWebUrl'] ?? '').toString(),
+      buttonText: (json['buttonText'] ?? '').toString(),
+      redirectUrl: (json['redirectUrl'] ?? '').toString(),
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'title': title,
-      'descriptionPoints': descriptionPoints,
-      'fikrfreeAndroidPackage': fikrfreeAndroidPackage,
-      'fikrfreeIosAppStoreUrl': fikrfreeIosAppStoreUrl,
-      'fikrfreeWebUrl': fikrfreeWebUrl,
+      'isSubscribed': isSubscribed,
+      'bulletText': bulletPoints,
+      'buttonText': buttonText,
+      'redirectUrl': redirectUrl,
     };
   }
 }
@@ -67,7 +65,9 @@ class FreeDoctorResponseModel {
     }
     final copy = Map<String, dynamic>.from(json)
       ..remove('success')
-      ..remove('message');
+      ..remove('message')
+      ..remove('code')
+      ..remove('timestamp');
     return copy;
   }
 }
