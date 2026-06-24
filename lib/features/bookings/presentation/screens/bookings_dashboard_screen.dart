@@ -67,14 +67,9 @@ class BookingsDashboardScreen extends StatelessWidget {
                   ],
                 ),
               ),
-              Expanded(
-                child: Container(
-                  width: double.infinity,
+              AppScaffoldGradientPanel(
+                child: Padding(
                   padding: EdgeInsets.fromLTRB(20.w, 10.h, 20.w, 0),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.vertical(top: Radius.circular(42.r)),
-                  ),
                   child: Column(
                     children: [
                       Container(

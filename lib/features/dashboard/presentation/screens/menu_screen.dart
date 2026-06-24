@@ -103,17 +103,11 @@ class _MenuScreenState extends State<MenuScreen> {
       child: Column(
         children: [
           const MenuHeader(),
-          Expanded(
-            child: Container(
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(42.r)),
-              ),
-              child: Column(
-                children: [
-                  Expanded(
-                    child: ListView(
+          AppScaffoldGradientPanel(
+            child: Column(
+              children: [
+                Expanded(
+                  child: ListView(
                       padding: EdgeInsets.fromLTRB(22.w, 22.h, 22.w, 18.h),
                       children: [
                         MenuProfileCard(
@@ -232,7 +226,6 @@ class _MenuScreenState extends State<MenuScreen> {
                       ),
                     ),
                 ],
-              ),
             ),
           ),
         ],

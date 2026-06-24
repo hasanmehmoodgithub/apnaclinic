@@ -30,15 +30,8 @@ class PharmacyBookingDetailsScreen extends StatelessWidget {
             trailingWidth: 40,
             onBackTap: () => pharmacyPopOrGoHome(context),
           ),
-          Expanded(
-            child: Container(
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: AppColors.clrWhite,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(42.r)),
-              ),
-              child: PharmacyBookingDetailsBodyWidget(status: status),
-            ),
+          AppScaffoldGradientPanel(
+            child: PharmacyBookingDetailsBodyWidget(status: status),
           ),
         ],
       ),

@@ -277,20 +277,11 @@ class _LabTestCheckoutScreenState extends State<LabTestCheckoutScreen> {
       child: Column(
         children: [
           LabTestCheckoutHeaderWidget(title: l10n.labTestCheckoutTitle),
-          Expanded(
-            child: Center(
-              child: Container(
-                width: double.infinity,
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.vertical(
-                    top: Radius.circular(42),
-                  ),
-                ),
-                child: Column(
-                  children: [
-                    Expanded(
-                      child: SingleChildScrollView(
+          AppScaffoldGradientPanel(
+            child: Column(
+              children: [
+                Expanded(
+                  child: SingleChildScrollView(
                         padding: const EdgeInsets.fromLTRB(24, 30, 24, 24),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -328,8 +319,6 @@ class _LabTestCheckoutScreenState extends State<LabTestCheckoutScreen> {
                       errorMessage: _checkoutErrorMessage,
                     ),
                   ],
-                ),
-              ),
             ),
           ),
         ],

@@ -78,18 +78,9 @@ class _LabTestBookingScreenState extends State<LabTestBookingScreen> {
                 );
               },
             ),
-            Expanded(
-              child: Center(
-                child: Container(
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.vertical(
-                      top: Radius.circular(42.r),
-                    ),
-                  ),
-                  child: BlocBuilder<LabTestBookingCubit, LabTestBookingState>(
-                    builder: (context, state) {
+            AppScaffoldGradientPanel(
+              child: BlocBuilder<LabTestBookingCubit, LabTestBookingState>(
+                builder: (context, state) {
                       if (state.isLoadingDetail) {
                         return _buildLoadingBody(context, state, l10n);
                       }
@@ -232,8 +223,6 @@ class _LabTestBookingScreenState extends State<LabTestBookingScreen> {
                         ],
                       );
                     },
-                  ),
-                ),
               ),
             ),
           ],

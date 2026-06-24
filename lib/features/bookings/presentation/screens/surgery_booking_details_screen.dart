@@ -140,20 +140,11 @@ class _SurgeryDetailsScreenState extends State<SurgeryDetailsScreen> {
               SizedBox(width: 44.w),
             ],
           ),
-          // ─── Body content with white background & rounded top corners ───
-          Expanded(
-            child: Container(
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(24.r),
-                  topRight: Radius.circular(24.r),
-                ),
-              ),
-              child: Stack(
-                children: [
-                  ListView(
+          AppScaffoldGradientPanel(
+            topBorderRadius: 24.r,
+            child: Stack(
+              children: [
+                ListView(
                     padding: EdgeInsets.fromLTRB(
                       16.w, 16.h, 16.w, showCheckout ? 110.h : 24.h,
                     ),
@@ -218,7 +209,6 @@ class _SurgeryDetailsScreenState extends State<SurgeryDetailsScreen> {
                       ),
                     ),
                 ],
-              ),
             ),
           ),
         ],

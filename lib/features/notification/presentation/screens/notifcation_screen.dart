@@ -25,14 +25,9 @@ class NotificationScreen extends StatelessWidget {
       child: Column(
         children: [
           NotificationHeaderWidget(title: l10n.notificationsTitle),
-          Expanded(
-            child: Container(
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: AppColors.clrF4F6F8,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(42.r)),
-              ),
-              child: BlocBuilder<NotificationCubit, NotificationState>(
+          AppScaffoldGradientPanel(
+            color: AppColors.clrF4F6F8,
+            child: BlocBuilder<NotificationCubit, NotificationState>(
                 builder: (context, state) {
                   return switch (state.loadingStateStatus) {
                     StateStatus.loading =>
@@ -58,7 +53,6 @@ class NotificationScreen extends StatelessWidget {
                   };
                 },
               ),
-            ),
           ),
         ],
       ),

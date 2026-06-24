@@ -105,16 +105,9 @@ class _SurgeryBookingScreenState extends State<SurgeryBookingScreen> {
                 ],
               ),
             ),
-            Expanded(
-              child: Container(
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius:
-                      BorderRadius.vertical(top: Radius.circular(42.r)),
-                ),
-                child: BlocBuilder<SurgeryCubit, SurgeryState>(
-                  buildWhen: (prev, curr) =>
+            AppScaffoldGradientPanel(
+              child: BlocBuilder<SurgeryCubit, SurgeryState>(
+                buildWhen: (prev, curr) =>
                       prev.doctorsLoadingStateStatus !=
                           curr.doctorsLoadingStateStatus ||
                       prev.doctorsContent != curr.doctorsContent ||
@@ -226,7 +219,6 @@ class _SurgeryBookingScreenState extends State<SurgeryBookingScreen> {
                       ],
                     );
                   },
-                ),
               ),
             ),
           ],

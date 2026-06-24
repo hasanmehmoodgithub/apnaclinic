@@ -24,15 +24,8 @@ class PharmacyCartScreen extends StatelessWidget {
               if (context.canPop()) context.pop();
             },
           ),
-          Expanded(
-            child: Container(
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: AppColors.clrWhite,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(42.r)),
-              ),
-              child: const PharmacyCartBodyWidget(),
-            ),
+          AppScaffoldGradientPanel(
+            child: const PharmacyCartBodyWidget(),
           ),
         ],
       ),

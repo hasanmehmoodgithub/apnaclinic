@@ -53,18 +53,11 @@ class _PharmacyCheckoutScreenState extends State<PharmacyCheckoutScreen> {
               if (context.canPop()) context.pop();
             },
           ),
-          Expanded(
-            child: Container(
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: AppColors.clrWhite,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(42.r)),
-              ),
-              child: PharmacyCheckoutBodyWidget(
-                addressController: _addressController,
-                specialInstructionsController: _specialInstructionsController,
-                cities: _cities,
-              ),
+          AppScaffoldGradientPanel(
+            child: PharmacyCheckoutBodyWidget(
+              addressController: _addressController,
+              specialInstructionsController: _specialInstructionsController,
+              cities: _cities,
             ),
           ),
         ],

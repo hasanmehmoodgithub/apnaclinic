@@ -102,14 +102,16 @@ class _AddAccountScreenState extends State<AddAccountScreen> {
 
     return AppScaffoldGradient(
       appBar: AccountAppBarWidget(title: l10n.accountAddTitle),
-      child: Container(
-        decoration: BoxDecoration(
-          color: AppColors.clrWhite,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
-        ),
-        child: Padding(
-          padding: EdgeInsets.fromLTRB(18.w, 18.h, 18.w, 24.h),
-          child: AddAccountFormWidget(
+      child: SafeArea(
+        top: false,
+        child: Container(
+          decoration: BoxDecoration(
+            color: AppColors.clrWhite,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
+          ),
+          child: Padding(
+            padding: EdgeInsets.fromLTRB(18.w, 18.h, 18.w, 24.h),
+            child: AddAccountFormWidget(
             formKey: _formKey,
             accountMethods: _accountMethods,
             selectedAccountMethod: _selectedAccountMethod,
@@ -122,6 +124,7 @@ class _AddAccountScreenState extends State<AddAccountScreen> {
             isLoading: _isSaving,
           ),
         ),
+      ),
       ),
     );
   }

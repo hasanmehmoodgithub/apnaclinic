@@ -52,17 +52,8 @@ class SurgeryScreen extends StatelessWidget {
                   ],
                 ),
               ),
-              Expanded(
-                child: Container(
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    color: AppColors.clrWhite,
-                    borderRadius: BorderRadius.vertical(
-                      top: Radius.circular(42.r),
-                    ),
-                  ),
-                  child: _buildBody(context, state),
-                ),
+              AppScaffoldGradientPanel(
+                child: _buildBody(context, state),
               ),
             ],
           ),

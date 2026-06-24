@@ -91,16 +91,10 @@ class _LabTestViewDetailsScreenState extends State<LabTestViewDetailsScreen> {
       child: Column(
         children: [
           LabTestViewDetailsHeader(title: l10n.labTestScreenTitle),
-          Expanded(
-            child: Container(
-              width: double.infinity,
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(42)),
-              ),
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.fromLTRB(20, 22, 20, 20),
-                child: Column(
+          AppScaffoldGradientPanel(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.fromLTRB(20, 22, 20, 20),
+              child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
@@ -142,7 +136,6 @@ class _LabTestViewDetailsScreenState extends State<LabTestViewDetailsScreen> {
                     const SizedBox(height: 16),
                     LabTestViewDetailsNoteCard(note: details.note),
                   ],
-                ),
               ),
             ),
           ),

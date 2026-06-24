@@ -36,16 +36,9 @@ class PharmacyScreen extends StatelessWidget {
               );
             },
           ),
-          Expanded(
-            child: Container(
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: AppColors.clrWhite,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(42.r)),
-              ),
-              child: PharmacyScreenMedicinesPanelWidget(
-                initialFeaturedMedicine: initialFeaturedMedicine,
-              ),
+          AppScaffoldGradientPanel(
+            child: PharmacyScreenMedicinesPanelWidget(
+              initialFeaturedMedicine: initialFeaturedMedicine,
             ),
           ),
         ],

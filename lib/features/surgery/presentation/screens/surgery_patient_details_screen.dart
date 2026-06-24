@@ -178,17 +178,11 @@ class _SurgeryPatientDetailsScreenState
               ],
             ),
           ),
-          Expanded(
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.vertical(
-                  top: Radius.circular(28.r),
-                ),
-              ),
-              child: Column(
-                children: [
-                      Expanded(
+          AppScaffoldGradientPanel(
+            topBorderRadius: 28.r,
+            child: Column(
+              children: [
+                Expanded(
                         child: ListView(
                           padding: EdgeInsets.fromLTRB(25.w, 20.h, 25.w, 20.h),
                           children: [
@@ -379,7 +373,6 @@ class _SurgeryPatientDetailsScreenState
                         ),
                       ),
                 ],
-              ),
             ),
           ),
         ],

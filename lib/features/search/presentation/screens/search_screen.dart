@@ -135,16 +135,9 @@ class _SearchScreenState extends State<SearchScreen> {
                   ],
                 ),
               ),
-              Expanded(
-                child: Container(
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    color: AppColors.clrWhite,
-                    borderRadius: BorderRadius.vertical(
-                      top: Radius.circular(28.r),
-                    ),
-                  ),
-                  child: Column(
+              AppScaffoldGradientPanel(
+                topBorderRadius: 28.r,
+                child: Column(
                     children: [
                       Padding(
                         padding: EdgeInsets.fromLTRB(16.w, 20.h, 16.w, 0),
@@ -172,7 +165,6 @@ class _SearchScreenState extends State<SearchScreen> {
                       ),
                       Expanded(child: _buildBody(context, state)),
                     ],
-                  ),
                 ),
               ),
             ],
