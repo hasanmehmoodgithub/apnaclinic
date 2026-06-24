@@ -9,7 +9,7 @@ class AppStrings {
       'An unexpected error occurred. Please try again.';
   static const String ourServicesLoadError =
       'Unable to load services right now. Please try again in a moment.';
-  static const String freeDoctorLoadError =
+  static const String instantDoctorLoadError =
       'Unable to load instant doctor information right now. Please try again in a moment.';
   static const String customerSupportLoadError =
       'Unable to load customer support right now. Please try again in a moment.';

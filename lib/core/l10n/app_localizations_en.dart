@@ -464,24 +464,25 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pharmacyAddToCartLower => 'Add to cart';
 
   @override
-  String get freeDoctorTitle => 'Instant Doctor';
+  String get instantDoctorTitle => 'Instant Doctor';
 
   @override
-  String get freeDoctorOpenAppCta => 'Subscribe Now!';
+  String get instantDoctorOpenAppCta => 'Subscribe Now!';
 
   @override
-  String get freeDoctorOpenAppError =>
+  String get instantDoctorOpenAppError =>
       'Could not open subscription page right now.';
 
   @override
-  String get freeDoctorConsultationTitle => '24/7 Instant Doctor Consultation';
+  String get instantDoctorConsultationTitle =>
+      '24/7 Instant Doctor Consultation';
 
   @override
-  String get freeDoctorPoint1 =>
+  String get instantDoctorPoint1 =>
       'This service is available exclusively for M-Health subscribers.';
 
   @override
-  String get freeDoctorPoint2 =>
+  String get instantDoctorPoint2 =>
       'Get 24/7 access to qualified doctors for general medical support and much more.';
 
   @override
@@ -606,7 +607,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'Sehat aur insurance ab apke hath mei!';
 
   @override
-  String get dashboardBottomFreeDoctor => 'Instant Doctor';
+  String get dashboardBottomInstantDoctor => 'Instant Doctor';
 
   @override
   String get dashboardBottomSupport => 'Support';

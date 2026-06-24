@@ -464,23 +464,23 @@ class AppLocalizationsUr extends AppLocalizations {
   String get pharmacyAddToCartLower => 'کارٹ میں شامل کریں';
 
   @override
-  String get freeDoctorTitle => 'انسٹنٹ ڈاکٹر';
+  String get instantDoctorTitle => 'انسٹنٹ ڈاکٹر';
 
   @override
-  String get freeDoctorOpenAppCta => 'ابھی سبسکرائب کریں!';
+  String get instantDoctorOpenAppCta => 'ابھی سبسکرائب کریں!';
 
   @override
-  String get freeDoctorOpenAppError => 'اس وقت سبسکرپشن صفحہ نہیں کھل سکا۔';
+  String get instantDoctorOpenAppError => 'اس وقت سبسکرپشن صفحہ نہیں کھل سکا۔';
 
   @override
-  String get freeDoctorConsultationTitle => '24/7 انسٹنٹ ڈاکٹر مشاورت';
+  String get instantDoctorConsultationTitle => '24/7 انسٹنٹ ڈاکٹر مشاورت';
 
   @override
-  String get freeDoctorPoint1 =>
+  String get instantDoctorPoint1 =>
       'یہ سروس صرف M-Health سبسکرائبرز کے لیے دستیاب ہے۔';
 
   @override
-  String get freeDoctorPoint2 =>
+  String get instantDoctorPoint2 =>
       'عمومی طبی رہنمائی اور مزید کے لیے 24/7 مستند ڈاکٹروں تک رسائی حاصل کریں۔';
 
   @override
@@ -606,7 +606,7 @@ class AppLocalizationsUr extends AppLocalizations {
   String get dashboardFikrfreeTagline => 'صحت اور انشورنس اب آپ کے ہاتھ میں!';
 
   @override
-  String get dashboardBottomFreeDoctor => 'انسٹنٹ ڈاکٹر';
+  String get dashboardBottomInstantDoctor => 'انسٹنٹ ڈاکٹر';
 
   @override
   String get dashboardBottomSupport => 'سپورٹ';

@@ -126,7 +126,7 @@ class Assets {
   static const String svgNavBookings = 'assets/svg/nav_bookings.svg';
   static const String svgNavBookingsFilled = 'assets/svg/nav_bookings_filled.svg';
   static const String svgNavBookingsOutline = 'assets/svg/nav_bookings_outline.svg';
-  static const String svgNavFreeDoctor = 'assets/svg/nav_free_doctor.svg';
+  static const String svgNavInstantDoctor = 'assets/svg/nav_instant_doctor.svg';
   static const String svgNavHomeBottomBar = 'assets/svg/nav_home_bottom_bar.svg';
   static const String svgNavHomeFilled = 'assets/svg/nav_home_filled.svg';
   static const String svgNavHomeOutline = 'assets/svg/nav_home_outline.svg';

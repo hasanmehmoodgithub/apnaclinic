@@ -974,41 +974,41 @@ abstract class AppLocalizations {
   /// **'Add to cart'**
   String get pharmacyAddToCartLower;
 
-  /// No description provided for @freeDoctorTitle.
+  /// No description provided for @instantDoctorTitle.
   ///
   /// In en, this message translates to:
   /// **'Instant Doctor'**
-  String get freeDoctorTitle;
+  String get instantDoctorTitle;
 
-  /// No description provided for @freeDoctorOpenAppCta.
+  /// No description provided for @instantDoctorOpenAppCta.
   ///
   /// In en, this message translates to:
   /// **'Subscribe Now!'**
-  String get freeDoctorOpenAppCta;
+  String get instantDoctorOpenAppCta;
 
-  /// No description provided for @freeDoctorOpenAppError.
+  /// No description provided for @instantDoctorOpenAppError.
   ///
   /// In en, this message translates to:
   /// **'Could not open subscription page right now.'**
-  String get freeDoctorOpenAppError;
+  String get instantDoctorOpenAppError;
 
-  /// No description provided for @freeDoctorConsultationTitle.
+  /// No description provided for @instantDoctorConsultationTitle.
   ///
   /// In en, this message translates to:
   /// **'24/7 Instant Doctor Consultation'**
-  String get freeDoctorConsultationTitle;
+  String get instantDoctorConsultationTitle;
 
-  /// No description provided for @freeDoctorPoint1.
+  /// No description provided for @instantDoctorPoint1.
   ///
   /// In en, this message translates to:
   /// **'This service is available exclusively for M-Health subscribers.'**
-  String get freeDoctorPoint1;
+  String get instantDoctorPoint1;
 
-  /// No description provided for @freeDoctorPoint2.
+  /// No description provided for @instantDoctorPoint2.
   ///
   /// In en, this message translates to:
   /// **'Get 24/7 access to qualified doctors for general medical support and much more.'**
-  String get freeDoctorPoint2;
+  String get instantDoctorPoint2;
 
   /// No description provided for @customerSupportTitle.
   ///
@@ -1238,11 +1238,11 @@ abstract class AppLocalizations {
   /// **'Sehat aur insurance ab apke hath mei!'**
   String get dashboardFikrfreeTagline;
 
-  /// No description provided for @dashboardBottomFreeDoctor.
+  /// No description provided for @dashboardBottomInstantDoctor.
   ///
   /// In en, this message translates to:
   /// **'Instant Doctor'**
-  String get dashboardBottomFreeDoctor;
+  String get dashboardBottomInstantDoctor;
 
   /// No description provided for @dashboardBottomSupport.
   ///

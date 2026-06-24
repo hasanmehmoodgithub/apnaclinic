@@ -50,7 +50,7 @@ class ApnaBottomNavigationBar extends StatelessWidget {
             ),
             Expanded(
               child: _NavTab(
-                label: l10n.dashboardBottomFreeDoctor,
+                label: l10n.dashboardBottomInstantDoctor,
                 filledAsset: Assets.svgNavInstantDoctorFilled,
                 outlineAsset: Assets.svgNavInstantDoctorOutline,
                 selected: currentIndex == MainNavigationTabs.instantDoctor,

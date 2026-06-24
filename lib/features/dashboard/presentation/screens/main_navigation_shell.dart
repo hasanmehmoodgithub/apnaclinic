@@ -16,8 +16,8 @@ import '../../domain/services/promotional_banner_session.dart';
 import '../../../bookings/presentation/screens/bookings_dashboard_screen.dart';
 import '../../../customer_support/presentation/cubit/customer_support_cubit.dart';
 import '../../../customer_support/presentation/screens/customer_support_screen.dart';
-import '../../../free_doctor/presentation/cubit/free_doctor_cubit.dart';
-import '../../../free_doctor/presentation/screens/free_doctor_screen.dart';
+import '../../../instant_doctor/presentation/cubit/instant_doctor_cubit.dart';
+import '../../../instant_doctor/presentation/screens/instant_doctor_screen.dart';
 import '../../../profile_setup/presentation/cubit/profile_setup_cubit.dart';
 import '../constants/main_navigation_tabs.dart';
 import '../widgets/apna_bottom_navigation_bar.dart';
@@ -112,7 +112,7 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
     if (!mounted) return;
 
     if (isLoggedIn) {
-      context.read<FreeDoctorCubit>().loadContent();
+      context.read<InstantDoctorCubit>().loadContent();
     }
     context.read<CustomerSupportCubit>().loadContent();
 
@@ -193,8 +193,8 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
                       child: const HomeScreen(),
                     ),
                     KeepAliveTabPage(
-                      key: ValueKey('free_doctor_$_tabSessionKey'),
-                      child: const FreeDoctorScreen(showBackButton: false),
+                      key: ValueKey('instant_doctor_$_tabSessionKey'),
+                      child: const InstantDoctorScreen(showBackButton: false),
                     ),
                     KeepAliveTabPage(
                       key: ValueKey('bookings_$_tabSessionKey'),

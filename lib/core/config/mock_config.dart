@@ -42,7 +42,7 @@ class MockConfig {
     return _isTruthy(_mockTrueValue) || kDebugMode;
   }
 
-  static bool get enableFreeDoctorMocks {
+  static bool get enableInstantDoctorMocks {
     return false;
     return _isTruthy(_mockTrueValue) || kDebugMode;
   }

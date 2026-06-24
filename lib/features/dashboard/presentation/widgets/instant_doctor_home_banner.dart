@@ -44,7 +44,7 @@ class InstantDoctorHomeBanner extends StatelessWidget {
                       children: [
                         Flexible(
                           child: Text(
-                            l10n.freeDoctorTitle,
+                            l10n.instantDoctorTitle,
                             style: theme.textTheme.titleMedium?.copyWith(
                               fontWeight: FontWeight.w700,
                               fontSize: 18.sp,

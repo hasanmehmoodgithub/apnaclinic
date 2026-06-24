@@ -15,7 +15,7 @@ import '../../../../core/router/app_router.dart';
 import '../../../../core/services/notification_service.dart';
 import '../../../../core/utils/chucker_guard.dart';
 import '../../../customer_support/presentation/cubit/customer_support_cubit.dart';
-import '../../../free_doctor/presentation/cubit/free_doctor_cubit.dart';
+import '../../../instant_doctor/presentation/cubit/instant_doctor_cubit.dart';
 import '../../../pharmacy/presentation/cubit/pharmacy_cubit.dart';
 import '../../../profile_setup/presentation/cubit/profile_setup_cubit.dart';
 import '../cubit/app_cubit.dart';
@@ -67,7 +67,7 @@ class _ApnaClinicAppState extends State<ApnaClinicApp> {
     return MultiBlocProvider(
       providers: [
         BlocProvider(create: (context) => sl<AppCubit>()),
-        BlocProvider(create: (context) => sl<FreeDoctorCubit>()),
+        BlocProvider(create: (context) => sl<InstantDoctorCubit>()),
         BlocProvider(create: (context) => sl<CustomerSupportCubit>()),
         BlocProvider(create: (context) => sl<ProfileSetupCubit>()),
         BlocProvider(create: (context) => sl<PharmacyCubit>()),
