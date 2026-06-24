@@ -73,8 +73,9 @@ class AppUrls {
   static String get mobileSupport =>
       '$_normalizedApiBaseUrl/acs-cmsbe/api/v1/mobile/support';
 
-  /// Free doctor screen content endpoint
-  static String get freeDoctor => '$_normalizedApiBaseUrl/dashboard/free-doctor';
+  /// Instant doctor consultation info (aggregator mobile API).
+  static String instantDoctorConsultation(String msisdn) =>
+      '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/doctor-consultation/instant?msisdn=${Uri.encodeComponent(msisdn)}';
 
   /// Profile setup details endpoint
   static String userProfileById(String userId) =>

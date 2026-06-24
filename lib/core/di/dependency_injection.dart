@@ -23,6 +23,7 @@ import '../services/notification_service.dart';
 import '../services/responsive_config_service.dart';
 import '../services/speech_to_text_service.dart';
 import '../session/auth_session_refresh.dart';
+import '../session/local_logout_service.dart';
 import '../cities/cities_injection.dart';
 
 final GetIt sl = GetIt.instance;
@@ -68,6 +69,13 @@ Future<void> _initCore() async {
     () => const ResponsiveConfigService(),
   );
   sl.registerLazySingleton<AuthSessionRefresh>(() => AuthSessionRefresh());
+  sl.registerLazySingleton<LocalLogoutService>(
+    () => LocalLogoutService(
+      appPref: sl<AppPref>(),
+      apiService: sl<ApiService>(),
+      sessionRefresh: sl<AuthSessionRefresh>(),
+    ),
+  );
   sl.registerLazySingleton<SpeechToTextService>(() => SpeechToTextService());
   sl.registerLazySingleton<NotificationService>(
     () => NotificationService(appPref: sl<AppPref>()),

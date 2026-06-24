@@ -5,11 +5,10 @@ class FreeDoctorMapper {
   static FreeDoctorEntity toEntity(FreeDoctorResponseModel model) {
     final content = model.content;
     return FreeDoctorEntity(
-      title: content.title,
-      descriptionPoints: content.descriptionPoints,
-      fikrfreeAndroidPackage: content.fikrfreeAndroidPackage,
-      fikrfreeIosAppStoreUrl: content.fikrfreeIosAppStoreUrl,
-      fikrfreeWebUrl: content.fikrfreeWebUrl,
+      isSubscribed: content.isSubscribed,
+      bulletPoints: content.bulletPoints,
+      buttonText: content.buttonText,
+      redirectUrl: content.redirectUrl,
     );
   }
 }

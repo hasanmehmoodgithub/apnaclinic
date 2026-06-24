@@ -26,7 +26,7 @@ class FreeDoctorConsultationInfoCardWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     const radius = BorderRadius.vertical(top: Radius.circular(_cardTopRadius));
-    final points = state.content?.descriptionPoints ?? defaultPoints;
+    final points = state.content?.bulletPoints ?? defaultPoints;
 
     return DecoratedBox(
       decoration: BoxDecoration(
@@ -76,7 +76,7 @@ class FreeDoctorConsultationInfoCardWidget extends StatelessWidget {
                         SizedBox(width: 8.w),
                         Expanded(
                           child: Text(
-                            state.content?.title ?? defaultTitle,
+                            defaultTitle,
                             style: theme.textTheme.titleMedium?.copyWith(
                               fontWeight: FontWeight.w600,
                               color: AppColors.clr0B2239,

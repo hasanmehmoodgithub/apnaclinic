@@ -277,6 +277,10 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   }
 
   void _openInstantDoctorTab(BuildContext context) {
+    if (!sl<AppPref>().getLoginStatus()) {
+      context.push(AppRoutes.path(AppRoutes.authLogin));
+      return;
+    }
     context.read<MainNavigationCubit>().setIndex(MainNavigationTabs.instantDoctor);
   }
 }
