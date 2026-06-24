@@ -5,7 +5,7 @@ class MockConfig {
 
   static const String _mockTrueValue = String.fromEnvironment(
     'MOCKTRUE',
-    defaultValue: '',
+    defaultValue: 'true',
   );
 
   static bool get enableMocks {
