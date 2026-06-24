@@ -37,7 +37,7 @@ void main() {
         // Initialize dependency injection (includes AppPref initialization)
         // Encryption can be enabled/configured through AppPref methods after initialization
         await _initializeDependencyInjection();
-        await _prefetchStartupData();
+       // await _prefetchStartupData();
         await _initializePushNotifications();
 
         runApp(

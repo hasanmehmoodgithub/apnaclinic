@@ -26,6 +26,8 @@
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
+	<key>LSRequiresIPhoneOS</key>
+	<true/>
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSExceptionDomains</key>
@@ -46,18 +48,16 @@
 			</dict>
 		</dict>
 	</dict>
-	<key>LSRequiresIPhoneOS</key>
-	<true/>
 	<key>NSCameraUsageDescription</key>
 	<string>Apna Clinic needs camera access for video consultations and to take or attach profile photos.</string>
-	<key>NSMicrophoneUsageDescription</key>
-	<string>Apna Clinic needs microphone access for voice search and audio or video consultations with doctors.</string>
-	<key>NSSpeechRecognitionUsageDescription</key>
-	<string>Apna Clinic uses speech recognition so you can search by voice.</string>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Apna Clinic needs photo library access so you can choose a profile picture and attach images from your gallery during consultations.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Apna Clinic may use your location to show nearby clinics and services relevant to your care.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Apna Clinic needs microphone access for voice search and audio or video consultations with doctors.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Apna Clinic needs photo library access so you can choose a profile picture and attach images from your gallery during consultations.</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>Apna Clinic uses speech recognition so you can search by voice.</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
@@ -79,13 +79,13 @@
 			</array>
 		</dict>
 	</dict>
+	<key>UIApplicationSupportsIndirectInputEvents</key>
+	<true/>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>fetch</string>
 		<string>remote-notification</string>
 	</array>
-	<key>UIApplicationSupportsIndirectInputEvents</key>
-	<true/>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
@@ -93,15 +93,13 @@
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
-		<string>UIInterfaceOrientationLandscapeLeft</string>
-		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
 	<key>UISupportedInterfaceOrientations~ipad</key>
 	<array>
-		<string>UIInterfaceOrientationPortrait</string>
-		<string>UIInterfaceOrientationPortraitUpsideDown</string>
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationPortraitUpsideDown</string>
 	</array>
 </dict>
 </plist>
