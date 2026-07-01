@@ -19,7 +19,6 @@ class InstantDoctorConsultationInfoCardWidget extends StatelessWidget {
   final String defaultTitle;
   final List<String> defaultPoints;
 
-  static const String _watermarkAsset = Assets.imgPartner;
   static const double _cardTopRadius = 32;
 
   @override
@@ -44,14 +43,17 @@ class InstantDoctorConsultationInfoCardWidget extends StatelessWidget {
         borderRadius: radius,
         child: Stack(
           children: [
-            Positioned.fill(
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: 0,
               child: IgnorePointer(
-                child: Center(
-                  child: Opacity(
-                    opacity: 0.08,
+                child: Padding(
+                  padding: EdgeInsets.fromLTRB(32.w, 16.h, 32.w, 60.h),
+                  child: Center(
                     child: Image.asset(
-                      _watermarkAsset,
-                      width: 260.w,
+                      Assets.imgPartner,
+                      height: 180.h,
                       fit: BoxFit.contain,
                     ),
                   ),
@@ -62,7 +64,7 @@ class InstantDoctorConsultationInfoCardWidget extends StatelessWidget {
               const _ConsultationInfoShimmer()
             else
               SingleChildScrollView(
-                padding: EdgeInsets.fromLTRB(18.w, 28.h, 20.w, 24.h),
+                padding: EdgeInsets.fromLTRB(18.w, 28.h, 20.w, 180.h),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [

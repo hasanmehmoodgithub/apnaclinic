@@ -18,8 +18,7 @@
 ## State
 
 - `InstantDoctorCubit` — loads screen content; `openConsultationPage()` opens `redirectUrl` in `LaunchMode.inAppWebView`.
-- `InstantDoctorScreen` observes app resume and reloads content after the "Open App" action when the user returns.
-- While content is loading/reloading, the bottom CTA shows a shimmer placeholder; while opening the URL it shows the button spinner.
+- `InstantDoctorScreen` — hero header, consultation info card, partner watermark (`Assets.imgPartner`) between card and CTA, subscribe button with shimmer while reloading.
 
 ## DI
 

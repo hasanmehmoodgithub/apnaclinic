@@ -23,7 +23,7 @@ class InstantDoctorOpenAppButtonWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return SafeArea(
       top: false,
-      minimum: EdgeInsets.fromLTRB(20.w, 0, 20.w, 60.h),
+      minimum: EdgeInsets.fromLTRB(20.w, 0, 20.w, 28.h),
       child: isShimmerLoading
           ? AppShimmerCard(
               width: double.infinity,
