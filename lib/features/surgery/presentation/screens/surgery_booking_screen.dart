@@ -274,11 +274,6 @@ class _SurgeryBookingScreenState extends State<SurgeryBookingScreen> {
   }
 
   Future<void> _openPatientDetails(SurgeryBookingDoctorCardData card) async {
-    if (!sl<AppPref>().getLoginStatus()) {
-      context.push(AppRoutes.path(AppRoutes.authLogin));
-      return;
-    }
-  void _openPatientDetails(SurgeryBookingDoctorCardData card) {
     if (!context.requireLogin()) return;
 
     final state = context.read<SurgeryCubit>().state;
