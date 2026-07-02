@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
-import '../../../../generated/assets.dart';
 import '../../domain/entities/search_entity.dart';
 
 class SearchPharmacyResultCardWidget extends StatelessWidget {
@@ -49,9 +48,10 @@ class SearchPharmacyResultCardWidget extends StatelessWidget {
                   ),
                 ),
               ),
-              errorWidget: (context, url, error) => Image.asset(
-                Assets.servicesPharmacy,
-                fit: BoxFit.contain,
+              errorWidget: (context, url, error) => Icon(
+                Icons.medication_outlined,
+                size: 36.r,
+                color: AppColors.clr6B7280.withValues(alpha: 0.45),
               ),
               fadeInDuration: const Duration(milliseconds: 300),
             ),

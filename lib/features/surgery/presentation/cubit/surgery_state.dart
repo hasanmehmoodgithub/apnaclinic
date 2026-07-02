@@ -4,6 +4,7 @@ import '../../../../core/enums/state_status.dart';
 import '../../domain/entities/surgery_doctor_entity.dart';
 import '../../domain/entities/surgery_patient_form_entity.dart';
 import '../../domain/entities/surgery_procedure_entity.dart';
+import '../../domain/entities/surgery_provider_details_entity.dart';
 
 part 'surgery_state.freezed.dart';
 
@@ -31,5 +32,9 @@ abstract class SurgeryState with _$SurgeryState {
     @Default(SurgeryPatientFormEntity.empty)
     SurgeryPatientFormEntity patientForm,
     String? patientFormErrorMessage,
+    @Default(StateStatus.idle) StateStatus providerDetailsLoadingStateStatus,
+    @Default(SurgeryProviderDetailsEntity.empty)
+    SurgeryProviderDetailsEntity providerDetails,
+    String? providerDetailsErrorMessage,
   }) = _SurgeryState;
 }

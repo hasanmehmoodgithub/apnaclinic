@@ -13,7 +13,7 @@ Home services grid, promotional banner, search entry, and shell navigation. Keep
 
 ## Data & APIs (dashboard-specific)
 
-- Services: `AppUrls.ourServices` → `DashboardRemoteDataSourceImpl` (live CMS). `ServiceCardImage` uses `CachedNetworkImage` for remote `iconPath`; on error, bundled `assets/img/services/*.webp` via `service.route` (`service_icon_fallbacks.dart`).
+- Services: `AppUrls.ourServices` → `DashboardRemoteDataSourceImpl` (live CMS). `ServiceCardImage` loads remote icons (PNG, WebP, SVG); on empty URL or load failure shows a styled placeholder only.
 - Promo: `AppUrls.promotionalBanner` → CMS `GET /api/v1/mobile/banners`. Fetched once at **app open** (`main.dart`) and again only after **login** (`AuthSessionRefresh.consumeReloadPromotionalBanner`). Not called on logout tab remount. `PromotionalBannerSession` caches result and tracks whether the dialog was already shown this session.
 
 Profile uses **`profile_setup`** remote (`GET …/users/{userId}`) — no duplicate URL in dashboard.

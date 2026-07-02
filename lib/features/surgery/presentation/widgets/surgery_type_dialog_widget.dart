@@ -39,7 +39,9 @@ class SurgeryTypeDialogWidget extends StatelessWidget {
           ),
           ...List.generate(options.length, (i) {
             final option = options[i];
-            final isSelected = option.name == selected.name;
+            final isSelected = option.id.isNotEmpty && selected.id.isNotEmpty
+                ? option.id == selected.id
+                : option.name == selected.name;
             final isLast = i == options.length - 1;
             return Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -73,15 +75,17 @@ class SurgeryTypeDialogWidget extends StatelessWidget {
                                 fontWeight: FontWeight.w500,
                               ),
                             ),
-                            SizedBox(height: 2.h),
-                            Text(
-                              option.oldPrice,
-                              style: theme.textTheme.bodyMedium?.copyWith(
-                                color: const Color(0xFFB4B4B4),
-                                fontSize: 12.sp,
-                                decoration: TextDecoration.lineThrough,
+                            if (option.oldPrice.isNotEmpty) ...[
+                              SizedBox(height: 2.h),
+                              Text(
+                                option.oldPrice,
+                                style: theme.textTheme.bodyMedium?.copyWith(
+                                  color: const Color(0xFFB4B4B4),
+                                  fontSize: 12.sp,
+                                  decoration: TextDecoration.lineThrough,
+                                ),
                               ),
-                            ),
+                            ],
                           ],
                         ),
                       ],

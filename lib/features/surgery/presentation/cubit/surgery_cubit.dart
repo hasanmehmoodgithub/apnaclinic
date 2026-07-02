@@ -6,7 +6,9 @@ import '../../domain/entities/surgery_procedure_entity.dart';
 import '../../domain/use_cases/get_surgery_content_use_case.dart';
 import '../../domain/use_cases/get_surgery_doctors_use_case.dart';
 import '../../domain/use_cases/get_surgery_patient_form_use_case.dart';
+import '../../domain/use_cases/get_surgery_provider_details_use_case.dart';
 import '../../domain/use_cases/submit_surgery_booking_use_case.dart';
+import '../../domain/entities/surgery_provider_details_entity.dart';
 import 'surgery_state.dart';
 
 class SurgeryCubit extends Cubit<SurgeryState> {
@@ -14,6 +16,7 @@ class SurgeryCubit extends Cubit<SurgeryState> {
     required this.getSurgeryContentUseCase,
     required this.getSurgeryDoctorsUseCase,
     required this.getSurgeryPatientFormUseCase,
+    required this.getSurgeryProviderDetailsUseCase,
     required this.submitSurgeryBookingUseCase,
   }) : super(const SurgeryState()) {
     loadSurgeryContent();
@@ -22,6 +25,7 @@ class SurgeryCubit extends Cubit<SurgeryState> {
   final GetSurgeryContentUseCase getSurgeryContentUseCase;
   final GetSurgeryDoctorsUseCase getSurgeryDoctorsUseCase;
   final GetSurgeryPatientFormUseCase getSurgeryPatientFormUseCase;
+  final GetSurgeryProviderDetailsUseCase getSurgeryProviderDetailsUseCase;
   final SubmitSurgeryBookingUseCase submitSurgeryBookingUseCase;
 
   void _safeEmit(SurgeryState newState) {
@@ -113,6 +117,50 @@ class SurgeryCubit extends Cubit<SurgeryState> {
         ),
       ),
     );
+  }
+
+  Future<Either<ErrorMsg, SurgeryProviderDetailsEntity>>
+      loadSurgeryProviderDetails({
+    required String surgeryId,
+    required String cityId,
+    required String doctorId,
+  }) async {
+    _safeEmit(
+      state.copyWith(
+        providerDetailsLoadingStateStatus: StateStatus.loading,
+        providerDetailsErrorMessage: null,
+      ),
+    );
+
+    final result = await getSurgeryProviderDetailsUseCase(
+      GetSurgeryProviderDetailsParams(
+        surgeryId: surgeryId,
+        cityId: cityId,
+        doctorId: doctorId,
+      ),
+    );
+    if (isClosed) return result;
+
+    result.fold(
+      (error) => _safeEmit(
+        state.copyWith(
+          providerDetailsLoadingStateStatus: StateStatus.error,
+          providerDetailsErrorMessage: error,
+        ),
+      ),
+      (providerDetails) => _safeEmit(
+        state.copyWith(
+          providerDetailsLoadingStateStatus:
+              providerDetails.packages.isEmpty
+                  ? StateStatus.empty
+                  : StateStatus.success,
+          providerDetails: providerDetails,
+          providerDetailsErrorMessage: null,
+        ),
+      ),
+    );
+
+    return result;
   }
 
   Future<void> loadSurgeryPatientForm({required String doctorId}) async {

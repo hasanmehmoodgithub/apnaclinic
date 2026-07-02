@@ -106,10 +106,6 @@ class Assets {
   static const String onboardingLaboratory = 'assets/img/onboarding/book_lab_test.png';
   static const String onboardingPharmacy = 'assets/img/onboarding/order_medicine.png';
   static const String onboardingSurgeryBooking = 'assets/img/onboarding/surgery_booking.webp';
-  static const String servicesLaboratory = 'assets/img/services/laboratory.webp';
-  static const String servicesOnlineConsultation = 'assets/img/services/online_consultation.webp';
-  static const String servicesPharmacy = 'assets/img/services/pharmacy.webp';
-  static const String servicesSurgeryBooking = 'assets/img/services/surgery_booking.webp';
   static const String supportSupportHero = 'assets/img/support/support_hero.png';
   static const String svgApnaClinicLogo = 'assets/svg/apna_clinic_logo.svg';
   static const String svgAppbarbackground = 'assets/svg/appbarbackground.svg';
