@@ -122,6 +122,15 @@ class AppUrls {
     required String cityId,
   }) =>
       '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/surgery/providers?surgeryId=${Uri.encodeComponent(surgeryId)}&cityId=${Uri.encodeComponent(cityId)}';
+
+  /// Surgery provider details with packages (aggregator mobile API).
+  static String surgeryProviderDetails({
+    required String surgeryId,
+    required String cityId,
+    required String doctorId,
+  }) =>
+      '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/surgery/provider-details?surgeryId=${Uri.encodeComponent(surgeryId)}&cityId=${Uri.encodeComponent(cityId)}&doctorId=${Uri.encodeComponent(doctorId)}';
+
   static String surgeryPatientForm(String doctorId) =>
       '$_normalizedApiBaseUrl/surgery/patient-form/$doctorId';
   static String get surgeryBooking => '$_normalizedApiBaseUrl/surgery/booking';

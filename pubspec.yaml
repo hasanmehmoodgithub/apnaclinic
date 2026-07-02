@@ -102,7 +102,6 @@ flutter:
   # the material Icons class.
   assets:
     - assets/img/
-    - assets/img/services/
     - assets/img/onboarding/
     - assets/img/support/
     - assets/img/consultation/

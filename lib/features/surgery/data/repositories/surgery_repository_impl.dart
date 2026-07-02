@@ -6,11 +6,13 @@ import '../../domain/entities/surgery_booking_request_entity.dart';
 import '../../domain/entities/surgery_doctor_entity.dart';
 import '../../domain/entities/surgery_patient_form_entity.dart';
 import '../../domain/entities/surgery_procedure_entity.dart';
+import '../../domain/entities/surgery_provider_details_entity.dart';
 import '../../domain/repositories/surgery_repository.dart';
 import '../data_sources/surgery_remote_data_source.dart';
 import '../mappers/surgery_doctors_mapper.dart';
 import '../mappers/surgery_mapper.dart';
 import '../mappers/surgery_patient_form_mapper.dart';
+import '../mappers/surgery_provider_details_mapper.dart';
 
 class SurgeryRepositoryImpl implements SurgeryRepository {
   SurgeryRepositoryImpl({
@@ -76,6 +78,31 @@ class SurgeryRepositoryImpl implements SurgeryRepository {
       return Right(SurgeryDoctorsMapper.toEntity(model));
     } catch (e) {
       log('getSurgeryDoctors repository error: $e');
+      return Left(e.toString());
+    }
+  }
+
+  @override
+  Future<Either<ErrorMsg, SurgeryProviderDetailsEntity>> getSurgeryProviderDetails({
+    required String surgeryId,
+    required String cityId,
+    required String doctorId,
+  }) async {
+    try {
+      if (surgeryId.trim().isEmpty ||
+          cityId.trim().isEmpty ||
+          doctorId.trim().isEmpty) {
+        return const Left('Missing surgery booking details. Please try again.');
+      }
+
+      final model = await remoteDataSource.getSurgeryProviderDetails(
+        surgeryId: surgeryId,
+        cityId: cityId,
+        doctorId: doctorId,
+      );
+      return Right(SurgeryProviderDetailsMapper.toEntity(model));
+    } catch (e) {
+      log('getSurgeryProviderDetails repository error: $e');
       return Left(e.toString());
     }
   }

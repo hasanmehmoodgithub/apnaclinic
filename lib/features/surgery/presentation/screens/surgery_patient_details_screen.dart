@@ -18,6 +18,8 @@ import '../widgets/surgery_type_dialog_widget.dart';
 class SurgeryPatientDetailsScreen extends StatefulWidget {
   const SurgeryPatientDetailsScreen({
     super.key,
+    required this.surgeryId,
+    required this.cityId,
     required this.doctorId,
     required this.doctorName,
     required this.speciality,
@@ -31,6 +33,8 @@ class SurgeryPatientDetailsScreen extends StatefulWidget {
     required this.partnerLogoUrl,
   });
 
+  final String surgeryId;
+  final String cityId;
   final String doctorId;
   final String doctorName;
   final String speciality;
@@ -61,6 +65,7 @@ class _SurgeryPatientDetailsScreenState
   bool showGenderError = false;
   String? validationBannerMessage;
   bool isSubmittingBooking = false;
+  bool isLoadingSurgeryTypes = false;
 
   late final TextEditingController patientNameController;
   late final TextEditingController ageController;
@@ -76,9 +81,11 @@ class _SurgeryPatientDetailsScreenState
     emergencyContactController = TextEditingController();
     _prefillPatientDetailsFromSavedProfile();
     selectedSurgery = SurgeryOption(
-      widget.procedureName,
-      widget.price,
-      widget.oldPrice,
+      id: '',
+      name: widget.procedureName,
+      price: widget.price,
+      oldPrice: widget.oldPrice,
+      hospitalName: widget.hospitalName,
     );
   }
 
@@ -137,17 +144,10 @@ class _SurgeryPatientDetailsScreenState
     return age;
   }
 
-  List<SurgeryOption> get _surgeryOptions => [
-    SurgeryOption(widget.procedureName, widget.price, widget.oldPrice),
-  ];
-
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
-    final options = _surgeryOptions;
-    final currentSelection =
-        selectedSurgery ?? (options.isNotEmpty ? options.first : null);
+    final currentSelection = selectedSurgery;
 
     return AppScaffoldGradient(
       child: Column(
@@ -261,7 +261,9 @@ class _SurgeryPatientDetailsScreenState
                             if (currentSelection != null)
                               InkWell(
                                 borderRadius: BorderRadius.circular(10),
-                                onTap: () => _openSurgeryTypeDialog(options),
+                                onTap: isLoadingSurgeryTypes
+                                    ? null
+                                    : _openSurgeryTypeDialog,
                                 child: Container(
                                   padding: EdgeInsets.symmetric(
                                     horizontal: 12.w,
@@ -286,24 +288,34 @@ class _SurgeryPatientDetailsScreenState
                                           ),
                                         ),
                                       ),
-                                      Text(
-                                        currentSelection.price,
-                                        style:
-                                            theme.textTheme.bodyLarge?.copyWith(
-                                          color: const Color(0xFF061E40),
-                                          fontSize: 13.sp,
-                                          fontWeight: FontWeight.w500,
+                                      if (isLoadingSurgeryTypes)
+                                        SizedBox(
+                                          width: 16.r,
+                                          height: 16.r,
+                                          child: const CircularProgressIndicator(
+                                            strokeWidth: 2,
+                                          ),
+                                        )
+                                      else ...[
+                                        Text(
+                                          currentSelection.price,
+                                          style:
+                                              theme.textTheme.bodyLarge?.copyWith(
+                                            color: const Color(0xFF061E40),
+                                            fontSize: 13.sp,
+                                            fontWeight: FontWeight.w500,
+                                          ),
                                         ),
-                                      ),
-                                      SizedBox(width: 4.w),
-                                      Transform.scale(
-                                        scale: 1.2,
-                                        child: Icon(
-                                          Icons.keyboard_arrow_down_rounded,
-                                          color: const Color(0xFFB6BDC8),
-                                          size: 14.r,
+                                        SizedBox(width: 4.w),
+                                        Transform.scale(
+                                          scale: 1.2,
+                                          child: Icon(
+                                            Icons.keyboard_arrow_down_rounded,
+                                            color: const Color(0xFFB6BDC8),
+                                            size: 14.r,
+                                          ),
                                         ),
-                                      ),
+                                      ],
                                     ],
                                   ),
                                 ),
@@ -418,10 +430,40 @@ class _SurgeryPatientDetailsScreenState
     }
   }
 
-  Future<void> _openSurgeryTypeDialog(List<SurgeryOption> options) async {
-    if (options.isEmpty || selectedSurgery == null) return;
+  Future<void> _openSurgeryTypeDialog() async {
+    if (selectedSurgery == null || isLoadingSurgeryTypes) return;
 
     FocusScope.of(context).unfocus();
+    setState(() => isLoadingSurgeryTypes = true);
+
+    final result = await context.read<SurgeryCubit>().loadSurgeryProviderDetails(
+      surgeryId: widget.surgeryId,
+      cityId: widget.cityId,
+      doctorId: widget.doctorId,
+    );
+
+    if (!mounted) return;
+    setState(() => isLoadingSurgeryTypes = false);
+
+    final options = result.fold(
+      (_) => <SurgeryOption>[],
+      (details) => details.packages
+          .map(
+            (item) => SurgeryOption(
+              id: item.packageId,
+              name: item.packageName,
+              price: item.price,
+              oldPrice: item.oldPrice,
+              hospitalName: item.hospitalName,
+            ),
+          )
+          .toList(),
+    );
+
+    if (options.isEmpty) {
+      _showSurgeryTypesLoadFailedSnackbar();
+      return;
+    }
 
     final picked = await showDialog<SurgeryOption>(
       context: context,
@@ -437,6 +479,16 @@ class _SurgeryPatientDetailsScreenState
     if (picked != null) {
       setState(() => selectedSurgery = picked);
     }
+  }
+
+  void _showSurgeryTypesLoadFailedSnackbar() {
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        const SnackBar(
+          content: Text('Unable to load surgery types. Please try again.'),
+        ),
+      );
   }
 
   Future<void> _onProceedCheckoutPressed() async {
@@ -492,7 +544,9 @@ class _SurgeryPatientDetailsScreenState
         emergencyContact: emergency,
         surgeryName: surgery.name,
         doctorName: widget.doctorName,
-        hospitalName: widget.hospitalName,
+        hospitalName: surgery.hospitalName.isNotEmpty
+            ? surgery.hospitalName
+            : widget.hospitalName,
         gender: gender,
       );
 

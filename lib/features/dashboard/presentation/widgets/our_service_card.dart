@@ -54,7 +54,6 @@ class OurServiceCardWidget extends StatelessWidget {
                   Center(
                     child: ServiceCardImage(
                       imageUrl: imageAsset,
-                      fallbackRoute: route,
                     ),
                   ),
                   SizedBox(

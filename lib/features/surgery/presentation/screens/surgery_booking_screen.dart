@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/cities/domain/repositories/cities_repository.dart';
+import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/enums/state_status.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
@@ -271,15 +273,39 @@ class _SurgeryBookingScreenState extends State<SurgeryBookingScreen> {
     return specialtyFiltered.toList();
   }
 
+  Future<void> _openPatientDetails(SurgeryBookingDoctorCardData card) async {
+    if (!sl<AppPref>().getLoginStatus()) {
+      context.push(AppRoutes.path(AppRoutes.authLogin));
+      return;
+    }
   void _openPatientDetails(SurgeryBookingDoctorCardData card) {
     if (!context.requireLogin()) return;
 
+    final state = context.read<SurgeryCubit>().state;
+    final citiesRepository = sl<CitiesRepository>();
+    await citiesRepository.loadCities();
+    final cityId = citiesRepository.cityIdForName(state.selectedCity);
+    if (cityId == null || cityId.isEmpty) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+          const SnackBar(
+            content: Text('Please select a valid city.'),
+          ),
+        );
+      return;
+    }
+
+    if (!mounted) return;
     final surgeryCubit = context.read<SurgeryCubit>();
     Navigator.of(context).push(
       MaterialPageRoute<void>(
         builder: (_) => BlocProvider.value(
           value: surgeryCubit,
           child: SurgeryPatientDetailsScreen(
+            surgeryId: widget.surgeryId,
+            cityId: cityId,
             doctorId: card.id,
             doctorName: card.doctorName,
             speciality: card.speciality,
