@@ -5,6 +5,7 @@ class AuthSessionRefresh extends ChangeNotifier {
   int _epoch = 0;
   bool _selectHomeOnNextRefresh = false;
   bool _reloadPromotionalBannerOnNextRefresh = false;
+  int? _pendingTabIndex;
 
   int get epoch => _epoch;
 
@@ -35,6 +36,19 @@ class AuthSessionRefresh extends ChangeNotifier {
   bool consumeReloadPromotionalBanner() {
     final value = _reloadPromotionalBannerOnNextRefresh;
     _reloadPromotionalBannerOnNextRefresh = false;
+    return value;
+  }
+
+  /// Switch bottom nav tab after menu (or other overlay) closes.
+  void requestTabIndex(int index) {
+    _pendingTabIndex = index;
+    notifyListeners();
+  }
+
+  /// Consumed by [MainNavigationShell]; returns tab index once per request.
+  int? consumePendingTabIndex() {
+    final value = _pendingTabIndex;
+    _pendingTabIndex = null;
     return value;
   }
 }

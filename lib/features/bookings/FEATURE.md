@@ -6,7 +6,9 @@ Tabbed bookings hub (doctor consultation, surgery, lab test, pharmacy) with list
 
 ## Routes / entry
 
-- `BookingsDashboardScreen` — bottom nav tab; `AppRoutes` booking detail routes per type.
+## Routes / entry
+
+- `BookingsDashboardScreen` — bottom nav tab; menu tile switches to this tab; `AppRoutes` booking detail routes per type.
 
 ## UI
 

@@ -12,6 +12,7 @@ import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/preference/app_pref.dart';
 import '../../../../core/router/app_routes.dart';
+import '../../../../core/utils/auth_guard.dart';
 import '../../../profile_setup/presentation/profile_setup_launch_source.dart';
 import '../../../../core/services/notification_service.dart';
 import '../../../../core/widgets/heart_loader_widget.dart';
@@ -50,7 +51,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    _isLoggedIn = sl<AppPref>().getLoginStatus();
+    _isLoggedIn = AuthGuard.isLoggedIn();
     _bannerSession = sl<PromotionalBannerSession>();
     _isPromoDialogShown = _bannerSession.dialogShown;
     _dashboardCubit = sl<DashboardCubit>();
@@ -101,7 +102,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       animation: routerDelegate,
       builder: (context, _) {
         final l10n = AppLocalizations.of(context)!;
-        _isLoggedIn = sl<AppPref>().getLoginStatus();
+        _isLoggedIn = AuthGuard.isLoggedIn();
         final greetingName = _resolveGreetingName(l10n);
 
         // Whenever the router rebuilds us (which includes returning from
@@ -205,10 +206,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                     AppRoutes.path(AppRoutes.dashboardMenu),
                   ),
                   onNotificationTap: () {
-                    if (!_isLoggedIn) {
-                      context.push(AppRoutes.path(AppRoutes.authLogin));
-                      return;
-                    }
+                    if (!context.requireLogin()) return;
                     context.push(AppRoutes.path(AppRoutes.notifications));
                   },
                   onLoginTap: () =>
@@ -277,10 +275,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   }
 
   void _openInstantDoctorTab(BuildContext context) {
-    if (!sl<AppPref>().getLoginStatus()) {
-      context.push(AppRoutes.path(AppRoutes.authLogin));
-      return;
-    }
+    if (!context.requireLogin()) return;
     context.read<MainNavigationCubit>().setIndex(MainNavigationTabs.instantDoctor);
   }
 }

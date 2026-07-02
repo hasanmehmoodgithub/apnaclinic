@@ -127,6 +127,10 @@ await appPref.setLoginStatus(true);
 // Get login status
 bool isLoggedIn = appPref.getLoginStatus(); // Returns false by default
 
+// Prefer [AuthGuard] for app-wide login checks and guest redirects:
+// `AuthGuard.isLoggedIn()` — bool only (optional injected [AppPref])
+// `context.requireLogin()` — returns false and opens login for guests
+
 // Check authentication
 bool isAuth = appPref.isAuthenticated(); // Checks token + login status
 

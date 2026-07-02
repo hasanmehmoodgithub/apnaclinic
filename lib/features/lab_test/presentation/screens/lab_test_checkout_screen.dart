@@ -7,6 +7,7 @@ import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/preference/app_pref.dart';
 import '../../../../core/router/app_routes.dart';
+import '../../../../core/utils/auth_guard.dart';
 import '../../../../core/widgets/app_scaffold_gradient.dart';
 import '../../../../generated/assets.dart';
 import '../lab_test_route_args.dart';
@@ -64,7 +65,7 @@ class _LabTestCheckoutScreenState extends State<LabTestCheckoutScreen> {
   }
 
   void _prefillPatientDetailsFromSavedProfile() {
-    if (!_appPref.getLoginStatus()) return;
+    if (!AuthGuard.isLoggedIn(_appPref)) return;
     final user = _appPref.getUserLocalModel();
     if (user == null) return;
 

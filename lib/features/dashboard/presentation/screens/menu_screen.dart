@@ -9,12 +9,14 @@ import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/network/app_urls.dart';
 import '../../../../core/utils/app_url_launcher.dart';
 import '../../../../core/preference/app_pref.dart';
+import '../../../../core/utils/auth_guard.dart';
 import '../../../../core/session/auth_session_refresh.dart';
 import '../../../../core/session/local_logout_service.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../profile_setup/presentation/profile_setup_launch_source.dart';
 import '../../../auth/domain/use_cases/logout_use_case.dart';
 import '../../../../core/widgets/app_scaffold_gradient.dart';
+import '../constants/main_navigation_tabs.dart';
 import '../widgets/menu_about_card.dart';
 import '../widgets/menu_action_tile.dart';
 import '../widgets/menu_header.dart';
@@ -38,7 +40,7 @@ class _MenuScreenState extends State<MenuScreen> {
     super.initState();
     _appPref = sl<AppPref>();
     _sessionRefresh = sl<AuthSessionRefresh>();
-    _isLoggedIn = _appPref.getLoginStatus();
+    _isLoggedIn = AuthGuard.isLoggedIn(_appPref);
     _sessionRefresh.addListener(_onAuthSessionChanged);
   }
 
@@ -50,9 +52,15 @@ class _MenuScreenState extends State<MenuScreen> {
 
   void _onAuthSessionChanged() {
     if (!mounted) return;
-    final loggedIn = _appPref.getLoginStatus();
+    final loggedIn = AuthGuard.isLoggedIn(_appPref);
     if (loggedIn == _isLoggedIn) return;
     setState(() => _isLoggedIn = loggedIn);
+  }
+
+  void _openMyBookings(BuildContext context) {
+    if (!context.requireLogin()) return;
+    _sessionRefresh.requestTabIndex(MainNavigationTabs.bookings);
+    context.pop();
   }
 
   @override
@@ -70,6 +78,12 @@ class _MenuScreenState extends State<MenuScreen> {
         ? l10n.dashboardMenuSignInContinue
         : phone;
     final mainItems = [
+      _MenuItem(
+        id: _MenuItemId.myBookings,
+        title: l10n.bookingsDashboardTitle,
+        icon: Icons.event_note_outlined,
+        curveOverlayColor: AppColors.clr9EC7E8.withValues(alpha: 0.46),
+      ),
       _MenuItem(
         id: _MenuItemId.customerSupport,
         title: l10n.dashboardMenuCustomerSupport,
@@ -119,10 +133,7 @@ class _MenuScreenState extends State<MenuScreen> {
                               ? userLocal?.imageUrl
                               : null,
                           onActionTap: () {
-                            if (!_isLoggedIn) {
-                              context.push(AppRoutes.path(AppRoutes.authLogin));
-                              return;
-                            }
+                            if (!context.requireLogin()) return;
                             context.push(
                               AppRoutes.path(AppRoutes.profileSetup),
                               extra: ProfileSetupLaunchSource.menu,
@@ -133,6 +144,10 @@ class _MenuScreenState extends State<MenuScreen> {
                         for (final item in mainItems) ...[
                           MenuActionTile(
                             onTap: () {
+                              if (item.id == _MenuItemId.myBookings) {
+                                _openMyBookings(context);
+                                return;
+                              }
                               if (item.id == _MenuItemId.customerSupport) {
                                 context.push(
                                   AppRoutes.path(AppRoutes.customerSupport),
@@ -236,4 +251,4 @@ class _MenuItem {
   final Color curveOverlayColor;
 }
 
-enum _MenuItemId { customerSupport, faq }
+enum _MenuItemId { myBookings, customerSupport, faq }

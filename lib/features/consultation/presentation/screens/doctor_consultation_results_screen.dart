@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../components/shimmer/app_shimmer.dart';
 import '../../../../core/di/dependency_injection.dart';
-import '../../../../core/preference/app_pref.dart';
 import '../../../../core/router/app_routes.dart';
 
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../domain/entities/consultation_category_entity.dart';
+import '../../../../core/utils/auth_guard.dart';
 import '../../domain/use_cases/get_consultation_categories_use_case.dart';
 import '../../domain/use_cases/get_consultation_doctors_use_case.dart';
 import '../constants/consultation_ui_config.dart';
@@ -100,10 +100,7 @@ class _DoctorConsultationResultsScreenState
   }
 
   void _onBookNowTap(ResultsDoctorItem doctor) {
-    if (!sl<AppPref>().getLoginStatus()) {
-      context.push(AppRoutes.path(AppRoutes.authLogin));
-      return;
-    }
+    if (!context.requireLogin()) return;
     context.pushNamed(
       AppRoutes.consultationBookDoctor,
       extra: DoctorConsultationBookDoctorArgs(doctor: doctor),

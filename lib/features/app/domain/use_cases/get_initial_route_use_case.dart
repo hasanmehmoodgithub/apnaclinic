@@ -1,3 +1,4 @@
+import '../../../../core/utils/auth_guard.dart';
 import '../../../../core/preference/app_pref.dart';
 import '../../../../core/router/app_routes.dart';
 
@@ -7,7 +8,7 @@ class GetInitialRouteUseCase {
   final AppPref _appPref;
 
   String call() {
-    if (_appPref.getLoginStatus() && !_appPref.isProfileCompleted()) {
+    if (AuthGuard.isLoggedIn(_appPref) && !_appPref.isProfileCompleted()) {
       return AppRoutes.profileSetup;
     }
     if (!_appPref.isOnboardingCompleted()) {

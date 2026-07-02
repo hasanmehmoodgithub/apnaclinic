@@ -5,6 +5,7 @@ import '../../../../core/constants/app_colors.dart';
 import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
+import '../../../../core/utils/auth_guard.dart';
 import '../../../../core/preference/app_pref.dart';
 import '../../../../core/router/app_routes.dart';
 import '../profile_setup_launch_source.dart';
@@ -44,7 +45,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future<void> _refreshProfileFromApi() async {
-    if (!_appPref.getLoginStatus()) return;
+    if (!AuthGuard.isLoggedIn(_appPref)) return;
     await sl<GetProfileSetupContentUseCase>().call();
     if (mounted) setState(() {});
   }
@@ -76,7 +77,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isLoggedIn = _appPref.getLoginStatus();
+    final isLoggedIn = AuthGuard.isLoggedIn(_appPref);
     final userLocal = _appPref.getUserLocalModel();
     final firstName = userLocal?.firstName.trim() ?? '';
     final lastName = userLocal?.lastName.trim() ?? '';

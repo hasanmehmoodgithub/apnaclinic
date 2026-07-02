@@ -25,6 +25,7 @@ Profile uses **`profile_setup`** remote (`GET …/users/{userId}`) — no duplic
 ## UI
 
 - `HomeScreen` — teal `HomeHeaderSection` (rounded bottom `30.r`, menu + `apna clinic` logo + notification + Login, greeting, white pill **search button** — tap opens `AppRoutes.search`; search glyph `assets/svg/ic_search.svg`, mic `ic_search_mic.svg` for voice), light gray body, 2×2 services grid (`DashboardUiConfig`: **195×122** cards, **63×72** icons, 12px gap, `20.r` radius), `ServiceDiscountBadge`, `InstantDoctorHomeBanner` (`assets/svg/instant_doc.svg` via `InstantDoctorBannerArtwork`), `FikrfreeHealthBanner`. `DashboardCubit` + `NotificationCubit`.
+- `MenuScreen` — profile card, **My Bookings** (switches to Bookings bottom-nav tab, login required), Customer Support, FAQ tiles, About section, logout.
 - `MainNavigationShell` — four-tab bar (Home, Instant Doctor, Bookings, Support). Nav icons use filled/outline SVG pairs (`nav_*_filled.svg` / `nav_*_outline.svg`); selected tab shows filled icon. Tab order in `MainNavigationTabs`. Profile is not a bottom tab (header/menu). Exposes `MainNavigationCubit` for in-shell tab switches. Tabs switch **only via bottom nav tap** (no horizontal swipe). Listens to `AuthSessionRefresh` (login/logout) to remount tabs and reload cubits. Bottom bar (`ApnaBottomNavigationBar`) bleeds white into the home-indicator area; shell sets `systemNavigationBarColor` to white (no `SafeArea` wrapper on the bar).
 
 ## Session refresh

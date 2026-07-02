@@ -3,6 +3,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../core/enums/state_status.dart';
 import '../../../../core/preference/app_pref.dart';
+import '../../../../core/utils/auth_guard.dart';
 import '../../../../core/utils/phone_format_utils.dart';
 import '../../domain/use_cases/get_instant_doctor_content_params.dart';
 import '../../domain/use_cases/get_instant_doctor_content_use_case.dart';
@@ -20,7 +21,7 @@ class InstantDoctorCubit extends Cubit<InstantDoctorState> {
   final AppPref appPref;
 
   Future<void> loadContent() async {
-    if (!appPref.getLoginStatus()) {
+    if (!AuthGuard.isLoggedIn(appPref)) {
       emit(
         state.copyWith(
           loadingStateStatus: StateStatus.idle,

@@ -3,14 +3,13 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_system_ui.dart';
 import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/network/api_service.dart';
 import '../../../../core/preference/app_pref.dart';
-import '../../../../core/router/app_routes.dart';
+import '../../../../core/utils/auth_guard.dart';
 import '../../../../core/session/auth_session_refresh.dart';
 import '../../domain/services/promotional_banner_session.dart';
 import '../../../bookings/presentation/screens/bookings_dashboard_screen.dart';
@@ -76,7 +75,15 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
 
   void _onAuthSessionChanged() {
     if (!mounted) return;
+    _applyPendingTabIfNeeded();
     _syncTabsWithSessionIfNeeded();
+  }
+
+  void _applyPendingTabIfNeeded() {
+    final tabIndex = _sessionRefresh.consumePendingTabIndex();
+    if (tabIndex == null) return;
+    _navigationCubit.setIndex(tabIndex);
+    _applyStatusBar();
   }
 
   void _syncTabsWithSessionIfNeeded() {
@@ -94,7 +101,7 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
 
   Future<void> _refreshAllTabs() async {
     final appPref = sl<AppPref>();
-    final isLoggedIn = appPref.getLoginStatus();
+    final isLoggedIn = AuthGuard.isLoggedIn(appPref);
     final profileComplete = appPref.isProfileCompleted();
 
     if (_sessionRefresh.consumeSelectHomeTab()) {
@@ -138,13 +145,8 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
   }
 
   void _onNavTap(int index) {
-    final appPref = sl<AppPref>();
-    if (index == _instantDoctorIndex && !appPref.getLoginStatus()) {
-      context.push(AppRoutes.path(AppRoutes.authLogin));
-      return;
-    }
-    if (index == _bookingsIndex && !appPref.getLoginStatus()) {
-      context.push(AppRoutes.path(AppRoutes.authLogin));
+    if ((index == _instantDoctorIndex || index == _bookingsIndex) &&
+        !context.requireLogin()) {
       return;
     }
 

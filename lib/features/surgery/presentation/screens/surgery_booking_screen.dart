@@ -2,12 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/enums/state_status.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
-import '../../../../core/preference/app_pref.dart';
-import '../../../../core/router/app_routes.dart';
+import '../../../../core/utils/auth_guard.dart';
 import '../../../../core/widgets/app_scaffold_gradient.dart';
 import '../../domain/entities/surgery_doctor_entity.dart';
 import '../cubit/surgery_cubit.dart';
@@ -274,10 +272,7 @@ class _SurgeryBookingScreenState extends State<SurgeryBookingScreen> {
   }
 
   void _openPatientDetails(SurgeryBookingDoctorCardData card) {
-    if (!sl<AppPref>().getLoginStatus()) {
-      context.push(AppRoutes.path(AppRoutes.authLogin));
-      return;
-    }
+    if (!context.requireLogin()) return;
 
     final surgeryCubit = context.read<SurgeryCubit>();
     Navigator.of(context).push(
