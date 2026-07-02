@@ -4,6 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../constants/consultation_ui_config.dart';
+import '../../domain/entities/consultation_doctor_slots_entity.dart';
 import 'availability_section.dart';
 import 'doctor_profile_section.dart';
 import 'documents_section.dart';
@@ -29,6 +30,11 @@ class DoctorConsultationBookingBodyWidget extends StatelessWidget {
     required this.onBrowseTap,
     required this.issueController,
     required this.onTimeSlotChanged,
+    required this.availabilityDays,
+    required this.availabilityMonthLabel,
+    required this.isAvailabilityLoading,
+    this.availabilityErrorMessage,
+    this.onAvailabilityRetry,
   });
 
   final String doctorName;
@@ -47,6 +53,11 @@ class DoctorConsultationBookingBodyWidget extends StatelessWidget {
   final VoidCallback onBrowseTap;
   final TextEditingController issueController;
   final ValueChanged<String?> onTimeSlotChanged;
+  final List<ConsultationAvailabilityDayEntity> availabilityDays;
+  final String availabilityMonthLabel;
+  final bool isAvailabilityLoading;
+  final String? availabilityErrorMessage;
+  final VoidCallback? onAvailabilityRetry;
 
   @override
   Widget build(BuildContext context) {
@@ -96,6 +107,11 @@ class DoctorConsultationBookingBodyWidget extends StatelessWidget {
             SizedBox(height: 18.h),
             AvailabilitySection(
               textTheme: textTheme,
+              days: availabilityDays,
+              monthLabel: availabilityMonthLabel,
+              isLoading: isAvailabilityLoading,
+              errorMessage: availabilityErrorMessage,
+              onRetry: onAvailabilityRetry,
               onTimeSlotChanged: onTimeSlotChanged,
             ),
             SizedBox(height: 20.h),

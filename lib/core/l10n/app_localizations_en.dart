@@ -1074,6 +1074,13 @@ class AppLocalizationsEn extends AppLocalizations {
       'Please select a slot for video consultation';
 
   @override
+  String get consultationNoAvailability =>
+      'No appointment slots are available for this doctor right now.';
+
+  @override
+  String get consultationAvailabilityRetry => 'Retry';
+
+  @override
   String get commonContinue => 'Continue';
 
   @override

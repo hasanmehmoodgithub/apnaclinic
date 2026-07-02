@@ -61,6 +61,17 @@ class AppUrls {
   static String doctorConsultationDoctors(String mainCategoryId) =>
       '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/doctor-consultation/doctors?mainCategoryId=${Uri.encodeComponent(mainCategoryId)}';
 
+  /// Doctor consultation time slots (aggregator mobile API).
+  static String doctorConsultationSlots({
+    required String doctorId,
+    String? hospitalId,
+  }) {
+    final base =
+        '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/doctor-consultation/slots/${Uri.encodeComponent(doctorId)}';
+    if (hospitalId == null || hospitalId.trim().isEmpty) return base;
+    return '$base?hospitalId=${Uri.encodeComponent(hospitalId.trim())}';
+  }
+
   /// Supported cities for lab and surgery (aggregator mobile API).
   static String get cities =>
       '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/cities';

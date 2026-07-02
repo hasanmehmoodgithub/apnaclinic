@@ -1072,6 +1072,13 @@ class AppLocalizationsUr extends AppLocalizations {
       'براہ کرم ویڈیو مشاورت کے لیے وقت منتخب کریں';
 
   @override
+  String get consultationNoAvailability =>
+      'اس ڈاکٹر کے لیے فی الحال کوئی اپائنٹمنٹ سلاٹ دستیاب نہیں ہے۔';
+
+  @override
+  String get consultationAvailabilityRetry => 'دوبارہ کوشش کریں';
+
+  @override
   String get commonContinue => 'جاری رکھیں';
 
   @override

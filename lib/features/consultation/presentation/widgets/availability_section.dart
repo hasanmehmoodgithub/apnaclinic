@@ -1,17 +1,31 @@
 import 'package:flutter/material.dart';
 
+import '../../../../components/shimmer/app_shimmer.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
+import '../../../../core/l10n/app_localizations.dart';
+import '../../domain/entities/consultation_doctor_slots_entity.dart';
 import '../constants/consultation_ui_config.dart';
+import 'availability_section_shimmer_widget.dart';
 
 class AvailabilitySection extends StatefulWidget {
-  final TextTheme textTheme;
-  final ValueChanged<String?>? onTimeSlotChanged;
-
   const AvailabilitySection({
     super.key,
     required this.textTheme,
+    required this.days,
+    required this.monthLabel,
+    required this.isLoading,
+    this.errorMessage,
+    this.onRetry,
     this.onTimeSlotChanged,
   });
+
+  final TextTheme textTheme;
+  final List<ConsultationAvailabilityDayEntity> days;
+  final String monthLabel;
+  final bool isLoading;
+  final String? errorMessage;
+  final VoidCallback? onRetry;
+  final ValueChanged<String?>? onTimeSlotChanged;
 
   @override
   State<AvailabilitySection> createState() => _AvailabilitySectionState();
@@ -21,47 +35,28 @@ class _AvailabilitySectionState extends State<AvailabilitySection> {
   int? _selectedDateIndex;
   int? _selectedTimeSlotIndex;
 
-  static const List<_AvailabilityDay> _days = [
-    _AvailabilityDay(
-      weekDay: 'Thu',
-      dayOfMonth: '23',
-      timeSlots: ['6:00 PM - 6:30 PM', '6:30 PM - 7:00 PM', '7:00 PM - 7:30 PM'],
-    ),
-    _AvailabilityDay(
-      weekDay: 'Fri',
-      dayOfMonth: '24',
-      timeSlots: ['5:30 PM - 6:00 PM', '6:00 PM - 6:30 PM', '6:30 PM - 7:00 PM'],
-    ),
-    _AvailabilityDay(
-      weekDay: 'Sat',
-      dayOfMonth: '25',
-      timeSlots: ['4:30 PM - 5:00 PM', '5:00 PM - 5:30 PM', '5:30 PM - 6:00 PM'],
-    ),
-    _AvailabilityDay(
-      weekDay: 'Sun',
-      dayOfMonth: '26',
-      timeSlots: ['6:00 PM - 6:30 PM', '6:30 PM - 7:00 PM'],
-    ),
-    _AvailabilityDay(
-      weekDay: 'Mon',
-      dayOfMonth: '27',
-      timeSlots: ['7:00 PM - 7:30 PM', '7:30 PM - 8:00 PM'],
-    ),
-    _AvailabilityDay(
-      weekDay: 'Tue',
-      dayOfMonth: '28',
-      timeSlots: ['6:00 PM - 6:30 PM', '6:30 PM - 7:00 PM', '7:00 PM - 7:30 PM'],
-    ),
-    _AvailabilityDay(
-      weekDay: 'Wed',
-      dayOfMonth: '29',
-      timeSlots: ['5:30 PM - 6:00 PM', '6:00 PM - 6:30 PM'],
-    ),
-  ];
+  @override
+  void didUpdateWidget(covariant AvailabilitySection oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.days != widget.days) {
+      _selectedDateIndex = null;
+      _selectedTimeSlotIndex = null;
+      final callback = widget.onTimeSlotChanged;
+      if (callback != null) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (!mounted) return;
+          callback(null);
+        });
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    final selectedDay = _selectedDateIndex == null ? null : _days[_selectedDateIndex!];
+    final l10n = AppLocalizations.of(context)!;
+    final selectedDay =
+        _selectedDateIndex == null ? null : widget.days[_selectedDateIndex!];
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -76,110 +71,163 @@ class _AvailabilitySectionState extends State<AvailabilitySection> {
               ),
             ),
             const Spacer(),
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 11.w, vertical: 6.h),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20.r),
-                border: Border.all(color: const Color(0xFFE1E5EA), width: 1),
-              ),
-              child: Text(
-                'April 2026',
-                style: widget.textTheme.bodySmall?.copyWith(
-                  color: const Color(0xFF5F6C7C),
-                  fontSize: 11.sp,
+            if (widget.isLoading)
+              AppShimmerCard(
+                width: 88.w,
+                height: 28.h,
+                borderRadius: 20.r,
+              )
+            else if (widget.monthLabel.isNotEmpty)
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 11.w, vertical: 6.h),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20.r),
+                  border: Border.all(color: const Color(0xFFE1E5EA), width: 1),
+                ),
+                child: Text(
+                  widget.monthLabel,
+                  style: widget.textTheme.bodySmall?.copyWith(
+                    color: const Color(0xFF5F6C7C),
+                    fontSize: 11.sp,
+                  ),
                 ),
               ),
-            ),
           ],
         ),
         SizedBox(height: 10.h),
-        SizedBox(
-          height: 74.h,
-          child: ListView.separated(
-            scrollDirection: Axis.horizontal,
-            itemCount: _days.length,
-            separatorBuilder: (_, _) => SizedBox(width: 8.w),
-            itemBuilder: (context, index) {
-              final item = _days[index];
-              final selected = _selectedDateIndex == index;
-              return InkWell(
-                borderRadius: BorderRadius.circular(10.r),
-                onTap: () => setState(() {
-                  _selectedDateIndex = index;
-                  _selectedTimeSlotIndex = null;
-                  widget.onTimeSlotChanged?.call(null);
-                }),
-                child: Container(
-                  width: 56.w,
-                  decoration: BoxDecoration(
-                    color: selected
-                        ? ConsultationUiConfig.ctaColor
-                        : const Color(0xFFF1F3F6),
-                    borderRadius: BorderRadius.circular(10.r),
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        item.weekDay,
-                        style: widget.textTheme.bodySmall?.copyWith(
-                          color: selected
-                              ? Colors.white.withValues(alpha: 0.9)
-                              : const Color(0xFF778395),
-                          fontSize: 12.sp,
-                        ),
-                      ),
-                      SizedBox(height: 2.h),
-                      Text(
-                        item.dayOfMonth,
-                        style: widget.textTheme.titleMedium?.copyWith(
-                          color: selected ? Colors.white : const Color(0xFF545F70),
-                          fontSize: 22.sp,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              );
-            },
-          ),
-        ),
-        if (selectedDay != null) ...[
-          SizedBox(height: 10.h),
+        if (widget.isLoading)
+          const AvailabilitySectionShimmerWidget()
+        else if (widget.errorMessage != null)
+          _AvailabilityMessage(
+            textTheme: widget.textTheme,
+            message: widget.errorMessage!,
+            actionLabel: l10n.consultationAvailabilityRetry,
+            onAction: widget.onRetry,
+          )
+        else if (widget.days.isEmpty)
+          _AvailabilityMessage(
+            textTheme: widget.textTheme,
+            message: l10n.consultationNoAvailability,
+            actionLabel:
+                widget.onRetry == null ? null : l10n.consultationAvailabilityRetry,
+            onAction: widget.onRetry,
+          )
+        else ...[
           SizedBox(
-            height: 30.h,
+            height: 74.h,
             child: ListView.separated(
               scrollDirection: Axis.horizontal,
-              itemCount: selectedDay.timeSlots.length,
+              itemCount: widget.days.length,
               separatorBuilder: (_, _) => SizedBox(width: 8.w),
-              itemBuilder: (context, index) => _TimeSlotChip(
-                textTheme: widget.textTheme,
-                text: selectedDay.timeSlots[index],
-                isSelected: _selectedTimeSlotIndex == index,
-                onTap: () => setState(() {
-                  _selectedTimeSlotIndex = index;
-                  widget.onTimeSlotChanged?.call(selectedDay.timeSlots[index]);
-                }),
-              ),
+              itemBuilder: (context, index) {
+                final item = widget.days[index];
+                final selected = _selectedDateIndex == index;
+                return InkWell(
+                  borderRadius: BorderRadius.circular(10.r),
+                  onTap: () => setState(() {
+                    _selectedDateIndex = index;
+                    _selectedTimeSlotIndex = null;
+                    widget.onTimeSlotChanged?.call(null);
+                  }),
+                  child: Container(
+                    width: 56.w,
+                    decoration: BoxDecoration(
+                      color: selected
+                          ? ConsultationUiConfig.ctaColor
+                          : const Color(0xFFF1F3F6),
+                      borderRadius: BorderRadius.circular(10.r),
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          item.weekDay,
+                          style: widget.textTheme.bodySmall?.copyWith(
+                            color: selected
+                                ? Colors.white.withValues(alpha: 0.9)
+                                : const Color(0xFF778395),
+                            fontSize: 12.sp,
+                          ),
+                        ),
+                        SizedBox(height: 2.h),
+                        Text(
+                          item.dayOfMonth,
+                          style: widget.textTheme.titleMedium?.copyWith(
+                            color: selected
+                                ? Colors.white
+                                : const Color(0xFF545F70),
+                            fontSize: 22.sp,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
             ),
           ),
+          if (selectedDay != null) ...[
+            SizedBox(height: 10.h),
+            SizedBox(
+              height: 30.h,
+              child: ListView.separated(
+                scrollDirection: Axis.horizontal,
+                itemCount: selectedDay.slots.length,
+                separatorBuilder: (_, _) => SizedBox(width: 8.w),
+                itemBuilder: (context, index) {
+                  final slot = selectedDay.slots[index];
+                  return _TimeSlotChip(
+                    textTheme: widget.textTheme,
+                    text: slot.label,
+                    isSelected: _selectedTimeSlotIndex == index,
+                    onTap: () => setState(() {
+                      _selectedTimeSlotIndex = index;
+                      widget.onTimeSlotChanged?.call(slot.label);
+                    }),
+                  );
+                },
+              ),
+            ),
+          ],
         ],
       ],
     );
   }
 }
 
-class _AvailabilityDay {
-  const _AvailabilityDay({
-    required this.weekDay,
-    required this.dayOfMonth,
-    required this.timeSlots,
+class _AvailabilityMessage extends StatelessWidget {
+  const _AvailabilityMessage({
+    required this.textTheme,
+    required this.message,
+    this.actionLabel,
+    this.onAction,
   });
 
-  final String weekDay;
-  final String dayOfMonth;
-  final List<String> timeSlots;
+  final TextTheme textTheme;
+  final String message;
+  final String? actionLabel;
+  final VoidCallback? onAction;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          message,
+          style: textTheme.bodyMedium?.copyWith(
+            color: const Color(0xFF5F6C7C),
+            fontSize: 13.sp,
+          ),
+        ),
+        if (actionLabel != null && onAction != null) ...[
+          SizedBox(height: 8.h),
+          TextButton(onPressed: onAction, child: Text(actionLabel!)),
+        ],
+      ],
+    );
+  }
 }
 
 class _TimeSlotChip extends StatelessWidget {
@@ -205,7 +253,9 @@ class _TimeSlotChip extends StatelessWidget {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16.r),
           border: Border.all(
-            color: isSelected ? ConsultationUiConfig.ctaColor : const Color(0xFFE1E5EA),
+            color: isSelected
+                ? ConsultationUiConfig.ctaColor
+                : const Color(0xFFE1E5EA),
             width: 1,
           ),
           color: isSelected
@@ -215,7 +265,9 @@ class _TimeSlotChip extends StatelessWidget {
         child: Text(
           text,
           style: textTheme.bodySmall?.copyWith(
-            color: isSelected ? ConsultationUiConfig.ctaColor : const Color(0xFF5F6C7C),
+            color: isSelected
+                ? ConsultationUiConfig.ctaColor
+                : const Color(0xFF5F6C7C),
             fontSize: 12.sp,
             fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
           ),

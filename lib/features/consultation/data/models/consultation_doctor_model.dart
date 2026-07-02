@@ -17,6 +17,8 @@ class ConsultationDoctorModel {
     required this.bio,
     required this.partnerLabel,
     required this.partnerLogoUrl,
+    required this.hospitalId,
+    required this.partnerDoctorId,
   });
 
   final String id;
@@ -34,6 +36,8 @@ class ConsultationDoctorModel {
   final String bio;
   final String partnerLabel;
   final String partnerLogoUrl;
+  final String hospitalId;
+  final String partnerDoctorId;
 
   factory ConsultationDoctorModel.fromJson(Map<String, dynamic> json) {
     final partnerRaw = json['partner'];
@@ -65,7 +69,23 @@ class ConsultationDoctorModel {
       education: (json['education'] ?? '').toString().trim(),
       bio: (json['bio'] ?? json['description'] ?? '').toString().trim(),
       partnerLabel: _partnerLabel(partner),
-      partnerLogoUrl: (partner?['logoUrl'] ?? '').toString().trim(),
+      partnerLogoUrl: (partner?['logoUrl'] ?? partner?['logo_url'] ?? '')
+          .toString()
+          .trim(),
+      hospitalId: _readString(json, const [
+        'hospitalId',
+        'hospital_id',
+        'defaultHospitalId',
+        'default_hospital_id',
+      ], partner: partner),
+      partnerDoctorId: _readString(json, const [
+        'partnerDoctorId',
+        'partner_doctor_id',
+        'slotsDoctorId',
+        'slots_doctor_id',
+        'externalDoctorId',
+        'external_doctor_id',
+      ], partner: partner),
     );
   }
 
@@ -83,6 +103,9 @@ class ConsultationDoctorModel {
 
     return ResultsDoctorItem(
       id: publicId.isNotEmpty ? publicId : id,
+      apiDoctorId: id,
+      partnerDoctorId: partnerDoctorId,
+      hospitalId: hospitalId,
       name: displayName,
       specialty: specialtyName,
       experience: experienceText,
@@ -138,6 +161,36 @@ class ConsultationDoctorModel {
             '')
         .toString()
         .trim();
+  }
+
+  static String _readString(
+    Map<String, dynamic> json,
+    List<String> keys, {
+    Map<String, dynamic>? partner,
+  }) {
+    for (final key in keys) {
+      final rootValue = json[key];
+      if (rootValue != null && rootValue.toString().trim().isNotEmpty) {
+        return rootValue.toString().trim();
+      }
+    }
+
+    if (partner != null) {
+      for (final key in keys) {
+        final partnerValue = partner[key];
+        if (partnerValue != null && partnerValue.toString().trim().isNotEmpty) {
+          return partnerValue.toString().trim();
+        }
+      }
+      for (final key in const ['doctorId', 'doctor_id', 'externalId']) {
+        final partnerValue = partner[key];
+        if (partnerValue != null && partnerValue.toString().trim().isNotEmpty) {
+          return partnerValue.toString().trim();
+        }
+      }
+    }
+
+    return '';
   }
 }
 

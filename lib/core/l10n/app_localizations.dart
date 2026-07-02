@@ -2114,6 +2114,18 @@ abstract class AppLocalizations {
   /// **'Please select a slot for video consultation'**
   String get consultationSelectSlotError;
 
+  /// No description provided for @consultationNoAvailability.
+  ///
+  /// In en, this message translates to:
+  /// **'No appointment slots are available for this doctor right now.'**
+  String get consultationNoAvailability;
+
+  /// No description provided for @consultationAvailabilityRetry.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get consultationAvailabilityRetry;
+
   /// No description provided for @commonContinue.
   ///
   /// In en, this message translates to:

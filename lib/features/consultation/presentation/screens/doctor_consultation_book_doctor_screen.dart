@@ -5,9 +5,12 @@ import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart' as p;
+import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/router/app_routes.dart';
+import '../../domain/entities/consultation_doctor_slots_entity.dart';
+import '../../domain/use_cases/get_consultation_doctor_slots_use_case.dart';
 import '../constants/consultation_ui_config.dart';
 import '../widgets/results_doctor_item.dart';
 import '../widgets/consultation_hero_banner_widget.dart';
@@ -36,6 +39,56 @@ class _DoctorConsultationBookDoctorScreenState
   String? _attachedMediaName;
   String? _selectedTimeSlot;
   String? _validationErrorMessage;
+  bool _isAvailabilityLoading = true;
+  String? _availabilityErrorMessage;
+  List<ConsultationAvailabilityDayEntity> _availabilityDays = const [];
+  String _availabilityMonthLabel = '';
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) _loadDoctorSlots();
+    });
+  }
+
+  Future<void> _loadDoctorSlots() async {
+    setState(() {
+      _isAvailabilityLoading = true;
+      _availabilityErrorMessage = null;
+    });
+
+    final doctor = widget.doctor;
+    final doctorId = doctor.partnerDoctorId.trim().isNotEmpty
+        ? doctor.partnerDoctorId
+        : (doctor.apiDoctorId.trim().isNotEmpty ? doctor.apiDoctorId : doctor.id);
+    final hospitalId =
+        doctor.hospitalId.trim().isNotEmpty ? doctor.hospitalId : null;
+
+    final result = await sl<GetConsultationDoctorSlotsUseCase>()(
+      GetConsultationDoctorSlotsParams(
+        doctorId: doctorId,
+        hospitalId: hospitalId,
+      ),
+    );
+
+    if (!mounted) return;
+
+    result.fold(
+      (error) => setState(() {
+        _isAvailabilityLoading = false;
+        _availabilityErrorMessage = error;
+        _availabilityDays = const [];
+        _availabilityMonthLabel = '';
+      }),
+      (schedule) => setState(() {
+        _isAvailabilityLoading = false;
+        _availabilityErrorMessage = null;
+        _availabilityDays = schedule.days;
+        _availabilityMonthLabel = schedule.monthLabel;
+      }),
+    );
+  }
 
   @override
   void dispose() {
@@ -121,6 +174,11 @@ class _DoctorConsultationBookDoctorScreenState
                             }
                           });
                         },
+                        availabilityDays: _availabilityDays,
+                        availabilityMonthLabel: _availabilityMonthLabel,
+                        isAvailabilityLoading: _isAvailabilityLoading,
+                        availabilityErrorMessage: _availabilityErrorMessage,
+                        onAvailabilityRetry: _loadDoctorSlots,
                       ),
                       if (_validationErrorMessage != null)
                         Container(

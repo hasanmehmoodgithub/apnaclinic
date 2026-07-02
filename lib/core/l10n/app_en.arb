@@ -437,6 +437,8 @@
   "consultationJazzCashChargeDescription": "Amount will be charged from your jazz cash account.",
   "consultationRequiredFieldsError": "Please fill all the required fields",
   "consultationSelectSlotError": "Please select a slot for video consultation",
+  "consultationNoAvailability": "No appointment slots are available for this doctor right now.",
+  "consultationAvailabilityRetry": "Retry",
   "commonContinue": "Continue",
   "bookingsDashboardTitle": "My Bookings",
   "bookingsTabDoctorConsultation": "Doctor Consultation",
