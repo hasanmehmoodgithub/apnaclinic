@@ -1,15 +1,22 @@
 import 'dart:developer';
 
+import 'package:dio/dio.dart';
+
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/network/api_service.dart';
 import '../../../../core/network/app_urls.dart';
 import '../../../../core/utils/error_handler.dart';
+import '../mock/consultation_booking_mock_api.dart';
+import '../mock/payment_providers_mock_api.dart';
 import '../mock/consultation_categories_mock_api.dart';
 import '../mock/consultation_doctor_slots_mock_api.dart';
 import '../mock/consultation_doctors_mock_api.dart';
+import '../models/consultation_booking_form_data.dart';
 import '../models/consultation_category_model.dart';
 import '../models/consultation_doctor_model.dart';
 import '../models/consultation_doctor_slots_model.dart';
+import '../models/payment_provider_model.dart';
+import '../../domain/use_cases/submit_consultation_booking_use_case.dart';
 import 'consultation_remote_data_source.dart';
 
 class ConsultationRemoteDataSourceImpl implements ConsultationRemoteDataSource {
@@ -18,17 +25,41 @@ class ConsultationRemoteDataSourceImpl implements ConsultationRemoteDataSource {
     required this.mockApi,
     required this.doctorsMockApi,
     required this.slotsMockApi,
+    required this.bookingMockApi,
+    required this.paymentProvidersMockApi,
   });
 
   final ApiService apiService;
   final ConsultationCategoriesMockApi mockApi;
   final ConsultationDoctorsMockApi doctorsMockApi;
   final ConsultationDoctorSlotsMockApi slotsMockApi;
+  final ConsultationBookingMockApi bookingMockApi;
+  final PaymentProvidersMockApi paymentProvidersMockApi;
 
   static bool _isSuccessResponse(Map<String, dynamic> response) {
     if (response['success'] == true) return true;
     final code = response['code'];
     return code is num && code.toInt() == 200;
+  }
+
+  static bool _isBookingSubmitSuccess(Map<String, dynamic> response) {
+    if (response.isEmpty) return true;
+    return _isSuccessResponse(response);
+  }
+
+  static bool _isSuccessfulHttpStatus(int? statusCode) {
+    final code = statusCode ?? 0;
+    return code >= 200 && code < 300;
+  }
+
+  static bool _isSuccessfulBookingTransportError(dynamic error) {
+    if (error is DioException) {
+      return _isSuccessfulHttpStatus(error.response?.statusCode);
+    }
+    if (error is ApiException) {
+      return _isSuccessfulHttpStatus(error.statusCode);
+    }
+    return false;
   }
 
   @override
@@ -129,6 +160,70 @@ class ConsultationRemoteDataSourceImpl implements ConsultationRemoteDataSource {
           doctorId: doctorId,
           hospitalId: hospitalId,
         ),
+      );
+      return Future.error(message);
+    }
+  }
+
+  @override
+  Future<List<PaymentProviderModel>> getPaymentProviders() async {
+    try {
+      final Map<String, dynamic> response;
+      if (PaymentProvidersMockApi.useMockResponses) {
+        response = await paymentProvidersMockApi.getPaymentProvidersSuccessResponse();
+      } else {
+        response = await apiService.get(AppUrls.paymentProviders);
+        log('getPaymentProviders response: $response');
+      }
+
+      if (_isSuccessResponse(response)) {
+        return PaymentProvidersResponseModel.fromJson(response).providers;
+      }
+
+      final message =
+          (response['message'] ?? AppStrings.genericErrorMessage).toString();
+      return Future.error(message);
+    } catch (e) {
+      log('getPaymentProviders error: $e');
+      final message = ErrorHandler.handleExceptions(
+        e,
+        endpoint: AppUrls.paymentProviders,
+      );
+      return Future.error(message);
+    }
+  }
+
+  @override
+  Future<void> submitBooking(SubmitConsultationBookingParams params) async {
+    try {
+      final Map<String, dynamic> response;
+      if (ConsultationBookingMockApi.useMockResponses) {
+        response = await bookingMockApi.submitBookingSuccessResponse();
+      } else {
+        final formData = await consultationBookingFormData(params);
+        response = await apiService.post(
+          AppUrls.doctorConsultationBooking,
+          data: formData,
+          headers: const {'Content-Type': 'multipart/form-data'},
+        );
+        log('submitBooking response: $response');
+      }
+
+      if (_isBookingSubmitSuccess(response)) {
+        return;
+      }
+
+      final message =
+          (response['message'] ?? AppStrings.genericErrorMessage).toString();
+      return Future.error(message);
+    } catch (e) {
+      log('submitBooking error: $e');
+      if (_isSuccessfulBookingTransportError(e)) {
+        return;
+      }
+      final message = ErrorHandler.handleExceptions(
+        e,
+        endpoint: AppUrls.doctorConsultationBooking,
       );
       return Future.error(message);
     }

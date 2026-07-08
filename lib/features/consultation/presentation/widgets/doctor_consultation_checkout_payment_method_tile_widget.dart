@@ -1,7 +1,8 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../../core/extensions/screen_util_extensions.dart';
+import '../../../../core/l10n/app_localizations.dart';
 import '../../data/models/doctor_consultation_checkout_model.dart';
 
 class DoctorConsultationCheckoutPaymentMethodTileWidget extends StatelessWidget {
@@ -18,7 +19,10 @@ class DoctorConsultationCheckoutPaymentMethodTileWidget extends StatelessWidget 
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final textTheme = Theme.of(context).textTheme;
+    final description = _description(l10n);
+
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(12.r),
@@ -45,7 +49,22 @@ class DoctorConsultationCheckoutPaymentMethodTileWidget extends StatelessWidget 
                 shape: BoxShape.circle,
               ),
               padding: EdgeInsets.all(8.r),
-              child: SvgPicture.asset(option.iconAsset),
+              child: option.iconUrl.isNotEmpty
+                  ? CachedNetworkImage(
+                      imageUrl: option.iconUrl,
+                      fit: BoxFit.contain,
+                      placeholder: (_, _) => const SizedBox.shrink(),
+                      errorWidget: (_, _, _) => Icon(
+                        Icons.payment_rounded,
+                        size: 20.r,
+                        color: const Color(0xFF7B8798),
+                      ),
+                    )
+                  : Icon(
+                      Icons.payment_rounded,
+                      size: 20.r,
+                      color: const Color(0xFF7B8798),
+                    ),
             ),
             SizedBox(width: 10.w),
             Expanded(
@@ -53,18 +72,19 @@ class DoctorConsultationCheckoutPaymentMethodTileWidget extends StatelessWidget 
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    option.title,
+                    option.name,
                     style: textTheme.titleMedium?.copyWith(
                       color: const Color(0xFF061E40),
                       fontWeight: FontWeight.w600,
                     ),
                   ),
-                  Text(
-                    option.description,
-                    style: textTheme.bodySmall?.copyWith(
-                      color: const Color(0xFF7B8798),
+                  if (description.isNotEmpty)
+                    Text(
+                      description,
+                      style: textTheme.bodySmall?.copyWith(
+                        color: const Color(0xFF7B8798),
+                      ),
                     ),
-                  ),
                 ],
               ),
             ),
@@ -100,5 +120,16 @@ class DoctorConsultationCheckoutPaymentMethodTileWidget extends StatelessWidget 
         ),
       ),
     );
+  }
+
+  String _description(AppLocalizations l10n) {
+    switch (option.code.toUpperCase()) {
+      case 'JAZZCASH':
+        return l10n.consultationJazzCashChargeDescription;
+      case 'CARD':
+        return l10n.consultationCardChargeDescription;
+      default:
+        return '';
+    }
   }
 }

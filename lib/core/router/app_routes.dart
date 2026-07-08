@@ -10,6 +10,7 @@ class AppRoutes {
   static const String authLogin = 'auth-login';
   static const String authOtp = 'auth-otp';
   static const String profileSetup = 'profile-setup';
+  static const String profile = 'profile';
   static const String home = 'home';
   static const String dashboardMenu = 'dashboard-menu';
   static const String customerSupport = 'customer-support';

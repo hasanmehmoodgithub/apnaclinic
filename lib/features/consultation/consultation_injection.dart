@@ -1,15 +1,20 @@
 import '../../core/di/dependency_injection.dart';
 import 'data/data_sources/consultation_remote_data_source.dart';
 import 'data/data_sources/consultation_remote_data_source_impl.dart';
+import 'data/mock/consultation_booking_mock_api.dart';
 import 'data/mock/consultation_categories_mock_api.dart';
 import 'data/mock/consultation_doctor_slots_mock_api.dart';
 import 'data/mock/consultation_doctors_mock_api.dart';
+import 'data/mock/payment_providers_mock_api.dart';
 import 'data/repositories/consultation_repository_impl.dart';
 import 'domain/repositories/consultation_repository.dart';
 import 'domain/use_cases/get_consultation_categories_use_case.dart';
 import 'domain/use_cases/get_consultation_doctor_slots_use_case.dart';
 import 'domain/use_cases/get_consultation_doctors_use_case.dart';
+import 'domain/use_cases/get_payment_providers_use_case.dart';
+import 'domain/use_cases/submit_consultation_booking_use_case.dart';
 import 'presentation/cubit/consultation_cubit.dart';
+import 'presentation/cubit/doctor_consultation_checkout_cubit.dart';
 
 void initConsultationInjector() {
   sl.registerLazySingleton<ConsultationCategoriesMockApi>(
@@ -21,6 +26,12 @@ void initConsultationInjector() {
   sl.registerLazySingleton<ConsultationDoctorSlotsMockApi>(
     () => ConsultationDoctorSlotsMockApi(),
   );
+  sl.registerLazySingleton<ConsultationBookingMockApi>(
+    () => ConsultationBookingMockApi(),
+  );
+  sl.registerLazySingleton<PaymentProvidersMockApi>(
+    () => PaymentProvidersMockApi(),
+  );
 
   sl.registerLazySingleton<ConsultationRemoteDataSource>(
     () => ConsultationRemoteDataSourceImpl(
@@ -28,6 +39,8 @@ void initConsultationInjector() {
       mockApi: sl<ConsultationCategoriesMockApi>(),
       doctorsMockApi: sl<ConsultationDoctorsMockApi>(),
       slotsMockApi: sl<ConsultationDoctorSlotsMockApi>(),
+      bookingMockApi: sl<ConsultationBookingMockApi>(),
+      paymentProvidersMockApi: sl<PaymentProvidersMockApi>(),
     ),
   );
 
@@ -55,9 +68,29 @@ void initConsultationInjector() {
     ),
   );
 
+  sl.registerLazySingleton<GetPaymentProvidersUseCase>(
+    () => GetPaymentProvidersUseCase(
+      repository: sl<ConsultationRepository>(),
+    ),
+  );
+
+  sl.registerLazySingleton<SubmitConsultationBookingUseCase>(
+    () => SubmitConsultationBookingUseCase(
+      repository: sl<ConsultationRepository>(),
+    ),
+  );
+
   sl.registerFactory<ConsultationCubit>(
     () => ConsultationCubit(
       getCategoriesUseCase: sl<GetConsultationCategoriesUseCase>(),
+    ),
+  );
+
+  sl.registerFactory<DoctorConsultationCheckoutCubit>(
+    () => DoctorConsultationCheckoutCubit(
+      getPaymentProvidersUseCase: sl<GetPaymentProvidersUseCase>(),
+      submitBookingUseCase: sl<SubmitConsultationBookingUseCase>(),
+      appPref: sl(),
     ),
   );
 }

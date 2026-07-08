@@ -449,6 +449,9 @@
       "doctorName": {}
     }
   },
+  "consultationBookingFailed": "Unable to book consultation. Please try again.",
+  "consultationBookingInvalidContextError": "Booking details are incomplete. Please go back and try again.",
+  "consultationBookingMissingMsisdnError": "A valid phone number is required to complete booking.",
   "commonOk": "OK",
   "consultationUploadDocumentTitle": "Upload Document",
   "consultationUseCamera": "Use camera",
@@ -467,6 +470,7 @@
   "consultationSelectAccountTitle": "Select Account",
   "consultationProceedCta": "Proceed",
   "consultationJazzCashChargeDescription": "Amount will be charged from your jazz cash account.",
+  "consultationCardChargeDescription": "Amount will be charged from your card.",
   "consultationRequiredFieldsError": "Please fill all the required fields",
   "consultationSelectSlotError": "Please select a slot for video consultation",
   "consultationNoAvailability": "No appointment slots are available for this doctor right now.",

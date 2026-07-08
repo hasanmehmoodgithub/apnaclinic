@@ -17,7 +17,6 @@ import '../../features/consultation/presentation/screens/doctor_consultation_res
 import '../../features/consultation/presentation/doctor_consultation_results_args.dart';
 import '../../features/consultation/presentation/screens/doctor_consultation_screen.dart';
 import '../../features/consultation/presentation/cubit/doctor_consultation_checkout_cubit.dart';
-import '../../features/consultation/data/mock/doctor_consultation_checkout_mock_api.dart';
 import '../../features/consultation/presentation/doctor_consultation_book_doctor_args.dart';
 import '../../features/consultation/presentation/doctor_consultation_checkout_args.dart';
 import '../../features/customer_support/presentation/screens/customer_support_screen.dart';
@@ -56,6 +55,7 @@ import '../di/dependency_injection.dart';
 import '../preference/app_pref.dart';
 import '../utils/chucker_guard.dart';
 import '../../features/profile_setup/presentation/profile_setup_launch_source.dart';
+import '../../features/profile_setup/presentation/screens/profile_screen.dart';
 import '../../features/profile_setup/presentation/screens/profile_setup_screen.dart';
 import 'app_routes.dart';
 import 'router_observer.dart';
@@ -94,6 +94,11 @@ class AppRouter {
         builder: (context, state) => ProfileSetupScreen(
           launchSource: profileSetupLaunchSourceFromExtra(state.extra),
         ),
+      ),
+      GoRoute(
+        path: AppRoutes.path(AppRoutes.profile),
+        name: AppRoutes.profile,
+        builder: (context, state) => const ProfileScreen(),
       ),
       GoRoute(
         path: AppRoutes.path(AppRoutes.home),
@@ -192,9 +197,7 @@ class AppRouter {
             return const SizedBox.shrink();
           }
           return BlocProvider<DoctorConsultationCheckoutCubit>(
-            create: (_) => DoctorConsultationCheckoutCubit(
-              api: DoctorConsultationCheckoutMockApi(),
-            ),
+            create: (_) => sl<DoctorConsultationCheckoutCubit>(),
             child: DoctorConsultationCheckoutScreen(args: extra),
           );
         },

@@ -99,6 +99,9 @@ class ConsultationDoctorsMockApi {
       'satisfiedText': item.satisfiedText,
       'description': item.description,
       'partnerLogoUrl': item.partnerLogoUrl,
+      'tenantId': item.tenantId,
+      'partnerDoctorId': item.partnerDoctorId,
+      'hospitalId': item.hospitalId,
     };
   }
 }

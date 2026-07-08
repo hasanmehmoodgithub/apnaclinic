@@ -1069,6 +1069,18 @@ class AppLocalizationsUr extends AppLocalizations {
   }
 
   @override
+  String get consultationBookingFailed =>
+      'مشاورت بک نہیں ہو سکی۔ دوبارہ کوشش کریں۔';
+
+  @override
+  String get consultationBookingInvalidContextError =>
+      'بکنگ کی تفصیلات نامکمل ہیں۔ واپس جا کر دوبارہ کوشش کریں۔';
+
+  @override
+  String get consultationBookingMissingMsisdnError =>
+      'بکنگ مکمل کرنے کے لیے درست فون نمبر درکار ہے۔';
+
+  @override
   String get commonOk => 'ٹھیک ہے';
 
   @override
@@ -1127,6 +1139,10 @@ class AppLocalizationsUr extends AppLocalizations {
   @override
   String get consultationJazzCashChargeDescription =>
       'رقم آپ کے جاز کیش اکاؤنٹ سے کاٹی جائے گی۔';
+
+  @override
+  String get consultationCardChargeDescription =>
+      'رقم آپ کے کارڈ سے کاٹی جائے گی۔';
 
   @override
   String get consultationRequiredFieldsError =>

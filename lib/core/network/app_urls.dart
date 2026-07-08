@@ -72,6 +72,14 @@ class AppUrls {
     return '$base?hospitalId=${Uri.encodeComponent(hospitalId.trim())}';
   }
 
+  /// Doctor consultation booking (aggregator mobile API).
+  static String get doctorConsultationBooking =>
+      '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/doctor-consultation/book-consultation';
+
+  /// Payment providers for consultation checkout (aggregator mobile API).
+  static String get paymentProviders =>
+      '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/payment-provider';
+
   /// Supported cities for lab and surgery (aggregator mobile API).
   static String get cities =>
       '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/cities';

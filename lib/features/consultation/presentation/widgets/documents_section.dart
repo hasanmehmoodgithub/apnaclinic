@@ -2,19 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../../core/extensions/screen_util_extensions.dart';
+import '../../domain/entities/consultation_booking_attachment_entity.dart';
 
 class DocumentsSection extends StatelessWidget {
   const DocumentsSection({
     super.key,
     required this.textTheme,
     required this.onBrowseTap,
-    required this.attachedMediaNames,
+    required this.attachments,
     required this.onRemoveAttachment,
   });
 
   final TextTheme textTheme;
   final VoidCallback onBrowseTap;
-  final List<String> attachedMediaNames;
+  final List<ConsultationBookingAttachmentEntity> attachments;
   final ValueChanged<int> onRemoveAttachment;
 
   @override
@@ -74,13 +75,13 @@ class DocumentsSection extends StatelessWidget {
             ),
           ),
         ),
-        if (attachedMediaNames.isNotEmpty) ...[
+        if (attachments.isNotEmpty) ...[
           SizedBox(height: 8.h),
-          ...List.generate(attachedMediaNames.length, (index) {
-            final name = attachedMediaNames[index];
+          ...List.generate(attachments.length, (index) {
+            final attachment = attachments[index];
             return Padding(
               padding: EdgeInsets.only(
-                bottom: index == attachedMediaNames.length - 1 ? 0 : 6.h,
+                bottom: index == attachments.length - 1 ? 0 : 6.h,
               ),
               child: Container(
                 width: double.infinity,
@@ -100,7 +101,7 @@ class DocumentsSection extends StatelessWidget {
                     SizedBox(width: 8.w),
                     Expanded(
                       child: Text(
-                        name,
+                        attachment.name,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: textTheme.bodySmall?.copyWith(
