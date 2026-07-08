@@ -3,11 +3,6 @@ class Assets {
   Assets._();
 
   static const String assetsImgSplash = 'assets/img/splash.webp';
-  static const String imgBrandAlfahealth = 'assets/img/brand_alfahealth.png';
-  static const String imgBrandApnaclinicHome =
-      'assets/img/brand_apnaclinic_home.png';
-  static const String imgIcMenuDrawer = 'assets/img/ic_menu_drawer.png';
-  static const String imgNavSupportFilled = 'assets/img/nav_support_filled.png';
   static const String consultationAssistantIcon = 'assets/img/consultation/assistant_icon.svg';
   static const String consultationBackArrow = 'assets/img/consultation/back_arrow.svg';
   static const String consultationCardPattern = 'assets/img/consultation/card_pattern.svg';
@@ -63,15 +58,20 @@ class Assets {
   static const String iconsSurgerymessage = 'assets/icons/surgerymessage.svg';
   static const String iconsTest = 'assets/icons/test.svg';
   static const String iconsTick = 'assets/icons/tick.svg';
+  static const String iconsWarningTriangle = 'assets/icons/warning_triangle.svg';
   static const String imagesDashboardLoader = 'assets/images/dashboard_loader.json';
   static const String imagesPlaceholder = 'assets/images/placeholder.txt';
   static const String imgBanner = 'assets/img/banner.png';
+  static const String imgBrandAlfahealth = 'assets/img/brand_alfahealth.png';
+  static const String imgBrandApnaclinicHome = 'assets/img/brand_apnaclinic_home.png';
   static const String imgEmptyBox = 'assets/img/emptyBox.png';
   static const String imgFikarFree = 'assets/img/fikar_free.png';
   static const String imgFikrfreeLogo = 'assets/img/fikrfree_logo.png';
   static const String imgFreedoctorTitleIcon = 'assets/img/freedoctorTitleIcon.png';
   static const String imgHeroFamily = 'assets/img/hero_family.webp';
+  static const String imgIcMenuDrawer = 'assets/img/ic_menu_drawer.png';
   static const String imgInstantDocBanner = 'assets/img/instantDocBanner.png';
+  static const String imgNavSupportFilled = 'assets/img/nav_support_filled.png';
   static const String imgPartner = 'assets/img/partner.png';
   static const String imgPharmacyBanner = 'assets/img/pharmacyBanner.webp';
   static const String imgPlaceHolderPerson = 'assets/img/placeHolderPerson.webp';
@@ -106,15 +106,18 @@ class Assets {
   static const String labTestWalkin = 'assets/svg/lab_test/walkin.svg';
   static const String licenseFFL = 'assets/fonts/satoshi/Satoshi_Complete/License/FFL.txt';
   static const String onboardingBookConsultation = 'assets/img/onboarding/book_consultation.png';
+  static const String onboardingBookLabTest = 'assets/img/onboarding/book_lab_test.png';
   static const String onboardingDoctorConsultation = 'assets/img/onboarding/doctor_consultation.webp';
   static const String onboardingInstantDoctor = 'assets/img/onboarding/instant_doctor.png';
-  static const String onboardingLaboratory = 'assets/img/onboarding/book_lab_test.png';
-  static const String onboardingPharmacy = 'assets/img/onboarding/order_medicine.png';
+  static const String onboardingLaboratory = 'assets/img/onboarding/laboratory.webp';
+  static const String onboardingOrderMedicine = 'assets/img/onboarding/order_medicine.png';
+  static const String onboardingPharmacy = 'assets/img/onboarding/pharmacy.webp';
   static const String onboardingSurgeryBooking = 'assets/img/onboarding/surgery_booking.webp';
   static const String supportSupportHero = 'assets/img/support/support_hero.png';
   static const String svgApnaClinicLogo = 'assets/svg/apna_clinic_logo.svg';
   static const String svgAppbarbackground = 'assets/svg/appbarbackground.svg';
   static const String svgBrandApnaClinic = 'assets/svg/brand_apna_clinic.svg';
+  static const String svgCrossRectangular = 'assets/svg/crossRectangular.svg';
   static const String svgFrame1171275326 = 'assets/svg/frame_1171275326.svg';
   static const String svgIcMenu = 'assets/svg/ic_menu.svg';
   static const String svgIcNotification = 'assets/svg/ic_notification.svg';
@@ -127,11 +130,11 @@ class Assets {
   static const String svgNavBookings = 'assets/svg/nav_bookings.svg';
   static const String svgNavBookingsFilled = 'assets/svg/nav_bookings_filled.svg';
   static const String svgNavBookingsOutline = 'assets/svg/nav_bookings_outline.svg';
-  static const String svgNavInstantDoctor = 'assets/svg/nav_instant_doctor.svg';
+  static const String svgNavFreeDoctor = 'assets/svg/nav_free_doctor.svg';
   static const String svgNavHomeBottomBar = 'assets/svg/nav_home_bottom_bar.svg';
   static const String svgNavHomeFilled = 'assets/svg/nav_home_filled.svg';
-  static const String svgNavHomeOutline = 'assets/svg/nav_home_outline.svg';
   static const String svgNavHomeLogo = 'assets/svg/nav_home_logo.svg';
+  static const String svgNavHomeOutline = 'assets/svg/nav_home_outline.svg';
   static const String svgNavInstantDoctorFilled = 'assets/svg/nav_instant_doctor_filled.svg';
   static const String svgNavInstantDoctorOutline = 'assets/svg/nav_instant_doctor_outline.svg';
   static const String svgNavProfile = 'assets/svg/nav_profile.svg';

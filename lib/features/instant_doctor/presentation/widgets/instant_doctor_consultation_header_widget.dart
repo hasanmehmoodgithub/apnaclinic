@@ -21,14 +21,14 @@ class InstantDoctorConsultationHeaderWidget extends StatelessWidget {
           children: [
             Image.asset(
               Assets.imgFreedoctorTitleIcon,
-              height: 18.h,
+              height: 20.h,
             ),
             SizedBox(width: 8.w),
             Expanded(
               child: Text(
                 l10n.instantDoctorConsultationTitle,
                 style: theme.textTheme.titleMedium?.copyWith(
-                  color: AppColors.clr0B2239,
+                  color: AppColors.clr061E40,
                   fontWeight: FontWeight.w700,
                   fontSize: 18.sp,
                   height: 1.25,
@@ -41,8 +41,8 @@ class InstantDoctorConsultationHeaderWidget extends StatelessWidget {
         Text(
           l10n.instantDoctorConsultationSubtitle,
           style: theme.textTheme.bodyMedium?.copyWith(
-            color: AppColors.clr919191,
-            fontSize: 14.sp,
+            color: AppColors.clr43,
+            fontSize: 15.sp,
             fontWeight: FontWeight.w500,
             height: 1.35,
           ),

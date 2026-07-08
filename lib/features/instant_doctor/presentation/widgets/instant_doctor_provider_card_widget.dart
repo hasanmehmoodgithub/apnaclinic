@@ -34,47 +34,56 @@ class InstantDoctorProviderCardWidget extends StatelessWidget {
 
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.all(16.w),
+      padding: EdgeInsets.all(10.w),
       decoration: BoxDecoration(
         color: AppColors.clrWhite,
         borderRadius: BorderRadius.circular(_cardRadius.r),
         border: Border.all(color: AppColors.clrE4E7EB, width: 1),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _ProviderHeader(
-            provider: provider,
-            subscribedLabel: l10n.instantDoctorSubscribed,
-          ),
-          if (provider.product.benefits.isNotEmpty) ...[
-            SizedBox(height: 14.h),
-            _BenefitsSection(benefits: provider.product.benefits),
-          ],
-          SizedBox(height: 16.h),
-          if (provider.isSubscribed)
-            _SubscribedActions(
-              startConsultationLabel: l10n.instantDoctorStartConsultation,
-              isLoading: isLoading,
-              onPrimaryAction: onPrimaryAction,
-              onCancelSubscription: onCancelSubscription,
-              actionHeight: _actionHeight,
-              actionRadius: _actionRadius,
-            )
-          else
-            AppButton.primary(
-              text: l10n.instantDoctorSubscribe,
-              isLoading: isLoading,
-              onPressed: onPrimaryAction,
-              width: double.infinity,
-              height: _actionHeight.h,
-              borderRadius: _actionRadius.r,
-              elevation: 0,
-              backgroundColor: AppColors.clr0FAA9A,
-              foregroundColor: AppColors.clrWhite,
-              fontWeight: FontWeight.w700,
-              fontSize: 16.sp,
+          _ProviderLogo(logoUrl: provider.logoUrl),
+          SizedBox(width: 4.w,),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _ProviderHeader(
+                  provider: provider,
+                  subscribedLabel: l10n.instantDoctorSubscribed,
+                ),
+                if (provider.product.benefits.isNotEmpty) ...[
+                  SizedBox(height: 14.h),
+                  _BenefitsSection(benefits: provider.product.benefits),
+                ],
+                SizedBox(height: 16.h),
+                if (provider.isSubscribed)
+                  _SubscribedActions(
+                    startConsultationLabel: l10n.instantDoctorStartConsultation,
+                    isLoading: isLoading,
+                    onPrimaryAction: onPrimaryAction,
+                    onCancelSubscription: onCancelSubscription,
+                    actionHeight: _actionHeight,
+                    actionRadius: _actionRadius,
+                  )
+                else
+                  AppButton.primary(
+                    text: l10n.instantDoctorSubscribe,
+                    isLoading: isLoading,
+                    onPressed: onPrimaryAction,
+                    width: double.infinity,
+                    height: _actionHeight.h,
+                    borderRadius: _actionRadius.r,
+                    elevation: 0,
+                    backgroundColor: AppColors.clr0FAA9A,
+                    foregroundColor: AppColors.clrWhite,
+                    fontWeight: FontWeight.w700,
+                    fontSize: 16.sp,
+                  ),
+              ],
             ),
+          ),
         ],
       ),
     );
@@ -98,7 +107,7 @@ class _ProviderHeader extends StatelessWidget {
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _ProviderLogo(logoUrl: provider.logoUrl),
+
             SizedBox(width: 12.w),
             Expanded(
               child: Padding(
@@ -111,9 +120,9 @@ class _ProviderHeader extends StatelessWidget {
                     Text(
                       provider.providerName,
                       style: TextStyle(
-                        color: AppColors.clr0B2239,
+                        color: AppColors.clr061E40,
                         fontWeight: FontWeight.w700,
-                        fontSize: 16.sp,
+                        fontSize: 15.sp,
                         height: 1.2,
                       ),
                     ),
@@ -122,7 +131,7 @@ class _ProviderHeader extends StatelessWidget {
                       Text(
                         provider.product.priceDisplay,
                         style: TextStyle(
-                          color: AppColors.clr6C7C92,
+                          color: AppColors.clr43,
                           fontSize: 13.sp,
                           fontWeight: FontWeight.w500,
                           height: 1.2,
@@ -154,9 +163,9 @@ class _SubscribedBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 5.h),
+      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 8.h),
       decoration: BoxDecoration(
-        color: AppColors.clrEAF6F1,
+        color: AppColors.clrF3FCFB,
         borderRadius: BorderRadius.circular(20.r),
       ),
       child: Text(
@@ -219,7 +228,7 @@ class _SubscribedActions extends StatelessWidget {
             height: actionHeight.h,
             borderRadius: actionRadius.r,
             elevation: 0,
-            backgroundColor: AppColors.clrEAF6F1,
+            backgroundColor: AppColors.clrF3FCFB,
             foregroundColor: AppColors.clr0FAA9A,
             fontWeight: FontWeight.w700,
             fontSize: 15.sp,
@@ -289,13 +298,13 @@ class _BenefitChip extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
       decoration: BoxDecoration(
-        color: AppColors.clrF4F6F8,
+        color: AppColors.clrEDEDED,
         borderRadius: BorderRadius.circular(24.r),
       ),
       child: Text(
         label,
         style: TextStyle(
-          color: AppColors.clr0B2239,
+          color: AppColors.clr061E40,
           fontSize: 12.sp,
           fontWeight: FontWeight.w500,
           height: 1.2,

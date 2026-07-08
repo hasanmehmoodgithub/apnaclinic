@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../domain/entities/instant_doctor_product_entity.dart';
 import '../../domain/entities/instant_doctor_provider_entity.dart';
 import '../cubit/instant_doctor_cubit.dart';
 import '../cubit/instant_doctor_state.dart';
@@ -30,13 +31,15 @@ class _InstantDoctorScreenState extends State<InstantDoctorScreen>
     with WidgetsBindingObserver {
   static const double _cardOverlap = 56;
   static const double _topBannerFraction = 0.32;
-  static const double _panelTopRadius = 28;
+  static const double _panelTopRadius =35;
   bool _reloadOnResume = false;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+
+
   }
 
   @override

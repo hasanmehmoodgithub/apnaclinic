@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../components/widgets/app_button.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
+import '../../../../generated/assets.dart';
 
 class InstantDoctorSubscriptionFailureDialog extends StatelessWidget {
   const InstantDoctorSubscriptionFailureDialog({super.key});
@@ -25,10 +27,13 @@ class InstantDoctorSubscriptionFailureDialog extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(
-              Icons.warning_amber_rounded,
-              size: 64.r,
-              color: AppColors.clrF5A623,
+            SizedBox(
+              width: 64.r,
+              height: 64.r,
+              child: SvgPicture.asset(
+                Assets.iconsWarningTriangle,
+                fit: BoxFit.contain,
+              ),
             ),
             SizedBox(height: 16.h),
             Text(
@@ -58,8 +63,8 @@ class InstantDoctorSubscriptionFailureDialog extends StatelessWidget {
                 onPressed: () => context.pop(),
                 backgroundColor: AppColors.clrF4F6F8,
                 foregroundColor: AppColors.clr303D4F,
-                height: 52.h,
-                borderRadius: 12.r,
+                height: 64.h,
+                borderRadius: 22.r,
                 fontWeight: FontWeight.w600,
                 elevation: 0,
               ),

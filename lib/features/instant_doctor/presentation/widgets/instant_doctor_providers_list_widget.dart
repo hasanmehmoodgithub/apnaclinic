@@ -1,3 +1,4 @@
+import 'package:apnaclinic/components/shimmer/app_shimmer.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../core/constants/app_colors.dart';
@@ -36,7 +37,9 @@ class InstantDoctorProvidersListWidget extends StatelessWidget {
           _listPadding.bottom.h,
         ),
         children: [
-          const InstantDoctorConsultationHeaderWidget(),
+          const AppShimmerText(),
+          SizedBox(height: 16.h),
+          const AppShimmerText(),
           SizedBox(height: 16.h),
           const InstantDoctorProviderCardShimmer(),
           SizedBox(height: 14.h),

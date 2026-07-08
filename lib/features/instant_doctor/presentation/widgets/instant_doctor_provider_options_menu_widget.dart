@@ -1,4 +1,6 @@
+import 'package:apnaclinic/generated/assets.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
@@ -43,30 +45,19 @@ class InstantDoctorProviderOptionsMenuWidget extends StatelessWidget {
         itemBuilder: (context) => [
           PopupMenuItem<String>(
             value: _cancelSubscriptionValue,
-            height: 48.h,
+            height: 38.h,
             padding: EdgeInsets.symmetric(horizontal: 14.w),
             child: Row(
               children: [
-                Container(
-                  width: 22.r,
-                  height: 22.r,
-                  decoration: BoxDecoration(
-                    color: AppColors.clrFCE9F0,
-                    borderRadius: BorderRadius.circular(6.r),
-                  ),
-                  child: Icon(
-                    Icons.close_rounded,
-                    size: 14.r,
-                    color: AppColors.clrE01F26,
-                  ),
-                ),
+                SvgPicture.asset(        width: 22.r,
+                    height: 22.r,Assets.svgCrossRectangular),
                 SizedBox(width: 10.w),
                 Text(
                   l10n.instantDoctorCancelSubscription,
                   style: TextStyle(
                     color: AppColors.clrE01F26,
-                    fontSize: 14.sp,
-                    fontWeight: FontWeight.w600,
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
               ],
@@ -79,7 +70,7 @@ class InstantDoctorProviderOptionsMenuWidget extends StatelessWidget {
           child: Icon(
             Icons.more_vert_rounded,
             color: AppColors.clr303D4F,
-            size: 22.r,
+            size: 28.r,
           ),
         ),
       ),

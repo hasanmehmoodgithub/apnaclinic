@@ -13,48 +13,70 @@ class InstantDoctorProviderSummaryCard extends StatelessWidget {
 
   final InstantDoctorProviderEntity provider;
 
+  static const double _logoSize = 48;
+
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.all(14.w),
+      padding: EdgeInsets.all(10.w),
       decoration: BoxDecoration(
         color: AppColors.clrWhite,
         borderRadius: BorderRadius.circular(14.r),
         border: Border.all(color: AppColors.clrE4E7EB),
       ),
-      child: Column(
+      child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _ProviderLogo(logoUrl: provider.logoUrl),
-              SizedBox(width: 12.w),
-              Expanded(
-                child: Text(
-                  provider.providerName,
-                  style: theme.textTheme.titleMedium?.copyWith(
-                    color: AppColors.clr060,
-                    fontWeight: FontWeight.w700,
-                    fontSize: 15.sp,
+          _ProviderLogo(logoUrl: provider.logoUrl),
+          SizedBox(width: 4.w),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: EdgeInsets.only(left: 12.w),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        provider.providerName,
+                        style: TextStyle(
+                          color: AppColors.clr061E40,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 15.sp,
+                          height: 1.2,
+                        ),
+                      ),
+                      if (provider.product.priceDisplay.isNotEmpty) ...[
+                        SizedBox(height: 4.h),
+                        Text(
+                          provider.product.priceDisplay,
+                          style: TextStyle(
+                            color: AppColors.clr43,
+                            fontSize: 13.sp,
+                            fontWeight: FontWeight.w500,
+                            height: 1.2,
+                          ),
+                        ),
+                      ],
+                    ],
                   ),
                 ),
-              ),
-            ],
-          ),
-          if (provider.product.benefits.isNotEmpty) ...[
-            SizedBox(height: 12.h),
-            Wrap(
-              spacing: 8.w,
-              runSpacing: 8.h,
-              children: [
-                for (final benefit in provider.product.benefits)
-                  _BenefitChip(label: benefit),
+                if (provider.product.benefits.isNotEmpty) ...[
+                  SizedBox(height: 12.h),
+                  Wrap(
+                    spacing: 8.w,
+                    runSpacing: 8.h,
+                    children: [
+                      for (final benefit in provider.product.benefits)
+                        _BenefitChip(label: benefit),
+                    ],
+                  ),
+                ],
               ],
             ),
-          ],
+          ),
         ],
       ),
     );
@@ -70,10 +92,10 @@ class _ProviderLogo extends StatelessWidget {
   Widget build(BuildContext context) {
     final url = logoUrl?.trim() ?? '';
     return Container(
-      width: 40.r,
-      height: 40.r,
+      width: InstantDoctorProviderSummaryCard._logoSize.r,
+      height: InstantDoctorProviderSummaryCard._logoSize.r,
       decoration: BoxDecoration(
-        color: AppColors.clrF4F6F8,
+        color: AppColors.clrWhite,
         borderRadius: BorderRadius.circular(12.r),
         border: Border.all(color: AppColors.clrE4E7EB),
       ),
@@ -81,15 +103,15 @@ class _ProviderLogo extends StatelessWidget {
       child: url.isEmpty
           ? Icon(
               Icons.medical_services_outlined,
-              size: 20.r,
+              size: 24.r,
               color: AppColors.clr6C7C92,
             )
           : CachedNetworkImage(
               imageUrl: url,
-              fit: BoxFit.cover,
+              fit: BoxFit.contain,
               errorWidget: (_, _, _) => Icon(
                 Icons.medical_services_outlined,
-                size: 20.r,
+                size: 24.r,
                 color: AppColors.clr6C7C92,
               ),
             ),
@@ -105,16 +127,16 @@ class _BenefitChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 7.h),
+      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
       decoration: BoxDecoration(
-        color: AppColors.clrF4F6F8,
+        color: AppColors.clrEDEDED,
         borderRadius: BorderRadius.circular(24.r),
       ),
       child: Text(
         label,
         style: TextStyle(
-          color: AppColors.clr0B2239,
-          fontSize: 11.sp,
+          color: AppColors.clr061E40,
+          fontSize: 12.sp,
           fontWeight: FontWeight.w500,
           height: 1.2,
         ),
