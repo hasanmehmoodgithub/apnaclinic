@@ -1152,16 +1152,16 @@ class AppLocalizationsEn extends AppLocalizations {
       'Unable to load booking details. Please try again.';
 
   @override
-  String get bookingsStatusPending => 'PENDING';
+  String get bookingsStatusPending => 'Pending';
 
   @override
-  String get bookingsStatusConfirmed => 'CONFIRMED';
+  String get bookingsStatusConfirmed => 'Confirmed';
 
   @override
-  String get bookingsStatusCancel => 'CANCEL';
+  String get bookingsStatusCancel => 'Cancel';
 
   @override
-  String get bookingsStatusCompleted => 'COMPLETED';
+  String get bookingsStatusCompleted => 'Completed';
 
   @override
   String get bookingsPatientLabel => 'Patient';

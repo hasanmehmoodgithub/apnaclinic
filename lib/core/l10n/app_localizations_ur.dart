@@ -1152,16 +1152,16 @@ class AppLocalizationsUr extends AppLocalizations {
       'بکنگ کی تفصیلات لوڈ نہیں ہو سکیں۔ براہ کرم دوبارہ کوشش کریں۔';
 
   @override
-  String get bookingsStatusPending => 'PENDING';
+  String get bookingsStatusPending => 'Pending';
 
   @override
-  String get bookingsStatusConfirmed => 'CONFIRMED';
+  String get bookingsStatusConfirmed => 'Confirmed';
 
   @override
-  String get bookingsStatusCancel => 'CANCEL';
+  String get bookingsStatusCancel => 'Cancel';
 
   @override
-  String get bookingsStatusCompleted => 'COMPLETED';
+  String get bookingsStatusCompleted => 'Completed';
 
   @override
   String get bookingsPatientLabel => 'مریض';

@@ -2261,25 +2261,25 @@ abstract class AppLocalizations {
   /// No description provided for @bookingsStatusPending.
   ///
   /// In en, this message translates to:
-  /// **'PENDING'**
+  /// **'Pending'**
   String get bookingsStatusPending;
 
   /// No description provided for @bookingsStatusConfirmed.
   ///
   /// In en, this message translates to:
-  /// **'CONFIRMED'**
+  /// **'Confirmed'**
   String get bookingsStatusConfirmed;
 
   /// No description provided for @bookingsStatusCancel.
   ///
   /// In en, this message translates to:
-  /// **'CANCEL'**
+  /// **'Cancel'**
   String get bookingsStatusCancel;
 
   /// No description provided for @bookingsStatusCompleted.
   ///
   /// In en, this message translates to:
-  /// **'COMPLETED'**
+  /// **'Completed'**
   String get bookingsStatusCompleted;
 
   /// No description provided for @bookingsPatientLabel.
