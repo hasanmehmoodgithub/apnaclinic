@@ -3,6 +3,11 @@ class Assets {
   Assets._();
 
   static const String assetsImgSplash = 'assets/img/splash.webp';
+  static const String imgBrandAlfahealth = 'assets/img/brand_alfahealth.png';
+  static const String imgBrandApnaclinicHome =
+      'assets/img/brand_apnaclinic_home.png';
+  static const String imgIcMenuDrawer = 'assets/img/ic_menu_drawer.png';
+  static const String imgNavSupportFilled = 'assets/img/nav_support_filled.png';
   static const String consultationAssistantIcon = 'assets/img/consultation/assistant_icon.svg';
   static const String consultationBackArrow = 'assets/img/consultation/back_arrow.svg';
   static const String consultationCardPattern = 'assets/img/consultation/card_pattern.svg';

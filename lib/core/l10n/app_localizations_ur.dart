@@ -1137,6 +1137,13 @@ class AppLocalizationsUr extends AppLocalizations {
       'براہ کرم ویڈیو مشاورت کے لیے وقت منتخب کریں';
 
   @override
+  String get consultationNoAvailability =>
+      'اس ڈاکٹر کے لیے فی الحال کوئی اپائنٹمنٹ سلاٹ دستیاب نہیں ہے۔';
+
+  @override
+  String get consultationAvailabilityRetry => 'دوبارہ کوشش کریں';
+
+  @override
   String get commonContinue => 'جاری رکھیں';
 
   @override
@@ -1210,16 +1217,16 @@ class AppLocalizationsUr extends AppLocalizations {
       'بکنگ کی تفصیلات لوڈ نہیں ہو سکیں۔ براہ کرم دوبارہ کوشش کریں۔';
 
   @override
-  String get bookingsStatusPending => 'PENDING';
+  String get bookingsStatusPending => 'Pending';
 
   @override
-  String get bookingsStatusConfirmed => 'CONFIRMED';
+  String get bookingsStatusConfirmed => 'Confirmed';
 
   @override
-  String get bookingsStatusCancel => 'CANCEL';
+  String get bookingsStatusCancel => 'Cancel';
 
   @override
-  String get bookingsStatusCompleted => 'COMPLETED';
+  String get bookingsStatusCompleted => 'Completed';
 
   @override
   String get bookingsPatientLabel => 'مریض';

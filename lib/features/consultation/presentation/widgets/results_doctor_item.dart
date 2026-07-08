@@ -1,5 +1,8 @@
 class ResultsDoctorItem {
   final String id;
+  final String apiDoctorId;
+  final String partnerDoctorId;
+  final String hospitalId;
   final String name;
   final String specialty;
   final String experience;
@@ -16,6 +19,9 @@ class ResultsDoctorItem {
 
   const ResultsDoctorItem({
     required this.id,
+    required this.apiDoctorId,
+    this.partnerDoctorId = '',
+    this.hospitalId = '',
     required this.name,
     required this.specialty,
     required this.experience,
@@ -34,6 +40,9 @@ class ResultsDoctorItem {
   factory ResultsDoctorItem.fromMap(Map<String, dynamic> map) {
     return ResultsDoctorItem(
       id: map['id'] as String? ?? '',
+      apiDoctorId: (map['apiDoctorId'] ?? map['id'] ?? '').toString(),
+      partnerDoctorId: (map['partnerDoctorId'] ?? '').toString(),
+      hospitalId: (map['hospitalId'] ?? '').toString(),
       name: map['name'] as String? ?? '',
       specialty: map['specialty'] as String? ?? '',
       experience: map['experience'] as String? ?? '',

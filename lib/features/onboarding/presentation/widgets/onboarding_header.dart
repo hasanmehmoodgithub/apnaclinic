@@ -1,6 +1,5 @@
 import 'package:apnaclinic/generated/assets.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
 import 'onboarding_scale.dart';
 
@@ -56,9 +55,10 @@ class OnboardingHeader extends StatelessWidget {
             ),
           ),
           SizedBox(height: onboardingScaled(12, scale)),
-          SvgPicture.asset(
-            Assets.svgBrandApnaClinic,
+          Image.asset(
+            Assets.imgBrandAlfahealth,
             width: logoWidth,
+            fit: BoxFit.contain,
           ),
         ],
       ),

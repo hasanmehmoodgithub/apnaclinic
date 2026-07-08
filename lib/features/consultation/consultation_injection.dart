@@ -2,10 +2,12 @@ import '../../core/di/dependency_injection.dart';
 import 'data/data_sources/consultation_remote_data_source.dart';
 import 'data/data_sources/consultation_remote_data_source_impl.dart';
 import 'data/mock/consultation_categories_mock_api.dart';
+import 'data/mock/consultation_doctor_slots_mock_api.dart';
 import 'data/mock/consultation_doctors_mock_api.dart';
 import 'data/repositories/consultation_repository_impl.dart';
 import 'domain/repositories/consultation_repository.dart';
 import 'domain/use_cases/get_consultation_categories_use_case.dart';
+import 'domain/use_cases/get_consultation_doctor_slots_use_case.dart';
 import 'domain/use_cases/get_consultation_doctors_use_case.dart';
 import 'presentation/cubit/consultation_cubit.dart';
 
@@ -16,12 +18,16 @@ void initConsultationInjector() {
   sl.registerLazySingleton<ConsultationDoctorsMockApi>(
     () => ConsultationDoctorsMockApi(),
   );
+  sl.registerLazySingleton<ConsultationDoctorSlotsMockApi>(
+    () => ConsultationDoctorSlotsMockApi(),
+  );
 
   sl.registerLazySingleton<ConsultationRemoteDataSource>(
     () => ConsultationRemoteDataSourceImpl(
       apiService: sl(),
       mockApi: sl<ConsultationCategoriesMockApi>(),
       doctorsMockApi: sl<ConsultationDoctorsMockApi>(),
+      slotsMockApi: sl<ConsultationDoctorSlotsMockApi>(),
     ),
   );
 
@@ -39,6 +45,12 @@ void initConsultationInjector() {
 
   sl.registerLazySingleton<GetConsultationDoctorsUseCase>(
     () => GetConsultationDoctorsUseCase(
+      repository: sl<ConsultationRepository>(),
+    ),
+  );
+
+  sl.registerLazySingleton<GetConsultationDoctorSlotsUseCase>(
+    () => GetConsultationDoctorSlotsUseCase(
       repository: sl<ConsultationRepository>(),
     ),
   );

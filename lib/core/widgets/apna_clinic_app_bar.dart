@@ -103,12 +103,13 @@ class ApnaClinicAppBar extends StatelessWidget implements PreferredSizeWidget {
 
                         onPressed: onMenuTap,
 
-                        icon: SvgPicture.asset(
-                          Assets.svgIcMenu,
-                          width: 23.w,
-                          height: 16.h,
+                        icon: Image.asset(
+                          Assets.imgIcMenuDrawer,
+                          width: 24.w,
+                          height: 24.h,
                           fit: BoxFit.contain,
-                          colorFilter: svgFilter,
+                          color: wordmarkColor,
+                          colorBlendMode: BlendMode.srcIn,
                         ),
                       ),
                     ),
@@ -119,28 +120,13 @@ class ApnaClinicAppBar extends StatelessWidget implements PreferredSizeWidget {
                     alignment: Alignment.centerLeft,
                     child: Padding(
                       padding: EdgeInsets.only(left: 8.w),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          SvgPicture.asset(
-                            Assets.svgApnaClinicLogo,
-                            height: 26.h,
-                            width: 26.h,
-                            fit: BoxFit.contain,
-                            colorFilter: svgFilter,
-                          ),
-                          SizedBox(width: 7.w),
-                          Text(
-                            'apna clinic',
-                            style: TextStyle(
-                              color: wordmarkColor,
-                              fontSize: 17.sp,
-                              fontWeight: FontWeight.w600,
-                              height: 1.0,
-                              letterSpacing: -0.3,
-                            ),
-                          ),
-                        ],
+                      child: Image.asset(
+                        Assets.imgBrandApnaclinicHome,
+                        height: 26.h,
+                        fit: BoxFit.contain,
+                        alignment: Alignment.centerLeft,
+                        color: wordmarkColor,
+                        colorBlendMode: BlendMode.srcIn,
                       ),
                     ),
                   ),

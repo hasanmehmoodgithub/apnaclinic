@@ -9,7 +9,7 @@ import '../constants/dashboard_ui_config.dart';
 import 'home_header_search_field.dart';
 
 class HomeHeaderSection extends StatelessWidget {
-  const HomeHeaderSection({
+  const   HomeHeaderSection({
     super.key,
     required this.userName,
     required this.isLoggedIn,

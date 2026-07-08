@@ -232,13 +232,17 @@ class NotificationService {
   Future<void> _getFCMToken() async {
     try {
       if (defaultTargetPlatform == TargetPlatform.iOS) {
-        final apnsToken = await _firebaseMessaging?.getAPNSToken();
+        final apnsToken = await _firebaseMessaging
+            ?.getAPNSToken()
+            .timeout(const Duration(seconds: 5), onTimeout: () => null);
         developer.log(
           'APNS token ${apnsToken != null ? "available" : "not yet available"}',
           name: 'NotificationService',
         );
       }
-      _fcmToken = await _firebaseMessaging?.getToken();
+      _fcmToken = await _firebaseMessaging
+          ?.getToken()
+          .timeout(const Duration(seconds: 8), onTimeout: () => null);
       if (_fcmToken == null || _fcmToken!.isEmpty) {
         developer.log('FCM getToken returned empty', name: 'NotificationService');
       } else {
@@ -334,7 +338,19 @@ class NotificationService {
         !FlavorConfig.isStaging) {
       return;
     }
-    await subscribeToTopic('TestNotification');
+    try {
+      await subscribeToTopic('TestNotification').timeout(
+        const Duration(seconds: 5),
+        onTimeout: () {
+          developer.log(
+            'Topic subscribe timed out (emulator / no Play Services)',
+            name: 'NotificationService',
+          );
+        },
+      );
+    } catch (e) {
+      developer.log('Topic subscribe failed: $e', name: 'NotificationService');
+    }
   }
 
   Future<void> subscribeToTopic(String topic) async {

@@ -2222,6 +2222,18 @@ abstract class AppLocalizations {
   /// **'Please select a slot for video consultation'**
   String get consultationSelectSlotError;
 
+  /// No description provided for @consultationNoAvailability.
+  ///
+  /// In en, this message translates to:
+  /// **'No appointment slots are available for this doctor right now.'**
+  String get consultationNoAvailability;
+
+  /// No description provided for @consultationAvailabilityRetry.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get consultationAvailabilityRetry;
+
   /// No description provided for @commonContinue.
   ///
   /// In en, this message translates to:
@@ -2357,25 +2369,25 @@ abstract class AppLocalizations {
   /// No description provided for @bookingsStatusPending.
   ///
   /// In en, this message translates to:
-  /// **'PENDING'**
+  /// **'Pending'**
   String get bookingsStatusPending;
 
   /// No description provided for @bookingsStatusConfirmed.
   ///
   /// In en, this message translates to:
-  /// **'CONFIRMED'**
+  /// **'Confirmed'**
   String get bookingsStatusConfirmed;
 
   /// No description provided for @bookingsStatusCancel.
   ///
   /// In en, this message translates to:
-  /// **'CANCEL'**
+  /// **'Cancel'**
   String get bookingsStatusCancel;
 
   /// No description provided for @bookingsStatusCompleted.
   ///
   /// In en, this message translates to:
-  /// **'COMPLETED'**
+  /// **'Completed'**
   String get bookingsStatusCompleted;
 
   /// No description provided for @bookingsPatientLabel.

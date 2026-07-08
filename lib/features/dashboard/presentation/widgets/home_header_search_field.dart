@@ -55,7 +55,7 @@ class HomeHeaderSearchField extends StatelessWidget {
                   style: theme.textTheme.bodyMedium?.copyWith(
                     color: AppColors.clr6B7280,
                     fontWeight: FontWeight.w400,
-                    fontSize: 13.sp,
+                    fontSize: 16.sp,
                   ),
                 ),
               ),
