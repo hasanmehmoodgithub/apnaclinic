@@ -228,7 +228,39 @@
   "instantDoctorTitle": "Instant Doctor",
   "instantDoctorOpenAppCta": "Subscribe Now!",
   "instantDoctorOpenAppError": "Could not open subscription page right now.",
+  "instantDoctorSubscribe": "Subscribe",
+  "instantDoctorStartConsultation": "Start Consultation",
+  "instantDoctorSubscribed": "Subscribed",
+  "instantDoctorNoProviders": "No instant doctor plans available right now.",
+  "instantDoctorPlanDetails": "Plan details",
+  "instantDoctorOtpInstruction": "A 4 digit OTP code is sent to your number. Please enter the code below to proceed",
+  "instantDoctorSubscribeSuccessTitle": "Successfully Subscribed!",
+  "instantDoctorSubscribeSuccessMessage": "You have successfully subscribed to {providerName}. Consult a doctor any time instantly",
+  "@instantDoctorSubscribeSuccessMessage": {
+    "placeholders": {
+      "providerName": {
+        "type": "String"
+      }
+    }
+  },
+  "instantDoctorSubscribeFailedTitle": "Subscription Failed!",
+  "instantDoctorSubscribeFailedMessage": "Unfortunately some error has occurred. Please try again.",
+  "instantDoctorClose": "Close",
+  "instantDoctorCancelSubscription": "Cancel Subscription",
+  "instantDoctorCancelSubscriptionTitle": "Cancel Subscription?",
+  "instantDoctorCancelSubscriptionMessage": "Are you sure you want to cancel your {providerName} subscription?",
+  "@instantDoctorCancelSubscriptionMessage": {
+    "placeholders": {
+      "providerName": {
+        "type": "String"
+      }
+    }
+  },
+  "instantDoctorCancelSubscriptionConfirm": "Yes, Cancel",
+  "instantDoctorCancelSubscriptionSuccess": "Subscription cancelled successfully.",
+  "instantDoctorCancelSubscriptionFailed": "Unable to cancel subscription. Please try again.",
   "instantDoctorConsultationTitle": "24/7 Instant Doctor Consultation",
+  "instantDoctorConsultationSubtitle": "Consult a doctor instantly and any time by choosing a package of your choice.",
   "instantDoctorPoint1": "This service is available exclusively for M-Health subscribers.",
   "instantDoctorPoint2": "Get 24/7 access to qualified doctors for general medical support and much more.",
   "customerSupportTitle": "Customer Support",

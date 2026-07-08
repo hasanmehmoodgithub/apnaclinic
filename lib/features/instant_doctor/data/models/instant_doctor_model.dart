@@ -1,36 +1,72 @@
-class InstantDoctorModel {
-  const InstantDoctorModel({
-    required this.isSubscribed,
-    required this.bulletPoints,
-    required this.buttonText,
+class InstantDoctorProductModel {
+  const InstantDoctorProductModel({
+    required this.productId,
+    required this.productCode,
+    required this.productType,
+    required this.productTitle,
+    required this.priceDisplay,
+    required this.benefits,
     required this.redirectUrl,
   });
 
-  final bool isSubscribed;
-  final List<String> bulletPoints;
-  final String buttonText;
+  final int productId;
+  final String productCode;
+  final String productType;
+  final String productTitle;
+  final String priceDisplay;
+  final List<String> benefits;
   final String redirectUrl;
 
-  factory InstantDoctorModel.fromJson(Map<String, dynamic> json) {
-    final bullets = json['bulletText'] ?? json['descriptionPoints'];
-    return InstantDoctorModel(
-      isSubscribed: json['isSubscribed'] == true,
-      bulletPoints: (bullets as List<dynamic>? ?? [])
+  factory InstantDoctorProductModel.fromJson(Map<String, dynamic> json) {
+    return InstantDoctorProductModel(
+      productId: _parseInt(json['productId']),
+      productCode: (json['productCode'] ?? '').toString(),
+      productType: (json['productType'] ?? '').toString(),
+      productTitle: (json['productTitle'] ?? '').toString(),
+      priceDisplay: (json['priceDisplay'] ?? '').toString(),
+      benefits: (json['benefits'] as List<dynamic>? ?? [])
           .map((e) => e.toString())
           .where((e) => e.isNotEmpty)
           .toList(),
-      buttonText: (json['buttonText'] ?? '').toString(),
       redirectUrl: (json['redirectUrl'] ?? '').toString(),
     );
   }
+}
 
-  Map<String, dynamic> toJson() {
-    return {
-      'isSubscribed': isSubscribed,
-      'bulletText': bulletPoints,
-      'buttonText': buttonText,
-      'redirectUrl': redirectUrl,
-    };
+class InstantDoctorProviderModel {
+  const InstantDoctorProviderModel({
+    required this.providerId,
+    required this.providerName,
+    required this.logoUrl,
+    required this.isSubscribed,
+    required this.product,
+  });
+
+  final int providerId;
+  final String providerName;
+  final String? logoUrl;
+  final bool isSubscribed;
+  final InstantDoctorProductModel product;
+
+  factory InstantDoctorProviderModel.fromJson(Map<String, dynamic> json) {
+    final productJson = json['product'];
+    return InstantDoctorProviderModel(
+      providerId: _parseInt(json['providerId']),
+      providerName: (json['providerName'] ?? '').toString(),
+      logoUrl: json['logoUrl']?.toString(),
+      isSubscribed: json['isSubscribed'] == true,
+      product: productJson is Map<String, dynamic>
+          ? InstantDoctorProductModel.fromJson(productJson)
+          : const InstantDoctorProductModel(
+              productId: 0,
+              productCode: '',
+              productType: '',
+              productTitle: '',
+              priceDisplay: '',
+              benefits: [],
+              redirectUrl: '',
+            ),
+    );
   }
 }
 
@@ -38,36 +74,34 @@ class InstantDoctorResponseModel {
   const InstantDoctorResponseModel({
     required this.success,
     required this.message,
-    required this.content,
+    required this.providers,
   });
 
   final bool success;
   final String message;
-  final InstantDoctorModel content;
+  final List<InstantDoctorProviderModel> providers;
 
   factory InstantDoctorResponseModel.fromJson(Map<String, dynamic> json) {
-    final payload = _contentMap(json);
     return InstantDoctorResponseModel(
       success: json['success'] == true,
       message: (json['message'] ?? '').toString(),
-      content: InstantDoctorModel.fromJson(payload),
+      providers: _providersFromJson(json['data']),
     );
   }
 
-  static Map<String, dynamic> _contentMap(Map<String, dynamic> json) {
-    final data = json['data'];
-    if (data is Map<String, dynamic>) {
-      return data;
-    }
-    final content = json['content'];
-    if (content is Map<String, dynamic>) {
-      return content;
-    }
-    final copy = Map<String, dynamic>.from(json)
-      ..remove('success')
-      ..remove('message')
-      ..remove('code')
-      ..remove('timestamp');
-    return copy;
+  static List<InstantDoctorProviderModel> _providersFromJson(dynamic data) {
+    if (data is! List<dynamic>) return const [];
+
+    return data
+        .whereType<Map<String, dynamic>>()
+        .map(InstantDoctorProviderModel.fromJson)
+        .where((provider) => provider.providerName.isNotEmpty)
+        .toList();
   }
+}
+
+int _parseInt(dynamic value) {
+  if (value is int) return value;
+  if (value is num) return value.toInt();
+  return int.tryParse(value?.toString() ?? '') ?? 0;
 }

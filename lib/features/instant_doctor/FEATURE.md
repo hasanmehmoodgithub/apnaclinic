@@ -2,7 +2,7 @@
 
 ## Purpose
 
-**Instant Doctor** — loads subscription/consultation info from the aggregator API and opens the consultation URL in an in-app web view.
+**Instant Doctor** — loads multiple provider subscription plans from the aggregator API. Unsubscribed plans use OTP send/verify before opening consultation; subscribed plans open `redirectUrl` directly.
 
 ## Routes / entry
 
@@ -11,19 +11,23 @@
 ## Data & APIs
 
 - `AppUrls.instantDoctorConsultation(msisdn)` — `GET /acs-aggregator/api/v1/mobile/doctor-consultation/instant?msisdn=...`
-- Response `data`: `isSubscribed`, `bulletText[]`, `buttonText`, `redirectUrl`
+- `AppUrls.instantDoctorSendOtp` — `POST …/doctor-consultation/instant/send-otp` — body: `msisdn`, `productId`, `uuid`
+- `AppUrls.instantDoctorVerifyOtp` — `POST …/doctor-consultation/instant/verify-otp` — body: `msisdn`, `productId`, `otp`, `uuid`
+- `AppUrls.instantDoctorCancelSubscription` — `POST …/doctor-consultation/instant/cancel-subscription` — body: `msisdn`, `productId`
+- Response `data[]`: `providerId`, `providerName`, `logoUrl`, `isSubscribed`, `product` (`productId`, `productCode`, `productType`, `productTitle`, `priceDisplay`, `benefits[]`, `redirectUrl`)
 - `msisdn` from logged-in user (`AppPref.getUserLocalModel().phone`, normalized via `PhoneFormatUtils.toMsisdn`)
-- Mock when `MockConfig.enableMocks` is true (`InstantDoctorMockApi`).
+- `uuid` generated per subscription attempt via `SubscriptionUuidUtils.generate()`
+- Mock when `MockConfig.enableInstantDoctorMocks` is true (`InstantDoctorMockApi`).
 
 ## State
 
-- `InstantDoctorCubit` — loads screen content; `openConsultationPage()` opens `redirectUrl` in `LaunchMode.inAppWebView`.
-- `InstantDoctorScreen` — hero header, consultation info card, partner watermark (`Assets.imgPartner`) between card and CTA, subscribe button with shimmer while reloading.
+- `InstantDoctorCubit` — loads providers; subscription OTP flow; `cancelSubscription(provider)`; `openProviderPage` opens `product.redirectUrl` in `LaunchMode.inAppWebView`.
+- `InstantDoctorScreen` — hero header, consultation title block, provider cards (subscribed ⋮ menu → cancel subscription), OTP bottom sheet, success/failure dialogs.
 
 ## DI
 
-- `instant_doctor_injection.dart` — data source, repository, use case, cubit factory (`AppPref` + `GetInstantDoctorContentUseCase`).
+- `instant_doctor_injection.dart` — data source, repository, use cases, cubit factory (`AppPref` + content/OTP use cases).
 
 ## Mocks
 
-- `InstantDoctorMockApi` mirrors live instant consultation response shape when mocks enabled.
+- `InstantDoctorMockApi` mirrors live multi-provider + OTP responses when mocks enabled (verify accepts OTP `1234`).

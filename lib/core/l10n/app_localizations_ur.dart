@@ -473,7 +473,72 @@ class AppLocalizationsUr extends AppLocalizations {
   String get instantDoctorOpenAppError => 'اس وقت سبسکرپشن صفحہ نہیں کھل سکا۔';
 
   @override
+  String get instantDoctorSubscribe => 'سبسکرائب کریں';
+
+  @override
+  String get instantDoctorStartConsultation => 'مشاورت شروع کریں';
+
+  @override
+  String get instantDoctorSubscribed => 'سبسکرائبڈ';
+
+  @override
+  String get instantDoctorNoProviders =>
+      'اس وقت کوئی انسٹنٹ ڈاکٹر پلان دستیاب نہیں۔';
+
+  @override
+  String get instantDoctorPlanDetails => 'پلان کی تفصیل';
+
+  @override
+  String get instantDoctorOtpInstruction =>
+      'آپ کے نمبر پر 4 ہندسوں کا OTP بھیجا گیا ہے۔ آگے بڑھنے کے لیے نیچے کوڈ درج کریں';
+
+  @override
+  String get instantDoctorSubscribeSuccessTitle =>
+      'کامیابی سے سبسکرائب ہو گیا!';
+
+  @override
+  String instantDoctorSubscribeSuccessMessage(String providerName) {
+    return 'آپ نے $providerName کو کامیابی سے سبسکرائب کر لیا ہے۔ کسی بھی وقت فوری ڈاکٹر سے مشورہ کریں';
+  }
+
+  @override
+  String get instantDoctorSubscribeFailedTitle => 'سبسکرپشن ناکام!';
+
+  @override
+  String get instantDoctorSubscribeFailedMessage =>
+      'افسوس، کچھ خرابی پیش آ گئی۔ براہ کرم دوبارہ کوشش کریں۔';
+
+  @override
+  String get instantDoctorClose => 'بند کریں';
+
+  @override
+  String get instantDoctorCancelSubscription => 'سبسکرپشن منسوخ کریں';
+
+  @override
+  String get instantDoctorCancelSubscriptionTitle => 'سبسکرپشن منسوخ کریں؟';
+
+  @override
+  String instantDoctorCancelSubscriptionMessage(String providerName) {
+    return 'کیا آپ واقعی $providerName کی سبسکرپشن منسوخ کرنا چاہتے ہیں؟';
+  }
+
+  @override
+  String get instantDoctorCancelSubscriptionConfirm => 'ہاں، منسوخ کریں';
+
+  @override
+  String get instantDoctorCancelSubscriptionSuccess =>
+      'سبسکرپشن کامیابی سے منسوخ ہو گئی۔';
+
+  @override
+  String get instantDoctorCancelSubscriptionFailed =>
+      'سبسکرپشن منسوخ نہیں ہو سکی۔ دوبارہ کوشش کریں۔';
+
+  @override
   String get instantDoctorConsultationTitle => '24/7 انسٹنٹ ڈاکٹر مشاورت';
+
+  @override
+  String get instantDoctorConsultationSubtitle =>
+      'اپنی پسند کا پیکج منتخب کر کے کسی بھی وقت فوری ڈاکٹر سے مشورہ کریں۔';
 
   @override
   String get instantDoctorPoint1 =>

@@ -53,4 +53,129 @@ class InstantDoctorRemoteDataSourceImpl implements InstantDoctorRemoteDataSource
       return Future.error(message);
     }
   }
+
+  @override
+  Future<void> sendSubscriptionOtp({
+    required String msisdn,
+    required int productId,
+    required String uuid,
+  }) async {
+    try {
+      final Map<String, dynamic> response;
+      if (InstantDoctorMockApi.useMockResponses) {
+        response = await mockApi.sendOtpSuccessResponse(
+          msisdn: msisdn,
+          productId: productId,
+          uuid: uuid,
+        );
+      } else {
+        response = await apiService.post(
+          AppUrls.instantDoctorSendOtp,
+          data: <String, dynamic>{
+            'msisdn': msisdn,
+            'productId': productId,
+            'uuid': uuid,
+          },
+        );
+        log('sendSubscriptionOtp response: $response');
+      }
+
+      if (_isSuccessResponse(response)) return;
+
+      final message = (response['message'] ?? AppStrings.instantDoctorSendOtpError)
+          .toString();
+      return Future.error(message);
+    } catch (e) {
+      log('sendSubscriptionOtp error: $e');
+      final message = ErrorHandler.handleExceptions(
+        e,
+        endpoint: AppUrls.instantDoctorSendOtp,
+      );
+      return Future.error(message);
+    }
+  }
+
+  @override
+  Future<void> verifySubscriptionOtp({
+    required String msisdn,
+    required int productId,
+    required String otp,
+    required String uuid,
+  }) async {
+    try {
+      final Map<String, dynamic> response;
+      if (InstantDoctorMockApi.useMockResponses) {
+        response = await mockApi.verifyOtpResponse(
+          msisdn: msisdn,
+          productId: productId,
+          otp: otp,
+          uuid: uuid,
+        );
+      } else {
+        response = await apiService.post(
+          AppUrls.instantDoctorVerifyOtp,
+          data: <String, dynamic>{
+            'msisdn': msisdn,
+            'productId': productId,
+            'otp': otp,
+            'uuid': uuid,
+          },
+        );
+        log('verifySubscriptionOtp response: $response');
+      }
+
+      if (_isSuccessResponse(response)) return;
+
+      final message =
+          (response['message'] ?? AppStrings.instantDoctorVerifyOtpError)
+              .toString();
+      return Future.error(message);
+    } catch (e) {
+      log('verifySubscriptionOtp error: $e');
+      final message = ErrorHandler.handleExceptions(
+        e,
+        endpoint: AppUrls.instantDoctorVerifyOtp,
+      );
+      return Future.error(message);
+    }
+  }
+
+  @override
+  Future<void> cancelSubscription({
+    required String msisdn,
+    required int productId,
+  }) async {
+    try {
+      final Map<String, dynamic> response;
+      if (InstantDoctorMockApi.useMockResponses) {
+        response = await mockApi.cancelSubscriptionSuccessResponse(
+          msisdn: msisdn,
+          productId: productId,
+        );
+      } else {
+        response = await apiService.post(
+          AppUrls.instantDoctorCancelSubscription,
+          data: <String, dynamic>{
+            'msisdn': msisdn,
+            'productId': productId,
+          },
+        );
+        log('cancelSubscription response: $response');
+      }
+
+      if (_isSuccessResponse(response)) return;
+
+      final message = (response['message'] ??
+              AppStrings.instantDoctorCancelSubscriptionError)
+          .toString();
+      return Future.error(message);
+    } catch (e) {
+      log('cancelSubscription error: $e');
+      final message = ErrorHandler.handleExceptions(
+        e,
+        endpoint: AppUrls.instantDoctorCancelSubscription,
+      );
+      return Future.error(message);
+    }
+  }
 }

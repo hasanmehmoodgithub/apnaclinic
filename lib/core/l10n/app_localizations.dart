@@ -992,11 +992,119 @@ abstract class AppLocalizations {
   /// **'Could not open subscription page right now.'**
   String get instantDoctorOpenAppError;
 
+  /// No description provided for @instantDoctorSubscribe.
+  ///
+  /// In en, this message translates to:
+  /// **'Subscribe'**
+  String get instantDoctorSubscribe;
+
+  /// No description provided for @instantDoctorStartConsultation.
+  ///
+  /// In en, this message translates to:
+  /// **'Start Consultation'**
+  String get instantDoctorStartConsultation;
+
+  /// No description provided for @instantDoctorSubscribed.
+  ///
+  /// In en, this message translates to:
+  /// **'Subscribed'**
+  String get instantDoctorSubscribed;
+
+  /// No description provided for @instantDoctorNoProviders.
+  ///
+  /// In en, this message translates to:
+  /// **'No instant doctor plans available right now.'**
+  String get instantDoctorNoProviders;
+
+  /// No description provided for @instantDoctorPlanDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Plan details'**
+  String get instantDoctorPlanDetails;
+
+  /// No description provided for @instantDoctorOtpInstruction.
+  ///
+  /// In en, this message translates to:
+  /// **'A 4 digit OTP code is sent to your number. Please enter the code below to proceed'**
+  String get instantDoctorOtpInstruction;
+
+  /// No description provided for @instantDoctorSubscribeSuccessTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Successfully Subscribed!'**
+  String get instantDoctorSubscribeSuccessTitle;
+
+  /// No description provided for @instantDoctorSubscribeSuccessMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'You have successfully subscribed to {providerName}. Consult a doctor any time instantly'**
+  String instantDoctorSubscribeSuccessMessage(String providerName);
+
+  /// No description provided for @instantDoctorSubscribeFailedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Subscription Failed!'**
+  String get instantDoctorSubscribeFailedTitle;
+
+  /// No description provided for @instantDoctorSubscribeFailedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Unfortunately some error has occurred. Please try again.'**
+  String get instantDoctorSubscribeFailedMessage;
+
+  /// No description provided for @instantDoctorClose.
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get instantDoctorClose;
+
+  /// No description provided for @instantDoctorCancelSubscription.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel Subscription'**
+  String get instantDoctorCancelSubscription;
+
+  /// No description provided for @instantDoctorCancelSubscriptionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel Subscription?'**
+  String get instantDoctorCancelSubscriptionTitle;
+
+  /// No description provided for @instantDoctorCancelSubscriptionMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to cancel your {providerName} subscription?'**
+  String instantDoctorCancelSubscriptionMessage(String providerName);
+
+  /// No description provided for @instantDoctorCancelSubscriptionConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Yes, Cancel'**
+  String get instantDoctorCancelSubscriptionConfirm;
+
+  /// No description provided for @instantDoctorCancelSubscriptionSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Subscription cancelled successfully.'**
+  String get instantDoctorCancelSubscriptionSuccess;
+
+  /// No description provided for @instantDoctorCancelSubscriptionFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to cancel subscription. Please try again.'**
+  String get instantDoctorCancelSubscriptionFailed;
+
   /// No description provided for @instantDoctorConsultationTitle.
   ///
   /// In en, this message translates to:
   /// **'24/7 Instant Doctor Consultation'**
   String get instantDoctorConsultationTitle;
+
+  /// No description provided for @instantDoctorConsultationSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Consult a doctor instantly and any time by choosing a package of your choice.'**
+  String get instantDoctorConsultationSubtitle;
 
   /// No description provided for @instantDoctorPoint1.
   ///

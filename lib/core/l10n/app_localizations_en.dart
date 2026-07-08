@@ -474,8 +474,72 @@ class AppLocalizationsEn extends AppLocalizations {
       'Could not open subscription page right now.';
 
   @override
+  String get instantDoctorSubscribe => 'Subscribe';
+
+  @override
+  String get instantDoctorStartConsultation => 'Start Consultation';
+
+  @override
+  String get instantDoctorSubscribed => 'Subscribed';
+
+  @override
+  String get instantDoctorNoProviders =>
+      'No instant doctor plans available right now.';
+
+  @override
+  String get instantDoctorPlanDetails => 'Plan details';
+
+  @override
+  String get instantDoctorOtpInstruction =>
+      'A 4 digit OTP code is sent to your number. Please enter the code below to proceed';
+
+  @override
+  String get instantDoctorSubscribeSuccessTitle => 'Successfully Subscribed!';
+
+  @override
+  String instantDoctorSubscribeSuccessMessage(String providerName) {
+    return 'You have successfully subscribed to $providerName. Consult a doctor any time instantly';
+  }
+
+  @override
+  String get instantDoctorSubscribeFailedTitle => 'Subscription Failed!';
+
+  @override
+  String get instantDoctorSubscribeFailedMessage =>
+      'Unfortunately some error has occurred. Please try again.';
+
+  @override
+  String get instantDoctorClose => 'Close';
+
+  @override
+  String get instantDoctorCancelSubscription => 'Cancel Subscription';
+
+  @override
+  String get instantDoctorCancelSubscriptionTitle => 'Cancel Subscription?';
+
+  @override
+  String instantDoctorCancelSubscriptionMessage(String providerName) {
+    return 'Are you sure you want to cancel your $providerName subscription?';
+  }
+
+  @override
+  String get instantDoctorCancelSubscriptionConfirm => 'Yes, Cancel';
+
+  @override
+  String get instantDoctorCancelSubscriptionSuccess =>
+      'Subscription cancelled successfully.';
+
+  @override
+  String get instantDoctorCancelSubscriptionFailed =>
+      'Unable to cancel subscription. Please try again.';
+
+  @override
   String get instantDoctorConsultationTitle =>
       '24/7 Instant Doctor Consultation';
+
+  @override
+  String get instantDoctorConsultationSubtitle =>
+      'Consult a doctor instantly and any time by choosing a package of your choice.';
 
   @override
   String get instantDoctorPoint1 =>

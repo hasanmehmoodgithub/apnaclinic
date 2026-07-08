@@ -1,23 +1,12 @@
 import 'package:equatable/equatable.dart';
 
-class InstantDoctorEntity extends Equatable {
-  const InstantDoctorEntity({
-    required this.isSubscribed,
-    required this.bulletPoints,
-    required this.buttonText,
-    required this.redirectUrl,
-  });
+import 'instant_doctor_provider_entity.dart';
 
-  final bool isSubscribed;
-  final List<String> bulletPoints;
-  final String buttonText;
-  final String redirectUrl;
+class InstantDoctorEntity extends Equatable {
+  const InstantDoctorEntity({required this.providers});
+
+  final List<InstantDoctorProviderEntity> providers;
 
   @override
-  List<Object?> get props => [
-    isSubscribed,
-    bulletPoints,
-    buttonText,
-    redirectUrl,
-  ];
+  List<Object?> get props => [providers];
 }

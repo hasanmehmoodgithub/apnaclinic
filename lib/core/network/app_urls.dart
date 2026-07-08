@@ -77,6 +77,18 @@ class AppUrls {
   static String instantDoctorConsultation(String msisdn) =>
       '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/doctor-consultation/instant?msisdn=${Uri.encodeComponent(msisdn)}';
 
+  /// Instant doctor subscription OTP — send.
+  static String get instantDoctorSendOtp =>
+      '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/doctor-consultation/instant/send-otp';
+
+  /// Instant doctor subscription OTP — verify.
+  static String get instantDoctorVerifyOtp =>
+      '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/doctor-consultation/instant/verify-otp';
+
+  /// Instant doctor subscription — cancel.
+  static String get instantDoctorCancelSubscription =>
+      '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/doctor-consultation/instant/cancel-subscription';
+
   /// Profile setup details endpoint
   static String userProfileById(String userId) =>
       '$_normalizedApiBaseUrl/acs-auth/api/v1/users/$userId';

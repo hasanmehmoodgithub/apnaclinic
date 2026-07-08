@@ -149,7 +149,39 @@
   "instantDoctorTitle": "انسٹنٹ ڈاکٹر",
   "instantDoctorOpenAppCta": "ابھی سبسکرائب کریں!",
   "instantDoctorOpenAppError": "اس وقت سبسکرپشن صفحہ نہیں کھل سکا۔",
+  "instantDoctorSubscribe": "سبسکرائب کریں",
+  "instantDoctorStartConsultation": "مشاورت شروع کریں",
+  "instantDoctorSubscribed": "سبسکرائبڈ",
+  "instantDoctorNoProviders": "اس وقت کوئی انسٹنٹ ڈاکٹر پلان دستیاب نہیں۔",
+  "instantDoctorPlanDetails": "پلان کی تفصیل",
+  "instantDoctorOtpInstruction": "آپ کے نمبر پر 4 ہندسوں کا OTP بھیجا گیا ہے۔ آگے بڑھنے کے لیے نیچے کوڈ درج کریں",
+  "instantDoctorSubscribeSuccessTitle": "کامیابی سے سبسکرائب ہو گیا!",
+  "instantDoctorSubscribeSuccessMessage": "آپ نے {providerName} کو کامیابی سے سبسکرائب کر لیا ہے۔ کسی بھی وقت فوری ڈاکٹر سے مشورہ کریں",
+  "@instantDoctorSubscribeSuccessMessage": {
+    "placeholders": {
+      "providerName": {
+        "type": "String"
+      }
+    }
+  },
+  "instantDoctorSubscribeFailedTitle": "سبسکرپشن ناکام!",
+  "instantDoctorSubscribeFailedMessage": "افسوس، کچھ خرابی پیش آ گئی۔ براہ کرم دوبارہ کوشش کریں۔",
+  "instantDoctorClose": "بند کریں",
+  "instantDoctorCancelSubscription": "سبسکرپشن منسوخ کریں",
+  "instantDoctorCancelSubscriptionTitle": "سبسکرپشن منسوخ کریں؟",
+  "instantDoctorCancelSubscriptionMessage": "کیا آپ واقعی {providerName} کی سبسکرپشن منسوخ کرنا چاہتے ہیں؟",
+  "@instantDoctorCancelSubscriptionMessage": {
+    "placeholders": {
+      "providerName": {
+        "type": "String"
+      }
+    }
+  },
+  "instantDoctorCancelSubscriptionConfirm": "ہاں، منسوخ کریں",
+  "instantDoctorCancelSubscriptionSuccess": "سبسکرپشن کامیابی سے منسوخ ہو گئی۔",
+  "instantDoctorCancelSubscriptionFailed": "سبسکرپشن منسوخ نہیں ہو سکی۔ دوبارہ کوشش کریں۔",
   "instantDoctorConsultationTitle": "24/7 انسٹنٹ ڈاکٹر مشاورت",
+  "instantDoctorConsultationSubtitle": "اپنی پسند کا پیکج منتخب کر کے کسی بھی وقت فوری ڈاکٹر سے مشورہ کریں۔",
   "instantDoctorPoint1": "یہ سروس صرف M-Health سبسکرائبرز کے لیے دستیاب ہے۔",
   "instantDoctorPoint2": "عمومی طبی رہنمائی اور مزید کے لیے 24/7 مستند ڈاکٹروں تک رسائی حاصل کریں۔",
   "customerSupportTitle": "کسٹمر سپورٹ",
