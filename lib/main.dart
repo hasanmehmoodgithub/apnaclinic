@@ -37,12 +37,14 @@ void main() {
         // Initialize dependency injection (includes AppPref initialization)
         // Encryption can be enabled/configured through AppPref methods after initialization
         await _initializeDependencyInjection();
-       // await _prefetchStartupData();
-        await _initializePushNotifications();
+        // await _prefetchStartupData();
 
         runApp(
           wrapWithDevicePreview(child: const ApnaClinicApp()),
         );
+
+        // FCM can hang on emulators without Play Services — never block first frame.
+        unawaited(_initializePushNotifications());
       } catch (e, stackTrace) {
         // Guard: Handle initialization errors gracefully
         developer.log(
@@ -57,34 +59,38 @@ void main() {
           runApp(
             wrapWithDevicePreview(
               child: MaterialApp(
-              home: Scaffold(
-                body: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.error_outline, size: 64.r, color: Colors.red),
-                      SizedBox(height: 16.h),
-                      Text(
-                        'Initialization Error',
-                        style: TextStyle(
-                          fontSize: 24.sp,
-                          fontWeight: FontWeight.bold,
+                home: Scaffold(
+                  body: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.error_outline,
+                          size: 64.r,
+                          color: Colors.red,
                         ),
-                      ),
-                      SizedBox(height: 8.h),
-                      Padding(
-                        padding: EdgeInsets.all(16.r),
-                        child: Text(
-                          e.toString(),
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(color: Colors.red),
+                        SizedBox(height: 16.h),
+                        Text(
+                          'Initialization Error',
+                          style: TextStyle(
+                            fontSize: 24.sp,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                      ),
-                    ],
+                        SizedBox(height: 8.h),
+                        Padding(
+                          padding: EdgeInsets.all(16.r),
+                          child: Text(
+                            e.toString(),
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(color: Colors.red),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
             ),
           );
         } else {

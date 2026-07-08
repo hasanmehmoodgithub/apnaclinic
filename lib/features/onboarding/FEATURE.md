@@ -17,5 +17,6 @@ when logged in without a completed profile.
 
 ## Layout (responsive)
 - Figma artboard **430×932**; `onboardingScale()` = `min(width/430, height/932)`.
+- Header logo: `Assets.imgBrandAlfahealth` (`assets/img/brand_alfahealth.png`).
 - Column: header → `Expanded` page view → pager → next button (`SafeArea`).
 - Page content scrolls on very short screens; image/title sizes clamped via scale.
