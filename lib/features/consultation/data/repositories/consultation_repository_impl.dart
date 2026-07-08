@@ -2,6 +2,8 @@ import '../../../../core/functional/functional_export.dart';
 import '../../domain/entities/consultation_category_entity.dart';
 import '../../domain/entities/consultation_doctor_slots_entity.dart';
 import '../../domain/repositories/consultation_repository.dart';
+import '../../domain/entities/payment_provider_entity.dart';
+import '../../domain/use_cases/submit_consultation_booking_use_case.dart';
 import '../../presentation/widgets/results_doctor_item.dart';
 import '../data_sources/consultation_remote_data_source.dart';
 import '../utils/consultation_slots_error_utils.dart';
@@ -62,6 +64,44 @@ class ConsultationRepositoryImpl implements ConsultationRepository {
           ? e.trim()
           : 'Unable to load availability right now.';
       return Left(ConsultationSlotsErrorUtils.toUserMessage(raw));
+    }
+  }
+
+  @override
+  Future<Either<ErrorMsg, List<PaymentProviderEntity>>> getPaymentProviders() async {
+    try {
+      final providers = await remoteDataSource.getPaymentProviders();
+      return Right(
+        providers
+            .map(
+              (provider) => PaymentProviderEntity(
+                name: provider.name,
+                code: provider.code,
+                iconUrl: provider.iconUrl,
+              ),
+            )
+            .toList(growable: false),
+      );
+    } catch (e) {
+      if (e is String && e.trim().isNotEmpty) {
+        return Left(e.trim());
+      }
+      return const Left('Unable to load payment methods right now.');
+    }
+  }
+
+  @override
+  Future<Either<ErrorMsg, void>> submitBooking(
+    SubmitConsultationBookingParams params,
+  ) async {
+    try {
+      await remoteDataSource.submitBooking(params);
+      return const Right(null);
+    } catch (e) {
+      if (e is String && e.trim().isNotEmpty) {
+        return Left(e.trim());
+      }
+      return const Left('Unable to book consultation right now.');
     }
   }
 }

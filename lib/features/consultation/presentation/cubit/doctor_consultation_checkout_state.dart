@@ -5,12 +5,14 @@ import '../../data/models/doctor_consultation_checkout_model.dart';
 class DoctorConsultationCheckoutState extends Equatable {
   const DoctorConsultationCheckoutState({
     this.isLoading = false,
+    this.isSubmitting = false,
     this.data,
     this.selectedPaymentMethodId,
     this.errorMessage,
   });
 
   final bool isLoading;
+  final bool isSubmitting;
   final DoctorConsultationCheckoutModel? data;
   final String? selectedPaymentMethodId;
   final String? errorMessage;
@@ -19,6 +21,7 @@ class DoctorConsultationCheckoutState extends Equatable {
 
   DoctorConsultationCheckoutState copyWith({
     bool? isLoading,
+    bool? isSubmitting,
     DoctorConsultationCheckoutModel? data,
     String? selectedPaymentMethodId,
     String? errorMessage,
@@ -26,12 +29,20 @@ class DoctorConsultationCheckoutState extends Equatable {
   }) {
     return DoctorConsultationCheckoutState(
       isLoading: isLoading ?? this.isLoading,
+      isSubmitting: isSubmitting ?? this.isSubmitting,
       data: data ?? this.data,
-      selectedPaymentMethodId: selectedPaymentMethodId ?? this.selectedPaymentMethodId,
+      selectedPaymentMethodId:
+          selectedPaymentMethodId ?? this.selectedPaymentMethodId,
       errorMessage: clearError ? null : (errorMessage ?? this.errorMessage),
     );
   }
 
   @override
-  List<Object?> get props => [isLoading, data, selectedPaymentMethodId, errorMessage];
+  List<Object?> get props => [
+        isLoading,
+        isSubmitting,
+        data,
+        selectedPaymentMethodId,
+        errorMessage,
+      ];
 }

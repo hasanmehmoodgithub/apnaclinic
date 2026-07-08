@@ -4,6 +4,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../constants/consultation_ui_config.dart';
+import '../../domain/entities/consultation_booking_attachment_entity.dart';
+import '../../domain/entities/consultation_selected_slot_entity.dart';
 import '../../domain/entities/consultation_doctor_slots_entity.dart';
 import 'availability_section.dart';
 import 'doctor_profile_section.dart';
@@ -26,11 +28,11 @@ class DoctorConsultationBookingBodyWidget extends StatelessWidget {
     required this.partner,
     required this.partnerLogoUrl,
     required this.textTheme,
-    required this.attachedMediaNames,
+    required this.attachments,
     required this.onBrowseTap,
     required this.onRemoveAttachment,
     required this.issueController,
-    required this.onTimeSlotChanged,
+    required this.onSlotChanged,
     required this.availabilityDays,
     required this.availabilityMonthLabel,
     required this.isAvailabilityLoading,
@@ -50,11 +52,11 @@ class DoctorConsultationBookingBodyWidget extends StatelessWidget {
   final String partner;
   final String partnerLogoUrl;
   final TextTheme textTheme;
-  final List<String> attachedMediaNames;
+  final List<ConsultationBookingAttachmentEntity> attachments;
   final VoidCallback onBrowseTap;
   final ValueChanged<int> onRemoveAttachment;
   final TextEditingController issueController;
-  final ValueChanged<String?> onTimeSlotChanged;
+  final ValueChanged<ConsultationSelectedSlotEntity?> onSlotChanged;
   final List<ConsultationAvailabilityDayEntity> availabilityDays;
   final String availabilityMonthLabel;
   final bool isAvailabilityLoading;
@@ -114,7 +116,7 @@ class DoctorConsultationBookingBodyWidget extends StatelessWidget {
               isLoading: isAvailabilityLoading,
               errorMessage: availabilityErrorMessage,
               onRetry: onAvailabilityRetry,
-              onTimeSlotChanged: onTimeSlotChanged,
+              onSlotChanged: onSlotChanged,
             ),
             SizedBox(height: 20.h),
             IssueSection(
@@ -127,7 +129,7 @@ class DoctorConsultationBookingBodyWidget extends StatelessWidget {
             DocumentsSection(
               textTheme: textTheme,
               onBrowseTap: onBrowseTap,
-              attachedMediaNames: attachedMediaNames,
+              attachments: attachments,
               onRemoveAttachment: onRemoveAttachment,
             ),
             SizedBox(height: 16.h),

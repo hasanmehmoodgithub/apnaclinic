@@ -9,7 +9,9 @@ import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/router/app_routes.dart';
+import '../../domain/entities/consultation_booking_attachment_entity.dart';
 import '../../domain/entities/consultation_doctor_slots_entity.dart';
+import '../../domain/entities/consultation_selected_slot_entity.dart';
 import '../../domain/use_cases/get_consultation_doctor_slots_use_case.dart';
 import '../constants/consultation_ui_config.dart';
 import '../widgets/results_doctor_item.dart';
@@ -36,8 +38,8 @@ class _DoctorConsultationBookDoctorScreenState
     extends State<DoctorConsultationBookDoctorScreen> {
   final ImagePicker _imagePicker = ImagePicker();
   final TextEditingController _issueController = TextEditingController();
-  final List<String> _attachedMediaNames = [];
-  String? _selectedTimeSlot;
+  final List<ConsultationBookingAttachmentEntity> _attachments = [];
+  ConsultationSelectedSlotEntity? _selectedSlot;
   String? _validationErrorMessage;
   bool _isAvailabilityLoading = true;
   String? _availabilityErrorMessage;
@@ -163,13 +165,13 @@ class _DoctorConsultationBookDoctorScreenState
                         partner: doctor.partner,
                         partnerLogoUrl: doctor.partnerLogoUrl,
                         textTheme: textTheme,
-                        attachedMediaNames: _attachedMediaNames,
+                        attachments: _attachments,
                         onBrowseTap: _openUploadDocumentSheet,
                         onRemoveAttachment: _removeAttachment,
                         issueController: _issueController,
-                        onTimeSlotChanged: (value) {
+                        onSlotChanged: (value) {
                           setState(() {
-                            _selectedTimeSlot = value;
+                            _selectedSlot = value;
                             if (_validationErrorMessage != null) {
                               _validationErrorMessage = null;
                             }
@@ -228,7 +230,7 @@ class _DoctorConsultationBookDoctorScreenState
                                 });
                                 return;
                               }
-                              if (_selectedTimeSlot == null) {
+                              if (_selectedSlot == null) {
                                 setState(() {
                                   _validationErrorMessage =
                                       l10n.consultationSelectSlotError;
@@ -241,10 +243,13 @@ class _DoctorConsultationBookDoctorScreenState
                               context.pushNamed(
                                 AppRoutes.consultationCheckout,
                                 extra: DoctorConsultationCheckoutArgs(
-                                  doctorName: doctor.name,
-                                  specialty: doctor.specialty,
-                                  qualification: qualification,
-                                  doctorImageUrl: doctor.imageUrl,
+                                  doctor: doctor,
+                                  issueDescription: trimmedIssue,
+                                  selectedSlot: _selectedSlot!,
+                                  attachments:
+                                      List<ConsultationBookingAttachmentEntity>.unmodifiable(
+                                    _attachments,
+                                  ),
                                 ),
                               );
                             },
@@ -304,21 +309,20 @@ class _DoctorConsultationBookDoctorScreenState
     );
   }
 
-  void _addAttachments(Iterable<String> names) {
-    final next = names
-        .map((name) => name.trim())
-        .where((name) => name.isNotEmpty)
+  void _addAttachments(Iterable<ConsultationBookingAttachmentEntity> items) {
+    final next = items
+        .where((item) => item.path.trim().isNotEmpty && item.name.trim().isNotEmpty)
         .toList();
     if (next.isEmpty) return;
     setState(() {
-      _attachedMediaNames.addAll(next);
+      _attachments.addAll(next);
     });
   }
 
   void _removeAttachment(int index) {
-    if (index < 0 || index >= _attachedMediaNames.length) return;
+    if (index < 0 || index >= _attachments.length) return;
     setState(() {
-      _attachedMediaNames.removeAt(index);
+      _attachments.removeAt(index);
     });
   }
 
@@ -329,7 +333,12 @@ class _DoctorConsultationBookDoctorScreenState
         imageQuality: 85,
       );
       if (picked == null || !mounted) return;
-      _addAttachments([p.basename(picked.path)]);
+      _addAttachments([
+        ConsultationBookingAttachmentEntity(
+          name: p.basename(picked.path),
+          path: picked.path,
+        ),
+      ]);
     } on PlatformException {
       _showSnackBar(AppLocalizations.of(context)!.consultationCameraUnavailable);
     } catch (_) {
@@ -341,7 +350,14 @@ class _DoctorConsultationBookDoctorScreenState
     try {
       final picked = await _imagePicker.pickMultiImage(imageQuality: 85);
       if (picked.isEmpty || !mounted) return;
-      _addAttachments(picked.map((file) => p.basename(file.path)));
+      _addAttachments(
+        picked.map(
+          (file) => ConsultationBookingAttachmentEntity(
+            name: p.basename(file.path),
+            path: file.path,
+          ),
+        ),
+      );
     } on PlatformException {
       _showSnackBar(AppLocalizations.of(context)!.consultationGalleryUnavailable);
     } catch (_) {
@@ -353,7 +369,16 @@ class _DoctorConsultationBookDoctorScreenState
     try {
       final result = await FilePicker.pickFiles(allowMultiple: true);
       if (result == null || result.files.isEmpty || !mounted) return;
-      _addAttachments(result.files.map((file) => file.name));
+      _addAttachments(
+        result.files
+            .where((file) => (file.path ?? '').trim().isNotEmpty)
+            .map(
+              (file) => ConsultationBookingAttachmentEntity(
+                name: file.name,
+                path: file.path!,
+              ),
+            ),
+      );
     } catch (_) {
       _showSnackBar(AppLocalizations.of(context)!.consultationPickFileFailed);
     }

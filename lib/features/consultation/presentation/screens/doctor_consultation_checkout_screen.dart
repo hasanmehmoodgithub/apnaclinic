@@ -3,18 +3,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/preference/app_pref.dart';
 import '../../../../core/router/app_routes.dart';
-import '../../../account/data/account_local_store.dart';
+import '../../../../core/session/auth_session_refresh.dart';
 import '../../../account/domain/models/account_method.dart';
-import '../../../../core/di/dependency_injection.dart';
+import '../../../account/domain/use_cases/get_accounts_list_use_case.dart';
+import '../../../dashboard/presentation/constants/main_navigation_tabs.dart';
+import '../../data/utils/consultation_booking_utils.dart';
 import '../constants/consultation_ui_config.dart';
 import '../widgets/consultation_screen_header_widget.dart';
 import '../cubit/doctor_consultation_checkout_cubit.dart';
 import '../cubit/doctor_consultation_checkout_state.dart';
 import '../doctor_consultation_checkout_args.dart';
+import '../widgets/consultation_booking_confirmation_dialog_widget.dart';
 import '../widgets/doctor_consultation_checkout_billing_section_widget.dart';
 import '../widgets/doctor_consultation_jazzcash_accounts_sheet_widget.dart';
 import '../widgets/doctor_consultation_checkout_payment_method_tile_widget.dart';
@@ -42,34 +46,63 @@ class _DoctorConsultationCheckoutScreenState
   void initState() {
     super.initState();
     _loadSavedAccounts();
-    context.read<DoctorConsultationCheckoutCubit>().load();
+    context.read<DoctorConsultationCheckoutCubit>().load(widget.args);
   }
 
   Future<void> _loadSavedAccounts() async {
-    final accounts = AccountLocalStore(sl<AppPref>()).getAccounts();
+    final l10n = AppLocalizations.of(context)!;
+    final result = await sl<GetAccountsListUseCase>().call();
     if (!mounted) return;
-    setState(() {
-      _savedAccounts = accounts;
-      _selectedAccountIndex = accounts.indexWhere((item) => item.isDefault);
-      if (_selectedAccountIndex < 0) {
-        _selectedAccountIndex = 0;
-      }
-    });
+
+    result.fold(
+      (_) {
+        setState(() {
+          _savedAccounts = const [];
+          _selectedAccountIndex = 0;
+        });
+      },
+      (items) {
+        final accounts = items
+            .map(
+              (item) => AccountMethod(
+                bankName: l10n.accountMethodJazzCash,
+                accountHolderName: l10n.accountHolderFallback,
+                accountNumber: item.number,
+                isDefault: item.isDefault,
+              ),
+            )
+            .toList(growable: false);
+
+        var selectedIndex = accounts.indexWhere((item) => item.isDefault);
+        if (selectedIndex < 0) selectedIndex = 0;
+
+        setState(() {
+          _savedAccounts = accounts;
+          _selectedAccountIndex = selectedIndex;
+        });
+      },
+    );
   }
 
   void _onPaymentMethodTap(String id) {
     context.read<DoctorConsultationCheckoutCubit>().selectPaymentMethod(id);
   }
 
-  Future<void> _onContinuePressed(String? selectedPaymentMethodId) async {
-    if (selectedPaymentMethodId == null) return;
-    if (selectedPaymentMethodId == 'jazz_cash') {
-      await _openJazzCashBottomSheet();
+  Future<void> _onContinuePressed(String? selectedPaymentMethodCode) async {
+    if (selectedPaymentMethodCode == null) return;
+    if (ConsultationBookingUtils.isJazzCashCode(selectedPaymentMethodCode)) {
+      await _openJazzCashBottomSheet(selectedPaymentMethodCode);
       return;
     }
+
+    final msisdn = sl<AppPref>().getUserLocalModel()?.phone ?? '';
+    await _submitBooking(
+      paymentMethodCode: selectedPaymentMethodCode,
+      msisdn: msisdn,
+    );
   }
 
-  Future<void> _openJazzCashBottomSheet() async {
+  Future<void> _openJazzCashBottomSheet(String paymentMethodCode) async {
     final selectedIndex = await showModalBottomSheet<int>(
       context: context,
       isScrollControlled: true,
@@ -86,10 +119,61 @@ class _DoctorConsultationCheckoutScreenState
       await context.pushNamed(AppRoutes.accountDetails);
       await _loadSavedAccounts();
       if (!mounted) return;
-      await _openJazzCashBottomSheet();
+      await _openJazzCashBottomSheet(paymentMethodCode);
       return;
     }
     setState(() => _selectedAccountIndex = selectedIndex);
+
+    final account = _savedAccounts[selectedIndex];
+    await _submitBooking(
+      paymentMethodCode: paymentMethodCode,
+      msisdn: account.accountNumber,
+    );
+  }
+
+  Future<void> _submitBooking({
+    required String paymentMethodCode,
+    required String msisdn,
+  }) async {
+    final l10n = AppLocalizations.of(context)!;
+    final cubit = context.read<DoctorConsultationCheckoutCubit>();
+    final success = await cubit.submitBooking(
+      args: widget.args,
+      paymentMethodCode: paymentMethodCode,
+      msisdn: msisdn,
+    );
+    if (!mounted) return;
+
+    if (!success) {
+      final message = cubit.state.errorMessage;
+      final displayMessage = switch (message) {
+        'invalid_booking_context' => l10n.consultationBookingInvalidContextError,
+        'missing_msisdn' => l10n.consultationBookingMissingMsisdnError,
+        _ => (message != null && message.isNotEmpty)
+            ? message
+            : l10n.consultationBookingFailed,
+      };
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(SnackBar(content: Text(displayMessage)));
+      return;
+    }
+
+    await showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (dialogContext) {
+        return ConsultationBookingConfirmationDialogWidget(
+          doctorName: widget.args.doctorName,
+          onOk: () {
+            Navigator.of(dialogContext).pop();
+            if (!mounted) return;
+            sl<AuthSessionRefresh>().requestTabIndex(MainNavigationTabs.bookings);
+            context.go(AppRoutes.path(AppRoutes.home));
+          },
+        );
+      },
+    );
   }
 
   @override
@@ -135,8 +219,32 @@ class _DoctorConsultationCheckoutScreenState
                       DoctorConsultationCheckoutCubit,
                       DoctorConsultationCheckoutState>(
                     builder: (context, state) {
-                      if (state.isLoading || state.data == null) {
+                      if (state.isLoading) {
                         return const DoctorConsultationCheckoutShimmerWidget();
+                      }
+                      if (state.hasError || state.data == null) {
+                        return Center(
+                          child: Padding(
+                            padding: EdgeInsets.all(20.w),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  state.errorMessage ?? l10n.consultationBookingFailed,
+                                  textAlign: TextAlign.center,
+                                  style: Theme.of(context).textTheme.bodyMedium,
+                                ),
+                                SizedBox(height: 12.h),
+                                FilledButton(
+                                  onPressed: () => context
+                                      .read<DoctorConsultationCheckoutCubit>()
+                                      .load(widget.args),
+                                  child: Text(l10n.commonRetry),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
                       }
                       final data = state.data!;
                       return Padding(
@@ -162,11 +270,11 @@ class _DoctorConsultationCheckoutScreenState
                                 itemBuilder: (context, index) {
                                   final option = data.paymentOptions[index];
                                   final isSelected =
-                                      state.selectedPaymentMethodId == option.id;
+                                      state.selectedPaymentMethodId == option.code;
                                   return DoctorConsultationCheckoutPaymentMethodTileWidget(
                                     option: option,
                                     isSelected: isSelected,
-                                    onTap: () => _onPaymentMethodTap(option.id),
+                                    onTap: () => _onPaymentMethodTap(option.code),
                                   );
                                 },
                               ),
@@ -175,7 +283,8 @@ class _DoctorConsultationCheckoutScreenState
                               width: double.infinity,
                               height: 56.h,
                               child: FilledButton(
-                                onPressed: state.selectedPaymentMethodId == null
+                                onPressed: state.selectedPaymentMethodId == null ||
+                                        state.isSubmitting
                                     ? null
                                     : () => _onContinuePressed(
                                           state.selectedPaymentMethodId,
@@ -186,7 +295,16 @@ class _DoctorConsultationCheckoutScreenState
                                     borderRadius: BorderRadius.circular(16.r),
                                   ),
                                 ),
-                                child: Text(l10n.commonContinue),
+                                child: state.isSubmitting
+                                    ? SizedBox(
+                                        width: 22.r,
+                                        height: 22.r,
+                                        child: const CircularProgressIndicator(
+                                          strokeWidth: 2,
+                                          color: Colors.white,
+                                        ),
+                                      )
+                                    : Text(l10n.commonContinue),
                               ),
                             ),
                           ],

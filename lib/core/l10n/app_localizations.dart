@@ -2102,6 +2102,24 @@ abstract class AppLocalizations {
   /// **'Your consultation has been booked with {doctorName}. You can join the call from Appointments.'**
   String consultationBookingConfirmedMessage(Object doctorName);
 
+  /// No description provided for @consultationBookingFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to book consultation. Please try again.'**
+  String get consultationBookingFailed;
+
+  /// No description provided for @consultationBookingInvalidContextError.
+  ///
+  /// In en, this message translates to:
+  /// **'Booking details are incomplete. Please go back and try again.'**
+  String get consultationBookingInvalidContextError;
+
+  /// No description provided for @consultationBookingMissingMsisdnError.
+  ///
+  /// In en, this message translates to:
+  /// **'A valid phone number is required to complete booking.'**
+  String get consultationBookingMissingMsisdnError;
+
   /// No description provided for @commonOk.
   ///
   /// In en, this message translates to:
@@ -2209,6 +2227,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Amount will be charged from your jazz cash account.'**
   String get consultationJazzCashChargeDescription;
+
+  /// No description provided for @consultationCardChargeDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Amount will be charged from your card.'**
+  String get consultationCardChargeDescription;
 
   /// No description provided for @consultationRequiredFieldsError.
   ///

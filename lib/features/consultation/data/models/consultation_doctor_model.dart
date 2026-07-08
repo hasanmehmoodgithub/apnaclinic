@@ -19,6 +19,7 @@ class ConsultationDoctorModel {
     required this.partnerLogoUrl,
     required this.hospitalId,
     required this.partnerDoctorId,
+    required this.tenantId,
   });
 
   final String id;
@@ -38,6 +39,7 @@ class ConsultationDoctorModel {
   final String partnerLogoUrl;
   final String hospitalId;
   final String partnerDoctorId;
+  final String tenantId;
 
   factory ConsultationDoctorModel.fromJson(Map<String, dynamic> json) {
     final partnerRaw = json['partner'];
@@ -86,6 +88,10 @@ class ConsultationDoctorModel {
         'externalDoctorId',
         'external_doctor_id',
       ], partner: partner),
+      tenantId: _readString(json, const [
+        'tenantId',
+        'tenant_id',
+      ], partner: partner),
     );
   }
 
@@ -106,6 +112,7 @@ class ConsultationDoctorModel {
       apiDoctorId: id,
       partnerDoctorId: partnerDoctorId,
       hospitalId: hospitalId,
+      tenantId: tenantId,
       name: displayName,
       specialty: specialtyName,
       experience: experienceText,

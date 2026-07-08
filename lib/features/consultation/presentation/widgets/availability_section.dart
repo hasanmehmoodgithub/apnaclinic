@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../components/shimmer/app_shimmer.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
+import '../../domain/entities/consultation_selected_slot_entity.dart';
 import '../../domain/entities/consultation_doctor_slots_entity.dart';
 import '../constants/consultation_ui_config.dart';
 import 'availability_section_shimmer_widget.dart';
@@ -16,7 +17,7 @@ class AvailabilitySection extends StatefulWidget {
     required this.isLoading,
     this.errorMessage,
     this.onRetry,
-    this.onTimeSlotChanged,
+    this.onSlotChanged,
   });
 
   final TextTheme textTheme;
@@ -25,7 +26,7 @@ class AvailabilitySection extends StatefulWidget {
   final bool isLoading;
   final String? errorMessage;
   final VoidCallback? onRetry;
-  final ValueChanged<String?>? onTimeSlotChanged;
+  final ValueChanged<ConsultationSelectedSlotEntity?>? onSlotChanged;
 
   @override
   State<AvailabilitySection> createState() => _AvailabilitySectionState();
@@ -41,7 +42,7 @@ class _AvailabilitySectionState extends State<AvailabilitySection> {
     if (oldWidget.days != widget.days) {
       _selectedDateIndex = null;
       _selectedTimeSlotIndex = null;
-      final callback = widget.onTimeSlotChanged;
+      final callback = widget.onSlotChanged;
       if (callback != null) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           if (!mounted) return;
@@ -127,7 +128,7 @@ class _AvailabilitySectionState extends State<AvailabilitySection> {
                   onTap: () => setState(() {
                     _selectedDateIndex = index;
                     _selectedTimeSlotIndex = null;
-                    widget.onTimeSlotChanged?.call(null);
+                    widget.onSlotChanged?.call(null);
                   }),
                   child: Container(
                     width: 56.w,
@@ -183,7 +184,14 @@ class _AvailabilitySectionState extends State<AvailabilitySection> {
                     isSelected: _selectedTimeSlotIndex == index,
                     onTap: () => setState(() {
                       _selectedTimeSlotIndex = index;
-                      widget.onTimeSlotChanged?.call(slot.label);
+                      widget.onSlotChanged?.call(
+                        ConsultationSelectedSlotEntity(
+                          date: selectedDay.date,
+                          startTime: slot.startTime,
+                          endTime: slot.endTime,
+                          label: slot.label,
+                        ),
+                      );
                     }),
                   );
                 },

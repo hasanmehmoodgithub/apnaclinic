@@ -13,7 +13,6 @@ import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/preference/app_pref.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/utils/auth_guard.dart';
-import '../../../profile_setup/presentation/profile_setup_launch_source.dart';
 import '../../../../core/services/notification_service.dart';
 import '../../../../core/widgets/heart_loader_widget.dart';
 import '../../domain/entities/our_service_entity.dart';
@@ -211,10 +210,10 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                   },
                   onLoginTap: () =>
                       context.push(AppRoutes.path(AppRoutes.authLogin)),
-                  onProfileTap: () => context.push(
-                    AppRoutes.path(AppRoutes.profileSetup),
-                    extra: ProfileSetupLaunchSource.menu,
-                  ),
+                  onProfileTap: () {
+                    if (!context.requireLogin()) return;
+                    context.push(AppRoutes.path(AppRoutes.profile));
+                  },
                   onSearchTap: () => _openSearch(context),
                   onVoiceTap: () => _openVoiceSearch(context),
                 );

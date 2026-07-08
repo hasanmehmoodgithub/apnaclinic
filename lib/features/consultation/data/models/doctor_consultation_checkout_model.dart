@@ -1,15 +1,13 @@
 class DoctorConsultationPaymentOptionModel {
   const DoctorConsultationPaymentOptionModel({
-    required this.id,
-    required this.title,
-    required this.description,
-    required this.iconAsset,
+    required this.code,
+    required this.name,
+    required this.iconUrl,
   });
 
-  final String id;
-  final String title;
-  final String description;
-  final String iconAsset;
+  final String code;
+  final String name;
+  final String iconUrl;
 }
 
 class DoctorConsultationCheckoutModel {
@@ -17,13 +15,11 @@ class DoctorConsultationCheckoutModel {
     required this.consultationFee,
     required this.discount,
     required this.paymentOptions,
-    required this.selectedPaymentMethodId,
   });
 
   final int consultationFee;
   final int discount;
   final List<DoctorConsultationPaymentOptionModel> paymentOptions;
-  final String selectedPaymentMethodId;
 
   int get total => consultationFee - discount;
 }

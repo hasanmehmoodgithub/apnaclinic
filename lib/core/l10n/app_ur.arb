@@ -353,6 +353,9 @@
       "doctorName": {}
     }
   },
+  "consultationBookingFailed": "مشاورت بک نہیں ہو سکی۔ دوبارہ کوشش کریں۔",
+  "consultationBookingInvalidContextError": "بکنگ کی تفصیلات نامکمل ہیں۔ واپس جا کر دوبارہ کوشش کریں۔",
+  "consultationBookingMissingMsisdnError": "بکنگ مکمل کرنے کے لیے درست فون نمبر درکار ہے۔",
   "commonOk": "ٹھیک ہے",
   "consultationUploadDocumentTitle": "دستاویز اپلوڈ کریں",
   "consultationUseCamera": "کیمرہ استعمال کریں",
@@ -371,6 +374,7 @@
   "consultationSelectAccountTitle": "اکاؤنٹ منتخب کریں",
   "consultationProceedCta": "آگے بڑھیں",
   "consultationJazzCashChargeDescription": "رقم آپ کے جاز کیش اکاؤنٹ سے کاٹی جائے گی۔",
+  "consultationCardChargeDescription": "رقم آپ کے کارڈ سے کاٹی جائے گی۔",
   "consultationRequiredFieldsError": "براہ کرم تمام ضروری فیلڈز پُر کریں",
   "consultationSelectSlotError": "براہ کرم ویڈیو مشاورت کے لیے وقت منتخب کریں",
   "consultationNoAvailability": "اس ڈاکٹر کے لیے فی الحال کوئی اپائنٹمنٹ سلاٹ دستیاب نہیں ہے۔",

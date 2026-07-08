@@ -43,7 +43,7 @@ class Assets {
   static const String iconsCash = 'assets/icons/cash.svg';
   static const String iconsClose = 'assets/icons/close.svg';
   static const String iconsD1 = 'assets/icons/d1.svg';
-  static const String iconsD2 = 'assets/icons/d2.svg';
+static const String iconsD2 = 'assets/icons/d2.svg';
   static const String iconsDebitCard = 'assets/icons/debitCard.svg';
   static const String iconsDoctor = 'assets/icons/doctor.svg';
   static const String iconsEmpty = 'assets/icons/empty.svg';

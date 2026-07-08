@@ -3,6 +3,8 @@ class ResultsDoctorItem {
   final String apiDoctorId;
   final String partnerDoctorId;
   final String hospitalId;
+  /// Doctor partner tenant (`partner.tenantId` from doctors API); used for booking.
+  final String tenantId;
   final String name;
   final String specialty;
   final String experience;
@@ -22,6 +24,7 @@ class ResultsDoctorItem {
     required this.apiDoctorId,
     this.partnerDoctorId = '',
     this.hospitalId = '',
+    this.tenantId = '',
     required this.name,
     required this.specialty,
     required this.experience,
@@ -43,6 +46,7 @@ class ResultsDoctorItem {
       apiDoctorId: (map['apiDoctorId'] ?? map['id'] ?? '').toString(),
       partnerDoctorId: (map['partnerDoctorId'] ?? '').toString(),
       hospitalId: (map['hospitalId'] ?? '').toString(),
+      tenantId: (map['tenantId'] ?? map['partnerTenantId'] ?? '').toString(),
       name: map['name'] as String? ?? '',
       specialty: map['specialty'] as String? ?? '',
       experience: map['experience'] as String? ?? '',

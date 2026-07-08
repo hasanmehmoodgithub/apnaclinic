@@ -1070,6 +1070,18 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get consultationBookingFailed =>
+      'Unable to book consultation. Please try again.';
+
+  @override
+  String get consultationBookingInvalidContextError =>
+      'Booking details are incomplete. Please go back and try again.';
+
+  @override
+  String get consultationBookingMissingMsisdnError =>
+      'A valid phone number is required to complete booking.';
+
+  @override
   String get commonOk => 'OK';
 
   @override
@@ -1128,6 +1140,10 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get consultationJazzCashChargeDescription =>
       'Amount will be charged from your jazz cash account.';
+
+  @override
+  String get consultationCardChargeDescription =>
+      'Amount will be charged from your card.';
 
   @override
   String get consultationRequiredFieldsError =>

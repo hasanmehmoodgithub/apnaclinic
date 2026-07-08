@@ -28,7 +28,28 @@ class _DoctorConsultationJazzCashAccountsSheetWidgetState
   @override
   void initState() {
     super.initState();
-    _selectedIndex = widget.initialSelectedIndex;
+    _selectedIndex = _clampSelectedIndex(widget.initialSelectedIndex);
+  }
+
+  @override
+  void didUpdateWidget(
+    covariant DoctorConsultationJazzCashAccountsSheetWidget oldWidget,
+  ) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.initialSelectedIndex != widget.initialSelectedIndex ||
+        oldWidget.accounts.length != widget.accounts.length) {
+      _selectedIndex = _clampSelectedIndex(widget.initialSelectedIndex);
+    }
+  }
+
+  int _clampSelectedIndex(int index) {
+    if (widget.accounts.isEmpty) return 0;
+    if (index < 0 || index >= widget.accounts.length) {
+      final defaultIndex =
+          widget.accounts.indexWhere((account) => account.isDefault);
+      return defaultIndex >= 0 ? defaultIndex : 0;
+    }
+    return index;
   }
 
   @override
