@@ -28,7 +28,7 @@ Doctor consultation category browse, doctor results, booking, and checkout.
 
 - `ConsultationCubit` — loads categories via `GetConsultationCategoriesUseCase`.
 - `DoctorConsultationResultsScreen` — loads doctors via `GetConsultationDoctorsUseCase` using `mainCategoryId`.
-- `DoctorConsultationBookDoctorScreen` — loads slots via `GetConsultationDoctorSlotsUseCase` using `ResultsDoctorItem.apiDoctorId`.
+- `DoctorConsultationBookDoctorScreen` — loads slots via `GetConsultationDoctorSlotsUseCase` using `ResultsDoctorItem.apiDoctorId`. Documents section supports multiple attachments (gallery/file multi-select; camera appends) with per-item delete.
 
 ## DI
 

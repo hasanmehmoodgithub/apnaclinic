@@ -21,22 +21,27 @@ class ResultsDoctorCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.all(10.r),
-      decoration: BoxDecoration(
-        color: Colors.white,
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onBookNowTap,
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: const Color(0xFFE8ECF0), width: 1),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x14565C67),
-            blurRadius: 8,
-            spreadRadius: 0.6,
-            offset: Offset.zero,
+        child: Container(
+          padding: EdgeInsets.all(10.r),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12.r),
+            border: Border.all(color: const Color(0xFFE8ECF0), width: 1),
+            boxShadow: const [
+              BoxShadow(
+                color: Color(0x14565C67),
+                blurRadius: 8,
+                spreadRadius: 0.6,
+                offset: Offset.zero,
+              ),
+            ],
           ),
-        ],
-      ),
-      child: Row(
+          child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           ClipRRect(
@@ -162,22 +167,19 @@ class ResultsDoctorCard extends StatelessWidget {
                     SizedBox(
                       height: 40.h,
                       width: 114.w,
-                      child: ElevatedButton(
-                        onPressed: onBookNowTap,
-                        style: ElevatedButton.styleFrom(
-                          elevation: 0,
-                          backgroundColor: ConsultationUiConfig.ctaColor,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8.r),
-                          ),
-                          padding: EdgeInsets.symmetric(horizontal: 8.w),
+                      child: DecoratedBox(
+                        decoration: BoxDecoration(
+                          color: ConsultationUiConfig.ctaColor,
+                          borderRadius: BorderRadius.circular(8.r),
                         ),
-                        child: Text(
-                          'Book Now',
-                          style: textTheme.labelLarge?.copyWith(
-                            color: Colors.white,
-                            fontSize: 14.sp,
-                            fontWeight: FontWeight.w600,
+                        child: Center(
+                          child: Text(
+                            'Book Now',
+                            style: textTheme.labelLarge?.copyWith(
+                              color: Colors.white,
+                              fontSize: 14.sp,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
                         ),
                       ),
@@ -188,6 +190,8 @@ class ResultsDoctorCard extends StatelessWidget {
             ),
           ),
         ],
+      ),
+        ),
       ),
     );
   }

@@ -12,22 +12,40 @@ class MockConfig {
     return _isTruthy(_mockTrueValue) || kDebugMode;
   }
 
-  static bool get enableLabTestMocks => enableMocks;
+  static bool get enableLabTestMocks {
+    return false;
+    return _isTruthy(_mockTrueValue) || kDebugMode;
+  }
+  static bool get enableAuthMocks {
+    return false;
+    return _isTruthy(_mockTrueValue)  || kDebugMode;
+  }
+  static bool get enableProfileMocks {
+    return false;
+    return _isTruthy(_mockTrueValue)  || kDebugMode;
+  }
 
-  static bool get enableAuthMocks => enableMocks;
+  static bool get enableDashboardMocks => false;
 
-  static bool get enableProfileMocks => enableMocks;
+  static bool get enableConsultationMocks {
+    return false;
+    return _isTruthy(_mockTrueValue) || kDebugMode;
+  }
 
-  static bool get enableDashboardMocks => enableMocks;
+  static bool get enableSurgeryMocks {
+    return false;
+    return _isTruthy(_mockTrueValue) || kDebugMode;
+  }
 
-  static bool get enableConsultationMocks => enableMocks;
+  static bool get enableAccountMocks {
+    return false;
+    return _isTruthy(_mockTrueValue) || kDebugMode;
+  }
 
-  static bool get enableSurgeryMocks => enableMocks;
-
-  static bool get enableAccountMocks => enableMocks;
-
-  static bool get enableInstantDoctorMocks => enableMocks;
-
+  static bool get enableInstantDoctorMocks {
+    return false;
+    return _isTruthy(_mockTrueValue) || kDebugMode;
+  }
   static bool _isTruthy(String value) {
     final normalized = value.trim().toLowerCase();
     return normalized == 'true' ||

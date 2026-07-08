@@ -8,12 +8,14 @@ class DocumentsSection extends StatelessWidget {
     super.key,
     required this.textTheme,
     required this.onBrowseTap,
-    required this.attachedMediaName,
+    required this.attachedMediaNames,
+    required this.onRemoveAttachment,
   });
 
   final TextTheme textTheme;
   final VoidCallback onBrowseTap;
-  final String? attachedMediaName;
+  final List<String> attachedMediaNames;
+  final ValueChanged<int> onRemoveAttachment;
 
   @override
   Widget build(BuildContext context) {
@@ -72,17 +74,59 @@ class DocumentsSection extends StatelessWidget {
             ),
           ),
         ),
-        if ((attachedMediaName ?? '').isNotEmpty) ...[
+        if (attachedMediaNames.isNotEmpty) ...[
           SizedBox(height: 8.h),
-          Text(
-            'Attached: $attachedMediaName',
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: textTheme.bodySmall?.copyWith(
-              color: const Color(0xFF5F6C7C),
-              fontSize: 12.sp,
-            ),
-          ),
+          ...List.generate(attachedMediaNames.length, (index) {
+            final name = attachedMediaNames[index];
+            return Padding(
+              padding: EdgeInsets.only(
+                bottom: index == attachedMediaNames.length - 1 ? 0 : 6.h,
+              ),
+              child: Container(
+                width: double.infinity,
+                padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 8.h),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF7F9FB),
+                  borderRadius: BorderRadius.circular(8.r),
+                  border: Border.all(color: const Color(0xFFE2E6EB)),
+                ),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.insert_drive_file_outlined,
+                      size: 18.r,
+                      color: const Color(0xFF5F6C7C),
+                    ),
+                    SizedBox(width: 8.w),
+                    Expanded(
+                      child: Text(
+                        name,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: textTheme.bodySmall?.copyWith(
+                          color: const Color(0xFF5F6C7C),
+                          fontSize: 12.sp,
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: 4.w),
+                    InkWell(
+                      onTap: () => onRemoveAttachment(index),
+                      borderRadius: BorderRadius.circular(99.r),
+                      child: Padding(
+                        padding: EdgeInsets.all(4.r),
+                        child: Icon(
+                          Icons.close_rounded,
+                          size: 18.r,
+                          color: const Color(0xFF8A95A3),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }),
         ],
       ],
     );

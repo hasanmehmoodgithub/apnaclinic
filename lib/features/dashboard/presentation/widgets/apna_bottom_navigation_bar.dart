@@ -21,7 +21,6 @@ class ApnaBottomNavigationBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final bottomInset = MediaQuery.paddingOf(context).bottom;
 
     return Container(
       decoration: BoxDecoration(
@@ -34,7 +33,7 @@ class ApnaBottomNavigationBar extends StatelessWidget {
           ),
         ],
       ),
-      padding: EdgeInsets.only(bottom:14),
+      padding: EdgeInsets.only(bottom: 14),
       child: SizedBox(
         height: 58.h,
         child: Row(
@@ -69,7 +68,7 @@ class ApnaBottomNavigationBar extends StatelessWidget {
             Expanded(
               child: _NavTab(
                 label: l10n.dashboardBottomSupport,
-                filledAsset: Assets.svgNavSupportFilled,
+                filledAsset: Assets.imgNavSupportFilled,
                 outlineAsset: Assets.svgNavSupportOutline,
                 selected: currentIndex == MainNavigationTabs.support,
                 onTap: () => onTap(MainNavigationTabs.support),
@@ -97,9 +96,12 @@ class _NavTab extends StatelessWidget {
   final bool selected;
   final VoidCallback onTap;
 
+  bool _isPng(String asset) => asset.toLowerCase().endsWith('.png');
+
   @override
   Widget build(BuildContext context) {
     final color = selected ? AppColors.clr09 : AppColors.clr6B7280;
+    final asset = selected ? filledAsset : outlineAsset;
 
     return Material(
       color: Colors.transparent,
@@ -110,13 +112,23 @@ class _NavTab extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              SvgPicture.asset(
-                selected ? filledAsset : outlineAsset,
-                width: 24.r,
-                height: 24.r,
-                fit: BoxFit.contain,
-                colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
-              ),
+              if (_isPng(asset))
+                Image.asset(
+                  asset,
+                  width: 24.r,
+                  height: 24.r,
+                  fit: BoxFit.contain,
+                  color: color,
+                  colorBlendMode: BlendMode.srcIn,
+                )
+              else
+                SvgPicture.asset(
+                  asset,
+                  width: 24.r,
+                  height: 24.r,
+                  fit: BoxFit.contain,
+                  colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
+                ),
               SizedBox(height: 4.h),
               Text(
                 label,

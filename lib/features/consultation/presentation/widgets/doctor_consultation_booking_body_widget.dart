@@ -26,8 +26,9 @@ class DoctorConsultationBookingBodyWidget extends StatelessWidget {
     required this.partner,
     required this.partnerLogoUrl,
     required this.textTheme,
-    required this.attachedMediaName,
+    required this.attachedMediaNames,
     required this.onBrowseTap,
+    required this.onRemoveAttachment,
     required this.issueController,
     required this.onTimeSlotChanged,
     required this.availabilityDays,
@@ -49,8 +50,9 @@ class DoctorConsultationBookingBodyWidget extends StatelessWidget {
   final String partner;
   final String partnerLogoUrl;
   final TextTheme textTheme;
-  final String? attachedMediaName;
+  final List<String> attachedMediaNames;
   final VoidCallback onBrowseTap;
+  final ValueChanged<int> onRemoveAttachment;
   final TextEditingController issueController;
   final ValueChanged<String?> onTimeSlotChanged;
   final List<ConsultationAvailabilityDayEntity> availabilityDays;
@@ -125,7 +127,8 @@ class DoctorConsultationBookingBodyWidget extends StatelessWidget {
             DocumentsSection(
               textTheme: textTheme,
               onBrowseTap: onBrowseTap,
-              attachedMediaName: attachedMediaName,
+              attachedMediaNames: attachedMediaNames,
+              onRemoveAttachment: onRemoveAttachment,
             ),
             SizedBox(height: 16.h),
             const Divider(color: Color(0xFFE4E8ED), thickness: 1),

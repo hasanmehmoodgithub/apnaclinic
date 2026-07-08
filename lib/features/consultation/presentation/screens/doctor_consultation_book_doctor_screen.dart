@@ -36,7 +36,7 @@ class _DoctorConsultationBookDoctorScreenState
     extends State<DoctorConsultationBookDoctorScreen> {
   final ImagePicker _imagePicker = ImagePicker();
   final TextEditingController _issueController = TextEditingController();
-  String? _attachedMediaName;
+  final List<String> _attachedMediaNames = [];
   String? _selectedTimeSlot;
   String? _validationErrorMessage;
   bool _isAvailabilityLoading = true;
@@ -163,8 +163,9 @@ class _DoctorConsultationBookDoctorScreenState
                         partner: doctor.partner,
                         partnerLogoUrl: doctor.partnerLogoUrl,
                         textTheme: textTheme,
-                        attachedMediaName: _attachedMediaName,
+                        attachedMediaNames: _attachedMediaNames,
                         onBrowseTap: _openUploadDocumentSheet,
+                        onRemoveAttachment: _removeAttachment,
                         issueController: _issueController,
                         onTimeSlotChanged: (value) {
                           setState(() {
@@ -303,6 +304,24 @@ class _DoctorConsultationBookDoctorScreenState
     );
   }
 
+  void _addAttachments(Iterable<String> names) {
+    final next = names
+        .map((name) => name.trim())
+        .where((name) => name.isNotEmpty)
+        .toList();
+    if (next.isEmpty) return;
+    setState(() {
+      _attachedMediaNames.addAll(next);
+    });
+  }
+
+  void _removeAttachment(int index) {
+    if (index < 0 || index >= _attachedMediaNames.length) return;
+    setState(() {
+      _attachedMediaNames.removeAt(index);
+    });
+  }
+
   Future<void> _pickFromCamera() async {
     try {
       final picked = await _imagePicker.pickImage(
@@ -310,9 +329,7 @@ class _DoctorConsultationBookDoctorScreenState
         imageQuality: 85,
       );
       if (picked == null || !mounted) return;
-      setState(() {
-        _attachedMediaName = p.basename(picked.path);
-      });
+      _addAttachments([p.basename(picked.path)]);
     } on PlatformException {
       _showSnackBar(AppLocalizations.of(context)!.consultationCameraUnavailable);
     } catch (_) {
@@ -322,14 +339,9 @@ class _DoctorConsultationBookDoctorScreenState
 
   Future<void> _pickFromGallery() async {
     try {
-      final picked = await _imagePicker.pickImage(
-        source: ImageSource.gallery,
-        imageQuality: 85,
-      );
-      if (picked == null || !mounted) return;
-      setState(() {
-        _attachedMediaName = p.basename(picked.path);
-      });
+      final picked = await _imagePicker.pickMultiImage(imageQuality: 85);
+      if (picked.isEmpty || !mounted) return;
+      _addAttachments(picked.map((file) => p.basename(file.path)));
     } on PlatformException {
       _showSnackBar(AppLocalizations.of(context)!.consultationGalleryUnavailable);
     } catch (_) {
@@ -339,12 +351,9 @@ class _DoctorConsultationBookDoctorScreenState
 
   Future<void> _pickFromFile() async {
     try {
-      final result = await FilePicker.pickFiles();
+      final result = await FilePicker.pickFiles(allowMultiple: true);
       if (result == null || result.files.isEmpty || !mounted) return;
-      final selected = result.files.first;
-      setState(() {
-        _attachedMediaName = selected.name;
-      });
+      _addAttachments(result.files.map((file) => file.name));
     } catch (_) {
       _showSnackBar(AppLocalizations.of(context)!.consultationPickFileFailed);
     }
@@ -361,18 +370,12 @@ class _DoctorConsultationBookDoctorScreenState
     final width = 188.w;
     final height = 177.h;
     final trimmed = imageUrl.trim();
+    final Widget image;
     if (trimmed.isEmpty) {
-      return Image.asset(
-        ConsultationUiConfig.heroDoctorAsset,
-        width: width,
-        height: height,
-        fit: BoxFit.cover,
-      );
-    }
-    final isNetwork =
-        trimmed.startsWith('http://') || trimmed.startsWith('https://');
-    if (isNetwork) {
-      return CachedNetworkImage(
+      image = _heroFallback(width, height);
+    } else if (trimmed.startsWith('http://') ||
+        trimmed.startsWith('https://')) {
+      image = CachedNetworkImage(
         imageUrl: trimmed,
         width: width,
         height: height,
@@ -380,13 +383,18 @@ class _DoctorConsultationBookDoctorScreenState
         placeholder: (_, _) => _heroFallback(width, height),
         errorWidget: (_, _, _) => _heroFallback(width, height),
       );
+    } else {
+      image = Image.asset(
+        trimmed,
+        width: width,
+        height: height,
+        fit: BoxFit.cover,
+        errorBuilder: (_, _, _) => _heroFallback(width, height),
+      );
     }
-    return Image.asset(
-      trimmed,
-      width: width,
-      height: height,
-      fit: BoxFit.cover,
-      errorBuilder: (_, _, _) => _heroFallback(width, height),
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(12.r),
+      child: image,
     );
   }
 
