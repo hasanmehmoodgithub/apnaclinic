@@ -234,6 +234,7 @@
   "instantDoctorNoProviders": "No instant doctor plans available right now.",
   "instantDoctorPlanDetails": "Plan details",
   "instantDoctorOtpInstruction": "A 4 digit OTP code is sent to your number. Please enter the code below to proceed",
+  "instantDoctorOtpUnsubscribeInstruction": "A 4 digit OTP code is sent to your number. Please enter the code below to unsubscribe this service",
   "instantDoctorSubscribeSuccessTitle": "Successfully Subscribed!",
   "instantDoctorSubscribeSuccessMessage": "You have successfully subscribed to {providerName}. Consult a doctor any time instantly",
   "@instantDoctorSubscribeSuccessMessage": {
@@ -247,16 +248,10 @@
   "instantDoctorSubscribeFailedMessage": "Unfortunately some error has occurred. Please try again.",
   "instantDoctorClose": "Close",
   "instantDoctorCancelSubscription": "Cancel Subscription",
-  "instantDoctorCancelSubscriptionTitle": "Cancel Subscription?",
-  "instantDoctorCancelSubscriptionMessage": "Are you sure you want to cancel your {providerName} subscription?",
-  "@instantDoctorCancelSubscriptionMessage": {
-    "placeholders": {
-      "providerName": {
-        "type": "String"
-      }
-    }
-  },
-  "instantDoctorCancelSubscriptionConfirm": "Yes, Cancel",
+  "instantDoctorCancelSubscriptionTitle": "Are you sure you want to unsubscribe?",
+  "instantDoctorCancelSubscriptionMessage": "This service will be unsubscribed from your account.",
+  "instantDoctorCancelSubscriptionConfirm": "Unsubscribe",
+  "instantDoctorCancelSubscriptionDiscard": "Discard",
   "instantDoctorCancelSubscriptionSuccess": "Subscription cancelled successfully.",
   "instantDoctorCancelSubscriptionFailed": "Unable to cancel subscription. Please try again.",
   "instantDoctorConsultationTitle": "24/7 Instant Doctor Consultation",

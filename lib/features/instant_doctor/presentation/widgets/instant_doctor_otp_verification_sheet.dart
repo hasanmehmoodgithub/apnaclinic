@@ -10,6 +10,7 @@ import '../../../../core/enums/state_status.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../domain/entities/instant_doctor_provider_entity.dart';
+import '../../domain/enums/instant_doctor_otp_action.dart';
 import '../cubit/instant_doctor_cubit.dart';
 import '../cubit/instant_doctor_state.dart';
 import '../models/instant_doctor_flow_outcome.dart';
@@ -59,10 +60,25 @@ class _InstantDoctorOtpVerificationSheetState
       ),
     );
 
-    return BlocSelector<InstantDoctorCubit, InstantDoctorState, bool>(
-      selector: (state) => state.verifyOtpStatus == StateStatus.loading,
-      builder: (context, isVerifying) {
+    return BlocSelector<
+        InstantDoctorCubit,
+        InstantDoctorState,
+        (bool, InstantDoctorOtpAction?)>(
+      selector: (state) => (
+        state.verifyOtpStatus == StateStatus.loading,
+        state.otpAction,
+      ),
+      builder: (context, otpState) {
+        final isVerifying = otpState.$1;
+        final isUnsubscribe =
+            otpState.$2 == InstantDoctorOtpAction.unsubscribe;
         final canContinue = _otpValue.length == 4 && !isVerifying;
+        final instruction = isUnsubscribe
+            ? l10n.instantDoctorOtpUnsubscribeInstruction
+            : l10n.instantDoctorOtpInstruction;
+        final actionLabel = isUnsubscribe
+            ? l10n.instantDoctorCancelSubscriptionConfirm
+            : l10n.commonContinue;
 
         return SafeArea(
           child: Padding(
@@ -92,10 +108,12 @@ class _InstantDoctorOtpVerificationSheetState
                   ),
                 ),
                 SizedBox(height: 16.h),
-                InstantDoctorProviderSummaryCard(provider: widget.provider),
-                SizedBox(height: 16.h),
+                if (!isUnsubscribe) ...[
+                  InstantDoctorProviderSummaryCard(provider: widget.provider),
+                  SizedBox(height: 16.h),
+                ],
                 Text(
-                  l10n.instantDoctorOtpInstruction,
+                  instruction,
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: AppColors.clr6C7C92,
@@ -131,7 +149,7 @@ class _InstantDoctorOtpVerificationSheetState
                 InstantDoctorOtpResendButton(isVerifying: isVerifying),
                 const _InstantDoctorOtpErrorText(),
                 AppButton.primary(
-                  text: l10n.commonContinue,
+                  text: actionLabel,
                   isLoading: isVerifying,
                   onPressed: canContinue ? () => _verifyOtp(context) : null,
                   width: double.infinity,

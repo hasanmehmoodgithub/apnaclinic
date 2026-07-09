@@ -75,10 +75,6 @@ class _AddAccountScreenState extends State<AddAccountScreen> {
       },
       (_) async {
         if (!mounted) return;
-        if (widget.launchSource == AddAccountLaunchSource.profile) {
-          context.pop(true);
-          return;
-        }
         await _refreshProfileAndAccounts();
         if (!mounted) return;
         context.pushReplacement(

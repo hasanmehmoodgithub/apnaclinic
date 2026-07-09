@@ -113,10 +113,7 @@ class _InstantDoctorScreenState extends State<InstantDoctorScreen> {
   Future<void> _onCancelSubscription(
     InstantDoctorProviderEntity provider,
   ) async {
-    final confirmed = await showInstantDoctorCancelSubscriptionDialog(
-      context,
-      providerName: provider.providerName,
-    );
+    final confirmed = await showInstantDoctorCancelSubscriptionDialog(context);
     if (!confirmed || !mounted) return;
 
     final outcome = await _cubit.onCancelSubscriptionConfirmed(provider);
@@ -210,13 +207,19 @@ class _InstantDoctorScreenState extends State<InstantDoctorScreen> {
     sheetContext.pop();
     if (!mounted) return;
 
+    final otpAction = outcome.action ?? _cubit.state.otpAction;
     _cubit.clearOtpFlow();
     if (outcome.isSuccess) {
-      if (outcome.action == InstantDoctorOtpAction.unsubscribe) {
+      if (otpAction == InstantDoctorOtpAction.unsubscribe) {
         _showSnackBar(_l10n.instantDoctorCancelSubscriptionSuccess);
         return;
       }
       await _showSubscribeSuccessDialog(provider, outcome);
+      return;
+    }
+
+    if (otpAction == InstantDoctorOtpAction.unsubscribe) {
+      _showSnackBar(_l10n.instantDoctorCancelSubscriptionFailed);
       return;
     }
 

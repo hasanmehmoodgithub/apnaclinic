@@ -155,6 +155,7 @@
   "instantDoctorNoProviders": "اس وقت کوئی انسٹنٹ ڈاکٹر پلان دستیاب نہیں۔",
   "instantDoctorPlanDetails": "پلان کی تفصیل",
   "instantDoctorOtpInstruction": "آپ کے نمبر پر 4 ہندسوں کا OTP بھیجا گیا ہے۔ آگے بڑھنے کے لیے نیچے کوڈ درج کریں",
+  "instantDoctorOtpUnsubscribeInstruction": "آپ کے نمبر پر 4 ہندسوں کا OTP بھیجا گیا ہے۔ اس سروس کو ان سبسکرائب کرنے کے لیے نیچے کوڈ درج کریں",
   "instantDoctorSubscribeSuccessTitle": "کامیابی سے سبسکرائب ہو گیا!",
   "instantDoctorSubscribeSuccessMessage": "آپ نے {providerName} کو کامیابی سے سبسکرائب کر لیا ہے۔ کسی بھی وقت فوری ڈاکٹر سے مشورہ کریں",
   "@instantDoctorSubscribeSuccessMessage": {
@@ -168,16 +169,10 @@
   "instantDoctorSubscribeFailedMessage": "افسوس، کچھ خرابی پیش آ گئی۔ براہ کرم دوبارہ کوشش کریں۔",
   "instantDoctorClose": "بند کریں",
   "instantDoctorCancelSubscription": "سبسکرپشن منسوخ کریں",
-  "instantDoctorCancelSubscriptionTitle": "سبسکرپشن منسوخ کریں؟",
-  "instantDoctorCancelSubscriptionMessage": "کیا آپ واقعی {providerName} کی سبسکرپشن منسوخ کرنا چاہتے ہیں؟",
-  "@instantDoctorCancelSubscriptionMessage": {
-    "placeholders": {
-      "providerName": {
-        "type": "String"
-      }
-    }
-  },
-  "instantDoctorCancelSubscriptionConfirm": "ہاں، منسوخ کریں",
+  "instantDoctorCancelSubscriptionTitle": "کیا آپ واقعی ان سبسکرائب کرنا چاہتے ہیں؟",
+  "instantDoctorCancelSubscriptionMessage": "یہ سروس آپ کے اکاؤنٹ سے ان سبسکرائب کر دی جائے گی۔",
+  "instantDoctorCancelSubscriptionConfirm": "ان سبسکرائب کریں",
+  "instantDoctorCancelSubscriptionDiscard": "رد کریں",
   "instantDoctorCancelSubscriptionSuccess": "سبسکرپشن کامیابی سے منسوخ ہو گئی۔",
   "instantDoctorCancelSubscriptionFailed": "سبسکرپشن منسوخ نہیں ہو سکی۔ دوبارہ کوشش کریں۔",
   "instantDoctorConsultationTitle": "24/7 انسٹنٹ ڈاکٹر مشاورت",

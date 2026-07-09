@@ -1028,6 +1028,12 @@ abstract class AppLocalizations {
   /// **'A 4 digit OTP code is sent to your number. Please enter the code below to proceed'**
   String get instantDoctorOtpInstruction;
 
+  /// No description provided for @instantDoctorOtpUnsubscribeInstruction.
+  ///
+  /// In en, this message translates to:
+  /// **'A 4 digit OTP code is sent to your number. Please enter the code below to unsubscribe this service'**
+  String get instantDoctorOtpUnsubscribeInstruction;
+
   /// No description provided for @instantDoctorSubscribeSuccessTitle.
   ///
   /// In en, this message translates to:
@@ -1067,20 +1073,26 @@ abstract class AppLocalizations {
   /// No description provided for @instantDoctorCancelSubscriptionTitle.
   ///
   /// In en, this message translates to:
-  /// **'Cancel Subscription?'**
+  /// **'Are you sure you want to unsubscribe?'**
   String get instantDoctorCancelSubscriptionTitle;
 
   /// No description provided for @instantDoctorCancelSubscriptionMessage.
   ///
   /// In en, this message translates to:
-  /// **'Are you sure you want to cancel your {providerName} subscription?'**
-  String instantDoctorCancelSubscriptionMessage(String providerName);
+  /// **'This service will be unsubscribed from your account.'**
+  String get instantDoctorCancelSubscriptionMessage;
 
   /// No description provided for @instantDoctorCancelSubscriptionConfirm.
   ///
   /// In en, this message translates to:
-  /// **'Yes, Cancel'**
+  /// **'Unsubscribe'**
   String get instantDoctorCancelSubscriptionConfirm;
+
+  /// No description provided for @instantDoctorCancelSubscriptionDiscard.
+  ///
+  /// In en, this message translates to:
+  /// **'Discard'**
+  String get instantDoctorCancelSubscriptionDiscard;
 
   /// No description provided for @instantDoctorCancelSubscriptionSuccess.
   ///

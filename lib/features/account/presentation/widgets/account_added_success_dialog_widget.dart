@@ -13,10 +13,12 @@ class AccountAddedSuccessDialogWidget extends StatelessWidget {
     super.key,
     required this.displayBankName,
     required this.accountNumber,
+    required this.accountHolderName,
   });
 
   final String displayBankName;
   final String accountNumber;
+  final String accountHolderName;
 
   @override
   Widget build(BuildContext context) {
@@ -68,6 +70,16 @@ class AccountAddedSuccessDialogWidget extends StatelessWidget {
                   ),
                   TextSpan(
                     text: accountNumber,
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: AppColors.clr6B7C96,
+                      fontSize: 14.sp,
+                      height: 1.35,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  const TextSpan(text: ' - '),
+                  TextSpan(
+                    text: accountHolderName,
                     style: theme.textTheme.bodyMedium?.copyWith(
                       color: AppColors.clr6B7C96,
                       fontSize: 14.sp,

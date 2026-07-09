@@ -494,6 +494,10 @@ class AppLocalizationsEn extends AppLocalizations {
       'A 4 digit OTP code is sent to your number. Please enter the code below to proceed';
 
   @override
+  String get instantDoctorOtpUnsubscribeInstruction =>
+      'A 4 digit OTP code is sent to your number. Please enter the code below to unsubscribe this service';
+
+  @override
   String get instantDoctorSubscribeSuccessTitle => 'Successfully Subscribed!';
 
   @override
@@ -515,15 +519,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get instantDoctorCancelSubscription => 'Cancel Subscription';
 
   @override
-  String get instantDoctorCancelSubscriptionTitle => 'Cancel Subscription?';
+  String get instantDoctorCancelSubscriptionTitle =>
+      'Are you sure you want to unsubscribe?';
 
   @override
-  String instantDoctorCancelSubscriptionMessage(String providerName) {
-    return 'Are you sure you want to cancel your $providerName subscription?';
-  }
+  String get instantDoctorCancelSubscriptionMessage =>
+      'This service will be unsubscribed from your account.';
 
   @override
-  String get instantDoctorCancelSubscriptionConfirm => 'Yes, Cancel';
+  String get instantDoctorCancelSubscriptionConfirm => 'Unsubscribe';
+
+  @override
+  String get instantDoctorCancelSubscriptionDiscard => 'Discard';
 
   @override
   String get instantDoctorCancelSubscriptionSuccess =>

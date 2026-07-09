@@ -6,8 +6,8 @@ Manage linked JazzCash phone numbers on the user profile (account details).
 
 ## Routes / entry
 
-- `AppRoutes.accountDetails` — list linked phones from profile API.
-- `AppRoutes.addAccount` — add a new phone number (`AddAccountLaunchSource.profile` from profile tab pops back and refreshes; default flow opens account details with success dialog).
+- `AppRoutes.accountDetails` — list linked phones from profile API. Optional route `extra`: `showSuccessDialog`, `addedPhone`. When both are set after add-account, the list shows **only the newly added number** behind the success dialog; after **Continue**, the full list reloads.
+- `AppRoutes.addAccount` — add a new phone number. On success, navigates to account details with success dialog (including from profile via `AddAccountLaunchSource.profile`).
 
 ## Data & APIs
 

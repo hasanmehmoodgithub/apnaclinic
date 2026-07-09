@@ -2,7 +2,7 @@
 
 ## Purpose
 
-**Instant Doctor** — loads multiple provider subscription plans from the aggregator API. Unsubscribed plans use OTP send/verify (`action: subscribe`) before opening consultation; subscribed plans open `redirectUrl` directly. Cancel subscription uses the same OTP flow with `action: unsubscribe`.
+**Instant Doctor** — loads multiple provider subscription plans from the aggregator API. Unsubscribed plans use OTP send/verify (`action: subscribe`) before opening consultation; subscribed plans open `redirectUrl` directly. Cancel subscription: confirm dialog → OTP sheet (`action: unsubscribe`, no provider card, **Unsubscribe** CTA) → verify → success snackbar.
 
 ## Routes / entry
 

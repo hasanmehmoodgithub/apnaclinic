@@ -493,6 +493,10 @@ class AppLocalizationsUr extends AppLocalizations {
       'آپ کے نمبر پر 4 ہندسوں کا OTP بھیجا گیا ہے۔ آگے بڑھنے کے لیے نیچے کوڈ درج کریں';
 
   @override
+  String get instantDoctorOtpUnsubscribeInstruction =>
+      'آپ کے نمبر پر 4 ہندسوں کا OTP بھیجا گیا ہے۔ اس سروس کو ان سبسکرائب کرنے کے لیے نیچے کوڈ درج کریں';
+
+  @override
   String get instantDoctorSubscribeSuccessTitle =>
       'کامیابی سے سبسکرائب ہو گیا!';
 
@@ -515,15 +519,18 @@ class AppLocalizationsUr extends AppLocalizations {
   String get instantDoctorCancelSubscription => 'سبسکرپشن منسوخ کریں';
 
   @override
-  String get instantDoctorCancelSubscriptionTitle => 'سبسکرپشن منسوخ کریں؟';
+  String get instantDoctorCancelSubscriptionTitle =>
+      'کیا آپ واقعی ان سبسکرائب کرنا چاہتے ہیں؟';
 
   @override
-  String instantDoctorCancelSubscriptionMessage(String providerName) {
-    return 'کیا آپ واقعی $providerName کی سبسکرپشن منسوخ کرنا چاہتے ہیں؟';
-  }
+  String get instantDoctorCancelSubscriptionMessage =>
+      'یہ سروس آپ کے اکاؤنٹ سے ان سبسکرائب کر دی جائے گی۔';
 
   @override
-  String get instantDoctorCancelSubscriptionConfirm => 'ہاں، منسوخ کریں';
+  String get instantDoctorCancelSubscriptionConfirm => 'ان سبسکرائب کریں';
+
+  @override
+  String get instantDoctorCancelSubscriptionDiscard => 'رد کریں';
 
   @override
   String get instantDoctorCancelSubscriptionSuccess =>

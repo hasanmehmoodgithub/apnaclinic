@@ -3,10 +3,12 @@ import '../../../../core/constants/app_colors.dart';
 import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
+import '../../../../core/preference/app_pref.dart';
 import '../../domain/entities/account_item_entity.dart';
 import '../../domain/models/account_method.dart';
 import '../../domain/use_cases/delete_user_phone_use_case.dart';
 import '../../domain/use_cases/get_accounts_list_use_case.dart';
+import '../utils/account_phone_utils.dart';
 import '../widgets/account_added_success_dialog_widget.dart';
 import '../widgets/account_app_bar_widget.dart';
 import '../widgets/account_details_loading_shimmer_widget.dart';
@@ -54,7 +56,7 @@ class _AccountDetailsScreenState extends State<AccountDetailsScreen> {
       }),
       (accounts) async {
         setState(() {
-          _accounts = accounts;
+          _accounts = _resolveDisplayAccounts(accounts);
           _isLoading = false;
         });
         if (!widget.showSuccessDialog ||
@@ -68,7 +70,31 @@ class _AccountDetailsScreenState extends State<AccountDetailsScreen> {
     );
   }
 
+  List<AccountItemEntity> _resolveDisplayAccounts(
+    List<AccountItemEntity> accounts,
+  ) {
+    final addedPhone = widget.addedPhone?.trim();
+    if (addedPhone == null || addedPhone.isEmpty) {
+      return accounts;
+    }
+
+    return filterAccountsForAddedPhone(
+      accounts: accounts,
+      addedPhone: addedPhone,
+    );
+  }
+
+  String _accountHolderName(AppLocalizations l10n) {
+    final user = sl<AppPref>().getUserLocalModel();
+    final firstName = user?.firstName.trim() ?? '';
+    final lastName = user?.lastName.trim() ?? '';
+    final fullName = '$firstName $lastName'.trim();
+    return fullName.isEmpty ? l10n.accountHolderFallback : fullName;
+  }
+
   Future<void> _deleteAccount(AccountItemEntity item) async {
+    if (item.id.isEmpty) return;
+
     final result = await sl<DeleteUserPhoneUseCase>()(
       DeleteUserPhoneParams(phoneId: item.id),
     );
@@ -93,14 +119,26 @@ class _AccountDetailsScreenState extends State<AccountDetailsScreen> {
         return AccountAddedSuccessDialogWidget(
           displayBankName: l10n.accountMethodJazzCash,
           accountNumber: accountNumber,
+          accountHolderName: _accountHolderName(l10n),
         );
       },
+    );
+    if (!mounted) return;
+
+    final result = await sl<GetAccountsListUseCase>().call();
+    if (!mounted) return;
+
+    result.fold(
+      (error) => setState(() => _errorMessage = error),
+      (accounts) => setState(() => _accounts = accounts),
     );
   }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final accountHolderName = _accountHolderName(l10n);
+
     return Scaffold(
       backgroundColor: AppColors.clrWhite,
       appBar: AccountAppBarWidget(title: l10n.accountDetailsTitle),
@@ -134,12 +172,12 @@ class _AccountDetailsScreenState extends State<AccountDetailsScreen> {
                 return AccountMethodCardWidget(
                   account: AccountMethod(
                     bankName: l10n.accountMethodJazzCash,
-                    accountHolderName: l10n.accountHolderFallback,
+                    accountHolderName: accountHolderName,
                     accountNumber: item.number,
                     isDefault: item.isDefault,
                   ),
                   displayBankName: l10n.accountMethodJazzCash,
-                  onDeleteTap: item.isDefault
+                  onDeleteTap: item.isDefault || item.id.isEmpty
                       ? null
                       : () => _deleteAccount(item),
                 );
