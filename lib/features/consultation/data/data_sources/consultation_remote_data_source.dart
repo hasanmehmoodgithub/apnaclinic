@@ -1,4 +1,5 @@
 import '../../domain/use_cases/submit_consultation_booking_use_case.dart';
+import '../models/consultation_booking_list_model.dart';
 import '../models/consultation_category_model.dart';
 import '../models/consultation_doctor_model.dart';
 import '../models/consultation_doctor_slots_model.dart';
@@ -14,5 +15,9 @@ abstract class ConsultationRemoteDataSource {
     String? hospitalId,
   });
   Future<List<PaymentProviderModel>> getPaymentProviders();
+  Future<ConsultationBookingsPageModel> getBookings({
+    int page = 1,
+    int limit = 20,
+  });
   Future<void> submitBooking(SubmitConsultationBookingParams params);
 }

@@ -52,7 +52,7 @@ class ConsultationCategoryCard extends StatelessWidget {
                 right: 0,
                 child: IgnorePointer(
                   child: Opacity(
-                    opacity: 0.9,
+                    opacity: 0.3,
                     child: _usePatternD2
                         ? const _CardPatternD2()
                         : const _CardPatternD1(),
@@ -61,11 +61,11 @@ class ConsultationCategoryCard extends StatelessWidget {
               ),
               Positioned(
                 left: responsive.w(context, 14),
-                top: responsive.h(context, 16),
+                top: responsive.h(context, 26),
                 right: responsive.w(context, 70),
                 child: Text(
                   category.cardTitle,
-                  maxLines: 2,
+                  maxLines: 3,
                   overflow: TextOverflow.ellipsis,
                   style: textTheme.titleMedium?.copyWith(
                     fontSize: responsive.sp(context, 12.5),

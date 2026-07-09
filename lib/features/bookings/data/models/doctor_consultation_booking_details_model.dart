@@ -9,6 +9,7 @@ enum DoctorConsultationBookingStatus {
       case 'PENDING':
         return DoctorConsultationBookingStatus.pending;
       case 'CONFIRMED':
+      case 'PAID':
         return DoctorConsultationBookingStatus.confirmed;
       case 'CANCEL':
         return DoctorConsultationBookingStatus.cancel;

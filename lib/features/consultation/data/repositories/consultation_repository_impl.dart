@@ -1,4 +1,5 @@
 import '../../../../core/functional/functional_export.dart';
+import '../../domain/entities/consultation_booking_list_entity.dart';
 import '../../domain/entities/consultation_category_entity.dart';
 import '../../domain/entities/consultation_doctor_slots_entity.dart';
 import '../../domain/repositories/consultation_repository.dart';
@@ -87,6 +88,25 @@ class ConsultationRepositoryImpl implements ConsultationRepository {
         return Left(e.trim());
       }
       return const Left('Unable to load payment methods right now.');
+    }
+  }
+
+  @override
+  Future<Either<ErrorMsg, ConsultationBookingsPageEntity>> getBookings({
+    int page = 1,
+    int limit = 20,
+  }) async {
+    try {
+      final pageModel = await remoteDataSource.getBookings(
+        page: page,
+        limit: limit,
+      );
+      return Right(pageModel.toEntity());
+    } catch (e) {
+      if (e is String && e.trim().isNotEmpty) {
+        return Left(e.trim());
+      }
+      return const Left('Unable to load consultation bookings right now.');
     }
   }
 

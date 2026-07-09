@@ -1,20 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
+import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../generated/assets.dart';
+import '../../../account/data/models/account_item_model.dart';
 import '../../../account/domain/models/account_method.dart';
+import '../../../account/domain/use_cases/get_accounts_list_use_case.dart';
+import '../models/doctor_consultation_jazzcash_sheet_result.dart';
 
 class DoctorConsultationJazzCashAccountsSheetWidget extends StatefulWidget {
-  const DoctorConsultationJazzCashAccountsSheetWidget({
-    super.key,
-    required this.accounts,
-    required this.initialSelectedIndex,
-  });
-
-  final List<AccountMethod> accounts;
-  final int initialSelectedIndex;
+  const DoctorConsultationJazzCashAccountsSheetWidget({super.key});
 
   @override
   State<DoctorConsultationJazzCashAccountsSheetWidget> createState() =>
@@ -23,42 +20,103 @@ class DoctorConsultationJazzCashAccountsSheetWidget extends StatefulWidget {
 
 class _DoctorConsultationJazzCashAccountsSheetWidgetState
     extends State<DoctorConsultationJazzCashAccountsSheetWidget> {
-  late int _selectedIndex;
+  bool _isLoading = true;
+  String? _errorMessage;
+  List<AccountMethod> _accounts = const [];
+  List<String> _accountMsisdns = const [];
+  int _selectedIndex = 0;
+  bool _didRequestLoad = false;
 
   @override
-  void initState() {
-    super.initState();
-    _selectedIndex = _clampSelectedIndex(widget.initialSelectedIndex);
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_didRequestLoad) return;
+    _didRequestLoad = true;
+    _loadAccounts();
   }
 
-  @override
-  void didUpdateWidget(
-    covariant DoctorConsultationJazzCashAccountsSheetWidget oldWidget,
-  ) {
-    super.didUpdateWidget(oldWidget);
-    if (oldWidget.initialSelectedIndex != widget.initialSelectedIndex ||
-        oldWidget.accounts.length != widget.accounts.length) {
-      _selectedIndex = _clampSelectedIndex(widget.initialSelectedIndex);
-    }
+  Future<void> _loadAccounts() async {
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+
+    final l10n = AppLocalizations.of(context)!;
+    final result = await sl<GetAccountsListUseCase>().call();
+    if (!mounted) return;
+
+    result.fold(
+      (error) => setState(() {
+        _isLoading = false;
+        _errorMessage = error;
+        _accounts = const [];
+        _accountMsisdns = const [];
+        _selectedIndex = 0;
+      }),
+      (items) {
+        final accounts = <AccountMethod>[];
+        final msisdns = <String>[];
+
+        for (final item in items) {
+          final msisdn = _resolveMsisdn(item);
+          if (msisdn.isEmpty) continue;
+
+          accounts.add(
+            AccountMethod(
+              bankName: l10n.accountMethodJazzCash,
+              accountHolderName: l10n.accountHolderFallback,
+              accountNumber: item.number.isNotEmpty ? item.number : msisdn,
+              isDefault: item.isDefault,
+            ),
+          );
+          msisdns.add(msisdn);
+        }
+
+        var selectedIndex = accounts.indexWhere((item) => item.isDefault);
+        if (selectedIndex < 0 && accounts.isNotEmpty) selectedIndex = 0;
+
+        setState(() {
+          _isLoading = false;
+          _accounts = accounts;
+          _accountMsisdns = msisdns;
+          _selectedIndex = selectedIndex;
+        });
+      },
+    );
   }
 
-  int _clampSelectedIndex(int index) {
-    if (widget.accounts.isEmpty) return 0;
-    if (index < 0 || index >= widget.accounts.length) {
-      final defaultIndex =
-          widget.accounts.indexWhere((account) => account.isDefault);
-      return defaultIndex >= 0 ? defaultIndex : 0;
+  String _resolveMsisdn(dynamic item) {
+    if (item is AccountItemModel && item.msisdn.trim().isNotEmpty) {
+      return item.msisdn.trim();
     }
-    return index;
+    return item.number.toString().trim();
+  }
+
+  void _onProceed() {
+    if (_accounts.isEmpty ||
+        _selectedIndex < 0 ||
+        _selectedIndex >= _accounts.length) {
+      return;
+    }
+
+    Navigator.of(context).pop(
+      DoctorConsultationJazzCashSheetResult.account(
+        msisdn: _accountMsisdns[_selectedIndex],
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final textTheme = Theme.of(context).textTheme;
+
     return SafeArea(
       top: false,
       child: Container(
+        constraints: BoxConstraints(
+          maxHeight: MediaQuery.sizeOf(context).height * 0.85,
+        ),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
@@ -89,23 +147,13 @@ class _DoctorConsultationJazzCashAccountsSheetWidgetState
               ),
             ),
             SizedBox(height: 10.h),
-            ...List.generate(widget.accounts.length, (index) {
-              final account = widget.accounts[index];
-              return _SavedAccountTile(
-                account: account,
-                isSelected: _selectedIndex == index,
-                onTap: () => setState(() => _selectedIndex = index),
-              );
-            }),
-            const _AddAccountTile(),
+            Flexible(child: _buildBody(l10n)),
             SizedBox(height: 12.h),
             SizedBox(
               width: double.infinity,
               height: 56.h,
               child: FilledButton(
-                onPressed: widget.accounts.isEmpty
-                    ? null
-                    : () => Navigator.of(context).pop(_selectedIndex),
+                onPressed: _accounts.isEmpty || _isLoading ? null : _onProceed,
                 style: FilledButton.styleFrom(
                   backgroundColor: const Color(0xFF1FAFA3),
                   shape: RoundedRectangleBorder(
@@ -118,6 +166,53 @@ class _DoctorConsultationJazzCashAccountsSheetWidgetState
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildBody(AppLocalizations l10n) {
+    if (_isLoading) {
+      return Padding(
+        padding: EdgeInsets.symmetric(vertical: 28.h),
+        child: const Center(
+          child: CircularProgressIndicator(strokeWidth: 2),
+        ),
+      );
+    }
+
+    if (_errorMessage != null) {
+      return Padding(
+        padding: EdgeInsets.symmetric(vertical: 20.h),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              _errorMessage!,
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
+            SizedBox(height: 12.h),
+            TextButton(
+              onPressed: _loadAccounts,
+              child: Text(l10n.commonRetry),
+            ),
+          ],
+        ),
+      );
+    }
+
+    return ListView(
+      shrinkWrap: true,
+      children: [
+        ...List.generate(_accounts.length, (index) {
+          final account = _accounts[index];
+          return _SavedAccountTile(
+            account: account,
+            isSelected: _selectedIndex == index,
+            onTap: () => setState(() => _selectedIndex = index),
+          );
+        }),
+        const _AddAccountTile(),
+      ],
     );
   }
 }
@@ -163,7 +258,9 @@ class _JazzCashTopTile extends StatelessWidget {
                 ),
                 Text(
                   l10n.consultationJazzCashChargeDescription,
-                  style: textTheme.bodySmall?.copyWith(color: const Color(0xFF7B8798)),
+                  style: textTheme.bodySmall?.copyWith(
+                    color: const Color(0xFF7B8798),
+                  ),
                 ),
               ],
             ),
@@ -240,7 +337,9 @@ class _AddAccountTile extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
     final textTheme = Theme.of(context).textTheme;
     return InkWell(
-      onTap: () => Navigator.of(context).pop(-1),
+      onTap: () => Navigator.of(context).pop(
+        const DoctorConsultationJazzCashSheetResult.addAccount(),
+      ),
       borderRadius: BorderRadius.circular(10.r),
       child: Container(
         margin: EdgeInsets.only(bottom: 12.h),

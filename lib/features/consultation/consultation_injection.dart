@@ -1,13 +1,16 @@
 import '../../core/di/dependency_injection.dart';
+import '../bookings/presentation/cubit/doctor_consultation_bookings_cubit.dart';
 import 'data/data_sources/consultation_remote_data_source.dart';
 import 'data/data_sources/consultation_remote_data_source_impl.dart';
 import 'data/mock/consultation_booking_mock_api.dart';
+import 'data/mock/consultation_bookings_list_mock_api.dart';
 import 'data/mock/consultation_categories_mock_api.dart';
 import 'data/mock/consultation_doctor_slots_mock_api.dart';
 import 'data/mock/consultation_doctors_mock_api.dart';
 import 'data/mock/payment_providers_mock_api.dart';
 import 'data/repositories/consultation_repository_impl.dart';
 import 'domain/repositories/consultation_repository.dart';
+import 'domain/use_cases/get_consultation_bookings_use_case.dart';
 import 'domain/use_cases/get_consultation_categories_use_case.dart';
 import 'domain/use_cases/get_consultation_doctor_slots_use_case.dart';
 import 'domain/use_cases/get_consultation_doctors_use_case.dart';
@@ -29,6 +32,9 @@ void initConsultationInjector() {
   sl.registerLazySingleton<ConsultationBookingMockApi>(
     () => ConsultationBookingMockApi(),
   );
+  sl.registerLazySingleton<ConsultationBookingsListMockApi>(
+    () => ConsultationBookingsListMockApi(),
+  );
   sl.registerLazySingleton<PaymentProvidersMockApi>(
     () => PaymentProvidersMockApi(),
   );
@@ -40,6 +46,7 @@ void initConsultationInjector() {
       doctorsMockApi: sl<ConsultationDoctorsMockApi>(),
       slotsMockApi: sl<ConsultationDoctorSlotsMockApi>(),
       bookingMockApi: sl<ConsultationBookingMockApi>(),
+      bookingsListMockApi: sl<ConsultationBookingsListMockApi>(),
       paymentProvidersMockApi: sl<PaymentProvidersMockApi>(),
     ),
   );
@@ -80,6 +87,12 @@ void initConsultationInjector() {
     ),
   );
 
+  sl.registerLazySingleton<GetConsultationBookingsUseCase>(
+    () => GetConsultationBookingsUseCase(
+      repository: sl<ConsultationRepository>(),
+    ),
+  );
+
   sl.registerFactory<ConsultationCubit>(
     () => ConsultationCubit(
       getCategoriesUseCase: sl<GetConsultationCategoriesUseCase>(),
@@ -91,6 +104,12 @@ void initConsultationInjector() {
       getPaymentProvidersUseCase: sl<GetPaymentProvidersUseCase>(),
       submitBookingUseCase: sl<SubmitConsultationBookingUseCase>(),
       appPref: sl(),
+    ),
+  );
+
+  sl.registerFactory<DoctorConsultationBookingsCubit>(
+    () => DoctorConsultationBookingsCubit(
+      getBookingsUseCase: sl<GetConsultationBookingsUseCase>(),
     ),
   );
 }

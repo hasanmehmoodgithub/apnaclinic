@@ -9,6 +9,7 @@ Doctor consultation category browse, doctor results, booking, and checkout.
 - `AppRoutes.consultation` — category grid (`DoctorConsultationScreen`); tiles use surgery `Assets.iconsD1` / `Assets.iconsD2` background vectors on `ConsultationUiConfig.cardBackground`.
 - `AppRoutes.consultationDoctors` — doctor results; extra: `DoctorConsultationResultsArgs` (`selectedCategory`, `mainCategoryId`, preloaded `categoryOptions` from category grid — avoids duplicate categories API call). Book Now requires login (`AppPref.getLoginStatus()`); guests go to `AppRoutes.authLogin`.
 - `AppRoutes.consultationCheckout` — payment screen; extra: `DoctorConsultationCheckoutArgs` (doctor, issue, selected slot, attachments). Submits booking via `POST` `AppUrls.doctorConsultationBooking` (`multipart/form-data`).
+- `AppRoutes.consultationSummary` — booking summary after JazzCash account selection; extra: `DoctorConsultationSummaryArgs`. Proceed submits booking; Cancel returns to checkout.
 
 ## Data & APIs
 
@@ -19,9 +20,11 @@ Doctor consultation category browse, doctor results, booking, and checkout.
   - Response `data.data[]`: `id`, `publicId`, `displayName`, `specialtyName`, `yearsOfExperience`, `profileImageUrl`, `consultationFee`, `discountPercent`, `isFree`, `ratingScore` (string or number), `bio`, `education`, `qualifications`, `partner`.
   - Maps to `ResultsDoctorItem` via `ConsultationDoctorModel` (`bio` → description, `education` when `qualifications` is empty, `partner.logoUrl` for logo; partner name only if API sends `partner.name` / `displayName`). `apiDoctorId` keeps numeric `id` for slots API.
 - **GET** `AppUrls.paymentProviders` — `/api/v1/mobile/payment-provider` (active providers with `name`, `code`, `iconUrl`).
-- **POST** `AppUrls.doctorConsultationBooking` — `/api/v1/mobile/doctor-consultation/booking` (`multipart/form-data`).
+- **POST** `AppUrls.doctorConsultationBooking` — `/api/v1/mobile/doctor-consultation/book-consultation` (`multipart/form-data`).
   - Fields: `doctorId`, `tenantId`, `consultationFee`, `patientId`, `patientRelation`, `slotDate`, `slotStartTime`, `slotEndTime`, `paymentMethod` (e.g. `JAZZCASH`), `msisdn`, `attachments[]` (files).
   - `tenantId` from doctor `partner.tenantId` (not JWT); `patientId` from JWT/`AppPref`; JazzCash `msisdn` from selected saved account (profile phones via `GetAccountsListUseCase`; default/`isDefault` pre-selected in JazzCash sheet); slot values from selected availability chip.
+- **GET** `AppUrls.doctorConsultationBookings(page, limit)` — `/api/v1/mobile/doctor-consultation?page=&limit=` (subscriber's booked consultations).
+  - Response `data`: `{ data: [], page, limit, total }`; items map to `ConsultationBookingListItemEntity` (flexible doctor/slot/fee fields).
 - **GET** `AppUrls.doctorConsultationSlots(doctorId, hospitalId?)` — `/api/v1/mobile/doctor-consultation/slots/{doctorId}` (optional `?hospitalId=` when doctors list provides it).
   - Response `data[]`: `date`, `slots[]` with `start_time`, `end_time`.
   - Uses `ResultsDoctorItem.partnerDoctorId` when present, else numeric `apiDoctorId` (`id` from doctors list).
@@ -33,13 +36,14 @@ Doctor consultation category browse, doctor results, booking, and checkout.
 - `ConsultationCubit` — loads categories via `GetConsultationCategoriesUseCase`.
 - `DoctorConsultationResultsScreen` — loads doctors via `GetConsultationDoctorsUseCase` using `mainCategoryId`.
 - `DoctorConsultationBookDoctorScreen` — loads slots via `GetConsultationDoctorSlotsUseCase` using `ResultsDoctorItem.apiDoctorId`. Documents section supports multiple attachments (gallery/file multi-select; camera appends) with per-item delete.
-- `DoctorConsultationCheckoutCubit` — loads payment providers via `GetPaymentProvidersUseCase`; submits booking via `SubmitConsultationBookingUseCase`.
+- `DoctorConsultationCheckoutCubit` — loads payment providers via `GetPaymentProvidersUseCase`; submits booking via `SubmitConsultationBookingUseCase`. JazzCash Continue opens `DoctorConsultationJazzCashAccountsSheetWidget` (loads saved phones via `GetAccountsListUseCase`; default account pre-selected).
+- `DoctorConsultationBookingsCubit` (bookings tab) — loads paginated bookings via `GetConsultationBookingsUseCase`.
 
 ## DI
 
-- `consultation_injection.dart` — `ConsultationRemoteDataSourceImpl`, repository, category/doctor/slots/payment-provider/booking use cases, `DoctorConsultationCheckoutCubit`, cubit.
+- `consultation_injection.dart` — `ConsultationRemoteDataSourceImpl`, repository, category/doctor/slots/payment-provider/booking/bookings-list use cases, `DoctorConsultationCheckoutCubit`, `DoctorConsultationBookingsCubit`.
 
 ## Mocks
 
-- `ConsultationCategoriesMockApi` / `ConsultationDoctorsMockApi` / `ConsultationDoctorSlotsMockApi` / `ConsultationBookingMockApi` / `PaymentProvidersMockApi` — when `MockConfig.enableConsultationMocks` is true (default false).
+- `ConsultationCategoriesMockApi` / `ConsultationDoctorsMockApi` / `ConsultationDoctorSlotsMockApi` / `ConsultationBookingMockApi` / `ConsultationBookingsListMockApi` / `PaymentProvidersMockApi` — when `MockConfig.enableConsultationMocks` is true (default false).
 - Book-doctor screen displays the same `ResultsDoctorItem` passed from results (no separate detail fetch).
