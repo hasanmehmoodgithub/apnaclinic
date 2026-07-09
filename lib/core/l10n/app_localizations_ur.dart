@@ -1167,6 +1167,18 @@ class AppLocalizationsUr extends AppLocalizations {
   String get consultationAvailabilityRetry => 'دوبارہ کوشش کریں';
 
   @override
+  String get consultationSummaryTitle => 'خلاصہ';
+
+  @override
+  String get consultationSummaryAccountNoLabel => 'اکاؤنٹ نمبر';
+
+  @override
+  String get consultationSummaryTotalAmountLabel => 'کل رقم';
+
+  @override
+  String get consultationTimeLabel => 'وقت';
+
+  @override
   String get commonContinue => 'جاری رکھیں';
 
   @override

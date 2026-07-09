@@ -76,6 +76,13 @@ class AppUrls {
   static String get doctorConsultationBooking =>
       '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/doctor-consultation/book-consultation';
 
+  /// Paginated list of subscriber's booked doctor consultations (aggregator mobile API).
+  static String doctorConsultationBookings({
+    int page = 1,
+    int limit = 20,
+  }) =>
+      '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/doctor-consultation?page=$page&limit=$limit';
+
   /// Payment providers for consultation checkout (aggregator mobile API).
   static String get paymentProviders =>
       '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/payment-provider';

@@ -1,5 +1,6 @@
 import '../../../../core/functional/functional_export.dart';
 import '../../presentation/widgets/results_doctor_item.dart';
+import '../entities/consultation_booking_list_entity.dart';
 import '../entities/consultation_category_entity.dart';
 import '../entities/consultation_doctor_slots_entity.dart';
 import '../entities/payment_provider_entity.dart';
@@ -15,6 +16,10 @@ abstract class ConsultationRepository {
     String? hospitalId,
   });
   Future<Either<ErrorMsg, List<PaymentProviderEntity>>> getPaymentProviders();
+  Future<Either<ErrorMsg, ConsultationBookingsPageEntity>> getBookings({
+    int page = 1,
+    int limit = 20,
+  });
   Future<Either<ErrorMsg, void>> submitBooking(
     SubmitConsultationBookingParams params,
   );

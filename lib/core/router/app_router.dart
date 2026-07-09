@@ -13,12 +13,14 @@ import '../../features/consultation/presentation/cubit/consultation_cubit.dart';
 import '../../features/consultation/presentation/screens/ai_consultation_screen.dart';
 import '../../features/consultation/presentation/screens/doctor_consultation_book_doctor_screen.dart';
 import '../../features/consultation/presentation/screens/doctor_consultation_checkout_screen.dart';
+import '../../features/consultation/presentation/screens/doctor_consultation_summary_screen.dart';
 import '../../features/consultation/presentation/screens/doctor_consultation_results_screen.dart';
 import '../../features/consultation/presentation/doctor_consultation_results_args.dart';
 import '../../features/consultation/presentation/screens/doctor_consultation_screen.dart';
 import '../../features/consultation/presentation/cubit/doctor_consultation_checkout_cubit.dart';
 import '../../features/consultation/presentation/doctor_consultation_book_doctor_args.dart';
 import '../../features/consultation/presentation/doctor_consultation_checkout_args.dart';
+import '../../features/consultation/presentation/doctor_consultation_summary_args.dart';
 import '../../features/customer_support/presentation/screens/customer_support_screen.dart';
 import '../../features/dashboard/presentation/screens/menu_screen.dart';
 import '../../features/lab_test/domain/repositories/lab_test_cart_repository.dart';
@@ -209,6 +211,20 @@ class AppRouter {
         },
       ),
       GoRoute(
+        path: AppRoutes.path(AppRoutes.consultationSummary),
+        name: AppRoutes.consultationSummary,
+        builder: (context, state) {
+          final extra = state.extra;
+          if (extra is! DoctorConsultationSummaryArgs) {
+            return const SizedBox.shrink();
+          }
+          return BlocProvider<DoctorConsultationCheckoutCubit>(
+            create: (_) => sl<DoctorConsultationCheckoutCubit>(),
+            child: DoctorConsultationSummaryScreen(args: extra),
+          );
+        },
+      ),
+      GoRoute(
         path: AppRoutes.path(AppRoutes.doctorConsultationBookingDetails),
         name: AppRoutes.doctorConsultationBookingDetails,
         builder: (context, state) {
@@ -220,6 +236,7 @@ class AppRouter {
             create: (_) => DoctorConsultationBookingDetailsCubit(
               api: DoctorConsultationBookingsMockApi(),
               bookingId: extra.bookingId,
+              booking: extra.booking,
             ),
             child: const DoctorConsultationBookingDetailsScreen(),
           );

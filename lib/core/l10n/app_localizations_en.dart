@@ -1168,6 +1168,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get consultationAvailabilityRetry => 'Retry';
 
   @override
+  String get consultationSummaryTitle => 'Summary';
+
+  @override
+  String get consultationSummaryAccountNoLabel => 'Account No.';
+
+  @override
+  String get consultationSummaryTotalAmountLabel => 'Total Amount';
+
+  @override
+  String get consultationTimeLabel => 'Time';
+
+  @override
   String get commonContinue => 'Continue';
 
   @override

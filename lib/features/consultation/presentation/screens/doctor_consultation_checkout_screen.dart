@@ -9,15 +9,17 @@ import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/preference/app_pref.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/session/auth_session_refresh.dart';
-import '../../../account/domain/models/account_method.dart';
-import '../../../account/domain/use_cases/get_accounts_list_use_case.dart';
+import '../../../../core/utils/phone_format_utils.dart';
+import '../models/doctor_consultation_jazzcash_sheet_result.dart';
 import '../../../dashboard/presentation/constants/main_navigation_tabs.dart';
+import '../../data/models/doctor_consultation_checkout_model.dart';
 import '../../data/utils/consultation_booking_utils.dart';
 import '../constants/consultation_ui_config.dart';
 import '../widgets/consultation_screen_header_widget.dart';
 import '../cubit/doctor_consultation_checkout_cubit.dart';
 import '../cubit/doctor_consultation_checkout_state.dart';
 import '../doctor_consultation_checkout_args.dart';
+import '../doctor_consultation_summary_args.dart';
 import '../widgets/consultation_booking_confirmation_dialog_widget.dart';
 import '../widgets/doctor_consultation_checkout_billing_section_widget.dart';
 import '../widgets/doctor_consultation_jazzcash_accounts_sheet_widget.dart';
@@ -39,58 +41,37 @@ class DoctorConsultationCheckoutScreen extends StatefulWidget {
 
 class _DoctorConsultationCheckoutScreenState
     extends State<DoctorConsultationCheckoutScreen> {
-  List<AccountMethod> _savedAccounts = const [];
-  int _selectedAccountIndex = 0;
-
   @override
   void initState() {
     super.initState();
-    _loadSavedAccounts();
     context.read<DoctorConsultationCheckoutCubit>().load(widget.args);
   }
 
-  Future<void> _loadSavedAccounts() async {
-    final l10n = AppLocalizations.of(context)!;
-    final result = await sl<GetAccountsListUseCase>().call();
-    if (!mounted) return;
-
-    result.fold(
-      (_) {
-        setState(() {
-          _savedAccounts = const [];
-          _selectedAccountIndex = 0;
-        });
-      },
-      (items) {
-        final accounts = items
-            .map(
-              (item) => AccountMethod(
-                bankName: l10n.accountMethodJazzCash,
-                accountHolderName: l10n.accountHolderFallback,
-                accountNumber: item.number,
-                isDefault: item.isDefault,
-              ),
-            )
-            .toList(growable: false);
-
-        var selectedIndex = accounts.indexWhere((item) => item.isDefault);
-        if (selectedIndex < 0) selectedIndex = 0;
-
-        setState(() {
-          _savedAccounts = accounts;
-          _selectedAccountIndex = selectedIndex;
-        });
-      },
-    );
+  DoctorConsultationPaymentOptionModel? _selectedPaymentOption(
+    DoctorConsultationCheckoutState state,
+  ) {
+    final code = state.selectedPaymentMethodId;
+    final options = state.data?.paymentOptions ?? const [];
+    if (code == null) return null;
+    for (final option in options) {
+      if (option.code == code) return option;
+    }
+    return null;
   }
 
   void _onPaymentMethodTap(String id) {
     context.read<DoctorConsultationCheckoutCubit>().selectPaymentMethod(id);
   }
 
-  Future<void> _onContinuePressed(String? selectedPaymentMethodCode) async {
+  Future<void> _onContinuePressed(DoctorConsultationCheckoutState state) async {
+    final selectedPaymentMethodCode = state.selectedPaymentMethodId;
     if (selectedPaymentMethodCode == null) return;
-    if (ConsultationBookingUtils.isJazzCashCode(selectedPaymentMethodCode)) {
+
+    final selectedOption = _selectedPaymentOption(state);
+    if (ConsultationBookingUtils.isJazzCashPayment(
+      selectedPaymentMethodCode,
+      name: selectedOption?.name ?? '',
+    )) {
       await _openJazzCashBottomSheet(selectedPaymentMethodCode);
       return;
     }
@@ -103,31 +84,44 @@ class _DoctorConsultationCheckoutScreenState
   }
 
   Future<void> _openJazzCashBottomSheet(String paymentMethodCode) async {
-    final selectedIndex = await showModalBottomSheet<int>(
+    final l10n = AppLocalizations.of(context)!;
+    final result = await showModalBottomSheet<DoctorConsultationJazzCashSheetResult>(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (_) {
-        return DoctorConsultationJazzCashAccountsSheetWidget(
-          accounts: _savedAccounts,
-          initialSelectedIndex: _selectedAccountIndex,
-        );
-      },
+      builder: (_) => const DoctorConsultationJazzCashAccountsSheetWidget(),
     );
-    if (selectedIndex == null || !mounted) return;
-    if (selectedIndex == -1) {
+    if (result == null || !mounted) return;
+
+    if (result.addAccount) {
       await context.pushNamed(AppRoutes.accountDetails);
-      await _loadSavedAccounts();
       if (!mounted) return;
       await _openJazzCashBottomSheet(paymentMethodCode);
       return;
     }
-    setState(() => _selectedAccountIndex = selectedIndex);
 
-    final account = _savedAccounts[selectedIndex];
-    await _submitBooking(
-      paymentMethodCode: paymentMethodCode,
-      msisdn: account.accountNumber,
+    final msisdn = result.msisdn?.trim() ?? '';
+    if (msisdn.isEmpty) return;
+
+    final cubit = context.read<DoctorConsultationCheckoutCubit>();
+    final checkoutData = cubit.state.data;
+    if (checkoutData == null) return;
+
+    final selectedOption = _selectedPaymentOption(cubit.state);
+    if (!mounted) return;
+
+    await context.pushNamed(
+      AppRoutes.consultationSummary,
+      extra: DoctorConsultationSummaryArgs(
+        checkoutArgs: widget.args,
+        paymentMethodCode: paymentMethodCode,
+        paymentMethodName: selectedOption?.name ?? l10n.accountMethodJazzCash,
+        accountNumber: PhoneFormatUtils.toLocalDisplay(msisdn),
+        msisdn: msisdn,
+        consultationFee: checkoutData.consultationFee,
+        discount: checkoutData.discount,
+        total: checkoutData.total,
+      ),
     );
   }
 
@@ -286,9 +280,7 @@ class _DoctorConsultationCheckoutScreenState
                                 onPressed: state.selectedPaymentMethodId == null ||
                                         state.isSubmitting
                                     ? null
-                                    : () => _onContinuePressed(
-                                          state.selectedPaymentMethodId,
-                                        ),
+                                    : () => _onContinuePressed(state),
                                 style: FilledButton.styleFrom(
                                   backgroundColor: const Color(0xFF1FAFA3),
                                   shape: RoundedRectangleBorder(

@@ -9,17 +9,24 @@ class ConsultationScreenHeaderWidget extends StatelessWidget {
     required this.title,
     required this.onBackTap,
     this.trailingWidth = 48,
+    this.compact = false,
   });
 
   final String title;
   final VoidCallback onBackTap;
   final double trailingWidth;
+  final bool compact;
 
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     return Padding(
-      padding: EdgeInsets.fromLTRB(8.w, 8.h, 8.w, 8.h),
+      padding: EdgeInsets.fromLTRB(
+        8.w,
+        compact ? 0 : 8.h,
+        8.w,
+        compact ? 0 : 8.h,
+      ),
       child: Row(
         children: [
           IconButton(

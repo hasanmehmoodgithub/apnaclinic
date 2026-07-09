@@ -33,8 +33,19 @@ class ConsultationBookingUtils {
     return (consultationFee, discount);
   }
 
-  static bool isJazzCashCode(String code) =>
-      code.trim().toUpperCase() == 'JAZZCASH';
+  static bool isJazzCashCode(String code) => isJazzCashPayment(code);
+
+  static bool isJazzCashPayment(String code, {String name = ''}) {
+    final normalizedCode =
+        code.trim().toUpperCase().replaceAll(RegExp(r'[\s_-]'), '');
+    if (normalizedCode == 'JAZZCASH' || normalizedCode.contains('JAZZCASH')) {
+      return true;
+    }
+
+    final normalizedName =
+        name.trim().toLowerCase().replaceAll(RegExp(r'[\s_-]'), '');
+    return normalizedName == 'jazzcash' || normalizedName.contains('jazzcash');
+  }
 
   static String paymentMethodApiValue(String paymentMethodCode) =>
       paymentMethodCode.trim().toUpperCase();

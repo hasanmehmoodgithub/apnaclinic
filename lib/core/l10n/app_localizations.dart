@@ -2270,6 +2270,30 @@ abstract class AppLocalizations {
   /// **'Retry'**
   String get consultationAvailabilityRetry;
 
+  /// No description provided for @consultationSummaryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Summary'**
+  String get consultationSummaryTitle;
+
+  /// No description provided for @consultationSummaryAccountNoLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Account No.'**
+  String get consultationSummaryAccountNoLabel;
+
+  /// No description provided for @consultationSummaryTotalAmountLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Amount'**
+  String get consultationSummaryTotalAmountLabel;
+
+  /// No description provided for @consultationTimeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Time'**
+  String get consultationTimeLabel;
+
   /// No description provided for @commonContinue.
   ///
   /// In en, this message translates to:

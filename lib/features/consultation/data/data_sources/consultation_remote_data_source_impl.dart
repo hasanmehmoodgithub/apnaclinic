@@ -7,11 +7,13 @@ import '../../../../core/network/api_service.dart';
 import '../../../../core/network/app_urls.dart';
 import '../../../../core/utils/error_handler.dart';
 import '../mock/consultation_booking_mock_api.dart';
+import '../mock/consultation_bookings_list_mock_api.dart';
 import '../mock/payment_providers_mock_api.dart';
 import '../mock/consultation_categories_mock_api.dart';
 import '../mock/consultation_doctor_slots_mock_api.dart';
 import '../mock/consultation_doctors_mock_api.dart';
 import '../models/consultation_booking_form_data.dart';
+import '../models/consultation_booking_list_model.dart';
 import '../models/consultation_category_model.dart';
 import '../models/consultation_doctor_model.dart';
 import '../models/consultation_doctor_slots_model.dart';
@@ -26,6 +28,7 @@ class ConsultationRemoteDataSourceImpl implements ConsultationRemoteDataSource {
     required this.doctorsMockApi,
     required this.slotsMockApi,
     required this.bookingMockApi,
+    required this.bookingsListMockApi,
     required this.paymentProvidersMockApi,
   });
 
@@ -34,6 +37,7 @@ class ConsultationRemoteDataSourceImpl implements ConsultationRemoteDataSource {
   final ConsultationDoctorsMockApi doctorsMockApi;
   final ConsultationDoctorSlotsMockApi slotsMockApi;
   final ConsultationBookingMockApi bookingMockApi;
+  final ConsultationBookingsListMockApi bookingsListMockApi;
   final PaymentProvidersMockApi paymentProvidersMockApi;
 
   static bool _isSuccessResponse(Map<String, dynamic> response) {
@@ -188,6 +192,42 @@ class ConsultationRemoteDataSourceImpl implements ConsultationRemoteDataSource {
       final message = ErrorHandler.handleExceptions(
         e,
         endpoint: AppUrls.paymentProviders,
+      );
+      return Future.error(message);
+    }
+  }
+
+  @override
+  Future<ConsultationBookingsPageModel> getBookings({
+    int page = 1,
+    int limit = 20,
+  }) async {
+    try {
+      final Map<String, dynamic> response;
+      if (ConsultationBookingsListMockApi.useMockResponses) {
+        response = await bookingsListMockApi.getBookingsSuccessResponse(
+          page: page,
+          limit: limit,
+        );
+      } else {
+        response = await apiService.get(
+          AppUrls.doctorConsultationBookings(page: page, limit: limit),
+        );
+        log('getBookings response: $response');
+      }
+
+      if (_isSuccessResponse(response)) {
+        return ConsultationBookingsPageModel.fromJson(response);
+      }
+
+      final message =
+          (response['message'] ?? AppStrings.genericErrorMessage).toString();
+      return Future.error(message);
+    } catch (e) {
+      log('getBookings error: $e');
+      final message = ErrorHandler.handleExceptions(
+        e,
+        endpoint: AppUrls.doctorConsultationBookings(page: page, limit: limit),
       );
       return Future.error(message);
     }

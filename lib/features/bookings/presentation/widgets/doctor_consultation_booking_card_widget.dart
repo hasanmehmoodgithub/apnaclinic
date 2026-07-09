@@ -60,7 +60,7 @@ class DoctorConsultationBookingCardWidget extends StatelessWidget {
                 _CardActionsColumn(
                   l10n: l10n,
                   textTheme: textTheme,
-                  bookingId: item.bookingId,
+                  item: item,
                 ),
               ],
             ),
@@ -274,12 +274,12 @@ class _CardActionsColumn extends StatelessWidget {
   const _CardActionsColumn({
     required this.l10n,
     required this.textTheme,
-    required this.bookingId,
+    required this.item,
   });
 
   final AppLocalizations l10n;
   final TextTheme textTheme;
-  final String bookingId;
+  final DoctorConsultationBookingDetailsModel item;
 
   @override
   Widget build(BuildContext context) {
@@ -319,7 +319,8 @@ class _CardActionsColumn extends StatelessWidget {
               onPressed: () => context.pushNamed(
                 AppRoutes.doctorConsultationBookingDetails,
                 extra: DoctorConsultationBookingDetailsArgs(
-                  bookingId: bookingId,
+                  bookingId: item.bookingId,
+                  booking: item,
                 ),
               ),
               style: OutlinedButton.styleFrom(
