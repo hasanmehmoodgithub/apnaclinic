@@ -1,4 +1,6 @@
+import 'package:apnaclinic/generated/assets.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import '../../../../components/shimmer/app_shimmer.dart';
 
 import '../../../../core/constants/app_colors.dart';
@@ -83,21 +85,10 @@ class AccountTile extends StatelessWidget {
             if (!account.isDefault && onDelete != null)
               InkWell(
                 onTap: onDelete,
-                borderRadius: BorderRadius.circular(14.r),
-                child: Container(
-                  margin: EdgeInsets.only(left: 8.w, top: 2.h),
-                  width: 28.r,
-                  height: 28.r,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(color: AppColors.clrD4D9E1),
-                    color: AppColors.clrWhite,
-                  ),
-                  child: Icon(
-                    Icons.delete_outline_rounded,
-                    color: AppColors.clrC62828,
-                    size: 16.r,
-                  ),
+                child: SvgPicture.asset(
+                  width: 34.r,
+                  height:34.r,
+                  Assets.svgDeleteRounded,
                 ),
               ),
           ],
@@ -135,7 +126,7 @@ class AddAccountTile extends StatelessWidget {
             Text(
               l10n.profileAddAccountCta,
               style: theme.textTheme.titleSmall?.copyWith(
-                color: AppColors.clr2C2F5A,
+                color: AppColors.clr061E40,
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -146,7 +137,7 @@ class AddAccountTile extends StatelessWidget {
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 border: Border.all(
-                  color: AppColors.clrC6CCD5,
+                  color: AppColors.clr9BA6A7,
                 ),
               ),
               child: const Icon(

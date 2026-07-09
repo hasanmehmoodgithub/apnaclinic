@@ -56,8 +56,10 @@ class AddAccountFormWidget extends StatelessWidget {
           ),
           SizedBox(height: 4.h),
           DropdownButtonFormField<String>(
+
             initialValue: selectedAccountMethod,
             decoration: _fieldDecoration(),
+            icon: const Icon(Icons.keyboard_arrow_down_rounded),
             items: accountMethods
                 .map(
                   (method) => DropdownMenuItem<String>(

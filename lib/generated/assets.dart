@@ -43,7 +43,7 @@ class Assets {
   static const String iconsCash = 'assets/icons/cash.svg';
   static const String iconsClose = 'assets/icons/close.svg';
   static const String iconsD1 = 'assets/icons/d1.svg';
-static const String iconsD2 = 'assets/icons/d2.svg';
+  static const String iconsD2 = 'assets/icons/d2.svg';
   static const String iconsDebitCard = 'assets/icons/debitCard.svg';
   static const String iconsDoctor = 'assets/icons/doctor.svg';
   static const String iconsEmpty = 'assets/icons/empty.svg';
@@ -118,6 +118,8 @@ static const String iconsD2 = 'assets/icons/d2.svg';
   static const String svgAppbarbackground = 'assets/svg/appbarbackground.svg';
   static const String svgBrandApnaClinic = 'assets/svg/brand_apna_clinic.svg';
   static const String svgCrossRectangular = 'assets/svg/crossRectangular.svg';
+  static const String svgDeleteRounded = 'assets/svg/deleteRounded.svg';
+  static const String svgEditRounded = 'assets/svg/editRounded.svg';
   static const String svgFrame1171275326 = 'assets/svg/frame_1171275326.svg';
   static const String svgIcMenu = 'assets/svg/ic_menu.svg';
   static const String svgIcNotification = 'assets/svg/ic_notification.svg';

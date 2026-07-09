@@ -104,6 +104,7 @@ class _AddAccountScreenState extends State<AddAccountScreen> {
       appBar: AccountAppBarWidget(title: l10n.accountAddTitle),
       child: SafeArea(
         top: false,
+        bottom: false,
         child: Container(
           decoration: BoxDecoration(
             color: AppColors.clrWhite,

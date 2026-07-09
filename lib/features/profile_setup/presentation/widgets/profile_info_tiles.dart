@@ -21,30 +21,35 @@ class InfoTilesRow extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
     return IntrinsicHeight(
       child: Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        SizedBox(
-          width: 94.w,
-          child: InfoTile(
-            title: l10n.profileGenderLabel,
-            value: gender,
-            minWidth: 94.w,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          SizedBox(
+            width: 94.w,
+            child: InfoTile(
+              title: l10n.profileGenderLabel,
+              value: gender,
+              minWidth: 94.w,
+            ),
           ),
-        ),
-        SizedBox(width: 8.w),
-        SizedBox(
-          width: 146.w,
-          child: InfoTile(
-            title: l10n.profileDobLabel,
-            value: dob,
-            minWidth: 146.w,
+          SizedBox(width: 8.w),
+          SizedBox(
+            width: 146.w,
+            child: InfoTile(
+              title: l10n.profileDobLabel,
+              value: dob,
+              minWidth: 146.w,
+            ),
           ),
-        ),
-        SizedBox(width: 8.w),
-        Expanded(
-          child: InfoTile(title: l10n.profileEmailLabel, value: email, minWidth: 0),
-        ),
-      ],
+          SizedBox(width: 8.w),
+          Expanded(
+            child: InfoTile(
+              title: l10n.profileEmailLabel,
+              value: email,
+              minWidth: 0,
+              valueMaxLines: 2,
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -56,25 +61,28 @@ class InfoTile extends StatelessWidget {
     required this.title,
     required this.value,
     required this.minWidth,
+    this.valueMaxLines = 1,
   });
 
   final String title;
   final String value;
   final double minWidth;
+  final int valueMaxLines;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Container(
-      constraints: BoxConstraints(minWidth: minWidth, minHeight: 68.h),
-      padding: EdgeInsets.fromLTRB(12.w, 8.h, 12.w, 8.h),
+      width: double.infinity,
+      constraints: BoxConstraints(minWidth: minWidth),
+      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10.r),
+        borderRadius: BorderRadius.circular(8.r),
         border: Border.all(color: AppColors.clrC9CFD7, width: 1),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.start,
         children: [
           Text(
             title,
@@ -84,19 +92,19 @@ class InfoTile extends StatelessWidget {
               color: AppColors.clr7A91AE,
               fontSize: 11.sp,
               fontWeight: FontWeight.w500,
-              height: 1,
+              height: 1.2,
             ),
           ),
           SizedBox(height: 5.h),
           Text(
             value,
-            maxLines: 1,
+            maxLines: valueMaxLines,
             overflow: TextOverflow.ellipsis,
             style: theme.textTheme.titleMedium?.copyWith(
               color: AppColors.clr2B2C58,
               fontWeight: FontWeight.w500,
               fontSize: 16.sp,
-              height: 1,
+              height: 1.2,
             ),
           ),
         ],

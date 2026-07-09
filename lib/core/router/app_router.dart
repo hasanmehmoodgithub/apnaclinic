@@ -57,6 +57,7 @@ import '../utils/chucker_guard.dart';
 import '../../features/instant_doctor/presentation/instant_doctor_consultation_args.dart';
 import '../../features/instant_doctor/presentation/screens/instant_doctor_consultation_webview_screen.dart';
 import '../../features/profile_setup/presentation/profile_setup_launch_source.dart';
+import '../../features/profile_setup/presentation/cubit/profile_cubit.dart';
 import '../../features/profile_setup/presentation/screens/profile_screen.dart';
 import '../../features/profile_setup/presentation/screens/profile_setup_screen.dart';
 import 'app_routes.dart';
@@ -100,7 +101,10 @@ class AppRouter {
       GoRoute(
         path: AppRoutes.path(AppRoutes.profile),
         name: AppRoutes.profile,
-        builder: (context, state) => const ProfileScreen(),
+        builder: (context, state) => BlocProvider<ProfileCubit>(
+          create: (_) => sl<ProfileCubit>(),
+          child: const ProfileScreen(),
+        ),
       ),
       GoRoute(
         path: AppRoutes.path(AppRoutes.home),

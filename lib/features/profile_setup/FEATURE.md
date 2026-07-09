@@ -6,6 +6,7 @@ Collect or edit user profile (name, gender, email, address, DOB, optional profil
 
 ## Routes
 
+- `AppRoutes.profile` — `ProfileScreen` (BlocProvider `ProfileCubit`); guest vs logged-in content; account list, edit profile, add/remove accounts.
 - `AppRoutes.profileSetup` — entry from menu, login (`push`), onboarding/splash (`go` with `ProfileSetupLaunchSource` extra). Back arrow only in **edit** mode (`isProfileCompleted`); first-time setup hides back and blocks system back.
 
 ## Data & APIs
@@ -26,6 +27,7 @@ Collect or edit user profile (name, gender, email, address, DOB, optional profil
 
 ## State
 
+- `ProfileCubit` / `ProfileState` — profile screen: refresh profile from API, load/delete linked accounts; `ProfileViewData` maps `AppPref` user fields for UI.
 - `ProfileSetupCubit` / `ProfileSetupState` — `dateOfBirth` drives the date picker label and initial picker date.
 
 ## DI
