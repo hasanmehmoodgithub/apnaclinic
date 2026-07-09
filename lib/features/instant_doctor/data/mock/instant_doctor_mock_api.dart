@@ -58,6 +58,7 @@ class InstantDoctorMockApi {
     required String msisdn,
     required int productId,
     required String uuid,
+    required String action,
   }) async {
     await Future<void>.delayed(const Duration(milliseconds: 400));
     return {
@@ -68,6 +69,7 @@ class InstantDoctorMockApi {
         'msisdn': msisdn,
         'productId': productId,
         'uuid': uuid,
+        'action': action,
       },
     };
   }
@@ -77,17 +79,20 @@ class InstantDoctorMockApi {
     required int productId,
     required String otp,
     required String uuid,
+    required String action,
   }) async {
     await Future<void>.delayed(const Duration(milliseconds: 400));
     if (otp == '1234') {
       return {
         'success': true,
-        'message': 'Subscription verified successfully',
+        'message': 'OTP verified and subscription successful',
         'code': 200,
         'data': {
-          'msisdn': msisdn,
-          'productId': productId,
-          'uuid': uuid,
+          'resultCode': '00',
+          'status': 'OK',
+          'transactionId': '8ecbb4c5-3a9b-4616-8886-03cbc38fcc58',
+          'description': 'Submitted',
+          'redirectUrl': 'https://vidconsult.milvikpakistan.com/',
         },
       };
     }
@@ -95,22 +100,6 @@ class InstantDoctorMockApi {
       'success': false,
       'message': 'Invalid OTP code.',
       'code': 400,
-    };
-  }
-
-  Future<Map<String, dynamic>> cancelSubscriptionSuccessResponse({
-    required String msisdn,
-    required int productId,
-  }) async {
-    await Future<void>.delayed(const Duration(milliseconds: 400));
-    return {
-      'success': true,
-      'message': 'Subscription cancelled successfully',
-      'code': 200,
-      'data': {
-        'msisdn': msisdn,
-        'productId': productId,
-      },
     };
   }
 }

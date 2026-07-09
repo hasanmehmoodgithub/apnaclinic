@@ -49,8 +49,11 @@ class InstantDoctorProviderOptionsMenuWidget extends StatelessWidget {
             padding: EdgeInsets.symmetric(horizontal: 14.w),
             child: Row(
               children: [
-                SvgPicture.asset(        width: 22.r,
-                    height: 22.r,Assets.svgCrossRectangular),
+                SvgPicture.asset(
+                  Assets.svgCrossRectangular,
+                  width: 22.r,
+                  height: 22.r,
+                ),
                 SizedBox(width: 10.w),
                 Text(
                   l10n.instantDoctorCancelSubscription,

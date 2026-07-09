@@ -12,25 +12,27 @@ import '../../../../core/l10n/app_localizations.dart';
 import '../../domain/entities/instant_doctor_provider_entity.dart';
 import '../cubit/instant_doctor_cubit.dart';
 import '../cubit/instant_doctor_state.dart';
+import '../models/instant_doctor_flow_outcome.dart';
+import 'instant_doctor_otp_resend_button.dart';
 import 'instant_doctor_provider_summary_card.dart';
 
-class InstantDoctorSubscriptionOtpSheet extends StatefulWidget {
-  const InstantDoctorSubscriptionOtpSheet({
+class InstantDoctorOtpVerificationSheet extends StatefulWidget {
+  const InstantDoctorOtpVerificationSheet({
     super.key,
     required this.provider,
     required this.onVerified,
   });
 
   final InstantDoctorProviderEntity provider;
-  final Future<void> Function(bool success) onVerified;
+  final ValueChanged<InstantDoctorOtpVerifyOutcome> onVerified;
 
   @override
-  State<InstantDoctorSubscriptionOtpSheet> createState() =>
-      _InstantDoctorSubscriptionOtpSheetState();
+  State<InstantDoctorOtpVerificationSheet> createState() =>
+      _InstantDoctorOtpVerificationSheetState();
 }
 
-class _InstantDoctorSubscriptionOtpSheetState
-    extends State<InstantDoctorSubscriptionOtpSheet> {
+class _InstantDoctorOtpVerificationSheetState
+    extends State<InstantDoctorOtpVerificationSheet> {
   final TextEditingController _otpController = TextEditingController();
   final FocusNode _otpFocusNode = FocusNode();
   String _otpValue = '';
@@ -57,9 +59,9 @@ class _InstantDoctorSubscriptionOtpSheetState
       ),
     );
 
-    return BlocBuilder<InstantDoctorCubit, InstantDoctorState>(
-      builder: (context, state) {
-        final isVerifying = state.verifyOtpStatus == StateStatus.loading;
+    return BlocSelector<InstantDoctorCubit, InstantDoctorState, bool>(
+      selector: (state) => state.verifyOtpStatus == StateStatus.loading,
+      builder: (context, isVerifying) {
         final canContinue = _otpValue.length == 4 && !isVerifying;
 
         return SafeArea(
@@ -114,7 +116,10 @@ class _InstantDoctorSubscriptionOtpSheetState
                       : SizedBox(width: itemSpacing),
                   focusedPinTheme: defaultPinTheme.copyWith(
                     decoration: defaultPinTheme.decoration?.copyWith(
-                      border: Border.all(color: AppColors.clr0FAA9A, width: 1.5),
+                      border: Border.all(
+                        color: AppColors.clr0FAA9A,
+                        width: 1.5,
+                      ),
                     ),
                   ),
                   onChanged: (value) {
@@ -123,44 +128,8 @@ class _InstantDoctorSubscriptionOtpSheetState
                   },
                 ),
                 SizedBox(height: 8.h),
-                Align(
-                  child: TextButton(
-                    onPressed: state.canResendOtp && !isVerifying
-                        ? () => context
-                            .read<InstantDoctorCubit>()
-                            .resendSubscriptionOtp()
-                        : null,
-                    child: state.canResendOtp
-                        ? Text(
-                            l10n.authResendOtp,
-                            style: AppTextStyles.loginResend,
-                          )
-                        : Text.rich(
-                            TextSpan(
-                              children: [
-                                TextSpan(text: '${l10n.authResendOtp} '),
-                                TextSpan(
-                                  text:
-                                      '${state.otpSecondsRemaining} ${l10n.authOtpSecondsShort}',
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            style: AppTextStyles.loginResend,
-                          ),
-                  ),
-                ),
-                if (state.otpErrorMessage != null &&
-                    state.otpErrorMessage!.isNotEmpty) ...[
-                  Text(
-                    state.otpErrorMessage!,
-                    textAlign: TextAlign.center,
-                    style: AppTextStyles.loginError,
-                  ),
-                  SizedBox(height: 8.h),
-                ],
+                InstantDoctorOtpResendButton(isVerifying: isVerifying),
+                const _InstantDoctorOtpErrorText(),
                 AppButton.primary(
                   text: l10n.commonContinue,
                   isLoading: isVerifying,
@@ -193,10 +162,36 @@ class _InstantDoctorSubscriptionOtpSheetState
       return;
     }
 
-    final success = await context
-        .read<InstantDoctorCubit>()
-        .verifySubscriptionOtp(_otpValue);
+    final outcome =
+        await context.read<InstantDoctorCubit>().verifyOtp(_otpValue);
     if (!context.mounted) return;
-    await widget.onVerified(success);
+    widget.onVerified(outcome);
+  }
+}
+
+class _InstantDoctorOtpErrorText extends StatelessWidget {
+  const _InstantDoctorOtpErrorText();
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocSelector<InstantDoctorCubit, InstantDoctorState, String?>(
+      selector: (state) => state.otpErrorMessage,
+      builder: (context, errorMessage) {
+        if (errorMessage == null || errorMessage.isEmpty) {
+          return const SizedBox.shrink();
+        }
+
+        return Column(
+          children: [
+            Text(
+              errorMessage,
+              textAlign: TextAlign.center,
+              style: AppTextStyles.loginError,
+            ),
+            SizedBox(height: 8.h),
+          ],
+        );
+      },
+    );
   }
 }

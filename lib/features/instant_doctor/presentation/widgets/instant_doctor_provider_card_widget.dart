@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../components/shimmer/app_shimmer.dart';
 import '../../../../components/widgets/app_button.dart';
@@ -7,19 +8,19 @@ import '../../../../core/constants/app_colors.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../domain/entities/instant_doctor_provider_entity.dart';
+import '../cubit/instant_doctor_cubit.dart';
+import '../cubit/instant_doctor_state.dart';
 import 'instant_doctor_provider_options_menu_widget.dart';
 
 class InstantDoctorProviderCardWidget extends StatelessWidget {
   const InstantDoctorProviderCardWidget({
     super.key,
     required this.provider,
-    required this.isLoading,
     required this.onPrimaryAction,
     required this.onCancelSubscription,
   });
 
   final InstantDoctorProviderEntity provider;
-  final bool isLoading;
   final VoidCallback onPrimaryAction;
   final VoidCallback onCancelSubscription;
 
@@ -32,60 +33,66 @@ class InstantDoctorProviderCardWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
 
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.all(10.w),
-      decoration: BoxDecoration(
-        color: AppColors.clrWhite,
-        borderRadius: BorderRadius.circular(_cardRadius.r),
-        border: Border.all(color: AppColors.clrE4E7EB, width: 1),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _ProviderLogo(logoUrl: provider.logoUrl),
-          SizedBox(width: 4.w,),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _ProviderHeader(
-                  provider: provider,
-                  subscribedLabel: l10n.instantDoctorSubscribed,
-                ),
-                if (provider.product.benefits.isNotEmpty) ...[
-                  SizedBox(height: 14.h),
-                  _BenefitsSection(benefits: provider.product.benefits),
-                ],
-                SizedBox(height: 16.h),
-                if (provider.isSubscribed)
-                  _SubscribedActions(
-                    startConsultationLabel: l10n.instantDoctorStartConsultation,
-                    isLoading: isLoading,
-                    onPrimaryAction: onPrimaryAction,
-                    onCancelSubscription: onCancelSubscription,
-                    actionHeight: _actionHeight,
-                    actionRadius: _actionRadius,
-                  )
-                else
-                  AppButton.primary(
-                    text: l10n.instantDoctorSubscribe,
-                    isLoading: isLoading,
-                    onPressed: onPrimaryAction,
-                    width: double.infinity,
-                    height: _actionHeight.h,
-                    borderRadius: _actionRadius.r,
-                    elevation: 0,
-                    backgroundColor: AppColors.clr0FAA9A,
-                    foregroundColor: AppColors.clrWhite,
-                    fontWeight: FontWeight.w700,
-                    fontSize: 16.sp,
-                  ),
-              ],
-            ),
+    return BlocSelector<InstantDoctorCubit, InstantDoctorState, bool>(
+      selector: (state) => state.isProviderBusy(provider.providerId),
+      builder: (context, isLoading) {
+        return Container(
+          width: double.infinity,
+          padding: EdgeInsets.all(10.w),
+          decoration: BoxDecoration(
+            color: AppColors.clrWhite,
+            borderRadius: BorderRadius.circular(_cardRadius.r),
+            border: Border.all(color: AppColors.clrE4E7EB, width: 1),
           ),
-        ],
-      ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _ProviderLogo(logoUrl: provider.logoUrl),
+              SizedBox(width: 4.w),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _ProviderHeader(
+                      provider: provider,
+                      subscribedLabel: l10n.instantDoctorSubscribed,
+                    ),
+                    if (provider.product.benefits.isNotEmpty) ...[
+                      SizedBox(height: 14.h),
+                      _BenefitsSection(benefits: provider.product.benefits),
+                    ],
+                    SizedBox(height: 16.h),
+                    if (provider.isSubscribed)
+                      _SubscribedActions(
+                        startConsultationLabel:
+                            l10n.instantDoctorStartConsultation,
+                        isLoading: isLoading,
+                        onPrimaryAction: onPrimaryAction,
+                        onCancelSubscription: onCancelSubscription,
+                        actionHeight: _actionHeight,
+                        actionRadius: _actionRadius,
+                      )
+                    else
+                      AppButton.primary(
+                        text: l10n.instantDoctorSubscribe,
+                        isLoading: isLoading,
+                        onPressed: onPrimaryAction,
+                        width: double.infinity,
+                        height: _actionHeight.h,
+                        borderRadius: _actionRadius.r,
+                        elevation: 0,
+                        backgroundColor: AppColors.clr0FAA9A,
+                        foregroundColor: AppColors.clrWhite,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 16.sp,
+                      ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

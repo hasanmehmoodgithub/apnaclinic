@@ -59,6 +59,7 @@ class InstantDoctorRemoteDataSourceImpl implements InstantDoctorRemoteDataSource
     required String msisdn,
     required int productId,
     required String uuid,
+    required String action,
   }) async {
     try {
       final Map<String, dynamic> response;
@@ -67,6 +68,7 @@ class InstantDoctorRemoteDataSourceImpl implements InstantDoctorRemoteDataSource
           msisdn: msisdn,
           productId: productId,
           uuid: uuid,
+          action: action,
         );
       } else {
         response = await apiService.post(
@@ -75,6 +77,7 @@ class InstantDoctorRemoteDataSourceImpl implements InstantDoctorRemoteDataSource
             'msisdn': msisdn,
             'productId': productId,
             'uuid': uuid,
+            'action': action,
           },
         );
         log('sendSubscriptionOtp response: $response');
@@ -96,11 +99,12 @@ class InstantDoctorRemoteDataSourceImpl implements InstantDoctorRemoteDataSource
   }
 
   @override
-  Future<void> verifySubscriptionOtp({
+  Future<InstantDoctorVerifyOtpResultModel> verifySubscriptionOtp({
     required String msisdn,
     required int productId,
     required String otp,
     required String uuid,
+    required String action,
   }) async {
     try {
       final Map<String, dynamic> response;
@@ -110,6 +114,7 @@ class InstantDoctorRemoteDataSourceImpl implements InstantDoctorRemoteDataSource
           productId: productId,
           otp: otp,
           uuid: uuid,
+          action: action,
         );
       } else {
         response = await apiService.post(
@@ -119,12 +124,25 @@ class InstantDoctorRemoteDataSourceImpl implements InstantDoctorRemoteDataSource
             'productId': productId,
             'otp': otp,
             'uuid': uuid,
+            'action': action,
           },
         );
         log('verifySubscriptionOtp response: $response');
       }
 
-      if (_isSuccessResponse(response)) return;
+      if (_isSuccessResponse(response)) {
+        final data = response['data'];
+        if (data is Map<String, dynamic>) {
+          return InstantDoctorVerifyOtpResultModel.fromJson(data);
+        }
+        return const InstantDoctorVerifyOtpResultModel(
+          resultCode: '',
+          status: '',
+          transactionId: '',
+          description: '',
+          redirectUrl: '',
+        );
+      }
 
       final message =
           (response['message'] ?? AppStrings.instantDoctorVerifyOtpError)
@@ -140,42 +158,4 @@ class InstantDoctorRemoteDataSourceImpl implements InstantDoctorRemoteDataSource
     }
   }
 
-  @override
-  Future<void> cancelSubscription({
-    required String msisdn,
-    required int productId,
-  }) async {
-    try {
-      final Map<String, dynamic> response;
-      if (InstantDoctorMockApi.useMockResponses) {
-        response = await mockApi.cancelSubscriptionSuccessResponse(
-          msisdn: msisdn,
-          productId: productId,
-        );
-      } else {
-        response = await apiService.post(
-          AppUrls.instantDoctorCancelSubscription,
-          data: <String, dynamic>{
-            'msisdn': msisdn,
-            'productId': productId,
-          },
-        );
-        log('cancelSubscription response: $response');
-      }
-
-      if (_isSuccessResponse(response)) return;
-
-      final message = (response['message'] ??
-              AppStrings.instantDoctorCancelSubscriptionError)
-          .toString();
-      return Future.error(message);
-    } catch (e) {
-      log('cancelSubscription error: $e');
-      final message = ErrorHandler.handleExceptions(
-        e,
-        endpoint: AppUrls.instantDoctorCancelSubscription,
-      );
-      return Future.error(message);
-    }
-  }
 }

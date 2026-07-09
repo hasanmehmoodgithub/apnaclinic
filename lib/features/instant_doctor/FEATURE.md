@@ -2,27 +2,27 @@
 
 ## Purpose
 
-**Instant Doctor** — loads multiple provider subscription plans from the aggregator API. Unsubscribed plans use OTP send/verify before opening consultation; subscribed plans open `redirectUrl` directly.
+**Instant Doctor** — loads multiple provider subscription plans from the aggregator API. Unsubscribed plans use OTP send/verify (`action: subscribe`) before opening consultation; subscribed plans open `redirectUrl` directly. Cancel subscription uses the same OTP flow with `action: unsubscribe`.
 
 ## Routes / entry
 
 - Bottom nav tab: `dashboardBottomInstantDoctor` → `InstantDoctorScreen` (via main navigation shell). **Login required** — guests are sent to `AppRoutes.authLogin` (bottom nav and home banner).
+- `AppRoutes.instantDoctorConsultation` — `InstantDoctorConsultationWebViewScreen`; extra: `InstantDoctorConsultationArgs` (`url`, `title`).
 
 ## Data & APIs
 
 - `AppUrls.instantDoctorConsultation(msisdn)` — `GET /acs-aggregator/api/v1/mobile/doctor-consultation/instant?msisdn=...`
-- `AppUrls.instantDoctorSendOtp` — `POST …/doctor-consultation/instant/send-otp` — body: `msisdn`, `productId`, `uuid`
-- `AppUrls.instantDoctorVerifyOtp` — `POST …/doctor-consultation/instant/verify-otp` — body: `msisdn`, `productId`, `otp`, `uuid`
-- `AppUrls.instantDoctorCancelSubscription` — `POST …/doctor-consultation/instant/cancel-subscription` — body: `msisdn`, `productId`
+- `AppUrls.instantDoctorSendOtp` — `POST …/doctor-consultation/instant/send-otp` — body: `msisdn`, `productId`, `uuid`, `action` (`subscribe` | `unsubscribe`)
+- `AppUrls.instantDoctorVerifyOtp` — `POST …/doctor-consultation/instant/verify-otp` — body: `msisdn`, `productId`, `otp`, `uuid`, `action` (`subscribe` | `unsubscribe`); success `data`: `resultCode`, `status`, `transactionId`, `description`, `redirectUrl`
 - Response `data[]`: `providerId`, `providerName`, `logoUrl`, `isSubscribed`, `product` (`productId`, `productCode`, `productType`, `productTitle`, `priceDisplay`, `benefits[]`, `redirectUrl`)
 - `msisdn` from logged-in user (`AppPref.getUserLocalModel().phone`, normalized via `PhoneFormatUtils.toMsisdn`)
-- `uuid` generated per subscription attempt via `SubscriptionUuidUtils.generate()`
+- `uuid` generated per OTP flow via `SubscriptionUuidUtils.generate()`
 - Mock when `MockConfig.enableInstantDoctorMocks` is true (`InstantDoctorMockApi`).
 
 ## State
 
-- `InstantDoctorCubit` — loads providers; subscription OTP flow; `cancelSubscription(provider)`; `openProviderPage` opens `product.redirectUrl` in `LaunchMode.inAppWebView`.
-- `InstantDoctorScreen` — hero header, consultation title block, provider cards (subscribed ⋮ menu → cancel subscription), OTP bottom sheet, success/failure dialogs.
+- `InstantDoctorCubit` — loads providers; `onProviderPrimaryTap` / `onCancelSubscriptionConfirmed` orchestrate subscribe/unsubscribe OTP; `verifyOtp` reloads content on success; `consultationUrl` returns provider `redirectUrl`.
+- `InstantDoctorScreen` — layout and UI reactions (OTP sheet, dialogs, snackbars); opens consultation via `AppRoutes.instantDoctorConsultation` web view screen; reloads providers when web view closes.
 
 ## DI
 

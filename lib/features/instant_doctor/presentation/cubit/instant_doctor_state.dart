@@ -2,6 +2,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 
 import '../../../../core/enums/state_status.dart';
 import '../../domain/entities/instant_doctor_provider_entity.dart';
+import '../../domain/enums/instant_doctor_otp_action.dart';
 
 part 'instant_doctor_state.freezed.dart';
 
@@ -12,8 +13,8 @@ abstract class InstantDoctorState with _$InstantDoctorState {
     @Default(<InstantDoctorProviderEntity>[]) List<InstantDoctorProviderEntity> providers,
     String? errorMessage,
     int? openingProviderId,
-    int? cancellingProviderId,
     InstantDoctorProviderEntity? activeOtpProvider,
+    InstantDoctorOtpAction? otpAction,
     String? subscriptionUuid,
     @Default(StateStatus.idle) StateStatus sendOtpStatus,
     @Default(StateStatus.idle) StateStatus verifyOtpStatus,
@@ -24,4 +25,10 @@ abstract class InstantDoctorState with _$InstantDoctorState {
   const InstantDoctorState._();
 
   bool get canResendOtp => otpSecondsRemaining <= 0;
+
+  bool isProviderBusy(int providerId) {
+    return openingProviderId == providerId ||
+        (sendOtpStatus == StateStatus.loading &&
+            activeOtpProvider?.providerId == providerId);
+  }
 }

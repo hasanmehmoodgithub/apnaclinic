@@ -54,6 +54,8 @@ import '../../features/auth/presentation/screens/login_screen.dart';
 import '../di/dependency_injection.dart';
 import '../preference/app_pref.dart';
 import '../utils/chucker_guard.dart';
+import '../../features/instant_doctor/presentation/instant_doctor_consultation_args.dart';
+import '../../features/instant_doctor/presentation/screens/instant_doctor_consultation_webview_screen.dart';
 import '../../features/profile_setup/presentation/profile_setup_launch_source.dart';
 import '../../features/profile_setup/presentation/screens/profile_screen.dart';
 import '../../features/profile_setup/presentation/screens/profile_setup_screen.dart';
@@ -370,6 +372,19 @@ class AppRouter {
             return const LabTestScreen();
           }
           return LabTestViewDetailsScreen(args: extra);
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.path(AppRoutes.instantDoctorConsultation),
+        name: AppRoutes.instantDoctorConsultation,
+        builder: (context, state) {
+          final args = instantDoctorConsultationArgsFromExtra(state.extra);
+          if (args == null) {
+            return const Scaffold(
+              body: Center(child: Text('Invalid consultation link')),
+            );
+          }
+          return InstantDoctorConsultationWebViewScreen(args: args);
         },
       ),
     ],

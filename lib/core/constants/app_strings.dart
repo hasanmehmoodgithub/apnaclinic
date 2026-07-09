@@ -17,6 +17,8 @@ class AppStrings {
       'Unable to verify OTP right now. Please try again.';
   static const String instantDoctorCancelSubscriptionError =
       'Unable to cancel subscription right now. Please try again.';
+  static const String instantDoctorPhoneRequiredError =
+      'Phone number is required for instant doctor.';
   static const String customerSupportLoadError =
       'Unable to load customer support right now. Please try again in a moment.';
   static const String profileSetupLoadError =

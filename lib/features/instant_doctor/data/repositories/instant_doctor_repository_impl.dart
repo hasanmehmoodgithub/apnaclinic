@@ -2,8 +2,8 @@ import 'dart:developer';
 
 import '../../../../core/functional/functional_export.dart';
 import '../../domain/entities/instant_doctor_entity.dart';
+import '../../domain/entities/instant_doctor_verify_otp_entity.dart';
 import '../../domain/repositories/instant_doctor_repository.dart';
-import '../../domain/use_cases/cancel_instant_doctor_subscription_params.dart';
 import '../../domain/use_cases/get_instant_doctor_content_params.dart';
 import '../../domain/use_cases/send_instant_doctor_otp_params.dart';
 import '../../domain/use_cases/verify_instant_doctor_otp_params.dart';
@@ -39,6 +39,7 @@ class InstantDoctorRepositoryImpl implements InstantDoctorRepository {
         msisdn: params.msisdn,
         productId: params.productId,
         uuid: params.uuid,
+        action: params.action.apiValue,
       );
       return const Right(null);
     } catch (e) {
@@ -48,35 +49,20 @@ class InstantDoctorRepositoryImpl implements InstantDoctorRepository {
   }
 
   @override
-  Future<Either<ErrorMsg, void>> verifySubscriptionOtp(
+  Future<Either<ErrorMsg, InstantDoctorVerifyOtpEntity>> verifySubscriptionOtp(
     VerifyInstantDoctorOtpParams params,
   ) async {
     try {
-      await remoteDataSource.verifySubscriptionOtp(
+      final model = await remoteDataSource.verifySubscriptionOtp(
         msisdn: params.msisdn,
         productId: params.productId,
         otp: params.otp,
         uuid: params.uuid,
+        action: params.action.apiValue,
       );
-      return const Right(null);
+      return Right(InstantDoctorMapper.toVerifyOtpEntity(model));
     } catch (e) {
       log('verifySubscriptionOtp repository error: $e');
-      return Left(e.toString());
-    }
-  }
-
-  @override
-  Future<Either<ErrorMsg, void>> cancelSubscription(
-    CancelInstantDoctorSubscriptionParams params,
-  ) async {
-    try {
-      await remoteDataSource.cancelSubscription(
-        msisdn: params.msisdn,
-        productId: params.productId,
-      );
-      return const Right(null);
-    } catch (e) {
-      log('cancelSubscription repository error: $e');
       return Left(e.toString());
     }
   }

@@ -1,19 +1,21 @@
 import 'package:apnaclinic/core/constants/app_colors.dart';
-import 'package:apnaclinic/core/enums/state_status.dart';
 import 'package:apnaclinic/core/extensions/screen_util_extensions.dart';
 import 'package:apnaclinic/core/l10n/app_localizations.dart';
+import 'package:apnaclinic/core/router/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../domain/entities/instant_doctor_product_entity.dart';
 import '../../domain/entities/instant_doctor_provider_entity.dart';
+import '../../domain/enums/instant_doctor_otp_action.dart';
 import '../cubit/instant_doctor_cubit.dart';
-import '../cubit/instant_doctor_state.dart';
+import '../instant_doctor_consultation_args.dart';
+import '../models/instant_doctor_flow_outcome.dart';
 import '../widgets/instant_doctor_cancel_subscription_dialog.dart';
-import '../widgets/instant_doctor_providers_list_widget.dart';
+import '../widgets/instant_doctor_otp_verification_sheet.dart';
+import '../widgets/instant_doctor_provider_list_widget.dart';
+import '../widgets/instant_doctor_screen_error_listener.dart';
 import '../widgets/instant_doctor_subscription_failure_dialog.dart';
-import '../widgets/instant_doctor_subscription_otp_sheet.dart';
 import '../widgets/instant_doctor_subscription_success_dialog.dart';
 import '../widgets/instant_doctor_top_header_widget.dart';
 
@@ -27,138 +29,152 @@ class InstantDoctorScreen extends StatefulWidget {
   State<InstantDoctorScreen> createState() => _InstantDoctorScreenState();
 }
 
-class _InstantDoctorScreenState extends State<InstantDoctorScreen>
-    with WidgetsBindingObserver {
+class _InstantDoctorScreenState extends State<InstantDoctorScreen> {
   static const double _cardOverlap = 56;
   static const double _topBannerFraction = 0.32;
-  static const double _panelTopRadius =35;
-  bool _reloadOnResume = false;
-
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addObserver(this);
-
-
-  }
-
-  @override
-  void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
-    super.dispose();
-  }
-
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed && _reloadOnResume) {
-      _reloadOnResume = false;
-      context.read<InstantDoctorCubit>().loadContent();
-    }
-  }
+  static const double _panelTopRadius = 35;
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final bannerHeight = MediaQuery.sizeOf(context).height * _topBannerFraction;
+    final panelTop = bannerHeight - _cardOverlap.h;
 
-    return BlocConsumer<InstantDoctorCubit, InstantDoctorState>(
-      listener: (context, state) {
-        final errorMessage = state.errorMessage;
-        if (state.loadingStateStatus == StateStatus.error &&
-            errorMessage != null &&
-            errorMessage.isNotEmpty) {
-          _showSnackBar(errorMessage);
-        }
-      },
-      builder: (context, state) {
-        final panelTop = bannerHeight - _cardOverlap.h;
-
-        return ColoredBox(
-          color: AppColors.clrF4F6F8,
-          child: Stack(
-            clipBehavior: Clip.none,
-            children: [
-              Positioned(
-                top: 0,
-                left: 0,
-                right: 0,
-                height: bannerHeight,
-                child: InstantDoctorTopHeaderWidget(
-                  title: l10n.instantDoctorTitle,
-                  showBackButton: widget.showBackButton,
-                  onBack: widget.onBack,
-                ),
+    return InstantDoctorScreenErrorListener(
+      child: ColoredBox(
+        color: AppColors.clrF4F6F8,
+        child: Stack(
+          clipBehavior: Clip.none,
+          children: [
+            Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
+              height: bannerHeight,
+              child: InstantDoctorTopHeaderWidget(
+                title: l10n.instantDoctorTitle,
+                showBackButton: widget.showBackButton,
+                onBack: widget.onBack,
               ),
-              Positioned(
-                top: panelTop,
-                left: 0,
-                right: 0,
-                bottom: 0,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.vertical(
-                    top: Radius.circular(_panelTopRadius.r),
-                  ),
-                  child: ColoredBox(
-                    color: AppColors.clrWhite,
-                    child: InstantDoctorProvidersListWidget(
-                      state: state,
-                      onProviderAction: _onProviderAction,
-                      onCancelSubscription: _onCancelSubscription,
-                    ),
+            ),
+            Positioned(
+              top: panelTop,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              child: ClipRRect(
+                borderRadius: BorderRadius.vertical(
+                  top: Radius.circular(_panelTopRadius.r),
+                ),
+                child: ColoredBox(
+                  color: AppColors.clrWhite,
+                  child: InstantDoctorProviderListWidget(
+                    onProviderPrimaryTap: _onProviderPrimaryTap,
+                    onCancelSubscription: _onCancelSubscription,
                   ),
                 ),
               ),
-            ],
-          ),
-        );
-      },
+            ),
+          ],
+        ),
+      ),
     );
   }
 
   InstantDoctorCubit get _cubit => context.read<InstantDoctorCubit>();
   AppLocalizations get _l10n => AppLocalizations.of(context)!;
 
-  Future<void> _onProviderAction(InstantDoctorProviderEntity provider) async {
-    if (provider.isSubscribed) {
-      await _openProviderPage(provider);
-      return;
-    }
-
-    final sent = await _cubit.startSubscription(provider);
+  Future<void> _onProviderPrimaryTap(
+    InstantDoctorProviderEntity provider,
+  ) async {
+    final outcome = await _cubit.onProviderPrimaryTap(provider);
     if (!mounted) return;
 
-    if (!sent) {
-      final error = _cubit.state.otpErrorMessage;
-      if (error != null && error.isNotEmpty) {
-        _showSnackBar(error);
-      }
-      return;
-    }
-
-    await _showOtpSheet(provider);
-    if (mounted) {
-      _cubit.clearOtpFlow();
+    switch (outcome) {
+      case InstantDoctorProviderTapOutcome.consultationOpened:
+        await _openConsultation(provider);
+        return;
+      case InstantDoctorProviderTapOutcome.consultationFailed:
+        _showSnackBar(
+          _l10n.instantDoctorOpenAppError,
+          behavior: SnackBarBehavior.floating,
+        );
+        return;
+      case InstantDoctorProviderTapOutcome.otpFlowStarted:
+        await _showOtpSheet(provider);
+        if (mounted) _cubit.clearOtpFlow();
+        return;
+      case InstantDoctorProviderTapOutcome.otpSendFailed:
+        _showOtpSendError();
+        return;
     }
   }
 
-  Future<void> _onCancelSubscription(InstantDoctorProviderEntity provider) async {
+  Future<void> _onCancelSubscription(
+    InstantDoctorProviderEntity provider,
+  ) async {
     final confirmed = await showInstantDoctorCancelSubscriptionDialog(
       context,
       providerName: provider.providerName,
     );
     if (!confirmed || !mounted) return;
 
-    final success = await _cubit.cancelSubscription(provider);
+    final outcome = await _cubit.onCancelSubscriptionConfirmed(provider);
     if (!mounted) return;
 
-    if (success) {
-      await _cubit.loadContent();
-      if (!mounted) return;
-      _showSnackBar(_l10n.instantDoctorCancelSubscriptionSuccess);
+    switch (outcome) {
+      case InstantDoctorProviderTapOutcome.otpFlowStarted:
+        await _showOtpSheet(provider);
+        if (mounted) _cubit.clearOtpFlow();
+        return;
+      case InstantDoctorProviderTapOutcome.otpSendFailed:
+        _showOtpSendError();
+        return;
+      case InstantDoctorProviderTapOutcome.consultationOpened:
+      case InstantDoctorProviderTapOutcome.consultationFailed:
+        return;
+    }
+  }
+
+  Future<void> _openConsultation(InstantDoctorProviderEntity provider) async {
+    final url = _cubit.consultationUrl(provider);
+    if (url == null) {
+      _showSnackBar(
+        _l10n.instantDoctorOpenAppError,
+        behavior: SnackBarBehavior.floating,
+      );
       return;
     }
 
-    _showSnackBar(_l10n.instantDoctorCancelSubscriptionFailed);
+    await _openConsultationUrl(
+      url: url,
+      title: provider.providerName,
+      providerId: provider.providerId,
+    );
+  }
+
+  Future<void> _openConsultationUrl({
+    required String url,
+    required String title,
+    int? providerId,
+  }) async {
+    if (providerId != null) {
+      _cubit.setOpeningProvider(providerId);
+    }
+
+    await context.pushNamed(
+      AppRoutes.instantDoctorConsultation,
+      extra: InstantDoctorConsultationArgs(
+        url: url,
+        title: title,
+      ),
+    );
+    if (!mounted) return;
+
+    if (providerId != null) {
+      _cubit.clearOpeningProvider();
+    }
+    await _cubit.loadContent();
   }
 
   Future<void> _showOtpSheet(InstantDoctorProviderEntity provider) async {
@@ -172,32 +188,48 @@ class _InstantDoctorScreenState extends State<InstantDoctorScreen>
       builder: (sheetContext) {
         return BlocProvider.value(
           value: _cubit,
-          child: InstantDoctorSubscriptionOtpSheet(
+          child: InstantDoctorOtpVerificationSheet(
             provider: provider,
-            onVerified: (success) async {
-              if (!sheetContext.mounted) return;
-              Navigator.of(sheetContext).pop();
-              if (!mounted) return;
-
-              _cubit.clearOtpFlow();
-              if (success) {
-                await _showSubscriptionSuccessDialog(provider);
-              } else {
-                await _showSubscriptionFailureDialog();
-              }
-            },
+            onVerified: (outcome) => _onOtpVerified(
+              sheetContext: sheetContext,
+              provider: provider,
+              outcome: outcome,
+            ),
           ),
         );
       },
     );
   }
 
-  Future<void> _showSubscriptionSuccessDialog(
-    InstantDoctorProviderEntity provider,
-  ) async {
-    await _cubit.loadContent();
+  Future<void> _onOtpVerified({
+    required BuildContext sheetContext,
+    required InstantDoctorProviderEntity provider,
+    required InstantDoctorOtpVerifyOutcome outcome,
+  }) async {
+    if (!sheetContext.mounted) return;
+    sheetContext.pop();
     if (!mounted) return;
 
+    _cubit.clearOtpFlow();
+    if (outcome.isSuccess) {
+      if (outcome.action == InstantDoctorOtpAction.unsubscribe) {
+        _showSnackBar(_l10n.instantDoctorCancelSubscriptionSuccess);
+        return;
+      }
+      await _showSubscribeSuccessDialog(provider, outcome);
+      return;
+    }
+
+    await showDialog<void>(
+      context: context,
+      builder: (_) => const InstantDoctorSubscriptionFailureDialog(),
+    );
+  }
+
+  Future<void> _showSubscribeSuccessDialog(
+    InstantDoctorProviderEntity provider,
+    InstantDoctorOtpVerifyOutcome outcome,
+  ) async {
     await showDialog<void>(
       context: context,
       barrierDismissible: false,
@@ -206,29 +238,33 @@ class _InstantDoctorScreenState extends State<InstantDoctorScreen>
           providerName: provider.providerName,
           onStartConsultation: () {
             dialogContext.pop();
-            _openProviderPage(provider);
+            if (!mounted) return;
+
+            final url =
+                outcome.redirectUrl ?? _cubit.consultationUrl(provider);
+            if (url == null) {
+              _showSnackBar(
+                _l10n.instantDoctorOpenAppError,
+                behavior: SnackBarBehavior.floating,
+              );
+              return;
+            }
+
+            _openConsultationUrl(
+              url: url,
+              title: provider.providerName,
+              providerId: provider.providerId,
+            );
           },
         );
       },
     );
   }
 
-  Future<void> _showSubscriptionFailureDialog() async {
-    await showDialog<void>(
-      context: context,
-      builder: (_) => const InstantDoctorSubscriptionFailureDialog(),
-    );
-  }
-
-  Future<void> _openProviderPage(InstantDoctorProviderEntity provider) async {
-    _reloadOnResume = true;
-    final opened = await _cubit.openProviderPage(provider);
-    if (!opened && mounted) {
-      _reloadOnResume = false;
-      _showSnackBar(
-        _l10n.instantDoctorOpenAppError,
-        behavior: SnackBarBehavior.floating,
-      );
+  void _showOtpSendError() {
+    final error = _cubit.state.otpErrorMessage;
+    if (error != null && error.isNotEmpty) {
+      _showSnackBar(error);
     }
   }
 

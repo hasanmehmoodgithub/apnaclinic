@@ -9,17 +9,14 @@ abstract class InstantDoctorRemoteDataSource {
     required String msisdn,
     required int productId,
     required String uuid,
+    required String action,
   });
 
-  Future<void> verifySubscriptionOtp({
+  Future<InstantDoctorVerifyOtpResultModel> verifySubscriptionOtp({
     required String msisdn,
     required int productId,
     required String otp,
     required String uuid,
-  });
-
-  Future<void> cancelSubscription({
-    required String msisdn,
-    required int productId,
+    required String action,
   });
 }

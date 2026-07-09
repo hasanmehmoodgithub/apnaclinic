@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$InstantDoctorState {
 
- StateStatus get loadingStateStatus; List<InstantDoctorProviderEntity> get providers; String? get errorMessage; int? get openingProviderId; int? get cancellingProviderId; InstantDoctorProviderEntity? get activeOtpProvider; String? get subscriptionUuid; StateStatus get sendOtpStatus; StateStatus get verifyOtpStatus; int get otpSecondsRemaining; String? get otpErrorMessage;
+ StateStatus get loadingStateStatus; List<InstantDoctorProviderEntity> get providers; String? get errorMessage; int? get openingProviderId; InstantDoctorProviderEntity? get activeOtpProvider; InstantDoctorOtpAction? get otpAction; String? get subscriptionUuid; StateStatus get sendOtpStatus; StateStatus get verifyOtpStatus; int get otpSecondsRemaining; String? get otpErrorMessage;
 /// Create a copy of InstantDoctorState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +25,16 @@ $InstantDoctorStateCopyWith<InstantDoctorState> get copyWith => _$InstantDoctorS
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is InstantDoctorState&&(identical(other.loadingStateStatus, loadingStateStatus) || other.loadingStateStatus == loadingStateStatus)&&const DeepCollectionEquality().equals(other.providers, providers)&&(identical(other.errorMessage, errorMessage) || other.errorMessage == errorMessage)&&(identical(other.openingProviderId, openingProviderId) || other.openingProviderId == openingProviderId)&&(identical(other.cancellingProviderId, cancellingProviderId) || other.cancellingProviderId == cancellingProviderId)&&(identical(other.activeOtpProvider, activeOtpProvider) || other.activeOtpProvider == activeOtpProvider)&&(identical(other.subscriptionUuid, subscriptionUuid) || other.subscriptionUuid == subscriptionUuid)&&(identical(other.sendOtpStatus, sendOtpStatus) || other.sendOtpStatus == sendOtpStatus)&&(identical(other.verifyOtpStatus, verifyOtpStatus) || other.verifyOtpStatus == verifyOtpStatus)&&(identical(other.otpSecondsRemaining, otpSecondsRemaining) || other.otpSecondsRemaining == otpSecondsRemaining)&&(identical(other.otpErrorMessage, otpErrorMessage) || other.otpErrorMessage == otpErrorMessage));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is InstantDoctorState&&(identical(other.loadingStateStatus, loadingStateStatus) || other.loadingStateStatus == loadingStateStatus)&&const DeepCollectionEquality().equals(other.providers, providers)&&(identical(other.errorMessage, errorMessage) || other.errorMessage == errorMessage)&&(identical(other.openingProviderId, openingProviderId) || other.openingProviderId == openingProviderId)&&(identical(other.activeOtpProvider, activeOtpProvider) || other.activeOtpProvider == activeOtpProvider)&&(identical(other.otpAction, otpAction) || other.otpAction == otpAction)&&(identical(other.subscriptionUuid, subscriptionUuid) || other.subscriptionUuid == subscriptionUuid)&&(identical(other.sendOtpStatus, sendOtpStatus) || other.sendOtpStatus == sendOtpStatus)&&(identical(other.verifyOtpStatus, verifyOtpStatus) || other.verifyOtpStatus == verifyOtpStatus)&&(identical(other.otpSecondsRemaining, otpSecondsRemaining) || other.otpSecondsRemaining == otpSecondsRemaining)&&(identical(other.otpErrorMessage, otpErrorMessage) || other.otpErrorMessage == otpErrorMessage));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,loadingStateStatus,const DeepCollectionEquality().hash(providers),errorMessage,openingProviderId,cancellingProviderId,activeOtpProvider,subscriptionUuid,sendOtpStatus,verifyOtpStatus,otpSecondsRemaining,otpErrorMessage);
+int get hashCode => Object.hash(runtimeType,loadingStateStatus,const DeepCollectionEquality().hash(providers),errorMessage,openingProviderId,activeOtpProvider,otpAction,subscriptionUuid,sendOtpStatus,verifyOtpStatus,otpSecondsRemaining,otpErrorMessage);
 
 @override
 String toString() {
-  return 'InstantDoctorState(loadingStateStatus: $loadingStateStatus, providers: $providers, errorMessage: $errorMessage, openingProviderId: $openingProviderId, cancellingProviderId: $cancellingProviderId, activeOtpProvider: $activeOtpProvider, subscriptionUuid: $subscriptionUuid, sendOtpStatus: $sendOtpStatus, verifyOtpStatus: $verifyOtpStatus, otpSecondsRemaining: $otpSecondsRemaining, otpErrorMessage: $otpErrorMessage)';
+  return 'InstantDoctorState(loadingStateStatus: $loadingStateStatus, providers: $providers, errorMessage: $errorMessage, openingProviderId: $openingProviderId, activeOtpProvider: $activeOtpProvider, otpAction: $otpAction, subscriptionUuid: $subscriptionUuid, sendOtpStatus: $sendOtpStatus, verifyOtpStatus: $verifyOtpStatus, otpSecondsRemaining: $otpSecondsRemaining, otpErrorMessage: $otpErrorMessage)';
 }
 
 
@@ -45,7 +45,7 @@ abstract mixin class $InstantDoctorStateCopyWith<$Res>  {
   factory $InstantDoctorStateCopyWith(InstantDoctorState value, $Res Function(InstantDoctorState) _then) = _$InstantDoctorStateCopyWithImpl;
 @useResult
 $Res call({
- StateStatus loadingStateStatus, List<InstantDoctorProviderEntity> providers, String? errorMessage, int? openingProviderId, int? cancellingProviderId, InstantDoctorProviderEntity? activeOtpProvider, String? subscriptionUuid, StateStatus sendOtpStatus, StateStatus verifyOtpStatus, int otpSecondsRemaining, String? otpErrorMessage
+ StateStatus loadingStateStatus, List<InstantDoctorProviderEntity> providers, String? errorMessage, int? openingProviderId, InstantDoctorProviderEntity? activeOtpProvider, InstantDoctorOtpAction? otpAction, String? subscriptionUuid, StateStatus sendOtpStatus, StateStatus verifyOtpStatus, int otpSecondsRemaining, String? otpErrorMessage
 });
 
 
@@ -62,15 +62,15 @@ class _$InstantDoctorStateCopyWithImpl<$Res>
 
 /// Create a copy of InstantDoctorState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? loadingStateStatus = null,Object? providers = null,Object? errorMessage = freezed,Object? openingProviderId = freezed,Object? cancellingProviderId = freezed,Object? activeOtpProvider = freezed,Object? subscriptionUuid = freezed,Object? sendOtpStatus = null,Object? verifyOtpStatus = null,Object? otpSecondsRemaining = null,Object? otpErrorMessage = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? loadingStateStatus = null,Object? providers = null,Object? errorMessage = freezed,Object? openingProviderId = freezed,Object? activeOtpProvider = freezed,Object? otpAction = freezed,Object? subscriptionUuid = freezed,Object? sendOtpStatus = null,Object? verifyOtpStatus = null,Object? otpSecondsRemaining = null,Object? otpErrorMessage = freezed,}) {
   return _then(_self.copyWith(
 loadingStateStatus: null == loadingStateStatus ? _self.loadingStateStatus : loadingStateStatus // ignore: cast_nullable_to_non_nullable
 as StateStatus,providers: null == providers ? _self.providers : providers // ignore: cast_nullable_to_non_nullable
 as List<InstantDoctorProviderEntity>,errorMessage: freezed == errorMessage ? _self.errorMessage : errorMessage // ignore: cast_nullable_to_non_nullable
 as String?,openingProviderId: freezed == openingProviderId ? _self.openingProviderId : openingProviderId // ignore: cast_nullable_to_non_nullable
-as int?,cancellingProviderId: freezed == cancellingProviderId ? _self.cancellingProviderId : cancellingProviderId // ignore: cast_nullable_to_non_nullable
 as int?,activeOtpProvider: freezed == activeOtpProvider ? _self.activeOtpProvider : activeOtpProvider // ignore: cast_nullable_to_non_nullable
-as InstantDoctorProviderEntity?,subscriptionUuid: freezed == subscriptionUuid ? _self.subscriptionUuid : subscriptionUuid // ignore: cast_nullable_to_non_nullable
+as InstantDoctorProviderEntity?,otpAction: freezed == otpAction ? _self.otpAction : otpAction // ignore: cast_nullable_to_non_nullable
+as InstantDoctorOtpAction?,subscriptionUuid: freezed == subscriptionUuid ? _self.subscriptionUuid : subscriptionUuid // ignore: cast_nullable_to_non_nullable
 as String?,sendOtpStatus: null == sendOtpStatus ? _self.sendOtpStatus : sendOtpStatus // ignore: cast_nullable_to_non_nullable
 as StateStatus,verifyOtpStatus: null == verifyOtpStatus ? _self.verifyOtpStatus : verifyOtpStatus // ignore: cast_nullable_to_non_nullable
 as StateStatus,otpSecondsRemaining: null == otpSecondsRemaining ? _self.otpSecondsRemaining : otpSecondsRemaining // ignore: cast_nullable_to_non_nullable
@@ -160,10 +160,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( StateStatus loadingStateStatus,  List<InstantDoctorProviderEntity> providers,  String? errorMessage,  int? openingProviderId,  int? cancellingProviderId,  InstantDoctorProviderEntity? activeOtpProvider,  String? subscriptionUuid,  StateStatus sendOtpStatus,  StateStatus verifyOtpStatus,  int otpSecondsRemaining,  String? otpErrorMessage)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( StateStatus loadingStateStatus,  List<InstantDoctorProviderEntity> providers,  String? errorMessage,  int? openingProviderId,  InstantDoctorProviderEntity? activeOtpProvider,  InstantDoctorOtpAction? otpAction,  String? subscriptionUuid,  StateStatus sendOtpStatus,  StateStatus verifyOtpStatus,  int otpSecondsRemaining,  String? otpErrorMessage)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _InstantDoctorState() when $default != null:
-return $default(_that.loadingStateStatus,_that.providers,_that.errorMessage,_that.openingProviderId,_that.cancellingProviderId,_that.activeOtpProvider,_that.subscriptionUuid,_that.sendOtpStatus,_that.verifyOtpStatus,_that.otpSecondsRemaining,_that.otpErrorMessage);case _:
+return $default(_that.loadingStateStatus,_that.providers,_that.errorMessage,_that.openingProviderId,_that.activeOtpProvider,_that.otpAction,_that.subscriptionUuid,_that.sendOtpStatus,_that.verifyOtpStatus,_that.otpSecondsRemaining,_that.otpErrorMessage);case _:
   return orElse();
 
 }
@@ -181,10 +181,10 @@ return $default(_that.loadingStateStatus,_that.providers,_that.errorMessage,_tha
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( StateStatus loadingStateStatus,  List<InstantDoctorProviderEntity> providers,  String? errorMessage,  int? openingProviderId,  int? cancellingProviderId,  InstantDoctorProviderEntity? activeOtpProvider,  String? subscriptionUuid,  StateStatus sendOtpStatus,  StateStatus verifyOtpStatus,  int otpSecondsRemaining,  String? otpErrorMessage)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( StateStatus loadingStateStatus,  List<InstantDoctorProviderEntity> providers,  String? errorMessage,  int? openingProviderId,  InstantDoctorProviderEntity? activeOtpProvider,  InstantDoctorOtpAction? otpAction,  String? subscriptionUuid,  StateStatus sendOtpStatus,  StateStatus verifyOtpStatus,  int otpSecondsRemaining,  String? otpErrorMessage)  $default,) {final _that = this;
 switch (_that) {
 case _InstantDoctorState():
-return $default(_that.loadingStateStatus,_that.providers,_that.errorMessage,_that.openingProviderId,_that.cancellingProviderId,_that.activeOtpProvider,_that.subscriptionUuid,_that.sendOtpStatus,_that.verifyOtpStatus,_that.otpSecondsRemaining,_that.otpErrorMessage);case _:
+return $default(_that.loadingStateStatus,_that.providers,_that.errorMessage,_that.openingProviderId,_that.activeOtpProvider,_that.otpAction,_that.subscriptionUuid,_that.sendOtpStatus,_that.verifyOtpStatus,_that.otpSecondsRemaining,_that.otpErrorMessage);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -201,10 +201,10 @@ return $default(_that.loadingStateStatus,_that.providers,_that.errorMessage,_tha
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( StateStatus loadingStateStatus,  List<InstantDoctorProviderEntity> providers,  String? errorMessage,  int? openingProviderId,  int? cancellingProviderId,  InstantDoctorProviderEntity? activeOtpProvider,  String? subscriptionUuid,  StateStatus sendOtpStatus,  StateStatus verifyOtpStatus,  int otpSecondsRemaining,  String? otpErrorMessage)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( StateStatus loadingStateStatus,  List<InstantDoctorProviderEntity> providers,  String? errorMessage,  int? openingProviderId,  InstantDoctorProviderEntity? activeOtpProvider,  InstantDoctorOtpAction? otpAction,  String? subscriptionUuid,  StateStatus sendOtpStatus,  StateStatus verifyOtpStatus,  int otpSecondsRemaining,  String? otpErrorMessage)?  $default,) {final _that = this;
 switch (_that) {
 case _InstantDoctorState() when $default != null:
-return $default(_that.loadingStateStatus,_that.providers,_that.errorMessage,_that.openingProviderId,_that.cancellingProviderId,_that.activeOtpProvider,_that.subscriptionUuid,_that.sendOtpStatus,_that.verifyOtpStatus,_that.otpSecondsRemaining,_that.otpErrorMessage);case _:
+return $default(_that.loadingStateStatus,_that.providers,_that.errorMessage,_that.openingProviderId,_that.activeOtpProvider,_that.otpAction,_that.subscriptionUuid,_that.sendOtpStatus,_that.verifyOtpStatus,_that.otpSecondsRemaining,_that.otpErrorMessage);case _:
   return null;
 
 }
@@ -216,7 +216,7 @@ return $default(_that.loadingStateStatus,_that.providers,_that.errorMessage,_tha
 
 
 class _InstantDoctorState extends InstantDoctorState {
-  const _InstantDoctorState({this.loadingStateStatus = StateStatus.idle, final  List<InstantDoctorProviderEntity> providers = const <InstantDoctorProviderEntity>[], this.errorMessage, this.openingProviderId, this.cancellingProviderId, this.activeOtpProvider, this.subscriptionUuid, this.sendOtpStatus = StateStatus.idle, this.verifyOtpStatus = StateStatus.idle, this.otpSecondsRemaining = 30, this.otpErrorMessage}): _providers = providers,super._();
+  const _InstantDoctorState({this.loadingStateStatus = StateStatus.idle, final  List<InstantDoctorProviderEntity> providers = const <InstantDoctorProviderEntity>[], this.errorMessage, this.openingProviderId, this.activeOtpProvider, this.otpAction, this.subscriptionUuid, this.sendOtpStatus = StateStatus.idle, this.verifyOtpStatus = StateStatus.idle, this.otpSecondsRemaining = 30, this.otpErrorMessage}): _providers = providers,super._();
   
 
 @override@JsonKey() final  StateStatus loadingStateStatus;
@@ -229,8 +229,8 @@ class _InstantDoctorState extends InstantDoctorState {
 
 @override final  String? errorMessage;
 @override final  int? openingProviderId;
-@override final  int? cancellingProviderId;
 @override final  InstantDoctorProviderEntity? activeOtpProvider;
+@override final  InstantDoctorOtpAction? otpAction;
 @override final  String? subscriptionUuid;
 @override@JsonKey() final  StateStatus sendOtpStatus;
 @override@JsonKey() final  StateStatus verifyOtpStatus;
@@ -247,16 +247,16 @@ _$InstantDoctorStateCopyWith<_InstantDoctorState> get copyWith => __$InstantDoct
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _InstantDoctorState&&(identical(other.loadingStateStatus, loadingStateStatus) || other.loadingStateStatus == loadingStateStatus)&&const DeepCollectionEquality().equals(other._providers, _providers)&&(identical(other.errorMessage, errorMessage) || other.errorMessage == errorMessage)&&(identical(other.openingProviderId, openingProviderId) || other.openingProviderId == openingProviderId)&&(identical(other.cancellingProviderId, cancellingProviderId) || other.cancellingProviderId == cancellingProviderId)&&(identical(other.activeOtpProvider, activeOtpProvider) || other.activeOtpProvider == activeOtpProvider)&&(identical(other.subscriptionUuid, subscriptionUuid) || other.subscriptionUuid == subscriptionUuid)&&(identical(other.sendOtpStatus, sendOtpStatus) || other.sendOtpStatus == sendOtpStatus)&&(identical(other.verifyOtpStatus, verifyOtpStatus) || other.verifyOtpStatus == verifyOtpStatus)&&(identical(other.otpSecondsRemaining, otpSecondsRemaining) || other.otpSecondsRemaining == otpSecondsRemaining)&&(identical(other.otpErrorMessage, otpErrorMessage) || other.otpErrorMessage == otpErrorMessage));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _InstantDoctorState&&(identical(other.loadingStateStatus, loadingStateStatus) || other.loadingStateStatus == loadingStateStatus)&&const DeepCollectionEquality().equals(other._providers, _providers)&&(identical(other.errorMessage, errorMessage) || other.errorMessage == errorMessage)&&(identical(other.openingProviderId, openingProviderId) || other.openingProviderId == openingProviderId)&&(identical(other.activeOtpProvider, activeOtpProvider) || other.activeOtpProvider == activeOtpProvider)&&(identical(other.otpAction, otpAction) || other.otpAction == otpAction)&&(identical(other.subscriptionUuid, subscriptionUuid) || other.subscriptionUuid == subscriptionUuid)&&(identical(other.sendOtpStatus, sendOtpStatus) || other.sendOtpStatus == sendOtpStatus)&&(identical(other.verifyOtpStatus, verifyOtpStatus) || other.verifyOtpStatus == verifyOtpStatus)&&(identical(other.otpSecondsRemaining, otpSecondsRemaining) || other.otpSecondsRemaining == otpSecondsRemaining)&&(identical(other.otpErrorMessage, otpErrorMessage) || other.otpErrorMessage == otpErrorMessage));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,loadingStateStatus,const DeepCollectionEquality().hash(_providers),errorMessage,openingProviderId,cancellingProviderId,activeOtpProvider,subscriptionUuid,sendOtpStatus,verifyOtpStatus,otpSecondsRemaining,otpErrorMessage);
+int get hashCode => Object.hash(runtimeType,loadingStateStatus,const DeepCollectionEquality().hash(_providers),errorMessage,openingProviderId,activeOtpProvider,otpAction,subscriptionUuid,sendOtpStatus,verifyOtpStatus,otpSecondsRemaining,otpErrorMessage);
 
 @override
 String toString() {
-  return 'InstantDoctorState(loadingStateStatus: $loadingStateStatus, providers: $providers, errorMessage: $errorMessage, openingProviderId: $openingProviderId, cancellingProviderId: $cancellingProviderId, activeOtpProvider: $activeOtpProvider, subscriptionUuid: $subscriptionUuid, sendOtpStatus: $sendOtpStatus, verifyOtpStatus: $verifyOtpStatus, otpSecondsRemaining: $otpSecondsRemaining, otpErrorMessage: $otpErrorMessage)';
+  return 'InstantDoctorState(loadingStateStatus: $loadingStateStatus, providers: $providers, errorMessage: $errorMessage, openingProviderId: $openingProviderId, activeOtpProvider: $activeOtpProvider, otpAction: $otpAction, subscriptionUuid: $subscriptionUuid, sendOtpStatus: $sendOtpStatus, verifyOtpStatus: $verifyOtpStatus, otpSecondsRemaining: $otpSecondsRemaining, otpErrorMessage: $otpErrorMessage)';
 }
 
 
@@ -267,7 +267,7 @@ abstract mixin class _$InstantDoctorStateCopyWith<$Res> implements $InstantDocto
   factory _$InstantDoctorStateCopyWith(_InstantDoctorState value, $Res Function(_InstantDoctorState) _then) = __$InstantDoctorStateCopyWithImpl;
 @override @useResult
 $Res call({
- StateStatus loadingStateStatus, List<InstantDoctorProviderEntity> providers, String? errorMessage, int? openingProviderId, int? cancellingProviderId, InstantDoctorProviderEntity? activeOtpProvider, String? subscriptionUuid, StateStatus sendOtpStatus, StateStatus verifyOtpStatus, int otpSecondsRemaining, String? otpErrorMessage
+ StateStatus loadingStateStatus, List<InstantDoctorProviderEntity> providers, String? errorMessage, int? openingProviderId, InstantDoctorProviderEntity? activeOtpProvider, InstantDoctorOtpAction? otpAction, String? subscriptionUuid, StateStatus sendOtpStatus, StateStatus verifyOtpStatus, int otpSecondsRemaining, String? otpErrorMessage
 });
 
 
@@ -284,15 +284,15 @@ class __$InstantDoctorStateCopyWithImpl<$Res>
 
 /// Create a copy of InstantDoctorState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? loadingStateStatus = null,Object? providers = null,Object? errorMessage = freezed,Object? openingProviderId = freezed,Object? cancellingProviderId = freezed,Object? activeOtpProvider = freezed,Object? subscriptionUuid = freezed,Object? sendOtpStatus = null,Object? verifyOtpStatus = null,Object? otpSecondsRemaining = null,Object? otpErrorMessage = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? loadingStateStatus = null,Object? providers = null,Object? errorMessage = freezed,Object? openingProviderId = freezed,Object? activeOtpProvider = freezed,Object? otpAction = freezed,Object? subscriptionUuid = freezed,Object? sendOtpStatus = null,Object? verifyOtpStatus = null,Object? otpSecondsRemaining = null,Object? otpErrorMessage = freezed,}) {
   return _then(_InstantDoctorState(
 loadingStateStatus: null == loadingStateStatus ? _self.loadingStateStatus : loadingStateStatus // ignore: cast_nullable_to_non_nullable
 as StateStatus,providers: null == providers ? _self._providers : providers // ignore: cast_nullable_to_non_nullable
 as List<InstantDoctorProviderEntity>,errorMessage: freezed == errorMessage ? _self.errorMessage : errorMessage // ignore: cast_nullable_to_non_nullable
 as String?,openingProviderId: freezed == openingProviderId ? _self.openingProviderId : openingProviderId // ignore: cast_nullable_to_non_nullable
-as int?,cancellingProviderId: freezed == cancellingProviderId ? _self.cancellingProviderId : cancellingProviderId // ignore: cast_nullable_to_non_nullable
 as int?,activeOtpProvider: freezed == activeOtpProvider ? _self.activeOtpProvider : activeOtpProvider // ignore: cast_nullable_to_non_nullable
-as InstantDoctorProviderEntity?,subscriptionUuid: freezed == subscriptionUuid ? _self.subscriptionUuid : subscriptionUuid // ignore: cast_nullable_to_non_nullable
+as InstantDoctorProviderEntity?,otpAction: freezed == otpAction ? _self.otpAction : otpAction // ignore: cast_nullable_to_non_nullable
+as InstantDoctorOtpAction?,subscriptionUuid: freezed == subscriptionUuid ? _self.subscriptionUuid : subscriptionUuid // ignore: cast_nullable_to_non_nullable
 as String?,sendOtpStatus: null == sendOtpStatus ? _self.sendOtpStatus : sendOtpStatus // ignore: cast_nullable_to_non_nullable
 as StateStatus,verifyOtpStatus: null == verifyOtpStatus ? _self.verifyOtpStatus : verifyOtpStatus // ignore: cast_nullable_to_non_nullable
 as StateStatus,otpSecondsRemaining: null == otpSecondsRemaining ? _self.otpSecondsRemaining : otpSecondsRemaining // ignore: cast_nullable_to_non_nullable

@@ -70,6 +70,32 @@ class InstantDoctorProviderModel {
   }
 }
 
+class InstantDoctorVerifyOtpResultModel {
+  const InstantDoctorVerifyOtpResultModel({
+    required this.resultCode,
+    required this.status,
+    required this.transactionId,
+    required this.description,
+    required this.redirectUrl,
+  });
+
+  final String resultCode;
+  final String status;
+  final String transactionId;
+  final String description;
+  final String redirectUrl;
+
+  factory InstantDoctorVerifyOtpResultModel.fromJson(Map<String, dynamic> json) {
+    return InstantDoctorVerifyOtpResultModel(
+      resultCode: (json['resultCode'] ?? '').toString(),
+      status: (json['status'] ?? '').toString(),
+      transactionId: (json['transactionId'] ?? '').toString(),
+      description: (json['description'] ?? '').toString(),
+      redirectUrl: (json['redirectUrl'] ?? '').toString(),
+    );
+  }
+}
+
 class InstantDoctorResponseModel {
   const InstantDoctorResponseModel({
     required this.success,

@@ -1,22 +1,22 @@
 import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:url_launcher/url_launcher.dart';
 
+import '../../../../core/constants/app_strings.dart';
 import '../../../../core/enums/state_status.dart';
 import '../../../../core/preference/app_pref.dart';
 import '../../../../core/utils/auth_guard.dart';
 import '../../../../core/utils/phone_format_utils.dart';
 import '../../../../core/utils/subscription_uuid_utils.dart';
 import '../../domain/entities/instant_doctor_provider_entity.dart';
-import '../../domain/use_cases/cancel_instant_doctor_subscription_params.dart';
-import '../../domain/use_cases/cancel_instant_doctor_subscription_use_case.dart';
+import '../../domain/enums/instant_doctor_otp_action.dart';
 import '../../domain/use_cases/get_instant_doctor_content_params.dart';
 import '../../domain/use_cases/get_instant_doctor_content_use_case.dart';
 import '../../domain/use_cases/send_instant_doctor_otp_params.dart';
 import '../../domain/use_cases/send_instant_doctor_otp_use_case.dart';
 import '../../domain/use_cases/verify_instant_doctor_otp_params.dart';
 import '../../domain/use_cases/verify_instant_doctor_otp_use_case.dart';
+import '../models/instant_doctor_flow_outcome.dart';
 import 'instant_doctor_state.dart';
 
 class InstantDoctorCubit extends Cubit<InstantDoctorState> {
@@ -24,7 +24,6 @@ class InstantDoctorCubit extends Cubit<InstantDoctorState> {
     required this.getContentUseCase,
     required this.sendOtpUseCase,
     required this.verifyOtpUseCase,
-    required this.cancelSubscriptionUseCase,
     required this.appPref,
   }) : super(const InstantDoctorState()) {
     loadContent();
@@ -33,7 +32,6 @@ class InstantDoctorCubit extends Cubit<InstantDoctorState> {
   final GetInstantDoctorContentUseCase getContentUseCase;
   final SendInstantDoctorOtpUseCase sendOtpUseCase;
   final VerifyInstantDoctorOtpUseCase verifyOtpUseCase;
-  final CancelInstantDoctorSubscriptionUseCase cancelSubscriptionUseCase;
   final AppPref appPref;
   Timer? _otpTimer;
 
@@ -73,7 +71,7 @@ class InstantDoctorCubit extends Cubit<InstantDoctorState> {
       emit(
         state.copyWith(
           loadingStateStatus: StateStatus.error,
-          errorMessage: 'Phone number is required for instant doctor.',
+          errorMessage: AppStrings.instantDoctorPhoneRequiredError,
         ),
       );
       return;
@@ -101,12 +99,47 @@ class InstantDoctorCubit extends Cubit<InstantDoctorState> {
     );
   }
 
-  Future<bool> startSubscription(InstantDoctorProviderEntity provider) async {
+  Future<InstantDoctorProviderTapOutcome> onProviderPrimaryTap(
+    InstantDoctorProviderEntity provider,
+  ) async {
+    if (provider.isSubscribed) {
+      return consultationUrl(provider) != null
+          ? InstantDoctorProviderTapOutcome.consultationOpened
+          : InstantDoctorProviderTapOutcome.consultationFailed;
+    }
+
+    final sent = await startSubscription(provider);
+    return sent
+        ? InstantDoctorProviderTapOutcome.otpFlowStarted
+        : InstantDoctorProviderTapOutcome.otpSendFailed;
+  }
+
+  Future<InstantDoctorProviderTapOutcome> onCancelSubscriptionConfirmed(
+    InstantDoctorProviderEntity provider,
+  ) async {
+    final sent = await startUnsubscription(provider);
+    return sent
+        ? InstantDoctorProviderTapOutcome.otpFlowStarted
+        : InstantDoctorProviderTapOutcome.otpSendFailed;
+  }
+
+  Future<bool> startSubscription(InstantDoctorProviderEntity provider) {
+    return _startOtpFlow(provider, InstantDoctorOtpAction.subscribe);
+  }
+
+  Future<bool> startUnsubscription(InstantDoctorProviderEntity provider) {
+    return _startOtpFlow(provider, InstantDoctorOtpAction.unsubscribe);
+  }
+
+  Future<bool> _startOtpFlow(
+    InstantDoctorProviderEntity provider,
+    InstantDoctorOtpAction action,
+  ) async {
     final msisdn = _resolveMsisdn();
     if (msisdn == null) {
       emit(
         state.copyWith(
-          otpErrorMessage: 'Phone number is required for instant doctor.',
+          otpErrorMessage: AppStrings.instantDoctorPhoneRequiredError,
         ),
       );
       return false;
@@ -116,6 +149,7 @@ class InstantDoctorCubit extends Cubit<InstantDoctorState> {
     emit(
       state.copyWith(
         activeOtpProvider: provider,
+        otpAction: action,
         subscriptionUuid: uuid,
         sendOtpStatus: StateStatus.loading,
         verifyOtpStatus: StateStatus.idle,
@@ -128,6 +162,7 @@ class InstantDoctorCubit extends Cubit<InstantDoctorState> {
         msisdn: msisdn,
         productId: provider.product.productId,
         uuid: uuid,
+        action: action,
       ),
     );
 
@@ -138,6 +173,7 @@ class InstantDoctorCubit extends Cubit<InstantDoctorState> {
             sendOtpStatus: StateStatus.error,
             otpErrorMessage: error,
             activeOtpProvider: null,
+            otpAction: null,
             subscriptionUuid: null,
           ),
         );
@@ -157,11 +193,14 @@ class InstantDoctorCubit extends Cubit<InstantDoctorState> {
     );
   }
 
-  Future<bool> resendSubscriptionOtp() async {
+  Future<bool> resendOtp() async {
     final provider = state.activeOtpProvider;
+    final action = state.otpAction;
     final uuid = state.subscriptionUuid;
     final msisdn = _resolveMsisdn();
-    if (provider == null || uuid == null || msisdn == null) return false;
+    if (provider == null || action == null || uuid == null || msisdn == null) {
+      return false;
+    }
     if (!state.canResendOtp) return false;
 
     emit(
@@ -176,6 +215,7 @@ class InstantDoctorCubit extends Cubit<InstantDoctorState> {
         msisdn: msisdn,
         productId: provider.product.productId,
         uuid: uuid,
+        action: action,
       ),
     );
 
@@ -203,13 +243,16 @@ class InstantDoctorCubit extends Cubit<InstantDoctorState> {
     );
   }
 
-  Future<bool> verifySubscriptionOtp(String otp) async {
+  Future<InstantDoctorOtpVerifyOutcome> verifyOtp(String otp) async {
     final provider = state.activeOtpProvider;
+    final action = state.otpAction;
     final uuid = state.subscriptionUuid;
     final msisdn = _resolveMsisdn();
-    if (provider == null || uuid == null || msisdn == null) return false;
+    if (provider == null || action == null || uuid == null || msisdn == null) {
+      return const InstantDoctorOtpVerifyOutcome.failure();
+    }
     if (otp.trim().length != 4) {
-      return false;
+      return const InstantDoctorOtpVerifyOutcome.failure();
     }
 
     emit(
@@ -225,27 +268,33 @@ class InstantDoctorCubit extends Cubit<InstantDoctorState> {
         productId: provider.product.productId,
         otp: otp.trim(),
         uuid: uuid,
+        action: action,
       ),
     );
 
-    return result.fold(
-      (error) {
+    return await result.fold(
+      (error) async {
         emit(
           state.copyWith(
             verifyOtpStatus: StateStatus.error,
             otpErrorMessage: error,
           ),
         );
-        return false;
+        return InstantDoctorOtpVerifyOutcome.failure(error);
       },
-      (_) {
+      (verifyResult) async {
         emit(
           state.copyWith(
             verifyOtpStatus: StateStatus.success,
             otpErrorMessage: null,
           ),
         );
-        return true;
+        await loadContent();
+        final redirectUrl = verifyResult.redirectUrl.trim();
+        return InstantDoctorOtpVerifyOutcome.success(
+          action: action,
+          redirectUrl: redirectUrl.isEmpty ? null : redirectUrl,
+        );
       },
     );
   }
@@ -255,6 +304,7 @@ class InstantDoctorCubit extends Cubit<InstantDoctorState> {
     emit(
       state.copyWith(
         activeOtpProvider: null,
+        otpAction: null,
         subscriptionUuid: null,
         sendOtpStatus: StateStatus.idle,
         verifyOtpStatus: StateStatus.idle,
@@ -269,37 +319,19 @@ class InstantDoctorCubit extends Cubit<InstantDoctorState> {
     emit(state.copyWith(otpErrorMessage: null));
   }
 
-  Future<bool> cancelSubscription(InstantDoctorProviderEntity provider) async {
-    final msisdn = _resolveMsisdn();
-    if (msisdn == null) return false;
-
-    emit(state.copyWith(cancellingProviderId: provider.providerId));
-    final result = await cancelSubscriptionUseCase(
-      CancelInstantDoctorSubscriptionParams(
-        msisdn: msisdn,
-        productId: provider.product.productId,
-      ),
-    );
-
-    emit(state.copyWith(cancellingProviderId: null));
-    return result.fold((_) => false, (_) => true);
+  String? consultationUrl(InstantDoctorProviderEntity provider) {
+    final redirectUrl = provider.product.redirectUrl.trim();
+    if (redirectUrl.isEmpty) return null;
+    return redirectUrl;
   }
 
-  Future<bool> openProviderPage(InstantDoctorProviderEntity provider) async {
-    final redirectUrl = provider.product.redirectUrl.trim();
-    if (redirectUrl.isEmpty) {
-      return false;
-    }
+  void setOpeningProvider(int providerId) {
+    emit(state.copyWith(openingProviderId: providerId));
+  }
 
-    emit(state.copyWith(openingProviderId: provider.providerId));
-    try {
-      final uri = Uri.parse(redirectUrl);
-      return await launchUrl(uri, mode: LaunchMode.inAppWebView);
-    } catch (_) {
-      return false;
-    } finally {
-      emit(state.copyWith(openingProviderId: null));
-    }
+  void clearOpeningProvider() {
+    if (state.openingProviderId == null) return;
+    emit(state.copyWith(openingProviderId: null));
   }
 
   void _startOtpTimer() {
