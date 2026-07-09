@@ -94,7 +94,7 @@ class _DoctorConsultationCheckoutScreenState
     if (result == null || !mounted) return;
 
     if (result.addAccount) {
-      await context.pushNamed(AppRoutes.accountDetails);
+      await context.pushNamed(AppRoutes.addAccount);
       if (!mounted) return;
       await _openJazzCashBottomSheet(paymentMethodCode);
       return;
