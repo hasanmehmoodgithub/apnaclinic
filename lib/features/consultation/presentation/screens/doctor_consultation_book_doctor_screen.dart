@@ -181,7 +181,6 @@ class _DoctorConsultationBookDoctorScreenState
                         availabilityMonthLabel: _availabilityMonthLabel,
                         isAvailabilityLoading: _isAvailabilityLoading,
                         availabilityErrorMessage: _availabilityErrorMessage,
-                        onAvailabilityRetry: _loadDoctorSlots,
                       ),
                       if (_validationErrorMessage != null)
                         Container(

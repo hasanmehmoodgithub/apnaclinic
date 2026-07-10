@@ -65,24 +65,19 @@ class _AddAccountScreenState extends State<AddAccountScreen> {
           SnackBar(content: Text(error)),
         );
       },
-      (_) async {
-        if (!mounted) return;
-        await _refreshProfileAndAccounts();
+      (_) {
         if (!mounted) return;
         if (widget.launchSource == AddAccountLaunchSource.consultationCheckout) {
           context.pop(phone);
           return;
         }
         context.pushReplacement(
-        await context.push(
           AppRoutes.path(AppRoutes.accountDetails),
           extra: <String, dynamic>{
             'showSuccessDialog': true,
             'addedPhone': phone,
           },
         );
-        if (!mounted) return;
-        context.pop(true);
       },
     );
   }
@@ -104,19 +99,19 @@ class _AddAccountScreenState extends State<AddAccountScreen> {
           child: Padding(
             padding: EdgeInsets.fromLTRB(18.w, 18.h, 18.w, 24.h),
             child: AddAccountFormWidget(
-            formKey: _formKey,
-            accountMethods: _accountMethods,
-            selectedAccountMethod: _selectedAccountMethod,
-            onAccountMethodChanged: (value) {
-              setState(() => _selectedAccountMethod = value);
-            },
-            accountNumberController: _accountNumberController,
-            accountNumberValidator: _validatePakistanAccountNumber,
-            onSavePressed: _saveAccount,
-            isLoading: _isSaving,
+              formKey: _formKey,
+              accountMethods: _accountMethods,
+              selectedAccountMethod: _selectedAccountMethod,
+              onAccountMethodChanged: (value) {
+                setState(() => _selectedAccountMethod = value);
+              },
+              accountNumberController: _accountNumberController,
+              accountNumberValidator: _validatePakistanAccountNumber,
+              onSavePressed: _saveAccount,
+              isLoading: _isSaving,
+            ),
           ),
         ),
-      ),
       ),
     );
   }

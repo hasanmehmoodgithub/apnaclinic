@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+
 import '../../../../core/extensions/screen_util_extensions.dart';
 
 class EmptyBookingWidget extends StatelessWidget {
@@ -9,69 +10,70 @@ class EmptyBookingWidget extends StatelessWidget {
     required this.buttonText,
     required this.onTap,
     this.iconPath = 'assets/icons/empty.svg',
-    this.height = 160,
   });
 
   final String description;
   final String buttonText;
   final VoidCallback onTap;
   final String iconPath;
-  final double height;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return CustomPaint(
-      painter: const _DashedRoundedRectPainter(),
-      child: Container(
-
-        width: double.infinity,
-
-        padding: EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 14.h),
-        decoration: BoxDecoration(
-          color:   Colors.white,
-          borderRadius: BorderRadius.circular(18.r),
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Padding(
-              padding: EdgeInsets.only(top: 2.h),
-              child: SvgPicture.asset(
+    return Align(
+      alignment: Alignment.topCenter,
+      child: CustomPaint(
+        painter: const _DashedRoundedRectPainter(),
+        child: Container(
+          width: double.infinity,
+          padding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 16.h),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(18.r),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SvgPicture.asset(
                 iconPath,
                 width: 56.r,
                 height: 56.r,
               ),
-            ),
-            Text(
-              description,
-              textAlign: TextAlign.center,
-              style: theme.textTheme.titleLarge?.copyWith(
-                color: const Color(0xFFA1A7AE),
-                fontWeight: FontWeight.w500,
-                height: 1.2,
-                fontSize: 12.sp,
-              ),
-            ),
-            OutlinedButton(
-              onPressed: onTap,
-              style: OutlinedButton.styleFrom(
-                minimumSize: Size(0, 30.h),
-                side: BorderSide(color: const Color(0xFFD4D8DD), width: 1.5.r),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10.r),
-                ),
-              ),
-              child: Text(
-                buttonText,
-                style: theme.textTheme.headlineSmall?.copyWith(
-                  color: const Color(0xFF1D2A3A),
-                  fontSize: 12.sp,
+              SizedBox(height: 10.h),
+              Text(
+                description,
+                textAlign: TextAlign.center,
+                style: theme.textTheme.titleLarge?.copyWith(
+                  color: const Color(0xFFA1A7AE),
                   fontWeight: FontWeight.w500,
+                  height: 1.2,
+                  fontSize: 12.sp,
                 ),
               ),
-            ),
-          ],
+              SizedBox(height: 12.h),
+              OutlinedButton(
+                onPressed: onTap,
+                style: OutlinedButton.styleFrom(
+                  minimumSize: Size(0, 30.h),
+                  side: BorderSide(
+                    color: const Color(0xFFD4D8DD),
+                    width: 1.5.r,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10.r),
+                  ),
+                ),
+                child: Text(
+                  buttonText,
+                  style: theme.textTheme.headlineSmall?.copyWith(
+                    color: const Color(0xFF1D2A3A),
+                    fontSize: 12.sp,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

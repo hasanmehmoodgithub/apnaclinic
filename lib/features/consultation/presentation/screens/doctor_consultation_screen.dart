@@ -53,6 +53,7 @@ class _DoctorConsultationScreenState extends State<DoctorConsultationScreen> {
           ),
         ),
         child: SafeArea(
+          bottom: false,
           child: Column(
             children: [
               ConsultationScreenHeaderWidget(
