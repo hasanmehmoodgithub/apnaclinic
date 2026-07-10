@@ -18,7 +18,7 @@ Products response: `data.data.data[]` with pagination `current_page`, `last_page
 
 ## State
 
-- `PharmacyCubit` — server-side search on search-icon tap (`submitSearch` → `display_name`), pagination (`loadMoreMedicines`), `loadProductDetail(productId)`, `loadCart()` for active cart + `cartBookingId`. Add-to-cart: if product already in cart, quantity-update only; else add API. Heart loader on add + cart +/-. Checkout: `loadCheckoutCities()` via shared `CitiesRepository` (`AppUrls.cities`); delivery address prefilled from `UserLocalModel.address`.
+- `PharmacyCubit` — server-side search on search-icon tap (`submitSearch` → `display_name`); clearing the field reloads all products. Search field stays visible during loading/error/empty. Pagination (`loadMoreMedicines`), `loadProductDetail(productId)`, `loadCart()` for active cart + `cartBookingId`. Add-to-cart: if product already in cart, quantity-update only; else add API. Heart loader on add + cart +/-. Checkout: `loadCheckoutCities()` via shared `CitiesRepository` (`AppUrls.cities`); delivery address prefilled from `UserLocalModel.address`; totals from active-cart `payment_breakdown`.
 
 ## Mocks
 

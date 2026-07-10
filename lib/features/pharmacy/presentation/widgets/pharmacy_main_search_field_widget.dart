@@ -10,11 +10,13 @@ class PharmacyMainSearchFieldWidget extends StatefulWidget {
     required this.searchQuery,
     required this.searchHint,
     required this.onSearchSubmitted,
+    required this.onSearchCleared,
   });
 
   final String searchQuery;
   final String searchHint;
   final ValueChanged<String> onSearchSubmitted;
+  final VoidCallback onSearchCleared;
 
   @override
   State<PharmacyMainSearchFieldWidget> createState() =>
@@ -24,11 +26,13 @@ class PharmacyMainSearchFieldWidget extends StatefulWidget {
 class _PharmacyMainSearchFieldWidgetState
     extends State<PharmacyMainSearchFieldWidget> {
   late final TextEditingController _controller;
+  late final FocusNode _focusNode;
 
   @override
   void initState() {
     super.initState();
     _controller = TextEditingController(text: widget.searchQuery);
+    _focusNode = FocusNode();
   }
 
   @override
@@ -45,6 +49,7 @@ class _PharmacyMainSearchFieldWidgetState
   @override
   void dispose() {
     _controller.dispose();
+    _focusNode.dispose();
     super.dispose();
   }
 
@@ -52,18 +57,70 @@ class _PharmacyMainSearchFieldWidgetState
     widget.onSearchSubmitted(_controller.text);
   }
 
+  void _clearSearch() {
+    if (_controller.text.isEmpty && widget.searchQuery.isEmpty) return;
+    _controller.clear();
+    widget.onSearchCleared();
+  }
+
   @override
   Widget build(BuildContext context) {
+    // Clear only after a search has been submitted (active query in state).
+    final hasActiveSearch = widget.searchQuery.trim().isNotEmpty;
+    final suffixWidth = hasActiveSearch ? 88.w : 48.w;
+
     return SizedBox(
       width: double.infinity,
       height: 45.r,
       child: TextFormField(
         controller: _controller,
+        focusNode: _focusNode,
+        textInputAction: TextInputAction.search,
+        onFieldSubmitted: (_) => _submitSearch(),
         decoration: InputDecoration(
           hintText: widget.searchHint,
-          suffixIcon: IconButton(
-            onPressed: _submitSearch,
-            icon: const Icon(Icons.search, color: AppColors.clr9AA4B2),
+          suffixIconConstraints: BoxConstraints(
+            minHeight: 45.r,
+            minWidth: suffixWidth,
+            maxHeight: 45.r,
+            maxWidth: suffixWidth,
+          ),
+          suffixIcon: SizedBox(
+            width: suffixWidth,
+            height: 45.r,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                IconButton(
+                  onPressed: _submitSearch,
+                  padding: EdgeInsets.zero,
+                  constraints: BoxConstraints.tightFor(
+                    width: 40.w,
+                    height: 40.r,
+                  ),
+                  icon: Icon(
+                    Icons.search,
+                    size: 22.r,
+                    color: AppColors.clr9AA4B2,
+                  ),
+                ),
+                if (hasActiveSearch)
+                  IconButton(
+                    onPressed: _clearSearch,
+                    padding: EdgeInsets.zero,
+                    constraints: BoxConstraints.tightFor(
+                      width: 40.w,
+                      height: 40.r,
+                    ),
+                    icon: Icon(
+                      Icons.close,
+                      size: 20.r,
+                      color: AppColors.clr9AA4B2,
+                    ),
+                  ),
+              ],
+            ),
           ),
           filled: true,
           fillColor: AppColors.clrWhite,
