@@ -27,8 +27,12 @@ Collect or edit user profile (name, gender, email, address, DOB, optional profil
 
 ## State
 
-- `ProfileCubit` / `ProfileState` — profile screen: refresh profile from API, load/delete linked accounts; `ProfileViewData` maps `AppPref` user fields for UI.
+- `ProfileCubit` / `ProfileState` — profile screen: reads UI from `AppPref`; fetches GET profile only when `ProfileSessionSync` says the session is not synced and cached prefs exist. After login, logout, or app launch (in-memory reset), the first home/profile open syncs once; revisiting profile uses `AppPref` + cached linked phones without another GET. Explicit `refreshProfile(force: true)` / `loadAccounts(force: true)` after edit, add account, or delete account.
 - `ProfileSetupCubit` / `ProfileSetupState` — `dateOfBirth` drives the date picker label and initial picker date.
+
+## Session cache
+
+- `ProfileSessionSync` (`lib/core/session/profile_session_sync.dart`) — in-memory guard for the current app launch / login session. Invalidated on login and logout. Marked synced after successful GET profile (`ProfileSetupRepositoryImpl`, `AccountRepositoryImpl`). `hasCachedUserProfile(AppPref)` checks local `UserLocalModel` before skipping network.
 
 ## DI
 

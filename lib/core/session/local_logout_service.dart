@@ -4,6 +4,7 @@ import '../preference/app_pref.dart';
 import '../preference/app_pref_keys.dart';
 import '../services/notification_service.dart';
 import 'auth_session_refresh.dart';
+import 'profile_session_sync.dart';
 
 /// Clears all local auth/session data. Used after logout (even if API fails).
 class LocalLogoutService {
@@ -26,6 +27,7 @@ class LocalLogoutService {
   );
 
   Future<void> clearAll({bool notifyShell = true}) async {
+    sl<ProfileSessionSync>().invalidate();
     _apiService.removeToken();
     await _appPref.setRefreshToken('');
     await _appPref.setAccessTokenExpiresIn(0);

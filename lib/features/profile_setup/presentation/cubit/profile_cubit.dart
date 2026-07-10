@@ -1,7 +1,9 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/enums/state_status.dart';
 import '../../../../core/preference/app_pref.dart';
+import '../../../../core/session/profile_session_sync.dart';
 import '../../../../core/utils/auth_guard.dart';
 import '../../../account/domain/use_cases/delete_user_phone_use_case.dart';
 import '../../../account/domain/use_cases/get_accounts_list_use_case.dart';
@@ -15,7 +17,9 @@ class ProfileCubit extends Cubit<ProfileState> {
     required this.getProfileSetupContentUseCase,
     required this.getAccountsListUseCase,
     required this.deleteUserPhoneUseCase,
-  }) : super(const ProfileState()) {
+    ProfileSessionSync? profileSessionSync,
+  })  : _profileSessionSync = profileSessionSync ?? sl<ProfileSessionSync>(),
+        super(const ProfileState()) {
     _initialize();
   }
 
@@ -23,29 +27,56 @@ class ProfileCubit extends Cubit<ProfileState> {
   final GetProfileSetupContentUseCase getProfileSetupContentUseCase;
   final GetAccountsListUseCase getAccountsListUseCase;
   final DeleteUserPhoneUseCase deleteUserPhoneUseCase;
+  final ProfileSessionSync _profileSessionSync;
 
   bool get isLoggedIn => AuthGuard.isLoggedIn(appPref);
 
   ProfileViewData get viewData => ProfileViewData.fromAppPref(appPref);
 
   Future<void> _initialize() async {
-    await Future.wait([
-      refreshProfile(),
-      loadAccounts(),
-    ]);
-  }
-
-  Future<void> refreshProfile() async {
     if (!isLoggedIn) {
       emit(state.copyWith(profileRevision: state.profileRevision + 1));
       return;
     }
 
-    await getProfileSetupContentUseCase.call();
     emit(state.copyWith(profileRevision: state.profileRevision + 1));
+
+    if (_profileSessionSync.shouldSkipNetworkFetch(appPref)) {
+      _emitCachedAccounts();
+      return;
+    }
+
+    await refreshProfile(force: true);
   }
 
-  Future<void> loadAccounts() async {
+  Future<void> refreshProfile({bool force = false}) async {
+    if (!isLoggedIn) {
+      emit(state.copyWith(profileRevision: state.profileRevision + 1));
+      return;
+    }
+
+    if (!force && _profileSessionSync.shouldSkipNetworkFetch(appPref)) {
+      emit(state.copyWith(profileRevision: state.profileRevision + 1));
+      _emitCachedAccounts();
+      return;
+    }
+
+    final result = await getProfileSetupContentUseCase.call();
+    emit(state.copyWith(profileRevision: state.profileRevision + 1));
+    result.fold(
+      (_) {},
+      (_) => _emitCachedAccounts(),
+    );
+  }
+
+  Future<void> loadAccounts({bool force = false}) async {
+    if (!isLoggedIn) return;
+
+    if (!force && _profileSessionSync.shouldSkipNetworkFetch(appPref)) {
+      _emitCachedAccounts();
+      return;
+    }
+
     emit(
       state.copyWith(
         accountsStatus: StateStatus.loading,
@@ -71,6 +102,16 @@ class ProfileCubit extends Cubit<ProfileState> {
     );
   }
 
+  void _emitCachedAccounts() {
+    emit(
+      state.copyWith(
+        accountsStatus: StateStatus.success,
+        accounts: _profileSessionSync.cachedAccounts,
+        accountsError: null,
+      ),
+    );
+  }
+
   Future<String?> deleteAccount(String phoneId) async {
     final result = await deleteUserPhoneUseCase(
       DeleteUserPhoneParams(phoneId: phoneId),
@@ -79,7 +120,7 @@ class ProfileCubit extends Cubit<ProfileState> {
     return result.fold(
       (error) => error,
       (_) {
-        loadAccounts();
+        loadAccounts(force: true);
         return null;
       },
     );

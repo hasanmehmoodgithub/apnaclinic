@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
@@ -44,6 +45,11 @@ class _AccountDetailsScreenState extends State<AccountDetailsScreen> {
     return fullName.isEmpty ? l10n.accountHolderFallback : fullName;
   }
 
+  void _popWithAccountAdded() {
+    if (!mounted) return;
+    context.pop(true);
+  }
+
   Future<void> _showSuccessDialogIfNeeded() async {
     if (_didShowInitialSuccessDialog || !mounted) return;
 
@@ -61,6 +67,7 @@ class _AccountDetailsScreenState extends State<AccountDetailsScreen> {
           displayBankName: l10n.accountMethodJazzCash,
           accountNumber: accountNumber,
           accountHolderName: _accountHolderName(l10n),
+          onContinue: _popWithAccountAdded,
         );
       },
     );
@@ -74,7 +81,10 @@ class _AccountDetailsScreenState extends State<AccountDetailsScreen> {
 
     return Scaffold(
       backgroundColor: AppColors.clrWhite,
-      appBar: AccountAppBarWidget(title: l10n.accountDetailsTitle),
+      appBar: AccountAppBarWidget(
+        title: l10n.accountDetailsTitle,
+        onBack: _popWithAccountAdded,
+      ),
       body: accountNumber.isEmpty
           ? Center(
               child: Text(

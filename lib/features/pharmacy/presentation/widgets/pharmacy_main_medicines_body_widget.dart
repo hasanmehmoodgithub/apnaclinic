@@ -17,8 +17,39 @@ import 'pharmacy_main_section_title_widget.dart';
 import 'pharmacy_screen_state_view.dart';
 
 /// Hub white panel: load / error / empty / search + grid. Rebuilds when medicines or search change, not on cart-only updates.
-class PharmacyMainMedicinesBodyWidget extends StatelessWidget {
+class PharmacyMainMedicinesBodyWidget extends StatefulWidget {
   const PharmacyMainMedicinesBodyWidget({super.key});
+
+  @override
+  State<PharmacyMainMedicinesBodyWidget> createState() =>
+      _PharmacyMainMedicinesBodyWidgetState();
+}
+
+class _PharmacyMainMedicinesBodyWidgetState
+    extends State<PharmacyMainMedicinesBodyWidget> {
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_onScroll);
+  }
+
+  @override
+  void dispose() {
+    _scrollController
+      ..removeListener(_onScroll)
+      ..dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    if (!_scrollController.hasClients) return;
+    final position = _scrollController.position;
+    if (position.pixels < position.maxScrollExtent - 200) return;
+
+    context.read<PharmacyCubit>().loadMoreMedicines();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +60,8 @@ class PharmacyMainMedicinesBodyWidget extends StatelessWidget {
               current.medicinesLoadingStateStatus ||
           previous.medicinesErrorMessage != current.medicinesErrorMessage ||
           previous.medicines != current.medicines ||
-          previous.searchQuery != current.searchQuery,
+          previous.searchQuery != current.searchQuery ||
+          previous.isLoadingMore != current.isLoadingMore,
       builder: (context, state) {
         return _buildContent(context, l10n, state);
       },
@@ -57,13 +89,8 @@ class PharmacyMainMedicinesBodyWidget extends StatelessWidget {
       );
     }
 
-    final medicines = state.medicines.where((medicine) {
-      final query = state.searchQuery.trim().toLowerCase();
-      if (query.isEmpty) return true;
-      return medicine.name.toLowerCase().contains(query);
-    }).toList();
-
     return ListView(
+      controller: _scrollController,
       padding: EdgeInsets.fromLTRB(18.w, 16.h, 18.w, 24.h),
       children: [
         PharmacyMainSectionTitleWidget(
@@ -73,28 +100,24 @@ class PharmacyMainMedicinesBodyWidget extends StatelessWidget {
         PharmacyMainSearchFieldWidget(
           searchQuery: state.searchQuery,
           searchHint: l10n.pharmacyMainSearchHint,
-          onSearchChanged: (value) =>
-              context.read<PharmacyCubit>().updateSearchQuery(value),
+          onSearchSubmitted: (value) =>
+              context.read<PharmacyCubit>().submitSearch(value),
         ),
         SizedBox(height: 8.h),
-        if (medicines.isEmpty)
+        PharmacyMainMedicinesGridWidget(
+          medicines: state.medicines,
+          onMedicineTap: (medicine) => _openPharmacyDetail(context, medicine),
+          onAddToCartTap: (medicine) => _openAddToCartSheet(context, medicine),
+        ),
+        if (state.isLoadingMore)
           Padding(
-            padding: EdgeInsets.symmetric(vertical: 28.h),
-            child: Center(
-              child: Text(
-                l10n.pharmacyEmptyMedicines,
-                style: Theme.of(
-                  context,
-                ).textTheme.bodyMedium?.copyWith(color: AppColors.clr6C7C92),
+            padding: EdgeInsets.symmetric(vertical: 16.h),
+            child: const Center(
+              child: CircularProgressIndicator(
+                color: AppColors.clr40AFA2,
+                strokeWidth: 2,
               ),
             ),
-          )
-        else
-          PharmacyMainMedicinesGridWidget(
-            medicines: medicines,
-            onMedicineTap: (medicine) => _openPharmacyDetail(context, medicine),
-            onAddToCartTap: (medicine) =>
-                _openAddToCartSheet(context, medicine),
           ),
       ],
     );

@@ -13,7 +13,7 @@ class MockConfig {
   }
 
   static bool get enableLabTestMocks {
-    return false;
+
     return _isTruthy(_mockTrueValue) || kDebugMode;
   }
   static bool get enableAuthMocks {
@@ -43,6 +43,10 @@ class MockConfig {
   }
 
   static bool get enableInstantDoctorMocks {
+    return false;
+    return _isTruthy(_mockTrueValue) || kDebugMode;
+  }
+  static bool get enablePharmacyMocks {
     return false;
     return _isTruthy(_mockTrueValue) || kDebugMode;
   }

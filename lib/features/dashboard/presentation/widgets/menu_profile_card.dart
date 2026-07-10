@@ -35,7 +35,7 @@ class MenuProfileCard extends StatelessWidget {
       onTap: onActionTap,
       onTrailingTap: onActionTap,
       height: 100.h,
-      curveOverlayColor: AppColors.clrEBDFFF.withValues(alpha: 0.6),
+      curveOverlayColor: AppColors.clrEBDFFF.withValues(alpha: 0.4),
       trailingOverlayWidth: 124.w,
       contentPadding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 20.h),
       titleSpacing: 4,

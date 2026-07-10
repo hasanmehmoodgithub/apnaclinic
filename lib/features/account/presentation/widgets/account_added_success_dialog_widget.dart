@@ -14,11 +14,13 @@ class AccountAddedSuccessDialogWidget extends StatelessWidget {
     required this.displayBankName,
     required this.accountNumber,
     required this.accountHolderName,
+    this.onContinue,
   });
 
   final String displayBankName;
   final String accountNumber;
   final String accountHolderName;
+  final VoidCallback? onContinue;
 
   @override
   Widget build(BuildContext context) {
@@ -96,7 +98,10 @@ class AccountAddedSuccessDialogWidget extends StatelessWidget {
               width: double.infinity,
               child: AppButton.primary(
                 text: l10n.accountContinueCta,
-                onPressed: () => context.pop(),
+                onPressed: () {
+                  context.pop();
+                  onContinue?.call();
+                },
                 backgroundColor: AppColors.clr40AFA2,
                 foregroundColor: AppColors.clrWhite,
                 height: 60.h,

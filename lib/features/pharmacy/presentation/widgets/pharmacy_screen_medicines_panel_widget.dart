@@ -12,8 +12,8 @@ import 'pharmacy_add_to_cart_sheet.dart';
 import 'pharmacy_medicine_content_section.dart';
 import 'pharmacy_screen_state_view.dart';
 
-/// Featured medicine + grid. [buildWhen] avoids rebuilds when only the cart changes.
-class PharmacyScreenMedicinesPanelWidget extends StatelessWidget {
+/// Featured medicine + related products from product-detail API.
+class PharmacyScreenMedicinesPanelWidget extends StatefulWidget {
   const PharmacyScreenMedicinesPanelWidget({
     super.key,
     this.initialFeaturedMedicine,
@@ -22,14 +22,44 @@ class PharmacyScreenMedicinesPanelWidget extends StatelessWidget {
   final PharmacyMedicineEntity? initialFeaturedMedicine;
 
   @override
+  State<PharmacyScreenMedicinesPanelWidget> createState() =>
+      _PharmacyScreenMedicinesPanelWidgetState();
+}
+
+class _PharmacyScreenMedicinesPanelWidgetState
+    extends State<PharmacyScreenMedicinesPanelWidget> {
+  @override
+  void initState() {
+    super.initState();
+    _loadProductDetail();
+  }
+
+  @override
+  void didUpdateWidget(covariant PharmacyScreenMedicinesPanelWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.initialFeaturedMedicine?.id !=
+        widget.initialFeaturedMedicine?.id) {
+      _loadProductDetail();
+    }
+  }
+
+  void _loadProductDetail() {
+    final productId = widget.initialFeaturedMedicine?.id;
+    if (productId == null || productId.isEmpty) return;
+    context.read<PharmacyCubit>().loadProductDetail(productId);
+  }
+
+  @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     return BlocBuilder<PharmacyCubit, PharmacyState>(
       buildWhen: (previous, current) =>
-          previous.medicinesLoadingStateStatus !=
-              current.medicinesLoadingStateStatus ||
-          previous.medicinesErrorMessage != current.medicinesErrorMessage ||
-          previous.medicines != current.medicines,
+          previous.productDetailLoadingStateStatus !=
+              current.productDetailLoadingStateStatus ||
+          previous.productDetailErrorMessage !=
+              current.productDetailErrorMessage ||
+          previous.selectedProduct != current.selectedProduct ||
+          previous.relatedProducts != current.relatedProducts,
       builder: (context, state) {
         return _buildContent(context, l10n, state);
       },
@@ -41,32 +71,26 @@ class PharmacyScreenMedicinesPanelWidget extends StatelessWidget {
     AppLocalizations l10n,
     PharmacyState state,
   ) {
-    if (state.medicinesLoadingStateStatus == StateStatus.loading) {
+    if (state.productDetailLoadingStateStatus == StateStatus.loading) {
       return const PharmacyScreenStateView.loading();
     }
 
-    if (state.medicinesLoadingStateStatus == StateStatus.error) {
+    if (state.productDetailLoadingStateStatus == StateStatus.error) {
       return PharmacyScreenStateView.error(
-        message: state.medicinesErrorMessage ?? l10n.pharmacyLoadError,
+        message: state.productDetailErrorMessage ?? l10n.pharmacyLoadError,
       );
     }
 
-    if (state.medicines.isEmpty) {
+    final featured = state.selectedProduct;
+    if (featured == null) {
       return PharmacyScreenStateView.empty(
         message: l10n.pharmacyEmptyMedicines,
       );
     }
 
-    final featuredMedicine = initialFeaturedMedicine == null
-        ? state.medicines.first
-        : state.medicines.firstWhere(
-            (medicine) => medicine.id == initialFeaturedMedicine!.id,
-            orElse: () => initialFeaturedMedicine!,
-          );
-
     return PharmacyMedicineContentSection(
-      medicines: state.medicines,
-      featuredMedicine: featuredMedicine,
+      medicines: state.relatedProducts,
+      featuredMedicine: featured,
       onAddToCart: (medicine) => _openAddToCartSheet(context, medicine),
       onMedicineTap: (medicine) => _openPharmacyDetail(context, medicine),
     );

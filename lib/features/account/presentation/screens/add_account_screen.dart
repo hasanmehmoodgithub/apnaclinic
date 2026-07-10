@@ -8,7 +8,6 @@ import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/widgets/app_scaffold_gradient.dart';
 import '../../domain/use_cases/add_user_phone_use_case.dart';
-import '../../domain/use_cases/get_accounts_list_use_case.dart';
 import '../add_account_launch_source.dart';
 import '../widgets/account_app_bar_widget.dart';
 import '../widgets/add_account_form_widget.dart';
@@ -32,13 +31,6 @@ class _AddAccountScreenState extends State<AddAccountScreen> {
   late String _selectedAccountMethod;
   bool _didInitializeMethods = false;
   bool _isSaving = false;
-
-  @override
-  void initState() {
-    super.initState();
-    // Warm profile cache so numeric user id is available for POST /users/{id}/phone.
-    sl<GetAccountsListUseCase>().call();
-  }
 
   @override
   void didChangeDependencies() {
@@ -75,21 +67,17 @@ class _AddAccountScreenState extends State<AddAccountScreen> {
       },
       (_) async {
         if (!mounted) return;
-        await _refreshProfileAndAccounts();
-        if (!mounted) return;
-        context.pushReplacement(
+        await context.push(
           AppRoutes.path(AppRoutes.accountDetails),
           extra: <String, dynamic>{
             'showSuccessDialog': true,
             'addedPhone': phone,
           },
         );
+        if (!mounted) return;
+        context.pop(true);
       },
     );
-  }
-
-  Future<void> _refreshProfileAndAccounts() async {
-    await sl<GetAccountsListUseCase>().call();
   }
 
   @override

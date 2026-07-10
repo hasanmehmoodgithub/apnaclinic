@@ -4,17 +4,53 @@ import '../../../../core/constants/app_colors.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 
 /// Search input used by the pharmacy main panel.
-class PharmacyMainSearchFieldWidget extends StatelessWidget {
+class PharmacyMainSearchFieldWidget extends StatefulWidget {
   const PharmacyMainSearchFieldWidget({
     super.key,
     required this.searchQuery,
     required this.searchHint,
-    required this.onSearchChanged,
+    required this.onSearchSubmitted,
   });
 
   final String searchQuery;
   final String searchHint;
-  final ValueChanged<String> onSearchChanged;
+  final ValueChanged<String> onSearchSubmitted;
+
+  @override
+  State<PharmacyMainSearchFieldWidget> createState() =>
+      _PharmacyMainSearchFieldWidgetState();
+}
+
+class _PharmacyMainSearchFieldWidgetState
+    extends State<PharmacyMainSearchFieldWidget> {
+  late final TextEditingController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController(text: widget.searchQuery);
+  }
+
+  @override
+  void didUpdateWidget(covariant PharmacyMainSearchFieldWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.searchQuery != _controller.text) {
+      _controller.value = _controller.value.copyWith(
+        text: widget.searchQuery,
+        selection: TextSelection.collapsed(offset: widget.searchQuery.length),
+      );
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _submitSearch() {
+    widget.onSearchSubmitted(_controller.text);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,11 +58,13 @@ class PharmacyMainSearchFieldWidget extends StatelessWidget {
       width: double.infinity,
       height: 45.r,
       child: TextFormField(
-        onChanged: onSearchChanged,
-        initialValue: searchQuery,
+        controller: _controller,
         decoration: InputDecoration(
-          hintText: searchHint,
-          suffixIcon: const Icon(Icons.search, color: AppColors.clr9AA4B2),
+          hintText: widget.searchHint,
+          suffixIcon: IconButton(
+            onPressed: _submitSearch,
+            icon: const Icon(Icons.search, color: AppColors.clr9AA4B2),
+          ),
           filled: true,
           fillColor: AppColors.clrWhite,
           contentPadding: EdgeInsets.symmetric(

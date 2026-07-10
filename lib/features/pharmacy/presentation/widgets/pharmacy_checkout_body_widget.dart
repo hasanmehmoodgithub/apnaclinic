@@ -18,12 +18,10 @@ class PharmacyCheckoutBodyWidget extends StatelessWidget {
     super.key,
     required this.addressController,
     required this.specialInstructionsController,
-    required this.cities,
   });
 
   final TextEditingController addressController;
   final TextEditingController specialInstructionsController;
-  final List<String> cities;
 
   @override
   Widget build(BuildContext context) {
@@ -32,8 +30,13 @@ class PharmacyCheckoutBodyWidget extends StatelessWidget {
       buildWhen: (previous, current) =>
           previous.cartItems != current.cartItems ||
           previous.selectedCity != current.selectedCity ||
+          previous.checkoutCities != current.checkoutCities ||
+          previous.paymentBreakdown != current.paymentBreakdown ||
           previous.selectedPaymentMethod != current.selectedPaymentMethod,
       builder: (context, state) {
+        final cities = state.checkoutCities.isNotEmpty
+            ? state.checkoutCities
+            : <String>[state.selectedCity];
         return Stack(
           children: [
             ListView(
@@ -82,7 +85,9 @@ class PharmacyCheckoutBodyWidget extends StatelessWidget {
                   padding: EdgeInsets.symmetric(vertical: 2.h),
                 ),
                 PharmacySummaryRow(
-                  title: l10n.pharmacyCheckoutDiscountLabel,
+                  title: state.discountPercent != null
+                      ? '${l10n.labTestCheckoutDiscountLabel} (${state.discountPercent!.toStringAsFixed(0)}%)'
+                      : l10n.pharmacyCheckoutDiscountLabel,
                   value: state.discount,
                   isBold: true,
                   padding: EdgeInsets.symmetric(vertical: 2.h),
@@ -104,7 +109,9 @@ class PharmacyCheckoutBodyWidget extends StatelessWidget {
                 SizedBox(height: 20.h),
                 PharmacyCheckoutCityDropdown(
                   label: l10n.pharmacyCheckoutCityLabel,
-                  value: state.selectedCity,
+                  value: cities.contains(state.selectedCity)
+                      ? state.selectedCity
+                      : cities.first,
                   cities: cities,
                   onChanged: (city) {
                     if (city == null) return;

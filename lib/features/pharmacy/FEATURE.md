@@ -4,6 +4,26 @@
 
 Browse medicines, cart, checkout, and view pharmacy order details.
 
+## Data & APIs
+
+| Action | Method | `AppUrls` | Body |
+|--------|--------|-----------|------|
+| List products | POST | `pharmacyProducts` → `acs-aggregator/api/v1/mobile/partner/pharmacy/products` | `{ "page": "1", "display_name": "" }` — pass search text in `display_name` when searching; empty for browse |
+| Product detail | POST | `pharmacyProductDetail` → `acs-aggregator/api/v1/mobile/partner/pharmacy/product/details` | `{ "product_id": <id> }` (int) — returns product + `related_items[]` for “More like” list |
+| Cart (active) | POST | `pharmacyCart` → `acs-aggregator/api/v1/mobile/partner/pharmacy/cart/active` | `{}` — cart in `data.data.products[]`; `booking_id` from `booking.id`; checkout totals from `data.data.payment_breakdown` (`delivery_charges`, `discount`, `total`, `sub_total`) |
+| Add to cart | POST | `pharmacyAddToCart` → `acs-aggregator/api/v1/mobile/partner/pharmacy/cart/add` | `{ "product_id": <id>, "quantity": <n>, "booking_id": "<id>"? }` — on success, update local cart/`cartBookingId` from response (no active-cart refetch) |
+| Update cart qty | POST | `pharmacyUpdateCartQuantity` → `acs-aggregator/api/v1/mobile/partner/pharmacy/cart/quantity/update` | `{ "booking_id": "<id>", "product_id": "<id>", "quantity": "<n>" }` — on success, update local cart from response (no active-cart refetch) |
+
+Products response: `data.data.data[]` with pagination `current_page`, `last_page`, `total`. Maps `display_name` → name, `media.file` → image, `price` / `old_price` → amounts.
+
+## State
+
+- `PharmacyCubit` — server-side search on search-icon tap (`submitSearch` → `display_name`), pagination (`loadMoreMedicines`), `loadProductDetail(productId)`, `loadCart()` for active cart + `cartBookingId`. Add-to-cart: if product already in cart, quantity-update only; else add API. Heart loader on add + cart +/-. Checkout: `loadCheckoutCities()` via shared `CitiesRepository` (`AppUrls.cities`); delivery address prefilled from `UserLocalModel.address`.
+
+## Mocks
+
+`PharmacyMockApi` when `MockConfig.enableMocks` is true; `getPharmacyProductsSuccessResponse` mirrors aggregator shape and filters by `display_name`.
+
 ## Routes / entry
 
 - `AppRoutes.pharmacyMain` — pharmacy dashboard (medicines home).

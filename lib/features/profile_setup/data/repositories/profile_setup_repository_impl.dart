@@ -4,20 +4,25 @@ import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/functional/functional_export.dart';
 import '../../../../core/preference/app_pref.dart';
 import '../../../../core/preference/user_local_model.dart';
+import '../../../../core/session/profile_session_sync.dart';
 import '../../../../core/utils/phone_format_utils.dart';
 import '../../domain/entities/profile_setup_entity.dart';
 import '../../domain/models/profile_setup_data.dart';
 import '../../domain/repositories/profile_setup_repository.dart';
 import '../data_sources/profile_setup_remote_data_source.dart';
+import '../mappers/profile_phones_mapper.dart';
 import '../mappers/profile_setup_mapper.dart';
 
 class ProfileSetupRepositoryImpl implements ProfileSetupRepository {
   ProfileSetupRepositoryImpl({
     required ProfileSetupRemoteDataSource remoteDataSource,
-  }) : _remoteDataSource = remoteDataSource;
+    ProfileSessionSync? profileSessionSync,
+  })  : _remoteDataSource = remoteDataSource,
+        _profileSessionSync = profileSessionSync ?? sl<ProfileSessionSync>();
 
   final appPref = sl<AppPref>();
   final ProfileSetupRemoteDataSource _remoteDataSource;
+  final ProfileSessionSync _profileSessionSync;
 
   @override
   Future<Either<ErrorMsg, ProfileSetupEntity>> getProfileSetupContent() async {
@@ -28,6 +33,9 @@ class ProfileSetupRepositoryImpl implements ProfileSetupRepository {
         entity,
         apiUserId: model.content.apiUserId,
         primaryMsisdn: model.content.primaryMsisdn,
+      );
+      _profileSessionSync.markSynced(
+        mapProfilePhonesToAccountItems(model.content.phones),
       );
       return Right(entity);
     } catch (e) {
@@ -41,6 +49,7 @@ class ProfileSetupRepositoryImpl implements ProfileSetupRepository {
     try {
       await _remoteDataSource.saveProfile(data);
       await _persistDataLocally(data);
+      _profileSessionSync.invalidate();
       return const Right(null);
     } catch (e) {
       log('saveProfile repository error: $e');

@@ -19,6 +19,7 @@ Future<void> showPharmacyAddToCartSheet(
   required String loaderIdPrefix,
 }) async {
   final pharmacyCubit = context.read<PharmacyCubit>();
+  final hostContext = context;
   var qty = 1;
 
   await showModalBottomSheet<void>(
@@ -133,16 +134,24 @@ Future<void> showPharmacyAddToCartSheet(
                     bgClr: AppColors.clr27B3A6,
                     onTap: () async {
                       final loaderId = '${loaderIdPrefix}_${medicine.id}';
-                      showHeartLoaderDialog(
-                        sheetContext,
-                        id: loaderId,
-                        size: 120,
-                      );
-                      final success = await pharmacyCubit.addToCartApi(
-                        medicine,
-                        quantity: qty,
-                      );
-                      HeartLoaderDialogController.close(loaderId);
+                      final loaderContext =
+                          hostContext.mounted ? hostContext : sheetContext;
+                      if (loaderContext.mounted) {
+                        showHeartLoaderDialog(
+                          loaderContext,
+                          id: loaderId,
+                          size: 120,
+                        );
+                      }
+                      var success = false;
+                      try {
+                        success = await pharmacyCubit.addToCartApi(
+                          medicine,
+                          quantity: qty,
+                        );
+                      } finally {
+                        HeartLoaderDialogController.close(loaderId);
+                      }
                       if (success && sheetContext.mounted) {
                         sheetContext.pop();
                       }

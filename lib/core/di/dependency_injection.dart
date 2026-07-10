@@ -24,6 +24,7 @@ import '../services/responsive_config_service.dart';
 import '../services/speech_to_text_service.dart';
 import '../session/auth_session_refresh.dart';
 import '../session/local_logout_service.dart';
+import '../session/profile_session_sync.dart';
 import '../cities/cities_injection.dart';
 
 final GetIt sl = GetIt.instance;
@@ -69,6 +70,7 @@ Future<void> _initCore() async {
     () => const ResponsiveConfigService(),
   );
   sl.registerLazySingleton<AuthSessionRefresh>(() => AuthSessionRefresh());
+  sl.registerLazySingleton<ProfileSessionSync>(() => ProfileSessionSync());
   sl.registerLazySingleton<LocalLogoutService>(
     () => LocalLogoutService(
       appPref: sl<AppPref>(),

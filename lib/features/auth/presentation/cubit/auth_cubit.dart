@@ -10,6 +10,7 @@ import '../../../../core/preference/app_pref.dart';
 import '../../../../core/preference/app_pref_keys.dart';
 import '../../../../core/services/notification_service.dart';
 import '../../../../core/session/auth_session_refresh.dart';
+import '../../../../core/session/profile_session_sync.dart';
 import '../../../../core/preference/user_local_model.dart';
 import '../../../../core/utils/jwt_utils.dart';
 import '../../domain/entities/auth_entity.dart';
@@ -266,6 +267,7 @@ class AuthCubit extends Cubit<AuthState> {
         (tokenUserId != null ? tokenUserId.toString() : state.phoneNumber);
 
     await _appPref.setLoginStatus(true);
+    sl<ProfileSessionSync>().invalidate();
     await _appPref.setUserId(resolvedUserId);
     await _appPref.setToken(entity.token ?? '');
     await _appPref.setRefreshToken(entity.refreshToken ?? '');

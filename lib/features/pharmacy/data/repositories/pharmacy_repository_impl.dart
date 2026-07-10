@@ -1,11 +1,14 @@
 import 'dart:developer';
 
 import '../../../../core/functional/functional_export.dart';
-import '../../domain/entities/pharmacy_cart_item_entity.dart';
-import '../../domain/entities/pharmacy_medicine_entity.dart';
+import '../../domain/entities/pharmacy_add_to_cart_result_entity.dart';
+import '../../domain/entities/pharmacy_cart_entity.dart';
+import '../../domain/entities/pharmacy_products_page_entity.dart';
+import '../../domain/entities/pharmacy_product_detail_entity.dart';
 import '../../domain/repositories/pharmacy_repository.dart';
 import '../data_sources/pharmacy_remote_data_source.dart';
 import '../mappers/pharmacy_medicine_mapper.dart';
+import '../models/pharmacy_medicine_model.dart';
 
 class PharmacyRepositoryImpl implements PharmacyRepository {
   PharmacyRepositoryImpl({required this.remoteDataSource});
@@ -13,43 +16,88 @@ class PharmacyRepositoryImpl implements PharmacyRepository {
   final PharmacyRemoteDataSource remoteDataSource;
 
   @override
-  Future<Either<ErrorMsg, List<PharmacyMedicineEntity>>>
-  getPharmacyMedicines() async {
+  Future<Either<ErrorMsg, PharmacyProductsPageEntity>> getPharmacyProducts({
+    required int page,
+    String displayName = '',
+  }) async {
     try {
-      final model = await remoteDataSource.getPharmacyMedicines();
-      final entities = PharmacyMedicineMapper.toEntityList(model);
-      log('Mapped pharmacy medicines count: ${entities.length}');
-      return Right(entities);
+      final model = await remoteDataSource.getPharmacyProducts(
+        page: page,
+        displayName: displayName,
+      );
+      final entity = PharmacyMedicineMapper.toProductsPageEntity(model);
+      log('Mapped pharmacy products count: ${entity.items.length}');
+      return Right(entity);
     } catch (e) {
       return Left(e.toString());
     }
   }
 
   @override
-  Future<Either<ErrorMsg, List<PharmacyCartItemEntity>>>
-  getPharmacyCart() async {
+  Future<Either<ErrorMsg, PharmacyProductDetailEntity>> getPharmacyProductDetail({
+    required String productId,
+  }) async {
+    try {
+      final model = await remoteDataSource.getPharmacyProductDetail(
+        productId: productId,
+      );
+      final entity = PharmacyMedicineMapper.toProductDetailEntity(model);
+      log('Mapped pharmacy product detail id: ${entity.product.id}');
+      return Right(entity);
+    } catch (e) {
+      return Left(e.toString());
+    }
+  }
+
+  @override
+  Future<Either<ErrorMsg, PharmacyCartEntity>> getPharmacyCart() async {
     try {
       final model = await remoteDataSource.getPharmacyCart();
-      final entities = PharmacyMedicineMapper.toCartItemEntityList(model);
-      log('Mapped pharmacy cart count: ${entities.length}');
-      return Right(entities);
+      final entity = PharmacyMedicineMapper.toCartEntity(model);
+      log('Mapped pharmacy cart count: ${entity.items.length}');
+      return Right(entity);
     } catch (e) {
       return Left(e.toString());
     }
   }
 
   @override
-  Future<Either<ErrorMsg, String>> addToCart({
+  Future<Either<ErrorMsg, PharmacyAddToCartResultEntity>> addToCart({
     required String medicineId,
     required int quantity,
+    String? bookingId,
   }) async {
     try {
       final response = await remoteDataSource.addToCart(
         medicineId: medicineId,
         quantity: quantity,
+        bookingId: bookingId,
       );
-      final message = (response['message'] ?? 'Added to cart').toString();
-      return Right(message);
+      final model = PharmacyCartResponseModel.fromJson(response);
+      final entity = PharmacyMedicineMapper.toAddToCartResultEntity(model);
+      log('Mapped add-to-cart bookingId: ${entity.bookingId}');
+      return Right(entity);
+    } catch (e) {
+      return Left(e.toString());
+    }
+  }
+
+  @override
+  Future<Either<ErrorMsg, PharmacyAddToCartResultEntity>> updateCartQuantity({
+    required String bookingId,
+    required String productId,
+    required String quantity,
+  }) async {
+    try {
+      final response = await remoteDataSource.updateCartQuantity(
+        bookingId: bookingId,
+        productId: productId,
+        quantity: quantity,
+      );
+      final model = PharmacyCartResponseModel.fromJson(response);
+      final entity = PharmacyMedicineMapper.toAddToCartResultEntity(model);
+      log('Mapped update-cart bookingId: ${entity.bookingId}');
+      return Right(entity);
     } catch (e) {
       return Left(e.toString());
     }
