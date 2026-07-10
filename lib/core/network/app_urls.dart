@@ -238,4 +238,12 @@ class AppUrls {
   static const String faq = 'https://apnaclinic.ecnstg.com/faq';
 
   static const String website = 'https://apnaclinic.ecnstg.com/';
+
+  /// FikrFree on the App Store (iOS).
+  static const String fikrFreeAppStoreIos =
+      'https://apps.apple.com/pk/app/fikrfree/id6739287582';
+
+  /// FikrFree on Google Play (Android).
+  static const String fikrFreePlayStoreAndroid =
+      'https://play.google.com/store/apps/details?id=com.fikrfree.android&hl=en';
 }
