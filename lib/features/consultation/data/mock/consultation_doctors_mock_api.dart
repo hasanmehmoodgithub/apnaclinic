@@ -6,52 +6,70 @@ class ConsultationDoctorsMockApi {
 
   Future<Map<String, dynamic>> getDoctorsResponse({
     required String mainCategoryId,
+    String? partnerId,
+    String? search,
+    int page = 1,
+    int limit = 20,
   }) async {
     await Future<void>.delayed(const Duration(milliseconds: 850));
+
+    final allDoctors = List<Map<String, dynamic>>.generate(24, (index) {
+      final id = index + 1;
+      final tenantId = id.isEven ? 2 : 1;
+      final partnerName = tenantId == 1 ? 'Oladoc' : 'MedIQ';
+      return {
+        'id': id,
+        'publicId': 'dr_mock_$id',
+        'displayName': 'Dr. Mock Doctor $id',
+        'specialtyName': index.isEven ? 'General Practitioner' : 'Neurologist',
+        'yearsOfExperience': (id % 8) + 1,
+        'profileImageUrl':
+            'https://static.vecteezy.com/system/resources/previews/046/680/074/non_2x/an-pakistani-female-doctor-on-isolated-transparent-background-png.png',
+        'consultationFee': '${(id % 5 + 1) * 500}.00',
+        'discountPercent': '0.00',
+        'isFree': false,
+        'ratingScore': '${4 + (id % 10) / 10}',
+        'bio': 'Dr. Mock Doctor $id is available via $partnerName.',
+        'education': 'MBBS',
+        'qualifications': [],
+        'partner': {'tenantId': tenantId, 'logoUrl': null},
+      };
+    });
+
+    final trimmedPartnerId = partnerId?.trim();
+    var doctors = trimmedPartnerId == null || trimmedPartnerId.isEmpty
+        ? allDoctors
+        : allDoctors.where((doctor) {
+            final partner = doctor['partner'];
+            if (partner is! Map) return false;
+            return partner['tenantId']?.toString() == trimmedPartnerId;
+          }).toList(growable: false);
+
+    final trimmedSearch = search?.trim().toLowerCase();
+    if (trimmedSearch != null && trimmedSearch.isNotEmpty) {
+      doctors = doctors.where((doctor) {
+        final name = doctor['displayName']?.toString().toLowerCase() ?? '';
+        final specialty = doctor['specialtyName']?.toString().toLowerCase() ?? '';
+        return name.contains(trimmedSearch) || specialty.contains(trimmedSearch);
+      }).toList(growable: false);
+    }
+
+    final safePage = page < 1 ? 1 : page;
+    final safeLimit = limit < 1 ? 20 : limit;
+    final start = (safePage - 1) * safeLimit;
+    final pageItems = start >= doctors.length
+        ? const <Map<String, dynamic>>[]
+        : doctors.skip(start).take(safeLimit).toList(growable: false);
 
     return {
       'success': true,
       'message': 'Doctors retrieved',
       'code': 200,
       'data': {
-        'data': [
-          {
-            'id': 1,
-            'publicId': 'dr_saadiya_akhter_janjua',
-            'displayName': 'Dr. Saadiya Akhtar Janjua',
-            'specialtyName': 'General Practitioner',
-            'yearsOfExperience': 2,
-            'profileImageUrl':
-                'https://static.vecteezy.com/system/resources/previews/046/680/074/non_2x/an-pakistani-female-doctor-on-isolated-transparent-background-png.png',
-            'consultationFee': '500.00',
-            'discountPercent': '30.00',
-            'isFree': false,
-            'ratingScore': '4.5',
-            'bio':
-                'Dr. Saadiya Akhtar Janjua is a skilled General Practitioner with over 2 years of clinical experience.',
-            'education': 'MBBS',
-            'qualifications': [],
-            'partner': {'tenantId': 1, 'logoUrl': null},
-          },
-          {
-            'id': 2,
-            'publicId': 'dr_sumbal_shahid',
-            'displayName': 'Dr. Sumbal Shahid',
-            'specialtyName': 'Neurologist',
-            'yearsOfExperience': 6,
-            'profileImageUrl':
-                'https://www.shutterstock.com/image-photo/indian-doctor-stethoscope-around-neck-600nw-1625058334.jpg',
-            'consultationFee': '15000.00',
-            'discountPercent': '0.00',
-            'isFree': false,
-            'ratingScore': '4.8',
-            'bio':
-                'Dr. Sumbal Shahid is a skilled Neurologist with over 6 years of clinical experience.',
-            'education': 'MBBS, FCPS',
-            'qualifications': [],
-            'partner': {'tenantId': 2, 'logoUrl': null},
-          },
-        ],
+        'data': pageItems,
+        'page': safePage,
+        'limit': safeLimit,
+        'total': doctors.length,
       },
     };
   }

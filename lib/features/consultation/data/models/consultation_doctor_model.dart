@@ -1,3 +1,4 @@
+import '../../domain/entities/consultation_doctors_page_entity.dart';
 import '../../presentation/widgets/results_doctor_item.dart';
 
 class ConsultationDoctorModel {
@@ -206,21 +207,29 @@ class ConsultationDoctorsResponseModel {
     required this.success,
     required this.message,
     required this.doctors,
+    required this.page,
+    required this.limit,
+    required this.total,
   });
 
   final bool success;
   final String message;
   final List<ConsultationDoctorModel> doctors;
+  final int page;
+  final int limit;
+  final int total;
+
+  bool get hasMore => page * limit < total;
 
   factory ConsultationDoctorsResponseModel.fromJson(Map<String, dynamic> json) {
     final code = json['code'];
     final success = json['success'] == true || (code is num && code.toInt() == 200);
     final data = json['data'];
+    final Map<String, dynamic>? pageData =
+        data is Map<String, dynamic> ? data : null;
     final List<dynamic> rawDoctors;
-    if (data is Map<String, dynamic>) {
-      rawDoctors = data['data'] is List
-          ? data['data'] as List<dynamic>
-          : (data['doctors'] is List ? data['doctors'] as List<dynamic> : const []);
+    if (pageData?['data'] is List) {
+      rawDoctors = pageData!['data'] as List<dynamic>;
     } else if (data is List) {
       rawDoctors = data;
     } else {
@@ -235,10 +244,36 @@ class ConsultationDoctorsResponseModel {
         .where((doctor) => doctor.displayName.isNotEmpty)
         .toList(growable: false);
 
+    final page = _readInt(pageData ?? json, 'page', fallback: 1);
+    final limit = _readInt(pageData ?? json, 'limit', fallback: 20);
+    final total = _readInt(pageData ?? json, 'total', fallback: doctors.length);
+
     return ConsultationDoctorsResponseModel(
       success: success,
       message: (json['message'] ?? '').toString(),
       doctors: doctors,
+      page: page,
+      limit: limit,
+      total: total,
     );
+  }
+
+  ConsultationDoctorsPageEntity toPageEntity() {
+    return ConsultationDoctorsPageEntity(
+      doctors: doctors.map((doctor) => doctor.toResultsDoctorItem()).toList(),
+      page: page,
+      limit: limit,
+      total: total,
+    );
+  }
+
+  static int _readInt(
+    Map<String, dynamic> json,
+    String key, {
+    required int fallback,
+  }) {
+    final value = json[key];
+    if (value is num) return value.toInt();
+    return int.tryParse(value?.toString() ?? '') ?? fallback;
   }
 }

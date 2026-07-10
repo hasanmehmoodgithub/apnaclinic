@@ -2090,6 +2090,36 @@ abstract class AppLocalizations {
   /// **'Specialist'**
   String get consultationSpecialistTitle;
 
+  /// No description provided for @consultationResultsFilter.
+  ///
+  /// In en, this message translates to:
+  /// **'Filter'**
+  String get consultationResultsFilter;
+
+  /// No description provided for @consultationSelectPartnerTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Partner'**
+  String get consultationSelectPartnerTitle;
+
+  /// No description provided for @consultationSearchPartner.
+  ///
+  /// In en, this message translates to:
+  /// **'Search Partner'**
+  String get consultationSearchPartner;
+
+  /// No description provided for @consultationNoPartnersFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No partners found.'**
+  String get consultationNoPartnersFound;
+
+  /// No description provided for @consultationNoDoctorsFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No doctors found.'**
+  String get consultationNoDoctorsFound;
+
   /// No description provided for @consultationVideoBookingPrompt.
   ///
   /// In en, this message translates to:
@@ -2261,7 +2291,7 @@ abstract class AppLocalizations {
   /// No description provided for @consultationNoAvailability.
   ///
   /// In en, this message translates to:
-  /// **'No appointment slots are available for this doctor right now.'**
+  /// **'Time Slots are not available right now. Please try again later!'**
   String get consultationNoAvailability;
 
   /// No description provided for @consultationAvailabilityRetry.
@@ -2335,6 +2365,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No lab test bookings yet.'**
   String get bookingsLabTestEmptyDescription;
+
+  /// No description provided for @bookingsDoctorConsultationEmptyDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'No Booking Available'**
+  String get bookingsDoctorConsultationEmptyDescription;
 
   /// No description provided for @bookingsSurgeryEmptyDescription.
   ///

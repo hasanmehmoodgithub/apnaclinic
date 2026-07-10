@@ -77,6 +77,10 @@ class _AddAccountScreenState extends State<AddAccountScreen> {
         if (!mounted) return;
         await _refreshProfileAndAccounts();
         if (!mounted) return;
+        if (widget.launchSource == AddAccountLaunchSource.consultationCheckout) {
+          context.pop(phone);
+          return;
+        }
         context.pushReplacement(
           AppRoutes.path(AppRoutes.accountDetails),
           extra: <String, dynamic>{

@@ -58,8 +58,28 @@ class AppUrls {
       '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/doctor-categories';
 
   /// Doctor consultation doctors for a main category (aggregator mobile API).
-  static String doctorConsultationDoctors(String mainCategoryId) =>
-      '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/doctor-consultation/doctors?mainCategoryId=${Uri.encodeComponent(mainCategoryId)}';
+  static String doctorConsultationDoctors({
+    required String mainCategoryId,
+    String? partnerId,
+    String? search,
+    int page = 1,
+    int limit = 20,
+  }) {
+    final query = <String>[
+      'mainCategoryId=${Uri.encodeComponent(mainCategoryId)}',
+      'page=${Uri.encodeComponent(page.toString())}',
+      'limit=${Uri.encodeComponent(limit.toString())}',
+    ];
+    final trimmedPartnerId = partnerId?.trim();
+    if (trimmedPartnerId != null && trimmedPartnerId.isNotEmpty) {
+      query.add('partnerId=${Uri.encodeComponent(trimmedPartnerId)}');
+    }
+    final trimmedSearch = search?.trim();
+    if (trimmedSearch != null && trimmedSearch.isNotEmpty) {
+      query.add('search=${Uri.encodeComponent(trimmedSearch)}');
+    }
+    return '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/doctor-consultation/doctors?${query.join('&')}';
+  }
 
   /// Doctor consultation time slots (aggregator mobile API).
   static String doctorConsultationSlots({

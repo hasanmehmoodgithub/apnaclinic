@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
+import '../../../../core/l10n/app_localizations.dart';
+import '../../../../core/router/app_routes.dart';
 import '../cubit/doctor_consultation_bookings_cubit.dart';
 import '../cubit/doctor_consultation_bookings_state.dart';
 import '../widgets/doctor_consultation_booking_card_widget.dart';
+import '../widgets/empty_booking_widget.dart';
 
 class DoctorConsultationBookingsScreen extends StatelessWidget {
   const DoctorConsultationBookingsScreen({super.key});
@@ -55,6 +59,7 @@ class _DoctorConsultationBookingsBodyState
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return BlocBuilder<DoctorConsultationBookingsCubit,
         DoctorConsultationBookingsState>(
       builder: (context, state) {
@@ -72,7 +77,7 @@ class _DoctorConsultationBookingsBodyState
                 TextButton(
                   onPressed: () =>
                       context.read<DoctorConsultationBookingsCubit>().load(),
-                  child: const Text('Retry'),
+                  child: Text(l10n.commonRetry),
                 ),
               ],
             ),
@@ -80,7 +85,14 @@ class _DoctorConsultationBookingsBodyState
         }
 
         if (state.items.isEmpty) {
-          return const SizedBox.shrink();
+          return Padding(
+            padding: EdgeInsets.only(top: 20.h),
+            child: EmptyBookingWidget(
+              description: l10n.bookingsDoctorConsultationEmptyDescription,
+              buttonText: l10n.onboardingBookConsultationTitle,
+              onTap: () => context.pushNamed(AppRoutes.consultation),
+            ),
+          );
         }
 
         return ListView.separated(

@@ -93,14 +93,7 @@ class _DoctorConsultationCheckoutScreenState
     );
     if (result == null || !mounted) return;
 
-    if (result.addAccount) {
-      await context.pushNamed(AppRoutes.accountDetails);
-      if (!mounted) return;
-      await _openJazzCashBottomSheet(paymentMethodCode);
-      return;
-    }
-
-    final msisdn = result.msisdn?.trim() ?? '';
+    final msisdn = result.msisdn.trim();
     if (msisdn.isEmpty) return;
 
     final cubit = context.read<DoctorConsultationCheckoutCubit>();

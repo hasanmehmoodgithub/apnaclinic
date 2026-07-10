@@ -21,10 +21,10 @@ class ConsultationSlotsErrorUtils {
     final lower = message.toLowerCase();
     if (lower.contains('doctor hospital not found') ||
         lower.contains('hospital not found')) {
-      return 'This doctor has no available appointment slots at the moment.';
+      return 'Time Slots are not available right now. Please try again later!';
     }
     if (lower.contains('no slots') || lower.contains('slot not found')) {
-      return 'No appointment slots are available for this doctor right now.';
+      return 'Time Slots are not available right now. Please try again later!';
     }
 
     return message;
