@@ -67,7 +67,6 @@ class _PharmacyMainSearchFieldWidgetState
   Widget build(BuildContext context) {
     // Clear only after a search has been submitted (active query in state).
     final hasActiveSearch = widget.searchQuery.trim().isNotEmpty;
-    final suffixWidth = hasActiveSearch ? 88.w : 48.w;
 
     return SizedBox(
       width: double.infinity,
@@ -79,45 +78,25 @@ class _PharmacyMainSearchFieldWidgetState
         onFieldSubmitted: (_) => _submitSearch(),
         decoration: InputDecoration(
           hintText: widget.searchHint,
+          // Allow suffix to size to its children (avoids Row overflow).
           suffixIconConstraints: BoxConstraints(
             minHeight: 45.r,
-            minWidth: suffixWidth,
-            maxHeight: 45.r,
-            maxWidth: suffixWidth,
+            minWidth: 0,
           ),
-          suffixIcon: SizedBox(
-            width: suffixWidth,
-            height: 45.r,
+          suffixIcon: Padding(
+            padding: EdgeInsets.only(right: 6.w),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
+              mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                IconButton(
+                _SearchSuffixIcon(
+                  icon: Icons.search,
                   onPressed: _submitSearch,
-                  padding: EdgeInsets.zero,
-                  constraints: BoxConstraints.tightFor(
-                    width: 40.w,
-                    height: 40.r,
-                  ),
-                  icon: Icon(
-                    Icons.search,
-                    size: 22.r,
-                    color: AppColors.clr9AA4B2,
-                  ),
                 ),
                 if (hasActiveSearch)
-                  IconButton(
+                  _SearchSuffixIcon(
+                    icon: Icons.close,
                     onPressed: _clearSearch,
-                    padding: EdgeInsets.zero,
-                    constraints: BoxConstraints.tightFor(
-                      width: 40.w,
-                      height: 40.r,
-                    ),
-                    icon: Icon(
-                      Icons.close,
-                      size: 20.r,
-                      color: AppColors.clr9AA4B2,
-                    ),
                   ),
               ],
             ),
@@ -141,6 +120,31 @@ class _PharmacyMainSearchFieldWidgetState
             borderSide: const BorderSide(color: AppColors.clr9EC7E8),
           ),
         ),
+      ),
+    );
+  }
+}
+
+class _SearchSuffixIcon extends StatelessWidget {
+  const _SearchSuffixIcon({
+    required this.icon,
+    required this.onPressed,
+  });
+
+  final IconData icon;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 36.w,
+      height: 36.r,
+      child: IconButton(
+        onPressed: onPressed,
+        padding: EdgeInsets.zero,
+        visualDensity: VisualDensity.compact,
+        constraints: BoxConstraints.tightFor(width: 36.w, height: 36.r),
+        icon: Icon(icon, size: 20.r, color: AppColors.clr9AA4B2),
       ),
     );
   }
