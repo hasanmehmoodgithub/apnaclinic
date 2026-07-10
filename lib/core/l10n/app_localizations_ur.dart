@@ -1061,6 +1061,21 @@ class AppLocalizationsUr extends AppLocalizations {
   String get consultationSpecialistTitle => 'ماہر';
 
   @override
+  String get consultationResultsFilter => 'فلٹر';
+
+  @override
+  String get consultationSelectPartnerTitle => 'پارٹنر منتخب کریں';
+
+  @override
+  String get consultationSearchPartner => 'پارٹنر تلاش کریں';
+
+  @override
+  String get consultationNoPartnersFound => 'کوئی پارٹنر نہیں ملا۔';
+
+  @override
+  String get consultationNoDoctorsFound => 'کوئی ڈاکٹر نہیں ملا۔';
+
+  @override
   String get consultationVideoBookingPrompt =>
       'اپنی ویڈیو مشاورت یہاں بک کریں!';
 
@@ -1161,7 +1176,7 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get consultationNoAvailability =>
-      'اس ڈاکٹر کے لیے فی الحال کوئی اپائنٹمنٹ سلاٹ دستیاب نہیں ہے۔';
+      'ٹائم سلاٹس فی الحال دستیاب نہیں ہیں۔ براہ کرم بعد میں دوبارہ کوشش کریں!';
 
   @override
   String get consultationAvailabilityRetry => 'دوبارہ کوشش کریں';
@@ -1199,6 +1214,10 @@ class AppLocalizationsUr extends AppLocalizations {
   @override
   String get bookingsLabTestEmptyDescription =>
       'ابھی تک کوئی لیب ٹیسٹ بکنگ نہیں ہے۔';
+
+  @override
+  String get bookingsDoctorConsultationEmptyDescription =>
+      'کوئی بکنگ دستیاب نہیں ہے';
 
   @override
   String get bookingsSurgeryEmptyDescription =>

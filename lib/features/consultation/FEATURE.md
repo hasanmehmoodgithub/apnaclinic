@@ -16,7 +16,7 @@ Doctor consultation category browse, doctor results, booking, and checkout.
 - **GET** `AppUrls.doctorCategories` — `https://apnaclinic-aggregator.apps.jpocp.jazz.com.pk/api/v1/mobile/doctor-categories` (override `AGGREGATOR_BASE_URL`).
   - Response `data[]`: `id`, `title`, `displayLabel`, `iconPath`, `displayOrder`, `isActive`.
   - Maps to `ConsultationCategoryEntity`; inactive entries filtered; sorted by `displayOrder`.
-- **GET** `AppUrls.doctorConsultationDoctors(mainCategoryId)` — `/api/v1/mobile/doctor-consultation/doctors?mainCategoryId=`.
+- **GET** `AppUrls.doctorConsultationDoctors(mainCategoryId, partnerId?, search?, page, limit)` — `/api/v1/mobile/doctor-consultation/doctors?mainCategoryId=&partnerId=&search=&page=&limit=`.
   - Response `data.data[]`: `id`, `publicId`, `displayName`, `specialtyName`, `yearsOfExperience`, `profileImageUrl`, `consultationFee`, `discountPercent`, `isFree`, `ratingScore` (string or number), `bio`, `education`, `qualifications`, `partner`.
   - Maps to `ResultsDoctorItem` via `ConsultationDoctorModel` (`bio` → description, `education` when `qualifications` is empty, `partner.logoUrl` for logo; partner name only if API sends `partner.name` / `displayName`). `apiDoctorId` keeps numeric `id` for slots API.
 - **GET** `AppUrls.paymentProviders` — `/api/v1/mobile/payment-provider` (active providers with `name`, `code`, `iconUrl`).
@@ -34,9 +34,9 @@ Doctor consultation category browse, doctor results, booking, and checkout.
 ## State
 
 - `ConsultationCubit` — loads categories via `GetConsultationCategoriesUseCase`.
-- `DoctorConsultationResultsScreen` — loads doctors via `GetConsultationDoctorsUseCase` using `mainCategoryId`.
+- `DoctorConsultationResultsScreen` — paginated doctors via `GetConsultationDoctorsUseCase` (`page`/`limit` on scroll, `search` debounced from search field); **Filter** opens `ConsultationSelectPartnerSheetWidget` (static partners id `1` Oladoc, `2` MedIQ) and reloads doctors with optional `partnerId`.
 - `DoctorConsultationBookDoctorScreen` — loads slots via `GetConsultationDoctorSlotsUseCase` using `ResultsDoctorItem.apiDoctorId`. Documents section supports multiple attachments (gallery/file multi-select; camera appends) with per-item delete.
-- `DoctorConsultationCheckoutCubit` — loads payment providers via `GetPaymentProvidersUseCase`; submits booking via `SubmitConsultationBookingUseCase`. JazzCash Continue opens `DoctorConsultationJazzCashAccountsSheetWidget` (loads saved phones via `GetAccountsListUseCase`; default account pre-selected).
+- `DoctorConsultationCheckoutCubit` — loads payment providers via `GetPaymentProvidersUseCase`; submits booking via `SubmitConsultationBookingUseCase`. JazzCash Continue opens `DoctorConsultationJazzCashAccountsSheetWidget` (loads saved phones via `GetAccountsListUseCase`; default account pre-selected). **Add Account** opens shared `AddAccountScreen` (`AddAccountLaunchSource.consultationCheckout`); on save, sheet reloads all accounts and selects the new number.
 - `DoctorConsultationBookingsCubit` (bookings tab) — loads paginated bookings via `GetConsultationBookingsUseCase`.
 
 ## DI

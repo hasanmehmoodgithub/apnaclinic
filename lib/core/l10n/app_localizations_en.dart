@@ -1062,6 +1062,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get consultationSpecialistTitle => 'Specialist';
 
   @override
+  String get consultationResultsFilter => 'Filter';
+
+  @override
+  String get consultationSelectPartnerTitle => 'Select Partner';
+
+  @override
+  String get consultationSearchPartner => 'Search Partner';
+
+  @override
+  String get consultationNoPartnersFound => 'No partners found.';
+
+  @override
+  String get consultationNoDoctorsFound => 'No doctors found.';
+
+  @override
   String get consultationVideoBookingPrompt =>
       'Book your video consultation here!';
 
@@ -1162,7 +1177,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get consultationNoAvailability =>
-      'No appointment slots are available for this doctor right now.';
+      'Time Slots are not available right now. Please try again later!';
 
   @override
   String get consultationAvailabilityRetry => 'Retry';
@@ -1199,6 +1214,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get bookingsLabTestEmptyDescription => 'No lab test bookings yet.';
+
+  @override
+  String get bookingsDoctorConsultationEmptyDescription =>
+      'No Booking Available';
 
   @override
   String get bookingsSurgeryEmptyDescription => 'No surgery bookings yet.';

@@ -2,6 +2,7 @@
 enum AddAccountLaunchSource {
   profile,
   accountDetails,
+  consultationCheckout,
 }
 
 AddAccountLaunchSource addAccountLaunchSourceFromExtra(Object? extra) {

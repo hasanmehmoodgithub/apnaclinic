@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
+import '../../../../core/router/app_routes.dart';
 import '../../../../generated/assets.dart';
 import '../../../account/data/models/account_item_model.dart';
 import '../../../account/domain/models/account_method.dart';
 import '../../../account/domain/use_cases/get_accounts_list_use_case.dart';
+import '../../../account/presentation/add_account_launch_source.dart';
+import '../../../account/presentation/utils/account_phone_utils.dart';
 import '../models/doctor_consultation_jazzcash_sheet_result.dart';
 
 class DoctorConsultationJazzCashAccountsSheetWidget extends StatefulWidget {
@@ -35,7 +39,7 @@ class _DoctorConsultationJazzCashAccountsSheetWidgetState
     _loadAccounts();
   }
 
-  Future<void> _loadAccounts() async {
+  Future<void> _loadAccounts({String? selectPhone}) async {
     setState(() {
       _isLoading = true;
       _errorMessage = null;
@@ -72,7 +76,16 @@ class _DoctorConsultationJazzCashAccountsSheetWidgetState
           msisdns.add(msisdn);
         }
 
-        var selectedIndex = accounts.indexWhere((item) => item.isDefault);
+        var selectedIndex = -1;
+        final trimmedSelectPhone = selectPhone?.trim();
+        if (trimmedSelectPhone != null && trimmedSelectPhone.isNotEmpty) {
+          selectedIndex = msisdns.indexWhere(
+            (msisdn) => accountPhonesMatch(msisdn, trimmedSelectPhone),
+          );
+        }
+        if (selectedIndex < 0) {
+          selectedIndex = accounts.indexWhere((item) => item.isDefault);
+        }
         if (selectedIndex < 0 && accounts.isNotEmpty) selectedIndex = 0;
 
         setState(() {
@@ -83,6 +96,17 @@ class _DoctorConsultationJazzCashAccountsSheetWidgetState
         });
       },
     );
+  }
+
+  Future<void> _openAddAccount() async {
+    final addedPhone = await context.push<String>(
+      AppRoutes.path(AppRoutes.addAccount),
+      extra: AddAccountLaunchSource.consultationCheckout,
+    );
+    if (!mounted) return;
+    final trimmedPhone = addedPhone?.trim();
+    if (trimmedPhone == null || trimmedPhone.isEmpty) return;
+    await _loadAccounts(selectPhone: trimmedPhone);
   }
 
   String _resolveMsisdn(dynamic item) {
@@ -211,7 +235,7 @@ class _DoctorConsultationJazzCashAccountsSheetWidgetState
             onTap: () => setState(() => _selectedIndex = index),
           );
         }),
-        const _AddAccountTile(),
+        _AddAccountTile(onTap: _openAddAccount),
       ],
     );
   }
@@ -330,16 +354,16 @@ class _SavedAccountTile extends StatelessWidget {
 }
 
 class _AddAccountTile extends StatelessWidget {
-  const _AddAccountTile();
+  const _AddAccountTile({required this.onTap});
+
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final textTheme = Theme.of(context).textTheme;
     return InkWell(
-      onTap: () => Navigator.of(context).pop(
-        const DoctorConsultationJazzCashSheetResult.addAccount(),
-      ),
+      onTap: onTap,
       borderRadius: BorderRadius.circular(10.r),
       child: Container(
         margin: EdgeInsets.only(bottom: 12.h),

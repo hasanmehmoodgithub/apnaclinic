@@ -170,33 +170,43 @@ class _AvailabilitySectionState extends State<AvailabilitySection> {
           ),
           if (selectedDay != null) ...[
             SizedBox(height: 10.h),
-            SizedBox(
-              height: 30.h,
-              child: ListView.separated(
-                scrollDirection: Axis.horizontal,
-                itemCount: selectedDay.slots.length,
-                separatorBuilder: (_, _) => SizedBox(width: 8.w),
-                itemBuilder: (context, index) {
-                  final slot = selectedDay.slots[index];
-                  return _TimeSlotChip(
-                    textTheme: widget.textTheme,
-                    text: slot.label,
-                    isSelected: _selectedTimeSlotIndex == index,
-                    onTap: () => setState(() {
-                      _selectedTimeSlotIndex = index;
-                      widget.onSlotChanged?.call(
-                        ConsultationSelectedSlotEntity(
-                          date: selectedDay.date,
-                          startTime: slot.startTime,
-                          endTime: slot.endTime,
-                          label: slot.label,
-                        ),
-                      );
-                    }),
-                  );
-                },
+            if (selectedDay.slots.isEmpty)
+              _AvailabilityMessage(
+                textTheme: widget.textTheme,
+                message: l10n.consultationNoAvailability,
+                actionLabel: widget.onRetry == null
+                    ? null
+                    : l10n.consultationAvailabilityRetry,
+                onAction: widget.onRetry,
+              )
+            else
+              SizedBox(
+                height: 30.h,
+                child: ListView.separated(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: selectedDay.slots.length,
+                  separatorBuilder: (_, _) => SizedBox(width: 8.w),
+                  itemBuilder: (context, index) {
+                    final slot = selectedDay.slots[index];
+                    return _TimeSlotChip(
+                      textTheme: widget.textTheme,
+                      text: slot.label,
+                      isSelected: _selectedTimeSlotIndex == index,
+                      onTap: () => setState(() {
+                        _selectedTimeSlotIndex = index;
+                        widget.onSlotChanged?.call(
+                          ConsultationSelectedSlotEntity(
+                            date: selectedDay.date,
+                            startTime: slot.startTime,
+                            endTime: slot.endTime,
+                            label: slot.label,
+                          ),
+                        );
+                      }),
+                    );
+                  },
+                ),
               ),
-            ),
           ],
         ],
       ],

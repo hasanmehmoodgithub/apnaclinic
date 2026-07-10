@@ -7,8 +7,12 @@ import '../models/payment_provider_model.dart';
 
 abstract class ConsultationRemoteDataSource {
   Future<List<ConsultationCategoryModel>> getCategories();
-  Future<List<ConsultationDoctorModel>> getDoctors({
+  Future<ConsultationDoctorsResponseModel> getDoctors({
     required String mainCategoryId,
+    String? partnerId,
+    String? search,
+    int page = 1,
+    int limit = 20,
   });
   Future<ConsultationDoctorSlotsModel> getDoctorSlots({
     required String doctorId,

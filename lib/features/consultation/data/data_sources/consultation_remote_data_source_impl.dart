@@ -95,24 +95,38 @@ class ConsultationRemoteDataSourceImpl implements ConsultationRemoteDataSource {
   }
 
   @override
-  Future<List<ConsultationDoctorModel>> getDoctors({
+  Future<ConsultationDoctorsResponseModel> getDoctors({
     required String mainCategoryId,
+    String? partnerId,
+    String? search,
+    int page = 1,
+    int limit = 20,
   }) async {
     try {
       final Map<String, dynamic> response;
       if (ConsultationDoctorsMockApi.useMockResponses) {
         response = await doctorsMockApi.getDoctorsResponse(
           mainCategoryId: mainCategoryId,
+          partnerId: partnerId,
+          search: search,
+          page: page,
+          limit: limit,
         );
       } else {
         response = await apiService.get(
-          AppUrls.doctorConsultationDoctors(mainCategoryId),
+          AppUrls.doctorConsultationDoctors(
+            mainCategoryId: mainCategoryId,
+            partnerId: partnerId,
+            search: search,
+            page: page,
+            limit: limit,
+          ),
         );
         log('getDoctors response: $response');
       }
 
       if (_isSuccessResponse(response)) {
-        return ConsultationDoctorsResponseModel.fromJson(response).doctors;
+        return ConsultationDoctorsResponseModel.fromJson(response);
       }
 
       final message =
@@ -122,7 +136,13 @@ class ConsultationRemoteDataSourceImpl implements ConsultationRemoteDataSource {
       log('getDoctors error: $e');
       final message = ErrorHandler.handleExceptions(
         e,
-        endpoint: AppUrls.doctorConsultationDoctors(mainCategoryId),
+        endpoint: AppUrls.doctorConsultationDoctors(
+          mainCategoryId: mainCategoryId,
+          partnerId: partnerId,
+          search: search,
+          page: page,
+          limit: limit,
+        ),
       );
       return Future.error(message);
     }

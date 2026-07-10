@@ -5,7 +5,7 @@ import '../../domain/entities/consultation_doctor_slots_entity.dart';
 import '../../domain/repositories/consultation_repository.dart';
 import '../../domain/entities/payment_provider_entity.dart';
 import '../../domain/use_cases/submit_consultation_booking_use_case.dart';
-import '../../presentation/widgets/results_doctor_item.dart';
+import '../../domain/entities/consultation_doctors_page_entity.dart';
 import '../data_sources/consultation_remote_data_source.dart';
 import '../utils/consultation_slots_error_utils.dart';
 
@@ -29,14 +29,22 @@ class ConsultationRepositoryImpl implements ConsultationRepository {
   }
 
   @override
-  Future<Either<ErrorMsg, List<ResultsDoctorItem>>> getDoctors({
+  Future<Either<ErrorMsg, ConsultationDoctorsPageEntity>> getDoctors({
     required String mainCategoryId,
+    String? partnerId,
+    String? search,
+    int page = 1,
+    int limit = 20,
   }) async {
     try {
-      final doctors = await remoteDataSource.getDoctors(
+      final pageModel = await remoteDataSource.getDoctors(
         mainCategoryId: mainCategoryId,
+        partnerId: partnerId,
+        search: search,
+        page: page,
+        limit: limit,
       );
-      return Right(doctors.map((doctor) => doctor.toResultsDoctorItem()).toList());
+      return Right(pageModel.toPageEntity());
     } catch (e) {
       if (e is String && e.trim().isNotEmpty) {
         return Left(e.trim());

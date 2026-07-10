@@ -6,8 +6,8 @@ Manage linked JazzCash phone numbers on the user profile (account details).
 
 ## Routes / entry
 
-- `AppRoutes.accountDetails` — post add-account confirmation only (no API). Route `extra`: `showSuccessDialog`, `addedPhone`. Shows the newly added number and optional success dialog; full account list lives on the profile tab.
-- `AppRoutes.addAccount` — add a new phone number (POST only; no profile GET on open/save). On success, pushes account details (success dialog), then pops back with `true` so profile can refresh accounts.
+- `AppRoutes.accountDetails` — list linked phones from profile API. Optional route `extra`: `showSuccessDialog`, `addedPhone`. When both are set after add-account, the list shows **only the newly added number** behind the success dialog; after **Continue**, the full list reloads.
+- `AppRoutes.addAccount` — add a new phone number (`AddAccountFormWidget`). On success: navigates to account details with success dialog (default / profile); pops with added phone when `AddAccountLaunchSource.consultationCheckout` (doctor consultation JazzCash sheet).
 
 ## Data & APIs
 
@@ -38,4 +38,4 @@ Phone entries: `id`, `msisdn`, `jazzCashVerified`, `primary`. UI shows `03…` l
 
 Before add/delete phone, the app resolves numeric `data.id` via cached profile (`apiUserId`) or a profile GET using the session user id.
 
-After add/delete, profile tab refreshes phones via `GetAccountsListUseCase` (GET profile → `data.phones`). `AccountDetailsScreen` does not fetch accounts.
+After add/delete, account details refresh via `GetAccountsListUseCase` (GET profile → `data.phones`). Profile tab uses the same single call after phone changes; full profile fields reload separately via `GetProfileSetupContentUseCase` on screen open / edit.

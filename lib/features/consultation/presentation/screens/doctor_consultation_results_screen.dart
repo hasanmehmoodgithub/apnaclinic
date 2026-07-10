@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../components/shimmer/app_shimmer.dart';
@@ -16,6 +18,8 @@ import '../widgets/results_doctor_category_card.dart';
 import '../widgets/results_doctor_item.dart';
 import '../widgets/results_filter_button.dart';
 import '../widgets/results_search_field.dart';
+import '../widgets/consultation_select_partner_sheet_widget.dart';
+import '../constants/consultation_partner_filter_defaults.dart';
 import '../widgets/results_select_categories_dialog.dart';
 import '../widgets/consultation_screen_header_widget.dart';
 import '../widgets/consultation_hero_banner_widget.dart';
@@ -45,11 +49,19 @@ class _DoctorConsultationResultsScreenState
   final GetConsultationDoctorsUseCase _getDoctorsUseCase =
       sl<GetConsultationDoctorsUseCase>();
   final TextEditingController _searchController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
+  Timer? _searchDebounce;
   List<ConsultationCategoryEntity> _categoryOptions = const [];
+
+  static const int _pageLimit = 20;
 
   List<ResultsDoctorItem> _allDoctors = const [];
   bool _isLoading = false;
+  bool _isLoadingMore = false;
+  bool _hasMore = false;
+  int _currentPage = 1;
   String _query = '';
+  String? _selectedPartnerId;
   late String _selectedCategory;
   late String _mainCategoryId;
 
@@ -62,7 +74,30 @@ class _DoctorConsultationResultsScreenState
     if (_categoryOptions.isEmpty) {
       _loadCategories();
     }
-    _loadDoctors();
+    _scrollController.addListener(_onScroll);
+    _loadDoctors(refresh: true);
+  }
+
+  void _onScroll() {
+    if (!_scrollController.hasClients ||
+        _isLoading ||
+        _isLoadingMore ||
+        !_hasMore) {
+      return;
+    }
+    final position = _scrollController.position;
+    if (position.pixels >= position.maxScrollExtent - 200) {
+      _loadMoreDoctors();
+    }
+  }
+
+  void _onSearchChanged(String value) {
+    if (_query == value) return;
+    setState(() => _query = value);
+    _searchDebounce?.cancel();
+    _searchDebounce = Timer(const Duration(milliseconds: 400), () {
+      if (mounted) _loadDoctors(refresh: true);
+    });
   }
 
   Future<void> _loadCategories() async {
@@ -96,7 +131,7 @@ class _DoctorConsultationResultsScreenState
       _selectedCategory = category.title;
       _mainCategoryId = category.id;
     });
-    await _loadDoctors();
+    await _loadDoctors(refresh: true);
   }
 
   void _onBookNowTap(ResultsDoctorItem doctor) {
@@ -107,26 +142,81 @@ class _DoctorConsultationResultsScreenState
     );
   }
 
-  Future<void> _loadDoctors() async {
+  Future<void> _openSelectPartnerSheet() async {
+    final partner = await showModalBottomSheet<ConsultationPartnerFilterOption>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => ConsultationSelectPartnerSheetWidget(
+        selectedPartnerId: _selectedPartnerId,
+      ),
+    );
+    if (partner == null || partner.id == _selectedPartnerId) return;
+    setState(() => _selectedPartnerId = partner.id);
+    await _loadDoctors(refresh: true);
+  }
+
+  Future<void> _loadDoctors({required bool refresh}) async {
+    if (refresh) {
+      setState(() {
+        _isLoading = _allDoctors.isEmpty;
+        _isLoadingMore = false;
+        _hasMore = false;
+        _currentPage = 1;
+      });
+      await _fetchDoctors(page: 1, append: false);
+      return;
+    }
+
     setState(() => _isLoading = true);
+    await _fetchDoctors(page: 1, append: false);
+  }
+
+  Future<void> _loadMoreDoctors() async {
+    if (_isLoading || _isLoadingMore || !_hasMore) return;
+    setState(() => _isLoadingMore = true);
+    await _fetchDoctors(page: _currentPage + 1, append: true);
+  }
+
+  Future<void> _fetchDoctors({
+    required int page,
+    required bool append,
+  }) async {
+    final trimmedSearch = _query.trim();
     final result = await _getDoctorsUseCase(
-      GetConsultationDoctorsParams(mainCategoryId: _mainCategoryId),
+      GetConsultationDoctorsParams(
+        mainCategoryId: _mainCategoryId,
+        partnerId: _selectedPartnerId,
+        search: trimmedSearch.isEmpty ? null : trimmedSearch,
+        page: page,
+        limit: _pageLimit,
+      ),
     );
     if (!mounted) return;
     result.fold(
       (_) => setState(() {
-        _allDoctors = const [];
+        if (!append) _allDoctors = const [];
         _isLoading = false;
+        _isLoadingMore = false;
+        _hasMore = false;
       }),
-      (doctors) => setState(() {
-        _allDoctors = doctors;
+      (pageData) => setState(() {
+        _allDoctors =
+            append ? [..._allDoctors, ...pageData.doctors] : pageData.doctors;
+        _currentPage = pageData.page;
+        _hasMore = pageData.hasMore;
         _isLoading = false;
+        _isLoadingMore = false;
       }),
     );
   }
 
   @override
   void dispose() {
+    _searchDebounce?.cancel();
+    _scrollController
+      ..removeListener(_onScroll)
+      ..dispose();
     _searchController.dispose();
     super.dispose();
   }
@@ -134,19 +224,12 @@ class _DoctorConsultationResultsScreenState
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    if (_isLoading) {
+    if (_isLoading && _allDoctors.isEmpty) {
       return _buildFullScreenShimmer(context);
     }
 
     final textTheme = Theme.of(context).textTheme;
-    final doctors = _allDoctors.where((doctor) {
-      final query = _query.toLowerCase().trim();
-      if (query.isEmpty) {
-        return true;
-      }
-      return doctor.name.toLowerCase().contains(query) ||
-          doctor.specialty.toLowerCase().contains(query);
-    }).toList(growable: false);
+    final doctors = _allDoctors;
 
     return Scaffold(
       body: DecoratedBox(
@@ -194,16 +277,21 @@ class _DoctorConsultationResultsScreenState
                             Expanded(
                               child: ResultsSearchField(
                                 controller: _searchController,
-                                onChanged: (value) => setState(() => _query = value),
+                                onChanged: _onSearchChanged,
                               ),
                             ),
                             SizedBox(width: 8.w),
-                            ResultsFilterButton(textTheme: textTheme),
+                            ResultsFilterButton(
+                              textTheme: textTheme,
+                              label: l10n.consultationResultsFilter,
+                              onTap: _openSelectPartnerSheet,
+                            ),
                           ],
                         ),
                         SizedBox(height: 14.h),
                         Expanded(
                           child: ListView(
+                            controller: _scrollController,
                             padding: EdgeInsets.zero,
                             children: [
                               ResultsDoctorCategoryCard(
@@ -212,13 +300,35 @@ class _DoctorConsultationResultsScreenState
                                 onChangeTap: _openSelectCategoryDialog,
                               ),
                               SizedBox(height: 14.h),
-                              for (var index = 0; index < doctors.length; index++) ...[
-                                if (index > 0) SizedBox(height: 10.h),
-                                ResultsDoctorCard(
-                                  doctor: doctors[index],
-                                  textTheme: textTheme,
-                                  onBookNowTap: () => _onBookNowTap(doctors[index]),
+                              if (doctors.isEmpty && !_isLoading)
+                                Padding(
+                                  padding: EdgeInsets.symmetric(vertical: 24.h),
+                                  child: Center(
+                                    child: Text(
+                                      l10n.consultationNoDoctorsFound,
+                                      textAlign: TextAlign.center,
+                                      style: textTheme.bodyMedium?.copyWith(
+                                        color: const Color(0xFF667B99),
+                                        fontSize: 14.sp,
+                                      ),
+                                    ),
+                                  ),
+                                )
+                              else
+                                for (var index = 0; index < doctors.length; index++) ...[
+                                  if (index > 0) SizedBox(height: 10.h),
+                                  ResultsDoctorCard(
+                                    doctor: doctors[index],
+                                    textTheme: textTheme,
+                                    onBookNowTap: () => _onBookNowTap(doctors[index]),
+                                  ),
+                                ],
+                              if (_isLoadingMore) ...[
+                                SizedBox(height: 16.h),
+                                const Center(
+                                  child: CircularProgressIndicator(strokeWidth: 2),
                                 ),
+                                SizedBox(height: 16.h),
                               ],
                             ],
                           ),
