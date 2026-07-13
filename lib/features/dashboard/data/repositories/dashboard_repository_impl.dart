@@ -27,11 +27,12 @@ class DashboardRepositoryImpl implements DashboardRepository {
   }
 
   @override
-  Future<Either<ErrorMsg, PromotionalBannerEntity>> getPromotionalBanner() async {
+  Future<Either<ErrorMsg, List<PromotionalBannerEntity>>> getPromotionalBanner() async {
     try {
       final model = await remoteDataSource.getPromotionalBanner();
-      final entity = PromotionalBannerMapper.toEntity(model);
-      return Right(entity);
+      final entities = PromotionalBannerMapper.toEntityList(model);
+      log('Mapped promotional banners count: ${entities.length}');
+      return Right(entities);
     } catch (e) {
       log('getPromotionalBanner repository error: $e');
       return Left(e.toString());

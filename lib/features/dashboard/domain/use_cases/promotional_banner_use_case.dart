@@ -4,15 +4,13 @@ import '../entities/promotional_banner_entity.dart';
 import '../repositories/dashboard_repository.dart';
 
 class GetPromotionalBannerUseCase
-    implements UseCaseNoParams<PromotionalBannerEntity> {
+    implements UseCaseNoParams<List<PromotionalBannerEntity>> {
   GetPromotionalBannerUseCase({required this.repository});
 
   final DashboardRepository repository;
 
   @override
-  Future<Either<ErrorMsg, PromotionalBannerEntity>> call() async {
+  Future<Either<ErrorMsg, List<PromotionalBannerEntity>>> call() async {
     return await repository.getPromotionalBanner();
   }
 }
-
-

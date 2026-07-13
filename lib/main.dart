@@ -37,7 +37,8 @@ void main() {
         // Initialize dependency injection (includes AppPref initialization)
         // Encryption can be enabled/configured through AppPref methods after initialization
         await _initializeDependencyInjection();
-        // await _prefetchStartupData();
+        // Always fetch promo banners on cold start / process restart.
+        unawaited(sl<PromotionalBannerSession>().reload());
 
         runApp(
           wrapWithDevicePreview(child: const ApnaClinicApp()),

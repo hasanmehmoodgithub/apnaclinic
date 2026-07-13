@@ -14,7 +14,7 @@ Home services grid, promotional banner, search entry, and shell navigation. Keep
 ## Data & APIs (dashboard-specific)
 
 - Services: `AppUrls.ourServices` → `DashboardRemoteDataSourceImpl` (live CMS). `ServiceCardImage` loads remote icons (PNG, WebP, SVG); on empty URL or load failure shows a styled placeholder only.
-- Promo: `AppUrls.promotionalBanner` → CMS `GET /api/v1/mobile/banners`. Fetched once at **app open** (`main.dart`) and again only after **login** (`AuthSessionRefresh.consumeReloadPromotionalBanner`). Not called on logout tab remount. `PromotionalBannerSession` caches result and tracks whether the dialog was already shown this session.
+- Promo: `AppUrls.promotionalBanner` → CMS `GET /api/v1/mobile/banners`. Fetched on **every app restart** (`main.dart` → `PromotionalBannerSession.reload()`) and again after **login**. Response may include multiple banners (sorted by `displayOrder`); home shows them **one after another** (close 1st → show 2nd → …). `PromotionalBannerSession` holds the queue; not refetched on logout tab remount unless login refresh runs.
 
 Profile uses **`profile_setup`** remote (`GET …/users/{userId}`) — no duplicate URL in dashboard.
 

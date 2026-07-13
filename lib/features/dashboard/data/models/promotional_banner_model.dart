@@ -20,7 +20,8 @@ class PromotionalBannerModel {
   }
 
   factory PromotionalBannerModel.fromJson(Map<String, dynamic> json) {
-    final isActive = _toBool(json['isActive'] ?? json['is_active'], defaultValue: true);
+    final isActive =
+        _toBool(json['isActive'] ?? json['is_active'], defaultValue: true);
     final imagePath = (json['imagePath'] ??
             json['image_path'] ??
             json['imageUrl'] ??
@@ -29,10 +30,13 @@ class PromotionalBannerModel {
             '')
         .toString()
         .trim();
-    final ctaRaw =
-        (json['ctaUrl'] ?? json['cta_url'] ?? json['deepLink'] ?? json['route'] ?? '')
-            .toString()
-            .trim();
+    final ctaRaw = (json['ctaUrl'] ??
+            json['cta_url'] ??
+            json['deepLink'] ??
+            json['route'] ??
+            '')
+        .toString()
+        .trim();
 
     final withinSchedule = _isWithinSchedule(
       startDate: json['startDate'] ?? json['start_date'],
@@ -96,12 +100,12 @@ class PromotionalBannerResponseModel {
   const PromotionalBannerResponseModel({
     required this.success,
     required this.message,
-    required this.banner,
+    required this.banners,
   });
 
   final bool success;
   final String message;
-  final PromotionalBannerModel banner;
+  final List<PromotionalBannerModel> banners;
 
   factory PromotionalBannerResponseModel.fromJson(
     Map<String, dynamic> json,
@@ -109,9 +113,9 @@ class PromotionalBannerResponseModel {
     final dataRaw = json['data'] ?? json['banner'] ?? json['banners'];
     final List<Map<String, dynamic>> items;
     if (dataRaw is List) {
-      items = dataRaw.whereType<Map<String, dynamic>>().toList();
-    } else if (dataRaw is Map<String, dynamic>) {
-      items = [dataRaw];
+      items = dataRaw.whereType<Map>().map(Map<String, dynamic>.from).toList();
+    } else if (dataRaw is Map) {
+      items = [Map<String, dynamic>.from(dataRaw)];
     } else {
       items = const [];
     }
@@ -119,7 +123,9 @@ class PromotionalBannerResponseModel {
     final sortedEntries = items
         .map(
           (item) => (
-            order: (item['displayOrder'] as num?)?.toInt() ?? 0,
+            order: (item['displayOrder'] as num?)?.toInt() ??
+                (item['display_order'] as num?)?.toInt() ??
+                0,
             banner: PromotionalBannerModel.fromJson(item),
           ),
         )
@@ -127,17 +133,14 @@ class PromotionalBannerResponseModel {
         .toList()
       ..sort((a, b) => a.order.compareTo(b.order));
 
-    final selected = sortedEntries.isNotEmpty
-        ? sortedEntries.first.banner
-        : PromotionalBannerModel.empty();
-
     final code = json['code'];
-    final success = json['success'] == true || (code is num && code.toInt() == 200);
+    final success =
+        json['success'] == true || (code is num && code.toInt() == 200);
 
     return PromotionalBannerResponseModel(
       success: success,
       message: (json['message'] ?? '').toString(),
-      banner: selected,
+      banners: sortedEntries.map((e) => e.banner).toList(growable: false),
     );
   }
 }

@@ -64,12 +64,22 @@ class DashboardCubit extends Cubit<DashboardServicesState> {
     );
   }
 
-  void syncPromotionalBannerFromSession() {
+  Future<void> syncPromotionalBannerFromSession() async {
     final session = promotionalBannerSession;
     _safeEmit(
       state.copyWith(
+        promotionalBannerLoadingStateStatus: StateStatus.loading,
+        promotionalBannerErrorMessage: null,
+      ),
+    );
+
+    await session.ensureLoaded();
+    if (isClosed) return;
+
+    _safeEmit(
+      state.copyWith(
         promotionalBannerLoadingStateStatus: session.loadingStateStatus,
-        promotionalBanner: session.banner,
+        promotionalBanner: session.nextBanner,
         promotionalBannerErrorMessage: session.errorMessage,
       ),
     );

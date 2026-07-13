@@ -2,14 +2,17 @@ import '../../domain/entities/promotional_banner_entity.dart';
 import '../models/promotional_banner_model.dart';
 
 class PromotionalBannerMapper {
-  static PromotionalBannerEntity toEntity(
+  static List<PromotionalBannerEntity> toEntityList(
     PromotionalBannerResponseModel model,
   ) {
-    return PromotionalBannerEntity(
-      showBanner: model.banner.showBanner,
-      url: model.banner.url,
-      route: model.banner.route,
-    );
+    return model.banners
+        .map(
+          (banner) => PromotionalBannerEntity(
+            showBanner: banner.showBanner,
+            url: banner.url,
+            route: banner.route,
+          ),
+        )
+        .toList(growable: false);
   }
 }
-

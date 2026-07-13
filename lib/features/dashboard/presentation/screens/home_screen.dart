@@ -40,7 +40,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   static const String _bannerLoaderId = 'banner_loader';
   bool _isLoggedIn = false;
-  bool _isPromoDialogShown = false;
+  bool _isPresentingBannerQueue = false;
   late final DashboardCubit _dashboardCubit;
   late final NotificationCubit _notificationCubit;
   late final PromotionalBannerSession _bannerSession;
@@ -52,7 +52,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     WidgetsBinding.instance.addObserver(this);
     _isLoggedIn = AuthGuard.isLoggedIn();
     _bannerSession = sl<PromotionalBannerSession>();
-    _isPromoDialogShown = _bannerSession.dialogShown;
     _dashboardCubit = sl<DashboardCubit>();
     _notificationCubit = sl<NotificationCubit>();
     _bindPushRefresh();
@@ -110,6 +109,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           if (!mounted) return;
           _dismissKeyboard();
+          _maybeResumeBannerQueue();
         });
 
         return BlocProvider.value(
@@ -142,16 +142,37 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       return;
     }
 
-    final banner = state.promotionalBanner;
-    if (banner == null ||
-        !banner.showBanner ||
-        _isPromoDialogShown ||
-        _bannerSession.dialogShown) {
+    _maybeResumeBannerQueue();
+  }
+
+  void _maybeResumeBannerQueue() {
+    if (_isPresentingBannerQueue ||
+        !_bannerSession.hasPendingBanners ||
+        _dashboardCubit.state.promotionalBannerLoadingStateStatus !=
+            StateStatus.success ||
+        !_isHomeRouteActive(context)) {
       return;
     }
-    _isPromoDialogShown = true;
-    _bannerSession.markDialogShown();
-    showPromotionalBannerDialog(context, banner: banner);
+
+    _isPresentingBannerQueue = true;
+    unawaited(_presentBannerQueue());
+  }
+
+  Future<void> _presentBannerQueue() async {
+    try {
+      while (mounted && _bannerSession.hasPendingBanners) {
+        if (!_isHomeRouteActive(context)) break;
+        final banner = _bannerSession.nextBanner;
+        if (banner == null) break;
+        await showPromotionalBannerDialog(context, banner: banner);
+        if (!mounted) return;
+        _bannerSession.advanceQueue();
+      }
+    } finally {
+      if (mounted) {
+        _isPresentingBannerQueue = false;
+      }
+    }
   }
 
   void _openSearch(BuildContext context, {String? query}) {
