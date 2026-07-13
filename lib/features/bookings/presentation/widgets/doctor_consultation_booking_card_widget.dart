@@ -21,12 +21,27 @@ class DoctorConsultationBookingCardWidget extends StatelessWidget {
   static const String _partnerLogoUrl =
       'https://www.figma.com/api/mcp/asset/705ed652-7c25-48fd-916b-375e85a43137';
 
+  void _openDetails(BuildContext context) {
+    context.pushNamed(
+      AppRoutes.doctorConsultationBookingDetails,
+      extra: DoctorConsultationBookingDetailsArgs(
+        bookingId: item.bookingId,
+        booking: item,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final textTheme = Theme.of(context).textTheme;
 
-    return Container(
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: () => _openDetails(context),
+        borderRadius: BorderRadius.circular(16.r),
+        child: Container(
       decoration: BoxDecoration(
         color: AppColors.clrWhite,
         borderRadius: BorderRadius.circular(16.r),
@@ -60,7 +75,7 @@ class DoctorConsultationBookingCardWidget extends StatelessWidget {
                 _CardActionsColumn(
                   l10n: l10n,
                   textTheme: textTheme,
-                  item: item,
+                  onViewDetailsTap: () => _openDetails(context),
                 ),
               ],
             ),
@@ -71,6 +86,8 @@ class DoctorConsultationBookingCardWidget extends StatelessWidget {
               textTheme: textTheme,
             ),
           ],
+        ),
+      ),
         ),
       ),
     );
@@ -274,12 +291,12 @@ class _CardActionsColumn extends StatelessWidget {
   const _CardActionsColumn({
     required this.l10n,
     required this.textTheme,
-    required this.item,
+    required this.onViewDetailsTap,
   });
 
   final AppLocalizations l10n;
   final TextTheme textTheme;
-  final DoctorConsultationBookingDetailsModel item;
+  final VoidCallback onViewDetailsTap;
 
   @override
   Widget build(BuildContext context) {
@@ -316,13 +333,7 @@ class _CardActionsColumn extends StatelessWidget {
             width: double.infinity,
             height: 33.h,
             child: OutlinedButton(
-              onPressed: () => context.pushNamed(
-                AppRoutes.doctorConsultationBookingDetails,
-                extra: DoctorConsultationBookingDetailsArgs(
-                  bookingId: item.bookingId,
-                  booking: item,
-                ),
-              ),
+              onPressed: onViewDetailsTap,
               style: OutlinedButton.styleFrom(
                 side: BorderSide(
                   color: AppColors.clr9BA6A7,

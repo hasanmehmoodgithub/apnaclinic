@@ -20,7 +20,7 @@ Tabbed bookings hub (doctor consultation, surgery, lab test, pharmacy) with list
 
 ## UI
 
-- `DoctorConsultationBookingCardWidget` — consultation list card; status/fee row spans full card width (avoids overlap on narrow screens); doctor summary uses `Wrap` for name, rating, and date/time pills; status pill labels use title case (not all caps).
+- `DoctorConsultationBookingCardWidget` — consultation list card; whole card opens booking details on tap; **View Details** button uses the same navigation.
 
 ## Mocks
 
