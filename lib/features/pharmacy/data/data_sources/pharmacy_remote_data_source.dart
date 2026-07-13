@@ -28,4 +28,11 @@ abstract class PharmacyRemoteDataSource {
     required String userLocationId,
     required String paymentMethod,
   });
+
+  Future<Map<String, dynamic>> addProfileAddress({
+    required String address,
+    required String region,
+    String lat = '',
+    String long = '',
+  });
 }

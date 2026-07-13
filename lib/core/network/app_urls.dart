@@ -181,6 +181,10 @@ class AppUrls {
   static String get pharmacyOrderCheckout =>
       '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/partner/pharmacy/order/checkout';
 
+  /// Pharmacy profile address create (POST).
+  static String get pharmacyProfileAddress =>
+      '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/partner/pharmacy/profile/address';
+
   /// Search endpoint
   static String get search => '$_normalizedApiBaseUrl/search';
 

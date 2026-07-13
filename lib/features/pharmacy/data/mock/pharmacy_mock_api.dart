@@ -243,6 +243,12 @@ class PharmacyMockApi {
             'delivery_charges': 250,
             'total': 1078,
           },
+          'family_members': [
+            {
+              'id': 1,
+              'addresses': null,
+            },
+          ],
         },
       },
     };
@@ -370,6 +376,28 @@ class PharmacyMockApi {
         'payment_method': paymentMethod,
         'order_no': '1223',
         'status': 'confirmed',
+      },
+    };
+  }
+
+  Future<Map<String, dynamic>> addProfileAddressSuccessResponse({
+    required String address,
+    required String region,
+    String lat = '',
+    String long = '',
+  }) async {
+    await Future<void>.delayed(const Duration(milliseconds: 400));
+    return {
+      'success': true,
+      'message': 'Address added successfully',
+      'code': 200,
+      'data': {
+        'id': '9001',
+        'lat': lat,
+        'long': long,
+        'category': <String, dynamic>{},
+        'address': address,
+        'region': region,
       },
     };
   }

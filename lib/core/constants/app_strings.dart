@@ -33,6 +33,10 @@ class AppStrings {
       'Unable to place pharmacy order right now. Please try again.';
   static const String pharmacyCheckoutMissingContextError =
       'Unable to place order. Please check your cart, city, and login session.';
+  static const String pharmacyAddAddressError =
+      'Unable to save delivery address right now. Please try again.';
+  static const String pharmacyCheckoutAddressRequiredError =
+      'Please enter a delivery address before confirming.';
   static const String surgeryLoadError =
       'Unable to load surgery content right now. Please try again in a moment.';
   // Auth

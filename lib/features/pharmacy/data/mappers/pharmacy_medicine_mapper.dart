@@ -1,4 +1,6 @@
+import '../../domain/entities/pharmacy_add_address_result_entity.dart';
 import '../../domain/entities/pharmacy_add_to_cart_result_entity.dart';
+import '../../domain/entities/pharmacy_cart_address_entity.dart';
 import '../../domain/entities/pharmacy_cart_entity.dart';
 import '../../domain/entities/pharmacy_cart_item_entity.dart';
 import '../../domain/entities/pharmacy_checkout_result_entity.dart';
@@ -72,6 +74,15 @@ class PharmacyMedicineMapper {
       bookingId: model.bookingId,
       items: toCartItemEntityList(model),
       paymentBreakdown: toPaymentBreakdownEntity(model.paymentBreakdown),
+      addresses: model.addresses
+          .map(
+            (item) => PharmacyCartAddressEntity(
+              id: item.id,
+              address: item.address,
+              region: item.region,
+            ),
+          )
+          .toList(growable: false),
     );
   }
 
@@ -107,6 +118,24 @@ class PharmacyMedicineMapper {
       orderNo: orderNo,
       bookingId: bookingId,
       status: status,
+    );
+  }
+
+  static PharmacyAddAddressResultEntity toAddAddressResultEntity(
+    Map<String, dynamic> response,
+  ) {
+    final payload = _unwrapCheckoutPayload(response);
+    return PharmacyAddAddressResultEntity(
+      id: _stringOrNull(
+        payload['id'] ?? payload['address_id'] ?? payload['addressId'],
+      ),
+      address: _stringOrNull(
+            payload['address'] ??
+                payload['full_address'] ??
+                payload['fullAddress'],
+          ) ??
+          '',
+      region: _stringOrNull(payload['region'] ?? payload['city']) ?? '',
     );
   }
 

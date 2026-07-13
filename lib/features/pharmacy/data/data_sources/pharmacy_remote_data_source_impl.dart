@@ -268,4 +268,50 @@ class PharmacyRemoteDataSourceImpl implements PharmacyRemoteDataSource {
       return Future.error(message);
     }
   }
+
+  @override
+  Future<Map<String, dynamic>> addProfileAddress({
+    required String address,
+    required String region,
+    String lat = '',
+    String long = '',
+  }) async {
+    try {
+      final Map<String, dynamic> response;
+      if (PharmacyMockApi.useMockResponses) {
+        response = await mockApi.addProfileAddressSuccessResponse(
+          address: address,
+          region: region,
+          lat: lat,
+          long: long,
+        );
+      } else {
+        response = await apiService.post(
+          AppUrls.pharmacyProfileAddress,
+          data: <String, dynamic>{
+            'lat': lat,
+            'long': long,
+            'category': <String, dynamic>{},
+            'address': address,
+            'region': region,
+          },
+        );
+        log('addProfileAddress response: $response');
+      }
+
+      if (_isSuccessResponse(response)) {
+        return response;
+      }
+
+      final message =
+          (response['message'] ?? AppStrings.pharmacyAddAddressError).toString();
+      return Future.error(message);
+    } catch (e) {
+      final message = ErrorHandler.handleExceptions(
+        e,
+        endpoint: AppUrls.pharmacyProfileAddress,
+      );
+      return Future.error(message);
+    }
+  }
 }

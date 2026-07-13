@@ -29,7 +29,10 @@ class PharmacyCheckoutBodyWidget extends StatelessWidget {
   Future<void> _onConfirm(BuildContext context) async {
     final cubit = context.read<PharmacyCubit>();
     showHeartLoaderDialog(context, id: _checkoutLoaderId, size: 120);
-    final result = await cubit.checkoutOrder();
+    final result = await cubit.checkoutOrder(
+      address: addressController.text,
+      region: cubit.state.selectedCity,
+    );
     HeartLoaderDialogController.close(_checkoutLoaderId);
     if (!context.mounted) return;
 

@@ -217,6 +217,31 @@ class PharmacyCartItemModel {
   }
 }
 
+class PharmacyCartAddressModel {
+  const PharmacyCartAddressModel({
+    required this.id,
+    required this.address,
+    this.region = '',
+  });
+
+  final String id;
+  final String address;
+  final String region;
+
+  factory PharmacyCartAddressModel.fromJson(Map<String, dynamic> json) {
+    return PharmacyCartAddressModel(
+      id: (json['id'] ?? json['address_id'] ?? json['addressId'] ?? '')
+          .toString()
+          .trim(),
+      address:
+          (json['address'] ?? json['full_address'] ?? json['fullAddress'] ?? '')
+              .toString()
+              .trim(),
+      region: (json['region'] ?? json['city'] ?? '').toString().trim(),
+    );
+  }
+}
+
 class PharmacyCartResponseModel {
   const PharmacyCartResponseModel({
     required this.success,
@@ -225,6 +250,7 @@ class PharmacyCartResponseModel {
     required this.items,
     this.hasProductList = false,
     this.paymentBreakdown,
+    this.addresses = const [],
   });
 
   final bool success;
@@ -233,6 +259,7 @@ class PharmacyCartResponseModel {
   final List<PharmacyCartItemModel> items;
   final bool hasProductList;
   final PharmacyPaymentBreakdownModel? paymentBreakdown;
+  final List<PharmacyCartAddressModel> addresses;
 
   factory PharmacyCartResponseModel.fromJson(Map<String, dynamic> json) {
     final payload = _unwrapCartPayload(json);
@@ -262,7 +289,35 @@ class PharmacyCartResponseModel {
       paymentBreakdown: PharmacyPaymentBreakdownModel.fromJson(
         payload['payment_breakdown'] ?? payload['paymentBreakdown'],
       ),
+      addresses: _parseFamilyMemberAddresses(payload),
     );
+  }
+
+  /// Collects addresses from `family_members[].addresses` (null → empty).
+  static List<PharmacyCartAddressModel> _parseFamilyMemberAddresses(
+    Map<String, dynamic> payload,
+  ) {
+    final members = payload['family_members'] ?? payload['familyMembers'];
+    if (members is! List) return const [];
+
+    final addresses = <PharmacyCartAddressModel>[];
+    for (final member in members) {
+      if (member is! Map) continue;
+      final memberMap = Map<String, dynamic>.from(member);
+      final rawAddresses = memberMap['addresses'];
+      if (rawAddresses == null) continue;
+      if (rawAddresses is! List) continue;
+
+      for (final entry in rawAddresses) {
+        if (entry is! Map) continue;
+        final address = PharmacyCartAddressModel.fromJson(
+          Map<String, dynamic>.from(entry),
+        );
+        if (address.address.trim().isEmpty && address.id.isEmpty) continue;
+        addresses.add(address);
+      }
+    }
+    return addresses;
   }
 
   /// Supports both flat `data` and nested aggregator `data.data`.
@@ -277,7 +332,8 @@ class PharmacyCartResponseModel {
       if (nested.containsKey('products') ||
           nested.containsKey('booking') ||
           nested.containsKey('booking_id') ||
-          nested.containsKey('payment_breakdown')) {
+          nested.containsKey('payment_breakdown') ||
+          nested.containsKey('family_members')) {
         return nested;
       }
     }

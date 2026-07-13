@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import '../../../../core/functional/functional_export.dart';
+import '../../domain/entities/pharmacy_add_address_result_entity.dart';
 import '../../domain/entities/pharmacy_add_to_cart_result_entity.dart';
 import '../../domain/entities/pharmacy_cart_entity.dart';
 import '../../domain/entities/pharmacy_checkout_result_entity.dart';
@@ -120,6 +121,28 @@ class PharmacyRepositoryImpl implements PharmacyRepository {
       );
       final entity = PharmacyMedicineMapper.toCheckoutResultEntity(response);
       log('Mapped checkout orderNo: ${entity.orderNo}');
+      return Right(entity);
+    } catch (e) {
+      return Left(e.toString());
+    }
+  }
+
+  @override
+  Future<Either<ErrorMsg, PharmacyAddAddressResultEntity>> addProfileAddress({
+    required String address,
+    required String region,
+    String lat = '',
+    String long = '',
+  }) async {
+    try {
+      final response = await remoteDataSource.addProfileAddress(
+        address: address,
+        region: region,
+        lat: lat,
+        long: long,
+      );
+      final entity = PharmacyMedicineMapper.toAddAddressResultEntity(response);
+      log('Mapped add address id: ${entity.id}');
       return Right(entity);
     } catch (e) {
       return Left(e.toString());

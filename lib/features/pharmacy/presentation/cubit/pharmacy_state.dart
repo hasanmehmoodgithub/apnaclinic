@@ -1,6 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 import '../../../../core/enums/state_status.dart';
+import '../../domain/entities/pharmacy_cart_address_entity.dart';
 import '../../domain/entities/pharmacy_cart_item_entity.dart';
 import '../../domain/entities/pharmacy_medicine_entity.dart';
 import '../../domain/entities/pharmacy_payment_breakdown_entity.dart';
@@ -28,6 +29,7 @@ abstract class PharmacyState with _$PharmacyState {
     @Default([]) List<String> checkoutCities,
     String? cartBookingId,
     @Default([]) List<PharmacyCartItemEntity> cartItems,
+    @Default([]) List<PharmacyCartAddressEntity> cartAddresses,
     PharmacyPaymentBreakdownEntity? paymentBreakdown,
     @Default(PharmacyPaymentMethod.jazzCash)
     PharmacyPaymentMethod selectedPaymentMethod,
