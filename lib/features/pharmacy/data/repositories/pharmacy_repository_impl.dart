@@ -3,6 +3,7 @@ import 'dart:developer';
 import '../../../../core/functional/functional_export.dart';
 import '../../domain/entities/pharmacy_add_to_cart_result_entity.dart';
 import '../../domain/entities/pharmacy_cart_entity.dart';
+import '../../domain/entities/pharmacy_checkout_result_entity.dart';
 import '../../domain/entities/pharmacy_products_page_entity.dart';
 import '../../domain/entities/pharmacy_product_detail_entity.dart';
 import '../../domain/repositories/pharmacy_repository.dart';
@@ -97,6 +98,28 @@ class PharmacyRepositoryImpl implements PharmacyRepository {
       final model = PharmacyCartResponseModel.fromJson(response);
       final entity = PharmacyMedicineMapper.toAddToCartResultEntity(model);
       log('Mapped update-cart bookingId: ${entity.bookingId}');
+      return Right(entity);
+    } catch (e) {
+      return Left(e.toString());
+    }
+  }
+
+  @override
+  Future<Either<ErrorMsg, PharmacyCheckoutResultEntity>> checkoutOrder({
+    required String bookingId,
+    required String patientId,
+    required String userLocationId,
+    required String paymentMethod,
+  }) async {
+    try {
+      final response = await remoteDataSource.checkoutOrder(
+        bookingId: bookingId,
+        patientId: patientId,
+        userLocationId: userLocationId,
+        paymentMethod: paymentMethod,
+      );
+      final entity = PharmacyMedicineMapper.toCheckoutResultEntity(response);
+      log('Mapped checkout orderNo: ${entity.orderNo}');
       return Right(entity);
     } catch (e) {
       return Left(e.toString());

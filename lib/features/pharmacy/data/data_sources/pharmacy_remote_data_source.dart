@@ -21,4 +21,11 @@ abstract class PharmacyRemoteDataSource {
     required String productId,
     required String quantity,
   });
+
+  Future<Map<String, dynamic>> checkoutOrder({
+    required String bookingId,
+    required String patientId,
+    required String userLocationId,
+    required String paymentMethod,
+  });
 }

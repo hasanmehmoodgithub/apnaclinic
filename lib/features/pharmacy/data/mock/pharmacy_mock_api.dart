@@ -351,4 +351,26 @@ class PharmacyMockApi {
       ],
     };
   }
+
+  Future<Map<String, dynamic>> checkoutOrderSuccessResponse({
+    required String bookingId,
+    required String patientId,
+    required String userLocationId,
+    required String paymentMethod,
+  }) async {
+    await Future<void>.delayed(const Duration(milliseconds: 500));
+    return {
+      'success': true,
+      'message': 'Order placed successfully',
+      'code': 200,
+      'data': {
+        'booking_id': bookingId,
+        'patient_id': patientId,
+        'user_location_id': userLocationId,
+        'payment_method': paymentMethod,
+        'order_no': '1223',
+        'status': 'confirmed',
+      },
+    };
+  }
 }

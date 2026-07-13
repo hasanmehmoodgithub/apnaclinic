@@ -5,6 +5,7 @@ import '../../../../core/constants/app_colors.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/widgets/app_button_widget.dart';
+import '../../../../core/widgets/heart_loader_widget.dart';
 import '../cubit/pharmacy_cubit.dart';
 import '../cubit/pharmacy_state.dart';
 import '../pharmacy_navigation.dart';
@@ -22,6 +23,36 @@ class PharmacyCheckoutBodyWidget extends StatelessWidget {
 
   final TextEditingController addressController;
   final TextEditingController specialInstructionsController;
+
+  static const _checkoutLoaderId = 'pharmacy_checkout_loader';
+
+  Future<void> _onConfirm(BuildContext context) async {
+    final cubit = context.read<PharmacyCubit>();
+    showHeartLoaderDialog(context, id: _checkoutLoaderId, size: 120);
+    final result = await cubit.checkoutOrder();
+    HeartLoaderDialogController.close(_checkoutLoaderId);
+    if (!context.mounted) return;
+
+    await result.fold(
+      (error) async {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(error)),
+        );
+      },
+      (checkout) async {
+        await showPharmacyOrderPlacedDialog(context);
+        if (!context.mounted) return;
+        cubit.clearCart();
+        pharmacyGoToOrderDetailsAfterPlace(
+          context,
+          extra: <String, Object?>{
+            'orderNo': checkout.orderNo.isNotEmpty ? checkout.orderNo : '—',
+            'status': checkout.status,
+          },
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -177,18 +208,7 @@ class PharmacyCheckoutBodyWidget extends StatelessWidget {
                   bgClr: AppColors.clr1FAFA3,
                   onTap: state.cartItems.isEmpty
                       ? null
-                      : () async {
-                          await showPharmacyOrderPlacedDialog(context);
-                          if (!context.mounted) return;
-                          context.read<PharmacyCubit>().clearCart();
-                          pharmacyGoToOrderDetailsAfterPlace(
-                            context,
-                            extra: const {
-                              'orderNo': '1223',
-                              'status': 'confirmed',
-                            },
-                          );
-                        },
+                      : () => _onConfirm(context),
                 ),
               ),
             ),

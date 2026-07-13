@@ -9,6 +9,7 @@ import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/widgets/app_button_widget.dart';
 import '../../../../core/widgets/heart_loader_widget.dart';
+import '../../../../core/utils/auth_guard.dart';
 import '../../domain/entities/pharmacy_medicine_entity.dart';
 import '../cubit/pharmacy_cubit.dart';
 import 'pharmacy_quantity_stepper.dart';
@@ -18,6 +19,8 @@ Future<void> showPharmacyAddToCartSheet(
   PharmacyMedicineEntity medicine, {
   required String loaderIdPrefix,
 }) async {
+  if (!context.requireLogin()) return;
+
   final pharmacyCubit = context.read<PharmacyCubit>();
   final hostContext = context;
   var qty = 1;

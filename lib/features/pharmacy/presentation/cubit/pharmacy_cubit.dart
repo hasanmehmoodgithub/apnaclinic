@@ -1,13 +1,20 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/cities/domain/repositories/cities_repository.dart';
+import '../../../../core/constants/app_strings.dart';
 import '../../../../core/enums/state_status.dart';
+import '../../../../core/functional/functional_export.dart';
+import '../../../../core/preference/app_pref.dart';
+import '../../../../core/utils/auth_guard.dart';
+import '../../../../core/utils/jwt_utils.dart';
 import '../../domain/entities/pharmacy_cart_item_entity.dart';
+import '../../domain/entities/pharmacy_checkout_result_entity.dart';
 import '../../domain/entities/pharmacy_medicine_entity.dart';
 import '../../domain/use_cases/add_to_cart_use_case.dart';
 import '../../domain/use_cases/get_pharmacy_cart_use_case.dart';
 import '../../domain/use_cases/get_pharmacy_medicines_use_case.dart';
 import '../../domain/use_cases/get_pharmacy_product_detail_use_case.dart';
+import '../../domain/use_cases/pharmacy_checkout_use_case.dart';
 import '../../domain/use_cases/update_pharmacy_cart_quantity_use_case.dart';
 import 'pharmacy_state.dart';
 
@@ -18,10 +25,15 @@ class PharmacyCubit extends Cubit<PharmacyState> {
     required this.getPharmacyCartUseCase,
     required this.addToCartUseCase,
     required this.updatePharmacyCartQuantityUseCase,
+    required this.pharmacyCheckoutUseCase,
     required this.citiesRepository,
+    required this.appPref,
   }) : super(const PharmacyState()) {
     loadMedicines();
-    loadCart();
+    // Active cart requires auth — skip for guests.
+    if (AuthGuard.isLoggedIn(appPref)) {
+      loadCart();
+    }
   }
 
   final GetPharmacyMedicinesUseCase getPharmacyMedicinesUseCase;
@@ -29,7 +41,9 @@ class PharmacyCubit extends Cubit<PharmacyState> {
   final GetPharmacyCartUseCase getPharmacyCartUseCase;
   final AddToCartUseCase addToCartUseCase;
   final UpdatePharmacyCartQuantityUseCase updatePharmacyCartQuantityUseCase;
+  final PharmacyCheckoutUseCase pharmacyCheckoutUseCase;
   final CitiesRepository citiesRepository;
+  final AppPref appPref;
 
   Future<void> loadMedicines({bool refresh = false}) async {
     final displayName = state.searchQuery.trim();
@@ -143,6 +157,8 @@ class PharmacyCubit extends Cubit<PharmacyState> {
   }
 
   Future<void> loadCart() async {
+    if (!AuthGuard.isLoggedIn(appPref)) return;
+
     final result = await getPharmacyCartUseCase(const GetPharmacyCartParams());
     if (isClosed) return;
 
@@ -162,6 +178,8 @@ class PharmacyCubit extends Cubit<PharmacyState> {
     PharmacyMedicineEntity medicine, {
     int quantity = 1,
   }) async {
+    if (!AuthGuard.isLoggedIn(appPref)) return false;
+
     final addQty = quantity < 1 ? 1 : quantity;
     final existingIndex = state.cartItems.indexWhere(
       (item) => item.medicine.id == medicine.id,
@@ -308,6 +326,52 @@ class PharmacyCubit extends Cubit<PharmacyState> {
     );
   }
 
+  Future<Either<ErrorMsg, PharmacyCheckoutResultEntity>> checkoutOrder() async {
+    if (!AuthGuard.isLoggedIn(appPref)) {
+      return const Left(AppStrings.pharmacyCheckoutMissingContextError);
+    }
+
+    final bookingId = state.cartBookingId?.trim() ?? '';
+    final patientId = _resolvePatientId();
+    final userLocationId =
+        citiesRepository.cityIdForName(state.selectedCity)?.trim() ?? '';
+    final paymentMethod = _paymentMethodApiValue(state.selectedPaymentMethod);
+
+    if (bookingId.isEmpty || patientId.isEmpty || userLocationId.isEmpty) {
+      return const Left(AppStrings.pharmacyCheckoutMissingContextError);
+    }
+
+    return pharmacyCheckoutUseCase(
+      PharmacyCheckoutParams(
+        bookingId: bookingId,
+        patientId: patientId,
+        userLocationId: userLocationId,
+        paymentMethod: paymentMethod,
+      ),
+    );
+  }
+
+  String _resolvePatientId() {
+    final apiUserId = appPref.getUserLocalModel()?.apiUserId.trim() ?? '';
+    if (apiUserId.isNotEmpty) return apiUserId;
+
+    final token = appPref.getToken();
+    final claim = JwtUtils.claim<dynamic>(token, 'sub') ??
+        JwtUtils.claim<dynamic>(token, 'userId');
+    final fromToken = claim?.toString().trim() ?? '';
+    if (fromToken.isNotEmpty) return fromToken;
+
+    return appPref.getUserId().trim();
+  }
+
+  String _paymentMethodApiValue(PharmacyPaymentMethod method) {
+    return switch (method) {
+      PharmacyPaymentMethod.jazzCash => 'JAZZCASH',
+      PharmacyPaymentMethod.debitCard => 'CARD',
+      PharmacyPaymentMethod.cashOnDelivery => 'COD',
+    };
+  }
+
   Future<void> _updateQuantity(String medicineId, {required int delta}) async {
     final items = state.cartItems;
     final index = items.indexWhere((item) => item.medicine.id == medicineId);
@@ -323,6 +387,8 @@ class PharmacyCubit extends Cubit<PharmacyState> {
     required String medicineId,
     required int quantity,
   }) async {
+    if (!AuthGuard.isLoggedIn(appPref)) return false;
+
     final bookingId = state.cartBookingId;
     if (bookingId == null || bookingId.trim().isEmpty) return false;
 

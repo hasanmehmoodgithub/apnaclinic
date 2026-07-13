@@ -223,4 +223,49 @@ class PharmacyRemoteDataSourceImpl implements PharmacyRemoteDataSource {
       return Future.error(message);
     }
   }
+
+  @override
+  Future<Map<String, dynamic>> checkoutOrder({
+    required String bookingId,
+    required String patientId,
+    required String userLocationId,
+    required String paymentMethod,
+  }) async {
+    try {
+      final Map<String, dynamic> response;
+      if (PharmacyMockApi.useMockResponses) {
+        response = await mockApi.checkoutOrderSuccessResponse(
+          bookingId: bookingId,
+          patientId: patientId,
+          userLocationId: userLocationId,
+          paymentMethod: paymentMethod,
+        );
+      } else {
+        response = await apiService.post(
+          AppUrls.pharmacyOrderCheckout,
+          data: <String, dynamic>{
+            'booking_id': bookingId,
+            'patient_id': patientId,
+            'user_location_id': userLocationId,
+            'payment_method': paymentMethod,
+          },
+        );
+        log('checkoutOrder response: $response');
+      }
+
+      if (_isSuccessResponse(response)) {
+        return response;
+      }
+
+      final message = (response['message'] ?? AppStrings.pharmacyCheckoutError)
+          .toString();
+      return Future.error(message);
+    } catch (e) {
+      final message = ErrorHandler.handleExceptions(
+        e,
+        endpoint: AppUrls.pharmacyOrderCheckout,
+      );
+      return Future.error(message);
+    }
+  }
 }

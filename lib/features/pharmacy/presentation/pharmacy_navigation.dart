@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/router/app_routes.dart';
+import '../../../core/utils/auth_guard.dart';
 
 /// Pops when possible; otherwise returns to the app home shell.
 void pharmacyPopOrGoHome(BuildContext context) {
@@ -10,6 +11,12 @@ void pharmacyPopOrGoHome(BuildContext context) {
     return;
   }
   context.goNamed(AppRoutes.home);
+}
+
+/// Opens cart when logged in; otherwise redirects to login.
+void pharmacyOpenCart(BuildContext context) {
+  if (!context.requireLogin()) return;
+  context.pushNamed(AppRoutes.pharmacyCart);
 }
 
 /// After placing an order: home → pharmacy hub → order details (back works at each step).

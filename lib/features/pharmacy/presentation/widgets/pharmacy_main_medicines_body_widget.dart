@@ -7,6 +7,7 @@ import '../../../../core/constants/app_colors.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/router/app_routes.dart';
+import '../../../../core/utils/auth_guard.dart';
 import '../../domain/entities/pharmacy_medicine_entity.dart';
 import '../cubit/pharmacy_cubit.dart';
 import '../cubit/pharmacy_state.dart';
@@ -153,6 +154,7 @@ class _PharmacyMainMedicinesBodyWidgetState
     BuildContext context,
     PharmacyMedicineEntity medicine,
   ) async {
+    if (!context.requireLogin()) return;
     await showPharmacyAddToCartSheet(
       context,
       medicine,
