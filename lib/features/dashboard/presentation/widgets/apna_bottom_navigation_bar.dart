@@ -24,10 +24,10 @@ class ApnaBottomNavigationBar extends StatelessWidget {
     // Theme.platform respects Device Preview; dart:io Platform does not.
     final isAndroid = Theme.of(context).platform == TargetPlatform.android;
     final systemBottomInset = MediaQuery.viewPaddingOf(context).bottom;
-    // iOS: compact pad (white fills home-indicator). Android: clear OS nav buttons.
-    // final bottomPadding = isAndroid
-    //     ? 14.h + (systemBottomInset > 0 ? systemBottomInset : 24.h)
-    //     : 14.h;
+    final bottomPadding = 14.h +
+        (systemBottomInset > 0
+            ? systemBottomInset
+            : (isAndroid ? 24.h : 0));
     return Container(
       decoration: BoxDecoration(
         color: AppColors.clrWhite,
@@ -39,7 +39,7 @@ class ApnaBottomNavigationBar extends StatelessWidget {
           ),
         ],
       ),
-      //padding: EdgeInsets.only(bottom: bottomPadding),
+      padding: EdgeInsets.only(bottom: bottomPadding),
       child: SizedBox(
         height: 58.h,
         child: Row(
