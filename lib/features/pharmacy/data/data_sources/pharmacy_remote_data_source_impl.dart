@@ -289,8 +289,8 @@ class PharmacyRemoteDataSourceImpl implements PharmacyRemoteDataSource {
         response = await apiService.post(
           AppUrls.pharmacyProfileAddress,
           data: <String, dynamic>{
-            'lat': lat,
-            'long': long,
+            'lat': "0.0",
+            'long': "0.0",
             'category': <String, dynamic>{},
             'address': address,
             'region': region,
