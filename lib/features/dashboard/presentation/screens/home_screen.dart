@@ -240,9 +240,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                   SliverPadding(
                     padding: EdgeInsets.fromLTRB(20.w, 20.h, 20.w, 32.h),
                     sliver: SliverToBoxAdapter(
-                      child: FikrfreeHealthBanner(
-                        onTap: () {},
-                      ),
+                      child: const FikrfreeHealthBanner(),
                     ),
                   ),
                 ],

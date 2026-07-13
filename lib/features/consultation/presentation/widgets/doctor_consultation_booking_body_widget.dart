@@ -37,7 +37,6 @@ class DoctorConsultationBookingBodyWidget extends StatelessWidget {
     required this.availabilityMonthLabel,
     required this.isAvailabilityLoading,
     this.availabilityErrorMessage,
-    this.onAvailabilityRetry,
   });
 
   final String doctorName;
@@ -61,7 +60,6 @@ class DoctorConsultationBookingBodyWidget extends StatelessWidget {
   final String availabilityMonthLabel;
   final bool isAvailabilityLoading;
   final String? availabilityErrorMessage;
-  final VoidCallback? onAvailabilityRetry;
 
   @override
   Widget build(BuildContext context) {
@@ -115,7 +113,6 @@ class DoctorConsultationBookingBodyWidget extends StatelessWidget {
               monthLabel: availabilityMonthLabel,
               isLoading: isAvailabilityLoading,
               errorMessage: availabilityErrorMessage,
-              onRetry: onAvailabilityRetry,
               onSlotChanged: onSlotChanged,
             ),
             SizedBox(height: 20.h),

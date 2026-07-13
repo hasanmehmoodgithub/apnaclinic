@@ -2,14 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../../core/constants/app_colors.dart';
-import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
-import '../../../../core/router/app_routes.dart';
 import '../../../../core/widgets/app_scaffold_gradient.dart';
 import '../../domain/entities/pharmacy_medicine_entity.dart';
 import '../cubit/pharmacy_cubit.dart';
 import '../cubit/pharmacy_state.dart';
+import '../pharmacy_navigation.dart';
 import '../widgets/pharmacy_screen_header_widget.dart';
 import '../widgets/pharmacy_screen_medicines_panel_widget.dart';
 
@@ -32,7 +30,7 @@ class PharmacyScreen extends StatelessWidget {
                 title: l10n.pharmacyScreenTitle,
                 cartCount: cartCount,
                 onBackTap: () => _popOrIgnore(context),
-                onCartTap: () => context.pushNamed(AppRoutes.pharmacyCart),
+                onCartTap: () => pharmacyOpenCart(context),
               );
             },
           ),

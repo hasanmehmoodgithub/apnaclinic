@@ -1,39 +1,67 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../core/cities/domain/repositories/cities_repository.dart';
+import '../../../../core/constants/app_strings.dart';
 import '../../../../core/enums/state_status.dart';
+import '../../../../core/functional/functional_export.dart';
+import '../../../../core/preference/app_pref.dart';
+import '../../../../core/utils/auth_guard.dart';
+import '../../../../core/utils/jwt_utils.dart';
 import '../../domain/entities/pharmacy_cart_item_entity.dart';
+import '../../domain/entities/pharmacy_checkout_result_entity.dart';
 import '../../domain/entities/pharmacy_medicine_entity.dart';
 import '../../domain/use_cases/add_to_cart_use_case.dart';
 import '../../domain/use_cases/get_pharmacy_cart_use_case.dart';
 import '../../domain/use_cases/get_pharmacy_medicines_use_case.dart';
+import '../../domain/use_cases/get_pharmacy_product_detail_use_case.dart';
+import '../../domain/use_cases/pharmacy_checkout_use_case.dart';
+import '../../domain/use_cases/update_pharmacy_cart_quantity_use_case.dart';
 import 'pharmacy_state.dart';
 
 class PharmacyCubit extends Cubit<PharmacyState> {
   PharmacyCubit({
     required this.getPharmacyMedicinesUseCase,
+    required this.getPharmacyProductDetailUseCase,
     required this.getPharmacyCartUseCase,
     required this.addToCartUseCase,
+    required this.updatePharmacyCartQuantityUseCase,
+    required this.pharmacyCheckoutUseCase,
+    required this.citiesRepository,
+    required this.appPref,
   }) : super(const PharmacyState()) {
     loadMedicines();
-    loadCart();
+    // Active cart requires auth — skip for guests.
+    if (AuthGuard.isLoggedIn(appPref)) {
+      loadCart();
+    }
   }
 
   final GetPharmacyMedicinesUseCase getPharmacyMedicinesUseCase;
+  final GetPharmacyProductDetailUseCase getPharmacyProductDetailUseCase;
   final GetPharmacyCartUseCase getPharmacyCartUseCase;
   final AddToCartUseCase addToCartUseCase;
+  final UpdatePharmacyCartQuantityUseCase updatePharmacyCartQuantityUseCase;
+  final PharmacyCheckoutUseCase pharmacyCheckoutUseCase;
+  final CitiesRepository citiesRepository;
+  final AppPref appPref;
 
   Future<void> loadMedicines({bool refresh = false}) async {
+    final displayName = state.searchQuery.trim();
     emit(
       state.copyWith(
         medicinesLoadingStateStatus: refresh
             ? StateStatus.refreshing
             : StateStatus.loading,
         medicinesErrorMessage: null,
+        isLoadingMore: false,
       ),
     );
 
     final result = await getPharmacyMedicinesUseCase(
-      const GetPharmacyMedicinesParams(),
+      GetPharmacyMedicinesParams(
+        page: 1,
+        displayName: displayName,
+      ),
     );
     if (isClosed) return;
 
@@ -44,70 +72,204 @@ class PharmacyCubit extends Cubit<PharmacyState> {
           medicinesErrorMessage: error,
         ),
       ),
-      (data) => emit(
+      (page) => emit(
         state.copyWith(
-          medicinesLoadingStateStatus: data.isEmpty
+          medicinesLoadingStateStatus: page.items.isEmpty
               ? StateStatus.empty
               : StateStatus.success,
-          medicines: data,
+          medicines: page.items,
+          currentPage: page.currentPage,
+          lastPage: page.lastPage,
+          totalProducts: page.total,
           medicinesErrorMessage: null,
         ),
       ),
     );
   }
 
+  Future<void> loadProductDetail(String productId) async {
+    final trimmedId = productId.trim();
+    if (trimmedId.isEmpty) return;
+
+    emit(
+      state.copyWith(
+        productDetailLoadingStateStatus: StateStatus.loading,
+        productDetailErrorMessage: null,
+        selectedProduct: null,
+        relatedProducts: const [],
+      ),
+    );
+
+    final result = await getPharmacyProductDetailUseCase(
+      GetPharmacyProductDetailParams(productId: trimmedId),
+    );
+    if (isClosed) return;
+
+    result.fold(
+      (error) => emit(
+        state.copyWith(
+          productDetailLoadingStateStatus: StateStatus.error,
+          productDetailErrorMessage: error,
+        ),
+      ),
+      (detail) => emit(
+        state.copyWith(
+          productDetailLoadingStateStatus: StateStatus.success,
+          selectedProduct: detail.product,
+          relatedProducts: detail.relatedItems,
+          productDetailErrorMessage: null,
+        ),
+      ),
+    );
+  }
+
+  Future<void> loadMoreMedicines() async {
+    if (state.isLoadingMore || !state.hasMoreProducts) return;
+
+    emit(state.copyWith(isLoadingMore: true));
+
+    final result = await getPharmacyMedicinesUseCase(
+      GetPharmacyMedicinesParams(
+        page: state.currentPage + 1,
+        displayName: state.searchQuery.trim(),
+      ),
+    );
+    if (isClosed) return;
+
+    result.fold(
+      (error) => emit(
+        state.copyWith(
+          isLoadingMore: false,
+          medicinesErrorMessage: error,
+        ),
+      ),
+      (page) => emit(
+        state.copyWith(
+          isLoadingMore: false,
+          medicines: [...state.medicines, ...page.items],
+          currentPage: page.currentPage,
+          lastPage: page.lastPage,
+          totalProducts: page.total,
+          medicinesLoadingStateStatus: StateStatus.success,
+        ),
+      ),
+    );
+  }
+
   Future<void> loadCart() async {
+    if (!AuthGuard.isLoggedIn(appPref)) return;
+
     final result = await getPharmacyCartUseCase(const GetPharmacyCartParams());
     if (isClosed) return;
 
-    result.fold((_) {}, (items) => emit(state.copyWith(cartItems: items)));
-  }
-
-  void addToCart(PharmacyMedicineEntity medicine, {int quantity = 1}) {
-    final existingIndex = state.cartItems.indexWhere(
-      (item) => item.medicine.id == medicine.id,
+    result.fold(
+      (_) {},
+      (cart) => emit(
+        state.copyWith(
+          cartBookingId: cart.bookingId,
+          cartItems: cart.items,
+          paymentBreakdown: cart.paymentBreakdown,
+        ),
+      ),
     );
-    final items = [...state.cartItems];
-
-    if (existingIndex >= 0) {
-      final existing = items[existingIndex];
-      items[existingIndex] = existing.copyWith(
-        quantity: existing.quantity + quantity,
-      );
-    } else {
-      items.add(PharmacyCartItemEntity(medicine: medicine, quantity: quantity));
-    }
-    emit(state.copyWith(cartItems: items));
   }
 
   Future<bool> addToCartApi(
     PharmacyMedicineEntity medicine, {
     int quantity = 1,
   }) async {
+    if (!AuthGuard.isLoggedIn(appPref)) return false;
+
+    final addQty = quantity < 1 ? 1 : quantity;
+    final existingIndex = state.cartItems.indexWhere(
+      (item) => item.medicine.id == medicine.id,
+    );
+    final bookingId = state.cartBookingId?.trim();
+    final hasBookingId = bookingId != null && bookingId.isNotEmpty;
+
+    // Product already in cart → increase quantity via update API only.
+    if (existingIndex >= 0 && hasBookingId) {
+      final nextQty = state.cartItems[existingIndex].quantity + addQty;
+      return _setCartQuantity(
+        medicineId: medicine.id,
+        quantity: nextQty,
+      );
+    }
+
     final result = await addToCartUseCase(
-      AddToCartParams(medicineId: medicine.id, quantity: quantity),
+      AddToCartParams(
+        medicineId: medicine.id,
+        quantity: addQty,
+        bookingId: hasBookingId ? bookingId : null,
+      ),
     );
     if (isClosed) return false;
 
     return result.fold(
-      (_) {
-        // Keep cart UX responsive even if API is temporarily unavailable.
-        addToCart(medicine, quantity: quantity);
-        return true;
-      },
-      (_) {
-        addToCart(medicine, quantity: quantity);
+      (_) => false,
+      (addResult) {
+        _applyAddToCartResult(
+          medicine: medicine,
+          quantity: addQty,
+          bookingId: addResult.bookingId,
+          items: addResult.items,
+          hasProductList: addResult.hasProductList,
+        );
         return true;
       },
     );
   }
 
-  void increaseQuantity(String medicineId) {
-    _updateQuantity(medicineId, delta: 1);
+  void _applyAddToCartResult({
+    required PharmacyMedicineEntity medicine,
+    required int quantity,
+    required String? bookingId,
+    required List<PharmacyCartItemEntity> items,
+    required bool hasProductList,
+  }) {
+    final nextBookingId =
+        (bookingId != null && bookingId.trim().isNotEmpty)
+        ? bookingId.trim()
+        : state.cartBookingId;
+
+    if (hasProductList) {
+      emit(
+        state.copyWith(
+          cartBookingId: nextBookingId,
+          cartItems: items,
+          paymentBreakdown: null,
+        ),
+      );
+      return;
+    }
+
+    final cartItems = [...state.cartItems];
+    final index = cartItems.indexWhere((item) => item.medicine.id == medicine.id);
+    if (index >= 0) {
+      cartItems[index] = cartItems[index].copyWith(
+        quantity: cartItems[index].quantity + quantity,
+      );
+    } else {
+      cartItems.add(
+        PharmacyCartItemEntity(medicine: medicine, quantity: quantity),
+      );
+    }
+
+    emit(
+      state.copyWith(
+        cartBookingId: nextBookingId,
+        cartItems: cartItems,
+        paymentBreakdown: null,
+      ),
+    );
   }
 
-  void decreaseQuantity(String medicineId) {
-    _updateQuantity(medicineId, delta: -1);
+  Future<void> increaseQuantity(String medicineId) async {
+    await _updateQuantity(medicineId, delta: 1);
+  }
+
+  Future<void> decreaseQuantity(String medicineId) async {
+    await _updateQuantity(medicineId, delta: -1);
   }
 
   void removeFromCart(String medicineId) {
@@ -124,28 +286,186 @@ class PharmacyCubit extends Cubit<PharmacyState> {
     emit(state.copyWith(selectedPaymentMethod: method));
   }
 
-  void updateSearchQuery(String query) {
-    emit(state.copyWith(searchQuery: query));
+  void submitSearch(String query) {
+    final trimmed = query.trim();
+    if (trimmed == state.searchQuery) return;
+    emit(state.copyWith(searchQuery: trimmed));
+    loadMedicines();
   }
 
   void selectCheckoutCity(String city) {
     emit(state.copyWith(selectedCity: city));
   }
 
-  void clearCart() {
-    emit(state.copyWith(cartItems: []));
+  Future<void> loadCheckoutCities() async {
+    await citiesRepository.loadCities();
+    if (isClosed) return;
+
+    final names = citiesRepository.cityNames;
+    if (names.isEmpty) return;
+
+    final selected = names.contains(state.selectedCity)
+        ? state.selectedCity
+        : citiesRepository.defaultCityName;
+
+    emit(
+      state.copyWith(
+        checkoutCities: names,
+        selectedCity: selected,
+      ),
+    );
   }
 
-  void _updateQuantity(String medicineId, {required int delta}) {
-    final items = [...state.cartItems];
+  void clearCart() {
+    emit(
+      state.copyWith(
+        cartBookingId: null,
+        cartItems: [],
+        paymentBreakdown: null,
+      ),
+    );
+  }
+
+  Future<Either<ErrorMsg, PharmacyCheckoutResultEntity>> checkoutOrder() async {
+    if (!AuthGuard.isLoggedIn(appPref)) {
+      return const Left(AppStrings.pharmacyCheckoutMissingContextError);
+    }
+
+    final bookingId = state.cartBookingId?.trim() ?? '';
+    final patientId = _resolvePatientId();
+    final userLocationId =
+        citiesRepository.cityIdForName(state.selectedCity)?.trim() ?? '';
+    final paymentMethod = _paymentMethodApiValue(state.selectedPaymentMethod);
+
+    if (bookingId.isEmpty || patientId.isEmpty || userLocationId.isEmpty) {
+      return const Left(AppStrings.pharmacyCheckoutMissingContextError);
+    }
+
+    return pharmacyCheckoutUseCase(
+      PharmacyCheckoutParams(
+        bookingId: bookingId,
+        patientId: patientId,
+        userLocationId: userLocationId,
+        paymentMethod: paymentMethod,
+      ),
+    );
+  }
+
+  String _resolvePatientId() {
+    final apiUserId = appPref.getUserLocalModel()?.apiUserId.trim() ?? '';
+    if (apiUserId.isNotEmpty) return apiUserId;
+
+    final token = appPref.getToken();
+    final claim = JwtUtils.claim<dynamic>(token, 'sub') ??
+        JwtUtils.claim<dynamic>(token, 'userId');
+    final fromToken = claim?.toString().trim() ?? '';
+    if (fromToken.isNotEmpty) return fromToken;
+
+    return appPref.getUserId().trim();
+  }
+
+  String _paymentMethodApiValue(PharmacyPaymentMethod method) {
+    return switch (method) {
+      PharmacyPaymentMethod.jazzCash => 'JAZZCASH',
+      PharmacyPaymentMethod.debitCard => 'CARD',
+      PharmacyPaymentMethod.cashOnDelivery => 'COD',
+    };
+  }
+
+  Future<void> _updateQuantity(String medicineId, {required int delta}) async {
+    final items = state.cartItems;
     final index = items.indexWhere((item) => item.medicine.id == medicineId);
     if (index < 0) return;
+
     final nextQty = items[index].quantity + delta;
-    if (nextQty <= 0) {
+    if (nextQty < 0) return;
+
+    await _setCartQuantity(medicineId: medicineId, quantity: nextQty);
+  }
+
+  Future<bool> _setCartQuantity({
+    required String medicineId,
+    required int quantity,
+  }) async {
+    if (!AuthGuard.isLoggedIn(appPref)) return false;
+
+    final bookingId = state.cartBookingId;
+    if (bookingId == null || bookingId.trim().isEmpty) return false;
+
+    final result = await updatePharmacyCartQuantityUseCase(
+      UpdatePharmacyCartQuantityParams(
+        bookingId: bookingId,
+        productId: medicineId,
+        quantity: quantity.toString(),
+      ),
+    );
+    if (isClosed) return false;
+
+    return result.fold(
+      (_) => false,
+      (updateResult) {
+        if (updateResult.hasProductList) {
+          final nextBookingId =
+              (updateResult.bookingId != null &&
+                  updateResult.bookingId!.trim().isNotEmpty)
+              ? updateResult.bookingId!.trim()
+              : state.cartBookingId;
+          emit(
+            state.copyWith(
+              cartBookingId: nextBookingId,
+              cartItems: updateResult.items,
+              paymentBreakdown: null,
+            ),
+          );
+          return true;
+        }
+
+        _applyLocalQuantityUpdate(
+          medicineId: medicineId,
+          quantity: quantity,
+          bookingId: updateResult.bookingId,
+        );
+        return true;
+      },
+    );
+  }
+
+  void _applyLocalQuantityUpdate({
+    required String medicineId,
+    required int quantity,
+    String? bookingId,
+  }) {
+    final nextBookingId =
+        (bookingId != null && bookingId.trim().isNotEmpty)
+        ? bookingId.trim()
+        : state.cartBookingId;
+
+    final items = [...state.cartItems];
+    final index = items.indexWhere((item) => item.medicine.id == medicineId);
+    if (index < 0) {
+      if (nextBookingId != state.cartBookingId) {
+        emit(
+          state.copyWith(
+            cartBookingId: nextBookingId,
+            paymentBreakdown: null,
+          ),
+        );
+      }
+      return;
+    }
+
+    if (quantity <= 0) {
       items.removeAt(index);
     } else {
-      items[index] = items[index].copyWith(quantity: nextQty);
+      items[index] = items[index].copyWith(quantity: quantity);
     }
-    emit(state.copyWith(cartItems: items));
+
+    emit(
+      state.copyWith(
+        cartBookingId: nextBookingId,
+        cartItems: items,
+        paymentBreakdown: null,
+      ),
+    );
   }
 }

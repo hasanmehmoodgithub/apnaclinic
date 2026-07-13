@@ -154,14 +154,32 @@ class AppUrls {
   /// Notifications endpoint
   static String get notifications => '$_normalizedApiBaseUrl/notifications';
 
-  /// Pharmacy medicines endpoint
-  static String get pharmacyMedicines => '$_normalizedApiBaseUrl/pharmacy/medicines';
+  /// Pharmacy partner products list (POST, paginated).
+  static String get pharmacyProducts =>
+      '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/partner/pharmacy/products';
 
-  /// Pharmacy cart endpoint
-  static String get pharmacyCart => '$_normalizedApiBaseUrl/pharmacy/cart';
+  /// Pharmacy partner product detail (POST).
+  static String get pharmacyProductDetail =>
+      '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/partner/pharmacy/product/details';
 
-  /// Pharmacy add-to-cart endpoint
-  static String get pharmacyAddToCart => '$_normalizedApiBaseUrl/pharmacy/cart/add';
+  /// Legacy placeholder — prefer [pharmacyProducts].
+  static String get pharmacyMedicines => pharmacyProducts;
+
+  /// Pharmacy active cart (POST).
+  static String get pharmacyCart =>
+      '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/partner/pharmacy/cart/active';
+
+  /// Pharmacy add-to-cart (POST).
+  static String get pharmacyAddToCart =>
+      '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/partner/pharmacy/cart/add';
+
+  /// Pharmacy cart quantity update (POST).
+  static String get pharmacyUpdateCartQuantity =>
+      '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/partner/pharmacy/cart/quantity/update';
+
+  /// Pharmacy order checkout (POST).
+  static String get pharmacyOrderCheckout =>
+      '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/partner/pharmacy/order/checkout';
 
   /// Search endpoint
   static String get search => '$_normalizedApiBaseUrl/search';
@@ -240,4 +258,16 @@ class AppUrls {
 
   static const String privacyPolicy =
       'https://apnaclinic.ecnstg.com/privacy-policy';
+
+  static const String faq = 'https://apnaclinic.ecnstg.com/faq';
+
+  static const String website = 'https://apnaclinic.ecnstg.com/';
+
+  /// FikrFree on the App Store (iOS).
+  static const String fikrFreeAppStoreIos =
+      'https://apps.apple.com/pk/app/fikrfree/id6739287582';
+
+  /// FikrFree on Google Play (Android).
+  static const String fikrFreePlayStoreAndroid =
+      'https://play.google.com/store/apps/details?id=com.fikrfree.android&hl=en';
 }

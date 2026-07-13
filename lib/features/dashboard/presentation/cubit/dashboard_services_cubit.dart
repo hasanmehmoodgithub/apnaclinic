@@ -1,8 +1,10 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../../core/utils/auth_guard.dart';
+import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/enums/state_status.dart';
 import '../../../../core/preference/app_pref.dart';
+import '../../../../core/session/profile_session_sync.dart';
+import '../../../../core/utils/auth_guard.dart';
 import '../../../profile_setup/domain/use_cases/get_profile_setup_content_use_case.dart';
 import '../../domain/services/promotional_banner_session.dart';
 import '../../domain/use_cases/get_dashboard_services_use_case.dart';
@@ -14,7 +16,9 @@ class DashboardCubit extends Cubit<DashboardServicesState> {
     required this.promotionalBannerSession,
     required this.getProfileSetupContentUseCase,
     required this.appPref,
-  }) : super(const DashboardServicesState()) {
+    ProfileSessionSync? profileSessionSync,
+  })  : _profileSessionSync = profileSessionSync ?? sl<ProfileSessionSync>(),
+        super(const DashboardServicesState()) {
     loadOurServices();
     syncPromotionalBannerFromSession();
     syncUserProfileFromApi();
@@ -24,6 +28,7 @@ class DashboardCubit extends Cubit<DashboardServicesState> {
   final PromotionalBannerSession promotionalBannerSession;
   final GetProfileSetupContentUseCase getProfileSetupContentUseCase;
   final AppPref appPref;
+  final ProfileSessionSync _profileSessionSync;
 
   void _safeEmit(DashboardServicesState newState) {
     if (isClosed) return;
@@ -73,6 +78,13 @@ class DashboardCubit extends Cubit<DashboardServicesState> {
   /// Fetches user profile (GET …/users/{id}) and persists via [ProfileSetupRepository]; bumps [profileSyncNonce] on success so UI refreshes.
   Future<void> syncUserProfileFromApi() async {
     if (!AuthGuard.isLoggedIn(appPref)) return;
+    if (_profileSessionSync.shouldSkipNetworkFetch(appPref)) {
+      _safeEmit(
+        state.copyWith(profileSyncNonce: state.profileSyncNonce + 1),
+      );
+      return;
+    }
+
     final result = await getProfileSetupContentUseCase.call();
     if (isClosed) return;
     result.fold(

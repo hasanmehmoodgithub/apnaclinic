@@ -267,7 +267,7 @@ class PharmacyCheckoutCartItemRow extends StatelessWidget {
           clipBehavior: Clip.antiAlias,
           child: CachedNetworkImage(
             imageUrl: item.medicine.imageUrl,
-            fit: BoxFit.cover,
+            fit: BoxFit.contain,
             placeholder: (context, url) => AppShimmer(
               width: 130.r,
               height: 88.r,

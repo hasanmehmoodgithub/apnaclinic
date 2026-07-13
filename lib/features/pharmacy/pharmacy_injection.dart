@@ -1,5 +1,7 @@
+import '../../core/cities/domain/repositories/cities_repository.dart';
 import '../../core/di/dependency_injection.dart';
 import '../../core/network/api_service.dart';
+import '../../core/preference/app_pref.dart';
 import 'data/data_sources/pharmacy_remote_data_source.dart';
 import 'data/data_sources/pharmacy_remote_data_source_impl.dart';
 import 'data/mock/pharmacy_mock_api.dart';
@@ -8,6 +10,9 @@ import 'domain/repositories/pharmacy_repository.dart';
 import 'domain/use_cases/add_to_cart_use_case.dart';
 import 'domain/use_cases/get_pharmacy_cart_use_case.dart';
 import 'domain/use_cases/get_pharmacy_medicines_use_case.dart';
+import 'domain/use_cases/get_pharmacy_product_detail_use_case.dart';
+import 'domain/use_cases/pharmacy_checkout_use_case.dart';
+import 'domain/use_cases/update_pharmacy_cart_quantity_use_case.dart';
 import 'presentation/cubit/pharmacy_cubit.dart';
 
 void initPharmacyInjector() {
@@ -30,6 +35,12 @@ void initPharmacyInjector() {
     () => GetPharmacyMedicinesUseCase(repository: sl<PharmacyRepository>()),
   );
 
+  sl.registerLazySingleton<GetPharmacyProductDetailUseCase>(
+    () => GetPharmacyProductDetailUseCase(
+      repository: sl<PharmacyRepository>(),
+    ),
+  );
+
   sl.registerLazySingleton<GetPharmacyCartUseCase>(
     () => GetPharmacyCartUseCase(repository: sl<PharmacyRepository>()),
   );
@@ -38,11 +49,26 @@ void initPharmacyInjector() {
     () => AddToCartUseCase(repository: sl<PharmacyRepository>()),
   );
 
+  sl.registerLazySingleton<UpdatePharmacyCartQuantityUseCase>(
+    () => UpdatePharmacyCartQuantityUseCase(
+      repository: sl<PharmacyRepository>(),
+    ),
+  );
+
+  sl.registerLazySingleton<PharmacyCheckoutUseCase>(
+    () => PharmacyCheckoutUseCase(repository: sl<PharmacyRepository>()),
+  );
+
   sl.registerFactory<PharmacyCubit>(
     () => PharmacyCubit(
       getPharmacyMedicinesUseCase: sl<GetPharmacyMedicinesUseCase>(),
+      getPharmacyProductDetailUseCase: sl<GetPharmacyProductDetailUseCase>(),
       getPharmacyCartUseCase: sl<GetPharmacyCartUseCase>(),
       addToCartUseCase: sl<AddToCartUseCase>(),
+      updatePharmacyCartQuantityUseCase: sl<UpdatePharmacyCartQuantityUseCase>(),
+      pharmacyCheckoutUseCase: sl<PharmacyCheckoutUseCase>(),
+      citiesRepository: sl<CitiesRepository>(),
+      appPref: sl<AppPref>(),
     ),
   );
 }

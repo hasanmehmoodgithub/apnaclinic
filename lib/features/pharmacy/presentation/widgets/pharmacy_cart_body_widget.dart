@@ -6,13 +6,50 @@ import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/widgets/app_button_widget.dart';
+import '../../../../core/widgets/heart_loader_widget.dart';
 import '../cubit/pharmacy_cubit.dart';
 import '../cubit/pharmacy_state.dart';
 import 'pharmacy_cart_item_tile.dart';
 
 /// Cart panel content: cart list/empty-state and sticky checkout button.
-class PharmacyCartBodyWidget extends StatelessWidget {
+class PharmacyCartBodyWidget extends StatefulWidget {
   const PharmacyCartBodyWidget({super.key});
+
+  @override
+  State<PharmacyCartBodyWidget> createState() => _PharmacyCartBodyWidgetState();
+}
+
+class _PharmacyCartBodyWidgetState extends State<PharmacyCartBodyWidget> {
+  static const _qtyLoaderId = 'pharmacy_cart_qty_loader';
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      context.read<PharmacyCubit>().loadCart();
+    });
+  }
+
+  Future<void> _changeQuantity({
+    required String medicineId,
+    required bool increase,
+  }) async {
+    if (!mounted) return;
+    if (!HeartLoaderDialogController.isOpen(_qtyLoaderId)) {
+      showHeartLoaderDialog(context, id: _qtyLoaderId, size: 120);
+    }
+    try {
+      final cubit = context.read<PharmacyCubit>();
+      if (increase) {
+        await cubit.increaseQuantity(medicineId);
+      } else {
+        await cubit.decreaseQuantity(medicineId);
+      }
+    } finally {
+      HeartLoaderDialogController.close(_qtyLoaderId);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,12 +68,14 @@ class PharmacyCartBodyWidget extends StatelessWidget {
                   final item = state.cartItems[index];
                   return PharmacyCartItemTile(
                     item: item,
-                    onIncrease: () => context
-                        .read<PharmacyCubit>()
-                        .increaseQuantity(item.medicine.id),
-                    onDecrease: () => context
-                        .read<PharmacyCubit>()
-                        .decreaseQuantity(item.medicine.id),
+                    onIncrease: () => _changeQuantity(
+                      medicineId: item.medicine.id,
+                      increase: true,
+                    ),
+                    onDecrease: () => _changeQuantity(
+                      medicineId: item.medicine.id,
+                      increase: false,
+                    ),
                   );
                 },
                 separatorBuilder: (_, _) => SizedBox(height: 30.h),

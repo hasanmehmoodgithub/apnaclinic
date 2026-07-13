@@ -9,6 +9,7 @@ import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/widgets/app_button_widget.dart';
 import '../../../../core/widgets/heart_loader_widget.dart';
+import '../../../../core/utils/auth_guard.dart';
 import '../../domain/entities/pharmacy_medicine_entity.dart';
 import '../cubit/pharmacy_cubit.dart';
 import 'pharmacy_quantity_stepper.dart';
@@ -18,7 +19,10 @@ Future<void> showPharmacyAddToCartSheet(
   PharmacyMedicineEntity medicine, {
   required String loaderIdPrefix,
 }) async {
+  if (!context.requireLogin()) return;
+
   final pharmacyCubit = context.read<PharmacyCubit>();
+  final hostContext = context;
   var qty = 1;
 
   await showModalBottomSheet<void>(
@@ -133,16 +137,24 @@ Future<void> showPharmacyAddToCartSheet(
                     bgClr: AppColors.clr27B3A6,
                     onTap: () async {
                       final loaderId = '${loaderIdPrefix}_${medicine.id}';
-                      showHeartLoaderDialog(
-                        sheetContext,
-                        id: loaderId,
-                        size: 120,
-                      );
-                      final success = await pharmacyCubit.addToCartApi(
-                        medicine,
-                        quantity: qty,
-                      );
-                      HeartLoaderDialogController.close(loaderId);
+                      final loaderContext =
+                          hostContext.mounted ? hostContext : sheetContext;
+                      if (loaderContext.mounted) {
+                        showHeartLoaderDialog(
+                          loaderContext,
+                          id: loaderId,
+                          size: 120,
+                        );
+                      }
+                      var success = false;
+                      try {
+                        success = await pharmacyCubit.addToCartApi(
+                          medicine,
+                          quantity: qty,
+                        );
+                      } finally {
+                        HeartLoaderDialogController.close(loaderId);
+                      }
                       if (success && sheetContext.mounted) {
                         sheetContext.pop();
                       }

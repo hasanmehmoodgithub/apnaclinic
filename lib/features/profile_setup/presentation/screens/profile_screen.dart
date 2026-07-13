@@ -64,16 +64,17 @@ class ProfileScreen extends StatelessWidget {
       extra: ProfileSetupLaunchSource.menu,
     );
     if (!context.mounted || updated != true) return;
-    await context.read<ProfileCubit>().refreshProfile();
+    await context.read<ProfileCubit>().refreshProfile(force: true);
+    await context.read<ProfileCubit>().loadAccounts(force: true);
   }
 
   Future<void> _openAddAccount(BuildContext context) async {
-    await context.push<bool>(
+    final added = await context.push<bool>(
       AppRoutes.path(AppRoutes.addAccount),
       extra: AddAccountLaunchSource.profile,
     );
-    if (!context.mounted) return;
-    await context.read<ProfileCubit>().loadAccounts();
+    if (!context.mounted || added != true) return;
+    await context.read<ProfileCubit>().loadAccounts(force: true);
   }
 
   Future<void> _deleteAccountDetail(

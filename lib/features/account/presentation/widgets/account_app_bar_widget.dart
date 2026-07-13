@@ -8,9 +8,11 @@ class AccountAppBarWidget extends StatelessWidget implements PreferredSizeWidget
   const AccountAppBarWidget({
     super.key,
     required this.title,
+    this.onBack,
   });
 
   final String title;
+  final VoidCallback? onBack;
 
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
@@ -23,7 +25,7 @@ class AccountAppBarWidget extends StatelessWidget implements PreferredSizeWidget
       surfaceTintColor: Colors.transparent,
       elevation: 0,
       leading: IconButton(
-        onPressed: () => context.pop(),
+        onPressed: onBack ?? () => context.pop(),
         icon: const Icon(Icons.arrow_back_rounded, color: AppColors.clr060),
       ),
       title: Text(

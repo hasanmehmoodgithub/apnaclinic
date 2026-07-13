@@ -16,7 +16,6 @@ class AvailabilitySection extends StatefulWidget {
     required this.monthLabel,
     required this.isLoading,
     this.errorMessage,
-    this.onRetry,
     this.onSlotChanged,
   });
 
@@ -25,7 +24,6 @@ class AvailabilitySection extends StatefulWidget {
   final String monthLabel;
   final bool isLoading;
   final String? errorMessage;
-  final VoidCallback? onRetry;
   final ValueChanged<ConsultationSelectedSlotEntity?>? onSlotChanged;
 
   @override
@@ -102,16 +100,11 @@ class _AvailabilitySectionState extends State<AvailabilitySection> {
           _AvailabilityMessage(
             textTheme: widget.textTheme,
             message: widget.errorMessage!,
-            actionLabel: l10n.consultationAvailabilityRetry,
-            onAction: widget.onRetry,
           )
         else if (widget.days.isEmpty)
           _AvailabilityMessage(
             textTheme: widget.textTheme,
             message: l10n.consultationNoAvailability,
-            actionLabel:
-                widget.onRetry == null ? null : l10n.consultationAvailabilityRetry,
-            onAction: widget.onRetry,
           )
         else ...[
           SizedBox(
@@ -174,10 +167,6 @@ class _AvailabilitySectionState extends State<AvailabilitySection> {
               _AvailabilityMessage(
                 textTheme: widget.textTheme,
                 message: l10n.consultationNoAvailability,
-                actionLabel: widget.onRetry == null
-                    ? null
-                    : l10n.consultationAvailabilityRetry,
-                onAction: widget.onRetry,
               )
             else
               SizedBox(
@@ -218,32 +207,19 @@ class _AvailabilityMessage extends StatelessWidget {
   const _AvailabilityMessage({
     required this.textTheme,
     required this.message,
-    this.actionLabel,
-    this.onAction,
   });
 
   final TextTheme textTheme;
   final String message;
-  final String? actionLabel;
-  final VoidCallback? onAction;
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          message,
-          style: textTheme.bodyMedium?.copyWith(
-            color: const Color(0xFF5F6C7C),
-            fontSize: 13.sp,
-          ),
-        ),
-        if (actionLabel != null && onAction != null) ...[
-          SizedBox(height: 8.h),
-          TextButton(onPressed: onAction, child: Text(actionLabel!)),
-        ],
-      ],
+    return Text(
+      message,
+      style: textTheme.bodyMedium?.copyWith(
+        color: const Color(0xFF5F6C7C),
+        fontSize: 13.sp,
+      ),
     );
   }
 }

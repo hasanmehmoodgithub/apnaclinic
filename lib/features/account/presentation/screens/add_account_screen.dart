@@ -8,7 +8,6 @@ import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/widgets/app_scaffold_gradient.dart';
 import '../../domain/use_cases/add_user_phone_use_case.dart';
-import '../../domain/use_cases/get_accounts_list_use_case.dart';
 import '../add_account_launch_source.dart';
 import '../widgets/account_app_bar_widget.dart';
 import '../widgets/add_account_form_widget.dart';
@@ -32,13 +31,6 @@ class _AddAccountScreenState extends State<AddAccountScreen> {
   late String _selectedAccountMethod;
   bool _didInitializeMethods = false;
   bool _isSaving = false;
-
-  @override
-  void initState() {
-    super.initState();
-    // Warm profile cache so numeric user id is available for POST /users/{id}/phone.
-    sl<GetAccountsListUseCase>().call();
-  }
 
   @override
   void didChangeDependencies() {
@@ -73,9 +65,7 @@ class _AddAccountScreenState extends State<AddAccountScreen> {
           SnackBar(content: Text(error)),
         );
       },
-      (_) async {
-        if (!mounted) return;
-        await _refreshProfileAndAccounts();
+      (_) {
         if (!mounted) return;
         if (widget.launchSource == AddAccountLaunchSource.consultationCheckout) {
           context.pop(phone);
@@ -90,10 +80,6 @@ class _AddAccountScreenState extends State<AddAccountScreen> {
         );
       },
     );
-  }
-
-  Future<void> _refreshProfileAndAccounts() async {
-    await sl<GetAccountsListUseCase>().call();
   }
 
   @override
@@ -113,19 +99,19 @@ class _AddAccountScreenState extends State<AddAccountScreen> {
           child: Padding(
             padding: EdgeInsets.fromLTRB(18.w, 18.h, 18.w, 24.h),
             child: AddAccountFormWidget(
-            formKey: _formKey,
-            accountMethods: _accountMethods,
-            selectedAccountMethod: _selectedAccountMethod,
-            onAccountMethodChanged: (value) {
-              setState(() => _selectedAccountMethod = value);
-            },
-            accountNumberController: _accountNumberController,
-            accountNumberValidator: _validatePakistanAccountNumber,
-            onSavePressed: _saveAccount,
-            isLoading: _isSaving,
+              formKey: _formKey,
+              accountMethods: _accountMethods,
+              selectedAccountMethod: _selectedAccountMethod,
+              onAccountMethodChanged: (value) {
+                setState(() => _selectedAccountMethod = value);
+              },
+              accountNumberController: _accountNumberController,
+              accountNumberValidator: _validatePakistanAccountNumber,
+              onSavePressed: _saveAccount,
+              isLoading: _isSaving,
+            ),
           ),
         ),
-      ),
       ),
     );
   }

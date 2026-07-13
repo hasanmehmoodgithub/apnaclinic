@@ -36,7 +36,7 @@ class PharmacySelectedCard extends StatelessWidget {
           child: CachedNetworkImage(
             imageUrl: featured.imageUrl,
             width: double.infinity,
-            fit: BoxFit.cover,
+            fit: BoxFit.contain,
             placeholder: (context, url) => AppShimmer(
               width: double.infinity,
               height: 260.h,
