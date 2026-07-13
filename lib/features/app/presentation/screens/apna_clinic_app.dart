@@ -96,7 +96,7 @@ class _ApnaClinicAppState extends State<ApnaClinicApp> {
             builder: (context) {
               ScreenUtilX.init(
                 context,
-              designWidth :410,
+                 designWidth :410,
                  designHeight : 720,
                 useScaleByDefault: false,
               );

@@ -58,6 +58,7 @@ void main() {
         if (kDebugMode) {
           runApp(
             wrapWithDevicePreview(
+
               child: MaterialApp(
                 home: Scaffold(
                   body: Center(
