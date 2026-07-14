@@ -81,13 +81,14 @@ class AppUrls {
     return '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/doctor-consultation/doctors?${query.join('&')}';
   }
 
-  /// Doctor consultation time slots (aggregator mobile API).
+  /// Doctor consultation doctor details + availability (aggregator mobile API).
+  /// `GET /acs-aggregator/api/v1/mobile/doctor-consultation/doctor/{doctorId}`
   static String doctorConsultationSlots({
     required String doctorId,
     String? hospitalId,
   }) {
     final base =
-        '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/doctor-consultation/slots/${Uri.encodeComponent(doctorId)}';
+        '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/doctor-consultation/doctor/${Uri.encodeComponent(doctorId)}';
     if (hospitalId == null || hospitalId.trim().isEmpty) return base;
     return '$base?hospitalId=${Uri.encodeComponent(hospitalId.trim())}';
   }

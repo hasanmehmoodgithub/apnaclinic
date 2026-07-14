@@ -11,10 +11,11 @@ class DoctorProfileSection extends StatelessWidget {
   final String specialty;
   final String imageUrl;
   final String qualification;
-  final String verifiedPatientsCount;
+  final String? verifiedPatientsCount;
   final String experience;
-  final String satisfiedText;
-  final double rating;
+  final String? satisfiedText;
+  final double? rating;
+  final bool showPmdcVerified;
   final String description;
   final String partner;
   final String partnerLogoUrl;
@@ -26,10 +27,11 @@ class DoctorProfileSection extends StatelessWidget {
     required this.specialty,
     required this.imageUrl,
     required this.qualification,
-    required this.verifiedPatientsCount,
+    this.verifiedPatientsCount,
     required this.experience,
-    required this.satisfiedText,
-    required this.rating,
+    this.satisfiedText,
+    this.rating,
+    this.showPmdcVerified = false,
     required this.description,
     required this.partner,
     required this.partnerLogoUrl,
@@ -38,6 +40,40 @@ class DoctorProfileSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final showRating = rating != null;
+    final showSideBadges = showPmdcVerified || showRating;
+    final statCards = <Widget>[
+      if (verifiedPatientsCount != null)
+        Expanded(
+          child: _StatCard(
+            title: 'Verified Patients\nCount',
+            value: verifiedPatientsCount!,
+            textTheme: textTheme,
+          ),
+        ),
+      if (experience.isNotEmpty) ...[
+        if (verifiedPatientsCount != null) SizedBox(width: 8.w),
+        Expanded(
+          child: _StatCard(
+            title: 'Experience',
+            value: experience,
+            textTheme: textTheme,
+          ),
+        ),
+      ],
+      if (satisfiedText != null) ...[
+        if (verifiedPatientsCount != null || experience.isNotEmpty)
+          SizedBox(width: 8.w),
+        Expanded(
+          child: _StatCard(
+            title: 'Satisfied',
+            value: satisfiedText!,
+            textTheme: textTheme,
+          ),
+        ),
+      ],
+    ];
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -53,56 +89,74 @@ class DoctorProfileSection extends StatelessWidget {
                     style: textTheme.titleMedium?.copyWith(
                       color: ConsultationUiConfig.primaryText,
                       fontSize: 22.sp,
-                      // height: 1.05,
                       fontWeight: FontWeight.w400,
                     ),
                   ),
                   SizedBox(height: 1.h),
-                  Text(
-                    specialty,
-                    style: textTheme.bodyMedium?.copyWith(
-                      color: ConsultationUiConfig.tertiaryText,
-                      fontSize: 16.sp,
+                  if (specialty.isNotEmpty) ...[
+                    Text(
+                      specialty,
+                      style: textTheme.bodyMedium?.copyWith(
+                        color: ConsultationUiConfig.tertiaryText,
+                        fontSize: 16.sp,
+                      ),
                     ),
-                  ),
-                  SizedBox(height: 1.h),
-                  Text(
-                    qualification,
-                    style: textTheme.bodyMedium?.copyWith(
-                      color: ConsultationUiConfig.tertiaryText,
-                      fontSize: 14.sp,
+                    SizedBox(height: 1.h),
+                  ],
+                  if (qualification.isNotEmpty)
+                    Text(
+                      qualification,
+                      style: textTheme.bodyMedium?.copyWith(
+                        color: ConsultationUiConfig.tertiaryText,
+                        fontSize: 14.sp,
+                      ),
                     ),
-                  ),
                 ],
               ),
             ),
-            SizedBox(width: 10.w),
-            Column(
-              children: [
-                SizedBox(
-                  // width: 90.w,
-                  child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 8.h),
-                    decoration: BoxDecoration(
-                      border: Border.all(color: const Color(0xFFE1E5EA)),
-                      borderRadius: BorderRadius.circular(10.r),
-                    ),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
+            if (showSideBadges) ...[
+              SizedBox(width: 10.w),
+              Column(
+                children: [
+                  if (showPmdcVerified)
+                    SizedBox(
+                      child: Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 10.w,
+                          vertical: 8.h,
+                        ),
+                        decoration: BoxDecoration(
+                          border: Border.all(color: const Color(0xFFE1E5EA)),
+                          borderRadius: BorderRadius.circular(10.r),
+                        ),
+                        child: Column(
                           mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            SvgPicture.asset(
-                              'assets/img/consultation/verified.svg',
-                              width: 17.w,
-                              height: 17.h,
-                              fit: BoxFit.contain,
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                SvgPicture.asset(
+                                  'assets/img/consultation/verified.svg',
+                                  width: 17.w,
+                                  height: 17.h,
+                                  fit: BoxFit.contain,
+                                ),
+                                SizedBox(width: 4.w),
+                                Text(
+                                  'PMC',
+                                  style: textTheme.bodySmall?.copyWith(
+                                    color: const Color(0xFF2E3A4B),
+                                    fontSize: 14.sp,
+                                    height: 1.05,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ],
                             ),
-                            SizedBox(width: 4.w),
+                            SizedBox(height: 2.h),
                             Text(
-                              'PMC',
+                              'Verified',
                               style: textTheme.bodySmall?.copyWith(
                                 color: const Color(0xFF2E3A4B),
                                 fontSize: 14.sp,
@@ -112,131 +166,103 @@ class DoctorProfileSection extends StatelessWidget {
                             ),
                           ],
                         ),
-                        SizedBox(height: 2.h),
-                        Text(
-                          'Verified',
-                          style: textTheme.bodySmall?.copyWith(
-                            color: const Color(0xFF2E3A4B),
-                            fontSize: 14.sp,
-                            height: 1.05,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ],
+                      ),
                     ),
+                  if (showPmdcVerified && showRating) SizedBox(height: 8.h),
+                  if (showRating)
+                    SizedBox(
+                      width: 72.w,
+                      height: 30.h,
+                      child: RatingProgressBadge(
+                        rating: rating!,
+                        maxRating: 5,
+                        textTheme: textTheme,
+                      ),
+                    ),
+                ],
+              ),
+            ],
+          ],
+        ),
+        if (statCards.isNotEmpty) ...[
+          SizedBox(height: 14.h),
+          IntrinsicHeight(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: statCards,
+            ),
+          ),
+        ],
+        if (partner.trim().isNotEmpty || partnerLogoUrl.trim().isNotEmpty) ...[
+          SizedBox(height: 10.h),
+          Container(
+            width: double.infinity,
+            padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 14.h),
+            decoration: BoxDecoration(
+              border: Border.all(color: const Color(0xFFE2E6EB), width: 1),
+              borderRadius: BorderRadius.circular(8.r),
+            ),
+            child: Row(
+              children: [
+                Container(
+                  width: 34.w,
+                  height: 34.h,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(color: const Color(0xFFE2E6EB), width: 1),
+                  ),
+                  alignment: Alignment.center,
+                  child: ConsultationPartnerLogoWidget(
+                    logoUrl: partnerLogoUrl,
+                    width: 24.w,
+                    height: 24.h,
+                    compact: true,
                   ),
                 ),
-                SizedBox(height: 8.h),
-                SizedBox(
-                  width: 72.w,
-                  height: 30.h,
-                  child: RatingProgressBadge(
-                    rating: rating,
-                    maxRating: 5,
-                    textTheme: textTheme,
+                if (partner.trim().isNotEmpty) ...[
+                  SizedBox(width: 8.w),
+                  Text(
+                    partner,
+                    style: textTheme.bodyMedium?.copyWith(
+                      color: const Color(0xFF1E2D3F),
+                      fontSize: 14.sp,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
+                ],
+              ],
+            ),
+          ),
+        ],
+        if (description.isNotEmpty) ...[
+          SizedBox(height: 10.h),
+          Container(
+            width: double.infinity,
+            padding: EdgeInsets.fromLTRB(12.w, 10.h, 12.w, 12.h),
+            decoration: BoxDecoration(
+              border: Border.all(color: const Color(0xFFE2E6EB), width: 1),
+              borderRadius: BorderRadius.circular(8.r),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Description',
+                  style: textTheme.titleSmall?.copyWith(
+                    color: const Color(0xFF1E2D3F),
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                SizedBox(height: 6.h),
+                _DoctorDescription(
+                  textTheme: textTheme,
+                  fullDescription: description,
                 ),
               ],
             ),
-          ],
-        ),
-        SizedBox(height: 14.h),
-        IntrinsicHeight(
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Expanded(
-                child: _StatCard(
-                  title: 'Verified Patients\nCount',
-                  value: verifiedPatientsCount,
-                  textTheme: textTheme,
-                ),
-              ),
-              SizedBox(width: 8.w),
-              Expanded(
-                child: _StatCard(
-                  title: 'Experience',
-                  value: experience,
-                  textTheme: textTheme,
-                ),
-              ),
-              SizedBox(width: 8.w),
-              Expanded(
-                child: _StatCard(
-                  title: 'Satisfied',
-                  value: satisfiedText,
-                  textTheme: textTheme,
-                ),
-              ),
-            ],
           ),
-        ),
-        SizedBox(height: 10.h),
-        Container(
-          width: double.infinity,
-          padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 14.h),
-          decoration: BoxDecoration(
-            border: Border.all(color: const Color(0xFFE2E6EB), width: 1),
-            borderRadius: BorderRadius.circular(8.r),
-          ),
-          child: Row(
-            children: [
-              Container(
-                width: 34.w,
-                height: 34.h,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(color: const Color(0xFFE2E6EB), width: 1),
-                ),
-                alignment: Alignment.center,
-                child: ConsultationPartnerLogoWidget(
-                  logoUrl: partnerLogoUrl,
-                  width: 24.w,
-                  height: 24.h,
-                  compact: true,
-                ),
-              ),
-              if (partner.trim().isNotEmpty) ...[
-                SizedBox(width: 8.w),
-                Text(
-                  partner,
-                  style: textTheme.bodyMedium?.copyWith(
-                    color: const Color(0xFF1E2D3F),
-                    fontSize: 14.sp,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ],
-            ],
-          ),
-        ),
-        SizedBox(height: 10.h),
-        Container(
-          width: double.infinity,
-          padding: EdgeInsets.fromLTRB(12.w, 10.h, 12.w, 12.h),
-          decoration: BoxDecoration(
-            border: Border.all(color: const Color(0xFFE2E6EB), width: 1),
-            borderRadius: BorderRadius.circular(8.r),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Description',
-                style: textTheme.titleSmall?.copyWith(
-                  color: const Color(0xFF1E2D3F),
-                  fontSize: 16.sp,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              SizedBox(height: 6.h),
-              _DoctorDescription(
-                textTheme: textTheme,
-                fullDescription: description,
-              ),
-            ],
-          ),
-        ),
+        ],
       ],
     );
   }

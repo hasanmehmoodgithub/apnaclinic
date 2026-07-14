@@ -9,6 +9,7 @@ import '../../../lab_test/presentation/lab_test_route_args.dart';
 import '../../data/mock/lab_test_bookings_mock_api.dart';
 import '../../data/models/lab_test_booking_item_model.dart';
 
+import '../widgets/bookings_list_shimmer_widget.dart';
 import '../widgets/empty_booking_widget.dart';
 
 class LabTestBookingsScreen extends StatefulWidget {
@@ -36,7 +37,10 @@ class _LabTestBookingsScreenState extends State<LabTestBookingsScreen> {
         future: _bookingsFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator(strokeWidth: 2));
+            return BookingsListShimmerWidget(
+              padding: EdgeInsets.zero,
+              separatorHeight: 10.h,
+            );
           }
 
           final bookings = snapshot.data ?? const <LabTestBookingItemModel>[];

@@ -6,52 +6,104 @@ class ConsultationDoctorSlotsModel {
   const ConsultationDoctorSlotsModel({
     required this.monthLabel,
     required this.days,
+    this.doctorInfo,
   });
 
   final String monthLabel;
   final List<ConsultationAvailabilityDayEntity> days;
+  final ConsultationDoctorSlotsDoctorInfoEntity? doctorInfo;
 
   factory ConsultationDoctorSlotsModel.fromJson(Map<String, dynamic> json) {
-    final data = json['data'];
-    final rawDays = data is List ? data : const <dynamic>[];
+    final rawDays = _extractTimeslotDays(json);
+    final doctorInfo = _parseDoctorInfo(json);
 
-    final days = rawDays
+    final parsedDays = rawDays
         .whereType<Map<String, dynamic>>()
         .map(_parseDay)
-        .where((day) => day.slots.isNotEmpty)
+        .where((day) => day.date.isNotEmpty)
         .toList(growable: false);
 
-    final monthLabel = days.isNotEmpty
-        ? _monthLabelForDate(days.first.date)
-        : '';
+    // Fill gaps in the returned range so missing dates render as disabled.
+    final days = _fillMissingDates(parsedDays);
 
-    return ConsultationDoctorSlotsModel(monthLabel: monthLabel, days: days);
+    final monthLabel =
+        days.isNotEmpty ? _monthLabelForDays(days) : '';
+
+    return ConsultationDoctorSlotsModel(
+      monthLabel: monthLabel,
+      days: days,
+      doctorInfo: doctorInfo,
+    );
   }
 
   ConsultationDoctorSlotsEntity toEntity() {
-    return ConsultationDoctorSlotsEntity(monthLabel: monthLabel, days: days);
+    return ConsultationDoctorSlotsEntity(
+      monthLabel: monthLabel,
+      days: days,
+      doctorInfo: doctorInfo,
+    );
+  }
+
+  static List<dynamic> _extractTimeslotDays(Map<String, dynamic> json) {
+    final data = json['data'];
+    if (data is Map<String, dynamic>) {
+      final doctorInfo = data['doctorInfo'];
+      if (doctorInfo is Map<String, dynamic>) {
+        final timeslots = doctorInfo['timeslots'] ?? doctorInfo['timeSlots'];
+        if (timeslots is List) return timeslots;
+      }
+      if (data['data'] is List) return data['data'] as List<dynamic>;
+    }
+    if (data is List) return data;
+    return const [];
+  }
+
+  static ConsultationDoctorSlotsDoctorInfoEntity? _parseDoctorInfo(
+    Map<String, dynamic> json,
+  ) {
+    final data = json['data'];
+    if (data is! Map<String, dynamic>) return null;
+    final doctorInfo = data['doctorInfo'];
+    if (doctorInfo is! Map<String, dynamic>) return null;
+
+    return ConsultationDoctorSlotsDoctorInfoEntity(
+      ratings: _readDouble(doctorInfo['ratings']),
+      pmdcVerified: doctorInfo['pmdcVerified'] == true,
+      verifiedPatientsCount:
+          _readInt(doctorInfo['verifiedPatientsCount']),
+      patientsSatisfiedPercentage:
+          _readDouble(doctorInfo['patientsSatisfiedPercentage']),
+    );
   }
 
   static ConsultationAvailabilityDayEntity _parseDay(
     Map<String, dynamic> json,
   ) {
     final date = (json['date'] ?? '').toString().trim();
-    final parsedDate = DateTime.tryParse(date);
-    final weekDay = parsedDate != null
-        ? DateFormat('EEE').format(parsedDate)
-        : '';
-    final dayOfMonth = parsedDate != null
-        ? DateFormat('d').format(parsedDate)
-        : '';
+    return _dayEntity(
+      date: date,
+      slots: _parseSlots(json['slots']),
+    );
+  }
 
-    final slotsRaw = json['slots'];
-    final slots = slotsRaw is List
-        ? slotsRaw
-            .whereType<Map<String, dynamic>>()
-            .map(_parseSlot)
-            .where((slot) => slot.label.isNotEmpty)
-            .toList(growable: false)
-        : const <ConsultationTimeSlotEntity>[];
+  static List<ConsultationTimeSlotEntity> _parseSlots(dynamic slotsRaw) {
+    if (slotsRaw is! List) return const [];
+    return slotsRaw
+        .whereType<Map<String, dynamic>>()
+        .map(_parseSlot)
+        .where((slot) => slot.label.isNotEmpty)
+        .toList(growable: false);
+  }
+
+  static ConsultationAvailabilityDayEntity _dayEntity({
+    required String date,
+    required List<ConsultationTimeSlotEntity> slots,
+  }) {
+    final parsedDate = DateTime.tryParse(date);
+    final weekDay =
+        parsedDate != null ? DateFormat('EEE').format(parsedDate) : '';
+    final dayOfMonth =
+        parsedDate != null ? DateFormat('d').format(parsedDate) : '';
 
     return ConsultationAvailabilityDayEntity(
       date: date,
@@ -61,12 +113,57 @@ class ConsultationDoctorSlotsModel {
     );
   }
 
+  /// Inserts empty days for any date gaps between the first and last timeslot.
+  static List<ConsultationAvailabilityDayEntity> _fillMissingDates(
+    List<ConsultationAvailabilityDayEntity> days,
+  ) {
+    if (days.isEmpty) return days;
+
+    final byDate = <String, ConsultationAvailabilityDayEntity>{};
+    DateTime? minDate;
+    DateTime? maxDate;
+
+    for (final day in days) {
+      final parsed = DateTime.tryParse(day.date);
+      if (parsed == null) continue;
+      final dateOnly = DateTime(parsed.year, parsed.month, parsed.day);
+      final key = _dateKey(dateOnly);
+      byDate[key] = day;
+      if (minDate == null || dateOnly.isBefore(minDate)) minDate = dateOnly;
+      if (maxDate == null || dateOnly.isAfter(maxDate)) maxDate = dateOnly;
+    }
+
+    if (minDate == null || maxDate == null) return days;
+
+    final filled = <ConsultationAvailabilityDayEntity>[];
+    for (var cursor = minDate;
+        !cursor.isAfter(maxDate);
+        cursor = cursor.add(const Duration(days: 1))) {
+      final key = _dateKey(cursor);
+      filled.add(
+        byDate[key] ??
+            _dayEntity(date: key, slots: const <ConsultationTimeSlotEntity>[]),
+      );
+    }
+    return filled;
+  }
+
+  static String _dateKey(DateTime date) =>
+      '${date.year.toString().padLeft(4, '0')}-'
+      '${date.month.toString().padLeft(2, '0')}-'
+      '${date.day.toString().padLeft(2, '0')}';
+
   static ConsultationTimeSlotEntity _parseSlot(Map<String, dynamic> json) {
-    final startTime =
+    final rawStart =
         (json['start_time'] ?? json['startTime'] ?? '').toString().trim();
-    final endTime = (json['end_time'] ?? json['endTime'] ?? '').toString().trim();
-    final label = startTime.isNotEmpty && endTime.isNotEmpty
-        ? '${_formatTime12h(startTime)} - ${_formatTime12h(endTime)}'
+    final rawEnd =
+        (json['end_time'] ?? json['endTime'] ?? '').toString().trim();
+    final startTime = _to24Hour(rawStart);
+    final endTime = _to24Hour(rawEnd);
+    final startDisplay = _toDisplayTime(rawStart);
+    final endDisplay = _toDisplayTime(rawEnd);
+    final label = startDisplay.isNotEmpty && endDisplay.isNotEmpty
+        ? '$startDisplay - $endDisplay'
         : '';
 
     return ConsultationTimeSlotEntity(
@@ -76,10 +173,59 @@ class ConsultationDoctorSlotsModel {
     );
   }
 
-  static String _monthLabelForDate(String date) {
-    final parsed = DateTime.tryParse(date);
-    if (parsed == null) return '';
-    return DateFormat('MMMM yyyy').format(parsed);
+  static String _to24Hour(String time) {
+    final trimmed = time.trim();
+    if (trimmed.isEmpty) return '';
+
+    final upper = trimmed.toUpperCase();
+    if (upper.contains('AM') || upper.contains('PM')) {
+      final parsed = _parse12Hour(trimmed);
+      if (parsed != null) {
+        return DateFormat('HH:mm').format(parsed);
+      }
+      return trimmed;
+    }
+
+    final parts = trimmed.split(':');
+    if (parts.length < 2) return trimmed;
+
+    final hour = int.tryParse(parts[0]) ?? 0;
+    final minute = int.tryParse(parts[1].replaceAll(RegExp(r'\D'), '')) ?? 0;
+    return '${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')}';
+  }
+
+  static String _toDisplayTime(String time) {
+    final trimmed = time.trim();
+    if (trimmed.isEmpty) return '';
+
+    final upper = trimmed.toUpperCase();
+    if (upper.contains('AM') || upper.contains('PM')) {
+      return trimmed;
+    }
+
+    return _formatTime12h(trimmed);
+  }
+
+  static DateTime? _parse12Hour(String time) {
+    for (final pattern in ['h:mm a', 'hh:mm a']) {
+      try {
+        return DateFormat(pattern).parseLoose(time);
+      } catch (_) {}
+    }
+    return null;
+  }
+
+  static String _monthLabelForDays(List<ConsultationAvailabilityDayEntity> days) {
+    final first = DateTime.tryParse(days.first.date);
+    final last = DateTime.tryParse(days.last.date);
+    if (first == null || last == null) return '';
+    if (first.year == last.year && first.month == last.month) {
+      return DateFormat('MMMM yyyy').format(first);
+    }
+    if (first.year == last.year) {
+      return '${DateFormat('MMMM').format(first)} - ${DateFormat('MMMM yyyy').format(last)}';
+    }
+    return '${DateFormat('MMM yyyy').format(first)} - ${DateFormat('MMM yyyy').format(last)}';
   }
 
   static String _formatTime12h(String time24) {
@@ -92,5 +238,15 @@ class ConsultationDoctorSlotsModel {
     hour = hour % 12;
     if (hour == 0) hour = 12;
     return '$hour:$minute $period';
+  }
+
+  static double _readDouble(dynamic value) {
+    if (value is num) return value.toDouble();
+    return double.tryParse(value?.toString() ?? '') ?? 0;
+  }
+
+  static int _readInt(dynamic value) {
+    if (value is num) return value.toInt();
+    return int.tryParse(value?.toString() ?? '') ?? 0;
   }
 }

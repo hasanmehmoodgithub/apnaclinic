@@ -20,10 +20,11 @@ class DoctorConsultationBookingBodyWidget extends StatelessWidget {
     required this.specialty,
     required this.imageUrl,
     required this.qualification,
-    required this.verifiedPatientsCount,
+    this.verifiedPatientsCount,
     required this.experience,
-    required this.satisfiedText,
-    required this.rating,
+    this.satisfiedText,
+    this.rating,
+    this.showPmdcVerified = false,
     required this.description,
     required this.partner,
     required this.partnerLogoUrl,
@@ -34,7 +35,6 @@ class DoctorConsultationBookingBodyWidget extends StatelessWidget {
     required this.issueController,
     required this.onSlotChanged,
     required this.availabilityDays,
-    required this.availabilityMonthLabel,
     required this.isAvailabilityLoading,
     this.availabilityErrorMessage,
   });
@@ -43,10 +43,11 @@ class DoctorConsultationBookingBodyWidget extends StatelessWidget {
   final String specialty;
   final String imageUrl;
   final String qualification;
-  final String verifiedPatientsCount;
+  final String? verifiedPatientsCount;
   final String experience;
-  final String satisfiedText;
-  final double rating;
+  final String? satisfiedText;
+  final double? rating;
+  final bool showPmdcVerified;
   final String description;
   final String partner;
   final String partnerLogoUrl;
@@ -57,7 +58,6 @@ class DoctorConsultationBookingBodyWidget extends StatelessWidget {
   final TextEditingController issueController;
   final ValueChanged<ConsultationSelectedSlotEntity?> onSlotChanged;
   final List<ConsultationAvailabilityDayEntity> availabilityDays;
-  final String availabilityMonthLabel;
   final bool isAvailabilityLoading;
   final String? availabilityErrorMessage;
 
@@ -79,6 +79,7 @@ class DoctorConsultationBookingBodyWidget extends StatelessWidget {
               experience: experience,
               satisfiedText: satisfiedText,
               rating: rating,
+              showPmdcVerified: showPmdcVerified,
               description: description,
               partner: partner,
               partnerLogoUrl: partnerLogoUrl,
@@ -110,7 +111,6 @@ class DoctorConsultationBookingBodyWidget extends StatelessWidget {
             AvailabilitySection(
               textTheme: textTheme,
               days: availabilityDays,
-              monthLabel: availabilityMonthLabel,
               isLoading: isAvailabilityLoading,
               errorMessage: availabilityErrorMessage,
               onSlotChanged: onSlotChanged,

@@ -8,6 +8,7 @@ import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/router/app_routes.dart';
 import '../cubit/doctor_consultation_bookings_cubit.dart';
 import '../cubit/doctor_consultation_bookings_state.dart';
+import '../widgets/bookings_list_shimmer_widget.dart';
 import '../widgets/doctor_consultation_booking_card_widget.dart';
 import '../widgets/empty_booking_widget.dart';
 
@@ -64,7 +65,7 @@ class _DoctorConsultationBookingsBodyState
         DoctorConsultationBookingsState>(
       builder: (context, state) {
         if (state.isLoading) {
-          return const Center(child: CircularProgressIndicator(strokeWidth: 2));
+          return const BookingsListShimmerWidget();
         }
 
         if (state.hasError && state.items.isEmpty) {

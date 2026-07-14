@@ -105,7 +105,7 @@ class ConsultationDoctorModel {
         ? qualifications.join(', ')
         : education;
     final ratingText = ratingScore == null
-        ? '0 / 5'
+        ? ''
         : '${_formatRatingScore(ratingScore!)} / 5';
 
     return ResultsDoctorItem(

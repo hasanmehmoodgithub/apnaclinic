@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:intl/intl.dart';
 
 import '../../domain/use_cases/submit_consultation_booking_use_case.dart';
 
@@ -42,10 +43,20 @@ String _normalizeTime(String value) {
   final trimmed = value.trim();
   if (trimmed.isEmpty) return trimmed;
 
+  final upper = trimmed.toUpperCase();
+  if (upper.contains('AM') || upper.contains('PM')) {
+    for (final pattern in ['h:mm a', 'hh:mm a']) {
+      try {
+        final parsed = DateFormat(pattern).parseLoose(trimmed);
+        return DateFormat('HH:mm').format(parsed);
+      } catch (_) {}
+    }
+  }
+
   final parts = trimmed.split(':');
   if (parts.length < 2) return trimmed;
 
   final hour = int.tryParse(parts[0]) ?? 0;
-  final minute = int.tryParse(parts[1]) ?? 0;
+  final minute = int.tryParse(parts[1].replaceAll(RegExp(r'\D'), '')) ?? 0;
   return '${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')}';
 }
