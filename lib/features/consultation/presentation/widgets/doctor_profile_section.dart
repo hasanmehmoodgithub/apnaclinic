@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../../core/extensions/screen_util_extensions.dart';
+import '../../domain/entities/consultation_doctor_slots_entity.dart';
 import '../constants/consultation_ui_config.dart';
 import 'consultation_partner_logo_widget.dart';
+import 'doctor_patient_reviews_section.dart';
 import 'rating_progress_badge.dart';
 
 class DoctorProfileSection extends StatelessWidget {
@@ -20,6 +22,7 @@ class DoctorProfileSection extends StatelessWidget {
   final String partner;
   final String partnerLogoUrl;
   final TextTheme textTheme;
+  final ConsultationPatientReviewsEntity? patientReviews;
 
   const DoctorProfileSection({
     super.key,
@@ -36,6 +39,7 @@ class DoctorProfileSection extends StatelessWidget {
     required this.partner,
     required this.partnerLogoUrl,
     required this.textTheme,
+    this.patientReviews,
   });
 
   @override
@@ -261,6 +265,13 @@ class DoctorProfileSection extends StatelessWidget {
                 ),
               ],
             ),
+          ),
+        ],
+        if (patientReviews != null && patientReviews!.hasReviews) ...[
+          SizedBox(height: 16.h),
+          DoctorPatientReviewsSection(
+            patientReviews: patientReviews!,
+            textTheme: textTheme,
           ),
         ],
       ],
