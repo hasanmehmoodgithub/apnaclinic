@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../../core/extensions/screen_util_extensions.dart';
+import '../../../../core/widgets/app_rounded_rating_widget.dart';
 import '../../domain/entities/consultation_doctor_slots_entity.dart';
 import '../constants/consultation_ui_config.dart';
 import 'consultation_partner_logo_widget.dart';
 import 'doctor_patient_reviews_section.dart';
-import 'rating_progress_badge.dart';
 
 class DoctorProfileSection extends StatelessWidget {
   final String doctorName;
@@ -174,14 +174,9 @@ class DoctorProfileSection extends StatelessWidget {
                     ),
                   if (showPmdcVerified && showRating) SizedBox(height: 8.h),
                   if (showRating)
-                    SizedBox(
-                      width: 72.w,
-                      height: 30.h,
-                      child: RatingProgressBadge(
-                        rating: rating!,
-                        maxRating: 5,
-                        textTheme: textTheme,
-                      ),
+                    AppRoundedRatingWidget(
+                      rating: rating!,
+                      textTheme: textTheme,
                     ),
                 ],
               ),

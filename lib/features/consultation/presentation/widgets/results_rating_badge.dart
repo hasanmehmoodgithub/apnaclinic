@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/extensions/screen_util_extensions.dart';
+import '../../../../core/widgets/app_rounded_rating_widget.dart';
 
+/// Prefer [AppRoundedRatingWidget]. Kept for call sites that still pass a rating string.
 class ResultsRatingBadge extends StatelessWidget {
   const ResultsRatingBadge({
     super.key,
@@ -14,22 +16,12 @@ class ResultsRatingBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 2.h),
-      decoration: BoxDecoration(
-        color: const Color(0xFFF5FBEF),
-        borderRadius: BorderRadius.circular(3.r),
-        border: Border.all(color: const Color(0xFFDAEFCF), width: 1),
-      ),
-      child: Text(
-        rating,
-        style: textTheme.bodySmall?.copyWith(
-          color: const Color(0xFF87B074),
-          fontSize: 9.sp,
-          fontWeight: FontWeight.w600,
-          height: 1,
-        ),
-      ),
+    final score = double.tryParse(rating.split('/').first.trim()) ?? 0;
+    return AppRoundedRatingWidget(
+      rating: score,
+      textTheme: textTheme,
+      width: 56.w,
+      height: 24.h,
     );
   }
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
+import '../../../../core/widgets/app_rounded_rating_widget.dart';
 import '../../domain/entities/consultation_doctor_slots_entity.dart';
 import '../constants/consultation_ui_config.dart';
 
@@ -19,11 +20,7 @@ class DoctorPatientReviewItemWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ratingText = _formatRating(review.rating);
-    final maxText = _formatRating(review.maxRating);
-    final badgeColor = review.rating >= 4.5
-        ? const Color(0xFF87D47A)
-        : ConsultationUiConfig.ctaColor;
+    final ratingText = AppRoundedRatingWidget.formatScore(review.rating);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -56,21 +53,12 @@ class DoctorPatientReviewItemWidget extends StatelessWidget {
               ),
             ],
             const Spacer(),
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
-              decoration: BoxDecoration(
-                color: badgeColor.withValues(alpha: 0.08),
-                borderRadius: BorderRadius.circular(16.r),
-                border: Border.all(color: badgeColor, width: 1),
-              ),
-              child: Text(
-                '$ratingText / $maxText',
-                style: textTheme.bodySmall?.copyWith(
-                  color: badgeColor,
-                  fontSize: 12.sp,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
+            AppRoundedRatingWidget(
+              rating: review.rating,
+              maxRating: review.maxRating > 0 ? review.maxRating : 5,
+              textTheme: textTheme,
+              width: 64.w,
+              height: 28.h,
             ),
           ],
         ),
@@ -103,10 +91,5 @@ class DoctorPatientReviewItemWidget extends StatelessWidget {
         ],
       ],
     );
-  }
-
-  static String _formatRating(double value) {
-    if (value % 1 == 0) return value.toInt().toString();
-    return value.toStringAsFixed(1);
   }
 }

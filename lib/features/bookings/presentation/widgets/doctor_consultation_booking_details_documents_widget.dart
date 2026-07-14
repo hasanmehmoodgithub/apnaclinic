@@ -5,6 +5,7 @@ import '../../../../core/constants/app_colors.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/utils/app_url_launcher.dart';
+import '../../../../generated/assets.dart';
 import '../../data/mappers/doctor_consultation_booking_mapper.dart';
 
 class DoctorConsultationBookingDetailsDocumentsWidget extends StatelessWidget {
@@ -54,32 +55,43 @@ class DoctorConsultationBookingDetailsDocumentsWidget extends StatelessWidget {
                       vertical: 12.h,
                     ),
                     child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Icon(
-                          Icons.insert_drive_file_outlined,
-                          size: 20.r,
-                          color: AppColors.clr52708E,
+                        Image.asset(
+                          Assets.consultationDocumentDownload,
+                          width: 18.w,
+                          height: 20.h,
+                          fit: BoxFit.contain,
                         ),
-                        SizedBox(width: 10.w),
+                        SizedBox(width: 12.w),
                         Expanded(
-                          child: Text(
-                            DoctorConsultationBookingMapper
-                                .attachmentDisplayName(
-                              attachments[i],
-                              i,
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: textTheme.bodyMedium?.copyWith(
-                              color: AppColors.clr061E40,
-                            ),
-                          ),
-                        ),
-                        Text(
-                          l10n.bookingsDownloadCta,
-                          style: textTheme.bodyMedium?.copyWith(
-                            color: AppColors.clr2F80ED,
-                            fontWeight: FontWeight.w600,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                DoctorConsultationBookingMapper
+                                    .attachmentDisplayName(
+                                  attachments[i],
+                                  i,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: textTheme.bodyMedium?.copyWith(
+                                  color: AppColors.clr061E40,
+                                  fontSize: 14.sp,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                              ),
+                              SizedBox(height: 2.h),
+                              Text(
+                                l10n.bookingsDownloadCta,
+                                style: textTheme.bodyMedium?.copyWith(
+                                  color: AppColors.clr024886,
+                                  fontSize: 13.sp,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ],

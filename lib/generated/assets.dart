@@ -14,6 +14,14 @@ class Assets {
   static const String consultationCatSkin = 'assets/img/consultation/cat_skin.svg';
   static const String consultationCatStomach = 'assets/img/consultation/cat_stomach.svg';
   static const String consultationCatWomen = 'assets/img/consultation/cat_women.svg';
+  static const String consultationDocumentDownload =
+      'assets/img/consultation/document_download.png';
+  static const String consultationEInvoiceDownload =
+      'assets/img/consultation/e_invoice_download.png';
+  static const String consultationStarFilled =
+      'assets/img/consultation/star_filled.png';
+  static const String consultationStarUnfilled =
+      'assets/img/consultation/star_unfilled.png';
   static const String consultationHeroDoctor = 'assets/img/consultation/hero_doctor.png';
   static const String consultationHeroVector = 'assets/img/consultation/hero_vector.svg';
   static const String consultationSummaryDoctorCardVector =
