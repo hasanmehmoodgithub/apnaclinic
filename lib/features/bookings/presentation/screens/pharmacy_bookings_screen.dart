@@ -9,6 +9,7 @@ import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../pharmacy/data/mock/pharmacy_mock_api.dart';
 import '../../../pharmacy/presentation/widgets/pharmacy_booking_details_body_widget.dart';
+import '../widgets/bookings_list_shimmer_widget.dart';
 
 class PharmacyBookingsScreen extends StatefulWidget {
   const PharmacyBookingsScreen({super.key});
@@ -43,7 +44,10 @@ class _PharmacyBookingsScreenState extends State<PharmacyBookingsScreen> {
       future: _bookingsFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
+          return BookingsListShimmerWidget(
+            cardHeight: 118.h,
+            separatorHeight: 12.h,
+          );
         }
 
         if (snapshot.hasError) {

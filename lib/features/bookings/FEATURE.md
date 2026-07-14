@@ -15,7 +15,7 @@ Tabbed bookings hub (doctor consultation, surgery, lab test, pharmacy) with list
 
 ## State
 
-- `DoctorConsultationBookingsCubit` — paginated consultation bookings list (page 1, limit 20; infinite scroll load-more). Empty list shows `EmptyBookingWidget` with “No Booking Available”.
+- `DoctorConsultationBookingsCubit` — paginated consultation bookings list (page 1, limit 20; infinite scroll load-more). Initial load uses `BookingsListShimmerWidget`. Empty list shows `EmptyBookingWidget` with “No Booking Available”.
 - `DoctorConsultationBookingDetailsCubit` — shows preloaded booking from list args; falls back to mock details when no booking payload.
 
 ## UI

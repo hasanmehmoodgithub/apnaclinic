@@ -9,6 +9,7 @@ import '../../../consultation/presentation/widgets/consultation_partner_logo_wid
 import '../../data/mock/surgery_bookings_mock_api.dart';
 import '../../data/models/surgery_booking_list_item_model.dart';
 import '../../data/models/surgery_details_item.dart';
+import '../widgets/bookings_list_shimmer_widget.dart';
 
 class SurgeryBookingsScreen extends StatefulWidget {
   const SurgeryBookingsScreen({super.key});
@@ -34,7 +35,7 @@ class _SurgeryBookingsScreenState extends State<SurgeryBookingsScreen> {
       future: _bookingsFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator(strokeWidth: 2));
+          return const BookingsListShimmerWidget();
         }
 
         final items = snapshot.data ?? const <SurgeryBookingListItemModel>[];

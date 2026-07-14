@@ -44,7 +44,7 @@ class _DoctorConsultationBookDoctorScreenState
   bool _isAvailabilityLoading = true;
   String? _availabilityErrorMessage;
   List<ConsultationAvailabilityDayEntity> _availabilityDays = const [];
-  String _availabilityMonthLabel = '';
+  ConsultationDoctorSlotsDoctorInfoEntity? _slotsDoctorInfo;
 
   @override
   void initState() {
@@ -81,13 +81,13 @@ class _DoctorConsultationBookDoctorScreenState
         _isAvailabilityLoading = false;
         _availabilityErrorMessage = error;
         _availabilityDays = const [];
-        _availabilityMonthLabel = '';
+        _slotsDoctorInfo = null;
       }),
       (schedule) => setState(() {
         _isAvailabilityLoading = false;
         _availabilityErrorMessage = null;
         _availabilityDays = schedule.days;
-        _availabilityMonthLabel = schedule.monthLabel;
+        _slotsDoctorInfo = schedule.doctorInfo;
       }),
     );
   }
@@ -103,20 +103,17 @@ class _DoctorConsultationBookDoctorScreenState
     final l10n = AppLocalizations.of(context)!;
     final textTheme = Theme.of(context).textTheme;
     final doctor = widget.doctor;
-    final qualification =
-        doctor.qualification.isNotEmpty ? doctor.qualification : 'MBBS';
-    final verifiedPatientsCount = doctor.verifiedPatientsCount != '0'
-        ? doctor.verifiedPatientsCount
-        : '35';
-    final experience =
-        doctor.experience.isNotEmpty ? doctor.experience : '2 Years';
-    final satisfiedText =
-        doctor.satisfiedText != '0' ? doctor.satisfiedText : '4% (35)';
+    final qualification = doctor.qualification.trim();
+    final experience = doctor.experience.trim();
+    final description = doctor.description.trim();
+    final slotsInfo = _slotsDoctorInfo;
+    final verifiedPatientsCount = slotsInfo?.verifiedPatientsCount.toString();
+    final satisfiedText = slotsInfo == null
+        ? null
+        : '${_formatPercentage(slotsInfo.patientsSatisfiedPercentage)}% (${slotsInfo.verifiedPatientsCount})';
     final ratingValue =
-        double.tryParse(doctor.rating.split('/').first.trim()) ?? 4.5;
-    final description = doctor.description.isNotEmpty
-        ? doctor.description
-        : 'Doctor details are currently unavailable.';
+        slotsInfo?.ratings ?? _parseDoctorRating(doctor.rating);
+    final showPmdcVerified = slotsInfo?.pmdcVerified == true;
 
     return Scaffold(
       body: DecoratedBox(
@@ -161,6 +158,7 @@ class _DoctorConsultationBookDoctorScreenState
                         experience: experience,
                         satisfiedText: satisfiedText,
                         rating: ratingValue,
+                        showPmdcVerified: showPmdcVerified,
                         description: description,
                         partner: doctor.partner,
                         partnerLogoUrl: doctor.partnerLogoUrl,
@@ -178,7 +176,6 @@ class _DoctorConsultationBookDoctorScreenState
                           });
                         },
                         availabilityDays: _availabilityDays,
-                        availabilityMonthLabel: _availabilityMonthLabel,
                         isAvailabilityLoading: _isAvailabilityLoading,
                         availabilityErrorMessage: _availabilityErrorMessage,
                       ),
@@ -429,5 +426,16 @@ class _DoctorConsultationBookDoctorScreenState
       height: height,
       fit: BoxFit.cover,
     );
+  }
+
+  String _formatPercentage(double value) {
+    if (value % 1 == 0) return value.toInt().toString();
+    return value.toStringAsFixed(1);
+  }
+
+  double? _parseDoctorRating(String rating) {
+    final part = rating.split('/').first.trim();
+    if (part.isEmpty) return null;
+    return double.tryParse(part);
   }
 }

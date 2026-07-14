@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 import '../../../../components/shimmer/app_shimmer.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
@@ -13,7 +14,6 @@ class AvailabilitySection extends StatefulWidget {
     super.key,
     required this.textTheme,
     required this.days,
-    required this.monthLabel,
     required this.isLoading,
     this.errorMessage,
     this.onSlotChanged,
@@ -21,7 +21,6 @@ class AvailabilitySection extends StatefulWidget {
 
   final TextTheme textTheme;
   final List<ConsultationAvailabilityDayEntity> days;
-  final String monthLabel;
   final bool isLoading;
   final String? errorMessage;
   final ValueChanged<ConsultationSelectedSlotEntity?>? onSlotChanged;
@@ -35,26 +34,58 @@ class _AvailabilitySectionState extends State<AvailabilitySection> {
   int? _selectedTimeSlotIndex;
 
   @override
+  void initState() {
+    super.initState();
+    _selectFirstAvailableDate(widget.days, notifySlotChanged: false);
+  }
+
+  @override
   void didUpdateWidget(covariant AvailabilitySection oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.days != widget.days) {
-      _selectedDateIndex = null;
-      _selectedTimeSlotIndex = null;
-      final callback = widget.onSlotChanged;
-      if (callback != null) {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          if (!mounted) return;
-          callback(null);
-        });
-      }
+      _selectFirstAvailableDate(widget.days);
     }
+  }
+
+  void _selectFirstAvailableDate(
+    List<ConsultationAvailabilityDayEntity> days, {
+    bool notifySlotChanged = true,
+  }) {
+    final firstAvailableIndex =
+        days.indexWhere((day) => day.slots.isNotEmpty);
+    setState(() {
+      _selectedDateIndex =
+          firstAvailableIndex >= 0 ? firstAvailableIndex : null;
+      _selectedTimeSlotIndex = null;
+    });
+
+    if (!notifySlotChanged) return;
+
+    final callback = widget.onSlotChanged;
+    if (callback == null) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      callback(null);
+    });
+  }
+
+  bool get _hasAnyAvailableSlots =>
+      widget.days.any((day) => day.slots.isNotEmpty);
+
+  String? get _selectedMonthLabel {
+    if (_selectedDateIndex == null) return null;
+    final selectedDay = widget.days[_selectedDateIndex!];
+    final parsed = DateTime.tryParse(selectedDay.date);
+    if (parsed == null) return null;
+    return DateFormat('MMMM yyyy').format(parsed);
   }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final selectedDay =
-        _selectedDateIndex == null ? null : widget.days[_selectedDateIndex!];
+    final selectedDay = _selectedDateIndex == null
+        ? null
+        : widget.days[_selectedDateIndex!];
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -76,7 +107,7 @@ class _AvailabilitySectionState extends State<AvailabilitySection> {
                 height: 28.h,
                 borderRadius: 20.r,
               )
-            else if (widget.monthLabel.isNotEmpty)
+            else if (_selectedMonthLabel != null)
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 11.w, vertical: 6.h),
                 decoration: BoxDecoration(
@@ -84,7 +115,7 @@ class _AvailabilitySectionState extends State<AvailabilitySection> {
                   border: Border.all(color: const Color(0xFFE1E5EA), width: 1),
                 ),
                 child: Text(
-                  widget.monthLabel,
+                  _selectedMonthLabel!,
                   style: widget.textTheme.bodySmall?.copyWith(
                     color: const Color(0xFF5F6C7C),
                     fontSize: 11.sp,
@@ -115,53 +146,34 @@ class _AvailabilitySectionState extends State<AvailabilitySection> {
               separatorBuilder: (_, _) => SizedBox(width: 8.w),
               itemBuilder: (context, index) {
                 final item = widget.days[index];
+                final hasSlots = item.slots.isNotEmpty;
                 final selected = _selectedDateIndex == index;
-                return InkWell(
-                  borderRadius: BorderRadius.circular(10.r),
-                  onTap: () => setState(() {
-                    _selectedDateIndex = index;
-                    _selectedTimeSlotIndex = null;
-                    widget.onSlotChanged?.call(null);
-                  }),
-                  child: Container(
-                    width: 56.w,
-                    decoration: BoxDecoration(
-                      color: selected
-                          ? ConsultationUiConfig.ctaColor
-                          : const Color(0xFFF1F3F6),
-                      borderRadius: BorderRadius.circular(10.r),
-                    ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          item.weekDay,
-                          style: widget.textTheme.bodySmall?.copyWith(
-                            color: selected
-                                ? Colors.white.withValues(alpha: 0.9)
-                                : const Color(0xFF778395),
-                            fontSize: 12.sp,
-                          ),
-                        ),
-                        SizedBox(height: 2.h),
-                        Text(
-                          item.dayOfMonth,
-                          style: widget.textTheme.titleMedium?.copyWith(
-                            color: selected
-                                ? Colors.white
-                                : const Color(0xFF545F70),
-                            fontSize: 22.sp,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                return _DateChip(
+                  textTheme: widget.textTheme,
+                  weekDay: item.weekDay,
+                  dayOfMonth: item.dayOfMonth,
+                  isSelected: selected,
+                  isEnabled: hasSlots,
+                  onTap: hasSlots
+                      ? () => setState(() {
+                            _selectedDateIndex = index;
+                            _selectedTimeSlotIndex = null;
+                            widget.onSlotChanged?.call(null);
+                          })
+                      : null,
                 );
               },
             ),
           ),
-          if (selectedDay != null) ...[
+          if (!_hasAnyAvailableSlots)
+            Padding(
+              padding: EdgeInsets.only(top: 10.h),
+              child: _AvailabilityMessage(
+                textTheme: widget.textTheme,
+                message: l10n.consultationNoAvailability,
+              ),
+            )
+          else if (selectedDay != null) ...[
             SizedBox(height: 10.h),
             if (selectedDay.slots.isEmpty)
               _AvailabilityMessage(
@@ -199,6 +211,82 @@ class _AvailabilitySectionState extends State<AvailabilitySection> {
           ],
         ],
       ],
+    );
+  }
+}
+
+class _DateChip extends StatelessWidget {
+  const _DateChip({
+    required this.textTheme,
+    required this.weekDay,
+    required this.dayOfMonth,
+    required this.isSelected,
+    required this.isEnabled,
+    this.onTap,
+  });
+
+  final TextTheme textTheme;
+  final String weekDay;
+  final String dayOfMonth;
+  final bool isSelected;
+  final bool isEnabled;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final backgroundColor = !isEnabled
+        ? const Color(0xFFF7F8FA)
+        : isSelected
+            ? ConsultationUiConfig.ctaColor
+            : const Color(0xFFF1F3F6);
+    final weekDayColor = !isEnabled
+        ? const Color(0xFFB8C0CB)
+        : isSelected
+            ? Colors.white.withValues(alpha: 0.9)
+            : const Color(0xFF778395);
+    final dayColor = !isEnabled
+        ? const Color(0xFFB8C0CB)
+        : isSelected
+            ? Colors.white
+            : const Color(0xFF545F70);
+
+    return InkWell(
+      borderRadius: BorderRadius.circular(10.r),
+      onTap: onTap,
+      child: Opacity(
+        opacity: isEnabled ? 1 : 0.55,
+        child: Container(
+          width: 56.w,
+          decoration: BoxDecoration(
+            color: backgroundColor,
+            borderRadius: BorderRadius.circular(10.r),
+            border: !isEnabled
+                ? Border.all(color: const Color(0xFFE8EBF0), width: 1)
+                : null,
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                weekDay,
+                style: textTheme.bodySmall?.copyWith(
+                  color: weekDayColor,
+                  fontSize: 12.sp,
+                ),
+              ),
+              SizedBox(height: 2.h),
+              Text(
+                dayOfMonth,
+                style: textTheme.titleMedium?.copyWith(
+                  color: dayColor,
+                  fontSize: 22.sp,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

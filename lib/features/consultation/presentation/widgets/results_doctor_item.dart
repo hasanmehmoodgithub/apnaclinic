@@ -54,7 +54,7 @@ class ResultsDoctorItem {
       fee: map['fee'] as String? ?? '',
       oldFee: map['oldFee'] as String? ?? '',
       partner: map['partner'] as String? ?? '',
-      rating: map['rating'] as String? ?? '0 / 5',
+      rating: map['rating'] as String? ?? '',
       imageUrl: map['imageUrl'] as String? ?? '',
       verifiedPatientsCount: map['verifiedPatientsCount'] as String? ?? '0',
       satisfiedText: map['satisfiedText'] as String? ?? '0',

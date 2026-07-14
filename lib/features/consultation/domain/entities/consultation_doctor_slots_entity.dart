@@ -24,14 +24,30 @@ class ConsultationAvailabilityDayEntity {
   final List<ConsultationTimeSlotEntity> slots;
 }
 
+class ConsultationDoctorSlotsDoctorInfoEntity {
+  const ConsultationDoctorSlotsDoctorInfoEntity({
+    required this.ratings,
+    required this.pmdcVerified,
+    required this.verifiedPatientsCount,
+    required this.patientsSatisfiedPercentage,
+  });
+
+  final double ratings;
+  final bool pmdcVerified;
+  final int verifiedPatientsCount;
+  final double patientsSatisfiedPercentage;
+}
+
 class ConsultationDoctorSlotsEntity {
   const ConsultationDoctorSlotsEntity({
     required this.monthLabel,
     required this.days,
+    this.doctorInfo,
   });
 
   final String monthLabel;
   final List<ConsultationAvailabilityDayEntity> days;
+  final ConsultationDoctorSlotsDoctorInfoEntity? doctorInfo;
 
   static const empty = ConsultationDoctorSlotsEntity(
     monthLabel: '',
