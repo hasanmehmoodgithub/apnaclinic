@@ -41,45 +41,45 @@ class OurServiceCardWidget extends StatelessWidget {
             DashboardUiConfig.serviceCardBorderRadius.r,
           ),
         ),
-        child: Stack(
-          clipBehavior: Clip.none,
+        padding: EdgeInsets.fromLTRB(
+          DashboardUiConfig.serviceCardTitleHorizontalPadding.w,
+          DashboardUiConfig.serviceCardTopPadding.h,
+          DashboardUiConfig.serviceCardTitleHorizontalPadding.w,
+          DashboardUiConfig.serviceCardBottomPadding.h,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Padding(
-              padding: EdgeInsets.symmetric(vertical: 18,horizontal: 8),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
+            if (showDiscount)
+              Row(
                 children: [
-                  Center(
-                    child: ServiceCardImage(
-                      imageUrl: imageAsset,
-                    ),
-                  ),
-                  SizedBox(
-                    height: DashboardUiConfig.serviceCardIconTitleGap.h,
-                  ),
-                  Text(
-                    title,
-                    textAlign: TextAlign.center,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: theme.textTheme.titleSmall?.copyWith(
-                      fontWeight: FontWeight.w700,
-                      color: AppColors.clr09,
-                      fontSize: 12.sp,
-                      height: 1.2,
-                    ),
+                  const Spacer(),
+                  Flexible(
+                    child: ServiceDiscountBadge(label: discountLabel),
                   ),
                 ],
               ),
-            ),
             if (showDiscount)
-              Positioned(
-                top: DashboardUiConfig.serviceDiscountBadgeTop.h,
-                right: DashboardUiConfig.serviceDiscountBadgeRight.w,
-                child: ServiceDiscountBadge(label: discountLabel),
+              SizedBox(height: DashboardUiConfig.serviceCardIconTitleGap.h),
+            Center(
+              child: ServiceCardImage(
+                imageUrl: imageAsset,
               ),
+            ),
+            SizedBox(height: DashboardUiConfig.serviceCardIconTitleGap.h),
+            Text(
+              title,
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: theme.textTheme.titleSmall?.copyWith(
+                fontWeight: FontWeight.w700,
+                color: AppColors.clr09,
+                fontSize: 12.sp,
+                height: 1.2,
+              ),
+            ),
           ],
         ),
       ),
