@@ -112,13 +112,14 @@ class DoctorConsultationCheckoutCubit extends Cubit<DoctorConsultationCheckoutSt
         consultationFee:
             ConsultationBookingUtils.resolveConsultationFee(args.doctor),
         patientId: patientId,
-        patientRelation: 'Self',
+        patientRelation: 'self',
         slotDate: args.selectedSlot.date,
         slotStartTime: args.selectedSlot.startTime,
         slotEndTime: args.selectedSlot.endTime,
         paymentMethod:
             ConsultationBookingUtils.paymentMethodApiValue(paymentMethodCode),
         msisdn: normalizedMsisdn,
+        issue: args.issueDescription.trim(),
         attachments: args.attachments,
       ),
     );

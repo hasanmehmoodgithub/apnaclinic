@@ -81,8 +81,14 @@ class DoctorConsultationSummaryScreen extends StatelessWidget {
       return firstPart;
     }
 
-    final parts = slot.startTime.split(':');
-    if (parts.length < 2) return slot.startTime;
+    final startTime = slot.startTime.trim();
+    if (startTime.toUpperCase().contains('AM') ||
+        startTime.toUpperCase().contains('PM')) {
+      return startTime;
+    }
+
+    final parts = startTime.split(':');
+    if (parts.length < 2) return startTime;
     final hour = int.tryParse(parts[0]) ?? 0;
     final minute = parts[1].padLeft(2, '0');
     final period = hour >= 12 ? 'PM' : 'AM';

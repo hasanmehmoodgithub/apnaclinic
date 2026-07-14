@@ -82,16 +82,29 @@ class AuthInterceptor extends Interceptor {
     try {
       final accessToken = _appPref.getToken();
       final retryData = _retryData(options.data);
+      final retryHeaders = <String, dynamic>{
+        ..._retryHeaders(options.headers),
+        if (accessToken.isNotEmpty) 'Authorization': 'Bearer $accessToken',
+      };
+
+      // FormData.clone() generates a new boundary — keep header/contentType in sync.
+      String? retryContentType = options.contentType;
+      if (retryData is FormData) {
+        retryContentType =
+            'multipart/form-data; boundary=${retryData.boundary}';
+        retryHeaders.removeWhere(
+          (key, _) => key.toLowerCase() == 'content-type',
+        );
+        retryHeaders[Headers.contentTypeHeader] = retryContentType;
+      }
+
       final retryOptions = Options(
         method: options.method,
-        headers: <String, dynamic>{
-          ..._retryHeaders(options.headers),
-          if (accessToken.isNotEmpty) 'Authorization': 'Bearer $accessToken',
-        },
+        headers: retryHeaders,
         sendTimeout: options.sendTimeout,
         receiveTimeout: options.receiveTimeout,
         extra: <String, dynamic>{...options.extra, _retryKey: true},
-        contentType: options.contentType,
+        contentType: retryContentType,
         responseType: options.responseType,
       );
 

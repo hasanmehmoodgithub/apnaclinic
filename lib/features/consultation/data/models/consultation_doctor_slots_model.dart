@@ -261,12 +261,11 @@ class ConsultationDoctorSlotsModel {
         (json['start_time'] ?? json['startTime'] ?? '').toString().trim();
     final rawEnd =
         (json['end_time'] ?? json['endTime'] ?? '').toString().trim();
-    final startTime = _to24Hour(rawStart);
-    final endTime = _to24Hour(rawEnd);
-    final startDisplay = _toDisplayTime(rawStart);
-    final endDisplay = _toDisplayTime(rawEnd);
-    final label = startDisplay.isNotEmpty && endDisplay.isNotEmpty
-        ? '$startDisplay - $endDisplay'
+    // Keep AM/PM to match slots API and booking POST contract.
+    final startTime = _to12Hour(rawStart);
+    final endTime = _to12Hour(rawEnd);
+    final label = startTime.isNotEmpty && endTime.isNotEmpty
+        ? '$startTime - $endTime'
         : '';
 
     return ConsultationTimeSlotEntity(
@@ -276,7 +275,8 @@ class ConsultationDoctorSlotsModel {
     );
   }
 
-  static String _to24Hour(String time) {
+  /// Normalizes to API-style 12h time, e.g. `03:50 PM`.
+  static String _to12Hour(String time) {
     final trimmed = time.trim();
     if (trimmed.isEmpty) return '';
 
@@ -284,7 +284,7 @@ class ConsultationDoctorSlotsModel {
     if (upper.contains('AM') || upper.contains('PM')) {
       final parsed = _parse12Hour(trimmed);
       if (parsed != null) {
-        return DateFormat('HH:mm').format(parsed);
+        return DateFormat('hh:mm a').format(parsed);
       }
       return trimmed;
     }
@@ -292,21 +292,12 @@ class ConsultationDoctorSlotsModel {
     final parts = trimmed.split(':');
     if (parts.length < 2) return trimmed;
 
-    final hour = int.tryParse(parts[0]) ?? 0;
-    final minute = int.tryParse(parts[1].replaceAll(RegExp(r'\D'), '')) ?? 0;
-    return '${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')}';
-  }
+    final hour = int.tryParse(parts[0]);
+    final minute = int.tryParse(parts[1].replaceAll(RegExp(r'\D'), ''));
+    if (hour == null || minute == null) return trimmed;
 
-  static String _toDisplayTime(String time) {
-    final trimmed = time.trim();
-    if (trimmed.isEmpty) return '';
-
-    final upper = trimmed.toUpperCase();
-    if (upper.contains('AM') || upper.contains('PM')) {
-      return trimmed;
-    }
-
-    return _formatTime12h(trimmed);
+    final parsed = DateTime(2026, 1, 1, hour, minute);
+    return DateFormat('hh:mm a').format(parsed);
   }
 
   static DateTime? _parse12Hour(String time) {
@@ -329,18 +320,6 @@ class ConsultationDoctorSlotsModel {
       return '${DateFormat('MMMM').format(first)} - ${DateFormat('MMMM yyyy').format(last)}';
     }
     return '${DateFormat('MMM yyyy').format(first)} - ${DateFormat('MMM yyyy').format(last)}';
-  }
-
-  static String _formatTime12h(String time24) {
-    final parts = time24.split(':');
-    if (parts.length < 2) return time24;
-
-    var hour = int.tryParse(parts[0]) ?? 0;
-    final minute = parts[1].padLeft(2, '0');
-    final period = hour >= 12 ? 'PM' : 'AM';
-    hour = hour % 12;
-    if (hour == 0) hour = 12;
-    return '$hour:$minute $period';
   }
 
   static double _readDouble(dynamic value) {
