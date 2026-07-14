@@ -73,7 +73,110 @@ class ConsultationDoctorSlotsModel {
           _readInt(doctorInfo['verifiedPatientsCount']),
       patientsSatisfiedPercentage:
           _readDouble(doctorInfo['patientsSatisfiedPercentage']),
+      patientReviews: _parsePatientReviews(doctorInfo['patientReviews']),
     );
+  }
+
+  static ConsultationPatientReviewsEntity _parsePatientReviews(dynamic raw) {
+    if (raw is! Map<String, dynamic>) {
+      return ConsultationPatientReviewsEntity.empty;
+    }
+
+    final reviewsRaw = raw['reviews'];
+    final reviews = reviewsRaw is List
+        ? reviewsRaw
+            .whereType<Map<String, dynamic>>()
+            .map(_parsePatientReview)
+            .where((review) =>
+                review.comment.isNotEmpty || review.patientName.isNotEmpty)
+            .toList(growable: false)
+        : const <ConsultationPatientReviewEntity>[];
+
+    return ConsultationPatientReviewsEntity(
+      totalCount: _readInt(raw['totalCount'] ?? raw['total_count']),
+      filteredCount: _readInt(raw['filteredCount'] ?? raw['filtered_count']),
+      reviews: reviews,
+    );
+  }
+
+  static ConsultationPatientReviewEntity _parsePatientReview(
+    Map<String, dynamic> json,
+  ) {
+    final rating = _readDouble(
+      json['rating'] ??
+          json['ratings'] ??
+          json['score'] ??
+          json['starRating'] ??
+          json['star_rating'],
+    );
+    final parsedMax = _readDouble(
+      json['maxRating'] ?? json['max_rating'] ?? json['outOf'],
+    );
+    final maxRating = parsedMax > 0 ? parsedMax : 5.0;
+    final comment = _readString(json, const [
+      'comment',
+      'review',
+      'feedback',
+      'title',
+      'text',
+      'content',
+      'reviewText',
+      'review_text',
+      'message',
+    ]);
+    final patientName = _readString(json, const [
+      'patientName',
+      'patient_name',
+      'name',
+      'reviewerName',
+      'reviewer_name',
+      'displayName',
+      'display_name',
+      'maskedName',
+      'masked_name',
+    ]);
+    final dateLabel = _formatReviewDate(_readString(json, const [
+      'date',
+      'reviewDate',
+      'review_date',
+      'createdAt',
+      'created_at',
+      'reviewedAt',
+      'reviewed_at',
+      'updatedAt',
+      'updated_at',
+    ]));
+
+    return ConsultationPatientReviewEntity(
+      rating: rating,
+      maxRating: maxRating,
+      dateLabel: dateLabel,
+      comment: comment,
+      patientName: patientName,
+    );
+  }
+
+  static String _readString(Map<String, dynamic> json, List<String> keys) {
+    for (final key in keys) {
+      final value = json[key];
+      if (value == null) continue;
+      final text = value.toString().trim();
+      if (text.isNotEmpty) return text;
+    }
+    return '';
+  }
+
+  static String _formatReviewDate(String raw) {
+    final trimmed = raw.trim();
+    if (trimmed.isEmpty) return '';
+
+    final parsed = DateTime.tryParse(trimmed);
+    if (parsed != null) {
+      return DateFormat('dd/MM/yyyy').format(parsed);
+    }
+
+    // Already display-formatted (e.g. 08/12/2025).
+    return trimmed;
   }
 
   static ConsultationAvailabilityDayEntity _parseDay(

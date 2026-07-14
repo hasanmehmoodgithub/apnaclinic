@@ -163,6 +163,7 @@ class _DoctorConsultationBookDoctorScreenState
                         partner: doctor.partner,
                         partnerLogoUrl: doctor.partnerLogoUrl,
                         textTheme: textTheme,
+                        patientReviews: slotsInfo?.patientReviews,
                         attachments: _attachments,
                         onBrowseTap: _openUploadDocumentSheet,
                         onRemoveAttachment: _removeAttachment,

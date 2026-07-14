@@ -1208,6 +1208,18 @@ class AppLocalizationsEn extends AppLocalizations {
       'Time Slots are not available right now. Please try again later!';
 
   @override
+  String get consultationPatientsReviewsTitle => 'Patient\'s Reviews';
+
+  @override
+  String get consultationSeeMoreReviews => 'See More Reviews';
+
+  @override
+  String get consultationShowLessReviews => 'Show Less';
+
+  @override
+  String get consultationFeedbackTitle => 'Feedback';
+
+  @override
   String get consultationAvailabilityRetry => 'Retry';
 
   @override

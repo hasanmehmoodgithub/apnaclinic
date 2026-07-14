@@ -26,7 +26,8 @@ Doctor consultation category browse, doctor results, booking, and checkout.
 - **GET** `AppUrls.doctorConsultationBookings(page, limit)` — `/api/v1/mobile/doctor-consultation?page=&limit=` (subscriber's booked consultations).
   - Response `data`: `{ data: [], page, limit, total }`; items map to `ConsultationBookingListItemEntity` (flexible doctor/slot/fee fields).
 - **GET** `AppUrls.doctorConsultationSlots(doctorId, hospitalId?)` — `/api/v1/mobile/doctor-consultation/doctor/{doctorId}` (optional `?hospitalId=` when doctors list provides it).
-  - Response `data.doctorInfo`: `ratings`, `pmdcVerified`, `verifiedPatientsCount`, `patientsSatisfiedPercentage`, `timeslots[]` (`date`, `slots[]` with `startTime`/`endTime` in 12h e.g. `12:40 PM`), `patientReviews`.
+  - Response `data.doctorInfo`: `ratings`, `pmdcVerified`, `verifiedPatientsCount`, `patientsSatisfiedPercentage`, `timeslots[]` (`date`, `slots[]` with `startTime`/`endTime` in 12h e.g. `12:40 PM`), `patientReviews` (`totalCount`, `filteredCount`, `reviews[]` with `rating`/`date`/`comment`/`patientName` — flexible keys).
+  - Book-doctor screen shows Patient's Reviews under Description (first review + See More → Feedback bottom sheet).
   - Parser normalizes slot times to 24h (`HH:mm`) for booking submit; legacy `data[]` with `start_time`/`end_time` still supported.
   - Missing dates between the first and last `timeslots` entry are filled as empty days (disabled in UI). First date with slots is auto-selected on load; month label reflects the selected date.
   - Uses `ResultsDoctorItem.partnerDoctorId` when present, else numeric `apiDoctorId` (`id` from doctors list).

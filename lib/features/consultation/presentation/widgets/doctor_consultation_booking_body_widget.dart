@@ -37,6 +37,7 @@ class DoctorConsultationBookingBodyWidget extends StatelessWidget {
     required this.availabilityDays,
     required this.isAvailabilityLoading,
     this.availabilityErrorMessage,
+    this.patientReviews,
   });
 
   final String doctorName;
@@ -60,6 +61,7 @@ class DoctorConsultationBookingBodyWidget extends StatelessWidget {
   final List<ConsultationAvailabilityDayEntity> availabilityDays;
   final bool isAvailabilityLoading;
   final String? availabilityErrorMessage;
+  final ConsultationPatientReviewsEntity? patientReviews;
 
   @override
   Widget build(BuildContext context) {
@@ -84,6 +86,7 @@ class DoctorConsultationBookingBodyWidget extends StatelessWidget {
               partner: partner,
               partnerLogoUrl: partnerLogoUrl,
               textTheme: textTheme,
+              patientReviews: patientReviews,
             ),
             SizedBox(height: 16.h),
             const Divider(color: Color(0xFFE4E8ED), thickness: 1),

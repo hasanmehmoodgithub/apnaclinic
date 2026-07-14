@@ -2339,6 +2339,30 @@ abstract class AppLocalizations {
   /// **'Time Slots are not available right now. Please try again later!'**
   String get consultationNoAvailability;
 
+  /// No description provided for @consultationPatientsReviewsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Patient\'s Reviews'**
+  String get consultationPatientsReviewsTitle;
+
+  /// No description provided for @consultationSeeMoreReviews.
+  ///
+  /// In en, this message translates to:
+  /// **'See More Reviews'**
+  String get consultationSeeMoreReviews;
+
+  /// No description provided for @consultationShowLessReviews.
+  ///
+  /// In en, this message translates to:
+  /// **'Show Less'**
+  String get consultationShowLessReviews;
+
+  /// No description provided for @consultationFeedbackTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Feedback'**
+  String get consultationFeedbackTitle;
+
   /// No description provided for @consultationAvailabilityRetry.
   ///
   /// In en, this message translates to:

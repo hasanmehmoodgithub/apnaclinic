@@ -1207,6 +1207,18 @@ class AppLocalizationsUr extends AppLocalizations {
       'ٹائم سلاٹس فی الحال دستیاب نہیں ہیں۔ براہ کرم بعد میں دوبارہ کوشش کریں!';
 
   @override
+  String get consultationPatientsReviewsTitle => 'مریض کے جائزے';
+
+  @override
+  String get consultationSeeMoreReviews => 'مزید جائزے دیکھیں';
+
+  @override
+  String get consultationShowLessReviews => 'کم دکھائیں';
+
+  @override
+  String get consultationFeedbackTitle => 'فیڈبیک';
+
+  @override
   String get consultationAvailabilityRetry => 'دوبارہ کوشش کریں';
 
   @override

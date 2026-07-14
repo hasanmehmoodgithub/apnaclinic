@@ -16,13 +16,32 @@ class ConsultationDoctorSlotsMockApi {
         'doctorInfo': {
           'ratings': 5,
           'pmdcVerified': true,
-          'verifiedPatientsCount': 0,
+          'verifiedPatientsCount': 76,
           'patientsSatisfiedPercentage': 100,
           'timeslots': _mockTimeslots(),
           'patientReviews': {
-            'totalCount': 0,
-            'filteredCount': 0,
-            'reviews': [],
+            'totalCount': 76,
+            'filteredCount': 3,
+            'reviews': [
+              {
+                'rating': 5,
+                'date': '2025-12-08',
+                'comment': 'Recommended & Satisfied',
+                'patientName': 'A** ***d',
+              },
+              {
+                'rating': 5,
+                'date': '2025-12-08',
+                'comment': 'Recommended & Satisfied',
+                'patientName': 'A** ***d',
+              },
+              {
+                'rating': 4,
+                'date': '2025-11-21',
+                'comment': 'Good consultation experience',
+                'patientName': 'S*** *a',
+              },
+            ],
           },
         },
       },
