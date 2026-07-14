@@ -2141,6 +2141,12 @@ abstract class AppLocalizations {
   /// **'Filter'**
   String get consultationResultsFilter;
 
+  /// No description provided for @consultationClearFilter.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear'**
+  String get consultationClearFilter;
+
   /// No description provided for @consultationSelectPartnerTitle.
   ///
   /// In en, this message translates to:

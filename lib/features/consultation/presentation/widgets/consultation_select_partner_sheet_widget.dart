@@ -11,9 +11,14 @@ class ConsultationSelectPartnerSheetWidget extends StatefulWidget {
   const ConsultationSelectPartnerSheetWidget({
     super.key,
     this.selectedPartnerId,
+    this.partners = const [],
   });
 
+  /// Pop this from the sheet to clear the active partner filter.
+  static const Object clearSelection = _ClearPartnerFilterSelection();
+
   final String? selectedPartnerId;
+  final List<ConsultationPartnerFilterOption> partners;
 
   @override
   State<ConsultationSelectPartnerSheetWidget> createState() =>
@@ -31,12 +36,15 @@ class _ConsultationSelectPartnerSheetWidgetState
     super.dispose();
   }
 
+  List<ConsultationPartnerFilterOption> get _sourcePartners {
+    if (widget.partners.isNotEmpty) return widget.partners;
+    return ConsultationPartnerFilterDefaults.partners;
+  }
+
   List<ConsultationPartnerFilterOption> get _filteredPartners {
     final query = _query.trim().toLowerCase();
-    if (query.isEmpty) {
-      return ConsultationPartnerFilterDefaults.partners;
-    }
-    return ConsultationPartnerFilterDefaults.partners
+    if (query.isEmpty) return _sourcePartners;
+    return _sourcePartners
         .where((partner) => partner.name.toLowerCase().contains(query))
         .toList(growable: false);
   }
@@ -73,13 +81,33 @@ class _ConsultationSelectPartnerSheetWidgetState
               ),
             ),
             SizedBox(height: 16.h),
-            Text(
-              l10n.consultationSelectPartnerTitle,
-              style: textTheme.titleMedium?.copyWith(
-                color: const Color(0xFF061E40),
-                fontWeight: FontWeight.w700,
-                fontSize: 18.sp,
-              ),
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    l10n.consultationSelectPartnerTitle,
+                    style: textTheme.titleMedium?.copyWith(
+                      color: const Color(0xFF061E40),
+                      fontWeight: FontWeight.w700,
+                      fontSize: 18.sp,
+                    ),
+                  ),
+                ),
+                if (widget.selectedPartnerId != null)
+                  GestureDetector(
+                    onTap: () => Navigator.of(context).pop(
+                      ConsultationSelectPartnerSheetWidget.clearSelection,
+                    ),
+                    child: Text(
+                      l10n.consultationClearFilter,
+                      style: textTheme.bodyMedium?.copyWith(
+                        color: ConsultationUiConfig.ctaColor,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 14.sp,
+                      ),
+                    ),
+                  ),
+              ],
             ),
             SizedBox(height: 12.h),
             SizedBox(
@@ -166,6 +194,10 @@ class _ConsultationSelectPartnerSheetWidgetState
   }
 }
 
+class _ClearPartnerFilterSelection {
+  const _ClearPartnerFilterSelection();
+}
+
 class _PartnerFilterTile extends StatelessWidget {
   const _PartnerFilterTile({
     required this.partner,
@@ -220,7 +252,7 @@ class _PartnerFilterTile extends StatelessWidget {
                 ),
                 padding: EdgeInsets.all(6.r),
                 child: ConsultationPartnerLogoWidget(
-                  logoUrl: partner.logoAsset,
+                  logoUrl: partner.resolvedLogo,
                   width: 28.r,
                   height: 28.r,
                   compact: true,

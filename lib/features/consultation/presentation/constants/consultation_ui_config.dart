@@ -23,6 +23,8 @@ class ConsultationUiConfig {
   static const String infoCircleAsset = 'assets/img/consultation/info_icon.svg';
   static const String searchIconAsset =
       'assets/img/consultation/search_icon.svg';
+  static const String filterIconAsset =
+      'assets/img/consultation/filter_icon.png';
 
   static const Color pageTopGradient = Color(0xFF87DDD3);
   static const Color pageBottomGradient = Color(0xFFFFFFFF);

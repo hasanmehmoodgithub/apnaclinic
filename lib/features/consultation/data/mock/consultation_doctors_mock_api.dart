@@ -15,8 +15,8 @@ class ConsultationDoctorsMockApi {
 
     final allDoctors = List<Map<String, dynamic>>.generate(24, (index) {
       final id = index + 1;
-      final tenantId = id.isEven ? 2 : 1;
-      final partnerName = tenantId == 1 ? 'Oladoc' : 'MedIQ';
+      final tenantId = id.isEven ? 2 : 3;
+      final partnerName = tenantId == 2 ? 'Oladoc' : 'MedIQ';
       return {
         'id': id,
         'publicId': 'dr_mock_$id',
@@ -70,6 +70,10 @@ class ConsultationDoctorsMockApi {
         'page': safePage,
         'limit': safeLimit,
         'total': doctors.length,
+        'partners': [
+          {'tenantId': 2, 'logoUrl': null},
+          {'tenantId': 3, 'logoUrl': null},
+        ],
       },
     };
   }

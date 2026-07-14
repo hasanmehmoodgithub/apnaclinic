@@ -56,6 +56,8 @@ class _DoctorConsultationResultsScreenState
   static const int _pageLimit = 20;
 
   List<ResultsDoctorItem> _allDoctors = const [];
+  List<ConsultationPartnerFilterOption> _filterPartners =
+      ConsultationPartnerFilterDefaults.partners;
   bool _isLoading = false;
   bool _isLoadingMore = false;
   bool _hasMore = false;
@@ -143,16 +145,27 @@ class _DoctorConsultationResultsScreenState
   }
 
   Future<void> _openSelectPartnerSheet() async {
-    final partner = await showModalBottomSheet<ConsultationPartnerFilterOption>(
+    final result = await showModalBottomSheet<Object?>(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (context) => ConsultationSelectPartnerSheetWidget(
         selectedPartnerId: _selectedPartnerId,
+        partners: _filterPartners,
       ),
     );
-    if (partner == null || partner.id == _selectedPartnerId) return;
-    setState(() => _selectedPartnerId = partner.id);
+    if (!mounted || result == null) return;
+
+    if (result == ConsultationSelectPartnerSheetWidget.clearSelection) {
+      if (_selectedPartnerId == null) return;
+      setState(() => _selectedPartnerId = null);
+      await _loadDoctors(refresh: true);
+      return;
+    }
+
+    if (result is! ConsultationPartnerFilterOption) return;
+    if (result.id == _selectedPartnerId) return;
+    setState(() => _selectedPartnerId = result.id);
     await _loadDoctors(refresh: true);
   }
 
@@ -203,6 +216,14 @@ class _DoctorConsultationResultsScreenState
       (pageData) => setState(() {
         _allDoctors =
             append ? [..._allDoctors, ...pageData.doctors] : pageData.doctors;
+        if (!append && pageData.partners.isNotEmpty) {
+          _filterPartners = pageData.partners;
+          final selected = _selectedPartnerId;
+          if (selected != null &&
+              !_filterPartners.any((partner) => partner.id == selected)) {
+            _selectedPartnerId = null;
+          }
+        }
         _currentPage = pageData.page;
         _hasMore = pageData.hasMore;
         _isLoading = false;
@@ -284,6 +305,7 @@ class _DoctorConsultationResultsScreenState
                             ResultsFilterButton(
                               textTheme: textTheme,
                               label: l10n.consultationResultsFilter,
+                              isActive: _selectedPartnerId != null,
                               onTap: _openSelectPartnerSheet,
                             ),
                           ],

@@ -1,4 +1,5 @@
 import '../../domain/entities/consultation_doctors_page_entity.dart';
+import '../../presentation/constants/consultation_partner_filter_defaults.dart';
 import '../../presentation/widgets/results_doctor_item.dart';
 
 class ConsultationDoctorModel {
@@ -44,7 +45,8 @@ class ConsultationDoctorModel {
 
   factory ConsultationDoctorModel.fromJson(Map<String, dynamic> json) {
     final partnerRaw = json['partner'];
-    final partner = partnerRaw is Map<String, dynamic> ? partnerRaw : null;
+    final partner =
+        partnerRaw is Map ? Map<String, dynamic>.from(partnerRaw) : null;
     final qualificationsRaw = json['qualifications'];
 
     return ConsultationDoctorModel(
@@ -210,6 +212,7 @@ class ConsultationDoctorsResponseModel {
     required this.page,
     required this.limit,
     required this.total,
+    this.partners = const [],
   });
 
   final bool success;
@@ -218,15 +221,17 @@ class ConsultationDoctorsResponseModel {
   final int page;
   final int limit;
   final int total;
+  final List<ConsultationPartnerFilterOption> partners;
 
   bool get hasMore => page * limit < total;
 
   factory ConsultationDoctorsResponseModel.fromJson(Map<String, dynamic> json) {
     final code = json['code'];
-    final success = json['success'] == true || (code is num && code.toInt() == 200);
+    final success =
+        json['success'] == true || (code is num && code.toInt() == 200);
     final data = json['data'];
     final Map<String, dynamic>? pageData =
-        data is Map<String, dynamic> ? data : null;
+        data is Map ? Map<String, dynamic>.from(data) : null;
     final List<dynamic> rawDoctors;
     if (pageData?['data'] is List) {
       rawDoctors = pageData!['data'] as List<dynamic>;
@@ -239,6 +244,7 @@ class ConsultationDoctorsResponseModel {
     }
 
     final doctors = rawDoctors
+        .map(_asStringKeyedMap)
         .whereType<Map<String, dynamic>>()
         .map(ConsultationDoctorModel.fromJson)
         .where((doctor) => doctor.displayName.isNotEmpty)
@@ -247,6 +253,7 @@ class ConsultationDoctorsResponseModel {
     final page = _readInt(pageData ?? json, 'page', fallback: 1);
     final limit = _readInt(pageData ?? json, 'limit', fallback: 20);
     final total = _readInt(pageData ?? json, 'total', fallback: doctors.length);
+    final partners = _parsePartners(pageData);
 
     return ConsultationDoctorsResponseModel(
       success: success,
@@ -255,6 +262,7 @@ class ConsultationDoctorsResponseModel {
       page: page,
       limit: limit,
       total: total,
+      partners: partners,
     );
   }
 
@@ -264,7 +272,45 @@ class ConsultationDoctorsResponseModel {
       page: page,
       limit: limit,
       total: total,
+      partners: partners,
     );
+  }
+
+  static List<ConsultationPartnerFilterOption> _parsePartners(
+    Map<String, dynamic>? pageData,
+  ) {
+    final raw = pageData?['partners'];
+    if (raw is! List) return const [];
+
+    final partners = <ConsultationPartnerFilterOption>[];
+    final seen = <String>{};
+    for (final item in raw) {
+      final map = _asStringKeyedMap(item);
+      if (map == null) continue;
+      final tenantId = (map['tenantId'] ?? map['tenant_id'] ?? map['id'] ?? '')
+          .toString()
+          .trim();
+      if (tenantId.isEmpty || !seen.add(tenantId)) continue;
+      partners.add(
+        ConsultationPartnerFilterDefaults.fromApi(
+          tenantId: tenantId,
+          name: (map['name'] ??
+                  map['displayName'] ??
+                  map['display_name'] ??
+                  map['label'] ??
+                  map['title'])
+              ?.toString(),
+          logoUrl: (map['logoUrl'] ?? map['logo_url'])?.toString(),
+        ),
+      );
+    }
+    return partners;
+  }
+
+  static Map<String, dynamic>? _asStringKeyedMap(dynamic value) {
+    if (value is Map<String, dynamic>) return value;
+    if (value is Map) return Map<String, dynamic>.from(value);
+    return null;
   }
 
   static int _readInt(

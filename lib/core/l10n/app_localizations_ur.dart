@@ -1092,6 +1092,9 @@ class AppLocalizationsUr extends AppLocalizations {
   String get consultationResultsFilter => 'فلٹر';
 
   @override
+  String get consultationClearFilter => 'صاف کریں';
+
+  @override
   String get consultationSelectPartnerTitle => 'پارٹنر منتخب کریں';
 
   @override

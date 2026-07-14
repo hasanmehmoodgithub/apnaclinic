@@ -1093,6 +1093,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get consultationResultsFilter => 'Filter';
 
   @override
+  String get consultationClearFilter => 'Clear';
+
+  @override
   String get consultationSelectPartnerTitle => 'Select Partner';
 
   @override

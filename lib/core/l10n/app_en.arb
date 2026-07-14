@@ -453,6 +453,7 @@
   "consultationSelectCategoriesTitle": "Select Categories",
   "consultationSpecialistTitle": "Specialist",
   "consultationResultsFilter": "Filter",
+  "consultationClearFilter": "Clear",
   "consultationSelectPartnerTitle": "Select Partner",
   "consultationSearchPartner": "Search Partner",
   "consultationNoPartnersFound": "No partners found.",
