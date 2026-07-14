@@ -7,7 +7,8 @@ class ApiErrorMessageUtils {
     if (responseData == null) return null;
     if (responseData is String) {
       final t = responseData.trim();
-      return t.isEmpty ? null : t;
+      if (t.isEmpty) return null;
+      return _sanitizeRawMessage(t);
     }
     if (responseData is! Map) return null;
     final map = Map<String, dynamic>.from(responseData);
@@ -47,7 +48,8 @@ class ApiErrorMessageUtils {
     if (message == null) return null;
     if (message is String) {
       final t = message.trim();
-      return t.isEmpty ? null : t;
+      if (t.isEmpty) return null;
+      return _sanitizeRawMessage(t);
     }
     if (message is List) {
       final parts = <String>[];
@@ -67,5 +69,18 @@ class ApiErrorMessageUtils {
       if (err is String && err.trim().isNotEmpty) return err.trim();
     }
     return null;
+  }
+
+  /// WAFs often return HTML "Request Rejected" pages; don't show raw HTML to users.
+  static String _sanitizeRawMessage(String message) {
+    final lower = message.toLowerCase();
+    if (lower.contains('request rejected') ||
+        (lower.contains('<html') && lower.contains('support id'))) {
+      return 'Request was rejected by the server. Please try again, or upload fewer/smaller attachments.';
+    }
+    if (message.length > 400 && lower.contains('<html')) {
+      return 'Request failed. Please try again.';
+    }
+    return message;
   }
 }

@@ -15,6 +15,7 @@ class SubmitConsultationBookingParams {
     required this.slotEndTime,
     required this.paymentMethod,
     required this.msisdn,
+    this.issue = '',
     this.attachments = const [],
   });
 
@@ -28,6 +29,7 @@ class SubmitConsultationBookingParams {
   final String slotEndTime;
   final String paymentMethod;
   final String msisdn;
+  final String issue;
   final List<ConsultationBookingAttachmentEntity> attachments;
 }
 

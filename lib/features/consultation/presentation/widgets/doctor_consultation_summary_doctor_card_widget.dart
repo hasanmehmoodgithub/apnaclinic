@@ -55,10 +55,11 @@ class DoctorConsultationSummaryDoctorCardWidget extends StatelessWidget {
                     children: [
                       Padding(
                         padding: EdgeInsets.only(top: 2.h),
-                        child: Icon(
-                          Icons.medical_services_outlined,
-                          color: const Color(0xFF667B99),
-                          size: 18.r,
+                        child: SvgPicture.asset(
+                          Assets.consultationSummaryMedicalBriefcase,
+                          width: 18.r,
+                          height: 18.r,
+                          fit: BoxFit.contain,
                         ),
                       ),
                       SizedBox(width: 8.w),

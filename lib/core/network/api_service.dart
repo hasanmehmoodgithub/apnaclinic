@@ -205,13 +205,32 @@ class ApiService {
   }) async {
     try {
       _syncAuthHeader();
+      final requestHeaders = <String, dynamic>{
+        if (headers != null) ...headers,
+      };
+
+      // BaseOptions default is application/json. For FormData we must override
+      // with the same value on header + contentType, including boundary —
+      // otherwise servers return "Failed to parse multipart request".
+      String? contentType;
+      if (data is FormData) {
+        contentType = 'multipart/form-data; boundary=${data.boundary}';
+        requestHeaders.removeWhere(
+          (key, _) => key.toLowerCase() == 'content-type',
+        );
+        requestHeaders[Headers.contentTypeHeader] = contentType;
+      } else {
+        contentType = headers?['Content-Type'] ?? headers?['content-type'];
+      }
+
       final response = await _dio.request<Map<String, dynamic>>(
         endpoint,
         data: data,
         queryParameters: queryParameters,
         options: Options(
           method: method,
-          headers: headers,
+          headers: requestHeaders,
+          contentType: contentType,
           sendTimeout: timeout,
           receiveTimeout: timeout,
         ),

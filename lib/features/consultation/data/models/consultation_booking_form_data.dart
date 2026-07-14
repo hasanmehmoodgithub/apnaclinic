@@ -1,45 +1,52 @@
 import 'package:dio/dio.dart';
 import 'package:intl/intl.dart';
+import 'package:path/path.dart' as p;
 
 import '../../domain/use_cases/submit_consultation_booking_use_case.dart';
 
+/// Same pattern as [profileSetupSaveFormData]: fields + files in one map → [FormData.fromMap].
 Future<FormData> consultationBookingFormData(
   SubmitConsultationBookingParams params,
 ) async {
   final payload = <String, dynamic>{
-    'doctorId': params.doctorId,
-    'tenantId': params.tenantId,
-    'consultationFee': params.consultationFee,
-    'patientId': params.patientId,
+    'doctorId': '${params.doctorId}',
+    'tenantId': '${params.tenantId}',
+    'consultationFee': '${params.consultationFee}',
+    'patientId': '${params.patientId}',
     'patientRelation': params.patientRelation,
     'slotDate': params.slotDate,
-    'slotStartTime': _normalizeTime(params.slotStartTime),
-    'slotEndTime': _normalizeTime(params.slotEndTime),
+    'slotStartTime': _to12HourAmPm(params.slotStartTime),
+    'slotEndTime': _to12HourAmPm(params.slotEndTime),
     'paymentMethod': params.paymentMethod,
     'msisdn': params.msisdn,
+    'issue': params.issue,
   };
 
-  if (params.attachments.isNotEmpty) {
-    final files = <MultipartFile>[];
-    for (final attachment in params.attachments) {
-      final path = attachment.path.trim();
-      if (path.isEmpty) continue;
-      files.add(
-        await MultipartFile.fromFile(
-          path,
-          filename: attachment.name,
-        ),
-      );
-    }
-    if (files.isNotEmpty) {
-      payload['attachments'] = files;
-    }
+  final attachmentFiles = <MultipartFile>[];
+  for (final attachment in params.attachments) {
+    final path = attachment.path.trim();
+    if (path.isEmpty) continue;
+
+    final filename = attachment.name.trim().isNotEmpty
+        ? attachment.name.trim()
+        : p.basename(path);
+
+    attachmentFiles.add(
+      await MultipartFile.fromFile(path, filename: filename),
+    );
+  }
+
+  if (attachmentFiles.length == 1) {
+    payload['attachments'] = attachmentFiles.first;
+  } else if (attachmentFiles.length > 1) {
+    payload['attachments'] = attachmentFiles;
   }
 
   return FormData.fromMap(payload);
 }
 
-String _normalizeTime(String value) {
+/// Normalizes to API-style 12h time, e.g. `03:50 PM`.
+String _to12HourAmPm(String value) {
   final trimmed = value.trim();
   if (trimmed.isEmpty) return trimmed;
 
@@ -48,15 +55,19 @@ String _normalizeTime(String value) {
     for (final pattern in ['h:mm a', 'hh:mm a']) {
       try {
         final parsed = DateFormat(pattern).parseLoose(trimmed);
-        return DateFormat('HH:mm').format(parsed);
+        return DateFormat('hh:mm a').format(parsed);
       } catch (_) {}
     }
+    return trimmed;
   }
 
   final parts = trimmed.split(':');
   if (parts.length < 2) return trimmed;
 
-  final hour = int.tryParse(parts[0]) ?? 0;
-  final minute = int.tryParse(parts[1].replaceAll(RegExp(r'\D'), '')) ?? 0;
-  return '${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')}';
+  final hour = int.tryParse(parts[0]);
+  final minute = int.tryParse(parts[1].replaceAll(RegExp(r'\D'), ''));
+  if (hour == null || minute == null) return trimmed;
+
+  final parsed = DateTime(2026, 1, 1, hour, minute);
+  return DateFormat('hh:mm a').format(parsed);
 }

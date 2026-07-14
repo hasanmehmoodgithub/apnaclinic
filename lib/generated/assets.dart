@@ -18,6 +18,8 @@ class Assets {
   static const String consultationHeroVector = 'assets/img/consultation/hero_vector.svg';
   static const String consultationSummaryDoctorCardVector =
       'assets/img/consultation/summary_doctor_card_vector.png';
+  static const String consultationSummaryMedicalBriefcase =
+      'assets/img/consultation/summary_medical_briefcase.svg';
   static const String consultationInfoIcon = 'assets/img/consultation/info_icon.svg';
   static const String consultationSearchIcon = 'assets/img/consultation/search_icon.svg';
   static const String consultationTimeDateAsset = 'assets/img/consultation/time_date_asset.svg';
