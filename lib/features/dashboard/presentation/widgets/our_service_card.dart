@@ -26,7 +26,7 @@ class OurServiceCardWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final showDiscount = formatServiceDiscountBadge(discountLabel).isNotEmpty;
+    final showDiscount = discountLabel.trim().isNotEmpty;
 
     return InkWell(
       onTap: onTap,

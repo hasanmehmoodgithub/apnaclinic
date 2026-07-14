@@ -4,23 +4,8 @@ import 'package:flutter/material.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../constants/dashboard_ui_config.dart';
 
-/// Normalizes API/mock copy (e.g. `Up to 20% off`) to `20% OFF`.
-String formatServiceDiscountBadge(String raw) {
-  final trimmed = raw.trim();
-  if (trimmed.isEmpty) return '';
-
-  final percentMatch =
-      RegExp(r'(\d+)\s*%', caseSensitive: false).firstMatch(trimmed);
-  if (percentMatch != null) {
-    return '${percentMatch.group(1)}% OFF';
-  }
-
-  final upper = trimmed.toUpperCase();
-  if (upper.contains('OFF')) return upper;
-  return trimmed;
-}
-
 /// Pill-shaped discount tag for home service grid cards (top-right).
+/// Shows [label] as provided (no reformatting); long text wraps fully.
 class ServiceDiscountBadge extends StatelessWidget {
   const ServiceDiscountBadge({
     super.key,
@@ -31,28 +16,32 @@ class ServiceDiscountBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final formatted = formatServiceDiscountBadge(label);
-    if (formatted.isEmpty) return const SizedBox.shrink();
+    final text = label.trim();
+    if (text.isEmpty) return const SizedBox.shrink();
 
-    final verticalPadding =
-        DashboardUiConfig.serviceDiscountBadgeVerticalPadding.h;
-
-    return Container(
-      padding: EdgeInsets.symmetric(
-        horizontal:4,
-        vertical:4,
+    return ConstrainedBox(
+      constraints: BoxConstraints(
+        maxWidth: DashboardUiConfig.serviceDiscountBadgeMaxWidth.w,
       ),
-      decoration:  ShapeDecoration(
-        color: AppColors.clrE0F7F6.withValues(alpha: 0.5),
-        shape: StadiumBorder(),
-      ),
-      child: Text(
-        formatted,
-        style: TextStyle(
-          color: AppColors.clr00897B,
-          fontSize: DashboardUiConfig.serviceDiscountBadgeFontSize.sp,
-          fontWeight: FontWeight.w700,
-          height: 1.0,
+      child: Container(
+        padding: EdgeInsets.symmetric(
+          horizontal: DashboardUiConfig.serviceDiscountBadgeHorizontalPadding.w,
+          vertical: DashboardUiConfig.serviceDiscountBadgeVerticalPadding.h,
+        ),
+        decoration: BoxDecoration(
+          color: AppColors.clrE0F7F6.withValues(alpha: 0.5),
+          borderRadius: BorderRadius.circular(100.r),
+        ),
+        child: Text(
+          text,
+          softWrap: true,
+          textAlign: TextAlign.start,
+          style: TextStyle(
+            color: AppColors.clr00897B,
+            fontSize: DashboardUiConfig.serviceDiscountBadgeFontSize.sp,
+            fontWeight: FontWeight.w700,
+            height: 1.2,
+          ),
         ),
       ),
     );
