@@ -154,8 +154,17 @@ static const Color clrf4f4f4  = Color(0xFFF4F4F4);
   static const Color clr061E40= Color(0xFF061E40);
   static const Color clrEDEDED= Color(0xFFEDEDED);
   static const Color clrF3FCFB= Color(0xFFF3FCFB);
-
-
-
-
+  static const Color clr3C4A58 = Color(0xFF3C4A58);
+  static const Color clr60789A = Color(0xFF60789A);
+  static const Color clrAEB8C1 = Color(0xFFAEB8C1);
+  static const Color clr4C5E76 = Color(0xFF4C5E76);
+  static const Color clr4D627F = Color(0xFF4D627F);
+  static const Color clrC8DAE1 = Color(0xFFC8DAE1);
+  static const Color clr52708E = Color(0xFF52708E);
+  static const Color clrE5E8EC = Color(0xFFE5E8EC);
+  static const Color clr707D8F = Color(0xFF707D8F);
+  static const Color clr7A8798 = Color(0xFF7A8798);
+  static const Color clrF5B301 = Color(0xFFF5B301);
+  static const Color clr98E089 = Color(0xFF98E089);
+  static const Color clr2F80ED = Color(0xFF2F80ED);
 }

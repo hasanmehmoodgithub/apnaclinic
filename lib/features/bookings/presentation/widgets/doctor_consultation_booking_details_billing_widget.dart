@@ -1,0 +1,130 @@
+import 'package:flutter/material.dart';
+
+import '../../../../core/constants/app_colors.dart';
+import '../../../../core/extensions/screen_util_extensions.dart';
+import '../../../../core/l10n/app_localizations.dart';
+import '../../data/models/doctor_consultation_booking_details_model.dart';
+
+class DoctorConsultationBookingDetailsBillingWidget extends StatelessWidget {
+  const DoctorConsultationBookingDetailsBillingWidget({
+    super.key,
+    required this.data,
+  });
+
+  final DoctorConsultationBookingDetailsModel data;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final textTheme = Theme.of(context).textTheme;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Text(
+              l10n.bookingsBillingTitle,
+              style: textTheme.titleMedium?.copyWith(
+                color: AppColors.clr061E40,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            const Spacer(),
+            Icon(
+              Icons.download_rounded,
+              color: AppColors.clr52708E,
+              size: 17.r,
+            ),
+            SizedBox(width: 4.w),
+            Text(
+              l10n.bookingsEInvoiceLabel,
+              style: textTheme.bodyMedium?.copyWith(
+                color: AppColors.clr52708E,
+              ),
+            ),
+          ],
+        ),
+        SizedBox(height: 8.h),
+        Container(
+          decoration: BoxDecoration(
+            color: AppColors.clrWhite,
+            borderRadius: BorderRadius.circular(8.r),
+            border: Border.all(color: AppColors.clrE5E8EC),
+          ),
+          child: Column(
+            children: [
+              _BillRow(
+                label: l10n.bookingsConsultationFeeLabel,
+                value: 'Rs.${data.originalFee}',
+              ),
+              _BillRow(
+                label: l10n.bookingsDiscountLabel(_percentLabel(data.discountPercent)),
+                value: 'Rs.${data.discountAmount}',
+              ),
+              Container(
+                color: AppColors.clrF7F7F7,
+                padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
+                child: _BillRow(
+                  label: l10n.bookingsTotalLabel,
+                  value: data.totalText,
+                  isTotal: true,
+                  dense: true,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  static String _percentLabel(double percent) {
+    if (percent <= 0) return '0';
+    if (percent % 1 == 0) return percent.toInt().toString();
+    return percent.toStringAsFixed(1);
+  }
+}
+
+class _BillRow extends StatelessWidget {
+  const _BillRow({
+    required this.label,
+    required this.value,
+    this.isTotal = false,
+    this.dense = false,
+  });
+
+  final String label;
+  final String value;
+  final bool isTotal;
+  final bool dense;
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+
+    return Padding(
+      padding: dense
+          ? EdgeInsets.zero
+          : EdgeInsets.symmetric(horizontal: 10.w, vertical: 8.h),
+      child: Row(
+        children: [
+          Text(
+            label,
+            style: textTheme.bodyMedium?.copyWith(
+              color: isTotal ? AppColors.clr061E40 : AppColors.clr707D8F,
+            ),
+          ),
+          const Spacer(),
+          Text(
+            value,
+            style: textTheme.bodyMedium?.copyWith(
+              color: AppColors.clr061E40,
+              fontWeight: isTotal ? FontWeight.w700 : FontWeight.w400,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
