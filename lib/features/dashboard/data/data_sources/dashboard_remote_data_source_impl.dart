@@ -6,8 +6,10 @@ import '../../../../core/network/app_urls.dart';
 import '../../../../core/preference/app_pref.dart';
 import '../../../../core/utils/error_handler.dart';
 import '../../../../core/utils/jwt_utils.dart';
+import '../mock/app_version_mock_api.dart';
 import '../mock/dashboard_services_mock_api.dart';
 import '../mock/promotional_banner_mock_api.dart';
+import '../models/app_version_model.dart';
 import '../models/promotional_banner_model.dart';
 import '../models/our_service_model.dart';
 import 'dashboard_remote_data_source.dart';
@@ -18,12 +20,14 @@ class DashboardRemoteDataSourceImpl implements DashboardRemoteDataSource {
     required this.appPref,
     required this.mockApi,
     required this.promotionalBannerMockApi,
+    required this.appVersionMockApi,
   });
 
   final ApiService apiService;
   final AppPref appPref;
   final DashboardServicesMockApi mockApi;
   final PromotionalBannerMockApi promotionalBannerMockApi;
+  final AppVersionMockApi appVersionMockApi;
 
   static bool _isSuccessResponse(Map<String, dynamic> response) {
     if (response['success'] == true) return true;
@@ -95,6 +99,56 @@ class DashboardRemoteDataSourceImpl implements DashboardRemoteDataSource {
       final message = ErrorHandler.handleExceptions(
         e,
         endpoint: AppUrls.promotionalBanner,
+      );
+      return Future.error(message);
+    }
+  }
+
+  @override
+  Future<AppVersionResponseModel> getAppVersion({
+    required String platform,
+  }) async {
+    final endpoint = AppUrls.appVersion(platform: platform);
+    try {
+      final Map<String, dynamic> response;
+      if (AppVersionMockApi.useMockResponses) {
+        response = await appVersionMockApi.getAppVersionSuccessResponse(
+          platform: platform,
+        );
+      } else {
+        response = await apiService.get(endpoint);
+        log('getAppVersion ($platform) response: $response');
+      }
+
+      if (_isSuccessResponse(response)) {
+        return AppVersionResponseModel.fromJson(response);
+      }
+
+      // CMS returns HTTP 200 + code 404 when no version is configured.
+      final code = response['code'];
+      if (code is num && code.toInt() == 404) {
+        return AppVersionResponseModel(
+          success: false,
+          message: (response['message'] ?? '').toString(),
+          version: AppVersionModel.empty,
+        );
+      }
+
+      final message =
+          (response['message'] ?? AppStrings.ourServicesLoadError).toString();
+      return Future.error(message);
+    } on ApiNotFoundException catch (e) {
+      log('getAppVersion not found: $e');
+      return AppVersionResponseModel(
+        success: false,
+        message: e.message,
+        version: AppVersionModel.empty,
+      );
+    } catch (e) {
+      log('getAppVersion error: $e');
+      final message = ErrorHandler.handleExceptions(
+        e,
+        endpoint: endpoint,
       );
       return Future.error(message);
     }

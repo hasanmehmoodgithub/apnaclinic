@@ -740,6 +740,34 @@ class AppLocalizationsUr extends AppLocalizations {
   String get dashboardCancel => 'منسوخ کریں';
 
   @override
+  String get dashboardAppUpdateAvailableTitle => 'اپ ڈیٹ دستیاب ہے';
+
+  @override
+  String get dashboardAppUpdateRequiredTitle => 'اپ ڈیٹ ضروری ہے';
+
+  @override
+  String get dashboardAppUpdateAvailableMessage =>
+      'اپنا کلینک کا نیا ورژن دستیاب ہے۔ تازہ ترین فیچرز کے لیے ابھی اپ ڈیٹ کریں۔';
+
+  @override
+  String get dashboardAppUpdateRequiredMessage =>
+      'ایپ استعمال جاری رکھنے کے لیے براہ کرم اپنا کلینک اپ ڈیٹ کریں۔';
+
+  @override
+  String get dashboardAppUpdateCta => 'ابھی اپ ڈیٹ کریں';
+
+  @override
+  String get dashboardAppUpdateLater => 'بعد میں';
+
+  @override
+  String dashboardAppUpdateVersionLabel(
+    String currentVersion,
+    String latestVersion,
+  ) {
+    return 'موجودہ $currentVersion → $latestVersion';
+  }
+
+  @override
   String get notificationsTitle => 'نوٹیفیکیشنز';
 
   @override

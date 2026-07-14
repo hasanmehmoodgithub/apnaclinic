@@ -19,6 +19,7 @@ import '../../domain/entities/our_service_entity.dart';
 import '../../domain/services/promotional_banner_session.dart';
 import '../cubit/dashboard_services_cubit.dart';
 import '../cubit/dashboard_services_state.dart';
+import '../widgets/app_update_dialog.dart';
 import '../widgets/fikrfree_health_banner.dart';
 import '../widgets/home_header_section.dart';
 import '../widgets/instant_doctor_home_banner.dart';
@@ -41,6 +42,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   static const String _bannerLoaderId = 'banner_loader';
   bool _isLoggedIn = false;
   bool _isPresentingBannerQueue = false;
+  bool _isPresentingUpdateDialog = false;
+  bool _updatePromptHandled = false;
   late final DashboardCubit _dashboardCubit;
   late final NotificationCubit _notificationCubit;
   late final PromotionalBannerSession _bannerSession;
@@ -109,7 +112,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           if (!mounted) return;
           _dismissKeyboard();
-          _maybeResumeBannerQueue();
+          unawaited(_maybePresentHomeDialogs());
         });
 
         return BlocProvider.value(
@@ -133,12 +136,37 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
           !HeartLoaderDialogController.isOpen(_bannerLoaderId)) {
         showHeartLoaderDialog(context, id: _bannerLoaderId);
       }
-      return;
+    } else {
+      HeartLoaderDialogController.close(_bannerLoaderId);
     }
 
-    HeartLoaderDialogController.close(_bannerLoaderId);
+    unawaited(_maybePresentHomeDialogs());
+  }
 
-    if (state.promotionalBannerLoadingStateStatus != StateStatus.success) {
+  Future<void> _maybePresentHomeDialogs() async {
+    if (!mounted || !_isHomeRouteActive(context)) return;
+    if (_isPresentingUpdateDialog || _isPresentingBannerQueue) return;
+
+    final state = _dashboardCubit.state;
+    if (state.appVersionLoadingStateStatus == StateStatus.loading) return;
+
+    final prompt = state.appUpdatePrompt;
+    if (prompt != null && !_updatePromptHandled) {
+      _isPresentingUpdateDialog = true;
+      try {
+        await showAppUpdateDialog(context, prompt: prompt);
+      } finally {
+        if (mounted) _isPresentingUpdateDialog = false;
+      }
+      if (!mounted) return;
+      // Force update stays until the store update; optional can continue.
+      if (prompt.forceUpdate) return;
+      _updatePromptHandled = true;
+    } else if (prompt == null) {
+      _updatePromptHandled = true;
+    }
+
+    if (state.appUpdatePrompt?.forceUpdate == true && !_updatePromptHandled) {
       return;
     }
 
@@ -147,6 +175,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
 
   void _maybeResumeBannerQueue() {
     if (_isPresentingBannerQueue ||
+        _isPresentingUpdateDialog ||
         !_bannerSession.hasPendingBanners ||
         _dashboardCubit.state.promotionalBannerLoadingStateStatus !=
             StateStatus.success ||

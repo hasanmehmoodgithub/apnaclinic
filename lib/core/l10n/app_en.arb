@@ -323,6 +323,23 @@
   "dashboardMenuLoginSignup": "Login / Signup",
   "dashboardLogoutMessage": "Are you sure you want to logout from your account?",
   "dashboardCancel": "Cancel",
+  "dashboardAppUpdateAvailableTitle": "Update Available",
+  "dashboardAppUpdateRequiredTitle": "Update Required",
+  "dashboardAppUpdateAvailableMessage": "A newer version of Apna Clinic is available. Update now for the latest features and improvements.",
+  "dashboardAppUpdateRequiredMessage": "Please update Apna Clinic to continue using the app.",
+  "dashboardAppUpdateCta": "Update Now",
+  "dashboardAppUpdateLater": "Later",
+  "dashboardAppUpdateVersionLabel": "Current {currentVersion} → {latestVersion}",
+  "@dashboardAppUpdateVersionLabel": {
+    "placeholders": {
+      "currentVersion": {
+        "type": "String"
+      },
+      "latestVersion": {
+        "type": "String"
+      }
+    }
+  },
   "notificationsTitle": "Notifications",
   "notificationsRetryCta": "Retry",
   "notificationsEmptyTitle": "No Notifications Yet!",

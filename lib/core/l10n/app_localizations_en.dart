@@ -740,6 +740,34 @@ class AppLocalizationsEn extends AppLocalizations {
   String get dashboardCancel => 'Cancel';
 
   @override
+  String get dashboardAppUpdateAvailableTitle => 'Update Available';
+
+  @override
+  String get dashboardAppUpdateRequiredTitle => 'Update Required';
+
+  @override
+  String get dashboardAppUpdateAvailableMessage =>
+      'A newer version of Apna Clinic is available. Update now for the latest features and improvements.';
+
+  @override
+  String get dashboardAppUpdateRequiredMessage =>
+      'Please update Apna Clinic to continue using the app.';
+
+  @override
+  String get dashboardAppUpdateCta => 'Update Now';
+
+  @override
+  String get dashboardAppUpdateLater => 'Later';
+
+  @override
+  String dashboardAppUpdateVersionLabel(
+    String currentVersion,
+    String latestVersion,
+  ) {
+    return 'Current $currentVersion → $latestVersion';
+  }
+
+  @override
   String get notificationsTitle => 'Notifications';
 
   @override

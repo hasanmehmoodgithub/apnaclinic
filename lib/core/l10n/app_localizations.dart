@@ -1478,6 +1478,51 @@ abstract class AppLocalizations {
   /// **'Cancel'**
   String get dashboardCancel;
 
+  /// No description provided for @dashboardAppUpdateAvailableTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Update Available'**
+  String get dashboardAppUpdateAvailableTitle;
+
+  /// No description provided for @dashboardAppUpdateRequiredTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Update Required'**
+  String get dashboardAppUpdateRequiredTitle;
+
+  /// No description provided for @dashboardAppUpdateAvailableMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'A newer version of Apna Clinic is available. Update now for the latest features and improvements.'**
+  String get dashboardAppUpdateAvailableMessage;
+
+  /// No description provided for @dashboardAppUpdateRequiredMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Please update Apna Clinic to continue using the app.'**
+  String get dashboardAppUpdateRequiredMessage;
+
+  /// No description provided for @dashboardAppUpdateCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Update Now'**
+  String get dashboardAppUpdateCta;
+
+  /// No description provided for @dashboardAppUpdateLater.
+  ///
+  /// In en, this message translates to:
+  /// **'Later'**
+  String get dashboardAppUpdateLater;
+
+  /// No description provided for @dashboardAppUpdateVersionLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Current {currentVersion} → {latestVersion}'**
+  String dashboardAppUpdateVersionLabel(
+    String currentVersion,
+    String latestVersion,
+  );
+
   /// No description provided for @notificationsTitle.
   ///
   /// In en, this message translates to:

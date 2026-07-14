@@ -115,6 +115,11 @@ class AppUrls {
   static String get promotionalBanner =>
       '$_normalizedApiBaseUrl/acs-cmsbe/api/v1/mobile/banners';
 
+  /// App version / force-update check — CMS mobile API (`platform=ios|android`).
+  static String appVersion({required String platform}) =>
+      '$_normalizedApiBaseUrl/acs-cmsbe/api/v1/mobile/app-version'
+      '?platform=${Uri.encodeComponent(platform)}';
+
   /// Customer support settings — CMS mobile API.
   static String get mobileSupport =>
       '$_normalizedApiBaseUrl/acs-cmsbe/api/v1/mobile/support';
@@ -274,4 +279,12 @@ class AppUrls {
   /// FikrFree on Google Play (Android).
   static const String fikrFreePlayStoreAndroid =
       'https://play.google.com/store/apps/details?id=com.fikrfree.android&hl=en';
+
+  /// Apna Clinic on Google Play (Android). Used when CMS omits storeUrl.
+  static const String apnaClinicPlayStoreAndroid =
+      'https://play.google.com/store/apps/details?id=com.apna.clinic.apnaclinic';
+
+  /// Apna Clinic App Store listing (iOS). Override when the live App Store id is known.
+  static const String apnaClinicAppStoreIos =
+      'https://apps.apple.com/pk/search?term=Apna%20Clinic';
 }

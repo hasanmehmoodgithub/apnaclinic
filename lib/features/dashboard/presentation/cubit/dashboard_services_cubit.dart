@@ -7,6 +7,7 @@ import '../../../../core/session/profile_session_sync.dart';
 import '../../../../core/utils/auth_guard.dart';
 import '../../../profile_setup/domain/use_cases/get_profile_setup_content_use_case.dart';
 import '../../domain/services/promotional_banner_session.dart';
+import '../../domain/use_cases/check_app_update_use_case.dart';
 import '../../domain/use_cases/get_dashboard_services_use_case.dart';
 import 'dashboard_services_state.dart';
 
@@ -14,18 +15,21 @@ class DashboardCubit extends Cubit<DashboardServicesState> {
   DashboardCubit({
     required this.getOurServicesUseCase,
     required this.promotionalBannerSession,
+    required this.checkAppUpdateUseCase,
     required this.getProfileSetupContentUseCase,
     required this.appPref,
     ProfileSessionSync? profileSessionSync,
   })  : _profileSessionSync = profileSessionSync ?? sl<ProfileSessionSync>(),
         super(const DashboardServicesState()) {
     loadOurServices();
+    checkAppUpdate();
     syncPromotionalBannerFromSession();
     syncUserProfileFromApi();
   }
 
   final GetOurServicesUseCase getOurServicesUseCase;
   final PromotionalBannerSession promotionalBannerSession;
+  final CheckAppUpdateUseCase checkAppUpdateUseCase;
   final GetProfileSetupContentUseCase getProfileSetupContentUseCase;
   final AppPref appPref;
   final ProfileSessionSync _profileSessionSync;
@@ -59,6 +63,35 @@ class DashboardCubit extends Cubit<DashboardServicesState> {
               : StateStatus.success,
           servicesList: data.where((e) => e.visibility).toList(),
           servicesErrorMessage: null,
+        ),
+      ),
+    );
+  }
+
+  /// Hits CMS app-version on every dashboard open and emits an update prompt when needed.
+  Future<void> checkAppUpdate() async {
+    _safeEmit(
+      state.copyWith(
+        appVersionLoadingStateStatus: StateStatus.loading,
+        appUpdatePrompt: null,
+      ),
+    );
+
+    final result = await checkAppUpdateUseCase.call();
+    if (isClosed) return;
+    result.fold(
+      (_) => _safeEmit(
+        state.copyWith(
+          appVersionLoadingStateStatus: StateStatus.error,
+          appUpdatePrompt: null,
+        ),
+      ),
+      (prompt) => _safeEmit(
+        state.copyWith(
+          appVersionLoadingStateStatus: prompt == null
+              ? StateStatus.empty
+              : StateStatus.success,
+          appUpdatePrompt: prompt,
         ),
       ),
     );

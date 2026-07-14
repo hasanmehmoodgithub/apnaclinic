@@ -15,9 +15,9 @@ T _$identity<T>(T value) => value;
 mixin _$DashboardServicesState {
 
 // Loading status
- StateStatus get ourServicesLoadingStateStatus; StateStatus get promotionalBannerLoadingStateStatus;/// Incremented after a successful user-profile sync so the home header can rebuild.
+ StateStatus get ourServicesLoadingStateStatus; StateStatus get promotionalBannerLoadingStateStatus; StateStatus get appVersionLoadingStateStatus;/// Incremented after a successful user-profile sync so the home header can rebuild.
  int get profileSyncNonce;// Data
- List<OurServiceEntity> get servicesList; String? get servicesErrorMessage; PromotionalBannerEntity? get promotionalBanner; String? get promotionalBannerErrorMessage;
+ List<OurServiceEntity> get servicesList; String? get servicesErrorMessage; PromotionalBannerEntity? get promotionalBanner; String? get promotionalBannerErrorMessage; AppUpdatePromptEntity? get appUpdatePrompt;
 /// Create a copy of DashboardServicesState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $DashboardServicesStateCopyWith<DashboardServicesState> get copyWith => _$Dashbo
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is DashboardServicesState&&(identical(other.ourServicesLoadingStateStatus, ourServicesLoadingStateStatus) || other.ourServicesLoadingStateStatus == ourServicesLoadingStateStatus)&&(identical(other.promotionalBannerLoadingStateStatus, promotionalBannerLoadingStateStatus) || other.promotionalBannerLoadingStateStatus == promotionalBannerLoadingStateStatus)&&(identical(other.profileSyncNonce, profileSyncNonce) || other.profileSyncNonce == profileSyncNonce)&&const DeepCollectionEquality().equals(other.servicesList, servicesList)&&(identical(other.servicesErrorMessage, servicesErrorMessage) || other.servicesErrorMessage == servicesErrorMessage)&&(identical(other.promotionalBanner, promotionalBanner) || other.promotionalBanner == promotionalBanner)&&(identical(other.promotionalBannerErrorMessage, promotionalBannerErrorMessage) || other.promotionalBannerErrorMessage == promotionalBannerErrorMessage));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is DashboardServicesState&&(identical(other.ourServicesLoadingStateStatus, ourServicesLoadingStateStatus) || other.ourServicesLoadingStateStatus == ourServicesLoadingStateStatus)&&(identical(other.promotionalBannerLoadingStateStatus, promotionalBannerLoadingStateStatus) || other.promotionalBannerLoadingStateStatus == promotionalBannerLoadingStateStatus)&&(identical(other.appVersionLoadingStateStatus, appVersionLoadingStateStatus) || other.appVersionLoadingStateStatus == appVersionLoadingStateStatus)&&(identical(other.profileSyncNonce, profileSyncNonce) || other.profileSyncNonce == profileSyncNonce)&&const DeepCollectionEquality().equals(other.servicesList, servicesList)&&(identical(other.servicesErrorMessage, servicesErrorMessage) || other.servicesErrorMessage == servicesErrorMessage)&&(identical(other.promotionalBanner, promotionalBanner) || other.promotionalBanner == promotionalBanner)&&(identical(other.promotionalBannerErrorMessage, promotionalBannerErrorMessage) || other.promotionalBannerErrorMessage == promotionalBannerErrorMessage)&&(identical(other.appUpdatePrompt, appUpdatePrompt) || other.appUpdatePrompt == appUpdatePrompt));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,ourServicesLoadingStateStatus,promotionalBannerLoadingStateStatus,profileSyncNonce,const DeepCollectionEquality().hash(servicesList),servicesErrorMessage,promotionalBanner,promotionalBannerErrorMessage);
+int get hashCode => Object.hash(runtimeType,ourServicesLoadingStateStatus,promotionalBannerLoadingStateStatus,appVersionLoadingStateStatus,profileSyncNonce,const DeepCollectionEquality().hash(servicesList),servicesErrorMessage,promotionalBanner,promotionalBannerErrorMessage,appUpdatePrompt);
 
 @override
 String toString() {
-  return 'DashboardServicesState(ourServicesLoadingStateStatus: $ourServicesLoadingStateStatus, promotionalBannerLoadingStateStatus: $promotionalBannerLoadingStateStatus, profileSyncNonce: $profileSyncNonce, servicesList: $servicesList, servicesErrorMessage: $servicesErrorMessage, promotionalBanner: $promotionalBanner, promotionalBannerErrorMessage: $promotionalBannerErrorMessage)';
+  return 'DashboardServicesState(ourServicesLoadingStateStatus: $ourServicesLoadingStateStatus, promotionalBannerLoadingStateStatus: $promotionalBannerLoadingStateStatus, appVersionLoadingStateStatus: $appVersionLoadingStateStatus, profileSyncNonce: $profileSyncNonce, servicesList: $servicesList, servicesErrorMessage: $servicesErrorMessage, promotionalBanner: $promotionalBanner, promotionalBannerErrorMessage: $promotionalBannerErrorMessage, appUpdatePrompt: $appUpdatePrompt)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $DashboardServicesStateCopyWith<$Res>  {
   factory $DashboardServicesStateCopyWith(DashboardServicesState value, $Res Function(DashboardServicesState) _then) = _$DashboardServicesStateCopyWithImpl;
 @useResult
 $Res call({
- StateStatus ourServicesLoadingStateStatus, StateStatus promotionalBannerLoadingStateStatus, int profileSyncNonce, List<OurServiceEntity> servicesList, String? servicesErrorMessage, PromotionalBannerEntity? promotionalBanner, String? promotionalBannerErrorMessage
+ StateStatus ourServicesLoadingStateStatus, StateStatus promotionalBannerLoadingStateStatus, StateStatus appVersionLoadingStateStatus, int profileSyncNonce, List<OurServiceEntity> servicesList, String? servicesErrorMessage, PromotionalBannerEntity? promotionalBanner, String? promotionalBannerErrorMessage, AppUpdatePromptEntity? appUpdatePrompt
 });
 
 
@@ -65,16 +65,18 @@ class _$DashboardServicesStateCopyWithImpl<$Res>
 
 /// Create a copy of DashboardServicesState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? ourServicesLoadingStateStatus = null,Object? promotionalBannerLoadingStateStatus = null,Object? profileSyncNonce = null,Object? servicesList = null,Object? servicesErrorMessage = freezed,Object? promotionalBanner = freezed,Object? promotionalBannerErrorMessage = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? ourServicesLoadingStateStatus = null,Object? promotionalBannerLoadingStateStatus = null,Object? appVersionLoadingStateStatus = null,Object? profileSyncNonce = null,Object? servicesList = null,Object? servicesErrorMessage = freezed,Object? promotionalBanner = freezed,Object? promotionalBannerErrorMessage = freezed,Object? appUpdatePrompt = freezed,}) {
   return _then(_self.copyWith(
 ourServicesLoadingStateStatus: null == ourServicesLoadingStateStatus ? _self.ourServicesLoadingStateStatus : ourServicesLoadingStateStatus // ignore: cast_nullable_to_non_nullable
 as StateStatus,promotionalBannerLoadingStateStatus: null == promotionalBannerLoadingStateStatus ? _self.promotionalBannerLoadingStateStatus : promotionalBannerLoadingStateStatus // ignore: cast_nullable_to_non_nullable
+as StateStatus,appVersionLoadingStateStatus: null == appVersionLoadingStateStatus ? _self.appVersionLoadingStateStatus : appVersionLoadingStateStatus // ignore: cast_nullable_to_non_nullable
 as StateStatus,profileSyncNonce: null == profileSyncNonce ? _self.profileSyncNonce : profileSyncNonce // ignore: cast_nullable_to_non_nullable
 as int,servicesList: null == servicesList ? _self.servicesList : servicesList // ignore: cast_nullable_to_non_nullable
 as List<OurServiceEntity>,servicesErrorMessage: freezed == servicesErrorMessage ? _self.servicesErrorMessage : servicesErrorMessage // ignore: cast_nullable_to_non_nullable
 as String?,promotionalBanner: freezed == promotionalBanner ? _self.promotionalBanner : promotionalBanner // ignore: cast_nullable_to_non_nullable
 as PromotionalBannerEntity?,promotionalBannerErrorMessage: freezed == promotionalBannerErrorMessage ? _self.promotionalBannerErrorMessage : promotionalBannerErrorMessage // ignore: cast_nullable_to_non_nullable
-as String?,
+as String?,appUpdatePrompt: freezed == appUpdatePrompt ? _self.appUpdatePrompt : appUpdatePrompt // ignore: cast_nullable_to_non_nullable
+as AppUpdatePromptEntity?,
   ));
 }
 
@@ -159,10 +161,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( StateStatus ourServicesLoadingStateStatus,  StateStatus promotionalBannerLoadingStateStatus,  int profileSyncNonce,  List<OurServiceEntity> servicesList,  String? servicesErrorMessage,  PromotionalBannerEntity? promotionalBanner,  String? promotionalBannerErrorMessage)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( StateStatus ourServicesLoadingStateStatus,  StateStatus promotionalBannerLoadingStateStatus,  StateStatus appVersionLoadingStateStatus,  int profileSyncNonce,  List<OurServiceEntity> servicesList,  String? servicesErrorMessage,  PromotionalBannerEntity? promotionalBanner,  String? promotionalBannerErrorMessage,  AppUpdatePromptEntity? appUpdatePrompt)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _DashboardServicesState() when $default != null:
-return $default(_that.ourServicesLoadingStateStatus,_that.promotionalBannerLoadingStateStatus,_that.profileSyncNonce,_that.servicesList,_that.servicesErrorMessage,_that.promotionalBanner,_that.promotionalBannerErrorMessage);case _:
+return $default(_that.ourServicesLoadingStateStatus,_that.promotionalBannerLoadingStateStatus,_that.appVersionLoadingStateStatus,_that.profileSyncNonce,_that.servicesList,_that.servicesErrorMessage,_that.promotionalBanner,_that.promotionalBannerErrorMessage,_that.appUpdatePrompt);case _:
   return orElse();
 
 }
@@ -180,10 +182,10 @@ return $default(_that.ourServicesLoadingStateStatus,_that.promotionalBannerLoadi
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( StateStatus ourServicesLoadingStateStatus,  StateStatus promotionalBannerLoadingStateStatus,  int profileSyncNonce,  List<OurServiceEntity> servicesList,  String? servicesErrorMessage,  PromotionalBannerEntity? promotionalBanner,  String? promotionalBannerErrorMessage)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( StateStatus ourServicesLoadingStateStatus,  StateStatus promotionalBannerLoadingStateStatus,  StateStatus appVersionLoadingStateStatus,  int profileSyncNonce,  List<OurServiceEntity> servicesList,  String? servicesErrorMessage,  PromotionalBannerEntity? promotionalBanner,  String? promotionalBannerErrorMessage,  AppUpdatePromptEntity? appUpdatePrompt)  $default,) {final _that = this;
 switch (_that) {
 case _DashboardServicesState():
-return $default(_that.ourServicesLoadingStateStatus,_that.promotionalBannerLoadingStateStatus,_that.profileSyncNonce,_that.servicesList,_that.servicesErrorMessage,_that.promotionalBanner,_that.promotionalBannerErrorMessage);case _:
+return $default(_that.ourServicesLoadingStateStatus,_that.promotionalBannerLoadingStateStatus,_that.appVersionLoadingStateStatus,_that.profileSyncNonce,_that.servicesList,_that.servicesErrorMessage,_that.promotionalBanner,_that.promotionalBannerErrorMessage,_that.appUpdatePrompt);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -200,10 +202,10 @@ return $default(_that.ourServicesLoadingStateStatus,_that.promotionalBannerLoadi
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( StateStatus ourServicesLoadingStateStatus,  StateStatus promotionalBannerLoadingStateStatus,  int profileSyncNonce,  List<OurServiceEntity> servicesList,  String? servicesErrorMessage,  PromotionalBannerEntity? promotionalBanner,  String? promotionalBannerErrorMessage)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( StateStatus ourServicesLoadingStateStatus,  StateStatus promotionalBannerLoadingStateStatus,  StateStatus appVersionLoadingStateStatus,  int profileSyncNonce,  List<OurServiceEntity> servicesList,  String? servicesErrorMessage,  PromotionalBannerEntity? promotionalBanner,  String? promotionalBannerErrorMessage,  AppUpdatePromptEntity? appUpdatePrompt)?  $default,) {final _that = this;
 switch (_that) {
 case _DashboardServicesState() when $default != null:
-return $default(_that.ourServicesLoadingStateStatus,_that.promotionalBannerLoadingStateStatus,_that.profileSyncNonce,_that.servicesList,_that.servicesErrorMessage,_that.promotionalBanner,_that.promotionalBannerErrorMessage);case _:
+return $default(_that.ourServicesLoadingStateStatus,_that.promotionalBannerLoadingStateStatus,_that.appVersionLoadingStateStatus,_that.profileSyncNonce,_that.servicesList,_that.servicesErrorMessage,_that.promotionalBanner,_that.promotionalBannerErrorMessage,_that.appUpdatePrompt);case _:
   return null;
 
 }
@@ -215,12 +217,13 @@ return $default(_that.ourServicesLoadingStateStatus,_that.promotionalBannerLoadi
 
 
 class _DashboardServicesState implements DashboardServicesState {
-  const _DashboardServicesState({this.ourServicesLoadingStateStatus = StateStatus.idle, this.promotionalBannerLoadingStateStatus = StateStatus.idle, this.profileSyncNonce = 0, final  List<OurServiceEntity> servicesList = const [], this.servicesErrorMessage, this.promotionalBanner, this.promotionalBannerErrorMessage}): _servicesList = servicesList;
+  const _DashboardServicesState({this.ourServicesLoadingStateStatus = StateStatus.idle, this.promotionalBannerLoadingStateStatus = StateStatus.idle, this.appVersionLoadingStateStatus = StateStatus.idle, this.profileSyncNonce = 0, final  List<OurServiceEntity> servicesList = const [], this.servicesErrorMessage, this.promotionalBanner, this.promotionalBannerErrorMessage, this.appUpdatePrompt}): _servicesList = servicesList;
   
 
 // Loading status
 @override@JsonKey() final  StateStatus ourServicesLoadingStateStatus;
 @override@JsonKey() final  StateStatus promotionalBannerLoadingStateStatus;
+@override@JsonKey() final  StateStatus appVersionLoadingStateStatus;
 /// Incremented after a successful user-profile sync so the home header can rebuild.
 @override@JsonKey() final  int profileSyncNonce;
 // Data
@@ -235,6 +238,7 @@ class _DashboardServicesState implements DashboardServicesState {
 @override final  String? servicesErrorMessage;
 @override final  PromotionalBannerEntity? promotionalBanner;
 @override final  String? promotionalBannerErrorMessage;
+@override final  AppUpdatePromptEntity? appUpdatePrompt;
 
 /// Create a copy of DashboardServicesState
 /// with the given fields replaced by the non-null parameter values.
@@ -246,16 +250,16 @@ _$DashboardServicesStateCopyWith<_DashboardServicesState> get copyWith => __$Das
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _DashboardServicesState&&(identical(other.ourServicesLoadingStateStatus, ourServicesLoadingStateStatus) || other.ourServicesLoadingStateStatus == ourServicesLoadingStateStatus)&&(identical(other.promotionalBannerLoadingStateStatus, promotionalBannerLoadingStateStatus) || other.promotionalBannerLoadingStateStatus == promotionalBannerLoadingStateStatus)&&(identical(other.profileSyncNonce, profileSyncNonce) || other.profileSyncNonce == profileSyncNonce)&&const DeepCollectionEquality().equals(other._servicesList, _servicesList)&&(identical(other.servicesErrorMessage, servicesErrorMessage) || other.servicesErrorMessage == servicesErrorMessage)&&(identical(other.promotionalBanner, promotionalBanner) || other.promotionalBanner == promotionalBanner)&&(identical(other.promotionalBannerErrorMessage, promotionalBannerErrorMessage) || other.promotionalBannerErrorMessage == promotionalBannerErrorMessage));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _DashboardServicesState&&(identical(other.ourServicesLoadingStateStatus, ourServicesLoadingStateStatus) || other.ourServicesLoadingStateStatus == ourServicesLoadingStateStatus)&&(identical(other.promotionalBannerLoadingStateStatus, promotionalBannerLoadingStateStatus) || other.promotionalBannerLoadingStateStatus == promotionalBannerLoadingStateStatus)&&(identical(other.appVersionLoadingStateStatus, appVersionLoadingStateStatus) || other.appVersionLoadingStateStatus == appVersionLoadingStateStatus)&&(identical(other.profileSyncNonce, profileSyncNonce) || other.profileSyncNonce == profileSyncNonce)&&const DeepCollectionEquality().equals(other._servicesList, _servicesList)&&(identical(other.servicesErrorMessage, servicesErrorMessage) || other.servicesErrorMessage == servicesErrorMessage)&&(identical(other.promotionalBanner, promotionalBanner) || other.promotionalBanner == promotionalBanner)&&(identical(other.promotionalBannerErrorMessage, promotionalBannerErrorMessage) || other.promotionalBannerErrorMessage == promotionalBannerErrorMessage)&&(identical(other.appUpdatePrompt, appUpdatePrompt) || other.appUpdatePrompt == appUpdatePrompt));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,ourServicesLoadingStateStatus,promotionalBannerLoadingStateStatus,profileSyncNonce,const DeepCollectionEquality().hash(_servicesList),servicesErrorMessage,promotionalBanner,promotionalBannerErrorMessage);
+int get hashCode => Object.hash(runtimeType,ourServicesLoadingStateStatus,promotionalBannerLoadingStateStatus,appVersionLoadingStateStatus,profileSyncNonce,const DeepCollectionEquality().hash(_servicesList),servicesErrorMessage,promotionalBanner,promotionalBannerErrorMessage,appUpdatePrompt);
 
 @override
 String toString() {
-  return 'DashboardServicesState(ourServicesLoadingStateStatus: $ourServicesLoadingStateStatus, promotionalBannerLoadingStateStatus: $promotionalBannerLoadingStateStatus, profileSyncNonce: $profileSyncNonce, servicesList: $servicesList, servicesErrorMessage: $servicesErrorMessage, promotionalBanner: $promotionalBanner, promotionalBannerErrorMessage: $promotionalBannerErrorMessage)';
+  return 'DashboardServicesState(ourServicesLoadingStateStatus: $ourServicesLoadingStateStatus, promotionalBannerLoadingStateStatus: $promotionalBannerLoadingStateStatus, appVersionLoadingStateStatus: $appVersionLoadingStateStatus, profileSyncNonce: $profileSyncNonce, servicesList: $servicesList, servicesErrorMessage: $servicesErrorMessage, promotionalBanner: $promotionalBanner, promotionalBannerErrorMessage: $promotionalBannerErrorMessage, appUpdatePrompt: $appUpdatePrompt)';
 }
 
 
@@ -266,7 +270,7 @@ abstract mixin class _$DashboardServicesStateCopyWith<$Res> implements $Dashboar
   factory _$DashboardServicesStateCopyWith(_DashboardServicesState value, $Res Function(_DashboardServicesState) _then) = __$DashboardServicesStateCopyWithImpl;
 @override @useResult
 $Res call({
- StateStatus ourServicesLoadingStateStatus, StateStatus promotionalBannerLoadingStateStatus, int profileSyncNonce, List<OurServiceEntity> servicesList, String? servicesErrorMessage, PromotionalBannerEntity? promotionalBanner, String? promotionalBannerErrorMessage
+ StateStatus ourServicesLoadingStateStatus, StateStatus promotionalBannerLoadingStateStatus, StateStatus appVersionLoadingStateStatus, int profileSyncNonce, List<OurServiceEntity> servicesList, String? servicesErrorMessage, PromotionalBannerEntity? promotionalBanner, String? promotionalBannerErrorMessage, AppUpdatePromptEntity? appUpdatePrompt
 });
 
 
@@ -283,16 +287,18 @@ class __$DashboardServicesStateCopyWithImpl<$Res>
 
 /// Create a copy of DashboardServicesState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? ourServicesLoadingStateStatus = null,Object? promotionalBannerLoadingStateStatus = null,Object? profileSyncNonce = null,Object? servicesList = null,Object? servicesErrorMessage = freezed,Object? promotionalBanner = freezed,Object? promotionalBannerErrorMessage = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? ourServicesLoadingStateStatus = null,Object? promotionalBannerLoadingStateStatus = null,Object? appVersionLoadingStateStatus = null,Object? profileSyncNonce = null,Object? servicesList = null,Object? servicesErrorMessage = freezed,Object? promotionalBanner = freezed,Object? promotionalBannerErrorMessage = freezed,Object? appUpdatePrompt = freezed,}) {
   return _then(_DashboardServicesState(
 ourServicesLoadingStateStatus: null == ourServicesLoadingStateStatus ? _self.ourServicesLoadingStateStatus : ourServicesLoadingStateStatus // ignore: cast_nullable_to_non_nullable
 as StateStatus,promotionalBannerLoadingStateStatus: null == promotionalBannerLoadingStateStatus ? _self.promotionalBannerLoadingStateStatus : promotionalBannerLoadingStateStatus // ignore: cast_nullable_to_non_nullable
+as StateStatus,appVersionLoadingStateStatus: null == appVersionLoadingStateStatus ? _self.appVersionLoadingStateStatus : appVersionLoadingStateStatus // ignore: cast_nullable_to_non_nullable
 as StateStatus,profileSyncNonce: null == profileSyncNonce ? _self.profileSyncNonce : profileSyncNonce // ignore: cast_nullable_to_non_nullable
 as int,servicesList: null == servicesList ? _self._servicesList : servicesList // ignore: cast_nullable_to_non_nullable
 as List<OurServiceEntity>,servicesErrorMessage: freezed == servicesErrorMessage ? _self.servicesErrorMessage : servicesErrorMessage // ignore: cast_nullable_to_non_nullable
 as String?,promotionalBanner: freezed == promotionalBanner ? _self.promotionalBanner : promotionalBanner // ignore: cast_nullable_to_non_nullable
 as PromotionalBannerEntity?,promotionalBannerErrorMessage: freezed == promotionalBannerErrorMessage ? _self.promotionalBannerErrorMessage : promotionalBannerErrorMessage // ignore: cast_nullable_to_non_nullable
-as String?,
+as String?,appUpdatePrompt: freezed == appUpdatePrompt ? _self.appUpdatePrompt : appUpdatePrompt // ignore: cast_nullable_to_non_nullable
+as AppUpdatePromptEntity?,
   ));
 }
 

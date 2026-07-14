@@ -237,6 +237,23 @@
   "dashboardMenuLoginSignup": "لاگ اِن / سائن اپ",
   "dashboardLogoutMessage": "کیا آپ واقعی اپنے اکاؤنٹ سے لاگ آؤٹ کرنا چاہتے ہیں؟",
   "dashboardCancel": "منسوخ کریں",
+  "dashboardAppUpdateAvailableTitle": "اپ ڈیٹ دستیاب ہے",
+  "dashboardAppUpdateRequiredTitle": "اپ ڈیٹ ضروری ہے",
+  "dashboardAppUpdateAvailableMessage": "اپنا کلینک کا نیا ورژن دستیاب ہے۔ تازہ ترین فیچرز کے لیے ابھی اپ ڈیٹ کریں۔",
+  "dashboardAppUpdateRequiredMessage": "ایپ استعمال جاری رکھنے کے لیے براہ کرم اپنا کلینک اپ ڈیٹ کریں۔",
+  "dashboardAppUpdateCta": "ابھی اپ ڈیٹ کریں",
+  "dashboardAppUpdateLater": "بعد میں",
+  "dashboardAppUpdateVersionLabel": "موجودہ {currentVersion} → {latestVersion}",
+  "@dashboardAppUpdateVersionLabel": {
+    "placeholders": {
+      "currentVersion": {
+        "type": "String"
+      },
+      "latestVersion": {
+        "type": "String"
+      }
+    }
+  },
   "notificationsTitle": "نوٹیفیکیشنز",
   "notificationsRetryCta": "دوبارہ کوشش کریں",
   "notificationsEmptyTitle": "ابھی تک کوئی نوٹیفیکیشن نہیں!",
