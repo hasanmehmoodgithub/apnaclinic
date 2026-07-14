@@ -5,6 +5,7 @@ import '../entities/consultation_category_entity.dart';
 import '../entities/consultation_doctor_slots_entity.dart';
 import '../entities/payment_provider_entity.dart';
 import '../use_cases/submit_consultation_booking_use_case.dart';
+import '../use_cases/submit_consultation_feedback_use_case.dart';
 
 abstract class ConsultationRepository {
   Future<Either<ErrorMsg, List<ConsultationCategoryEntity>>> getCategories();
@@ -26,5 +27,8 @@ abstract class ConsultationRepository {
   });
   Future<Either<ErrorMsg, void>> submitBooking(
     SubmitConsultationBookingParams params,
+  );
+  Future<Either<ErrorMsg, void>> submitFeedback(
+    SubmitConsultationFeedbackParams params,
   );
 }

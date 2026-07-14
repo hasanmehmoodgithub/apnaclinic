@@ -19,6 +19,7 @@ import '../models/consultation_doctor_model.dart';
 import '../models/consultation_doctor_slots_model.dart';
 import '../models/payment_provider_model.dart';
 import '../../domain/use_cases/submit_consultation_booking_use_case.dart';
+import '../../domain/use_cases/submit_consultation_feedback_use_case.dart';
 import 'consultation_remote_data_source.dart';
 
 class ConsultationRemoteDataSourceImpl implements ConsultationRemoteDataSource {
@@ -284,6 +285,41 @@ class ConsultationRemoteDataSourceImpl implements ConsultationRemoteDataSource {
       final message = ErrorHandler.handleExceptions(
         e,
         endpoint: AppUrls.doctorConsultationBooking,
+      );
+      return Future.error(message);
+    }
+  }
+
+  @override
+  Future<void> submitFeedback(SubmitConsultationFeedbackParams params) async {
+    try {
+      final Map<String, dynamic> response;
+      if (ConsultationBookingMockApi.useMockResponses) {
+        response = await bookingMockApi.submitFeedbackSuccessResponse();
+      } else {
+        response = await apiService.post(
+          AppUrls.doctorConsultationFeedback,
+          data: {
+            'refNo': params.refNo,
+            'rating': params.rating,
+            'review': params.review,
+          },
+        );
+        log('submitFeedback response: $response');
+      }
+
+      if (_isSuccessResponse(response)) {
+        return;
+      }
+
+      final message =
+          (response['message'] ?? AppStrings.genericErrorMessage).toString();
+      return Future.error(message);
+    } catch (e) {
+      log('submitFeedback error: $e');
+      final message = ErrorHandler.handleExceptions(
+        e,
+        endpoint: AppUrls.doctorConsultationFeedback,
       );
       return Future.error(message);
     }

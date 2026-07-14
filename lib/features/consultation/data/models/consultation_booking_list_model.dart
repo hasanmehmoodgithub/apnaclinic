@@ -9,6 +9,8 @@ class ConsultationBookingListItemModel {
     required this.slotEndTime,
     required this.consultationFee,
     required this.discountAmount,
+    required this.originalFee,
+    required this.discountPercent,
     required this.patientRelation,
     required this.issue,
     required this.doctorName,
@@ -18,6 +20,13 @@ class ConsultationBookingListItemModel {
     required this.education,
     required this.doctorImageUrl,
     required this.consultationLink,
+    required this.partnerRefNo,
+    required this.ratings,
+    required this.pmdcVerified,
+    required this.partnerTenantId,
+    required this.partnerLogoUrl,
+    required this.attachments,
+    required this.patientReview,
   });
 
   final String bookingId;
@@ -27,6 +36,8 @@ class ConsultationBookingListItemModel {
   final String slotEndTime;
   final int consultationFee;
   final int discountAmount;
+  final int originalFee;
+  final double discountPercent;
   final String patientRelation;
   final String issue;
   final String doctorName;
@@ -36,9 +47,17 @@ class ConsultationBookingListItemModel {
   final String education;
   final String doctorImageUrl;
   final String consultationLink;
+  final String partnerRefNo;
+  final double? ratings;
+  final bool pmdcVerified;
+  final String partnerTenantId;
+  final String partnerLogoUrl;
+  final List<String> attachments;
+  final ConsultationBookingPatientReviewEntity? patientReview;
 
   factory ConsultationBookingListItemModel.fromJson(Map<String, dynamic> json) {
     final doctor = _resolveDoctor(json);
+    final partner = _resolvePartner(doctor);
     final qualificationsRaw =
         doctor?['qualifications'] ?? json['qualifications'];
     final fees = _resolveFees(doctor, json);
@@ -78,8 +97,10 @@ class ConsultationBookingListItemModel {
         'endTime',
         'end_time',
       ]),
-      consultationFee: fees.$1,
-      discountAmount: fees.$2,
+      consultationFee: fees.payable,
+      discountAmount: fees.discount,
+      originalFee: fees.original,
+      discountPercent: fees.percent,
       patientRelation: _readString(json, const [
         'patientRelation',
         'patient_relation',
@@ -139,6 +160,34 @@ class ConsultationBookingListItemModel {
         'consultationLink',
         'consultation_link',
       ]),
+      partnerRefNo: _readString(json, const [
+        'partnerRefNo',
+        'partner_ref_no',
+        'referenceNo',
+        'reference_no',
+      ]),
+      ratings: _readNullableDouble(
+        doctor?['ratings'] ?? doctor?['ratingScore'] ?? json['ratings'],
+      ),
+      pmdcVerified: _readBool(
+        doctor?['pmdcVerified'] ??
+            doctor?['pmdc_verified'] ??
+            json['pmdcVerified'],
+      ),
+      partnerTenantId: _readString(
+        json,
+        const ['tenantId', 'tenant_id'],
+        nested: partner,
+        nestedKeys: const ['tenantId', 'tenant_id', 'id'],
+      ),
+      partnerLogoUrl: _readString(
+        json,
+        const ['partnerLogoUrl', 'partner_logo_url'],
+        nested: partner,
+        nestedKeys: const ['logoUrl', 'logo_url'],
+      ),
+      attachments: _parseAttachments(json['attachments']),
+      patientReview: _parsePatientReview(json['patientReview']),
     );
   }
 
@@ -151,6 +200,8 @@ class ConsultationBookingListItemModel {
       slotEndTime: slotEndTime,
       consultationFee: consultationFee,
       discountAmount: discountAmount,
+      originalFee: originalFee,
+      discountPercent: discountPercent,
       patientRelation: patientRelation,
       issue: issue,
       doctorName: doctorName,
@@ -160,14 +211,28 @@ class ConsultationBookingListItemModel {
       education: education,
       doctorImageUrl: doctorImageUrl,
       consultationLink: consultationLink,
+      partnerRefNo: partnerRefNo,
+      ratings: ratings,
+      pmdcVerified: pmdcVerified,
+      partnerTenantId: partnerTenantId,
+      partnerLogoUrl: partnerLogoUrl,
+      attachments: attachments,
+      patientReview: patientReview,
     );
   }
 
   static Map<String, dynamic>? _resolveDoctor(Map<String, dynamic> json) {
     for (final key in const ['doctorInfo', 'doctor', 'doctor_info']) {
       final value = json[key];
-      if (value is Map<String, dynamic>) return value;
+      if (value is Map) return Map<String, dynamic>.from(value);
     }
+    return null;
+  }
+
+  static Map<String, dynamic>? _resolvePartner(Map<String, dynamic>? doctor) {
+    if (doctor == null) return null;
+    final value = doctor['partner'];
+    if (value is Map) return Map<String, dynamic>.from(value);
     return null;
   }
 
@@ -175,6 +240,12 @@ class ConsultationBookingListItemModel {
     required Map<String, dynamic> json,
     required String doctorId,
   }) {
+    final partnerRef = _readString(json, const [
+      'partnerRefNo',
+      'partner_ref_no',
+    ]);
+    if (partnerRef.isNotEmpty) return partnerRef;
+
     final explicitId = _readString(json, const [
       'id',
       'bookingId',
@@ -207,40 +278,102 @@ class ConsultationBookingListItemModel {
     return '';
   }
 
-  static (int payable, int discount) _resolveFees(
+  static ({int payable, int discount, int original, double percent})
+      _resolveFees(
     Map<String, dynamic>? doctor,
     Map<String, dynamic> json,
   ) {
     if (doctor != null) {
       if (doctor['isFree'] == true) {
         final original = _readDouble(doctor['consultationFee']).round();
-        return (0, original);
+        return (
+          payable: 0,
+          discount: original,
+          original: original,
+          percent: 100,
+        );
       }
 
       final original = _readDouble(doctor['consultationFee']);
       final discountPercent = _readDouble(doctor['discountPercent']);
       if (original > 0) {
         if (discountPercent <= 0) {
-          return (original.round(), 0);
+          final amount = original.round();
+          return (
+            payable: amount,
+            discount: 0,
+            original: amount,
+            percent: 0,
+          );
         }
         final discount = (original * discountPercent / 100).round();
-        return ((original - discount).round(), discount);
+        return (
+          payable: (original - discount).round(),
+          discount: discount,
+          original: original.round(),
+          percent: discountPercent,
+        );
       }
     }
 
+    final payable = _readInt(json, const [
+      'consultationFee',
+      'consultation_fee',
+      'fee',
+      'payableAmount',
+      'payable_amount',
+    ]);
+    final discount = _readInt(json, const [
+      'discountAmount',
+      'discount_amount',
+      'discount',
+    ]);
     return (
-      _readInt(json, const [
-        'consultationFee',
-        'consultation_fee',
-        'fee',
-        'payableAmount',
-        'payable_amount',
-      ]),
-      _readInt(json, const [
-        'discountAmount',
-        'discount_amount',
-        'discount',
-      ]),
+      payable: payable,
+      discount: discount,
+      original: payable + discount,
+      percent: 0,
+    );
+  }
+
+  static List<String> _parseAttachments(dynamic raw) {
+    if (raw is! List) return const [];
+    return raw
+        .map((item) {
+          if (item is String) return item.trim();
+          if (item is Map) {
+            final map = Map<String, dynamic>.from(item);
+            return (map['url'] ??
+                    map['fileUrl'] ??
+                    map['file_url'] ??
+                    map['path'] ??
+                    '')
+                .toString()
+                .trim();
+          }
+          return item.toString().trim();
+        })
+        .where((url) => url.isNotEmpty)
+        .toList(growable: false);
+  }
+
+  static ConsultationBookingPatientReviewEntity? _parsePatientReview(
+    dynamic raw,
+  ) {
+    if (raw is! Map) return null;
+    final map = Map<String, dynamic>.from(raw);
+    final review = (map['review'] ?? map['comment'] ?? map['feedback'] ?? '')
+        .toString()
+        .trim();
+    final rating = _readNullableDouble(map['rating'] ?? map['score']);
+    final date = (map['date'] ?? map['createdAt'] ?? map['created_at'] ?? '')
+        .toString()
+        .trim();
+    if (rating == null && review.isEmpty) return null;
+    return ConsultationBookingPatientReviewEntity(
+      rating: rating ?? 0,
+      review: review,
+      date: date,
     );
   }
 
@@ -288,10 +421,23 @@ class ConsultationBookingListItemModel {
     return double.tryParse(value.toString()) ?? 0;
   }
 
+  static double? _readNullableDouble(dynamic value) {
+    if (value == null) return null;
+    if (value is num) return value.toDouble();
+    return double.tryParse(value.toString().trim());
+  }
+
   static int? _readNullableInt(dynamic value) {
     if (value == null) return null;
     if (value is num) return value.toInt();
     return int.tryParse(value.toString());
+  }
+
+  static bool _readBool(dynamic value) {
+    if (value is bool) return value;
+    if (value is num) return value != 0;
+    final text = value?.toString().trim().toLowerCase();
+    return text == 'true' || text == '1' || text == 'yes';
   }
 }
 
@@ -311,14 +457,16 @@ class ConsultationBookingsPageModel {
   factory ConsultationBookingsPageModel.fromJson(Map<String, dynamic> json) {
     final data = json['data'];
     final Map<String, dynamic>? pageData =
-        data is Map<String, dynamic> ? data : null;
+        data is Map ? Map<String, dynamic>.from(data) : null;
     final rawItems = pageData?['data'] is List
         ? pageData!['data'] as List<dynamic>
         : (data is List ? data : const <dynamic>[]);
 
     final items = rawItems
-        .whereType<Map<String, dynamic>>()
-        .map(ConsultationBookingListItemModel.fromJson)
+        .whereType<Map>()
+        .map((item) => ConsultationBookingListItemModel.fromJson(
+              Map<String, dynamic>.from(item),
+            ))
         .where(_isRenderableItem)
         .toList(growable: false);
 

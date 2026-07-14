@@ -14,4 +14,14 @@ class ConsultationBookingMockApi {
       },
     };
   }
+
+  Future<Map<String, dynamic>> submitFeedbackSuccessResponse() async {
+    await Future<void>.delayed(const Duration(milliseconds: 500));
+    return {
+      'success': true,
+      'message': 'Feedback submitted successfully',
+      'code': 200,
+      'data': null,
+    };
+  }
 }

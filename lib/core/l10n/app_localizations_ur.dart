@@ -1341,10 +1341,45 @@ class AppLocalizationsUr extends AppLocalizations {
   String get bookingsConsultationFeeLabel => 'کنسلٹیشن فیس';
 
   @override
-  String get bookingsDiscountLabel => 'ڈسکاؤنٹ (100%)';
+  String bookingsDiscountLabel(String percent) {
+    return 'ڈسکاؤنٹ ($percent%)';
+  }
 
   @override
   String get bookingsJoinNowCta => 'ابھی شامل ہوں';
+
+  @override
+  String get bookingsPatientsReviewTitle => 'مریض کا جائزہ';
+
+  @override
+  String get bookingsYourFeedbackLabel => 'آپ کی رائے';
+
+  @override
+  String get bookingsFeedbackHint => 'اپنی رائے لکھیں...';
+
+  @override
+  String get bookingsSubmitFeedbackCta => 'رائے جمع کرائیں';
+
+  @override
+  String get bookingsFeedbackSubmitSuccess => 'آپ کی رائے کا شکریہ۔';
+
+  @override
+  String get bookingsFeedbackSelectRating => 'براہِ کرم درجہ منتخب کریں۔';
+
+  @override
+  String get bookingsFeedbackMissingRef =>
+      'اس بکنگ کے لیے رائے جمع نہیں کی جا سکی۔';
+
+  @override
+  String get bookingsDocumentsTitle => 'دستاویزات';
+
+  @override
+  String get bookingsDownloadCta => 'ڈاؤن لوڈ';
+
+  @override
+  String bookingsAttachmentFallback(int index) {
+    return 'دستاویز $index';
+  }
 
   @override
   String get labTestSampleTypeBlood => 'خون';

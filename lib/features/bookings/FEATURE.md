@@ -12,15 +12,19 @@ Tabbed bookings hub (doctor consultation, surgery, lab test, pharmacy) with list
 ## Data & APIs
 
 - Doctor consultation list: **GET** `AppUrls.doctorConsultationBookings(page, limit)` via `GetConsultationBookingsUseCase` (consultation module). Maps API items to `DoctorConsultationBookingDetailsModel` in `DoctorConsultationBookingMapper`.
+  - Item fields: `doctorInfo` (`doctorid`, `displayName`, `specialtyName`, `profileImageUrl`, fees/`discountPercent`/`isFree`, `ratings`, `pmdcVerified`, `partner`), `patientRelation`, `slotDate`/`slotStartTime`/`slotEndTime`, `success` (`PAID` → confirmed), `partnerRefNo` (booking id), `issue`, `attachments` (URL strings), `patientReview` (`rating`/`review`/`date`).
+- Detail screen shows patient/issue, optional review + documents (download opens attachment URLs), and billing (original fee / discount % / total).
+- Submit feedback (when no existing review, non-cancelled): **POST** `AppUrls.doctorConsultationFeedback` via `SubmitConsultationFeedbackUseCase` — body `{ refNo, rating, review }` (`refNo` = `partnerRefNo` / booking id).
 
 ## State
 
 - `DoctorConsultationBookingsCubit` — paginated consultation bookings list (page 1, limit 20; infinite scroll load-more). Initial load uses `BookingsListShimmerWidget`. Empty list shows `EmptyBookingWidget` with “No Booking Available”.
-- `DoctorConsultationBookingDetailsCubit` — shows preloaded booking from list args; falls back to mock details when no booking payload.
+- `DoctorConsultationBookingDetailsCubit` — shows preloaded booking from list args; falls back to mock details when no booking payload; submits feedback and updates local `patientReview` on success.
 
 ## UI
 
 - `DoctorConsultationBookingCardWidget` — consultation list card; whole card opens booking details on tap; **View Details** button uses the same navigation.
+- `DoctorConsultationBookingFeedbackFormWidget` — rating + review + submit when `patientReview` is missing (hidden for cancelled); layout matches submitted review card (title, “Your Feedback” + date, stars + score chip, `#F7F7F7` text area).
 
 ## Mocks
 

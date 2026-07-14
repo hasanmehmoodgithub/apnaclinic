@@ -1340,10 +1340,45 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bookingsConsultationFeeLabel => 'Consultation fee';
 
   @override
-  String get bookingsDiscountLabel => 'Discount (100%)';
+  String bookingsDiscountLabel(String percent) {
+    return 'Discount ($percent%)';
+  }
 
   @override
   String get bookingsJoinNowCta => 'Join Now';
+
+  @override
+  String get bookingsPatientsReviewTitle => 'Patient’s Review';
+
+  @override
+  String get bookingsYourFeedbackLabel => 'Your Feedback';
+
+  @override
+  String get bookingsFeedbackHint => 'Write your feedback...';
+
+  @override
+  String get bookingsSubmitFeedbackCta => 'Submit Feedback';
+
+  @override
+  String get bookingsFeedbackSubmitSuccess => 'Thank you for your feedback.';
+
+  @override
+  String get bookingsFeedbackSelectRating => 'Please select a rating.';
+
+  @override
+  String get bookingsFeedbackMissingRef =>
+      'Unable to submit feedback for this booking.';
+
+  @override
+  String get bookingsDocumentsTitle => 'Documents';
+
+  @override
+  String get bookingsDownloadCta => 'Download';
+
+  @override
+  String bookingsAttachmentFallback(int index) {
+    return 'Document $index';
+  }
 
   @override
   String get labTestSampleTypeBlood => 'Blood';

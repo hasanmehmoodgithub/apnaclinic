@@ -25,59 +25,86 @@ class _DoctorConsultationBookingDetailsScreenState
     context.read<DoctorConsultationBookingDetailsCubit>().load();
   }
 
+  void _showSnackBar(String message) {
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(SnackBar(content: Text(message)));
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              Color(0xFFAEE3E3),
-              Color(0xFFEAF3F4),
-              Color(0xFFF3F5F7),
-            ],
-            stops: [0.0, 0.28, 0.45],
+    return BlocListener<DoctorConsultationBookingDetailsCubit,
+        DoctorConsultationBookingDetailsState>(
+      listenWhen: (prev, next) =>
+          prev.feedbackErrorMessage != next.feedbackErrorMessage ||
+          prev.feedbackSuccessMessage != next.feedbackSuccessMessage,
+      listener: (context, state) {
+        final success = state.feedbackSuccessMessage;
+        if (success != null && success.isNotEmpty) {
+          _showSnackBar(l10n.bookingsFeedbackSubmitSuccess);
+          return;
+        }
+        final error = state.feedbackErrorMessage;
+        if (error == null || error.isEmpty) return;
+        final display = switch (error) {
+          'missing_ref' => l10n.bookingsFeedbackMissingRef,
+          'invalid_rating' => l10n.bookingsFeedbackSelectRating,
+          _ => error,
+        };
+        _showSnackBar(display);
+      },
+      child: Scaffold(
+        body: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                Color(0xFFAEE3E3),
+                Color(0xFFEAF3F4),
+                Colors.white,
+              ],
+              stops: [0.0, 0.22, 0.38],
+            ),
           ),
-        ),
-        child: SafeArea(
-          child: Column(
-            children: [
-              const SurgeryBookingDetailsHeaderWidget(),
-              Expanded(
-                child: BlocBuilder<
-                    DoctorConsultationBookingDetailsCubit,
-                    DoctorConsultationBookingDetailsState>(
-                  builder: (context, state) {
-                    if (state.isLoading) {
-                      return const DoctorConsultationBookingDetailsShimmerWidget();
-                    }
-                    if (state.hasError || state.data == null) {
-                      return Center(
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(l10n.bookingsDetailsLoadError),
-                            SizedBox(height: 12.h),
-                            FilledButton(
-                              onPressed: () => context
-                                  .read<DoctorConsultationBookingDetailsCubit>()
-                                  .load(),
-                              child: Text(l10n.commonRetry),
-                            ),
-                          ],
-                        ),
+          child: SafeArea(
+            child: Column(
+              children: [
+                const SurgeryBookingDetailsHeaderWidget(),
+                Expanded(
+                  child: BlocBuilder<DoctorConsultationBookingDetailsCubit,
+                      DoctorConsultationBookingDetailsState>(
+                    builder: (context, state) {
+                      if (state.isLoading) {
+                        return const DoctorConsultationBookingDetailsShimmerWidget();
+                      }
+                      if (state.hasError || state.data == null) {
+                        return Center(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(l10n.bookingsDetailsLoadError),
+                              SizedBox(height: 12.h),
+                              FilledButton(
+                                onPressed: () => context
+                                    .read<
+                                        DoctorConsultationBookingDetailsCubit>()
+                                    .load(),
+                                child: Text(l10n.commonRetry),
+                              ),
+                            ],
+                          ),
+                        );
+                      }
+                      return DoctorConsultationBookingDetailsContentWidget(
+                        data: state.data!,
                       );
-                    }
-                    return DoctorConsultationBookingDetailsContentWidget(
-                      data: state.data!,
-                    );
-                  },
+                    },
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

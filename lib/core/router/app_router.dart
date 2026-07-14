@@ -9,6 +9,7 @@ import '../../features/bookings/data/mock/doctor_consultation_bookings_mock_api.
 import '../../features/bookings/presentation/cubit/doctor_consultation_booking_details_cubit.dart';
 import '../../features/bookings/presentation/doctor_consultation_booking_details_args.dart';
 import '../../features/bookings/presentation/screens/doctor_consultation_booking_details_screen.dart';
+import '../../features/consultation/domain/use_cases/submit_consultation_feedback_use_case.dart';
 import '../../features/consultation/presentation/cubit/consultation_cubit.dart';
 import '../../features/consultation/presentation/screens/ai_consultation_screen.dart';
 import '../../features/consultation/presentation/screens/doctor_consultation_book_doctor_screen.dart';
@@ -235,6 +236,7 @@ class AppRouter {
           return BlocProvider<DoctorConsultationBookingDetailsCubit>(
             create: (_) => DoctorConsultationBookingDetailsCubit(
               api: DoctorConsultationBookingsMockApi(),
+              submitFeedbackUseCase: sl<SubmitConsultationFeedbackUseCase>(),
               bookingId: extra.bookingId,
               booking: extra.booking,
             ),

@@ -437,7 +437,31 @@
   "bookingsBillingTitle": "بلنگ",
   "bookingsEInvoiceLabel": "ای-انوائس",
   "bookingsConsultationFeeLabel": "کنسلٹیشن فیس",
-  "bookingsDiscountLabel": "ڈسکاؤنٹ (100%)",
+  "bookingsDiscountLabel": "ڈسکاؤنٹ ({percent}%)",
+  "@bookingsDiscountLabel": {
+    "placeholders": {
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
   "bookingsJoinNowCta": "ابھی شامل ہوں",
+  "bookingsPatientsReviewTitle": "مریض کا جائزہ",
+  "bookingsYourFeedbackLabel": "آپ کی رائے",
+  "bookingsFeedbackHint": "اپنی رائے لکھیں...",
+  "bookingsSubmitFeedbackCta": "رائے جمع کرائیں",
+  "bookingsFeedbackSubmitSuccess": "آپ کی رائے کا شکریہ۔",
+  "bookingsFeedbackSelectRating": "براہِ کرم درجہ منتخب کریں۔",
+  "bookingsFeedbackMissingRef": "اس بکنگ کے لیے رائے جمع نہیں کی جا سکی۔",
+  "bookingsDocumentsTitle": "دستاویزات",
+  "bookingsDownloadCta": "ڈاؤن لوڈ",
+  "bookingsAttachmentFallback": "دستاویز {index}",
+  "@bookingsAttachmentFallback": {
+    "placeholders": {
+      "index": {
+        "type": "int"
+      }
+    }
+  },
   "labTestSampleTypeBlood": "خون"
 }

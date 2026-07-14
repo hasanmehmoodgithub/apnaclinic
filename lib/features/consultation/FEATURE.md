@@ -25,7 +25,11 @@ Doctor consultation category browse, doctor results, booking, and checkout.
   - Fields: `doctorId`, `tenantId`, `consultationFee`, `patientId`, `patientRelation`, `slotDate`, `slotStartTime`, `slotEndTime`, `paymentMethod` (e.g. `JAZZCASH`), `msisdn`, `attachments[]` (files).
   - `tenantId` from doctor `partner.tenantId` (not JWT); `patientId` from JWT/`AppPref`; JazzCash `msisdn` from selected saved account (profile phones via `GetAccountsListUseCase`; default/`isDefault` pre-selected in JazzCash sheet); slot values from selected availability chip.
 - **GET** `AppUrls.doctorConsultationBookings(page, limit)` — `/api/v1/mobile/doctor-consultation?page=&limit=` (subscriber's booked consultations).
-  - Response `data`: `{ data: [], page, limit, total }`; items map to `ConsultationBookingListItemEntity` (flexible doctor/slot/fee fields).
+  - Response `data`: `{ data: [], page, limit, total }`.
+  - Item: `doctorInfo` (`doctorid`, `displayName`, `yearsOfExperience`, `profileImageUrl`, `consultationFee`, `discountPercent`, `isFree`, `education`, `specialtyName`, `ratings`, `pmdcVerified`, `partner`), `patientRelation`, `slot*`, `success`, `partnerRefNo`, `issue`, `attachments` (URL strings), `patientReview` (`rating`/`review`/`date`, nullable).
+  - Maps to `ConsultationBookingListItemEntity` → bookings UI via `DoctorConsultationBookingMapper`.
+- **POST** `AppUrls.doctorConsultationFeedback` — `/api/v1/mobile/doctor-consultation/feedback` JSON `{ refNo, rating, review }`.
+  - Used from booking details when `patientReview` is null (not cancelled); `refNo` is `partnerRefNo` (fallback booking id).
 - **GET** `AppUrls.doctorConsultationSlots(doctorId, hospitalId?)` — `/api/v1/mobile/doctor-consultation/doctor/{doctorId}` (optional `?hospitalId=` when doctors list provides it).
   - Response `data.doctorInfo`: `ratings`, `pmdcVerified`, `verifiedPatientsCount`, `patientsSatisfiedPercentage`, `timeslots[]` (`date`, `slots[]` with `startTime`/`endTime` in 12h e.g. `12:40 PM`), `patientReviews` (`totalCount`, `filteredCount`, `reviews[]` with `rating`/`date`/`comment`/`patientName` — flexible keys).
   - Book-doctor screen shows Patient's Reviews under Description (first review + See More → Feedback bottom sheet).
@@ -42,10 +46,11 @@ Doctor consultation category browse, doctor results, booking, and checkout.
 - `DoctorConsultationBookDoctorScreen` — loads slots via `GetConsultationDoctorSlotsUseCase` using `ResultsDoctorItem.partnerDoctorId` or `apiDoctorId`. Documents section supports multiple attachments (gallery/file multi-select; camera appends) with per-item delete.
 - `DoctorConsultationCheckoutCubit` — loads payment providers via `GetPaymentProvidersUseCase`; submits booking via `SubmitConsultationBookingUseCase`. JazzCash Continue opens `DoctorConsultationJazzCashAccountsSheetWidget` (loads saved phones via `GetAccountsListUseCase`; default account pre-selected). **Add Account** opens shared `AddAccountScreen` (`AddAccountLaunchSource.consultationCheckout`); on save, sheet reloads all accounts and selects the new number.
 - `DoctorConsultationBookingsCubit` (bookings tab) — loads paginated bookings via `GetConsultationBookingsUseCase`.
+- Booking details — submits feedback via `SubmitConsultationFeedbackUseCase`.
 
 ## DI
 
-- `consultation_injection.dart` — `ConsultationRemoteDataSourceImpl`, repository, category/doctor/slots/payment-provider/booking/bookings-list use cases, `DoctorConsultationCheckoutCubit`, `DoctorConsultationBookingsCubit`.
+- `consultation_injection.dart` — `ConsultationRemoteDataSourceImpl`, repository, category/doctor/slots/payment-provider/booking/feedback/bookings-list use cases, `DoctorConsultationCheckoutCubit`, `DoctorConsultationBookingsCubit`.
 
 ## Mocks
 

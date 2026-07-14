@@ -533,7 +533,31 @@
   "bookingsBillingTitle": "Billing",
   "bookingsEInvoiceLabel": "E-Invoice",
   "bookingsConsultationFeeLabel": "Consultation fee",
-  "bookingsDiscountLabel": "Discount (100%)",
+  "bookingsDiscountLabel": "Discount ({percent}%)",
+  "@bookingsDiscountLabel": {
+    "placeholders": {
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
   "bookingsJoinNowCta": "Join Now",
+  "bookingsPatientsReviewTitle": "Patient’s Review",
+  "bookingsYourFeedbackLabel": "Your Feedback",
+  "bookingsFeedbackHint": "Write your feedback...",
+  "bookingsSubmitFeedbackCta": "Submit Feedback",
+  "bookingsFeedbackSubmitSuccess": "Thank you for your feedback.",
+  "bookingsFeedbackSelectRating": "Please select a rating.",
+  "bookingsFeedbackMissingRef": "Unable to submit feedback for this booking.",
+  "bookingsDocumentsTitle": "Documents",
+  "bookingsDownloadCta": "Download",
+  "bookingsAttachmentFallback": "Document {index}",
+  "@bookingsAttachmentFallback": {
+    "placeholders": {
+      "index": {
+        "type": "int"
+      }
+    }
+  },
   "labTestSampleTypeBlood": "Blood"
 }

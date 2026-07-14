@@ -1,4 +1,5 @@
 import '../../domain/use_cases/submit_consultation_booking_use_case.dart';
+import '../../domain/use_cases/submit_consultation_feedback_use_case.dart';
 import '../models/consultation_booking_list_model.dart';
 import '../models/consultation_category_model.dart';
 import '../models/consultation_doctor_model.dart';
@@ -24,4 +25,5 @@ abstract class ConsultationRemoteDataSource {
     int limit = 20,
   });
   Future<void> submitBooking(SubmitConsultationBookingParams params);
+  Future<void> submitFeedback(SubmitConsultationFeedbackParams params);
 }

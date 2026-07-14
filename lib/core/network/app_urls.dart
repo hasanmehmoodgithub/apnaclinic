@@ -104,6 +104,10 @@ class AppUrls {
   }) =>
       '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/doctor-consultation?page=$page&limit=$limit';
 
+  /// Submit patient feedback for a doctor consultation booking (aggregator mobile API).
+  static String get doctorConsultationFeedback =>
+      '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/doctor-consultation/feedback';
+
   /// Payment providers for consultation checkout (aggregator mobile API).
   static String get paymentProviders =>
       '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/payment-provider';

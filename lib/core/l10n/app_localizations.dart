@@ -2594,14 +2594,74 @@ abstract class AppLocalizations {
   /// No description provided for @bookingsDiscountLabel.
   ///
   /// In en, this message translates to:
-  /// **'Discount (100%)'**
-  String get bookingsDiscountLabel;
+  /// **'Discount ({percent}%)'**
+  String bookingsDiscountLabel(String percent);
 
   /// No description provided for @bookingsJoinNowCta.
   ///
   /// In en, this message translates to:
   /// **'Join Now'**
   String get bookingsJoinNowCta;
+
+  /// No description provided for @bookingsPatientsReviewTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Patient’s Review'**
+  String get bookingsPatientsReviewTitle;
+
+  /// No description provided for @bookingsYourFeedbackLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Feedback'**
+  String get bookingsYourFeedbackLabel;
+
+  /// No description provided for @bookingsFeedbackHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Write your feedback...'**
+  String get bookingsFeedbackHint;
+
+  /// No description provided for @bookingsSubmitFeedbackCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit Feedback'**
+  String get bookingsSubmitFeedbackCta;
+
+  /// No description provided for @bookingsFeedbackSubmitSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Thank you for your feedback.'**
+  String get bookingsFeedbackSubmitSuccess;
+
+  /// No description provided for @bookingsFeedbackSelectRating.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select a rating.'**
+  String get bookingsFeedbackSelectRating;
+
+  /// No description provided for @bookingsFeedbackMissingRef.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to submit feedback for this booking.'**
+  String get bookingsFeedbackMissingRef;
+
+  /// No description provided for @bookingsDocumentsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Documents'**
+  String get bookingsDocumentsTitle;
+
+  /// No description provided for @bookingsDownloadCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Download'**
+  String get bookingsDownloadCta;
+
+  /// No description provided for @bookingsAttachmentFallback.
+  ///
+  /// In en, this message translates to:
+  /// **'Document {index}'**
+  String bookingsAttachmentFallback(int index);
 
   /// No description provided for @labTestSampleTypeBlood.
   ///

@@ -1,3 +1,15 @@
+class ConsultationBookingPatientReviewEntity {
+  const ConsultationBookingPatientReviewEntity({
+    required this.rating,
+    required this.review,
+    required this.date,
+  });
+
+  final double rating;
+  final String review;
+  final String date;
+}
+
 class ConsultationBookingListItemEntity {
   const ConsultationBookingListItemEntity({
     required this.bookingId,
@@ -7,6 +19,8 @@ class ConsultationBookingListItemEntity {
     required this.slotEndTime,
     required this.consultationFee,
     required this.discountAmount,
+    required this.originalFee,
+    required this.discountPercent,
     required this.patientRelation,
     required this.issue,
     required this.doctorName,
@@ -16,6 +30,13 @@ class ConsultationBookingListItemEntity {
     required this.education,
     required this.doctorImageUrl,
     this.consultationLink = '',
+    this.partnerRefNo = '',
+    this.ratings,
+    this.pmdcVerified = false,
+    this.partnerTenantId = '',
+    this.partnerLogoUrl = '',
+    this.attachments = const [],
+    this.patientReview,
   });
 
   final String bookingId;
@@ -23,8 +44,14 @@ class ConsultationBookingListItemEntity {
   final String slotDate;
   final String slotStartTime;
   final String slotEndTime;
+
+  /// Amount payable after discount.
   final int consultationFee;
   final int discountAmount;
+
+  /// Fee before discount.
+  final int originalFee;
+  final double discountPercent;
   final String patientRelation;
   final String issue;
   final String doctorName;
@@ -34,6 +61,13 @@ class ConsultationBookingListItemEntity {
   final String education;
   final String doctorImageUrl;
   final String consultationLink;
+  final String partnerRefNo;
+  final double? ratings;
+  final bool pmdcVerified;
+  final String partnerTenantId;
+  final String partnerLogoUrl;
+  final List<String> attachments;
+  final ConsultationBookingPatientReviewEntity? patientReview;
 }
 
 class ConsultationBookingsPageEntity {
