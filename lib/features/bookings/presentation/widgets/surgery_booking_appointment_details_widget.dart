@@ -40,7 +40,9 @@ class SurgeryBookingAppointmentDetailsCardWidget extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  'Your appointment has been secluded.',
+                  item.appointmentSubtitle.isNotEmpty
+                      ? item.appointmentSubtitle
+                      : 'Your appointment has been scheduled.',
                   style: textTheme.bodySmall?.copyWith(
                     color: const Color(0xFF667B99),
                     fontSize: 9.sp,

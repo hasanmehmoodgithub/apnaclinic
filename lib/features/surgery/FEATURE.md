@@ -13,26 +13,30 @@ Browse surgical procedures by city, select a doctor/hospital offer, complete pat
 |--------|--------|---------------|------------|
 | Procedures list | GET | `surgeryProcedures(cityId?)` → `/api/v1/mobile/surgery/list?cityId=` (optional city filter) | `SurgeryMockApi` |
 | Doctor offers | GET | `surgeryProviders(surgeryId, cityId)` → `/api/v1/mobile/surgery/providers?surgeryId=&cityId=` — response `data.items[]` (`doctorId`, `doctorName`, `profileImageUrl`, `specialty`, `yearsOfExperience`, `education`, `hospitalName`, `price`, `discountedPrice`, `partnerLogoUrl`, …) | `SurgeryDoctorsMockApi` |
-| Provider packages | GET | `surgeryProviderDetails(surgeryId, cityId, doctorId)` → `/api/v1/mobile/surgery/provider-details?surgeryId=&cityId=&doctorId=` — response `data.doctor`, `data.packages[]` (`packageId`, `packageName`, `price`, `discountedPrice`, `hospitalName`, `tatMessage`, …). Called when user opens the surgery type picker on patient details. | `SurgeryProviderDetailsMockApi` |
+| Provider packages | GET | `surgeryProviderDetails(surgeryId, cityId, doctorId)` → `/api/v1/mobile/surgery/provider-details?surgeryId=&cityId=&doctorId=` — response `data.doctor`, `data.packages[]` (`packageId`, `packageName`, `price`, `discountedPrice`, `hospitalName`, `tatMessage`, …). Auto-loaded on patient details open (default package) and when user opens the surgery type picker. | `SurgeryProviderDetailsMockApi` |
 | Patient form | GET | `surgeryPatientForm(doctorId)` | `SurgeryPatientFormMockApi` |
-| Submit booking | POST | `surgeryBooking` | `SurgeryCheckoutMockApi` |
+| Submit booking (lead) | POST | `surgeryBooking` → `/api/v1/mobile/surgery/lead` — **Proceed Checkout** on patient details; body `{ doctorId, surgeryId (procedure id), packageId, cityId, patient: { name, age, gender, phone, emergencyPhone } }` | `SurgeryCheckoutMockApi` |
+| Book / pay surgery lead | POST | `surgeryBookSurgery` → `/api/v1/mobile/surgery/book-surgery` — Bookings details **Proceed Checkout** after payment method (+ JazzCash account); body `{ leadId, paymentMethod, msisdn }` | `SurgeryCheckoutMockApi.bookSurgery` |
+| Surgery leads (bookings list) | GET | `surgeryLeads(page, limit)` → `/api/v1/mobile/surgery/lead?page=&limit=` — `data.items[]` (`leadId`, `surgeryId`, `surgeryType`, `provider`, `doctor`, `status` e.g. `PENDING`/`PAID`, `paymentAllowed`, `patient`, `pricing` `{ fee, discount, total }`, `confirmedDate`, `scheduledDate`, …) via `GetSurgeryLeadsUseCase` | `SurgeryLeadsMockApi` |
 
 Aggregator list maps `data[]` items: `id`, `name`, `slug`, `image`, `description`, optional `displayOrder` / `isActive`. City picker uses **`CitiesRepository`** (prefetched at app open from `AppUrls.cities` → `/api/v1/mobile/cities`).
 
-Bookings list/details: `SurgeryBookingsMockApi` in `lib/features/bookings/data/mock/` (used by `SurgeryBookingsScreen`).
+Bookings tab (`SurgeryBookingsScreen`) maps leads with `SurgeryBookingListMapper` → detail args.
 
 Surgery mocks use `MockConfig.enableSurgeryMocks` (default false).
 
 ## State
-- `SurgeryCubit` / `SurgeryState`: content load (re-fetches procedures when city changes), city/search, doctors load, provider details load (surgery type packages), patient form load, `submitSurgeryBooking` (includes `gender`)
+- `SurgeryCubit` / `SurgeryState`: content load (re-fetches procedures when city changes), city/search, doctors load, provider details load (surgery type packages), patient form load, `submitSurgeryBooking` (lead API: `doctorId` + procedure `surgeryId` + `packageId` + `cityId` + patient)
+- Last selected city persists in `AppPrefKeys.surgerySelectedCity` (restored on open; saved in `changeCity`)
 - Status fields: `loadingStateStatus`, `doctorsLoadingStateStatus`, `providerDetailsLoadingStateStatus`, `patientFormLoadingStateStatus`
 
 ## DI
-`initSurgeryInjector()` registers mocks, `SurgeryRemoteDataSourceImpl`, repository, use cases, factory `SurgeryCubit`.
+`initSurgeryInjector()` registers mocks, `SurgeryRemoteDataSourceImpl`, repository, use cases (`GetSurgeryLeadsUseCase` included), factory `SurgeryCubit`.
 
 ## Mocks
 - `SurgeryMockApi` — aggregator-shaped surgery list
 - `SurgeryDoctorsMockApi` — doctors filtered by procedure + city
 - `SurgeryProviderDetailsMockApi` — surgery type packages per doctor
 - `SurgeryPatientFormMockApi` — surgery options + patient prefill per doctor
-- `SurgeryCheckoutMockApi` — booking submit success + `bookingId`
+- `SurgeryCheckoutMockApi` — lead submit success + `bookingId`
+- `SurgeryLeadsMockApi` — paginated leads list for bookings tab

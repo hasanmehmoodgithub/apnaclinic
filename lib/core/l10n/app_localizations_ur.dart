@@ -844,6 +844,13 @@ class AppLocalizationsUr extends AppLocalizations {
       'براہ کرم ایمرجنسی رابطہ نمبر شامل کریں۔';
 
   @override
+  String get surgeryAgeInvalid => 'براہ کرم درست عمر درج کریں (صرف نمبر)۔';
+
+  @override
+  String get surgeryPhoneInvalid =>
+      'براہ کرم 11 ہندسوں کا درست فون نمبر درج کریں۔';
+
+  @override
   String get surgerySelectForSurgery => 'سرجری کے لیے منتخب کریں';
 
   @override
@@ -1241,6 +1248,9 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get bookingsDashboardTitle => 'میری بکنگز';
+
+  @override
+  String get bookingsSurgeryDetailsTitle => 'تفصیلات';
 
   @override
   String get bookingsTabDoctorConsultation => 'ڈاکٹر مشاورت';

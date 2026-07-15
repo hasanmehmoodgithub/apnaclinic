@@ -844,6 +844,12 @@ class AppLocalizationsEn extends AppLocalizations {
       'Please add emergency contact number.';
 
   @override
+  String get surgeryAgeInvalid => 'Enter a valid age (numbers only).';
+
+  @override
+  String get surgeryPhoneInvalid => 'Enter a valid 11-digit phone number.';
+
+  @override
   String get surgerySelectForSurgery => 'Select for Surgery';
 
   @override
@@ -1242,6 +1248,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get bookingsDashboardTitle => 'My Bookings';
+
+  @override
+  String get bookingsSurgeryDetailsTitle => 'Details';
 
   @override
   String get bookingsTabDoctorConsultation => 'Doctor Consultation';

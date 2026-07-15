@@ -1,6 +1,7 @@
 import '../../domain/entities/surgery_booking_request_entity.dart';
 import '../models/surgery_content_model.dart';
 import '../models/surgery_doctor_model.dart';
+import '../models/surgery_lead_model.dart';
 import '../models/surgery_patient_form_model.dart';
 import '../models/surgery_provider_details_model.dart';
 
@@ -20,5 +21,14 @@ abstract class SurgeryRemoteDataSource {
   Future<SurgeryPatientFormModel> getSurgeryPatientForm({
     required String doctorId,
   });
+  Future<SurgeryLeadsPageModel> getSurgeryLeads({
+    int page = 1,
+    int limit = 20,
+  });
   Future<void> submitSurgeryBooking(SurgeryBookingRequestEntity request);
+  Future<void> bookSurgery({
+    required int leadId,
+    required String paymentMethod,
+    required String msisdn,
+  });
 }

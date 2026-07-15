@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../../../../core/extensions/screen_util_extensions.dart';
 
@@ -11,6 +12,8 @@ class SurgeryTextInputFieldWidget extends StatelessWidget {
     this.hintText,
     this.hasError = false,
     this.errorText,
+    this.inputFormatters,
+    this.maxLength,
   });
 
   final String title;
@@ -19,6 +22,8 @@ class SurgeryTextInputFieldWidget extends StatelessWidget {
   final TextInputType keyboardType;
   final bool hasError;
   final String? errorText;
+  final List<TextInputFormatter>? inputFormatters;
+  final int? maxLength;
 
   @override
   Widget build(BuildContext context) {
@@ -52,6 +57,8 @@ class SurgeryTextInputFieldWidget extends StatelessWidget {
           child: TextField(
             controller: controller,
             keyboardType: keyboardType,
+            inputFormatters: inputFormatters,
+            maxLength: maxLength,
             style: theme.textTheme.bodyLarge?.copyWith(
               color: hasError ? const Color(0xFFBA2025) : const Color(0xFF4A555F),
               fontSize: 12.sp,
@@ -60,6 +67,7 @@ class SurgeryTextInputFieldWidget extends StatelessWidget {
             decoration: InputDecoration(
               border: InputBorder.none,
               isDense: true,
+              counterText: '',
               contentPadding: EdgeInsets.symmetric(vertical: 10.h),
               hintText: effectiveHint,
               hintStyle: theme.textTheme.bodyLarge?.copyWith(

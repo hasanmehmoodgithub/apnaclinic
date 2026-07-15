@@ -1,16 +1,20 @@
 import '../../core/di/dependency_injection.dart';
 import '../../core/network/api_service.dart';
+import '../../core/preference/app_pref.dart';
 import 'data/data_sources/surgery_remote_data_source.dart';
 import 'data/data_sources/surgery_remote_data_source_impl.dart';
 import 'data/mock/surgery_checkout_mock_api.dart';
 import 'data/mock/surgery_doctors_mock_api.dart';
+import 'data/mock/surgery_leads_mock_api.dart';
 import 'data/mock/surgery_mock_api.dart';
 import 'data/mock/surgery_patient_form_mock_api.dart';
 import 'data/mock/surgery_provider_details_mock_api.dart';
 import 'data/repositories/surgery_repository_impl.dart';
 import 'domain/repositories/surgery_repository.dart';
+import 'domain/use_cases/book_surgery_use_case.dart';
 import 'domain/use_cases/get_surgery_content_use_case.dart';
 import 'domain/use_cases/get_surgery_doctors_use_case.dart';
+import 'domain/use_cases/get_surgery_leads_use_case.dart';
 import 'domain/use_cases/get_surgery_patient_form_use_case.dart';
 import 'domain/use_cases/get_surgery_provider_details_use_case.dart';
 import 'domain/use_cases/submit_surgery_booking_use_case.dart';
@@ -28,6 +32,7 @@ void initSurgeryInjector() {
   sl.registerLazySingleton<SurgeryCheckoutMockApi>(
     () => SurgeryCheckoutMockApi(),
   );
+  sl.registerLazySingleton<SurgeryLeadsMockApi>(() => SurgeryLeadsMockApi());
 
   sl.registerLazySingleton<SurgeryRemoteDataSource>(
     () => SurgeryRemoteDataSourceImpl(
@@ -37,6 +42,7 @@ void initSurgeryInjector() {
       providerDetailsMockApi: sl<SurgeryProviderDetailsMockApi>(),
       patientFormMockApi: sl<SurgeryPatientFormMockApi>(),
       checkoutMockApi: sl<SurgeryCheckoutMockApi>(),
+      leadsMockApi: sl<SurgeryLeadsMockApi>(),
     ),
   );
 
@@ -63,8 +69,16 @@ void initSurgeryInjector() {
     () => GetSurgeryProviderDetailsUseCase(repository: sl<SurgeryRepository>()),
   );
 
+  sl.registerLazySingleton<GetSurgeryLeadsUseCase>(
+    () => GetSurgeryLeadsUseCase(repository: sl<SurgeryRepository>()),
+  );
+
   sl.registerLazySingleton<SubmitSurgeryBookingUseCase>(
     () => SubmitSurgeryBookingUseCase(repository: sl<SurgeryRepository>()),
+  );
+
+  sl.registerLazySingleton<BookSurgeryUseCase>(
+    () => BookSurgeryUseCase(repository: sl<SurgeryRepository>()),
   );
 
   sl.registerFactory<SurgeryCubit>(
@@ -74,6 +88,8 @@ void initSurgeryInjector() {
       getSurgeryPatientFormUseCase: sl<GetSurgeryPatientFormUseCase>(),
       getSurgeryProviderDetailsUseCase: sl<GetSurgeryProviderDetailsUseCase>(),
       submitSurgeryBookingUseCase: sl<SubmitSurgeryBookingUseCase>(),
+      appPref: sl<AppPref>(),
+      citiesRepository: sl(),
     ),
   );
 }

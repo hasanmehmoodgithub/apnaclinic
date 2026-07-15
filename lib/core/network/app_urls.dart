@@ -223,7 +223,21 @@ class AppUrls {
 
   static String surgeryPatientForm(String doctorId) =>
       '$_normalizedApiBaseUrl/surgery/patient-form/$doctorId';
-  static String get surgeryBooking => '$_normalizedApiBaseUrl/surgery/booking';
+
+  /// Surgery lead submit (POST) and list (GET) — aggregator mobile API.
+  /// POST body: `doctorId`, `surgeryId` (procedure), `packageId`, `cityId`, `patient{...}`.
+  static String get surgeryBooking =>
+      '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/surgery/lead';
+
+  /// Paginated surgery leads / bookings list (GET same lead resource).
+  static String surgeryLeads({int page = 1, int limit = 20}) =>
+      '$surgeryBooking?page=$page&limit=$limit';
+
+  /// Confirm / pay a surgery lead (aggregator mobile API).
+  /// Body: `{ leadId, paymentMethod, msisdn }`.
+  static String get surgeryBookSurgery =>
+      '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/surgery/book-surgery';
+
   static String get labTestCatalog => '$_normalizedApiBaseUrl/lab/test';
 
   /// Paginated lab tests with available labs, sample type, and pricing.

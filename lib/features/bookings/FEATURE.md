@@ -16,6 +16,12 @@ Tabbed bookings hub (doctor consultation, surgery, lab test, pharmacy) with list
 - Join Now enabled only while current time is within slot `[start, end]` (confirmed + `meetingLink`); disabled before start and after end.
 - Patient’s Review / Feedback submit form is available only after slot end (submitted review always shown if present).
 - Submit feedback (when no existing review, non-cancelled): **POST** `AppUrls.doctorConsultationFeedback` via `SubmitConsultationFeedbackUseCase` — body `{ refNo, rating, review }` (`refNo` = `partnerRefNo` / booking id).
+- Surgery leads list: **GET** `AppUrls.surgeryLeads(page, limit)` via `GetSurgeryLeadsUseCase` (surgery module). Mapped by `SurgeryBookingListMapper`:
+  - Status: API `status` (`PENDING` → Pending, `PAID` → Paid); `paymentAllowed` enables Proceed Checkout.
+  - Pricing: `fee`, `discount`, `total` (legacy `discountFee`/`quotedPrice`/`finalPrice` still parsed).
+  - Appointment: `scheduledDate` when set; else created date with “Awaiting confirmation.”; patient includes `gender`; phones shown as local `03…`.
+- Surgery pay / book: **POST** `AppUrls.surgeryBookSurgery` via `BookSurgeryUseCase` from booking details **Proceed Checkout** (enabled only when `paymentAllowed`). Opens `PaymentMethodSheet` → JazzCash account sheet when JazzCash → body `{ leadId, paymentMethod: JAZZCASH|CARD, msisdn }`.
+- Surgery details title: `bookingsSurgeryDetailsTitle` (“Details”); checkout CTA remains visible (disabled grey) while Pending.
 
 ## State
 

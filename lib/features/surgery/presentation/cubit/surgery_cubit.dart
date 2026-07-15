@@ -1,14 +1,17 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../../core/functional/functional_export.dart';
+import '../../../../core/cities/domain/repositories/cities_repository.dart';
 import '../../../../core/enums/state_status.dart';
+import '../../../../core/functional/functional_export.dart';
+import '../../../../core/preference/app_pref.dart';
+import '../../../../core/preference/app_pref_keys.dart';
 import '../../domain/entities/surgery_procedure_entity.dart';
+import '../../domain/entities/surgery_provider_details_entity.dart';
 import '../../domain/use_cases/get_surgery_content_use_case.dart';
 import '../../domain/use_cases/get_surgery_doctors_use_case.dart';
 import '../../domain/use_cases/get_surgery_patient_form_use_case.dart';
 import '../../domain/use_cases/get_surgery_provider_details_use_case.dart';
 import '../../domain/use_cases/submit_surgery_booking_use_case.dart';
-import '../../domain/entities/surgery_provider_details_entity.dart';
 import 'surgery_state.dart';
 
 class SurgeryCubit extends Cubit<SurgeryState> {
@@ -18,8 +21,10 @@ class SurgeryCubit extends Cubit<SurgeryState> {
     required this.getSurgeryPatientFormUseCase,
     required this.getSurgeryProviderDetailsUseCase,
     required this.submitSurgeryBookingUseCase,
+    required this.appPref,
+    required this.citiesRepository,
   }) : super(const SurgeryState()) {
-    loadSurgeryContent();
+    loadSurgeryContent(city: _savedCity());
   }
 
   final GetSurgeryContentUseCase getSurgeryContentUseCase;
@@ -27,14 +32,44 @@ class SurgeryCubit extends Cubit<SurgeryState> {
   final GetSurgeryPatientFormUseCase getSurgeryPatientFormUseCase;
   final GetSurgeryProviderDetailsUseCase getSurgeryProviderDetailsUseCase;
   final SubmitSurgeryBookingUseCase submitSurgeryBookingUseCase;
+  final AppPref appPref;
+  final CitiesRepository citiesRepository;
 
   void _safeEmit(SurgeryState newState) {
     if (isClosed) return;
     emit(newState);
   }
 
+  String? _savedCity() {
+    final raw = appPref.getString(AppPrefKeys.surgerySelectedCity)?.trim();
+    if (raw == null || raw.isEmpty) return null;
+    return _resolveCityName(raw) ?? raw;
+  }
+
+  String? _resolveCityName(String? raw) {
+    if (raw == null || raw.trim().isEmpty) return null;
+    final trimmed = raw.trim();
+    if (citiesRepository.cityIdForName(trimmed) != null) {
+      final normalized = trimmed.toLowerCase();
+      for (final name in citiesRepository.cityNames) {
+        if (name.trim().toLowerCase() == normalized) return name;
+      }
+      return trimmed;
+    }
+    return null;
+  }
+
+  Future<void> _persistCity(String city) async {
+    final resolved = _resolveCityName(city) ?? city.trim();
+    if (resolved.isEmpty) return;
+    await appPref.setString(AppPrefKeys.surgerySelectedCity, resolved);
+  }
+
   Future<void> loadSurgeryContent({bool refresh = false, String? city}) async {
     final resolvedCity = (city ?? state.selectedCity).trim();
+    final cityForRequest =
+        _resolveCityName(resolvedCity) ??
+        (resolvedCity.isNotEmpty ? resolvedCity : null);
     _safeEmit(
       state.copyWith(
         loadingStateStatus: refresh
@@ -46,7 +81,7 @@ class SurgeryCubit extends Cubit<SurgeryState> {
 
     final result = await getSurgeryContentUseCase(
       GetSurgeryContentParams(
-        city: resolvedCity.isNotEmpty ? resolvedCity : null,
+        city: cityForRequest,
       ),
     );
     if (isClosed) return;
@@ -59,8 +94,8 @@ class SurgeryCubit extends Cubit<SurgeryState> {
         ),
       ),
       (content) {
-        final nextCity = resolvedCity.isNotEmpty
-            ? resolvedCity
+        final nextCity = (cityForRequest != null && cityForRequest.isNotEmpty)
+            ? (_resolveCityName(cityForRequest) ?? cityForRequest)
             : (content.defaultCity.isNotEmpty
                 ? content.defaultCity
                 : state.selectedCity);
@@ -196,9 +231,11 @@ class SurgeryCubit extends Cubit<SurgeryState> {
   }
 
   Future<void> changeCity(String city) async {
-    if (city.isEmpty || city == state.selectedCity) return;
-    _safeEmit(state.copyWith(selectedCity: city, searchQuery: ''));
-    await loadSurgeryContent(refresh: true, city: city);
+    final resolved = _resolveCityName(city) ?? city.trim();
+    if (resolved.isEmpty || resolved == state.selectedCity) return;
+    await _persistCity(resolved);
+    _safeEmit(state.copyWith(selectedCity: resolved, searchQuery: ''));
+    await loadSurgeryContent(refresh: true, city: resolved);
   }
 
   void updateSearchQuery(String query) {
@@ -224,25 +261,27 @@ class SurgeryCubit extends Cubit<SurgeryState> {
   }
 
   Future<Either<ErrorMsg, void>> submitSurgeryBooking({
+    required String doctorId,
+    required String surgeryId,
+    required String packageId,
+    required String cityId,
     required String patientName,
     required String age,
-    required String contactNumber,
-    required String emergencyContact,
-    required String surgeryName,
-    required String doctorName,
-    required String hospitalName,
     required String gender,
+    required String phone,
+    required String emergencyPhone,
   }) async {
     return await submitSurgeryBookingUseCase(
       SubmitSurgeryBookingParams(
+        doctorId: doctorId,
+        surgeryId: surgeryId,
+        packageId: packageId,
+        cityId: cityId,
         patientName: patientName,
         age: age,
-        contactNumber: contactNumber,
-        emergencyContact: emergencyContact,
-        surgeryName: surgeryName,
-        doctorName: doctorName,
-        hospitalName: hospitalName,
         gender: gender,
+        phone: phone,
+        emergencyPhone: emergencyPhone,
       ),
     );
   }

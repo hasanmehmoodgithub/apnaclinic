@@ -51,6 +51,10 @@ class SurgeryBookingPatientDetailsCardWidget extends StatelessWidget {
             l10n.labTestEmergencyContactTitle,
             item.emergencyContact,
           ),
+          if (item.gender.isNotEmpty) ...[
+            _divider(),
+            _kvRow(textTheme, l10n.profileGenderLabel, item.gender),
+          ],
         ],
       ),
     );

@@ -1,5 +1,6 @@
 import 'package:apnaclinic/core/widgets/app_scaffold_gradient.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
@@ -87,6 +88,9 @@ class _SurgeryPatientDetailsScreenState
       oldPrice: widget.oldPrice,
       hospitalName: widget.hospitalName,
     );
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadDefaultSurgeryPackage();
+    });
   }
 
   @override
@@ -222,6 +226,10 @@ class _SurgeryPatientDetailsScreenState
                               hintText: 'Patient Age',
                               controller: ageController,
                               keyboardType: TextInputType.number,
+                              inputFormatters: [
+                                FilteringTextInputFormatter.digitsOnly,
+                                LengthLimitingTextInputFormatter(3),
+                              ],
                               hasError: showAgeError,
                               errorText: 'Enter patient age',
                             ),
@@ -237,6 +245,10 @@ class _SurgeryPatientDetailsScreenState
                               hintText: 'Patient Contact Number',
                               controller: contactNumberController,
                               keyboardType: TextInputType.phone,
+                              inputFormatters: [
+                                FilteringTextInputFormatter.digitsOnly,
+                                LengthLimitingTextInputFormatter(11),
+                              ],
                               hasError: showContactError,
                               errorText: 'Enter contact number',
                             ),
@@ -246,6 +258,10 @@ class _SurgeryPatientDetailsScreenState
                               hintText: 'Patient Emergency Contact',
                               controller: emergencyContactController,
                               keyboardType: TextInputType.phone,
+                              inputFormatters: [
+                                FilteringTextInputFormatter.digitsOnly,
+                                LengthLimitingTextInputFormatter(11),
+                              ],
                               hasError: showEmergencyError,
                               errorText: 'Enter Phone Number',
                             ),
@@ -430,22 +446,14 @@ class _SurgeryPatientDetailsScreenState
     }
   }
 
-  Future<void> _openSurgeryTypeDialog() async {
-    if (selectedSurgery == null || isLoadingSurgeryTypes) return;
-
-    FocusScope.of(context).unfocus();
-    setState(() => isLoadingSurgeryTypes = true);
-
+  Future<List<SurgeryOption>> _fetchSurgeryPackages() async {
     final result = await context.read<SurgeryCubit>().loadSurgeryProviderDetails(
       surgeryId: widget.surgeryId,
       cityId: widget.cityId,
       doctorId: widget.doctorId,
     );
 
-    if (!mounted) return;
-    setState(() => isLoadingSurgeryTypes = false);
-
-    final options = result.fold(
+    return result.fold(
       (_) => <SurgeryOption>[],
       (details) => details.packages
           .map(
@@ -459,6 +467,48 @@ class _SurgeryPatientDetailsScreenState
           )
           .toList(),
     );
+  }
+
+  /// Prefills package id for POST `/surgery/lead` (`packageId`).
+  Future<void> _loadDefaultSurgeryPackage() async {
+    if (!mounted) return;
+    setState(() => isLoadingSurgeryTypes = true);
+
+    final options = await _fetchSurgeryPackages();
+
+    if (!mounted) return;
+    setState(() {
+      isLoadingSurgeryTypes = false;
+      if (options.isEmpty) return;
+
+      final currentId = selectedSurgery?.id ?? '';
+      if (currentId.isNotEmpty) {
+        final match = options.where((item) => item.id == currentId);
+        if (match.isNotEmpty) {
+          selectedSurgery = match.first;
+          return;
+        }
+      }
+
+      final byName = options.where(
+        (item) =>
+            item.name.toLowerCase() ==
+            (selectedSurgery?.name ?? widget.procedureName).toLowerCase(),
+      );
+      selectedSurgery = byName.isNotEmpty ? byName.first : options.first;
+    });
+  }
+
+  Future<void> _openSurgeryTypeDialog() async {
+    if (selectedSurgery == null || isLoadingSurgeryTypes) return;
+
+    FocusScope.of(context).unfocus();
+    setState(() => isLoadingSurgeryTypes = true);
+
+    final options = await _fetchSurgeryPackages();
+
+    if (!mounted) return;
+    setState(() => isLoadingSurgeryTypes = false);
 
     if (options.isEmpty) {
       _showSurgeryTypesLoadFailedSnackbar();
@@ -501,30 +551,52 @@ class _SurgeryPatientDetailsScreenState
 
     final nameMissing = name.isEmpty;
     final ageMissing = age.isEmpty;
+    final ageInvalid = !ageMissing && int.tryParse(age) == null;
     final genderMissing = gender.isEmpty;
     final contactMissing = contact.isEmpty;
+    final contactInvalid = !contactMissing && !_isValidElevenDigitPhone(contact);
     final emergencyMissing = emergency.isEmpty;
+    final emergencyInvalid =
+        !emergencyMissing && !_isValidElevenDigitPhone(emergency);
 
     if (nameMissing ||
         ageMissing ||
+        ageInvalid ||
         genderMissing ||
         contactMissing ||
-        emergencyMissing) {
+        contactInvalid ||
+        emergencyMissing ||
+        emergencyInvalid) {
       setState(() {
         showNameError = nameMissing;
-        showAgeError = ageMissing;
+        showAgeError = ageMissing || ageInvalid;
         showGenderError = genderMissing;
-        showContactError = contactMissing;
-        showEmergencyError = emergencyMissing;
+        showContactError = contactMissing || contactInvalid;
+        showEmergencyError = emergencyMissing || emergencyInvalid;
         validationBannerMessage = emergencyMissing
             ? l10n.surgeryEmergencyContactRequired
-            : l10n.surgeryPatientValidationMessage;
+            : (contactInvalid || emergencyInvalid)
+                ? l10n.surgeryPhoneInvalid
+                : ageInvalid
+                    ? l10n.surgeryAgeInvalid
+                    : l10n.surgeryPatientValidationMessage;
       });
       return;
     }
 
-    final surgery = selectedSurgery;
-    if (surgery == null) return;
+    var surgery = selectedSurgery;
+    if (surgery == null || surgery.id.trim().isEmpty) {
+      setState(() => isSubmittingBooking = true);
+      await _loadDefaultSurgeryPackage();
+      if (!mounted) return;
+      surgery = selectedSurgery;
+      setState(() => isSubmittingBooking = false);
+    }
+
+    if (surgery == null || surgery.id.trim().isEmpty) {
+      _showSurgeryTypesLoadFailedSnackbar();
+      return;
+    }
 
     setState(() {
       showNameError = false;
@@ -538,21 +610,24 @@ class _SurgeryPatientDetailsScreenState
 
     try {
       final result = await context.read<SurgeryCubit>().submitSurgeryBooking(
+        doctorId: widget.doctorId,
+        surgeryId: widget.surgeryId,
+        packageId: surgery.id,
+        cityId: widget.cityId,
         patientName: name,
         age: age,
-        contactNumber: contact,
-        emergencyContact: emergency,
-        surgeryName: surgery.name,
-        doctorName: widget.doctorName,
-        hospitalName: surgery.hospitalName.isNotEmpty
-            ? surgery.hospitalName
-            : widget.hospitalName,
         gender: gender,
+        phone: contact,
+        emergencyPhone: emergency,
       );
 
       if (!mounted) return;
       result.fold(
-        (_) => _showSubmitFailedSnackbar(),
+        (error) {
+          ScaffoldMessenger.of(context)
+            ..hideCurrentSnackBar()
+            ..showSnackBar(SnackBar(content: Text(error)));
+        },
         (_) => _showBookingSubmittedDialog(),
       );
     } catch (_) {
@@ -563,6 +638,11 @@ class _SurgeryPatientDetailsScreenState
         setState(() => isSubmittingBooking = false);
       }
     }
+  }
+
+  bool _isValidElevenDigitPhone(String value) {
+    final digits = value.replaceAll(RegExp(r'\D'), '');
+    return digits.length == 11;
   }
 
   Future<void> _showBookingSubmittedDialog() async {

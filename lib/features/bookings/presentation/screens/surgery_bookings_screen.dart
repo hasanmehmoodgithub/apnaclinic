@@ -2,14 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../consultation/presentation/widgets/consultation_partner_logo_widget.dart';
-import '../../data/mock/surgery_bookings_mock_api.dart';
+import '../../../surgery/domain/use_cases/get_surgery_leads_use_case.dart';
+import '../../data/mappers/surgery_booking_list_mapper.dart';
 import '../../data/models/surgery_booking_list_item_model.dart';
 import '../../data/models/surgery_details_item.dart';
 import '../widgets/bookings_list_shimmer_widget.dart';
+import '../widgets/empty_booking_widget.dart';
 
 class SurgeryBookingsScreen extends StatefulWidget {
   const SurgeryBookingsScreen({super.key});
@@ -19,12 +22,30 @@ class SurgeryBookingsScreen extends StatefulWidget {
 }
 
 class _SurgeryBookingsScreenState extends State<SurgeryBookingsScreen> {
-  late final Future<List<SurgeryBookingListItemModel>> _bookingsFuture;
+  late Future<List<SurgeryBookingListItemModel>> _bookingsFuture;
 
   @override
   void initState() {
     super.initState();
-    _bookingsFuture = SurgeryBookingsMockApi().getBookings();
+    _bookingsFuture = _loadBookings();
+  }
+
+  Future<List<SurgeryBookingListItemModel>> _loadBookings() async {
+    final result = await sl<GetSurgeryLeadsUseCase>()(
+      const GetSurgeryLeadsParams(page: 1, limit: 20),
+    );
+    return result.fold(
+      (error) => throw Exception(error),
+      (page) => page.items
+          .map(SurgeryBookingListMapper.fromLead)
+          .toList(growable: false),
+    );
+  }
+
+  Future<void> _retry() async {
+    setState(() {
+      _bookingsFuture = _loadBookings();
+    });
   }
 
   @override
@@ -38,13 +59,32 @@ class _SurgeryBookingsScreenState extends State<SurgeryBookingsScreen> {
           return const BookingsListShimmerWidget();
         }
 
+        if (snapshot.hasError) {
+          return Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  snapshot.error.toString().replaceFirst('Exception: ', ''),
+                  textAlign: TextAlign.center,
+                  style: textTheme.bodyMedium,
+                ),
+                SizedBox(height: 12.h),
+                TextButton(
+                  onPressed: _retry,
+                  child: Text(l10n.commonRetry),
+                ),
+              ],
+            ),
+          );
+        }
+
         final items = snapshot.data ?? const <SurgeryBookingListItemModel>[];
         if (items.isEmpty) {
-          return Center(
-            child: Text(
-              l10n.bookingsSurgeryEmptyDescription,
-              style: textTheme.bodyMedium,
-            ),
+          return EmptyBookingWidget(
+            description: l10n.bookingsSurgeryEmptyDescription,
+            buttonText: l10n.surgeryBookingScreenTitle,
+            onTap: () => context.pushNamed(AppRoutes.surgery),
           );
         }
 
@@ -224,7 +264,9 @@ class _SurgeryBookingCard extends StatelessWidget {
                       ),
                       SizedBox(width: 8.w),
                       Text(
-                        '${item.specialty}  |  ${item.qualification}',
+                        item.qualification.isEmpty
+                            ? item.specialty
+                            : '${item.specialty}  |  ${item.qualification}',
                         style: textTheme.bodySmall?.copyWith(
                           color: const Color(0xFF667B99),
                           fontSize: 12.sp,

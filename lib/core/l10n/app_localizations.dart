@@ -1655,6 +1655,18 @@ abstract class AppLocalizations {
   /// **'Please add emergency contact number.'**
   String get surgeryEmergencyContactRequired;
 
+  /// No description provided for @surgeryAgeInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid age (numbers only).'**
+  String get surgeryAgeInvalid;
+
+  /// No description provided for @surgeryPhoneInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid 11-digit phone number.'**
+  String get surgeryPhoneInvalid;
+
   /// No description provided for @surgerySelectForSurgery.
   ///
   /// In en, this message translates to:
@@ -2410,6 +2422,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'My Bookings'**
   String get bookingsDashboardTitle;
+
+  /// No description provided for @bookingsSurgeryDetailsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Details'**
+  String get bookingsSurgeryDetailsTitle;
 
   /// No description provided for @bookingsTabDoctorConsultation.
   ///

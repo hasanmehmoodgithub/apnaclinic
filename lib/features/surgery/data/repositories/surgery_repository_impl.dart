@@ -4,12 +4,15 @@ import '../../../../core/cities/domain/repositories/cities_repository.dart';
 import '../../../../core/functional/functional_export.dart';
 import '../../domain/entities/surgery_booking_request_entity.dart';
 import '../../domain/entities/surgery_doctor_entity.dart';
+import '../../domain/entities/surgery_lead_entity.dart';
 import '../../domain/entities/surgery_patient_form_entity.dart';
 import '../../domain/entities/surgery_procedure_entity.dart';
 import '../../domain/entities/surgery_provider_details_entity.dart';
 import '../../domain/repositories/surgery_repository.dart';
+import '../../domain/use_cases/book_surgery_use_case.dart';
 import '../data_sources/surgery_remote_data_source.dart';
 import '../mappers/surgery_doctors_mapper.dart';
+import '../mappers/surgery_leads_mapper.dart';
 import '../mappers/surgery_mapper.dart';
 import '../mappers/surgery_patient_form_mapper.dart';
 import '../mappers/surgery_provider_details_mapper.dart';
@@ -123,6 +126,23 @@ class SurgeryRepositoryImpl implements SurgeryRepository {
   }
 
   @override
+  Future<Either<ErrorMsg, SurgeryLeadsPageEntity>> getSurgeryLeads({
+    int page = 1,
+    int limit = 20,
+  }) async {
+    try {
+      final model = await remoteDataSource.getSurgeryLeads(
+        page: page,
+        limit: limit,
+      );
+      return Right(SurgeryLeadsMapper.toPageEntity(model));
+    } catch (e) {
+      log('getSurgeryLeads repository error: $e');
+      return Left(e.toString());
+    }
+  }
+
+  @override
   Future<Either<ErrorMsg, void>> submitSurgeryBooking(
     SurgeryBookingRequestEntity request,
   ) async {
@@ -131,6 +151,21 @@ class SurgeryRepositoryImpl implements SurgeryRepository {
       return const Right(null);
     } catch (e) {
       log('submitSurgeryBooking repository error: $e');
+      return Left(e.toString());
+    }
+  }
+
+  @override
+  Future<Either<ErrorMsg, void>> bookSurgery(BookSurgeryParams params) async {
+    try {
+      await remoteDataSource.bookSurgery(
+        leadId: params.leadId,
+        paymentMethod: params.paymentMethod,
+        msisdn: params.msisdn,
+      );
+      return const Right(null);
+    } catch (e) {
+      log('bookSurgery repository error: $e');
       return Left(e.toString());
     }
   }

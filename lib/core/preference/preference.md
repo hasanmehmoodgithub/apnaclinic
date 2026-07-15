@@ -32,6 +32,8 @@ static const String token = 'auth_token$prefVersion';
 // Results in: 'auth_tokenpref_version_1'
 ```
 
+**Feature city prefs:** `AppPrefKeys.labTestSelectedCity`, `AppPrefKeys.surgerySelectedCity` — last city chosen in Lab Test / Surgery lists.
+
 **Adding New Keys:**
 ```dart
 // In app_pref_keys.dart

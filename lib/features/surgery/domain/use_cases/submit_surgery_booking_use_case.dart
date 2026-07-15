@@ -5,35 +5,42 @@ import '../repositories/surgery_repository.dart';
 
 class SubmitSurgeryBookingParams {
   const SubmitSurgeryBookingParams({
+    required this.doctorId,
+    required this.surgeryId,
+    required this.packageId,
+    required this.cityId,
     required this.patientName,
     required this.age,
-    required this.contactNumber,
-    required this.emergencyContact,
-    required this.surgeryName,
-    required this.doctorName,
-    required this.hospitalName,
     required this.gender,
+    required this.phone,
+    required this.emergencyPhone,
   });
 
+  final String doctorId;
+
+  /// Procedure id from surgery list.
+  final String surgeryId;
+
+  /// Selected package id from provider-details.
+  final String packageId;
+  final String cityId;
   final String patientName;
   final String age;
-  final String contactNumber;
-  final String emergencyContact;
-  final String surgeryName;
-  final String doctorName;
-  final String hospitalName;
   final String gender;
+  final String phone;
+  final String emergencyPhone;
 
   SurgeryBookingRequestEntity toEntity() {
     return SurgeryBookingRequestEntity(
+      doctorId: doctorId,
+      surgeryId: surgeryId,
+      packageId: packageId,
+      cityId: cityId,
       patientName: patientName,
       age: age,
-      contactNumber: contactNumber,
-      emergencyContact: emergencyContact,
-      surgeryName: surgeryName,
-      doctorName: doctorName,
-      hospitalName: hospitalName,
       gender: gender,
+      phone: phone,
+      emergencyPhone: emergencyPhone,
     );
   }
 }
