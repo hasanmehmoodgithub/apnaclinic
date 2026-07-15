@@ -19,7 +19,7 @@ Tabbed bookings hub (doctor consultation, surgery, lab test, pharmacy) with list
 - Surgery leads list: **GET** `AppUrls.surgeryLeads(page, limit)` via `GetSurgeryLeadsUseCase` (surgery module). Mapped by `SurgeryBookingListMapper`:
   - Status: API `status` (`PENDING` → Pending, `PAID` → Paid); `paymentAllowed` enables Proceed Checkout.
   - Pricing: `fee`, `discount`, `total` (legacy `discountFee`/`quotedPrice`/`finalPrice` still parsed).
-  - Appointment: `scheduledDate` when set; else created date with “Awaiting confirmation.”; patient includes `gender`; phones shown as local `03…`.
+  - Appointment: shows API `scheduledDate` only (day/month/weekday/time). If null → “Awaiting confirmation.” + Applied On (no fake created date as schedule). Patient includes `gender`; phones as local `03…`.
 - Surgery pay / book: **POST** `AppUrls.surgeryBookSurgery` via `BookSurgeryUseCase` from booking details **Proceed Checkout** (enabled only when `paymentAllowed`). Opens `PaymentMethodSheet` → JazzCash account sheet when JazzCash → body `{ leadId, paymentMethod: JAZZCASH|CARD, msisdn }`.
 - Surgery details title: `bookingsSurgeryDetailsTitle` (“Details”); checkout CTA remains visible (disabled grey) while Pending.
 

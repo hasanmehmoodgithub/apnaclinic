@@ -22,12 +22,17 @@ class SurgeryBookingListMapper {
       status: lead.status,
       paymentAllowed: lead.paymentAllowed,
     );
-    final appointmentSource = lead.scheduledDate ??
-        lead.confirmedDate ??
-        (lead.leadCreatedAt.isNotEmpty
-            ? lead.leadCreatedAt
-            : lead.leadCreatedDate);
-    final appointment = _parseAppointment(appointmentSource);
+    final hasScheduledDate =
+        lead.scheduledDate != null && lead.scheduledDate!.trim().isNotEmpty;
+    final appointment = hasScheduledDate
+        ? _parseAppointment(lead.scheduledDate)
+        : const _AppointmentParts(
+            day: '',
+            month: '',
+            weekday: '',
+            time: '',
+            full: '',
+          );
     final isPending = bookingStatus == SurgeryBookingStatus.inReview ||
         bookingStatus == SurgeryBookingStatus.paymentPending;
 
@@ -55,15 +60,17 @@ class SurgeryBookingListMapper {
       appointmentDay: appointment.day,
       appointmentMonth: appointment.month,
       appointmentWeekday: appointment.weekday,
-      appointmentTime: appointment.time.isNotEmpty
-          ? appointment.time
+      appointmentTime: hasScheduledDate
+          ? (appointment.time.isNotEmpty ? appointment.time : lead.leadCreatedTime)
           : (isPending ? 'Applied On' : ''),
-      appointmentSubtitle: isPending && lead.scheduledDate == null
-          ? 'Awaiting confirmation.'
-          : 'Your appointment has been scheduled.',
-      appointmentDateFull: appointment.full.isNotEmpty
-          ? appointment.full
-          : (lead.scheduledDate ?? lead.confirmedDate ?? ''),
+      appointmentSubtitle: hasScheduledDate
+          ? 'Your appointment has been scheduled.'
+          : 'Awaiting confirmation.',
+      appointmentDateFull: hasScheduledDate
+          ? (appointment.full.isNotEmpty
+              ? appointment.full
+              : lead.scheduledDate!.trim())
+          : '',
       partnerLogoUrl: '',
     );
   }
@@ -182,7 +189,25 @@ class SurgeryBookingListMapper {
         return DateFormat(pattern).parseLoose(text);
       } catch (_) {}
     }
-    return null;
+
+    final match = RegExp(
+      r'^(\d{4})-(\d{2})-(\d{2})(?:\s+(\d{1,2}):(\d{2})\s*(AM|PM))?$',
+      caseSensitive: false,
+    ).firstMatch(text);
+    if (match == null) return null;
+
+    final year = int.tryParse(match.group(1)!);
+    final month = int.tryParse(match.group(2)!);
+    final day = int.tryParse(match.group(3)!);
+    if (year == null || month == null || day == null) return null;
+
+    var hour = int.tryParse(match.group(4) ?? '0') ?? 0;
+    final minute = int.tryParse(match.group(5) ?? '0') ?? 0;
+    final period = (match.group(6) ?? '').toUpperCase();
+    if (period == 'PM' && hour < 12) hour += 12;
+    if (period == 'AM' && hour == 12) hour = 0;
+
+    return DateTime(year, month, day, hour, minute);
   }
 
   static String _dayOrdinal(int day) {
