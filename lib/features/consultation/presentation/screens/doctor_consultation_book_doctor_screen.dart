@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:file_picker/file_picker.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -13,6 +15,7 @@ import '../../domain/entities/consultation_booking_attachment_entity.dart';
 import '../../domain/entities/consultation_doctor_slots_entity.dart';
 import '../../domain/entities/consultation_selected_slot_entity.dart';
 import '../../domain/use_cases/get_consultation_doctor_slots_use_case.dart';
+import '../constants/consultation_booking_attachment_config.dart';
 import '../constants/consultation_ui_config.dart';
 import '../widgets/results_doctor_item.dart';
 import '../widgets/consultation_hero_banner_widget.dart';
@@ -281,6 +284,13 @@ class _DoctorConsultationBookDoctorScreenState
 
   Future<void> _openUploadDocumentSheet() async {
     FocusScope.of(context).unfocus();
+    final l10n = AppLocalizations.of(context)!;
+    if (_attachments.length >=
+        ConsultationBookingAttachmentConfig.maxFileCount) {
+      _showSnackBar(l10n.consultationMaxFilesReached);
+      return;
+    }
+
     await showModalBottomSheet<void>(
       context: context,
       backgroundColor: Colors.white,
@@ -306,13 +316,54 @@ class _DoctorConsultationBookDoctorScreenState
     );
   }
 
-  void _addAttachments(Iterable<ConsultationBookingAttachmentEntity> items) {
-    final next = items
-        .where((item) => item.path.trim().isNotEmpty && item.name.trim().isNotEmpty)
-        .toList();
-    if (next.isEmpty) return;
+  Future<void> _addAttachments(
+    Iterable<ConsultationBookingAttachmentEntity> items,
+  ) async {
+    final l10n = AppLocalizations.of(context)!;
+    final remainingSlots =
+        ConsultationBookingAttachmentConfig.maxFileCount - _attachments.length;
+    if (remainingSlots <= 0) {
+      if (mounted) {
+        _showSnackBar(l10n.consultationMaxFilesReached);
+      }
+      return;
+    }
+
+    final accepted = <ConsultationBookingAttachmentEntity>[];
+    var hitFileCountLimit = false;
+
+    for (final item in items) {
+      if (accepted.length >= remainingSlots) {
+        hitFileCountLimit = true;
+        break;
+      }
+
+      final path = item.path.trim();
+      final name = item.name.trim();
+      if (path.isEmpty || name.isEmpty) continue;
+
+      final file = File(path);
+      if (!await file.exists()) continue;
+
+      final sizeBytes = await file.length();
+      if (sizeBytes > ConsultationBookingAttachmentConfig.maxFileSizeBytes) {
+        if (mounted) {
+          _showSnackBar(l10n.consultationFileTooLarge(name));
+        }
+        continue;
+      }
+
+      accepted.add(item);
+    }
+
+    if (accepted.isEmpty || !mounted) return;
+
+    if (hitFileCountLimit) {
+      _showSnackBar(l10n.consultationMaxFilesReached);
+    }
+
     setState(() {
-      _attachments.addAll(next);
+      _attachments.addAll(accepted);
     });
   }
 
@@ -330,7 +381,7 @@ class _DoctorConsultationBookDoctorScreenState
         imageQuality: 85,
       );
       if (picked == null || !mounted) return;
-      _addAttachments([
+      await _addAttachments([
         ConsultationBookingAttachmentEntity(
           name: p.basename(picked.path),
           path: picked.path,
@@ -347,7 +398,7 @@ class _DoctorConsultationBookDoctorScreenState
     try {
       final picked = await _imagePicker.pickMultiImage(imageQuality: 85);
       if (picked.isEmpty || !mounted) return;
-      _addAttachments(
+      await _addAttachments(
         picked.map(
           (file) => ConsultationBookingAttachmentEntity(
             name: p.basename(file.path),
@@ -366,7 +417,7 @@ class _DoctorConsultationBookDoctorScreenState
     try {
       final result = await FilePicker.pickFiles(allowMultiple: true);
       if (result == null || result.files.isEmpty || !mounted) return;
-      _addAttachments(
+      await _addAttachments(
         result.files
             .where((file) => (file.path ?? '').trim().isNotEmpty)
             .map(

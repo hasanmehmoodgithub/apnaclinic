@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../components/shimmer/app_shimmer.dart';
@@ -50,7 +48,6 @@ class _DoctorConsultationResultsScreenState
       sl<GetConsultationDoctorsUseCase>();
   final TextEditingController _searchController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
-  Timer? _searchDebounce;
   List<ConsultationCategoryEntity> _categoryOptions = const [];
 
   static const int _pageLimit = 20;
@@ -93,13 +90,22 @@ class _DoctorConsultationResultsScreenState
     }
   }
 
-  void _onSearchChanged(String value) {
-    if (_query == value) return;
+  void _onSearchSubmitted() {
+    final value = _searchController.text.trim();
+    if (_query == value) {
+      if (value.isEmpty) return;
+      _loadDoctors(refresh: true);
+      return;
+    }
     setState(() => _query = value);
-    _searchDebounce?.cancel();
-    _searchDebounce = Timer(const Duration(milliseconds: 400), () {
-      if (mounted) _loadDoctors(refresh: true);
-    });
+    _loadDoctors(refresh: true);
+  }
+
+  void _onSearchCleared() {
+    if (_searchController.text.isEmpty && _query.isEmpty) return;
+    _searchController.clear();
+    setState(() => _query = '');
+    _loadDoctors(refresh: true);
   }
 
   Future<void> _loadCategories() async {
@@ -234,7 +240,6 @@ class _DoctorConsultationResultsScreenState
 
   @override
   void dispose() {
-    _searchDebounce?.cancel();
     _scrollController
       ..removeListener(_onScroll)
       ..dispose();
@@ -298,7 +303,9 @@ class _DoctorConsultationResultsScreenState
                             Expanded(
                               child: ResultsSearchField(
                                 controller: _searchController,
-                                onChanged: _onSearchChanged,
+                                showClear: _query.trim().isNotEmpty,
+                                onSearch: _onSearchSubmitted,
+                                onClear: _onSearchCleared,
                               ),
                             ),
                             SizedBox(width: 8.w),

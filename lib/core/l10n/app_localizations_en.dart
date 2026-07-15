@@ -1170,6 +1170,29 @@ class AppLocalizationsEn extends AppLocalizations {
       'Could not pick file. Please try again.';
 
   @override
+  String get consultationDocumentsTitle => 'Documents';
+
+  @override
+  String get consultationDocumentsBrowse => 'Browse';
+
+  @override
+  String get consultationDocumentsUploadHint =>
+      'You can upload up to 5 files. Maximum size is 1 MB per file. Supported formats: images and PDF.';
+
+  @override
+  String get consultationUploadDocumentHint =>
+      'You can upload up to 5 files. Maximum size is 1 MB per file. Supported formats: images and PDF.';
+
+  @override
+  String consultationFileTooLarge(Object fileName) {
+    return '$fileName exceeds the 1 MB limit. Please choose a smaller file.';
+  }
+
+  @override
+  String get consultationMaxFilesReached =>
+      'You can upload a maximum of 5 files per booking.';
+
+  @override
   String get consultationPaymentMethodTitle => 'Payment Method';
 
   @override

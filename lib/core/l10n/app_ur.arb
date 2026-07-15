@@ -384,6 +384,17 @@
   "consultationGalleryUnavailable": "فی الحال گیلری تک رسائی دستیاب نہیں ہے۔",
   "consultationPickGalleryFailed": "گیلری سے میڈیا منتخب نہیں ہو سکا۔",
   "consultationPickFileFailed": "فائل منتخب نہیں ہو سکی۔ براہ کرم دوبارہ کوشش کریں۔",
+  "consultationDocumentsTitle": "دستاویزات",
+  "consultationDocumentsBrowse": "براؤز کریں",
+  "consultationDocumentsUploadHint": "آپ زیادہ سے زیادہ 5 فائلیں اپلوڈ کر سکتے ہیں۔ ہر فائل کی زیادہ سے زیادہ حد 1 MB ہے۔ تصاویر اور PDF دستاویزات منظور ہیں۔",
+  "consultationUploadDocumentHint": "آپ زیادہ سے زیادہ 5 فائلیں اپلوڈ کر سکتے ہیں۔ ہر فائل کی زیادہ سے زیادہ حد 1 MB ہے۔ تصاویر اور PDF دستاویزات منظور ہیں۔",
+  "consultationFileTooLarge": "{fileName} 1 MB کی حد سے زیادہ ہے۔ براہ کرم چھوٹی فائل منتخب کریں۔",
+  "@consultationFileTooLarge": {
+    "placeholders": {
+      "fileName": {}
+    }
+  },
+  "consultationMaxFilesReached": "ہر بکنگ میں زیادہ سے زیادہ 5 فائلیں اپلوڈ کی جا سکتی ہیں۔",
   "consultationPaymentMethodTitle": "ادائیگی کا طریقہ",
   "consultationVideoConsultationLabel": "ویڈیو مشاورت",
   "consultationConsultationFeesLabel": "مشاورت فیس",

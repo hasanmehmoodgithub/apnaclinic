@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../../core/extensions/screen_util_extensions.dart';
+import '../../../../core/l10n/app_localizations.dart';
+import '../../../../generated/assets.dart';
 import '../../domain/entities/consultation_booking_attachment_entity.dart';
+import '../constants/consultation_ui_config.dart';
 
 class DocumentsSection extends StatelessWidget {
   const DocumentsSection({
@@ -20,15 +23,26 @@ class DocumentsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Documents',
+          l10n.consultationDocumentsTitle,
           style: textTheme.titleMedium?.copyWith(
             color: const Color(0xFF1E2D3F),
             fontSize: 15.sp,
             fontWeight: FontWeight.w600,
+          ),
+        ),
+        SizedBox(height: 6.h),
+        Text(
+          l10n.consultationDocumentsUploadHint,
+          style: textTheme.bodySmall?.copyWith(
+            color: ConsultationUiConfig.tertiaryText,
+            fontSize: 11.sp,
+            height: 1.35,
           ),
         ),
         SizedBox(height: 8.h),
@@ -56,14 +70,14 @@ class DocumentsSection extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     SvgPicture.asset(
-                      'assets/img/consultation/upload.svg',
+                      Assets.consultationUpload,
                       width: 19.w,
                       height: 16.h,
                       fit: BoxFit.contain,
                     ),
                     SizedBox(width: 8.w),
                     Text(
-                      'Browse',
+                      l10n.consultationDocumentsBrowse,
                       style: textTheme.bodyLarge?.copyWith(
                         color: const Color(0xFF3C4858),
                         fontSize: 14.sp,

@@ -480,6 +480,17 @@
   "consultationGalleryUnavailable": "Gallery access is unavailable right now.",
   "consultationPickGalleryFailed": "Could not pick media from gallery.",
   "consultationPickFileFailed": "Could not pick file. Please try again.",
+  "consultationDocumentsTitle": "Documents",
+  "consultationDocumentsBrowse": "Browse",
+  "consultationDocumentsUploadHint": "You can upload up to 5 files. Maximum size is 1 MB per file. Supported formats: images and PDF.",
+  "consultationUploadDocumentHint": "You can upload up to 5 files. Maximum size is 1 MB per file. Supported formats: images and PDF.",
+  "consultationFileTooLarge": "{fileName} exceeds the 1 MB limit. Please choose a smaller file.",
+  "@consultationFileTooLarge": {
+    "placeholders": {
+      "fileName": {}
+    }
+  },
+  "consultationMaxFilesReached": "You can upload a maximum of 5 files per booking.",
   "consultationPaymentMethodTitle": "Payment Method",
   "consultationVideoConsultationLabel": "Video Consultation",
   "consultationConsultationFeesLabel": "Consultation Fees",

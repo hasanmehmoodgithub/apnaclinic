@@ -42,6 +42,16 @@ class ConsultationUploadDocumentSheetWidget extends StatelessWidget {
                 fontWeight: FontWeight.w700,
               ),
             ),
+            SizedBox(height: 8.h),
+            Text(
+              l10n.consultationUploadDocumentHint,
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                color: const Color(0xFF667B99),
+                fontSize: 12.sp,
+                height: 1.35,
+              ),
+            ),
             SizedBox(height: 14.h),
             UploadOptionTile(
               icon: Icons.camera_alt_outlined,
