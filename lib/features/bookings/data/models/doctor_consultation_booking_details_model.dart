@@ -59,12 +59,16 @@ class DoctorConsultationBookingDetailsModel {
     required this.discountPercent,
     required this.totalText,
     this.partnerRefNo = '',
+    this.meetingLink = '',
     this.ratings,
     this.pmdcVerified = false,
     this.partnerTenantId = '',
     this.partnerLogoUrl = '',
     this.attachments = const [],
+    this.doctorPrescriptions = const [],
     this.patientReview,
+    this.slotStartAt,
+    this.slotEndAt,
   });
 
   final String bookingId;
@@ -90,18 +94,47 @@ class DoctorConsultationBookingDetailsModel {
   final double discountPercent;
   final String totalText;
   final String partnerRefNo;
+  final String meetingLink;
   final double? ratings;
   final bool pmdcVerified;
   final String partnerTenantId;
   final String partnerLogoUrl;
   final List<String> attachments;
+  final List<String> doctorPrescriptions;
   final DoctorConsultationBookingPatientReview? patientReview;
+  final DateTime? slotStartAt;
+  final DateTime? slotEndAt;
 
   /// Prefer partner ref for feedback API; fall back to booking id.
   String get feedbackRefNo {
     final partner = partnerRefNo.trim();
     if (partner.isNotEmpty) return partner;
     return bookingId.trim();
+  }
+
+  /// Patient attachments + doctor prescriptions for the Documents section.
+  List<String> get documentUrls {
+    if (doctorPrescriptions.isEmpty) return attachments;
+    if (attachments.isEmpty) return doctorPrescriptions;
+    return [...doctorPrescriptions, ...attachments];
+  }
+
+  /// Join when confirmed, link present, and now is within [start, end].
+  bool get canJoinNow {
+    if (status != DoctorConsultationBookingStatus.confirmed) return false;
+    if (meetingLink.trim().isEmpty) return false;
+    final start = slotStartAt;
+    final end = slotEndAt;
+    if (start == null || end == null) return false;
+    final now = DateTime.now();
+    return !now.isBefore(start) && !now.isAfter(end);
+  }
+
+  /// Feedback submit / “Your Feedback” after slot end only.
+  bool get canShowFeedbackSection {
+    final end = slotEndAt;
+    if (end == null) return patientReview != null;
+    return DateTime.now().isAfter(end);
   }
 
   DoctorConsultationBookingDetailsModel copyWith({
@@ -131,12 +164,16 @@ class DoctorConsultationBookingDetailsModel {
       discountPercent: discountPercent,
       totalText: totalText,
       partnerRefNo: partnerRefNo,
+      meetingLink: meetingLink,
       ratings: ratings,
       pmdcVerified: pmdcVerified,
       partnerTenantId: partnerTenantId,
       partnerLogoUrl: partnerLogoUrl,
       attachments: attachments,
+      doctorPrescriptions: doctorPrescriptions,
       patientReview: patientReview ?? this.patientReview,
+      slotStartAt: slotStartAt,
+      slotEndAt: slotEndAt,
     );
   }
 }

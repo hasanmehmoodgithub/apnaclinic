@@ -5,15 +5,16 @@ import '../../../../core/constants/app_colors.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/utils/app_url_launcher.dart';
-import '../../../../generated/assets.dart';
 import '../../data/mappers/doctor_consultation_booking_mapper.dart';
 
 class DoctorConsultationBookingDetailsDocumentsWidget extends StatelessWidget {
   const DoctorConsultationBookingDetailsDocumentsWidget({
     super.key,
+    required this.title,
     required this.attachments,
   });
 
+  final String title;
   final List<String> attachments;
 
   @override
@@ -25,7 +26,7 @@ class DoctorConsultationBookingDetailsDocumentsWidget extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          l10n.bookingsDocumentsTitle,
+          title,
           style: textTheme.titleMedium?.copyWith(
             color: AppColors.clr061E40,
             fontWeight: FontWeight.w600,
@@ -58,7 +59,9 @@ class DoctorConsultationBookingDetailsDocumentsWidget extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Image.asset(
-                          Assets.consultationDocumentDownload,
+                          DoctorConsultationBookingMapper.fileTypeIconAsset(
+                            attachments[i],
+                          ),
                           width: 18.w,
                           height: 20.h,
                           fit: BoxFit.contain,

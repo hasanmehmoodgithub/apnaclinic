@@ -18,6 +18,8 @@ class Assets {
       'assets/img/consultation/document_download.png';
   static const String consultationEInvoiceDownload =
       'assets/img/consultation/e_invoice_download.png';
+  static const String consultationFileIcon = 'assets/img/consultation/file_icon.png';
+  static const String consultationPdfIcon = 'assets/img/consultation/pdf_icon.png';
   static const String consultationStarFilled =
       'assets/img/consultation/star_filled.png';
   static const String consultationStarUnfilled =

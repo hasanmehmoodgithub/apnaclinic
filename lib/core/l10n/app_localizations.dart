@@ -2609,6 +2609,12 @@ abstract class AppLocalizations {
   /// **'Patient’s Review'**
   String get bookingsPatientsReviewTitle;
 
+  /// No description provided for @bookingsDoctorsFeedbackTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Doctor’s Feedback'**
+  String get bookingsDoctorsFeedbackTitle;
+
   /// No description provided for @bookingsYourFeedbackLabel.
   ///
   /// In en, this message translates to:
@@ -2650,6 +2656,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Documents'**
   String get bookingsDocumentsTitle;
+
+  /// No description provided for @bookingsPrescriptionsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Prescription'**
+  String get bookingsPrescriptionsTitle;
 
   /// No description provided for @bookingsDownloadCta.
   ///

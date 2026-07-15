@@ -42,6 +42,7 @@ class DoctorConsultationBookingsMockApi {
       discountPercent: 0,
       totalText: 'Rs.3000',
       partnerRefNo: '1ZQYOXDG',
+      meetingLink: 'https://demo.oladoc.com/vc/hnl9o3tZ1783939936',
       ratings: 5,
       pmdcVerified: true,
       partnerTenantId: '2',
@@ -76,11 +77,15 @@ class DoctorConsultationBookingsMockApi {
       discountPercent: 0,
       totalText: 'Rs.1000',
       partnerRefNo: '1ZIGLGUT',
+      meetingLink: 'https://demo.oladoc.com/vc/uw2DKUdF1783425812',
       ratings: 5,
       pmdcVerified: true,
       partnerTenantId: '2',
       attachments: const [
         'http://bucket-route-minio.apps.jpocp.jazz.com.pk/apna-clinic/consultations/attachments/019f3c76-3fc5-7059-a7b5-a5d78f08dddf.png',
+      ],
+      doctorPrescriptions: const [
+        'https://medicalguidelines.msf.org/sites/default/files/2026-05/guideline-170-en.pdf',
       ],
     ),
   ];

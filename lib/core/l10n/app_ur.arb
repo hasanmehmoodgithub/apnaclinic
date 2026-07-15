@@ -447,6 +447,7 @@
   },
   "bookingsJoinNowCta": "ابھی شامل ہوں",
   "bookingsPatientsReviewTitle": "مریض کا جائزہ",
+  "bookingsDoctorsFeedbackTitle": "ڈاکٹر کی رائے",
   "bookingsYourFeedbackLabel": "آپ کی رائے",
   "bookingsFeedbackHint": "اپنی رائے لکھیں...",
   "bookingsSubmitFeedbackCta": "رائے جمع کرائیں",
@@ -454,6 +455,7 @@
   "bookingsFeedbackSelectRating": "براہِ کرم درجہ منتخب کریں۔",
   "bookingsFeedbackMissingRef": "اس بکنگ کے لیے رائے جمع نہیں کی جا سکی۔",
   "bookingsDocumentsTitle": "دستاویزات",
+  "bookingsPrescriptionsTitle": "نسخہ",
   "bookingsDownloadCta": "ڈاؤن لوڈ",
   "bookingsAttachmentFallback": "دستاویز {index}",
   "@bookingsAttachmentFallback": {

@@ -1352,6 +1352,9 @@ class AppLocalizationsUr extends AppLocalizations {
   String get bookingsPatientsReviewTitle => 'مریض کا جائزہ';
 
   @override
+  String get bookingsDoctorsFeedbackTitle => 'ڈاکٹر کی رائے';
+
+  @override
   String get bookingsYourFeedbackLabel => 'آپ کی رائے';
 
   @override
@@ -1372,6 +1375,9 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get bookingsDocumentsTitle => 'دستاویزات';
+
+  @override
+  String get bookingsPrescriptionsTitle => 'نسخہ';
 
   @override
   String get bookingsDownloadCta => 'ڈاؤن لوڈ';
