@@ -152,10 +152,7 @@ class ConsultationDoctorModel {
 
   static String _formatRatingScore(double value) {
     if (value % 1 == 0) return value.toInt().toString();
-    return value
-        .toStringAsFixed(2)
-        .replaceAll(RegExp(r'0+$'), '')
-        .replaceAll(RegExp(r'\.$'), '');
+    return value.toStringAsFixed(1);
   }
 
   static int? _readInt(dynamic value) {

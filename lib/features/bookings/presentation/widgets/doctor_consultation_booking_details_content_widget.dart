@@ -10,6 +10,7 @@ import 'doctor_consultation_booking_details_documents_widget.dart';
 import 'doctor_consultation_booking_details_field_widget.dart';
 import 'doctor_consultation_booking_details_header_widget.dart';
 import 'doctor_consultation_booking_details_join_button_widget.dart';
+import 'doctor_consultation_booking_details_prescriptions_widget.dart';
 import 'doctor_consultation_booking_details_review_widget.dart';
 import 'doctor_consultation_booking_feedback_form_widget.dart';
 
@@ -27,6 +28,10 @@ class DoctorConsultationBookingDetailsContentWidget extends StatelessWidget {
     final showJoinButton =
         data.status == DoctorConsultationBookingStatus.pending ||
             data.status == DoctorConsultationBookingStatus.confirmed;
+    final showSubmittedFeedback = data.patientReview != null;
+    final showFeedbackForm = !showSubmittedFeedback &&
+        data.canShowFeedbackSection &&
+        data.status != DoctorConsultationBookingStatus.cancel;
 
     return Column(
       children: [
@@ -65,19 +70,25 @@ class DoctorConsultationBookingDetailsContentWidget extends StatelessWidget {
                     title: l10n.bookingsIssueLabel,
                     value: data.issueValue,
                   ),
-                  if (data.patientReview != null) ...[
+                  if (data.doctorPrescriptions.isNotEmpty) ...[
+                    SizedBox(height: 14.h),
+                    DoctorConsultationBookingDetailsPrescriptionsWidget(
+                      urls: data.doctorPrescriptions,
+                    ),
+                  ],
+                  if (showSubmittedFeedback) ...[
                     SizedBox(height: 14.h),
                     DoctorConsultationBookingDetailsReviewWidget(
                       review: data.patientReview!,
                     ),
-                  ] else if (data.status !=
-                      DoctorConsultationBookingStatus.cancel) ...[
+                  ] else if (showFeedbackForm) ...[
                     SizedBox(height: 14.h),
                     const DoctorConsultationBookingFeedbackFormWidget(),
                   ],
                   if (data.attachments.isNotEmpty) ...[
                     SizedBox(height: 14.h),
                     DoctorConsultationBookingDetailsDocumentsWidget(
+                      title: l10n.bookingsDocumentsTitle,
                       attachments: data.attachments,
                     ),
                   ],
@@ -86,7 +97,9 @@ class DoctorConsultationBookingDetailsContentWidget extends StatelessWidget {
                   SizedBox(height: 28.h),
                   if (showJoinButton)
                     DoctorConsultationBookingDetailsJoinButtonWidget(
-                      status: data.status,
+                      enabled: data.canJoinNow,
+                      meetingLink: data.meetingLink,
+                      title: data.doctorName,
                     ),
                 ],
               ),

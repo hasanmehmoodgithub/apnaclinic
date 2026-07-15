@@ -27,13 +27,13 @@ Doctor consultation category browse, doctor results, booking, and checkout.
   - `tenantId` from doctor `partner.tenantId` (not JWT); `patientId` from JWT/`AppPref`; JazzCash `msisdn` from selected saved account (profile phones via `GetAccountsListUseCase`; default/`isDefault` pre-selected in JazzCash sheet); slot values from selected availability chip.
 - **GET** `AppUrls.doctorConsultationBookings(page, limit)` — `/api/v1/mobile/doctor-consultation?page=&limit=` (subscriber's booked consultations).
   - Response `data`: `{ data: [], page, limit, total }`.
-  - Item: `doctorInfo` (`doctorid`, `displayName`, `yearsOfExperience`, `profileImageUrl`, `consultationFee`, `discountPercent`, `isFree`, `education`, `specialtyName`, `ratings`, `pmdcVerified`, `partner`), `patientRelation`, `slot*`, `success`, `partnerRefNo`, `issue`, `attachments` (URL strings), `patientReview` (`rating`/`review`/`date`, nullable).
+  - Item: `doctorInfo` (`doctorid`, `displayName`, `yearsOfExperience`, `profileImageUrl`, `consultationFee`, `discountPercent`, `isFree`, `education`, `specialtyName`, `ratings`, `pmdcVerified`, `partner`), `patientRelation`, `slot*`, `success`, `partnerRefNo`, `meetingLink`, `issue`, `attachments`, `doctorPerscriptions` (API typo; also accepts `doctorPrescriptions`), `patientReview` (`rating`/`review`/`date`, nullable).
   - Maps to `ConsultationBookingListItemEntity` → bookings UI via `DoctorConsultationBookingMapper`.
 - **POST** `AppUrls.doctorConsultationFeedback` — `/api/v1/mobile/doctor-consultation/feedback` JSON `{ refNo, rating, review }`.
   - Used from booking details when `patientReview` is null (not cancelled); `refNo` is `partnerRefNo` (fallback booking id).
 - **GET** `AppUrls.doctorConsultationSlots(doctorId, hospitalId?)` — `/api/v1/mobile/doctor-consultation/doctor/{doctorId}` (optional `?hospitalId=` when doctors list provides it).
   - Response `data.doctorInfo`: `ratings`, `pmdcVerified`, `verifiedPatientsCount`, `patientsSatisfiedPercentage`, `timeslots[]` (`date`, `slots[]` with `startTime`/`endTime` in 12h e.g. `12:40 PM`), `patientReviews` (`totalCount`, `filteredCount`, `reviews[]` with `rating`/`date`/`comment`/`patientName` — flexible keys).
-  - Book-doctor screen shows Patient's Reviews under Description (first review + See More → Feedback bottom sheet).
+  - Book-doctor screen shows Patient's Reviews under Description (first review + See More → Feedback bottom sheet). Ratings use shared `AppRoundedRatingWidget` (whole numbers without `.0`).
   - Parser keeps slot times in 12h AM/PM (e.g. `03:50 PM`) for display and booking submit; legacy `data[]` with `start_time`/`end_time` still supported.
   - Missing dates between the first and last `timeslots` entry are filled as empty days (disabled in UI). First date with slots is auto-selected on load; month label reflects the selected date.
   - Uses `ResultsDoctorItem.partnerDoctorId` when present, else numeric `apiDoctorId` (`id` from doctors list).

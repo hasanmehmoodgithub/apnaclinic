@@ -10,9 +10,11 @@ import '../../data/mappers/doctor_consultation_booking_mapper.dart';
 class DoctorConsultationBookingDetailsDocumentsWidget extends StatelessWidget {
   const DoctorConsultationBookingDetailsDocumentsWidget({
     super.key,
+    required this.title,
     required this.attachments,
   });
 
+  final String title;
   final List<String> attachments;
 
   @override
@@ -24,7 +26,7 @@ class DoctorConsultationBookingDetailsDocumentsWidget extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          l10n.bookingsDocumentsTitle,
+          title,
           style: textTheme.titleMedium?.copyWith(
             color: AppColors.clr061E40,
             fontWeight: FontWeight.w600,
@@ -54,32 +56,45 @@ class DoctorConsultationBookingDetailsDocumentsWidget extends StatelessWidget {
                       vertical: 12.h,
                     ),
                     child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Icon(
-                          Icons.insert_drive_file_outlined,
-                          size: 20.r,
-                          color: AppColors.clr52708E,
-                        ),
-                        SizedBox(width: 10.w),
-                        Expanded(
-                          child: Text(
-                            DoctorConsultationBookingMapper
-                                .attachmentDisplayName(
-                              attachments[i],
-                              i,
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: textTheme.bodyMedium?.copyWith(
-                              color: AppColors.clr061E40,
-                            ),
+                        Image.asset(
+                          DoctorConsultationBookingMapper.fileTypeIconAsset(
+                            attachments[i],
                           ),
+                          width: 18.w,
+                          height: 20.h,
+                          fit: BoxFit.contain,
                         ),
-                        Text(
-                          l10n.bookingsDownloadCta,
-                          style: textTheme.bodyMedium?.copyWith(
-                            color: AppColors.clr2F80ED,
-                            fontWeight: FontWeight.w600,
+                        SizedBox(width: 12.w),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                DoctorConsultationBookingMapper
+                                    .attachmentDisplayName(
+                                  attachments[i],
+                                  i,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: textTheme.bodyMedium?.copyWith(
+                                  color: AppColors.clr061E40,
+                                  fontSize: 14.sp,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                              ),
+                              SizedBox(height: 2.h),
+                              Text(
+                                l10n.bookingsDownloadCta,
+                                style: textTheme.bodyMedium?.copyWith(
+                                  color: AppColors.clr024886,
+                                  fontSize: 13.sp,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ],

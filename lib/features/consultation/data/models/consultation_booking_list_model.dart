@@ -26,6 +26,7 @@ class ConsultationBookingListItemModel {
     required this.partnerTenantId,
     required this.partnerLogoUrl,
     required this.attachments,
+    required this.doctorPrescriptions,
     required this.patientReview,
   });
 
@@ -53,6 +54,7 @@ class ConsultationBookingListItemModel {
   final String partnerTenantId;
   final String partnerLogoUrl;
   final List<String> attachments;
+  final List<String> doctorPrescriptions;
   final ConsultationBookingPatientReviewEntity? patientReview;
 
   factory ConsultationBookingListItemModel.fromJson(Map<String, dynamic> json) {
@@ -157,6 +159,8 @@ class ConsultationBookingListItemModel {
         'image',
       ]),
       consultationLink: _readString(json, const [
+        'meetingLink',
+        'meeting_link',
         'consultationLink',
         'consultation_link',
       ]),
@@ -187,6 +191,11 @@ class ConsultationBookingListItemModel {
         nestedKeys: const ['logoUrl', 'logo_url'],
       ),
       attachments: _parseAttachments(json['attachments']),
+      doctorPrescriptions: _parseAttachments(
+        json['doctorPerscriptions'] ??
+            json['doctorPrescriptions'] ??
+            json['doctor_prescriptions'],
+      ),
       patientReview: _parsePatientReview(json['patientReview']),
     );
   }
@@ -217,6 +226,7 @@ class ConsultationBookingListItemModel {
       partnerTenantId: partnerTenantId,
       partnerLogoUrl: partnerLogoUrl,
       attachments: attachments,
+      doctorPrescriptions: doctorPrescriptions,
       patientReview: patientReview,
     );
   }
@@ -256,6 +266,8 @@ class ConsultationBookingListItemModel {
     if (explicitId.isNotEmpty) return explicitId;
 
     final consultationLink = _readString(json, const [
+      'meetingLink',
+      'meeting_link',
       'consultationLink',
       'consultation_link',
     ]);

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
+import '../../../../generated/assets.dart';
 import '../../data/models/doctor_consultation_booking_details_model.dart';
 
 class DoctorConsultationBookingDetailsBillingWidget extends StatelessWidget {
@@ -31,16 +32,18 @@ class DoctorConsultationBookingDetailsBillingWidget extends StatelessWidget {
               ),
             ),
             const Spacer(),
-            Icon(
-              Icons.download_rounded,
-              color: AppColors.clr52708E,
-              size: 17.r,
+            Image.asset(
+              Assets.consultationEInvoiceDownload,
+              width: 16.w,
+              height: 16.h,
+              fit: BoxFit.contain,
+              color: AppColors.clr024886,
             ),
             SizedBox(width: 4.w),
             Text(
               l10n.bookingsEInvoiceLabel,
               style: textTheme.bodyMedium?.copyWith(
-                color: AppColors.clr52708E,
+                color: AppColors.clr024886,
               ),
             ),
           ],

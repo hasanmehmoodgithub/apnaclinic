@@ -1351,6 +1351,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bookingsPatientsReviewTitle => 'Patient’s Review';
 
   @override
+  String get bookingsDoctorsFeedbackTitle => 'Doctor’s Feedback';
+
+  @override
   String get bookingsYourFeedbackLabel => 'Your Feedback';
 
   @override
@@ -1371,6 +1374,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get bookingsDocumentsTitle => 'Documents';
+
+  @override
+  String get bookingsPrescriptionsTitle => 'Prescription';
 
   @override
   String get bookingsDownloadCta => 'Download';

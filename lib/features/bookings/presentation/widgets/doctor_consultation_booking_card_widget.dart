@@ -6,6 +6,7 @@ import '../../../../core/constants/app_colors.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/router/app_routes.dart';
+import '../../../../core/widgets/app_rounded_rating_widget.dart';
 import '../../../consultation/presentation/constants/consultation_partner_filter_defaults.dart';
 import '../../../consultation/presentation/widgets/consultation_partner_logo_widget.dart';
 import '../../data/models/doctor_consultation_booking_details_model.dart';
@@ -164,9 +165,11 @@ class _DoctorSummarySection extends StatelessWidget {
               ),
             ),
             if (item.ratings != null)
-              _RatingBadge(
-                textTheme: textTheme,
+              AppRoundedRatingWidget(
                 rating: item.ratings!,
+                textTheme: textTheme,
+                width: 56.w,
+                height: 24.h,
               ),
           ],
         ),
@@ -401,38 +404,6 @@ String _localizedStatus(
       return l10n.bookingsStatusCancel;
     case DoctorConsultationBookingStatus.completed:
       return l10n.bookingsStatusCompleted;
-  }
-}
-
-class _RatingBadge extends StatelessWidget {
-  const _RatingBadge({
-    required this.textTheme,
-    required this.rating,
-  });
-
-  final TextTheme textTheme;
-  final double rating;
-
-  @override
-  Widget build(BuildContext context) {
-    final label = rating % 1 == 0
-        ? '${rating.toInt()} / 5'
-        : '${rating.toStringAsFixed(1)} / 5';
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 2.h),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(6.r),
-        border: Border.all(color: const Color(0xFF98E089), width: 1),
-      ),
-      child: Text(
-        label,
-        style: textTheme.bodySmall?.copyWith(
-          color: AppColors.clr667B99,
-          fontSize: 9.sp,
-          fontWeight: FontWeight.w700,
-        ),
-      ),
-    );
   }
 }
 

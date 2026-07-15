@@ -5,8 +5,10 @@ import 'package:intl/intl.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
+import '../../../../core/widgets/app_rounded_rating_widget.dart';
 import '../cubit/doctor_consultation_booking_details_cubit.dart';
 import '../cubit/doctor_consultation_booking_details_state.dart';
+import 'doctor_consultation_booking_rating_stars_widget.dart';
 
 class DoctorConsultationBookingFeedbackFormWidget extends StatefulWidget {
   const DoctorConsultationBookingFeedbackFormWidget({super.key});
@@ -40,9 +42,6 @@ class _DoctorConsultationBookingFeedbackFormWidgetState
     final l10n = AppLocalizations.of(context)!;
     final textTheme = Theme.of(context).textTheme;
     final todayLabel = DateFormat('dd/MM/yyyy').format(DateTime.now());
-    final ratingLabel = _rating % 1 == 0
-        ? _rating.toInt().toString()
-        : _rating.toStringAsFixed(1);
 
     return BlocBuilder<DoctorConsultationBookingDetailsCubit,
         DoctorConsultationBookingDetailsState>(
@@ -57,7 +56,7 @@ class _DoctorConsultationBookingFeedbackFormWidgetState
             Text(
               l10n.bookingsPatientsReviewTitle,
               style: textTheme.titleMedium?.copyWith(
-                color: const Color(0xFF061E40),
+                color: AppColors.clr061E40,
                 fontWeight: FontWeight.w700,
                 fontSize: 16.sp,
               ),
@@ -69,7 +68,7 @@ class _DoctorConsultationBookingFeedbackFormWidgetState
                 Text(
                   l10n.bookingsYourFeedbackLabel,
                   style: textTheme.bodyMedium?.copyWith(
-                    color: const Color(0xFF061E40),
+                    color: AppColors.clr061E40,
                     fontWeight: FontWeight.w600,
                     fontSize: 14.sp,
                   ),
@@ -78,7 +77,7 @@ class _DoctorConsultationBookingFeedbackFormWidgetState
                 Text(
                   todayLabel,
                   style: textTheme.bodySmall?.copyWith(
-                    color: const Color(0xFF98A2B3),
+                    color: AppColors.clr98A2B3,
                     fontSize: 12.sp,
                   ),
                 ),
@@ -87,42 +86,17 @@ class _DoctorConsultationBookingFeedbackFormWidgetState
             SizedBox(height: 10.h),
             Row(
               children: [
-                for (var i = 1; i <= 5; i++)
-                  Padding(
-                    padding: EdgeInsets.only(right: 2.w),
-                    child: InkWell(
-                      onTap: state.isSubmittingFeedback
-                          ? null
-                          : () => setState(() => _rating = i.toDouble()),
-                      borderRadius: BorderRadius.circular(20.r),
-                      child: Icon(
-                        i <= _rating
-                            ? Icons.star_rounded
-                            : Icons.star_border_rounded,
-                        size: 22.r,
-                        color: i <= _rating
-                            ? const Color(0xFFF5B301)
-                            : const Color(0xFFD0D5DD),
-                      ),
-                    ),
-                  ),
+                DoctorConsultationBookingRatingStarsWidget(
+                  rating: _rating,
+                  onStarTap: state.isSubmittingFeedback
+                      ? null
+                      : (value) => setState(() => _rating = value),
+                ),
                 const Spacer(),
                 if (_rating >= 1)
-                  Container(
-                    padding:
-                        EdgeInsets.symmetric(horizontal: 10.w, vertical: 3.h),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20.r),
-                      border: Border.all(color: const Color(0xFF98E089)),
-                    ),
-                    child: Text(
-                      '$ratingLabel / 5',
-                      style: textTheme.bodySmall?.copyWith(
-                        color: const Color(0xFF667B99),
-                        fontWeight: FontWeight.w600,
-                        fontSize: 12.sp,
-                      ),
-                    ),
+                  AppRoundedRatingWidget(
+                    rating: _rating,
+                    textTheme: textTheme,
                   ),
               ],
             ),
@@ -136,7 +110,7 @@ class _DoctorConsultationBookingFeedbackFormWidgetState
               decoration: InputDecoration(
                 hintText: l10n.bookingsFeedbackHint,
                 hintStyle: textTheme.bodyMedium?.copyWith(
-                  color: const Color(0xFF98A2B3),
+                  color: AppColors.clr98A2B3,
                   fontSize: 14.sp,
                 ),
                 filled: true,
@@ -163,7 +137,7 @@ class _DoctorConsultationBookingFeedbackFormWidgetState
                 ),
               ),
               style: textTheme.bodyMedium?.copyWith(
-                color: const Color(0xFF667085),
+                color: AppColors.clr667085,
                 fontSize: 14.sp,
                 height: 1.35,
               ),
@@ -175,8 +149,8 @@ class _DoctorConsultationBookingFeedbackFormWidgetState
               child: FilledButton(
                 onPressed: canSubmit ? _onSubmit : null,
                 style: FilledButton.styleFrom(
-                  backgroundColor: const Color(0xFF1FAFA3),
-                  foregroundColor: Colors.white,
+                  backgroundColor: AppColors.clr1FAFA3,
+                  foregroundColor: AppColors.clrWhite,
                   disabledBackgroundColor: const Color(0xFFB7D9D6),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16.r),
@@ -194,7 +168,7 @@ class _DoctorConsultationBookingFeedbackFormWidgetState
                     : Text(
                         l10n.bookingsSubmitFeedbackCta,
                         style: textTheme.titleMedium?.copyWith(
-                          color: Colors.white,
+                          color: AppColors.clrWhite,
                           fontWeight: FontWeight.w600,
                         ),
                       ),

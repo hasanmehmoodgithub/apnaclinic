@@ -543,6 +543,7 @@
   },
   "bookingsJoinNowCta": "Join Now",
   "bookingsPatientsReviewTitle": "Patient’s Review",
+  "bookingsDoctorsFeedbackTitle": "Doctor’s Feedback",
   "bookingsYourFeedbackLabel": "Your Feedback",
   "bookingsFeedbackHint": "Write your feedback...",
   "bookingsSubmitFeedbackCta": "Submit Feedback",
@@ -550,6 +551,7 @@
   "bookingsFeedbackSelectRating": "Please select a rating.",
   "bookingsFeedbackMissingRef": "Unable to submit feedback for this booking.",
   "bookingsDocumentsTitle": "Documents",
+  "bookingsPrescriptionsTitle": "Prescription",
   "bookingsDownloadCta": "Download",
   "bookingsAttachmentFallback": "Document {index}",
   "@bookingsAttachmentFallback": {

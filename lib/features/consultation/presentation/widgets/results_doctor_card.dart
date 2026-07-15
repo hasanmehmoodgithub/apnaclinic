@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/extensions/screen_util_extensions.dart';
+import '../../../../core/widgets/app_rounded_rating_widget.dart';
 import '../constants/consultation_ui_config.dart';
-import 'rating_progress_badge.dart';
 import 'results_doctor_item.dart';
 import 'results_doctor_thumb.dart';
 import 'results_partner_badge.dart';
@@ -83,17 +83,12 @@ class ResultsDoctorCard extends StatelessWidget {
                                 height: 16.h,
                                 child: FittedBox(
                                   fit: BoxFit.contain,
-                                  child: SizedBox(
-                                    width: 72.w,
-                                    height: 30.h,
-                                    child: RatingProgressBadge(
-                                      rating: double.tryParse(
-                                            doctor.rating.split('/').first.trim(),
-                                          ) ??
-                                          0,
-                                      maxRating: 5,
-                                      textTheme: textTheme,
-                                    ),
+                                  child: AppRoundedRatingWidget(
+                                    rating: double.tryParse(
+                                          doctor.rating.split('/').first.trim(),
+                                        ) ??
+                                        0,
+                                    textTheme: textTheme,
                                   ),
                                 ),
                               ),

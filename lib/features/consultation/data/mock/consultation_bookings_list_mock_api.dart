@@ -36,8 +36,10 @@ class ConsultationBookingsListMockApi {
             'slotEndTime': '10:00',
             'success': 'PAID',
             'partnerRefNo': '1ZQYOXDG',
+            'meetingLink': 'https://demo.oladoc.com/vc/mock-meeting-1',
             'issue': null,
             'attachments': <String>[],
+            'doctorPerscriptions': <String>[],
             'patientReview': {
               'rating': 5,
               'review': 'Excellent consultation',
@@ -66,9 +68,13 @@ class ConsultationBookingsListMockApi {
             'slotEndTime': '17:50',
             'success': 'PAID',
             'partnerRefNo': '1ZIGLGUT',
+            'meetingLink': 'https://demo.oladoc.com/vc/mock-meeting-2',
             'issue': null,
             'attachments': [
               'http://bucket-route-minio.apps.jpocp.jazz.com.pk/apna-clinic/consultations/attachments/019f3c76-3fc5-7059-a7b5-a5d78f08dddf.png',
+            ],
+            'doctorPerscriptions': [
+              'https://medicalguidelines.msf.org/sites/default/files/2026-05/guideline-170-en.pdf',
             ],
             'patientReview': null,
           },

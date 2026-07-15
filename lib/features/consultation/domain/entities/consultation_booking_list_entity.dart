@@ -36,6 +36,7 @@ class ConsultationBookingListItemEntity {
     this.partnerTenantId = '',
     this.partnerLogoUrl = '',
     this.attachments = const [],
+    this.doctorPrescriptions = const [],
     this.patientReview,
   });
 
@@ -60,6 +61,7 @@ class ConsultationBookingListItemEntity {
   final List<String> qualifications;
   final String education;
   final String doctorImageUrl;
+  /// Video consult / join URL (`meetingLink` from API).
   final String consultationLink;
   final String partnerRefNo;
   final double? ratings;
@@ -67,6 +69,8 @@ class ConsultationBookingListItemEntity {
   final String partnerTenantId;
   final String partnerLogoUrl;
   final List<String> attachments;
+  /// Doctor-issued prescription file URLs (`doctorPerscriptions` API typo supported).
+  final List<String> doctorPrescriptions;
   final ConsultationBookingPatientReviewEntity? patientReview;
 }
 
