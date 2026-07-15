@@ -48,6 +48,19 @@ class ConsultationDoctorModel {
     final partner =
         partnerRaw is Map ? Map<String, dynamic>.from(partnerRaw) : null;
     final qualificationsRaw = json['qualifications'];
+    final tenantId = _readString(json, const [
+      'tenantId',
+      'tenant_id',
+    ], partner: partner);
+    final apiPartnerName = _partnerLabel(partner);
+    final apiPartnerLogo =
+        (partner?['logoUrl'] ?? partner?['logo_url'] ?? '').toString().trim();
+    // Doctors API often returns only partner.tenantId — resolve name/logo by id.
+    final resolvedPartner = ConsultationPartnerFilterDefaults.fromApi(
+      tenantId: tenantId,
+      name: apiPartnerName.isEmpty ? null : apiPartnerName,
+      logoUrl: apiPartnerLogo.isEmpty ? null : apiPartnerLogo,
+    );
 
     return ConsultationDoctorModel(
       id: (json['id'] ?? '').toString(),
@@ -71,12 +84,10 @@ class ConsultationDoctorModel {
           .map((item) => item.toString().trim())
           .where((item) => item.isNotEmpty)
           .toList(growable: false),
-      education: (json['education'] ?? '').toString().trim(),
-      bio: (json['bio'] ?? json['description'] ?? '').toString().trim(),
-      partnerLabel: _partnerLabel(partner),
-      partnerLogoUrl: (partner?['logoUrl'] ?? partner?['logo_url'] ?? '')
-          .toString()
-          .trim(),
+      education: _nullableText(json['education']),
+      bio: _nullableText(json['bio'] ?? json['description']),
+      partnerLabel: resolvedPartner.name,
+      partnerLogoUrl: resolvedPartner.resolvedLogo,
       hospitalId: _readString(json, const [
         'hospitalId',
         'hospital_id',
@@ -91,10 +102,7 @@ class ConsultationDoctorModel {
         'externalDoctorId',
         'external_doctor_id',
       ], partner: partner),
-      tenantId: _readString(json, const [
-        'tenantId',
-        'tenant_id',
-      ], partner: partner),
+      tenantId: tenantId,
     );
   }
 
@@ -106,7 +114,7 @@ class ConsultationDoctorModel {
     final qualificationText = qualifications.isNotEmpty
         ? qualifications.join(', ')
         : education;
-    final ratingText = ratingScore == null
+    final ratingText = (ratingScore == null || ratingScore! <= 0)
         ? ''
         : '${_formatRatingScore(ratingScore!)} / 5';
 
@@ -164,13 +172,26 @@ class ConsultationDoctorModel {
 
   static String _partnerLabel(Map<String, dynamic>? partner) {
     if (partner == null) return '';
-    return (partner['name'] ??
+    final named = (partner['name'] ??
             partner['displayName'] ??
             partner['label'] ??
             partner['title'] ??
             '')
         .toString()
         .trim();
+    if (named.isNotEmpty) return named;
+    return ConsultationPartnerFilterDefaults.displayNameFromTenantSlug(
+          (partner['tenant'] ?? partner['tenantSlug'] ?? partner['slug'])
+              ?.toString(),
+        ) ??
+        '';
+  }
+
+  static String _nullableText(dynamic value) {
+    if (value == null) return '';
+    final text = value.toString().trim();
+    if (text.isEmpty || text.toLowerCase() == 'null') return '';
+    return text;
   }
 
   static String _readString(
@@ -299,6 +320,8 @@ class ConsultationDoctorsResponseModel {
                   map['display_name'] ??
                   map['label'] ??
                   map['title'])
+              ?.toString(),
+          tenantSlug: (map['tenant'] ?? map['tenantSlug'] ?? map['slug'])
               ?.toString(),
           logoUrl: (map['logoUrl'] ?? map['logo_url'])?.toString(),
         ),

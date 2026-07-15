@@ -71,8 +71,15 @@ class ConsultationDoctorsMockApi {
         'limit': safeLimit,
         'total': doctors.length,
         'partners': [
-          {'tenantId': 2, 'logoUrl': null},
-          {'tenantId': 3, 'logoUrl': null},
+          {
+            'tenantId': 1,
+            'tenant': '019f1893-a334-746b-95bb-32194322eb55',
+            'logoUrl': null,
+          },
+          {'tenantId': 2, 'tenant': 'oladoc', 'logoUrl': null},
+          {'tenantId': 3, 'tenant': 'mediq', 'logoUrl': null},
+          {'tenantId': 4, 'tenant': 'bima', 'logoUrl': null},
+          {'tenantId': 5, 'tenant': 'apna-clinic', 'logoUrl': null},
         ],
       },
     };

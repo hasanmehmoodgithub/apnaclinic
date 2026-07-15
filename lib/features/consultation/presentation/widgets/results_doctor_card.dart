@@ -107,16 +107,24 @@ class ResultsDoctorCard extends StatelessWidget {
                               color: ConsultationUiConfig.tertiaryText,
                             ),
                           ),
-                          SizedBox(height: 2.h),
-                          Text(
-                            '${doctor.experience} | ${doctor.qualification}',
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: textTheme.bodySmall?.copyWith(
-                              fontSize: 12.sp,
-                              color: ConsultationUiConfig.tertiaryText,
+                          if (doctor.experience.trim().isNotEmpty ||
+                              doctor.qualification.trim().isNotEmpty) ...[
+                            SizedBox(height: 2.h),
+                            Text(
+                              [
+                                if (doctor.experience.trim().isNotEmpty)
+                                  doctor.experience.trim(),
+                                if (doctor.qualification.trim().isNotEmpty)
+                                  doctor.qualification.trim(),
+                              ].join(' | '),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: textTheme.bodySmall?.copyWith(
+                                fontSize: 12.sp,
+                                color: ConsultationUiConfig.tertiaryText,
+                              ),
                             ),
-                          ),
+                          ],
                         ],
                       ),
                     ),
