@@ -158,6 +158,7 @@ class DoctorConsultationSummaryScreen extends StatelessWidget {
                             DoctorConsultationSummaryPartnerCardWidget(
                               partnerName: doctor.partner,
                               partnerLogoUrl: doctor.partnerLogoUrl,
+                              partnerTenantId: doctor.tenantId,
                             ),
                             SizedBox(height: 10.h),
                             DoctorConsultationSummaryPaymentCardWidget(

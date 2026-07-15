@@ -40,8 +40,8 @@ class DoctorConsultationSummaryDoctorCardWidget extends StatelessWidget {
               top: -4.h,
               child: Image.asset(
                 Assets.consultationSummaryDoctorCardVector,
-                width: 140.w,
-                height: 120.h,
+                width: 150.w,
+                height: 125.h,
                 fit: BoxFit.contain,
               ),
             ),
@@ -55,10 +55,10 @@ class DoctorConsultationSummaryDoctorCardWidget extends StatelessWidget {
                     children: [
                       Padding(
                         padding: EdgeInsets.only(top: 2.h),
-                        child: SvgPicture.asset(
-                          Assets.consultationSummaryMedicalBriefcase,
-                          width: 18.r,
-                          height: 18.r,
+                        child: Image.asset(
+                          Assets.consultationSummaryHeartEcg,
+                          width: 25.r,
+                          height: 25.r,
                           fit: BoxFit.contain,
                         ),
                       ),
@@ -124,8 +124,8 @@ class DoctorConsultationSummaryDoctorCardWidget extends StatelessWidget {
               right: 10.w,
               top: 10.h,
               child: SizedBox(
-                width: 95.w,
-                height: 85.h,
+                width: 100.w,
+                height: 90.h,
                 child: SvgPicture.asset(
                   Assets.svgBrandApnaClinic,
                   fit: BoxFit.contain,
