@@ -2285,6 +2285,42 @@ abstract class AppLocalizations {
   /// **'Could not pick file. Please try again.'**
   String get consultationPickFileFailed;
 
+  /// No description provided for @consultationDocumentsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Documents'**
+  String get consultationDocumentsTitle;
+
+  /// No description provided for @consultationDocumentsBrowse.
+  ///
+  /// In en, this message translates to:
+  /// **'Browse'**
+  String get consultationDocumentsBrowse;
+
+  /// No description provided for @consultationDocumentsUploadHint.
+  ///
+  /// In en, this message translates to:
+  /// **'You can upload up to 5 files. Maximum size is 1 MB per file. Supported formats: images and PDF.'**
+  String get consultationDocumentsUploadHint;
+
+  /// No description provided for @consultationUploadDocumentHint.
+  ///
+  /// In en, this message translates to:
+  /// **'You can upload up to 5 files. Maximum size is 1 MB per file. Supported formats: images and PDF.'**
+  String get consultationUploadDocumentHint;
+
+  /// No description provided for @consultationFileTooLarge.
+  ///
+  /// In en, this message translates to:
+  /// **'{fileName} exceeds the 1 MB limit. Please choose a smaller file.'**
+  String consultationFileTooLarge(Object fileName);
+
+  /// No description provided for @consultationMaxFilesReached.
+  ///
+  /// In en, this message translates to:
+  /// **'You can upload a maximum of 5 files per booking.'**
+  String get consultationMaxFilesReached;
+
   /// No description provided for @consultationPaymentMethodTitle.
   ///
   /// In en, this message translates to:

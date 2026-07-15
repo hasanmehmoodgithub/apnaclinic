@@ -1176,6 +1176,29 @@ class AppLocalizationsUr extends AppLocalizations {
       'فائل منتخب نہیں ہو سکی۔ براہ کرم دوبارہ کوشش کریں۔';
 
   @override
+  String get consultationDocumentsTitle => 'دستاویزات';
+
+  @override
+  String get consultationDocumentsBrowse => 'براؤز کریں';
+
+  @override
+  String get consultationDocumentsUploadHint =>
+      'آپ زیادہ سے زیادہ 5 فائلیں اپلوڈ کر سکتے ہیں۔ ہر فائل کی زیادہ سے زیادہ حد 1 MB ہے۔ تصاویر اور PDF دستاویزات منظور ہیں۔';
+
+  @override
+  String get consultationUploadDocumentHint =>
+      'آپ زیادہ سے زیادہ 5 فائلیں اپلوڈ کر سکتے ہیں۔ ہر فائل کی زیادہ سے زیادہ حد 1 MB ہے۔ تصاویر اور PDF دستاویزات منظور ہیں۔';
+
+  @override
+  String consultationFileTooLarge(Object fileName) {
+    return '$fileName 1 MB کی حد سے زیادہ ہے۔ براہ کرم چھوٹی فائل منتخب کریں۔';
+  }
+
+  @override
+  String get consultationMaxFilesReached =>
+      'ہر بکنگ میں زیادہ سے زیادہ 5 فائلیں اپلوڈ کی جا سکتی ہیں۔';
+
+  @override
   String get consultationPaymentMethodTitle => 'ادائیگی کا طریقہ';
 
   @override
