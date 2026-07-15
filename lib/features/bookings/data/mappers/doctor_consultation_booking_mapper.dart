@@ -7,6 +7,7 @@ import '../models/doctor_consultation_booking_details_model.dart';
 
 class DoctorConsultationBookingMapper {
   DoctorConsultationBookingMapper._();
+  //
 
   static DoctorConsultationBookingDetailsModel fromEntity(
     ConsultationBookingListItemEntity entity,
