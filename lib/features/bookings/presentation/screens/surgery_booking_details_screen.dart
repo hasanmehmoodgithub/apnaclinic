@@ -64,7 +64,7 @@ class _SurgeryDetailsScreenState extends State<SurgeryDetailsScreen> {
 
     if (!mounted || selected == null) return;
 
-    final paymentMethod = _paymentMethodApiValue(selected);
+    final paymentMethod = ConsultationBookingUtils.paymentMethodApiValue(selected);
     final String? msisdn;
 
     if (ConsultationBookingUtils.isJazzCashPayment(paymentMethod)) {
@@ -96,13 +96,6 @@ class _SurgeryDetailsScreenState extends State<SurgeryDetailsScreen> {
     final fromPatient = widget.item.contactNumber.trim();
     if (fromPatient.isNotEmpty) return fromPatient;
     return sl<AppPref>().getUserLocalModel()?.phone.trim() ?? '';
-  }
-
-  String _paymentMethodApiValue(String sheetValue) {
-    if (ConsultationBookingUtils.isJazzCashPayment(sheetValue)) {
-      return 'JAZZCASH';
-    }
-    return sheetValue.trim().toUpperCase().replaceAll(RegExp(r'[\s_-]'), '_');
   }
 
   Future<void> _bookSurgery({

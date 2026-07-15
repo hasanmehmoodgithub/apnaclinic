@@ -22,7 +22,7 @@ Tabbed bookings hub (doctor consultation, surgery, lab test, pharmacy) with list
   - Appointment: shows API `scheduledDate` only (day/month/weekday/time). If null → “Awaiting confirmation.” + Applied On (no fake created date as schedule). Patient includes `gender`; phones as local `03…`.
   - Card: `surgeryType` + `subSurgeryType`; doctor + specialty/education; clinic `hospitalName` (not partner name); partner logo from `provider` id/name/logo. List and details reuse the same `SurgeryDetailsItem` via `SurgeryBookingCardWidget` (details omits View Details).
   - Navigation: `SurgeryBookingDetailsArgs(leadId, item, initialStatus)` with `ValueKey(leadId)` so the tapped lead is opened.
-- Surgery pay / book: **POST** `AppUrls.surgeryBookSurgery` via `BookSurgeryUseCase` from booking details **Proceed Checkout** (visible only when `paymentAllowed`). Opens `PaymentMethodSheet` → JazzCash account sheet when JazzCash → body `{ leadId, paymentMethod: JAZZCASH|CARD, msisdn }`.
+- Surgery pay / book: **POST** `AppUrls.surgeryBookSurgery` via `BookSurgeryUseCase` from booking details **Proceed Checkout** (visible only when `paymentAllowed`). Opens `PaymentMethodSheet` loading active providers from `GetPaymentProvidersUseCase` (`AppUrls.paymentProviders`, same as doctor consultation) with API `iconUrl` and local JazzCash/card fallbacks → JazzCash account sheet when JazzCash → body `{ leadId, paymentMethod, msisdn }`.
 - Surgery details title: `bookingsSurgeryDetailsTitle` (“Details”).
 
 ## State
