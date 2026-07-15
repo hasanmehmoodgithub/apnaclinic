@@ -35,15 +35,17 @@ class TopSection extends StatelessWidget {
                   height: 1.2,
                 ),
               ),
-              SizedBox(height: 2.h),
-              Text(
-                item.hospital,
-                style: textTheme.bodyMedium?.copyWith(
-                  color: const Color(0xFF061E40),
-                  fontSize: 14.sp,
-                  fontWeight: FontWeight.w400,
+              if (item.procedureSubtitle.isNotEmpty) ...[
+                SizedBox(height: 2.h),
+                Text(
+                  item.procedureSubtitle,
+                  style: textTheme.bodyMedium?.copyWith(
+                    color: const Color(0xFF667B99),
+                    fontSize: 13.sp,
+                    fontWeight: FontWeight.w400,
+                  ),
                 ),
-              ),
+              ],
             ],
           ),
         ),

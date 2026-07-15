@@ -96,12 +96,12 @@ class _SurgeryBookingsScreenState extends State<SurgeryBookingsScreen> {
             final item = items[index];
             return GestureDetector(
               behavior: HitTestBehavior.opaque,
-              onTap: () => _openDetails(context, item, l10n),
+              onTap: () => _openDetails(context, item),
               child: _SurgeryBookingCard(
                 item: item,
                 textTheme: textTheme,
                 l10n: l10n,
-                onViewDetails: () => _openDetails(context, item, l10n),
+                onViewDetails: () => _openDetails(context, item),
               ),
             );
           },
@@ -113,12 +113,11 @@ class _SurgeryBookingsScreenState extends State<SurgeryBookingsScreen> {
   void _openDetails(
     BuildContext context,
     SurgeryBookingListItemModel item,
-    AppLocalizations l10n,
   ) {
     context.pushNamed(
       AppRoutes.surgeryBookingDetails,
       extra: SurgeryBookingDetailsArgs(
-        item: item.toDetailsItem(l10n),
+        item: item.toDetailsItem(),
         initialStatus: item.initialStatus,
       ),
     );
@@ -198,15 +197,17 @@ class _SurgeryBookingCard extends StatelessWidget {
                                 height: 1.2,
                               ),
                             ),
-                            SizedBox(height: 2.h),
-                            Text(
-                              item.hospital,
-                              style: textTheme.bodyMedium?.copyWith(
-                                color: const Color(0xFF061E40),
-                                fontSize: 14.sp,
-                                fontWeight: FontWeight.w400,
+                            if (item.procedureSubtitle.isNotEmpty) ...[
+                              SizedBox(height: 2.h),
+                              Text(
+                                item.procedureSubtitle,
+                                style: textTheme.bodyMedium?.copyWith(
+                                  color: const Color(0xFF667B99),
+                                  fontSize: 13.sp,
+                                  fontWeight: FontWeight.w400,
+                                ),
                               ),
-                            ),
+                            ],
                           ],
                         ),
                       ),

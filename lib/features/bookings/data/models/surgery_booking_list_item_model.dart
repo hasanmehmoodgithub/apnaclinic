@@ -1,4 +1,3 @@
-import '../../../../core/l10n/app_localizations.dart';
 import 'surgery_details_item.dart';
 
 class SurgeryBookingListItemModel {
@@ -60,13 +59,11 @@ class SurgeryBookingListItemModel {
   final String appointmentDateFull;
   final String partnerLogoUrl;
 
-  SurgeryDetailsItem toDetailsItem(AppLocalizations l10n) {
+  SurgeryDetailsItem toDetailsItem() {
     return SurgeryDetailsItem(
       leadId: bookingId,
       procedure: procedure,
-      procedureSubtitle: procedureSubtitle.isEmpty
-          ? l10n.bookingsSurgeryProcedureSubtitle
-          : procedureSubtitle,
+      procedureSubtitle: procedureSubtitle,
       hospital: hospital,
       doctor: doctor,
       specialty: specialty,
