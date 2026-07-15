@@ -17,12 +17,13 @@ Tabbed bookings hub (doctor consultation, surgery, lab test, pharmacy) with list
 - Patient’s Review / Feedback submit form is available only after slot end (submitted review always shown if present).
 - Submit feedback (when no existing review, non-cancelled): **POST** `AppUrls.doctorConsultationFeedback` via `SubmitConsultationFeedbackUseCase` — body `{ refNo, rating, review }` (`refNo` = `partnerRefNo` / booking id).
 - Surgery leads list: **GET** `AppUrls.surgeryLeads(page, limit)` via `GetSurgeryLeadsUseCase` (surgery module). Mapped by `SurgeryBookingListMapper`:
-  - Status: API `status` (`PENDING` → Pending, `PAID` → Paid); `paymentAllowed` enables Proceed Checkout.
+  - Status: API `status` (`PENDING` → Pending, `PAID` → Paid); **Proceed Checkout** shown only when API `paymentAllowed` is `true`.
   - Pricing: `fee`, `discount`, `total` (legacy `discountFee`/`quotedPrice`/`finalPrice` still parsed).
   - Appointment: shows API `scheduledDate` only (day/month/weekday/time). If null → “Awaiting confirmation.” + Applied On (no fake created date as schedule). Patient includes `gender`; phones as local `03…`.
-  - Card title: `surgeryType` + `subSurgeryType` (subtitle); provider name not shown on card.
-- Surgery pay / book: **POST** `AppUrls.surgeryBookSurgery` via `BookSurgeryUseCase` from booking details **Proceed Checkout** (enabled only when `paymentAllowed`). Opens `PaymentMethodSheet` → JazzCash account sheet when JazzCash → body `{ leadId, paymentMethod: JAZZCASH|CARD, msisdn }`.
-- Surgery details title: `bookingsSurgeryDetailsTitle` (“Details”); checkout CTA remains visible (disabled grey) while Pending.
+  - Card: `surgeryType` + `subSurgeryType`; doctor + specialty/education; clinic `hospitalName` (not partner name); partner logo from `provider` id/name/logo. List and details reuse the same `SurgeryDetailsItem` via `SurgeryBookingCardWidget` (details omits View Details).
+  - Navigation: `SurgeryBookingDetailsArgs(leadId, item, initialStatus)` with `ValueKey(leadId)` so the tapped lead is opened.
+- Surgery pay / book: **POST** `AppUrls.surgeryBookSurgery` via `BookSurgeryUseCase` from booking details **Proceed Checkout** (visible only when `paymentAllowed`). Opens `PaymentMethodSheet` → JazzCash account sheet when JazzCash → body `{ leadId, paymentMethod: JAZZCASH|CARD, msisdn }`.
+- Surgery details title: `bookingsSurgeryDetailsTitle` (“Details”).
 
 ## State
 

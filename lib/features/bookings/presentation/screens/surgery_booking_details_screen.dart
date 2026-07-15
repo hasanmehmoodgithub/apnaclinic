@@ -36,6 +36,7 @@ class SurgeryDetailsScreen extends StatefulWidget {
 
 class _SurgeryDetailsScreenState extends State<SurgeryDetailsScreen> {
   late SurgeryBookingStatus _status;
+  late String _statusLabel;
   late bool _paymentAllowed;
   bool _isBooking = false;
 
@@ -43,24 +44,13 @@ class _SurgeryDetailsScreenState extends State<SurgeryDetailsScreen> {
   void initState() {
     super.initState();
     _status = widget.initialStatus;
+    _statusLabel = widget.item.status;
     _paymentAllowed = widget.item.paymentAllowed;
   }
 
-  String get _statusLabel {
-    switch (_status) {
-      case SurgeryBookingStatus.inReview:
-        return 'Pending';
-      case SurgeryBookingStatus.paymentPending:
-        return 'Pending';
-      case SurgeryBookingStatus.confirmed:
-        return 'Paid';
-    }
-  }
+  bool get _showCheckoutBar => _paymentAllowed;
 
-  bool get _showCheckoutBar => _status != SurgeryBookingStatus.confirmed;
-
-  bool get _canProceedCheckout =>
-      _paymentAllowed && !_isBooking && _status != SurgeryBookingStatus.confirmed;
+  bool get _canProceedCheckout => _paymentAllowed && !_isBooking;
 
   Future<void> _openPaymentMethodSheet() async {
     if (!_canProceedCheckout) return;
@@ -147,6 +137,7 @@ class _SurgeryDetailsScreenState extends State<SurgeryDetailsScreen> {
       (_) async {
         setState(() {
           _status = SurgeryBookingStatus.confirmed;
+          _statusLabel = 'Paid';
           _paymentAllowed = false;
         });
         await _showBookingConfirmedDialog();
@@ -270,8 +261,6 @@ class _SurgeryDetailsScreenState extends State<SurgeryDetailsScreen> {
                             style: ElevatedButton.styleFrom(
                               backgroundColor: const Color(0xFF1AB6A1),
                               foregroundColor: Colors.white,
-                              disabledBackgroundColor: const Color(0xFFB0B8C1),
-                              disabledForegroundColor: Colors.white,
                               elevation: 0,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(14.r),

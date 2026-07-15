@@ -6,10 +6,12 @@ class SurgeryLeadEntity {
     required this.subSurgeryType,
     required this.providerId,
     required this.providerName,
+    required this.providerLogoUrl,
     required this.doctorId,
     required this.doctorName,
     required this.specialty,
     required this.education,
+    required this.hospitalName,
     required this.status,
     required this.paymentAllowed,
     required this.leadCreatedDate,
@@ -34,10 +36,12 @@ class SurgeryLeadEntity {
   final String subSurgeryType;
   final String providerId;
   final String providerName;
+  final String providerLogoUrl;
   final String doctorId;
   final String doctorName;
   final String specialty;
   final String education;
+  final String hospitalName;
 
   /// API `status` (e.g. PENDING, PAID).
   final String status;

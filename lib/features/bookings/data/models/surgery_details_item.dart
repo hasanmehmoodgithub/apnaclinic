@@ -2,10 +2,12 @@ enum SurgeryBookingStatus { inReview, paymentPending, confirmed }
 
 class SurgeryBookingDetailsArgs {
   const SurgeryBookingDetailsArgs({
+    required this.leadId,
     required this.item,
     required this.initialStatus,
   });
 
+  final String leadId;
   final SurgeryDetailsItem item;
   final SurgeryBookingStatus initialStatus;
 }
@@ -18,6 +20,7 @@ class SurgeryDetailsItem {
   final String doctor;
   final String specialty;
   final String qualification;
+  final String status;
   final String dateCreated;
   final String patientName;
   final int age;
@@ -45,6 +48,7 @@ class SurgeryDetailsItem {
     required this.doctor,
     required this.specialty,
     required this.qualification,
+    required this.status,
     required this.dateCreated,
     required this.patientName,
     required this.age,
@@ -64,4 +68,38 @@ class SurgeryDetailsItem {
     required this.appointmentDateFull,
     required this.partnerLogoUrl,
   });
+
+  SurgeryDetailsItem copyWith({
+    String? status,
+    bool? paymentAllowed,
+  }) {
+    return SurgeryDetailsItem(
+      leadId: leadId,
+      procedure: procedure,
+      procedureSubtitle: procedureSubtitle,
+      hospital: hospital,
+      doctor: doctor,
+      specialty: specialty,
+      qualification: qualification,
+      status: status ?? this.status,
+      dateCreated: dateCreated,
+      patientName: patientName,
+      age: age,
+      gender: gender,
+      contactNumber: contactNumber,
+      emergencyContact: emergencyContact,
+      fee: fee,
+      discountPercent: discountPercent,
+      discountAmount: discountAmount,
+      total: total,
+      paymentAllowed: paymentAllowed ?? this.paymentAllowed,
+      appointmentDay: appointmentDay,
+      appointmentMonth: appointmentMonth,
+      appointmentWeekday: appointmentWeekday,
+      appointmentTime: appointmentTime,
+      appointmentSubtitle: appointmentSubtitle,
+      appointmentDateFull: appointmentDateFull,
+      partnerLogoUrl: partnerLogoUrl,
+    );
+  }
 }

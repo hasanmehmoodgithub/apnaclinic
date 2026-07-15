@@ -1,6 +1,7 @@
 import 'package:intl/intl.dart';
 
 import '../../../../core/utils/phone_format_utils.dart';
+import '../../../consultation/presentation/constants/consultation_partner_filter_defaults.dart';
 import '../../../surgery/domain/entities/surgery_lead_entity.dart';
 import '../models/surgery_booking_list_item_model.dart';
 import '../models/surgery_details_item.dart';
@@ -36,10 +37,14 @@ class SurgeryBookingListMapper {
     final isPending = bookingStatus == SurgeryBookingStatus.inReview ||
         bookingStatus == SurgeryBookingStatus.paymentPending;
 
+    final hospital = lead.hospitalName.trim().isNotEmpty
+        ? lead.hospitalName.trim()
+        : '';
+
     return SurgeryBookingListItemModel(
       bookingId: lead.leadId,
       procedure: lead.surgeryType,
-      hospital: lead.providerName,
+      hospital: hospital,
       doctor: lead.doctorName,
       specialty: lead.specialty,
       qualification: lead.education,
@@ -61,7 +66,9 @@ class SurgeryBookingListMapper {
       appointmentMonth: appointment.month,
       appointmentWeekday: appointment.weekday,
       appointmentTime: hasScheduledDate
-          ? (appointment.time.isNotEmpty ? appointment.time : lead.leadCreatedTime)
+          ? (appointment.time.isNotEmpty
+              ? appointment.time
+              : lead.leadCreatedTime)
           : (isPending ? 'Applied On' : ''),
       appointmentSubtitle: hasScheduledDate
           ? 'Your appointment has been scheduled.'
@@ -71,8 +78,34 @@ class SurgeryBookingListMapper {
               ? appointment.full
               : lead.scheduledDate!.trim())
           : '',
-      partnerLogoUrl: '',
+      partnerLogoUrl: _resolvePartnerLogo(
+        providerId: lead.providerId,
+        providerName: lead.providerName,
+        providerLogoUrl: lead.providerLogoUrl,
+      ),
     );
+  }
+
+  static String _resolvePartnerLogo({
+    required String providerId,
+    required String providerName,
+    required String providerLogoUrl,
+  }) {
+    final remote = providerLogoUrl.trim();
+    if (remote.isNotEmpty) return remote;
+
+    final knownById = ConsultationPartnerFilterDefaults.knownById(providerId);
+    if (knownById != null && knownById.logoAsset.isNotEmpty) {
+      return knownById.logoAsset;
+    }
+
+    final name = providerName.trim().toLowerCase();
+    for (final partner in ConsultationPartnerFilterDefaults.partners) {
+      if (partner.name.toLowerCase() == name && partner.logoAsset.isNotEmpty) {
+        return partner.logoAsset;
+      }
+    }
+    return '';
   }
 
   static SurgeryBookingStatus _mapStatus({

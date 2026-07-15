@@ -68,6 +68,7 @@ class SurgeryBookingListItemModel {
       doctor: doctor,
       specialty: specialty,
       qualification: qualification,
+      status: status,
       dateCreated: dateCreated,
       patientName: patientName,
       age: age,

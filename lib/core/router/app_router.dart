@@ -336,6 +336,7 @@ class AppRouter {
             return const SizedBox.shrink();
           }
           return SurgeryDetailsScreen(
+            key: ValueKey('surgery-details-${extra.leadId}'),
             item: extra.item,
             initialStatus: extra.initialStatus,
           );

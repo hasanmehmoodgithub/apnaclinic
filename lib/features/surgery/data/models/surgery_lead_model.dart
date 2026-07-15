@@ -6,10 +6,12 @@ class SurgeryLeadModel {
     required this.subSurgeryType,
     required this.providerId,
     required this.providerName,
+    required this.providerLogoUrl,
     required this.doctorId,
     required this.doctorName,
     required this.specialty,
     required this.education,
+    required this.hospitalName,
     required this.status,
     required this.paymentAllowed,
     required this.leadCreatedDate,
@@ -34,10 +36,12 @@ class SurgeryLeadModel {
   final String subSurgeryType;
   final String providerId;
   final String providerName;
+  final String providerLogoUrl;
   final String doctorId;
   final String doctorName;
   final String specialty;
   final String education;
+  final String hospitalName;
   final String status;
   final bool paymentAllowed;
   final String leadCreatedDate;
@@ -90,10 +94,23 @@ class SurgeryLeadModel {
       ),
       providerId: _asString(providerMap['id']),
       providerName: _asString(providerMap['name']),
+      providerLogoUrl: _asString(
+        providerMap['logoUrl'] ??
+            providerMap['logo_url'] ??
+            providerMap['partnerLogoUrl'] ??
+            providerMap['partner_logo_url'],
+      ),
       doctorId: _asString(doctorMap['id']),
       doctorName: _asString(doctorMap['name']),
       specialty: _asString(doctorMap['specialty'] ?? doctorMap['speciality']),
       education: _asString(doctorMap['education']),
+      hospitalName: _asString(
+        json['hospitalName'] ??
+            json['hospital_name'] ??
+            doctorMap['hospitalName'] ??
+            doctorMap['hospital_name'] ??
+            patientMap['hospitalName'],
+      ),
       status: status,
       paymentAllowed: _asBool(
         json['paymentAllowed'] ?? json['payment_allowed'],
