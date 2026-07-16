@@ -5,12 +5,10 @@ import '../repositories/pharmacy_repository.dart';
 
 class UpdatePharmacyCartQuantityParams {
   const UpdatePharmacyCartQuantityParams({
-    required this.bookingId,
     required this.productId,
     required this.quantity,
   });
 
-  final String bookingId;
   final String productId;
   final String quantity;
 }
@@ -27,7 +25,6 @@ class UpdatePharmacyCartQuantityUseCase
     UpdatePharmacyCartQuantityParams params,
   ) async {
     return repository.updateCartQuantity(
-      bookingId: params.bookingId,
       productId: params.productId,
       quantity: params.quantity,
     );

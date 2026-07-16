@@ -7,12 +7,10 @@ class AddToCartParams {
   const AddToCartParams({
     required this.medicineId,
     required this.quantity,
-    this.bookingId,
   });
 
   final String medicineId;
   final int quantity;
-  final String? bookingId;
 }
 
 class AddToCartUseCase
@@ -28,7 +26,6 @@ class AddToCartUseCase
     return await repository.addToCart(
       medicineId: params.medicineId,
       quantity: params.quantity,
-      bookingId: params.bookingId,
     );
   }
 }

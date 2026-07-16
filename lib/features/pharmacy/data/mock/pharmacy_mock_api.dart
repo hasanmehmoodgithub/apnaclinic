@@ -13,77 +13,96 @@ class PharmacyMockApi {
 
     final allProducts = [
       {
-        'id': 8126,
-        'display_name': '10cc Syringe 1s syringe',
-        'description': '',
-        'price': '50.00',
-        'old_price': null,
-        'media': {
-          'file':
-              'https://bio-labs.net/wp-content/uploads/2022/10/12-Bio-Col-Tabs.webp',
-        },
-        'manufacturer': {'name': 'Medipak Limited'},
+        'product_id': 178,
+        'display_name': '2Sum 2gm Injection 1 vial',
+        'image_url':
+            'https://mediq-bucket.s3.amazonaws.com/products/webp-images/2sum-2gm-4.webp',
+        'price': 590,
+        'manufacturer': 'Sami Pharma',
+        'category': 'infections',
+        'prescription_required': false,
+        'generic_name': 'Cefoperazone 1 gm + Sulbactam 1 gm',
+        'package_type': 'Pack',
+        'indications': '',
+        'contra_indications':
+            'Contraindications may include hypersensitivity or allergy to cefoperazone, sulbactam, or any components of the medication.',
+        'images': <String>[],
       },
       {
-        'id': 176,
+        'product_id': 176,
         'display_name': '2Blink 4mg/3mg Drop 15 ml',
-        'description': 'Eye drops',
-        'price': '1.00',
-        'old_price': '2.00',
-        'media': {
-          'file':
-              'https://bio-labs.net/wp-content/uploads/2019/12/19-Bioris-2mg-Tabs-.webp',
-        },
-        'manufacturer': {'name': 'Sante Pharma'},
+        'image_url':
+            'https://mediq-bucket.s3.amazonaws.com/products/webp-images/2blink-4mg-3mg-8438.webp',
+        'price': 950,
+        'manufacturer': 'Sante Pharma',
+        'category': 'eye-conditions',
+        'prescription_required': false,
+        'generic_name': 'Propylene Glycol 0.3 % + Polyethylene Glycol 0.4 %',
+        'package_type': 'Pack',
+        'indications': '',
+        'contra_indications':
+            'Contraindications may include hypersensitivity or allergy to propylene glycol, polyethylene glycol, or any other component of the product.',
+        'images': <String>[],
       },
       {
-        'id': 177,
+        'product_id': 177,
         'display_name': 'Bio-D3 Ampoule',
-        'description':
-            'Vitamin D3 injection used for bone health and deficiency treatment.',
-        'price': '900.00',
-        'old_price': '1100.00',
-        'media': {
-          'file':
-              'https://bio-labs.net/wp-content/uploads/2019/12/13-Bio-D3-Inj_.webp',
-        },
-        'manufacturer': {'name': 'Bio Labs'},
+        'image_url':
+            'https://bio-labs.net/wp-content/uploads/2019/12/13-Bio-D3-Inj_.webp',
+        'price': 900,
+        'manufacturer': 'Bio Labs',
+        'category': 'vitamins',
+        'prescription_required': false,
+        'generic_name': 'Vitamin D3',
+        'package_type': 'Pack',
+        'indications': 'Vitamin D3 injection used for bone health and deficiency treatment.',
+        'contra_indications': '',
+        'images': <String>[],
       },
       {
-        'id': 178,
+        'product_id': 179,
         'display_name': 'BIORIS Tablets 2mg',
-        'description': 'Used for managing blood sugar levels.',
-        'price': '600.00',
-        'old_price': '750.00',
-        'media': {
-          'file':
-              'https://bio-labs.net/wp-content/uploads/2019/12/19-Bioris-2mg-Tabs-.webp',
-        },
-        'manufacturer': {'name': 'Bio Labs'},
+        'image_url':
+            'https://bio-labs.net/wp-content/uploads/2019/12/19-Bioris-2mg-Tabs-.webp',
+        'price': 600,
+        'manufacturer': 'Bio Labs',
+        'category': 'diabetes',
+        'prescription_required': true,
+        'generic_name': 'Glimepiride 2 mg',
+        'package_type': 'Blisters',
+        'indications': 'Used for managing blood sugar levels.',
+        'contra_indications': '',
+        'images': <String>[],
       },
       {
-        'id': 179,
+        'product_id': 180,
         'display_name': 'O-ZEETINE Capsules 6/25MG',
-        'description': 'Used for gastric and acidity-related conditions.',
-        'price': '800.00',
-        'old_price': '950.00',
-        'media': {
-          'file':
-              'https://bio-labs.net/wp-content/uploads/2024/01/75-72-74-mockup.webp',
-        },
-        'manufacturer': {'name': 'Bio Labs'},
+        'image_url':
+            'https://bio-labs.net/wp-content/uploads/2024/01/75-72-74-mockup.webp',
+        'price': 800,
+        'manufacturer': 'Bio Labs',
+        'category': 'gastro',
+        'prescription_required': false,
+        'generic_name': 'Omeprazole + Domperidone',
+        'package_type': 'Blisters',
+        'indications': 'Used for gastric and acidity-related conditions.',
+        'contra_indications': '',
+        'images': <String>[],
       },
       {
-        'id': 180,
+        'product_id': 181,
         'display_name': 'Vemtix Injection',
-        'description': 'Used in treatment of nausea and vomiting.',
-        'price': '1500.00',
-        'old_price': '1800.00',
-        'media': {
-          'file':
-              'https://bio-labs.net/wp-content/uploads/2024/11/Vemtix-8mg-Inj.png',
-        },
-        'manufacturer': {'name': 'Bio Labs'},
+        'image_url':
+            'https://bio-labs.net/wp-content/uploads/2024/11/Vemtix-8mg-Inj.png',
+        'price': 1500,
+        'manufacturer': 'Bio Labs',
+        'category': 'other-medicines',
+        'prescription_required': false,
+        'generic_name': 'Ondansetron 8 mg',
+        'package_type': 'Pack',
+        'indications': 'Used in treatment of nausea and vomiting.',
+        'contra_indications': '',
+        'images': <String>[],
       },
     ];
 
@@ -99,8 +118,8 @@ class PharmacyMockApi {
             .toList();
 
     const pageSize = 4;
-    final lastPage = (filtered.length / pageSize).ceil().clamp(1, 999);
-    final safePage = page.clamp(1, lastPage);
+    final totalPages = (filtered.length / pageSize).ceil().clamp(1, 999);
+    final safePage = page.clamp(1, totalPages);
     final start = (safePage - 1) * pageSize;
     final end = (start + pageSize).clamp(0, filtered.length);
     final pageItems = filtered.sublist(
@@ -113,15 +132,14 @@ class PharmacyMockApi {
       'message': 'Partner products retrieved',
       'code': 200,
       'data': {
-        'status': 200,
-        'message': 'Request Successful',
-        'data': {
-          'data': pageItems,
-          'current_page': safePage,
-          'last_page': lastPage,
-          'total': filtered.length,
-        },
+        'data': pageItems,
+        'page': safePage,
+        'limit': pageSize,
+        'total': filtered.length,
+        'totalPages': totalPages,
+        'hasNextPage': safePage < totalPages,
       },
+      'timestamp': DateTime.now().toUtc().toIso8601String(),
     };
   }
 
@@ -134,66 +152,29 @@ class PharmacyMockApi {
   }) async {
     await Future<void>.delayed(const Duration(milliseconds: 650));
 
-    final relatedItem = {
-      'id': 580,
-      'display_name': 'Arceva 15mg+90mg/5ml Suspension 30 ml',
-      'price': '153.00',
-      'old_price': null,
-      'media': {
-        'file':
-            'https://bio-labs.net/wp-content/uploads/2019/12/19-Bioris-2mg-Tabs-.webp',
-      },
-      'manufacturer': {'name': 'Sami Pharma'},
-      'dosage': {'name': 'Suspension'},
-    };
+    final resolvedId = int.tryParse(productId) ?? 177;
 
     return {
       'success': true,
       'message': 'Partner product details retrieved',
       'code': 200,
       'data': {
-        'status': 200,
-        'message': 'Request Successful',
-        'data': {
-          'id': int.tryParse(productId) ?? productId,
-          'display_name': 'A-Fantrine 15mg/90mg Suspension 30 ml',
-          'code': 'A-F15',
-          'description': 'Malaria treatment suspension',
-          'price': '239.00',
-          'old_price': null,
-          'prescription_required': 0,
-          'media': {
-            'file':
-                'https://bio-labs.net/wp-content/uploads/2019/12/13-Bio-D3-Inj_.webp',
-          },
-          'manufacturer': {'name': 'Atco Lab Pharma'},
-          'generic': {
-            'name': 'Artemether 15 mg / 5 ml + Lumefantrine 90 mg / 5 ml',
-          },
-          'dosage': {'name': 'Suspension'},
-          'related_items': [
-            relatedItem,
-            {
-              'id': 177,
-              'display_name': 'Bio-D3 Ampoule',
-              'price': '900.00',
-              'media': {
-                'file':
-                    'https://bio-labs.net/wp-content/uploads/2019/12/13-Bio-D3-Inj_.webp',
-              },
-            },
-            {
-              'id': 178,
-              'display_name': 'BIORIS Tablets 2mg',
-              'price': '600.00',
-              'media': {
-                'file':
-                    'https://bio-labs.net/wp-content/uploads/2019/12/19-Bioris-2mg-Tabs-.webp',
-              },
-            },
-          ],
-        },
+        'product_id': resolvedId,
+        'display_name': '2Sum 1gm Injection 1 vial',
+        'image_url':
+            'https://mediq-bucket.s3.amazonaws.com/products/webp-images/2sum-1gm-3.webp',
+        'price': 485,
+        'manufacturer': 'Sami Pharma',
+        'category': 'infections',
+        'prescription_required': false,
+        'generic_name': 'Cefoperazone 500 mg + Sulbactam 500 mg',
+        'package_type': 'Pack',
+        'indications': '',
+        'contra_indications':
+            'Contraindications may include hypersensitivity or allergy to cefoperazone, sulbactam, or any components of the medication. It is important to inform the healthcare professional about any existing medical conditions, such as a history of severe allergic reactions or liver disease. Cefoperazone and sulbactam should be used with caution in patients with impaired liver or kidney function.',
+        'images': <String>[],
       },
+      'timestamp': DateTime.now().toUtc().toIso8601String(),
     };
   }
 
@@ -212,36 +193,39 @@ class PharmacyMockApi {
             {
               'id': 63367,
               'booking_id': 422845,
-              'product_id': 8126,
-              'price': 50,
-              'total': 50,
+              'product_id': 178,
+              'unitPrice': 590,
+              'line_total': 590,
               'quantity': 1,
-              'subtotal': 50,
               'product': {
-                'id': 8126,
-                'display_name': 'Bio-D3 Ampoule',
-                'description':
-                    'Vitamin D3 injection used for bone health and deficiency treatment.',
-                'media': {
-                  'file':
-                      'https://bio-labs.net/wp-content/uploads/2019/12/13-Bio-D3-Inj_.webp',
-                },
-                'price': '900.00',
-                'old_price': '1100.00',
+                'product_id': 178,
+                'display_name': '2Sum 2gm Injection 1 vial',
+                'image_url':
+                    'https://mediq-bucket.s3.amazonaws.com/products/webp-images/2sum-2gm-4.webp',
+                'price': 590,
+                'manufacturer': 'Sami Pharma',
+                'category': 'infections',
+                'prescription_required': false,
+                'generic_name': 'Cefoperazone 1 gm + Sulbactam 1 gm',
+                'package_type': 'Pack',
+                'indications': '',
+                'contra_indications':
+                    'Contraindications may include hypersensitivity or allergy to cefoperazone, sulbactam, or any components of the medication.',
+                'images': <String>[],
               },
             },
           ],
           'products_count': 1,
           'booking': {
             'id': 422845,
-            'product_name': 'Bio-D3 Ampoule',
+            'product_name': '2Sum 2gm Injection 1 vial',
           },
           'payment_breakdown': {
-            'sub_total': 900,
-            'discount': 72,
-            'discount_percentage': 8,
+            'sub_total': 590,
+            'discount': 0,
+            'discount_percentage': 0,
             'delivery_charges': 250,
-            'total': 1078,
+            'total': 840,
           },
           'family_members': [
             {
@@ -251,11 +235,11 @@ class PharmacyMockApi {
           ],
         },
       },
+      'timestamp': DateTime.now().toUtc().toIso8601String(),
     };
   }
 
   Future<Map<String, dynamic>> updateCartQuantitySuccessResponse({
-    required String bookingId,
     required String productId,
     required String quantity,
   }) async {
@@ -265,9 +249,8 @@ class PharmacyMockApi {
       'message': 'Cart quantity updated',
       'code': 200,
       'data': {
-        'booking_id': bookingId,
-        'product_id': productId,
-        'quantity': quantity,
+        'product_id': int.tryParse(productId) ?? productId,
+        'quantity': int.tryParse(quantity) ?? quantity,
       },
     };
   }
@@ -275,13 +258,8 @@ class PharmacyMockApi {
   Future<Map<String, dynamic>> addToCartSuccessResponse({
     required String medicineId,
     required int quantity,
-    String? bookingId,
   }) async {
     await Future<void>.delayed(const Duration(milliseconds: 450));
-    final resolvedBookingId =
-        (bookingId != null && bookingId.trim().isNotEmpty)
-        ? bookingId
-        : '422845';
     return {
       'success': true,
       'message': 'Added to cart',
@@ -290,7 +268,7 @@ class PharmacyMockApi {
         'status': 200,
         'message': 'Request Successful',
         'data': {
-          'booking_id': resolvedBookingId,
+          'booking_id': '422845',
           'product_id': int.tryParse(medicineId) ?? medicineId,
           'quantity': quantity,
         },

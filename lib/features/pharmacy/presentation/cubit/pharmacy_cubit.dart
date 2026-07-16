@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/cities/domain/repositories/cities_repository.dart';
@@ -189,11 +191,9 @@ class PharmacyCubit extends Cubit<PharmacyState> {
     final existingIndex = state.cartItems.indexWhere(
       (item) => item.medicine.id == medicine.id,
     );
-    final bookingId = state.cartBookingId?.trim();
-    final hasBookingId = bookingId != null && bookingId.isNotEmpty;
 
     // Product already in cart → increase quantity via update API only.
-    if (existingIndex >= 0 && hasBookingId) {
+    if (existingIndex >= 0) {
       final nextQty = state.cartItems[existingIndex].quantity + addQty;
       return _setCartQuantity(
         medicineId: medicine.id,
@@ -205,7 +205,6 @@ class PharmacyCubit extends Cubit<PharmacyState> {
       AddToCartParams(
         medicineId: medicine.id,
         quantity: addQty,
-        bookingId: hasBookingId ? bookingId : null,
       ),
     );
     if (isClosed) return false;
@@ -461,12 +460,8 @@ class PharmacyCubit extends Cubit<PharmacyState> {
   }) async {
     if (!AuthGuard.isLoggedIn(appPref)) return false;
 
-    final bookingId = state.cartBookingId;
-    if (bookingId == null || bookingId.trim().isEmpty) return false;
-
     final result = await updatePharmacyCartQuantityUseCase(
       UpdatePharmacyCartQuantityParams(
-        bookingId: bookingId,
         productId: medicineId,
         quantity: quantity.toString(),
       ),
@@ -474,14 +469,22 @@ class PharmacyCubit extends Cubit<PharmacyState> {
     if (isClosed) return false;
 
     return result.fold(
-      (_) => false,
+      (error) {
+        log('updateCartQuantity failed: $error');
+        return false;
+      },
       (updateResult) {
-        if (updateResult.hasProductList) {
-          final nextBookingId =
-              (updateResult.bookingId != null &&
-                  updateResult.bookingId!.trim().isNotEmpty)
-              ? updateResult.bookingId!.trim()
-              : state.cartBookingId;
+        final nextBookingId =
+            (updateResult.bookingId != null &&
+                updateResult.bookingId!.trim().isNotEmpty)
+            ? updateResult.bookingId!.trim()
+            : state.cartBookingId;
+
+        // Prefer server product list only when it actually has items
+        // (or quantity was cleared). Empty `products: []` on a qty bump
+        // must not wipe the local cart.
+        if (updateResult.hasProductList &&
+            (updateResult.items.isNotEmpty || quantity <= 0)) {
           emit(
             state.copyWith(
               cartBookingId: nextBookingId,

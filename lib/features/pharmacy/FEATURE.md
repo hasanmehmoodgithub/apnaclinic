@@ -9,14 +9,16 @@ Browse medicines, cart, checkout, and view pharmacy order details.
 | Action | Method | `AppUrls` | Body |
 |--------|--------|-----------|------|
 | List products | POST | `pharmacyProducts` → `acs-aggregator/api/v1/mobile/partner/pharmacy/products` | `{ "page": "1", "display_name": "" }` — pass search text in `display_name` when searching; empty for browse |
-| Product detail | POST | `pharmacyProductDetail` → `acs-aggregator/api/v1/mobile/partner/pharmacy/product/details` | `{ "product_id": <id> }` (int) — returns product + `related_items[]` for “More like” list |
-| Cart (active) | POST | `pharmacyCart` → `acs-aggregator/api/v1/mobile/partner/pharmacy/cart/active` | `{}` — cart in `data.data.products[]`; `booking_id` from `booking.id`; checkout totals from `data.data.payment_breakdown` (`delivery_charges`, `discount`, `total`, `sub_total`) |
-| Add to cart | POST | `pharmacyAddToCart` → `acs-aggregator/api/v1/mobile/partner/pharmacy/cart/add` | `{ "product_id": <id>, "quantity": <n>, "booking_id": "<id>"? }` — on success, update local cart/`cartBookingId` from response (no active-cart refetch) |
-| Update cart qty | POST | `pharmacyUpdateCartQuantity` → `acs-aggregator/api/v1/mobile/partner/pharmacy/cart/quantity/update` | `{ "booking_id": "<id>", "product_id": "<id>", "quantity": "<n>" }` — on success, update local cart from response (no active-cart refetch) |
+| Product detail | POST | `pharmacyProductDetail` → `acs-aggregator/api/v1/mobile/partner/pharmacy/product/details` | `{ "product_id": <id> }` (int) — product in `data` with Partner fields (`product_id`, `display_name`, `image_url`, `price`, `manufacturer`, `category`, `prescription_required`, `generic_name`, `package_type`, `indications`, `contra_indications`, `images[]`); optional `related_items[]` for “More like” |
+| Cart (active) | POST | `pharmacyCart` → `acs-aggregator/api/v1/mobile/partner/pharmacy/cart/active` | `{}` — cart in `data` or `data.data`: `products[]`, `booking_id` / `booking.id`, `payment_breakdown`, `family_members[].addresses` |
+| Add to cart | POST | `pharmacyAddToCart` → `acs-aggregator/api/v1/mobile/partner/pharmacy/cart/add` | `{ "product_id": <id>, "quantity": <n> }` — both **int**; on success, update local cart/`cartBookingId` from response (no active-cart refetch) |
+| Update cart qty | POST | `pharmacyUpdateCartQuantity` → `acs-aggregator/api/v1/mobile/partner/pharmacy/cart/quantity/update` | `{ "product_id": <id>, "quantity": <n> }` — both **int**; on success, update local cart from response (no active-cart refetch) |
 | Order checkout | POST | `pharmacyOrderCheckout` → `…/pharmacy/order/checkout` | `{ "booking_id", "patient_id", "user_location_id", "payment_method" }` — all strings; `patient_id` from profile/`AppPref`; `user_location_id` prefers matched/added profile address id, else cities `cityIdForName`; payment `JAZZCASH` / `CARD` / `COD` |
 | Profile address | POST | `pharmacyProfileAddress` → `…/pharmacy/profile/address` | `{ "lat": "", "long": "", "category": {}, "address", "region" }` — called **before checkout** only when cart `family_members[].addresses` is null/empty or no address matches the checkout address field |
 
-Products response: `data.data.data[]` with pagination `current_page`, `last_page`, `total`. Maps `display_name` → name, `media.file` → image, `price` / `old_price` → amounts.
+Products response: `{ success, message, code, data: { data: [...], page, limit, total, totalPages, hasNextPage }, timestamp }`. Each product: `product_id`, `display_name`, `image_url`, `price`, `manufacturer` (string), `category`, `prescription_required`, `generic_name`, `package_type`, `indications`, `contra_indications`, `images[]`. Parsed by `PharmacyMedicineModel` → `PharmacyMedicineEntity` (`manufacturer`, `genericName`, etc.). Legacy shapes (`id`, `media.file`, nested `data.data.data`, `current_page`/`last_page`) still supported.
+
+Cart products: each `products[]` row may nest `product { …Partner product fields… }` or be flat. Line fields: `id` (cart line), `product_id`, `quantity`, `unitPrice`/`unit_price`/`price` (unit), `line_total`/`lineTotal`/`total`/`subtotal`. UI shows `displayUnitPrice` from `unitPrice`; cart totals use `lineTotal` when present.
 
 ## State
 

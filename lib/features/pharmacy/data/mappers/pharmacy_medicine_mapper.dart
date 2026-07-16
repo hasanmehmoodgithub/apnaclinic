@@ -20,6 +20,14 @@ class PharmacyMedicineMapper {
       companyUrl: model.companyUrl,
       price: model.price,
       oldPrice: model.oldPrice,
+      manufacturer: model.manufacturer,
+      category: model.category,
+      prescriptionRequired: model.prescriptionRequired,
+      genericName: model.genericName,
+      packageType: model.packageType,
+      indications: model.indications,
+      contraIndications: model.contraIndications,
+      images: model.images,
     );
   }
 
@@ -37,6 +45,7 @@ class PharmacyMedicineMapper {
       currentPage: model.currentPage,
       lastPage: model.lastPage,
       total: model.total,
+      hasNextPage: model.hasNextPage,
     );
   }
 
@@ -53,6 +62,9 @@ class PharmacyMedicineMapper {
     return PharmacyCartItemEntity(
       medicine: toEntity(item.medicine),
       quantity: item.quantity,
+      lineId: item.lineId,
+      unitPrice: item.unitPrice,
+      lineTotal: item.lineTotal,
     );
   }
 

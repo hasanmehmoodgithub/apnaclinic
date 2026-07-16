@@ -318,7 +318,7 @@ class PharmacyCheckoutCartItemRow extends StatelessWidget {
                       ),
                       TextSpan(
                         text:
-                            '${l10n.pharmacyCurrencyPrefix}${item.medicine.price.toStringAsFixed(0)}/-',
+                            '${l10n.pharmacyCurrencyPrefix}${item.displayUnitPrice.toStringAsFixed(0)}/-',
                         style: const TextStyle(color: AppColors.clr060),
                       ),
                     ],

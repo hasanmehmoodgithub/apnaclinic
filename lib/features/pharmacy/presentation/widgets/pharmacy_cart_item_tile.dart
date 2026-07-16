@@ -31,7 +31,7 @@ class PharmacyCartItemTile extends StatelessWidget {
           width: 108.r,
           height: 88.r,
           decoration: BoxDecoration(
-            color: AppColors.clrECECEC,
+            color: AppColors.clrWhite,
             borderRadius: BorderRadius.circular(22.r),
           ),
           clipBehavior: Clip.antiAlias,
@@ -106,7 +106,7 @@ class PharmacyCartItemTile extends StatelessWidget {
                                 ),
                                 TextSpan(
                                   text:
-                                      '${l10n.pharmacyCurrencyPrefix}${item.medicine.price.toStringAsFixed(0)}/-',
+                                      '${l10n.pharmacyCurrencyPrefix}${item.displayUnitPrice.toStringAsFixed(0)}/-',
                                   style: const TextStyle(
                                     color: AppColors.clr060,
                                   ),
