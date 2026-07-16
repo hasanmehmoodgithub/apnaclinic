@@ -17,4 +17,6 @@ abstract class LabTestRemoteDataSource {
     required int testId,
     required String cityId,
   });
+
+  Future<void> bookLabTest(Map<String, dynamic> body);
 }

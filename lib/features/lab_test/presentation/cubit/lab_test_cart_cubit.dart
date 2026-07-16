@@ -24,9 +24,9 @@ class LabTestCartCubit extends Cubit<LabTestCartState> {
     emit(state.copyWith(items: next));
   }
 
-  /// First line maps to checkout; null when cart is empty.
-  LabTestCheckoutArgs? checkoutArgsForFirstItem() {
+  /// Cart maps to checkout (all test ids booked together); null when empty.
+  LabTestCheckoutArgs? checkoutArgsForCart() {
     if (state.items.isEmpty) return null;
-    return labTestCartItemToCheckoutArgs(state.items.first);
+    return labTestCartToCheckoutArgs(state.items);
   }
 }

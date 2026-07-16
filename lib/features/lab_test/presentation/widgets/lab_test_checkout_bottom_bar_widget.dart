@@ -10,10 +10,12 @@ class LabTestCheckoutBottomBarWidget extends StatelessWidget {
     super.key,
     required this.onProceed,
     this.errorMessage,
+    this.isBusy = false,
   });
 
   final VoidCallback onProceed;
   final String? errorMessage;
+  final bool isBusy;
 
   @override
   Widget build(BuildContext context) {
@@ -48,11 +50,17 @@ class LabTestCheckoutBottomBarWidget extends StatelessWidget {
                   ),
                 ),
               ),
-            AppButtonWidget(
-              title: AppLocalizations.of(context)!.labTestBookCta,
-              bgClr: AppColors.clr1FAFA3,
-              onTap: onProceed,
-            ),
+            if (isBusy)
+              SizedBox(
+                height: 62.h,
+                child: const Center(child: CircularProgressIndicator()),
+              )
+            else
+              AppButtonWidget(
+                title: AppLocalizations.of(context)!.labTestBookCta,
+                bgClr: AppColors.clr1FAFA3,
+                onTap: onProceed,
+              ),
           ],
         ),
       ),

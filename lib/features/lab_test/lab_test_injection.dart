@@ -9,6 +9,7 @@ import 'data/repositories/lab_test_cart_repository_impl.dart';
 import 'data/repositories/lab_test_repository_impl.dart';
 import 'domain/repositories/lab_test_cart_repository.dart';
 import 'domain/repositories/lab_test_repository.dart';
+import 'domain/use_cases/book_lab_test_use_case.dart';
 import 'domain/use_cases/get_lab_test_catalog_use_case.dart';
 import 'domain/use_cases/get_lab_test_detail_use_case.dart';
 import 'presentation/cubit/lab_test_cart_cubit.dart';
@@ -41,6 +42,10 @@ void initLabTestInjector() {
 
   sl.registerLazySingleton<GetLabTestDetailUseCase>(
     () => GetLabTestDetailUseCase(repository: sl<LabTestRepository>()),
+  );
+
+  sl.registerLazySingleton<BookLabTestUseCase>(
+    () => BookLabTestUseCase(repository: sl<LabTestRepository>()),
   );
 
   sl.registerFactory<LabTestCubit>(

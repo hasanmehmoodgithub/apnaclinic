@@ -268,6 +268,12 @@ class AppUrls {
   }) =>
       '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/lab/tests/$testId?cityId=${Uri.encodeComponent(cityId)}';
 
+  /// Book one or more lab tests (aggregator mobile API).
+  /// Body: `{ partnerId, labId, cityId, homeSample, paymentMethod, msisdn,
+  /// patient: { name, age, gender, phoneNumber }, tests: [ { testId } ] }`.
+  static String get labBookTest =>
+      '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/lab/book-test';
+
   // ============================================
   // 3rd Party Integration Support (Full URLs)
   // ============================================

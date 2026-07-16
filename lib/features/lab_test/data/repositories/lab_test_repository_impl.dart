@@ -3,6 +3,7 @@ import '../../../../core/functional/functional_export.dart';
 import '../../domain/entities/lab_test_catalog_entity.dart';
 import '../../domain/entities/lab_test_detail_entity.dart';
 import '../../domain/repositories/lab_test_repository.dart';
+import '../../domain/use_cases/book_lab_test_use_case.dart';
 import '../../domain/use_cases/get_lab_test_catalog_use_case.dart';
 import '../../domain/use_cases/get_lab_test_detail_use_case.dart';
 import '../constants/lab_test_catalog_defaults.dart';
@@ -84,6 +85,51 @@ class LabTestRepositoryImpl implements LabTestRepository {
         cityId: cityId,
       );
       return Right(LabTestDetailMapper.toEntity(model));
+    } catch (e) {
+      return Left(e.toString());
+    }
+  }
+
+  @override
+  Future<Either<ErrorMsg, void>> bookLabTest(BookLabTestParams params) async {
+    try {
+      if (params.testIds.isEmpty) {
+        return const Left('No lab tests selected to book.');
+      }
+
+      await citiesRepository.loadCities();
+      final cityId = citiesRepository.cityIdForName(params.cityName);
+      if (cityId == null || cityId.isEmpty) {
+        return const Left('Please select a valid city.');
+      }
+
+      final partnerId = int.tryParse(params.partnerId.trim());
+      final labId = int.tryParse(params.labId.trim());
+      final resolvedCityId = int.tryParse(cityId.trim());
+      if (partnerId == null || labId == null || resolvedCityId == null) {
+        return const Left('Missing lab booking details. Please retry.');
+      }
+
+      final body = <String, dynamic>{
+        'partnerId': partnerId,
+        'labId': labId,
+        'cityId': resolvedCityId,
+        'homeSample': params.homeSample,
+        'paymentMethod': params.paymentMethod,
+        'msisdn': params.msisdn,
+        'patient': {
+          'name': params.patient.name,
+          'age': params.patient.age,
+          'gender': params.patient.gender,
+          'phoneNumber': params.patient.phoneNumber,
+        },
+        'tests': params.testIds
+            .map((id) => {'testId': id})
+            .toList(growable: false),
+      };
+
+      await remoteDataSource.bookLabTest(body);
+      return const Right(null);
     } catch (e) {
       return Left(e.toString());
     }

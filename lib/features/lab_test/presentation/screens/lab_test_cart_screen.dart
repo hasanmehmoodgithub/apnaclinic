@@ -89,7 +89,7 @@ class _LabTestCartScreenState extends State<LabTestCartScreen> {
 
   void _onProceedCheckout(BuildContext context) {
     final cubit = context.read<LabTestCartCubit>();
-    final extra = cubit.checkoutArgsForFirstItem();
+    final extra = cubit.checkoutArgsForCart();
     if (extra == null) return;
     context.pushNamed(AppRoutes.labTestCheckout, extra: extra);
   }

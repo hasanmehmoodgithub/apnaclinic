@@ -8,8 +8,14 @@ import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/preference/app_pref.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/utils/auth_guard.dart';
+import '../../../../core/utils/phone_format_utils.dart';
 import '../../../../core/widgets/app_scaffold_gradient.dart';
 import '../../../../generated/assets.dart';
+import '../../../bookings/presentation/widgets/payment_method_sheet.dart';
+import '../../../consultation/data/utils/consultation_booking_utils.dart';
+import '../../../consultation/presentation/models/doctor_consultation_jazzcash_sheet_result.dart';
+import '../../../consultation/presentation/widgets/doctor_consultation_jazzcash_accounts_sheet_widget.dart';
+import '../../domain/use_cases/book_lab_test_use_case.dart';
 import '../lab_test_route_args.dart';
 import '../widgets/lab_test_checkout_bottom_bar_widget.dart';
 import '../widgets/lab_test_checkout_header_widget.dart';
@@ -37,6 +43,7 @@ class _LabTestCheckoutScreenState extends State<LabTestCheckoutScreen> {
   final AppPref _appPref = sl<AppPref>();
   String _gender = 'male';
   bool _isEditingPatientDetails = false;
+  bool _isBooking = false;
   String? _checkoutErrorMessage;
 
   @override
@@ -119,9 +126,17 @@ class _LabTestCheckoutScreenState extends State<LabTestCheckoutScreen> {
     return age;
   }
 
-  void _onProceed() {
+  Future<void> _onProceed() async {
+    if (_isBooking) return;
     final l10n = AppLocalizations.of(context)!;
-    if (_emergencyController.text.trim().isEmpty) {
+    if (_emergencyController.text.trim().isEmpty ||
+        _nameController.text.trim().isEmpty ||
+        _phoneController.text.trim().isEmpty ||
+        _ageController.text.trim().isEmpty) {
+      setState(() => _checkoutErrorMessage = l10n.labTestCheckoutRequiredFieldsError);
+      return;
+    }
+    if (widget.args.testIds.isEmpty) {
       setState(() => _checkoutErrorMessage = l10n.labTestCheckoutRequiredFieldsError);
       return;
     }
@@ -129,6 +144,82 @@ class _LabTestCheckoutScreenState extends State<LabTestCheckoutScreen> {
       setState(() => _checkoutErrorMessage = null);
     }
 
+    final selected = await showModalBottomSheet<String>(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (_) => const PaymentMethodSheet(),
+    );
+    if (!mounted || selected == null) return;
+
+    final paymentMethod = ConsultationBookingUtils.paymentMethodApiValue(selected);
+    final String? msisdn;
+    if (ConsultationBookingUtils.isJazzCashPayment(paymentMethod)) {
+      msisdn = await _resolveJazzCashMsisdn();
+    } else {
+      msisdn = _resolveFallbackMsisdn();
+    }
+    if (!mounted || msisdn == null || msisdn.isEmpty) return;
+
+    await _bookLabTest(
+      paymentMethod: paymentMethod,
+      msisdn: PhoneFormatUtils.toLocalDisplay(msisdn),
+    );
+  }
+
+  Future<String?> _resolveJazzCashMsisdn() async {
+    final result =
+        await showModalBottomSheet<DoctorConsultationJazzCashSheetResult>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => const DoctorConsultationJazzCashAccountsSheetWidget(),
+    );
+    return result?.msisdn.trim();
+  }
+
+  String _resolveFallbackMsisdn() {
+    final fromPatient = _phoneController.text.trim();
+    if (fromPatient.isNotEmpty) return fromPatient;
+    return _appPref.getUserLocalModel()?.phone.trim() ?? '';
+  }
+
+  Future<void> _bookLabTest({
+    required String paymentMethod,
+    required String msisdn,
+  }) async {
+    final args = widget.args;
+    setState(() => _isBooking = true);
+
+    final result = await sl<BookLabTestUseCase>()(
+      BookLabTestParams(
+        partnerId: args.partnerId,
+        labId: args.labId,
+        cityName: args.city,
+        homeSample: args.bookingMethodIsHomeSample,
+        paymentMethod: paymentMethod,
+        msisdn: msisdn,
+        patient: BookLabTestPatientParams(
+          name: _nameController.text.trim(),
+          age: _ageController.text.trim(),
+          gender: _gender == 'female' ? 'Female' : 'Male',
+          phoneNumber: _phoneController.text.trim(),
+        ),
+        testIds: args.testIds,
+      ),
+    );
+
+    if (!mounted) return;
+    setState(() => _isBooking = false);
+
+    result.fold(
+      (error) => setState(() => _checkoutErrorMessage = error),
+      (_) => _showBookedDialog(),
+    );
+  }
+
+  void _showBookedDialog() {
+    final l10n = AppLocalizations.of(context)!;
     final code = widget.args.discountCode;
     showDialog<void>(
       context: context,
@@ -318,6 +409,7 @@ class _LabTestCheckoutScreenState extends State<LabTestCheckoutScreen> {
                     LabTestCheckoutBottomBarWidget(
                       onProceed: _onProceed,
                       errorMessage: _checkoutErrorMessage,
+                      isBusy: _isBooking,
                     ),
                   ],
             ),

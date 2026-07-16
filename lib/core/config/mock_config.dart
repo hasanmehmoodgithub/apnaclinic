@@ -13,7 +13,7 @@ class MockConfig {
   }
 
   static bool get enableLabTestMocks {
-
+    return false;
     return _isTruthy(_mockTrueValue) || kDebugMode;
   }
   static bool get enableAuthMocks {
