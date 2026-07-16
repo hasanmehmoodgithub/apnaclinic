@@ -272,6 +272,12 @@ class AppUrls {
   static String labOrders({int page = 1, int limit = 20}) =>
       '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/lab/orders?page=$page&limit=$limit';
 
+  /// Book one or more lab tests (aggregator mobile API).
+  /// Body: `{ partnerId, labId, cityId, homeSample, paymentMethod, msisdn,
+  /// patient: { name, age, gender, phoneNumber }, tests: [ { testId } ] }`.
+  static String get labBookTest =>
+      '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/lab/book-test';
+
   // ============================================
   // 3rd Party Integration Support (Full URLs)
   // ============================================

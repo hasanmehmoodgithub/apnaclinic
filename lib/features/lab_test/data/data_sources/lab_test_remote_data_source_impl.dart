@@ -163,4 +163,32 @@ class LabTestRemoteDataSourceImpl implements LabTestRemoteDataSource {
       return Future.error(message);
     }
   }
+
+  @override
+  Future<void> bookLabTest(Map<String, dynamic> body) async {
+    try {
+      final Map<String, dynamic> response;
+      if (LabTestMockApi.useMockResponses) {
+        response = await mockApi.bookLabTestSuccessResponse(body);
+      } else {
+        response = await apiService.post(AppUrls.labBookTest, data: body);
+        log('bookLabTest response: $response');
+      }
+
+      if (_isSuccessResponse(response)) {
+        return;
+      }
+
+      final message = (response['message'] ?? AppStrings.ourServicesLoadError)
+          .toString();
+      return Future.error(message);
+    } catch (e) {
+      log('bookLabTest error: $e');
+      final message = ErrorHandler.handleExceptions(
+        e,
+        endpoint: AppUrls.labBookTest,
+      );
+      return Future.error(message);
+    }
+  }
 }

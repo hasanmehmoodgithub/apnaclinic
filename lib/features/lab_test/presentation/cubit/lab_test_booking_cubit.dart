@@ -96,6 +96,7 @@ class LabTestBookingCubit extends Cubit<LabTestBookingState> {
     final a = state.args;
     final pricing = state.currentPricing;
     return LabTestCartItem(
+      testId: a.testId ?? 0,
       testTitle: a.testTitle,
       city: a.city,
       labId: vendor.id,

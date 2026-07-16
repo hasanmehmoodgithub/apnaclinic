@@ -47,8 +47,8 @@ class LabTestBookingArgs {
     required this.requirementLines,
     required this.partners,
     required this.labOffers,
-  })  : isPending = false,
-        testId = null;
+    this.testId,
+  }) : isPending = false;
 
   factory LabTestBookingArgs.fromDetail({
     required LabTestDetailEntity detail,
@@ -56,6 +56,7 @@ class LabTestBookingArgs {
     required List<String> requirementLines,
   }) {
     return LabTestBookingArgs(
+      testId: detail.id,
       city: city,
       testTitle: detail.name,
       sampleType: detail.sampleType,
@@ -102,6 +103,9 @@ class LabTestCheckoutArgs {
     required this.totalAmount,
     this.bookingMethodIsHomeSample = false,
     required this.requirementLines,
+    this.testIds = const <int>[],
+    this.partnerId = '',
+    this.labId = '',
   });
 
   final String city;
@@ -119,6 +123,11 @@ class LabTestCheckoutArgs {
   final String totalAmount;
   final bool bookingMethodIsHomeSample;
   final List<String> requirementLines;
+
+  /// All test ids in the cart to book together (supports multiple tests).
+  final List<int> testIds;
+  final String partnerId;
+  final String labId;
 }
 
 class LabTestViewDetailsArgs {

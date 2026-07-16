@@ -19,6 +19,8 @@ abstract class LabTestRemoteDataSource {
     required String cityId,
   });
 
+  Future<void> bookLabTest(Map<String, dynamic> body);
+
   Future<LabOrdersPageModel> getLabOrders({
     int page = 1,
     int limit = 20,

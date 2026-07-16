@@ -1,6 +1,7 @@
 /// Persisted lab test cart line (shared by booking and cart screens).
 class LabTestCartItem {
   const LabTestCartItem({
+    required this.testId,
     required this.testTitle,
     required this.city,
     required this.labId,
@@ -20,6 +21,7 @@ class LabTestCartItem {
     required this.bookingMethodIsHomeSample,
   });
 
+  final int testId;
   final String testTitle;
   final String city;
   final String labId;
@@ -40,6 +42,7 @@ class LabTestCartItem {
 
   factory LabTestCartItem.fromJson(Map<String, dynamic> json) {
     return LabTestCartItem(
+      testId: (json['testId'] as num?)?.toInt() ?? 0,
       testTitle: (json['testTitle'] ?? '').toString(),
       city: (json['city'] ?? '').toString(),
       labId: (json['labId'] ?? '').toString(),
@@ -67,6 +70,7 @@ class LabTestCartItem {
 
   Map<String, dynamic> toJson() {
     return {
+      'testId': testId,
       'testTitle': testTitle,
       'city': city,
       'labId': labId,

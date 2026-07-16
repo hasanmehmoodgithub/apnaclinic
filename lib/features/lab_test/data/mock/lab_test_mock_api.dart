@@ -461,4 +461,17 @@ class LabTestMockApi {
       },
     };
   }
+
+  Future<Map<String, dynamic>> bookLabTestSuccessResponse(
+    Map<String, dynamic> body,
+  ) async {
+    await Future<void>.delayed(const Duration(milliseconds: 600));
+    return {
+      'success': true,
+      'message': 'Lab test booked successfully',
+      'code': 200,
+      'data': {'orderNo': '155850', 'request': body},
+      'timestamp': DateTime.now().toUtc().toIso8601String(),
+    };
+  }
 }
