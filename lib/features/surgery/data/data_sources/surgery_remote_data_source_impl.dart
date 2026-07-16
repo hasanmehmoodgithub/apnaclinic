@@ -245,6 +245,38 @@ class SurgeryRemoteDataSourceImpl implements SurgeryRemoteDataSource {
   }
 
   @override
+  Future<SurgeryLeadModel> getSurgeryLead({required int leadId}) async {
+    final endpoint = AppUrls.surgeryLeadDetail(leadId);
+    try {
+      final Map<String, dynamic> response;
+      if (SurgeryLeadsMockApi.useMockResponses) {
+        response = await leadsMockApi.getSurgeryLeadSuccessResponse(
+          leadId: leadId,
+        );
+      } else {
+        response = await apiService.get(endpoint);
+        log('getSurgeryLead response: $response');
+      }
+
+      if (_isSuccessResponse(response)) {
+        final data = response['data'];
+        final payload = data is Map
+            ? Map<String, dynamic>.from(data)
+            : <String, dynamic>{};
+        return SurgeryLeadModel.fromJson(payload);
+      }
+
+      final message = (response['message'] ?? AppStrings.surgeryLoadError)
+          .toString();
+      return Future.error(message);
+    } catch (e) {
+      log('getSurgeryLead error: $e');
+      final message = ErrorHandler.handleExceptions(e, endpoint: endpoint);
+      return Future.error(message);
+    }
+  }
+
+  @override
   Future<void> submitSurgeryBooking(SurgeryBookingRequestEntity request) async {
     try {
       final doctorId = _parseIntId(request.doctorId);

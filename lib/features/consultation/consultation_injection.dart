@@ -10,6 +10,7 @@ import 'data/mock/consultation_doctors_mock_api.dart';
 import 'data/mock/payment_providers_mock_api.dart';
 import 'data/repositories/consultation_repository_impl.dart';
 import 'domain/repositories/consultation_repository.dart';
+import 'domain/use_cases/get_consultation_booking_use_case.dart';
 import 'domain/use_cases/get_consultation_bookings_use_case.dart';
 import 'domain/use_cases/get_consultation_categories_use_case.dart';
 import 'domain/use_cases/get_consultation_doctor_slots_use_case.dart';
@@ -65,9 +66,8 @@ void initConsultationInjector() {
   );
 
   sl.registerLazySingleton<GetConsultationDoctorsUseCase>(
-    () => GetConsultationDoctorsUseCase(
-      repository: sl<ConsultationRepository>(),
-    ),
+    () =>
+        GetConsultationDoctorsUseCase(repository: sl<ConsultationRepository>()),
   );
 
   sl.registerLazySingleton<GetConsultationDoctorSlotsUseCase>(
@@ -77,9 +77,7 @@ void initConsultationInjector() {
   );
 
   sl.registerLazySingleton<GetPaymentProvidersUseCase>(
-    () => GetPaymentProvidersUseCase(
-      repository: sl<ConsultationRepository>(),
-    ),
+    () => GetPaymentProvidersUseCase(repository: sl<ConsultationRepository>()),
   );
 
   sl.registerLazySingleton<SubmitConsultationBookingUseCase>(
@@ -96,6 +94,12 @@ void initConsultationInjector() {
 
   sl.registerLazySingleton<GetConsultationBookingsUseCase>(
     () => GetConsultationBookingsUseCase(
+      repository: sl<ConsultationRepository>(),
+    ),
+  );
+
+  sl.registerLazySingleton<GetConsultationBookingUseCase>(
+    () => GetConsultationBookingUseCase(
       repository: sl<ConsultationRepository>(),
     ),
   );

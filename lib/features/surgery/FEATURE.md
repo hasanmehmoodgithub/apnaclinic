@@ -18,6 +18,7 @@ Browse surgical procedures by city, select a doctor/hospital offer, complete pat
 | Submit booking (lead) | POST | `surgeryBooking` → `/api/v1/mobile/surgery/lead` — **Proceed Checkout** on patient details; body `{ doctorId, surgeryId (procedure id), packageId, cityId, patient: { name, age, gender, phone, emergencyPhone } }` | `SurgeryCheckoutMockApi` |
 | Book / pay surgery lead | POST | `surgeryBookSurgery` → `/api/v1/mobile/surgery/book-surgery` — Bookings details **Proceed Checkout** after payment method (+ JazzCash account); body `{ leadId, paymentMethod, msisdn }` | `SurgeryCheckoutMockApi.bookSurgery` |
 | Surgery leads (bookings list) | GET | `surgeryLeads(page, limit)` → `/api/v1/mobile/surgery/lead?page=&limit=` — `data.items[]` (`leadId`, `surgeryId`, `surgeryType`, `subSurgeryType`, `provider` `{id,name,logoUrl?}`, `doctor` `{id,name,specialty,education,hospitalName?}`, `status` e.g. `PENDING`/`PAID`, `paymentAllowed`, `patient`, `pricing` `{ fee, discount, total }`, `confirmedDate`, `scheduledDate`, …) via `GetSurgeryLeadsUseCase` | `SurgeryLeadsMockApi` |
+| Surgery lead detail | GET | `surgeryLeadDetail(leadId)` → `/api/v1/mobile/surgery/lead/{leadId}` — single lead in `data` (same fields as list item); used by Bookings **View Details** via `GetSurgeryLeadUseCase` | `SurgeryLeadsMockApi.getSurgeryLeadSuccessResponse` |
 
 Aggregator list maps `data[]` items: `id`, `name`, `slug`, `image`, `description`, optional `displayOrder` / `isActive`. City picker uses **`CitiesRepository`** (prefetched at app open from `AppUrls.cities` → `/api/v1/mobile/cities`).
 
@@ -31,7 +32,7 @@ Surgery mocks use `MockConfig.enableSurgeryMocks` (default false).
 - Status fields: `loadingStateStatus`, `doctorsLoadingStateStatus`, `providerDetailsLoadingStateStatus`, `patientFormLoadingStateStatus`
 
 ## DI
-`initSurgeryInjector()` registers mocks, `SurgeryRemoteDataSourceImpl`, repository, use cases (`GetSurgeryLeadsUseCase` included), factory `SurgeryCubit`.
+`initSurgeryInjector()` registers mocks, `SurgeryRemoteDataSourceImpl`, repository, use cases (`GetSurgeryLeadsUseCase`, `GetSurgeryLeadUseCase` included), factory `SurgeryCubit`.
 
 ## Mocks
 - `SurgeryMockApi` — aggregator-shaped surgery list

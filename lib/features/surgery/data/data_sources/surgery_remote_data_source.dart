@@ -25,6 +25,9 @@ abstract class SurgeryRemoteDataSource {
     int page = 1,
     int limit = 20,
   });
+
+  Future<SurgeryLeadModel> getSurgeryLead({required int leadId});
+
   Future<void> submitSurgeryBooking(SurgeryBookingRequestEntity request);
   Future<void> bookSurgery({
     required int leadId,

@@ -24,6 +24,9 @@ abstract class ConsultationRemoteDataSource {
     int page = 1,
     int limit = 20,
   });
+  Future<ConsultationBookingListItemModel> getBooking({
+    required int appointmentId,
+  });
   Future<void> submitBooking(SubmitConsultationBookingParams params);
   Future<void> submitFeedback(SubmitConsultationFeedbackParams params);
 }

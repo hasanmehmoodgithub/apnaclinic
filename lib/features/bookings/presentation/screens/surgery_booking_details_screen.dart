@@ -12,11 +12,14 @@ import '../../../consultation/data/utils/consultation_booking_utils.dart';
 import '../../../consultation/presentation/models/doctor_consultation_jazzcash_sheet_result.dart';
 import '../../../consultation/presentation/widgets/doctor_consultation_jazzcash_accounts_sheet_widget.dart';
 import '../../../surgery/domain/use_cases/book_surgery_use_case.dart';
+import '../../../surgery/domain/use_cases/get_surgery_lead_use_case.dart';
+import '../../data/mappers/surgery_booking_list_mapper.dart';
 import '../../data/models/surgery_details_item.dart';
 import '../widgets/alert_dialog_card.dart';
 import '../widgets/surgery_bokking_representative_note_widget.dart';
 import '../widgets/surgery_booking_appointment_details_widget.dart';
 import '../widgets/surgery_booking_card_widget.dart';
+import '../widgets/surgery_booking_details_shimmer_widget.dart';
 import '../widgets/surgery_booking_patient_details_card_widget.dart';
 import '../widgets/surgery_booking_payment_details_card_widget.dart';
 
@@ -35,22 +38,67 @@ class SurgeryDetailsScreen extends StatefulWidget {
 }
 
 class _SurgeryDetailsScreenState extends State<SurgeryDetailsScreen> {
-  late SurgeryBookingStatus _status;
+  late SurgeryDetailsItem _item;
   late String _statusLabel;
   late bool _paymentAllowed;
   bool _isBooking = false;
+  bool _isLoadingDetail = true;
+  String? _loadError;
 
   @override
   void initState() {
     super.initState();
-    _status = widget.initialStatus;
+    _item = widget.item;
     _statusLabel = widget.item.status;
     _paymentAllowed = widget.item.paymentAllowed;
+    _loadLeadDetail();
+  }
+
+  Future<void> _loadLeadDetail() async {
+    final leadId = int.tryParse(_item.leadId.trim());
+    if (leadId == null || leadId <= 0) {
+      setState(() {
+        _isLoadingDetail = false;
+        _loadError = 'Missing surgery lead id.';
+      });
+      return;
+    }
+
+    setState(() {
+      _isLoadingDetail = true;
+      _loadError = null;
+    });
+
+    final result = await sl<GetSurgeryLeadUseCase>()(
+      GetSurgeryLeadParams(leadId: leadId),
+    );
+    if (!mounted) return;
+
+    result.fold(
+      (error) {
+        setState(() {
+          _isLoadingDetail = false;
+          _loadError = error;
+        });
+      },
+      (lead) {
+        final mapped = SurgeryBookingListMapper.fromLead(lead);
+        final details = mapped.toDetailsItem();
+        setState(() {
+          _item = details;
+          _statusLabel = details.status;
+          _paymentAllowed = details.paymentAllowed;
+          _isLoadingDetail = false;
+          _loadError = null;
+        });
+      },
+    );
   }
 
   bool get _showCheckoutBar => _paymentAllowed;
 
-  bool get _canProceedCheckout => _paymentAllowed && !_isBooking;
+  bool get _canProceedCheckout =>
+      _paymentAllowed && !_isBooking && !_isLoadingDetail;
 
   Future<void> _openPaymentMethodSheet() async {
     if (!_canProceedCheckout) return;
@@ -93,7 +141,7 @@ class _SurgeryDetailsScreenState extends State<SurgeryDetailsScreen> {
   }
 
   String _resolveFallbackMsisdn() {
-    final fromPatient = widget.item.contactNumber.trim();
+    final fromPatient = _item.contactNumber.trim();
     if (fromPatient.isNotEmpty) return fromPatient;
     return sl<AppPref>().getUserLocalModel()?.phone.trim() ?? '';
   }
@@ -102,7 +150,7 @@ class _SurgeryDetailsScreenState extends State<SurgeryDetailsScreen> {
     required String paymentMethod,
     required String msisdn,
   }) async {
-    final leadId = int.tryParse(widget.item.leadId.trim());
+    final leadId = int.tryParse(_item.leadId.trim());
     if (leadId == null || leadId <= 0) {
       await _showPaymentFailedDialog(
         message: 'Missing surgery lead id. Please refresh bookings and retry.',
@@ -129,7 +177,6 @@ class _SurgeryDetailsScreenState extends State<SurgeryDetailsScreen> {
       },
       (_) async {
         setState(() {
-          _status = SurgeryBookingStatus.confirmed;
           _statusLabel = 'Paid';
           _paymentAllowed = false;
         });
@@ -153,7 +200,7 @@ class _SurgeryDetailsScreenState extends State<SurgeryDetailsScreen> {
   }
 
   Future<void> _showBookingConfirmedDialog() async {
-    final i = widget.item;
+    final i = _item;
     final appointmentLabel = i.appointmentDateFull.isNotEmpty
         ? i.appointmentDateFull
         : i.dateCreated;
@@ -211,31 +258,55 @@ class _SurgeryDetailsScreenState extends State<SurgeryDetailsScreen> {
             topBorderRadius: 24.r,
             child: Stack(
               children: [
-                ListView(
-                  padding: EdgeInsets.fromLTRB(
-                    16.w,
-                    16.h,
-                    16.w,
-                    _showCheckoutBar ? 110.h : 24.h,
+                if (_isLoadingDetail)
+                  const SurgeryBookingDetailsShimmerWidget()
+                else if (_loadError != null)
+                  Center(
+                    child: Padding(
+                      padding: EdgeInsets.all(24.r),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            _loadError!,
+                            textAlign: TextAlign.center,
+                            style: textTheme.bodyMedium?.copyWith(
+                              color: const Color(0xFF061E40),
+                            ),
+                          ),
+                          SizedBox(height: 12.h),
+                          FilledButton(
+                            onPressed: _loadLeadDetail,
+                            child: Text(l10n.commonRetry),
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
+                else
+                  ListView(
+                    padding: EdgeInsets.fromLTRB(
+                      16.w,
+                      16.h,
+                      16.w,
+                      _showCheckoutBar ? 110.h : 24.h,
+                    ),
+                    children: [
+                      SurgeryBookingCardWidget(
+                        item: _item,
+                        statusLabel: _statusLabel,
+                      ),
+                      SizedBox(height: 14.h),
+                      SurgeryBookingAppointmentDetailsCardWidget(item: _item),
+                      SizedBox(height: 10.h),
+                      const SurgeryBookingRepresentativeNoteWidget(),
+                      SizedBox(height: 14.h),
+                      SurgeryBookingPatientDetailsCardWidget(item: _item),
+                      SizedBox(height: 14.h),
+                      SurgeryBookingPaymentDetailsCardWidget(item: _item),
+                    ],
                   ),
-                  children: [
-                    SurgeryBookingCardWidget(
-                      item: widget.item,
-                      statusLabel: _statusLabel,
-                    ),
-                    SizedBox(height: 14.h),
-                    SurgeryBookingAppointmentDetailsCardWidget(
-                      item: widget.item,
-                    ),
-                    SizedBox(height: 10.h),
-                    const SurgeryBookingRepresentativeNoteWidget(),
-                    SizedBox(height: 14.h),
-                    SurgeryBookingPatientDetailsCardWidget(item: widget.item),
-                    SizedBox(height: 14.h),
-                    SurgeryBookingPaymentDetailsCardWidget(item: widget.item),
-                  ],
-                ),
-                if (_showCheckoutBar)
+                if (_showCheckoutBar && !_isLoadingDetail && _loadError == null)
                   Positioned(
                     left: 0,
                     right: 0,

@@ -14,6 +14,7 @@ import 'domain/repositories/surgery_repository.dart';
 import 'domain/use_cases/book_surgery_use_case.dart';
 import 'domain/use_cases/get_surgery_content_use_case.dart';
 import 'domain/use_cases/get_surgery_doctors_use_case.dart';
+import 'domain/use_cases/get_surgery_lead_use_case.dart';
 import 'domain/use_cases/get_surgery_leads_use_case.dart';
 import 'domain/use_cases/get_surgery_patient_form_use_case.dart';
 import 'domain/use_cases/get_surgery_provider_details_use_case.dart';
@@ -71,6 +72,10 @@ void initSurgeryInjector() {
 
   sl.registerLazySingleton<GetSurgeryLeadsUseCase>(
     () => GetSurgeryLeadsUseCase(repository: sl<SurgeryRepository>()),
+  );
+
+  sl.registerLazySingleton<GetSurgeryLeadUseCase>(
+    () => GetSurgeryLeadUseCase(repository: sl<SurgeryRepository>()),
   );
 
   sl.registerLazySingleton<SubmitSurgeryBookingUseCase>(

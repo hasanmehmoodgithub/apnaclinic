@@ -79,11 +79,13 @@ class ConsultationRemoteDataSourceImpl implements ConsultationRemoteDataSource {
       }
 
       if (_isSuccessResponse(response)) {
-        return ConsultationCategoriesResponseModel.fromJson(response).categories;
+        return ConsultationCategoriesResponseModel.fromJson(
+          response,
+        ).categories;
       }
 
-      final message =
-          (response['message'] ?? AppStrings.genericErrorMessage).toString();
+      final message = (response['message'] ?? AppStrings.genericErrorMessage)
+          .toString();
       return Future.error(message);
     } catch (e) {
       log('getCategories error: $e');
@@ -130,8 +132,8 @@ class ConsultationRemoteDataSourceImpl implements ConsultationRemoteDataSource {
         return ConsultationDoctorsResponseModel.fromJson(response);
       }
 
-      final message =
-          (response['message'] ?? AppStrings.genericErrorMessage).toString();
+      final message = (response['message'] ?? AppStrings.genericErrorMessage)
+          .toString();
       return Future.error(message);
     } catch (e) {
       log('getDoctors error: $e');
@@ -174,8 +176,8 @@ class ConsultationRemoteDataSourceImpl implements ConsultationRemoteDataSource {
         return ConsultationDoctorSlotsModel.fromJson(response);
       }
 
-      final message =
-          (response['message'] ?? AppStrings.genericErrorMessage).toString();
+      final message = (response['message'] ?? AppStrings.genericErrorMessage)
+          .toString();
       return Future.error(message);
     } catch (e) {
       log('getDoctorSlots error: $e');
@@ -195,7 +197,8 @@ class ConsultationRemoteDataSourceImpl implements ConsultationRemoteDataSource {
     try {
       final Map<String, dynamic> response;
       if (PaymentProvidersMockApi.useMockResponses) {
-        response = await paymentProvidersMockApi.getPaymentProvidersSuccessResponse();
+        response = await paymentProvidersMockApi
+            .getPaymentProvidersSuccessResponse();
       } else {
         response = await apiService.get(AppUrls.paymentProviders);
         log('getPaymentProviders response: $response');
@@ -205,8 +208,8 @@ class ConsultationRemoteDataSourceImpl implements ConsultationRemoteDataSource {
         return PaymentProvidersResponseModel.fromJson(response).providers;
       }
 
-      final message =
-          (response['message'] ?? AppStrings.genericErrorMessage).toString();
+      final message = (response['message'] ?? AppStrings.genericErrorMessage)
+          .toString();
       return Future.error(message);
     } catch (e) {
       log('getPaymentProviders error: $e');
@@ -241,8 +244,8 @@ class ConsultationRemoteDataSourceImpl implements ConsultationRemoteDataSource {
         return ConsultationBookingsPageModel.fromJson(response);
       }
 
-      final message =
-          (response['message'] ?? AppStrings.genericErrorMessage).toString();
+      final message = (response['message'] ?? AppStrings.genericErrorMessage)
+          .toString();
       return Future.error(message);
     } catch (e) {
       log('getBookings error: $e');
@@ -250,6 +253,40 @@ class ConsultationRemoteDataSourceImpl implements ConsultationRemoteDataSource {
         e,
         endpoint: AppUrls.doctorConsultationBookings(page: page, limit: limit),
       );
+      return Future.error(message);
+    }
+  }
+
+  @override
+  Future<ConsultationBookingListItemModel> getBooking({
+    required int appointmentId,
+  }) async {
+    final endpoint = AppUrls.doctorConsultationBookingDetail(appointmentId);
+    try {
+      final Map<String, dynamic> response;
+      if (ConsultationBookingsListMockApi.useMockResponses) {
+        response = await bookingsListMockApi.getBookingSuccessResponse(
+          appointmentId: appointmentId,
+        );
+      } else {
+        response = await apiService.get(endpoint);
+        log('getBooking response: $response');
+      }
+
+      if (_isSuccessResponse(response)) {
+        final data = response['data'];
+        final payload = data is Map
+            ? Map<String, dynamic>.from(data)
+            : <String, dynamic>{};
+        return ConsultationBookingListItemModel.fromJson(payload);
+      }
+
+      final message = (response['message'] ?? AppStrings.genericErrorMessage)
+          .toString();
+      return Future.error(message);
+    } catch (e) {
+      log('getBooking error: $e');
+      final message = ErrorHandler.handleExceptions(e, endpoint: endpoint);
       return Future.error(message);
     }
   }
@@ -274,8 +311,8 @@ class ConsultationRemoteDataSourceImpl implements ConsultationRemoteDataSource {
         return;
       }
 
-      final message =
-          (response['message'] ?? AppStrings.genericErrorMessage).toString();
+      final message = (response['message'] ?? AppStrings.genericErrorMessage)
+          .toString();
       return Future.error(message);
     } catch (e) {
       log('submitBooking error: $e');
@@ -312,8 +349,8 @@ class ConsultationRemoteDataSourceImpl implements ConsultationRemoteDataSource {
         return;
       }
 
-      final message =
-          (response['message'] ?? AppStrings.genericErrorMessage).toString();
+      final message = (response['message'] ?? AppStrings.genericErrorMessage)
+          .toString();
       return Future.error(message);
     } catch (e) {
       log('submitFeedback error: $e');
