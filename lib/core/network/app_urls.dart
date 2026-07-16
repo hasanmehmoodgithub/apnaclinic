@@ -268,6 +268,10 @@ class AppUrls {
   }) =>
       '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/lab/tests/$testId?cityId=${Uri.encodeComponent(cityId)}';
 
+  /// Paginated lab orders / bookings list.
+  static String labOrders({int page = 1, int limit = 20}) =>
+      '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/lab/orders?page=$page&limit=$limit';
+
   // ============================================
   // 3rd Party Integration Support (Full URLs)
   // ============================================

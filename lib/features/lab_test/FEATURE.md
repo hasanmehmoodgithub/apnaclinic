@@ -25,6 +25,11 @@ Browse lab tests, booking/cart flow, payment details checkout, and order view de
   - On test tap, app navigates to booking with `LabTestBookingArgs.pending`; `LabTestBookingCubit.loadDetailIfNeeded()` fetches detail on that screen (shimmer → content, same route).
   - Response: `data.partners[]` each with `labs[]` and `pricing.HOME_SAMPLING` / `pricing.WALK_IN` (`price`, `discountPct`, `finalPrice`).
   - Booking screen filters partners/labs by booking method (`WALK_IN` / `HOME_SAMPLING`); when no lab supports home sampling, partner/lab grids are hidden, sample type shows **N/A**, and **Add to Cart** is disabled.
+- **Lab orders / bookings list:** `GET AppUrls.labOrders` → `/acs-aggregator/api/v1/mobile/lab/orders?page=&limit=`
+  - Response: `{ success, message, code, data: { data: [...orders], page, limit, total }, timestamp }`.
+  - Each order: `orderId`, `publicId`, `orderType` (`WALK_IN` / `HOME_SAMPLING`), `status` (`PLACED`/`CONFIRMED`/`COMPLETED`/`CANCELLED`…), `reportStatus` (`NOT_AVAILABLE`/`AVAILABLE`), `paymentMethod`, `partnerRef`, `discountCode`, `lab { id, name, logoUrl }`, `partner { id, name, logoUrl }`, `patient { name, age, gender, phone }`, `tests[] { name, price, status }`, `pricing { subtotal, discount, homeSamplingFee, total, currency }`, `reports[]`, `placedAt`, `createdAt`.
+  - Parsed by `LabOrderModel`/`LabOrdersPageModel` (`data/models/lab_order_model.dart`) → mapped to `LabOrderEntity`/`LabOrdersPageEntity` via `LabOrdersMapper` → consumed by `GetLabOrdersUseCase`.
+  - Consumed by `bookings` feature's `LabTestBookingsScreen` (see `lib/features/bookings/FEATURE.md`) via `LabTestBookingListMapper.fromOrder`.
 - Search debounces (400ms) and re-fetches from the API when a city is selected.
 
 ## State
@@ -34,8 +39,9 @@ Browse lab tests, booking/cart flow, payment details checkout, and order view de
 
 ## DI
 
-- `lab_test_injection.dart` — `LabTestRemoteDataSource`, `LabTestRepository`, `GetLabTestCatalogUseCase`, `GetLabTestDetailUseCase`, `LabTestCubit`.
+- `lab_test_injection.dart` — `LabTestRemoteDataSource`, `LabTestRepository`, `GetLabTestCatalogUseCase`, `GetLabTestDetailUseCase`, `GetLabOrdersUseCase`, `LabTestCubit`.
 
 ## Mocks
 
 - When `MockConfig.enableLabTestMocks` is true, `LabTestMockApi` returns sample mobile API shapes (defaults to real API).
+- `LabOrdersMockApi` (`data/mock/lab_orders_mock_api.dart`) returns sample `lab/orders` responses (same gate, `LabOrdersMockApi.useMockResponses`), matching the exact shape documented above.

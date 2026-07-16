@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
+import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../generated/assets.dart';
+import '../../../lab_test/domain/use_cases/get_lab_orders_use_case.dart';
 import '../../../lab_test/presentation/lab_test_route_args.dart';
-import '../../data/mock/lab_test_bookings_mock_api.dart';
+import '../../../lab_test/presentation/widgets/lab_test_figma_image.dart';
+import '../../data/mappers/lab_test_booking_list_mapper.dart';
 import '../../data/models/lab_test_booking_item_model.dart';
 
 import '../widgets/bookings_list_shimmer_widget.dart';
@@ -25,7 +28,20 @@ class _LabTestBookingsScreenState extends State<LabTestBookingsScreen> {
   @override
   void initState() {
     super.initState();
-    _bookingsFuture = LabTestBookingsMockApi().getLabTestBookings();
+    _bookingsFuture = _loadBookings();
+  }
+
+  Future<List<LabTestBookingItemModel>> _loadBookings() async {
+    final result = await sl<GetLabOrdersUseCase>()(
+      const GetLabOrdersParams(page: 1, limit: 20),
+    );
+
+    return result.fold(
+      (_) => const <LabTestBookingItemModel>[],
+      (page) => page.items
+          .map(LabTestBookingListMapper.fromOrder)
+          .toList(growable: false),
+    );
   }
 
   @override
@@ -78,6 +94,7 @@ class _LabTestBookingCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
+    final isHomeSampling = booking.orderType.trim().toUpperCase() == 'HOME_SAMPLING';
 
     return Container(
       decoration: BoxDecoration(
@@ -113,13 +130,27 @@ class _LabTestBookingCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(
-                  width: 24.w,
-                  height: 24.h,
-                  child: SvgPicture.asset(
-                    Assets.labTestWalkin,
-                    fit: BoxFit.contain,
-                  ),
+                Row(
+                  children: [
+                    SizedBox(
+                      width: 24.w,
+                      height: 24.h,
+                      child: SvgPicture.asset(
+                        isHomeSampling ? Assets.labTestHomeSample : Assets.labTestWalkin,
+                        fit: BoxFit.contain,
+                      ),
+                    ),
+                    const Spacer(),
+                    if (booking.partnerLogoUrl.isNotEmpty)
+                      SizedBox(
+                        width: 22.w,
+                        height: 22.h,
+                        child: LabTestFigmaImage(
+                          url: booking.partnerLogoUrl,
+                          fit: BoxFit.contain,
+                        ),
+                      ),
+                  ],
                 ),
                 SizedBox(height: 8.h),
                 Text(
@@ -139,6 +170,17 @@ class _LabTestBookingCard extends StatelessWidget {
                     fontWeight: FontWeight.w400,
                   ),
                 ),
+                if (booking.labName.isNotEmpty) ...[
+                  SizedBox(height: 2.h),
+                  Text(
+                    booking.labName,
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: const Color(0xFF667B99),
+                      fontSize: 11.sp,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                ],
                 SizedBox(height: 9.h),
                 Container(height: 0.3.h, color: const Color(0xFF9BA6A7)),
                 SizedBox(height: 10.h),
@@ -212,13 +254,13 @@ class _LabTestBookingCard extends StatelessWidget {
                             AppRoutes.path(AppRoutes.labTestViewDetails),
                             extra: LabTestViewDetailsArgs(
                               testTitle: booking.reportTitle,
-                              labName: 'Chughtai Lab',
-                              labLogoUrl: Assets.labTestChughtaiLabLogo,
-                              partnerLogoUrl: Assets.labTestOladocOgo,
+                              labName: booking.labName,
+                              labLogoUrl: booking.labLogoUrl,
+                              partnerLogoUrl: booking.partnerLogoUrl,
                               sampleType: l10n.labTestSampleTypeBlood,
                               discountedFee: booking.discountedFee,
                               originalFee: booking.originalFee,
-                              discountCode: booking.orderNo,
+                              discountCode: booking.discountCode ?? booking.orderNo,
                             ),
                           );
                         },

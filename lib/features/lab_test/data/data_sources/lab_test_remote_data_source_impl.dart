@@ -4,7 +4,9 @@ import '../../../../core/constants/app_strings.dart';
 import '../../../../core/network/api_service.dart';
 import '../../../../core/network/app_urls.dart';
 import '../../../../core/utils/error_handler.dart';
+import '../mock/lab_orders_mock_api.dart';
 import '../mock/lab_test_mock_api.dart';
+import '../models/lab_order_model.dart';
 import '../models/lab_test_catalog_model.dart';
 import '../models/lab_test_detail_response_model.dart';
 import '../models/lab_test_mobile_tests_response_model.dart';
@@ -14,10 +16,12 @@ class LabTestRemoteDataSourceImpl implements LabTestRemoteDataSource {
   LabTestRemoteDataSourceImpl({
     required this.apiService,
     required this.mockApi,
+    required this.labOrdersMockApi,
   });
 
   final ApiService apiService;
   final LabTestMockApi mockApi;
+  final LabOrdersMockApi labOrdersMockApi;
 
   static bool _isSuccessResponse(Map<String, dynamic> response) {
     if (response['success'] == true) return true;
@@ -117,6 +121,38 @@ class LabTestRemoteDataSourceImpl implements LabTestRemoteDataSource {
 
       if (_isSuccessResponse(response)) {
         return LabTestDetailResponseModel.fromJson(response);
+      }
+
+      final message = (response['message'] ?? AppStrings.ourServicesLoadError)
+          .toString();
+      return Future.error(message);
+    } catch (e) {
+      final message = ErrorHandler.handleExceptions(e, endpoint: endpoint);
+      return Future.error(message);
+    }
+  }
+
+  @override
+  Future<LabOrdersPageModel> getLabOrders({
+    int page = 1,
+    int limit = 20,
+  }) async {
+    final endpoint = AppUrls.labOrders(page: page, limit: limit);
+
+    try {
+      final Map<String, dynamic> response;
+      if (LabOrdersMockApi.useMockResponses) {
+        response = await labOrdersMockApi.getLabOrdersSuccessResponse(
+          page: page,
+          limit: limit,
+        );
+      } else {
+        response = await apiService.get(endpoint);
+        log('getLabOrders response: $response');
+      }
+
+      if (_isSuccessResponse(response)) {
+        return LabOrdersPageModel.fromJson(response);
       }
 
       final message = (response['message'] ?? AppStrings.ourServicesLoadError)

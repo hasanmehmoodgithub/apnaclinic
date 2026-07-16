@@ -1,3 +1,4 @@
+import '../models/lab_order_model.dart';
 import '../models/lab_test_catalog_model.dart';
 import '../models/lab_test_detail_response_model.dart';
 import '../models/lab_test_mobile_tests_response_model.dart';
@@ -16,5 +17,10 @@ abstract class LabTestRemoteDataSource {
   Future<LabTestDetailResponseModel> getLabTestDetail({
     required int testId,
     required String cityId,
+  });
+
+  Future<LabOrdersPageModel> getLabOrders({
+    int page = 1,
+    int limit = 20,
   });
 }

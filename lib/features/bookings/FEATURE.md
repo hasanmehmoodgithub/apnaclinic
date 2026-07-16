@@ -24,6 +24,11 @@ Tabbed bookings hub (doctor consultation, surgery, lab test, pharmacy) with list
   - Navigation: `SurgeryBookingDetailsArgs(leadId, item, initialStatus)` with `ValueKey(leadId)` so the tapped lead is opened.
 - Surgery pay / book: **POST** `AppUrls.surgeryBookSurgery` via `BookSurgeryUseCase` from booking details **Proceed Checkout** (visible only when `paymentAllowed`). Opens `PaymentMethodSheet` loading active providers from `GetPaymentProvidersUseCase` (`AppUrls.paymentProviders`, same as doctor consultation) with API `iconUrl` and local JazzCash/card fallbacks → JazzCash account sheet when JazzCash → body `{ leadId, paymentMethod, msisdn }`.
 - Surgery details title: `bookingsSurgeryDetailsTitle` (“Details”).
+- Lab test orders list: **GET** `AppUrls.labOrders(page, limit)` via `GetLabOrdersUseCase` (lab_test module). Response shape and models documented in `lib/features/lab_test/FEATURE.md`. Mapped by `LabTestBookingListMapper.fromOrder` into `LabTestBookingItemModel`:
+  - Status: order `status` (`PLACED`/`CONFIRMED`/`COMPLETED`…) title-cased for display; `CANCELLED`/`CANCELED`/`REJECTED`/`FAILED` render as the red/"not confirmed" pill, everything else green.
+  - Card title: joined `tests[].name`; lab name shown under it; lab/partner logos rendered via `LabTestFigmaImage` (remote URL, SVG-safe fallback).
+  - Fee: `pricing.total` (discounted) / `pricing.subtotal` (original), formatted `Rs. n,nnn/-`; date: `placedAt` (fallback `createdAt`) formatted `d MMM, yyyy`.
+  - **View Details** still opens `LabTestViewDetailsArgs` (separate mocked results/order-card screen) but now seeded with the real lab/partner names, logos, fee and `discountCode` from the tapped order.
 
 ## State
 
