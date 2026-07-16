@@ -6,12 +6,14 @@ class PharmacyProductsPageEntity {
     required this.currentPage,
     required this.lastPage,
     required this.total,
+    this.hasNextPage = false,
   });
 
   final List<PharmacyMedicineEntity> items;
   final int currentPage;
   final int lastPage;
   final int total;
+  final bool hasNextPage;
 
-  bool get hasMore => currentPage < lastPage;
+  bool get hasMore => hasNextPage || currentPage < lastPage;
 }

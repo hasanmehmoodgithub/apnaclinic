@@ -67,13 +67,11 @@ class PharmacyRepositoryImpl implements PharmacyRepository {
   Future<Either<ErrorMsg, PharmacyAddToCartResultEntity>> addToCart({
     required String medicineId,
     required int quantity,
-    String? bookingId,
   }) async {
     try {
       final response = await remoteDataSource.addToCart(
         medicineId: medicineId,
         quantity: quantity,
-        bookingId: bookingId,
       );
       final model = PharmacyCartResponseModel.fromJson(response);
       final entity = PharmacyMedicineMapper.toAddToCartResultEntity(model);
@@ -86,13 +84,11 @@ class PharmacyRepositoryImpl implements PharmacyRepository {
 
   @override
   Future<Either<ErrorMsg, PharmacyAddToCartResultEntity>> updateCartQuantity({
-    required String bookingId,
     required String productId,
     required String quantity,
   }) async {
     try {
       final response = await remoteDataSource.updateCartQuantity(
-        bookingId: bookingId,
         productId: productId,
         quantity: quantity,
       );

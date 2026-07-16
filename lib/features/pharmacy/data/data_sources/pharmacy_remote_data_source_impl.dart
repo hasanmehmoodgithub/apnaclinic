@@ -135,7 +135,6 @@ class PharmacyRemoteDataSourceImpl implements PharmacyRemoteDataSource {
   Future<Map<String, dynamic>> addToCart({
     required String medicineId,
     required int quantity,
-    String? bookingId,
   }) async {
     try {
       final Map<String, dynamic> response;
@@ -143,7 +142,6 @@ class PharmacyRemoteDataSourceImpl implements PharmacyRemoteDataSource {
         response = await mockApi.addToCartSuccessResponse(
           medicineId: medicineId,
           quantity: quantity,
-          bookingId: bookingId,
         );
       } else {
         final productId = int.tryParse(medicineId.trim());
@@ -151,17 +149,12 @@ class PharmacyRemoteDataSourceImpl implements PharmacyRemoteDataSource {
           return Future.error(AppStrings.pharmacyLoadError);
         }
 
-        final trimmedBookingId = bookingId?.trim();
-        final payload = <String, dynamic>{
-          'product_id': productId,
-          'quantity': quantity,
-          if (trimmedBookingId != null && trimmedBookingId.isNotEmpty)
-            'booking_id': trimmedBookingId,
-        };
-
         response = await apiService.post(
           AppUrls.pharmacyAddToCart,
-          data: payload,
+          data: <String, dynamic>{
+            'product_id': productId,
+            'quantity': quantity,
+          },
         );
         log('addToCart response: $response');
       }
@@ -184,7 +177,6 @@ class PharmacyRemoteDataSourceImpl implements PharmacyRemoteDataSource {
 
   @override
   Future<Map<String, dynamic>> updateCartQuantity({
-    required String bookingId,
     required String productId,
     required String quantity,
   }) async {
@@ -192,17 +184,21 @@ class PharmacyRemoteDataSourceImpl implements PharmacyRemoteDataSource {
       final Map<String, dynamic> response;
       if (PharmacyMockApi.useMockResponses) {
         response = await mockApi.updateCartQuantitySuccessResponse(
-          bookingId: bookingId,
           productId: productId,
           quantity: quantity,
         );
       } else {
+        final productIdInt = int.tryParse(productId.trim());
+        final quantityInt = int.tryParse(quantity.trim());
+        if (productIdInt == null || quantityInt == null) {
+          return Future.error(AppStrings.pharmacyLoadError);
+        }
+
         response = await apiService.post(
           AppUrls.pharmacyUpdateCartQuantity,
           data: <String, dynamic>{
-            'booking_id': bookingId,
-            'product_id': productId,
-            'quantity': quantity,
+            'product_id': productIdInt,
+            'quantity': quantityInt,
           },
         );
         log('updateCartQuantity response: $response');

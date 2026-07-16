@@ -20,10 +20,8 @@ abstract class PharmacyRepository {
   Future<Either<ErrorMsg, PharmacyAddToCartResultEntity>> addToCart({
     required String medicineId,
     required int quantity,
-    String? bookingId,
   });
   Future<Either<ErrorMsg, PharmacyAddToCartResultEntity>> updateCartQuantity({
-    required String bookingId,
     required String productId,
     required String quantity,
   });

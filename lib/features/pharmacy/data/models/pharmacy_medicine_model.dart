@@ -1,3 +1,33 @@
+String _asString(dynamic value, {String fallback = ''}) {
+  if (value == null) return fallback;
+  final text = value.toString().trim();
+  if (text.toLowerCase() == 'null') return fallback;
+  return text;
+}
+
+bool _asBool(dynamic value) {
+  if (value is bool) return value;
+  if (value is num) return value != 0;
+  final normalized = value?.toString().trim().toLowerCase();
+  return normalized == 'true' || normalized == '1' || normalized == 'yes';
+}
+
+double _parsePrice(dynamic value) {
+  if (value == null) return 0;
+  if (value is num) return value.toDouble();
+  return double.tryParse(value.toString()) ?? 0;
+}
+
+int _parseInt(dynamic value, {required int fallback}) {
+  if (value is num) return value.toInt();
+  return int.tryParse(value?.toString() ?? '') ?? fallback;
+}
+
+List<String> _parseStringList(dynamic value) {
+  if (value is! List) return const [];
+  return value.map((item) => item.toString()).toList(growable: false);
+}
+
 class PharmacyMedicineModel {
   const PharmacyMedicineModel({
     required this.id,
@@ -7,6 +37,14 @@ class PharmacyMedicineModel {
     required this.companyUrl,
     required this.price,
     required this.oldPrice,
+    required this.manufacturer,
+    required this.category,
+    required this.prescriptionRequired,
+    required this.genericName,
+    required this.packageType,
+    required this.indications,
+    required this.contraIndications,
+    required this.images,
   });
 
   final String id;
@@ -16,27 +54,70 @@ class PharmacyMedicineModel {
   final String companyUrl;
   final double price;
   final double oldPrice;
+  final String manufacturer;
+  final String category;
+  final bool prescriptionRequired;
+  final String genericName;
+  final String packageType;
+  final String indications;
+  final String contraIndications;
+  final List<String> images;
 
   factory PharmacyMedicineModel.fromJson(Map<String, dynamic> json) {
     final media = json['media'];
     final imageFromMedia = media is Map
-        ? (media['file'] ?? '').toString()
-        : '';
-    final manufacturer = json['manufacturer'];
-    final manufacturerName = manufacturer is Map
-        ? (manufacturer['name'] ?? '').toString()
+        ? _asString(media['file'] ?? media['url'])
         : '';
 
+    final manufacturerRaw = json['manufacturer'];
+    final manufacturerName = manufacturerRaw is Map
+        ? _asString(manufacturerRaw['name'])
+        : _asString(manufacturerRaw);
+
+    final genericRaw = json['generic'];
+    final genericFromField = _asString(json['generic_name'] ?? json['genericName']);
+    final genericName = genericFromField.isNotEmpty
+        ? genericFromField
+        : (genericRaw is Map ? _asString(genericRaw['name']) : '');
+
+    final images = _parseStringList(json['images']);
+    final imageUrl = _resolveImageUrl(
+      imageFromMedia: imageFromMedia,
+      imageUrl: _asString(json['image_url'] ?? json['imageUrl']),
+      images: images,
+    );
+
+    final indications = _asString(json['indications']);
+    final contraIndications = _asString(
+      json['contra_indications'] ?? json['contraIndications'],
+    );
+
+    final description = _buildDescription(
+      description: _asString(json['description']),
+      manufacturerName: manufacturerName,
+      genericName: genericName,
+      indications: indications,
+      contraIndications: contraIndications,
+    );
+
     return PharmacyMedicineModel(
-      id: (json['id'] ?? '').toString(),
-      name: (json['display_name'] ?? json['name'] ?? '').toString(),
-      description: (json['description'] ?? manufacturerName).toString(),
-      imageUrl: imageFromMedia.isNotEmpty
-          ? imageFromMedia
-          : (json['imageUrl'] ?? '').toString(),
-      companyUrl: (json['companyUrl'] ?? '').toString(),
+      id: _asString(json['product_id'] ?? json['productId'] ?? json['id']),
+      name: _asString(json['display_name'] ?? json['name']),
+      description: description,
+      imageUrl: imageUrl,
+      companyUrl: _asString(json['companyUrl'] ?? json['company_url']),
       price: _parsePrice(json['price']),
       oldPrice: _parsePrice(json['old_price'] ?? json['oldPrice']),
+      manufacturer: manufacturerName,
+      category: _asString(json['category']),
+      prescriptionRequired: _asBool(
+        json['prescription_required'] ?? json['prescriptionRequired'],
+      ),
+      genericName: genericName,
+      packageType: _asString(json['package_type'] ?? json['packageType']),
+      indications: indications,
+      contraIndications: contraIndications,
+      images: images,
     );
   }
 
@@ -44,14 +125,13 @@ class PharmacyMedicineModel {
     Map<String, dynamic> json,
   ) {
     final base = PharmacyMedicineModel.fromJson(json);
-    final generic = json['generic'];
-    final genericName = generic is Map ? (generic['name'] ?? '').toString() : '';
     final dosage = json['dosage'];
-    final dosageName = dosage is Map ? (dosage['name'] ?? '').toString() : '';
+    final dosageName = dosage is Map ? _asString(dosage['name']) : '';
 
     final descriptionParts = <String>[
       if (base.description.trim().isNotEmpty) base.description.trim(),
-      if (genericName.trim().isNotEmpty) genericName.trim(),
+      if (base.genericName.trim().isNotEmpty && !base.description.contains(base.genericName))
+        base.genericName.trim(),
       if (dosageName.trim().isNotEmpty) dosageName.trim(),
     ];
 
@@ -63,13 +143,44 @@ class PharmacyMedicineModel {
       companyUrl: base.companyUrl,
       price: base.price,
       oldPrice: base.oldPrice,
+      manufacturer: base.manufacturer,
+      category: base.category,
+      prescriptionRequired: base.prescriptionRequired,
+      genericName: base.genericName,
+      packageType: base.packageType,
+      indications: base.indications,
+      contraIndications: base.contraIndications,
+      images: base.images,
     );
   }
 
-  static double _parsePrice(dynamic value) {
-    if (value == null) return 0;
-    if (value is num) return value.toDouble();
-    return double.tryParse(value.toString()) ?? 0;
+  static String _resolveImageUrl({
+    required String imageFromMedia,
+    required String imageUrl,
+    required List<String> images,
+  }) {
+    if (imageFromMedia.isNotEmpty) return imageFromMedia;
+    if (imageUrl.isNotEmpty) return imageUrl;
+    if (images.isNotEmpty) return images.first;
+    return '';
+  }
+
+  static String _buildDescription({
+    required String description,
+    required String manufacturerName,
+    required String genericName,
+    required String indications,
+    required String contraIndications,
+  }) {
+    if (description.trim().isNotEmpty) return description.trim();
+
+    final parts = <String>[
+      if (genericName.trim().isNotEmpty) genericName.trim(),
+      if (manufacturerName.trim().isNotEmpty) manufacturerName.trim(),
+      if (indications.trim().isNotEmpty) indications.trim(),
+      if (contraIndications.trim().isNotEmpty) contraIndications.trim(),
+    ];
+    return parts.join('\n');
   }
 }
 
@@ -81,6 +192,8 @@ class PharmacyProductsPageModel {
     required this.currentPage,
     required this.lastPage,
     required this.total,
+    required this.limit,
+    required this.hasNextPage,
   });
 
   final bool success;
@@ -89,36 +202,77 @@ class PharmacyProductsPageModel {
   final int currentPage;
   final int lastPage;
   final int total;
+  final int limit;
+  final bool hasNextPage;
 
   factory PharmacyProductsPageModel.fromJson(Map<String, dynamic> json) {
-    final nestedData = json['data'];
-    final pageData = nestedData is Map<String, dynamic>
-        ? nestedData['data']
-        : null;
-    final payload = pageData is Map<String, dynamic> ? pageData : json;
+    final pagePayload = _resolvePagePayload(json);
 
-    final rawList = payload['data'] ?? payload['medicines'] ?? <dynamic>[];
+    final rawList =
+        pagePayload['data'] ?? pagePayload['medicines'] ?? <dynamic>[];
     final medicines = (rawList is List ? rawList : <dynamic>[])
         .whereType<Map>()
-        .map((item) => PharmacyMedicineModel.fromJson(
-              Map<String, dynamic>.from(item),
-            ))
+        .map(
+          (item) => PharmacyMedicineModel.fromJson(
+            Map<String, dynamic>.from(item),
+          ),
+        )
         .toList(growable: false);
+
+    final currentPage = _parseInt(
+      pagePayload['page'] ?? pagePayload['current_page'],
+      fallback: 1,
+    );
+    final limit = _parseInt(pagePayload['limit'], fallback: medicines.length);
+    final total = _parseInt(
+      pagePayload['total'],
+      fallback: medicines.length,
+    );
+    final lastPage = _parseInt(
+      pagePayload['totalPages'] ??
+          pagePayload['total_pages'] ??
+          pagePayload['last_page'],
+      fallback: limit > 0 ? (total / limit).ceil().clamp(1, 999999) : 1,
+    );
+    final hasNextPage = pagePayload.containsKey('hasNextPage') ||
+        pagePayload.containsKey('has_next_page')
+        ? _asBool(pagePayload['hasNextPage'] ?? pagePayload['has_next_page'])
+        : currentPage < lastPage;
 
     return PharmacyProductsPageModel(
       success: json['success'] == true ||
           (json['code'] is num && (json['code'] as num).toInt() == 200),
-      message: (json['message'] ?? '').toString(),
+      message: _asString(json['message']),
       medicines: medicines,
-      currentPage: _parseInt(payload['current_page'], fallback: 1),
-      lastPage: _parseInt(payload['last_page'], fallback: 1),
-      total: _parseInt(payload['total'], fallback: medicines.length),
+      currentPage: currentPage,
+      lastPage: lastPage,
+      total: total,
+      limit: limit,
+      hasNextPage: hasNextPage,
     );
   }
 
-  static int _parseInt(dynamic value, {required int fallback}) {
-    if (value is num) return value.toInt();
-    return int.tryParse(value?.toString() ?? '') ?? fallback;
+  static Map<String, dynamic> _resolvePagePayload(Map<String, dynamic> json) {
+    final level1 = json['data'];
+    if (level1 is! Map) return json;
+
+    final map1 = Map<String, dynamic>.from(level1);
+
+    // Current API: { data: { data: [...], page, limit, total, totalPages } }
+    if (map1['data'] is List) {
+      return map1;
+    }
+
+    // Legacy wrapper: { data: { data: { data: [...], current_page, ... } } }
+    final level2 = map1['data'];
+    if (level2 is Map) {
+      final map2 = Map<String, dynamic>.from(level2);
+      if (map2['data'] is List || map2['medicines'] is List) {
+        return map2;
+      }
+    }
+
+    return map1;
   }
 }
 
@@ -155,7 +309,7 @@ class PharmacyProductDetailModel {
     return PharmacyProductDetailModel(
       success: json['success'] == true ||
           (json['code'] is num && (json['code'] as num).toInt() == 200),
-      message: (json['message'] ?? '').toString(),
+      message: _asString(json['message']),
       product: PharmacyMedicineModel.fromProductDetailJson(productMap),
       relatedItems: relatedItems,
     );
@@ -185,19 +339,66 @@ class PharmacyMedicinesResponseModel {
 }
 
 class PharmacyCartItemModel {
-  const PharmacyCartItemModel({required this.medicine, required this.quantity});
+  const PharmacyCartItemModel({
+    required this.medicine,
+    required this.quantity,
+    this.lineId = '',
+    this.unitPrice,
+    this.lineTotal,
+  });
 
   final PharmacyMedicineModel medicine;
   final int quantity;
 
+  /// Cart-line id (not product id), when the API returns one.
+  final String lineId;
+
+  /// Unit price from the cart line (`price`), if present.
+  final double? unitPrice;
+
+  /// Line total from the cart (`total` / `subtotal`), if present.
+  final double? lineTotal;
+
   factory PharmacyCartItemModel.fromJson(Map<String, dynamic> json) {
     final nestedProduct = json['product'];
-    final productJson = nestedProduct is Map
-        ? Map<String, dynamic>.from(nestedProduct)
-        : Map<String, dynamic>.from(json);
+    final Map<String, dynamic> productJson;
+    if (nestedProduct is Map) {
+      productJson = Map<String, dynamic>.from(nestedProduct);
+    } else {
+      // Flat cart line that already looks like a Partner product.
+      productJson = Map<String, dynamic>.from(json)
+        ..remove('quantity')
+        ..remove('qty')
+        ..remove('booking_id')
+        ..remove('bookingId')
+        ..remove('total')
+        ..remove('subtotal')
+        ..remove('line_total')
+        ..remove('lineTotal')
+        ..remove('unitPrice')
+        ..remove('unit_price')
+        ..remove('pivot');
+    }
 
-    if (productJson['id'] == null && json['product_id'] != null) {
-      productJson['id'] = json['product_id'];
+    // Cart line `product_id` is the medicine identity (prefer over line `id`).
+    final lineProductId = json['product_id'] ?? json['productId'];
+    if (lineProductId != null) {
+      productJson['product_id'] = lineProductId;
+      productJson['id'] ??= lineProductId;
+    }
+
+    // Prefer cart-line image when nested product omits it.
+    final lineImage = json['image_url'] ?? json['imageUrl'];
+    if (lineImage != null &&
+        _asString(productJson['image_url'] ?? productJson['imageUrl']).isEmpty) {
+      productJson['image_url'] = lineImage;
+    }
+
+    final unitPriceRaw =
+        json['unitPrice'] ?? json['unit_price'] ?? json['price'];
+    if (unitPriceRaw != null) {
+      // Cart-line unit price wins over nested product price.
+      productJson['price'] = unitPriceRaw;
     }
 
     final pivot = json['pivot'];
@@ -205,9 +406,26 @@ class PharmacyCartItemModel {
         (pivot is Map ? pivot['quantity'] : null) ??
         json['qty'];
 
+    final unitPrice =
+        unitPriceRaw != null ? _parsePrice(unitPriceRaw) : null;
+    final lineTotalRaw = json['line_total'] ??
+        json['lineTotal'] ??
+        json['total'] ??
+        json['subtotal'];
+    final lineTotal =
+        lineTotalRaw != null ? _parsePrice(lineTotalRaw) : null;
+
+    // Line `id` is the cart-row id when `product_id` is also present.
+    final lineId = (json['product_id'] != null || json['productId'] != null)
+        ? _asString(json['id'])
+        : '';
+
     return PharmacyCartItemModel(
       medicine: PharmacyMedicineModel.fromJson(productJson),
       quantity: _parseQuantity(quantityRaw),
+      lineId: lineId,
+      unitPrice: unitPrice,
+      lineTotal: lineTotal,
     );
   }
 
