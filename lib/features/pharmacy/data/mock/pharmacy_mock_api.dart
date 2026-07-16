@@ -152,66 +152,29 @@ class PharmacyMockApi {
   }) async {
     await Future<void>.delayed(const Duration(milliseconds: 650));
 
-    final relatedItem = {
-      'id': 580,
-      'display_name': 'Arceva 15mg+90mg/5ml Suspension 30 ml',
-      'price': '153.00',
-      'old_price': null,
-      'media': {
-        'file':
-            'https://bio-labs.net/wp-content/uploads/2019/12/19-Bioris-2mg-Tabs-.webp',
-      },
-      'manufacturer': {'name': 'Sami Pharma'},
-      'dosage': {'name': 'Suspension'},
-    };
+    final resolvedId = int.tryParse(productId) ?? 177;
 
     return {
       'success': true,
       'message': 'Partner product details retrieved',
       'code': 200,
       'data': {
-        'status': 200,
-        'message': 'Request Successful',
-        'data': {
-          'id': int.tryParse(productId) ?? productId,
-          'display_name': 'A-Fantrine 15mg/90mg Suspension 30 ml',
-          'code': 'A-F15',
-          'description': 'Malaria treatment suspension',
-          'price': '239.00',
-          'old_price': null,
-          'prescription_required': 0,
-          'media': {
-            'file':
-                'https://bio-labs.net/wp-content/uploads/2019/12/13-Bio-D3-Inj_.webp',
-          },
-          'manufacturer': {'name': 'Atco Lab Pharma'},
-          'generic': {
-            'name': 'Artemether 15 mg / 5 ml + Lumefantrine 90 mg / 5 ml',
-          },
-          'dosage': {'name': 'Suspension'},
-          'related_items': [
-            relatedItem,
-            {
-              'id': 177,
-              'display_name': 'Bio-D3 Ampoule',
-              'price': '900.00',
-              'media': {
-                'file':
-                    'https://bio-labs.net/wp-content/uploads/2019/12/13-Bio-D3-Inj_.webp',
-              },
-            },
-            {
-              'id': 178,
-              'display_name': 'BIORIS Tablets 2mg',
-              'price': '600.00',
-              'media': {
-                'file':
-                    'https://bio-labs.net/wp-content/uploads/2019/12/19-Bioris-2mg-Tabs-.webp',
-              },
-            },
-          ],
-        },
+        'product_id': resolvedId,
+        'display_name': '2Sum 1gm Injection 1 vial',
+        'image_url':
+            'https://mediq-bucket.s3.amazonaws.com/products/webp-images/2sum-1gm-3.webp',
+        'price': 485,
+        'manufacturer': 'Sami Pharma',
+        'category': 'infections',
+        'prescription_required': false,
+        'generic_name': 'Cefoperazone 500 mg + Sulbactam 500 mg',
+        'package_type': 'Pack',
+        'indications': '',
+        'contra_indications':
+            'Contraindications may include hypersensitivity or allergy to cefoperazone, sulbactam, or any components of the medication. It is important to inform the healthcare professional about any existing medical conditions, such as a history of severe allergic reactions or liver disease. Cefoperazone and sulbactam should be used with caution in patients with impaired liver or kidney function.',
+        'images': <String>[],
       },
+      'timestamp': DateTime.now().toUtc().toIso8601String(),
     };
   }
 

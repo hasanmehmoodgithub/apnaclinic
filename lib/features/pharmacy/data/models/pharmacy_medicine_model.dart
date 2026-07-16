@@ -290,13 +290,15 @@ class PharmacyProductDetailModel {
   final List<PharmacyMedicineModel> relatedItems;
 
   factory PharmacyProductDetailModel.fromJson(Map<String, dynamic> json) {
-    final nestedData = json['data'];
-    final payload = nestedData is Map<String, dynamic>
-        ? nestedData['data']
-        : json;
-    final productMap = payload is Map<String, dynamic> ? payload : <String, dynamic>{};
+    final productMap = _resolveProductPayload(json);
 
-    final rawRelated = productMap['related_items'] ?? <dynamic>[];
+    final rawRelated = productMap['related_items'] ??
+        productMap['relatedItems'] ??
+        (json['data'] is Map
+            ? (json['data'] as Map)['related_items'] ??
+                (json['data'] as Map)['relatedItems']
+            : null) ??
+        <dynamic>[];
     final relatedItems = (rawRelated is List ? rawRelated : <dynamic>[])
         .whereType<Map>()
         .map(
@@ -313,6 +315,33 @@ class PharmacyProductDetailModel {
       product: PharmacyMedicineModel.fromProductDetailJson(productMap),
       relatedItems: relatedItems,
     );
+  }
+
+  /// Current API: `{ data: { product_id, display_name, ... } }`
+  /// Legacy: `{ data: { data: { id, display_name, related_items, ... } } }`
+  static Map<String, dynamic> _resolveProductPayload(
+    Map<String, dynamic> json,
+  ) {
+    final data = json['data'];
+    if (data is! Map) return json;
+
+    final outer = Map<String, dynamic>.from(data);
+
+    // New Partner shape: product fields live directly under `data`.
+    if (outer.containsKey('product_id') ||
+        outer.containsKey('productId') ||
+        outer.containsKey('display_name') ||
+        outer.containsKey('displayName')) {
+      return outer;
+    }
+
+    // Legacy nested wrapper.
+    final inner = outer['data'];
+    if (inner is Map) {
+      return Map<String, dynamic>.from(inner);
+    }
+
+    return outer;
   }
 }
 
