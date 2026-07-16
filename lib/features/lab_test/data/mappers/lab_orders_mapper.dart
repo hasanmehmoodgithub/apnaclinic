@@ -22,6 +22,7 @@ class LabOrdersMapper {
       reportStatus: model.reportStatus,
       paymentMethod: model.paymentMethod,
       discountCode: model.discountCode,
+      partnerRef: model.partnerRef,
       labName: model.lab.name,
       labLogoUrl: model.lab.logoUrl,
       partnerName: model.partner.name,
@@ -43,6 +44,7 @@ class LabOrdersMapper {
         currency: model.pricing.currency,
       ),
       reports: model.reports,
+      invoice: model.invoice,
       placedAt: model.placedAt,
       createdAt: model.createdAt,
     );

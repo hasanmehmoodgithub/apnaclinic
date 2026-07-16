@@ -27,9 +27,9 @@ Tabbed bookings hub (doctor consultation, surgery, lab test, pharmacy) with list
 - Surgery details title: `bookingsSurgeryDetailsTitle` (“Details”).
 - Lab test orders list: **GET** `AppUrls.labOrders(page, limit)` via `GetLabOrdersUseCase` (lab_test module). Response shape and models documented in `lib/features/lab_test/FEATURE.md`. Mapped by `LabTestBookingListMapper.fromOrder` into `LabTestBookingItemModel`:
   - Status: order `status` (`PLACED`/`CONFIRMED`/`COMPLETED`…) title-cased for display; `CANCELLED`/`CANCELED`/`REJECTED`/`FAILED` render as the red/"not confirmed" pill, everything else green.
-  - Card title: joined `tests[].name`; lab name shown under it; lab/partner logos rendered via `LabTestFigmaImage` (remote URL, SVG-safe fallback).
+  - Card title: joined `tests[].name`; lab logo + name shown under it, partner logo top-right — both rendered via `LabTestFigmaImage` (remote PNG/JPG via `CachedNetworkImage`, remote SVG via `SvgPicture.network`, graceful fallback icon on error).
   - Fee: `pricing.total` (discounted) / `pricing.subtotal` (original), formatted `Rs. n,nnn/-`; date: `placedAt` (fallback `createdAt`) formatted `d MMM, yyyy`.
-  - **View Details** still opens `LabTestViewDetailsArgs` (separate mocked results/order-card screen) but now seeded with the real lab/partner names, logos, fee and `discountCode` from the tapped order.
+  - **View Details** opens `LabTestViewDetailsScreen` with `LabTestViewDetailsArgs` built by `LabTestBookingListMapper.toViewDetailsArgs` from the tapped order (patient name, order no, booking date, status, fees, lab/partner logos, `partnerRef` as discount code fallback, report-status note, optional `invoice` PDF URL). When `invoice` is missing, a temporary mock PDF URL is used so the e-invoice card still shows; tap opens via `AppUrlLauncher`.
 
 ## State
 

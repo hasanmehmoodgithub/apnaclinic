@@ -29,6 +29,7 @@ Browse lab tests, booking/cart flow, payment details checkout, and order view de
   - Triggered from **checkout** CTA after picking a payment method (JazzCash prompts for an account msisdn; otherwise the patient phone is used).
   - Body: `{ partnerId, labId, cityId, homeSample, paymentMethod, msisdn, patient: { name, age, gender, phoneNumber }, tests: [ { testId } ] }`.
   - `testId`s come from every cart line (supports multiple tests in one booking); `partnerId` / `labId` / `homeSample` come from the first cart line; `cityId` is resolved from the city name via `CitiesRepository`.
+- **Lab orders (bookings list):** `GET AppUrls.labOrders` — response items include optional `invoice` (PDF URL). Mapped through `LabOrderModel` → `LabOrderEntity` → bookings list → view details; when non-empty, `LabTestViewDetailsInvoiceCard` opens the PDF via `AppUrlLauncher`.
 - Search debounces (400ms) and re-fetches from the API when a city is selected.
 
 ## State

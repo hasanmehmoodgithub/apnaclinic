@@ -978,6 +978,20 @@ class AppLocalizationsEn extends AppLocalizations {
   String get labTestViewDetailsOrderTitle => 'Order Details';
 
   @override
+  String get labTestReportPendingNote =>
+      'Your report will be available once the lab completes processing.';
+
+  @override
+  String get labTestReportAvailableNote =>
+      'Your report is ready. You can download it from the test results section.';
+
+  @override
+  String get labTestInvoiceSectionTitle => 'Invoice';
+
+  @override
+  String get labTestInvoiceFileName => 'E-Invoice.pdf';
+
+  @override
   String get labTestDiscountCodeCopied => 'Discount code copied';
 
   @override

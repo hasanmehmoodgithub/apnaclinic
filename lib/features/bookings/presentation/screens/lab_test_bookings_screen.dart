@@ -7,7 +7,6 @@ import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../generated/assets.dart';
 import '../../../lab_test/domain/use_cases/get_lab_orders_use_case.dart';
-import '../../../lab_test/presentation/lab_test_route_args.dart';
 import '../../../lab_test/presentation/widgets/lab_test_figma_image.dart';
 import '../../data/mappers/lab_test_booking_list_mapper.dart';
 import '../../data/models/lab_test_booking_item_model.dart';
@@ -171,14 +170,29 @@ class _LabTestBookingCard extends StatelessWidget {
                   ),
                 ),
                 if (booking.labName.isNotEmpty) ...[
-                  SizedBox(height: 2.h),
-                  Text(
-                    booking.labName,
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: const Color(0xFF667B99),
-                      fontSize: 11.sp,
-                      fontWeight: FontWeight.w400,
-                    ),
+                  SizedBox(height: 4.h),
+                  Row(
+                    children: [
+                      if (booking.labLogoUrl.isNotEmpty) ...[
+                        SizedBox(
+                          width: 16.w,
+                          height: 16.h,
+                          child: LabTestFigmaImage(
+                            url: booking.labLogoUrl,
+                            fit: BoxFit.contain,
+                          ),
+                        ),
+                        SizedBox(width: 6.w),
+                      ],
+                      Text(
+                        booking.labName,
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: const Color(0xFF667B99),
+                          fontSize: 11.sp,
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                    ],
                   ),
                 ],
                 SizedBox(height: 9.h),
@@ -252,15 +266,9 @@ class _LabTestBookingCard extends StatelessWidget {
                         onPressed: () {
                           context.push(
                             AppRoutes.path(AppRoutes.labTestViewDetails),
-                            extra: LabTestViewDetailsArgs(
-                              testTitle: booking.reportTitle,
-                              labName: booking.labName,
-                              labLogoUrl: booking.labLogoUrl,
-                              partnerLogoUrl: booking.partnerLogoUrl,
-                              sampleType: l10n.labTestSampleTypeBlood,
-                              discountedFee: booking.discountedFee,
-                              originalFee: booking.originalFee,
-                              discountCode: booking.discountCode ?? booking.orderNo,
+                            extra: LabTestBookingListMapper.toViewDetailsArgs(
+                              booking,
+                              l10n,
                             ),
                           );
                         },

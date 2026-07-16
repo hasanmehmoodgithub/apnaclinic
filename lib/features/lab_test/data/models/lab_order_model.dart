@@ -159,6 +159,7 @@ class LabOrderModel {
     required this.tests,
     required this.pricing,
     required this.reports,
+    this.invoice,
     required this.placedAt,
     required this.createdAt,
   });
@@ -181,6 +182,9 @@ class LabOrderModel {
   final List<LabOrderTestModel> tests;
   final LabOrderPricingModel pricing;
   final List<String> reports;
+
+  /// PDF download URL for the order invoice, when available.
+  final String? invoice;
   final String placedAt;
   final String createdAt;
 
@@ -226,6 +230,7 @@ class LabOrderModel {
           ? LabOrderPricingModel.fromJson(Map<String, dynamic>.from(pricing))
           : LabOrderPricingModel.empty,
       reports: reports,
+      invoice: _nullableString(json['invoice']),
       placedAt: _asString(json['placedAt'] ?? json['placed_at']),
       createdAt: _asString(json['createdAt'] ?? json['created_at']),
     );

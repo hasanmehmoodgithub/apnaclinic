@@ -1,14 +1,21 @@
 import 'package:intl/intl.dart';
 
+import '../../../../core/l10n/app_localizations.dart';
 import '../../../lab_test/domain/entities/lab_order_entity.dart';
+import '../../../lab_test/presentation/lab_test_route_args.dart';
 import '../models/lab_test_booking_item_model.dart';
 
 class LabTestBookingListMapper {
   LabTestBookingListMapper._();
 
+  /// Temporary sample PDF until the API always returns `invoice`.
+  static const String mockInvoicePdfUrl =
+      'https://medicalguidelines.msf.org/sites/default/files/2026-05/guideline-170-en.pdf';
+
   static LabTestBookingItemModel fromOrder(LabOrderEntity order) {
     final pricing = order.pricing;
     final isConfirmed = _isConfirmedStatus(order.status);
+    final invoice = order.invoice?.trim();
 
     return LabTestBookingItemModel(
       orderId: order.orderId,
@@ -37,7 +44,43 @@ class LabTestBookingListMapper {
           )
           .toList(growable: false),
       discountCode: order.discountCode,
+      partnerRef: order.partnerRef,
+      invoice: (invoice != null && invoice.isNotEmpty) ? invoice : mockInvoicePdfUrl,
     );
+  }
+
+  static LabTestViewDetailsArgs toViewDetailsArgs(
+    LabTestBookingItemModel booking,
+    AppLocalizations l10n,
+  ) {
+    final invoice = booking.invoice?.trim();
+    return LabTestViewDetailsArgs(
+      testTitle: booking.reportTitle,
+      labName: booking.labName,
+      labLogoUrl: booking.labLogoUrl,
+      partnerLogoUrl: booking.partnerLogoUrl,
+      sampleType: l10n.labTestSampleTypeNotAvailable,
+      discountedFee: booking.discountedFee,
+      originalFee: booking.originalFee,
+      discountCode: booking.displayCode,
+      patientName: booking.patientName,
+      patientAge: booking.patientAge,
+      patientGender: booking.patientGender,
+      patientPhone: booking.patientPhone,
+      orderNo: booking.orderNo,
+      bookingDate: booking.dateLabel,
+      statusLabel: booking.statusLabel,
+      note: _reportNote(booking.reportStatus, l10n),
+      invoiceUrl:
+          (invoice != null && invoice.isNotEmpty) ? invoice : mockInvoicePdfUrl,
+    );
+  }
+
+  static String _reportNote(String reportStatus, AppLocalizations l10n) {
+    if (reportStatus.trim().toUpperCase() == 'AVAILABLE') {
+      return l10n.labTestReportAvailableNote;
+    }
+    return l10n.labTestReportPendingNote;
   }
 
   static bool _isConfirmedStatus(String status) {

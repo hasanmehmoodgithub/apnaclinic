@@ -271,7 +271,7 @@ class AppUrls {
 
   /// Paginated lab orders / bookings list.
   static String labOrders({int page = 1, int limit = 20}) =>
-      '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/lab/orders?page=$page&limit=$limit';
+      '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/lab-orders?page=$page&limit=$limit';
 
   /// Book one or more lab tests (aggregator mobile API).
   /// Body: `{ partnerId, labId, cityId, homeSample, paymentMethod, msisdn,

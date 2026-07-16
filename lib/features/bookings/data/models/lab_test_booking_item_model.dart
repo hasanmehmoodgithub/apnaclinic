@@ -34,6 +34,8 @@ class LabTestBookingItemModel {
     required this.patientPhone,
     required this.tests,
     required this.discountCode,
+    this.partnerRef,
+    this.invoice,
   });
 
   final String orderId;
@@ -58,7 +60,17 @@ class LabTestBookingItemModel {
   final String patientPhone;
   final List<LabTestBookingTestItem> tests;
   final String? discountCode;
+  final String? partnerRef;
+  final String? invoice;
 
   /// Order number shown on cards, e.g. `85048960`.
   String get orderNo => orderId.isNotEmpty ? orderId : publicId;
+
+  /// Code shown to lab staff: discount code, partner ref, or order id.
+  String get displayCode =>
+      (discountCode?.trim().isNotEmpty == true
+          ? discountCode!.trim()
+          : null) ??
+      (partnerRef?.trim().isNotEmpty == true ? partnerRef!.trim() : null) ??
+      orderNo;
 }

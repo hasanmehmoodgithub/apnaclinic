@@ -979,6 +979,20 @@ class AppLocalizationsUr extends AppLocalizations {
   String get labTestViewDetailsOrderTitle => 'آرڈر کی تفصیلات';
 
   @override
+  String get labTestReportPendingNote =>
+      'لیب کی پروسیسنگ مکمل ہونے کے بعد آپ کی رپورٹ دستیاب ہوگی۔';
+
+  @override
+  String get labTestReportAvailableNote =>
+      'آپ کی رپورٹ تیار ہے۔ آپ اسے ٹیسٹ نتائج سیکشن سے ڈاؤن لوڈ کر سکتے ہیں۔';
+
+  @override
+  String get labTestInvoiceSectionTitle => 'انوائس';
+
+  @override
+  String get labTestInvoiceFileName => 'E-Invoice.pdf';
+
+  @override
   String get labTestDiscountCodeCopied => 'ڈسکاؤنٹ کوڈ کاپی ہو گیا';
 
   @override
