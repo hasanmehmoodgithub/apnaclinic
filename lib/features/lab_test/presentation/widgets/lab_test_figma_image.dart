@@ -5,7 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-/// Displays a local SVG asset or remote image for lab-test UI.
+/// Displays a local SVG asset or remote image (PNG/JPG via [CachedNetworkImage],
+/// SVG via [SvgPicture.network]) for lab-test UI.
 class LabTestFigmaImage extends StatelessWidget {
   const LabTestFigmaImage({
     super.key,
@@ -49,9 +50,19 @@ class LabTestFigmaImage extends StatelessWidget {
 
     if (normalized.startsWith('http')) {
       final lower = normalized.toLowerCase();
-      // Remote SVG parsing is unreliable; known labs/partners use bundled assets.
       if (lower.endsWith('.svg')) {
-        return fallback();
+        final networkSvg = SvgPicture.network(
+          normalized,
+          width: width,
+          height: height,
+          fit: fit,
+          placeholderBuilder: (_) => fallback(),
+          errorBuilder: (_, _, _) => fallback(),
+        );
+        if (borderRadius != null) {
+          return ClipRRect(borderRadius: borderRadius!, child: networkSvg);
+        }
+        return networkSvg;
       }
 
       final networkChild = CachedNetworkImage(

@@ -48,6 +48,8 @@ class LabOrdersMockApi {
           'currency': 'PKR',
         },
         'reports': [],
+        'invoice':
+            'https://medicalguidelines.msf.org/sites/default/files/2026-05/guideline-170-en.pdf',
         'placedAt': '2026-07-16 06:31',
         'createdAt': '2026-07-16 11:31',
       },
@@ -89,6 +91,8 @@ class LabOrdersMockApi {
           'currency': 'PKR',
         },
         'reports': ['https://example.com/reports/lipid-profile.pdf'],
+        'invoice':
+            'https://medicalguidelines.msf.org/sites/default/files/2026-05/guideline-170-en.pdf',
         'placedAt': '2025-02-11 09:15',
         'createdAt': '2025-02-11 09:15',
       },

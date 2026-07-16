@@ -35,6 +35,7 @@ class LabOrderEntity {
     required this.reportStatus,
     required this.paymentMethod,
     required this.discountCode,
+    this.partnerRef,
     required this.labName,
     required this.labLogoUrl,
     required this.partnerName,
@@ -46,6 +47,7 @@ class LabOrderEntity {
     required this.tests,
     required this.pricing,
     required this.reports,
+    this.invoice,
     required this.placedAt,
     required this.createdAt,
   });
@@ -57,6 +59,7 @@ class LabOrderEntity {
   final String reportStatus;
   final String paymentMethod;
   final String? discountCode;
+  final String? partnerRef;
   final String labName;
   final String labLogoUrl;
   final String partnerName;
@@ -68,6 +71,7 @@ class LabOrderEntity {
   final List<LabOrderTestEntity> tests;
   final LabOrderPricingEntity pricing;
   final List<String> reports;
+  final String? invoice;
   final String placedAt;
   final String createdAt;
 }

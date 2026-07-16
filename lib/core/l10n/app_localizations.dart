@@ -1919,6 +1919,30 @@ abstract class AppLocalizations {
   /// **'Order Details'**
   String get labTestViewDetailsOrderTitle;
 
+  /// No description provided for @labTestReportPendingNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Your report will be available once the lab completes processing.'**
+  String get labTestReportPendingNote;
+
+  /// No description provided for @labTestReportAvailableNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Your report is ready. You can download it from the test results section.'**
+  String get labTestReportAvailableNote;
+
+  /// No description provided for @labTestInvoiceSectionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Invoice'**
+  String get labTestInvoiceSectionTitle;
+
+  /// No description provided for @labTestInvoiceFileName.
+  ///
+  /// In en, this message translates to:
+  /// **'E-Invoice.pdf'**
+  String get labTestInvoiceFileName;
+
   /// No description provided for @labTestDiscountCodeCopied.
   ///
   /// In en, this message translates to:

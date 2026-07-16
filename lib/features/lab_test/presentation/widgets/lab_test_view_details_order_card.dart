@@ -28,7 +28,6 @@ class LabTestViewDetailsOrderCard extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     return Container(
-      height: 260,
       clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
         color: const Color(0xFFEFF1FB),
