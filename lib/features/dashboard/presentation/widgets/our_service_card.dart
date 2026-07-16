@@ -53,9 +53,11 @@ class OurServiceCardWidget extends StatelessWidget {
           children: [
             if (showDiscount)
               Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  const Spacer(),
                   Flexible(
+                    fit: FlexFit.loose,
                     child: ServiceDiscountBadge(label: discountLabel),
                   ),
                 ],
