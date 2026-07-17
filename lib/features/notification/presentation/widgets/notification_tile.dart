@@ -60,7 +60,9 @@ class NotificationTile extends StatelessWidget {
                 border: Border.all(color: AppColors.clrB4D3EE),
               ),
               child: SvgPicture.asset(
-                _resolveTypeIcon(item.type),
+                _resolveTypeIcon(
+                  item.serviceType.isNotEmpty ? item.serviceType : item.type,
+                ),
                 colorFilter: const ColorFilter.mode(
                   AppColors.clr0B77C5,
                   BlendMode.srcIn,
@@ -110,17 +112,30 @@ class NotificationTile extends StatelessWidget {
   }
 
   String _resolveTypeIcon(String type) {
-    switch (type.toLowerCase()) {
-      case 'consultation':
+    switch (type.trim().toUpperCase()) {
+      case 'CONSULTATION':
         return Assets.iconsCalendar;
-      case 'lab':
+      case 'LAB':
         return Assets.iconsLab;
-      case 'surgery':
+      case 'SURGERY':
         return Assets.iconsSurgery;
-      case 'medicine':
+      case 'PHARMACY':
+      case 'MEDICINE':
         return Assets.iconsMedicine;
       default:
-        return Assets.iconsMedicine;
+        switch (type.toLowerCase()) {
+          case 'consultation':
+            return Assets.iconsCalendar;
+          case 'lab':
+            return Assets.iconsLab;
+          case 'surgery':
+            return Assets.iconsSurgery;
+          case 'medicine':
+          case 'pharmacy':
+            return Assets.iconsMedicine;
+          default:
+            return Assets.iconsMedicine;
+        }
     }
   }
 }

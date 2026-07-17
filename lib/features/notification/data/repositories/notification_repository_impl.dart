@@ -12,15 +12,40 @@ class NotificationRepositoryImpl implements NotificationRepository {
   final NotificationRemoteDataSource remoteDataSource;
 
   @override
-  Future<Either<ErrorMsg, List<NotificationEntity>>> getNotifications() async {
+  Future<Either<ErrorMsg, List<NotificationEntity>>> getNotifications({
+    int page = 1,
+    int limit = 20,
+  }) async {
     try {
-      final model = await remoteDataSource.getNotifications();
+      final model = await remoteDataSource.getNotifications(
+        page: page,
+        limit: limit,
+      );
       final entities = NotificationMapper.toEntityList(model);
       log('Mapped notifications count: ${entities.length}');
       return Right(entities);
     } catch (e) {
       log('getNotifications repository error: $e');
+      if (e is String && e.trim().isNotEmpty) {
+        return Left(e.trim());
+      }
       return Left(e.toString());
+    }
+  }
+
+  @override
+  Future<Either<ErrorMsg, void>> markNotificationRead({
+    required String publicId,
+  }) async {
+    try {
+      await remoteDataSource.markNotificationRead(publicId: publicId);
+      return const Right(null);
+    } catch (e) {
+      log('markNotificationRead repository error: $e');
+      if (e is String && e.trim().isNotEmpty) {
+        return Left(e.trim());
+      }
+      return const Left('Unable to update notification right now.');
     }
   }
 }

@@ -10,11 +10,19 @@ class NotificationMapper {
       timeLabel: model.time,
       dateLabel: model.date,
       type: model.type,
+      serviceType: model.serviceType,
       isRead: model.isRead,
+      entityId: model.entityId,
+      entityKind: model.entityKind,
+      deepLinkEndpoint: model.deepLinkEndpoint,
+      priority: model.priority,
+      createdAt: model.createdAt,
     );
   }
 
-  static List<NotificationEntity> toEntityList(NotificationsResponseModel model) {
-    return model.notifications.map(toEntity).toList();
+  static List<NotificationEntity> toEntityList(
+    NotificationsResponseModel model,
+  ) {
+    return model.notifications.map(toEntity).toList(growable: false);
   }
 }

@@ -3,8 +3,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
+import '../../../../core/widgets/heart_loader_widget.dart';
 import '../../domain/entities/notification_entity.dart';
 import '../cubit/notification_cubit.dart';
+import '../notification_navigation.dart';
 import 'notification_tile.dart';
 
 class NotificationListWidget extends StatelessWidget {
@@ -14,6 +16,8 @@ class NotificationListWidget extends StatelessWidget {
   });
 
   final Map<String, List<NotificationEntity>> groupedItems;
+
+  static const _heartLoaderId = 'notification_mark_read';
 
   @override
   Widget build(BuildContext context) {
@@ -38,13 +42,40 @@ class NotificationListWidget extends StatelessWidget {
             NotificationTile(
               item: entry.value[i],
               isLast: i == entry.value.length - 1,
-              onTap: () => context.read<NotificationCubit>().markAsRead(
-                entry.value[i].id,
-              ),
+              onTap: () => _onNotificationTap(context, entry.value[i]),
             ),
           ],
         ],
       ],
     );
+  }
+
+  Future<void> _onNotificationTap(
+    BuildContext context,
+    NotificationEntity item,
+  ) async {
+    if (item.isRead) {
+      openNotificationDeepLink(context, item);
+      return;
+    }
+
+    final cubit = context.read<NotificationCubit>();
+
+    showHeartLoaderDialog(context, id: _heartLoaderId);
+    final error = await cubit.markAsRead(item.id);
+    if (!context.mounted) {
+      HeartLoaderDialogController.close(_heartLoaderId);
+      return;
+    }
+    HeartLoaderDialogController.close(_heartLoaderId);
+
+    if (error != null && error.isNotEmpty) {
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(SnackBar(content: Text(error)));
+      return;
+    }
+
+    openNotificationDeepLink(context, item);
   }
 }

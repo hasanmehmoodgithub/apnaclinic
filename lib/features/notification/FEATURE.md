@@ -29,14 +29,25 @@ In-app notification list and Firebase Cloud Messaging (FCM) push notifications.
 
 ## In-app list API
 
-- `AppUrls.notifications` — placeholder REST path; still uses mock when `MockConfig.enableMocks` is true.
-- Wire backend inbox API when available; FCM can refresh list via `HomeScreen` push listener.
+- **GET** `AppUrls.notifications(page, limit)` → `/acs-notification/api/v1/notifications?page=&limit=` via `GetNotificationsUseCase`.
+  - Response: `{ items[], page, limit, total, totalPages }` (also accepts `data.items`).
+  - Item: `publicId`, `type`, `serviceType` (`CONSULTATION` / `LAB` / `SURGERY` / `PHARMACY`), `priority`, `title`, `body`, `deepLink` (`data.entity_id`, `entity.id`/`kind`, `endpoint`), `isRead`, `readAt`, `createdAt`.
+- **PUT** `AppUrls.notificationMarkRead(publicId)` → `/acs-notification/api/v1/notifications/{publicId}/read` via `MarkNotificationReadUseCase` (body `{}`).
+- Tap flow: if unread → heart loader → mark read → navigate by `serviceType` + `entityId`; if already `isRead` → navigate only (no mark-read API).
+  - `CONSULTATION` → `doctorConsultationBookingDetails` (`bookingId` = entity id; detail API loads).
+  - `SURGERY` → `surgeryBookingDetails` (`leadId` = entity id; lead detail API loads).
+  - `LAB` → `labTestViewDetails` (order no = entity id; placeholder fields until order-detail API).
+  - `PHARMACY` → `pharmacyBookingDetails` (`orderNo` = entity id).
+
+## State
+
+- `NotificationCubit` — loads inbox; `markAsRead` hits API then updates local `isRead` / unread sort.
 
 ## DI
 
-- `notification_injection.dart` — repository, use case, `NotificationCubit`.
+- `notification_injection.dart` — repository, get/mark-read use cases, `NotificationCubit`.
 - `NotificationService` registered in core DI (`dependency_injection.dart`).
 
 ## Mocks
 
-- `NotificationMockApi` when `MockConfig.enableMocks` is true (default).
+- `NotificationMockApi` when `MockConfig.enableNotificationMocks` is true (currently off; uses real API).

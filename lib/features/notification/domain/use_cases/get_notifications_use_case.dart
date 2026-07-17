@@ -4,7 +4,13 @@ import '../entities/notification_entity.dart';
 import '../repositories/notification_repository.dart';
 
 class GetNotificationsParams {
-  const GetNotificationsParams();
+  const GetNotificationsParams({
+    this.page = 1,
+    this.limit = 20,
+  });
+
+  final int page;
+  final int limit;
 }
 
 class GetNotificationsUseCase
@@ -16,7 +22,10 @@ class GetNotificationsUseCase
   @override
   Future<Either<ErrorMsg, List<NotificationEntity>>> call(
     GetNotificationsParams params,
-  ) async {
-    return await repository.getNotifications();
+  ) {
+    return repository.getNotifications(
+      page: params.page,
+      limit: params.limit,
+    );
   }
 }

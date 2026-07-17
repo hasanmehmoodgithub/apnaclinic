@@ -6,6 +6,7 @@ import 'data/mock/notification_mock_api.dart';
 import 'data/repositories/notification_repository_impl.dart';
 import 'domain/repositories/notification_repository.dart';
 import 'domain/use_cases/get_notifications_use_case.dart';
+import 'domain/use_cases/mark_notification_read_use_case.dart';
 import 'presentation/cubit/notification_cubit.dart';
 
 void initNotificationInjector() {
@@ -30,9 +31,16 @@ void initNotificationInjector() {
     ),
   );
 
+  sl.registerLazySingleton<MarkNotificationReadUseCase>(
+    () => MarkNotificationReadUseCase(
+      repository: sl<NotificationRepository>(),
+    ),
+  );
+
   sl.registerFactory<NotificationCubit>(
     () => NotificationCubit(
       getNotificationsUseCase: sl<GetNotificationsUseCase>(),
+      markNotificationReadUseCase: sl<MarkNotificationReadUseCase>(),
     ),
   );
 }
