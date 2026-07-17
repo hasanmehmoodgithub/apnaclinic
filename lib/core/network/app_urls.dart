@@ -8,8 +8,6 @@ class AppUrls {
   /// Get base URL from flavor configuration
   static String get baseUrl => FlavorConfig.apiBaseUrl;
 
-
-
   /// Mobile API key for CMS/aggregator guest access. Override: `--dart-define=MOBILE_API_KEY=...`
   static const String mobileApiKey = String.fromEnvironment(
     'MOBILE_API_KEY',
@@ -17,14 +15,13 @@ class AppUrls {
         'apk_426baebf7f6eeb2962d120583b66827f354da3f09c86ac27c4d673e5823dd772',
   );
 
-
-  static String get _normalizedApiBaseUrl =>
-      baseUrl.endsWith('/') ? baseUrl.substring(0, baseUrl.length - 1) : baseUrl;
+  static String get _normalizedApiBaseUrl => baseUrl.endsWith('/')
+      ? baseUrl.substring(0, baseUrl.length - 1)
+      : baseUrl;
 
   // ============================================
   // Auth endpoints (full URLs - baseUrl from flavor)
   // ============================================
-
 
   /// Request OTP endpoint
   static String get requestOtp =>
@@ -98,11 +95,12 @@ class AppUrls {
       '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/doctor-consultation/book-consultation';
 
   /// Paginated list of subscriber's booked doctor consultations (aggregator mobile API).
-  static String doctorConsultationBookings({
-    int page = 1,
-    int limit = 20,
-  }) =>
+  static String doctorConsultationBookings({int page = 1, int limit = 20}) =>
       '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/doctor-consultation?page=$page&limit=$limit';
+
+  /// Single booked doctor consultation by appointment id (aggregator mobile API).
+  static String doctorConsultationBookingDetail(int appointmentId) =>
+      '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/doctor-consultation/$appointmentId';
 
   /// Submit patient feedback for a doctor consultation booking (aggregator mobile API).
   static String get doctorConsultationFeedback =>
@@ -233,6 +231,9 @@ class AppUrls {
   static String surgeryLeads({int page = 1, int limit = 20}) =>
       '$surgeryBooking?page=$page&limit=$limit';
 
+  /// Single surgery lead / booking detail by id.
+  static String surgeryLeadDetail(int leadId) => '$surgeryBooking/$leadId';
+
   /// Confirm / pay a surgery lead (aggregator mobile API).
   /// Body: `{ leadId, paymentMethod, msisdn }`.
   static String get surgeryBookSurgery =>
@@ -256,16 +257,16 @@ class AppUrls {
       if (labId != null && labId.trim().isNotEmpty) 'labId': labId.trim(),
     };
     final encoded = query.entries
-        .map((e) => '${Uri.encodeQueryComponent(e.key)}=${Uri.encodeQueryComponent(e.value)}')
+        .map(
+          (e) =>
+              '${Uri.encodeQueryComponent(e.key)}=${Uri.encodeQueryComponent(e.value)}',
+        )
         .join('&');
     return '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/lab/tests?$encoded';
   }
 
   /// Lab test detail with per-partner labs and pricing for a city.
-  static String labTestDetail({
-    required int testId,
-    required String cityId,
-  }) =>
+  static String labTestDetail({required int testId, required String cityId}) =>
       '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/lab/tests/$testId?cityId=${Uri.encodeComponent(cityId)}';
 
   /// Paginated lab orders / bookings list.
@@ -285,7 +286,6 @@ class AppUrls {
   /// Use full URL for 3rd party integrations
   /// Example: AppUrls.thirdPartyUrl('https://api.thirdparty.com/endpoint')
   /// This returns the URL as-is for complete 3rd party integration
-
 
   // ============================================
   // Legal / policy pages (full URLs)

@@ -71,10 +71,7 @@ class ConsultationBookingListItemModel {
     );
 
     return ConsultationBookingListItemModel(
-      bookingId: _resolveBookingId(
-        json: json,
-        doctorId: doctorId,
-      ),
+      bookingId: _resolveBookingId(json: json, doctorId: doctorId),
       status: _readString(json, const [
         'status',
         'bookingStatus',
@@ -117,21 +114,18 @@ class ConsultationBookingListItemModel {
         'reason',
         'description',
       ]),
-      doctorName: _readString(json, const [
-        'doctorName',
-        'doctor_name',
-      ], nested: doctor, nestedKeys: const [
-        'displayName',
-        'name',
-      ]),
-      specialty: _readString(json, const [
-        'specialty',
-        'specialtyName',
-        'specialty_name',
-      ], nested: doctor, nestedKeys: const [
-        'specialtyName',
-        'specialty',
-      ]),
+      doctorName: _readString(
+        json,
+        const ['doctorName', 'doctor_name'],
+        nested: doctor,
+        nestedKeys: const ['displayName', 'name'],
+      ),
+      specialty: _readString(
+        json,
+        const ['specialty', 'specialtyName', 'specialty_name'],
+        nested: doctor,
+        nestedKeys: const ['specialtyName', 'specialty'],
+      ),
       yearsOfExperience: _readNullableInt(
         doctor?['yearsOfExperience'] ?? json['yearsOfExperience'],
       ),
@@ -145,19 +139,24 @@ class ConsultationBookingListItemModel {
         nested: doctor,
         nestedKeys: const ['education'],
       ),
-      doctorImageUrl: _readString(json, const [
-        'doctorImageUrl',
-        'doctor_image_url',
-        'profileImageUrl',
-        'profile_image_url',
-        'imageUrl',
-        'image',
-      ], nested: doctor, nestedKeys: const [
-        'profileImageUrl',
-        'profile_image_url',
-        'imageUrl',
-        'image',
-      ]),
+      doctorImageUrl: _readString(
+        json,
+        const [
+          'doctorImageUrl',
+          'doctor_image_url',
+          'profileImageUrl',
+          'profile_image_url',
+          'imageUrl',
+          'image',
+        ],
+        nested: doctor,
+        nestedKeys: const [
+          'profileImageUrl',
+          'profile_image_url',
+          'imageUrl',
+          'image',
+        ],
+      ),
       consultationLink: _readString(json, const [
         'meetingLink',
         'meeting_link',
@@ -250,11 +249,12 @@ class ConsultationBookingListItemModel {
     required Map<String, dynamic> json,
     required String doctorId,
   }) {
-    final partnerRef = _readString(json, const [
-      'partnerRefNo',
-      'partner_ref_no',
+    // Detail API is GET .../doctor-consultation/{appointmentId}.
+    final appointmentId = _readString(json, const [
+      'appointmentId',
+      'appointment_id',
     ]);
-    if (partnerRef.isNotEmpty) return partnerRef;
+    if (appointmentId.isNotEmpty) return appointmentId;
 
     final explicitId = _readString(json, const [
       'id',
@@ -264,6 +264,12 @@ class ConsultationBookingListItemModel {
       'public_id',
     ]);
     if (explicitId.isNotEmpty) return explicitId;
+
+    final partnerRef = _readString(json, const [
+      'partnerRefNo',
+      'partner_ref_no',
+    ]);
+    if (partnerRef.isNotEmpty) return partnerRef;
 
     final consultationLink = _readString(json, const [
       'meetingLink',
@@ -281,9 +287,13 @@ class ConsultationBookingListItemModel {
     }
 
     final slotDate = _readString(json, const ['slotDate', 'slot_date']);
-    final slotStartTime =
-        _readString(json, const ['slotStartTime', 'slot_start_time']);
-    if (doctorId.isNotEmpty && slotDate.isNotEmpty && slotStartTime.isNotEmpty) {
+    final slotStartTime = _readString(json, const [
+      'slotStartTime',
+      'slot_start_time',
+    ]);
+    if (doctorId.isNotEmpty &&
+        slotDate.isNotEmpty &&
+        slotStartTime.isNotEmpty) {
       return '${doctorId}_${slotDate}_$slotStartTime';
     }
 
@@ -291,10 +301,7 @@ class ConsultationBookingListItemModel {
   }
 
   static ({int payable, int discount, int original, double percent})
-      _resolveFees(
-    Map<String, dynamic>? doctor,
-    Map<String, dynamic> json,
-  ) {
+  _resolveFees(Map<String, dynamic>? doctor, Map<String, dynamic> json) {
     if (doctor != null) {
       if (doctor['isFree'] == true) {
         final original = _readDouble(doctor['consultationFee']).round();
@@ -311,12 +318,7 @@ class ConsultationBookingListItemModel {
       if (original > 0) {
         if (discountPercent <= 0) {
           final amount = original.round();
-          return (
-            payable: amount,
-            discount: 0,
-            original: amount,
-            percent: 0,
-          );
+          return (payable: amount, discount: 0, original: amount, percent: 0);
         }
         final discount = (original * discountPercent / 100).round();
         return (
@@ -468,17 +470,20 @@ class ConsultationBookingsPageModel {
 
   factory ConsultationBookingsPageModel.fromJson(Map<String, dynamic> json) {
     final data = json['data'];
-    final Map<String, dynamic>? pageData =
-        data is Map ? Map<String, dynamic>.from(data) : null;
+    final Map<String, dynamic>? pageData = data is Map
+        ? Map<String, dynamic>.from(data)
+        : null;
     final rawItems = pageData?['data'] is List
         ? pageData!['data'] as List<dynamic>
         : (data is List ? data : const <dynamic>[]);
 
     final items = rawItems
         .whereType<Map>()
-        .map((item) => ConsultationBookingListItemModel.fromJson(
-              Map<String, dynamic>.from(item),
-            ))
+        .map(
+          (item) => ConsultationBookingListItemModel.fromJson(
+            Map<String, dynamic>.from(item),
+          ),
+        )
         .where(_isRenderableItem)
         .toList(growable: false);
 

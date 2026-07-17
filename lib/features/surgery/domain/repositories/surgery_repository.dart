@@ -28,6 +28,11 @@ abstract class SurgeryRepository {
     int page = 1,
     int limit = 20,
   });
+
+  Future<Either<ErrorMsg, SurgeryLeadEntity>> getSurgeryLead({
+    required int leadId,
+  });
+
   Future<Either<ErrorMsg, void>> submitSurgeryBooking(
     SurgeryBookingRequestEntity request,
   );

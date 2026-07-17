@@ -143,6 +143,19 @@ class SurgeryRepositoryImpl implements SurgeryRepository {
   }
 
   @override
+  Future<Either<ErrorMsg, SurgeryLeadEntity>> getSurgeryLead({
+    required int leadId,
+  }) async {
+    try {
+      final model = await remoteDataSource.getSurgeryLead(leadId: leadId);
+      return Right(SurgeryLeadsMapper.toEntity(model));
+    } catch (e) {
+      log('getSurgeryLead repository error: $e');
+      return Left(e.toString());
+    }
+  }
+
+  @override
   Future<Either<ErrorMsg, void>> submitSurgeryBooking(
     SurgeryBookingRequestEntity request,
   ) async {

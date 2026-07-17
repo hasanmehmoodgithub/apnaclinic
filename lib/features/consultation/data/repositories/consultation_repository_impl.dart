@@ -78,7 +78,8 @@ class ConsultationRepositoryImpl implements ConsultationRepository {
   }
 
   @override
-  Future<Either<ErrorMsg, List<PaymentProviderEntity>>> getPaymentProviders() async {
+  Future<Either<ErrorMsg, List<PaymentProviderEntity>>>
+  getPaymentProviders() async {
     try {
       final providers = await remoteDataSource.getPaymentProviders();
       return Right(
@@ -116,6 +117,23 @@ class ConsultationRepositoryImpl implements ConsultationRepository {
         return Left(e.trim());
       }
       return const Left('Unable to load consultation bookings right now.');
+    }
+  }
+
+  @override
+  Future<Either<ErrorMsg, ConsultationBookingListItemEntity>> getBooking({
+    required int appointmentId,
+  }) async {
+    try {
+      final model = await remoteDataSource.getBooking(
+        appointmentId: appointmentId,
+      );
+      return Right(model.toEntity());
+    } catch (e) {
+      if (e is String && e.trim().isNotEmpty) {
+        return Left(e.trim());
+      }
+      return const Left('Unable to load consultation booking right now.');
     }
   }
 

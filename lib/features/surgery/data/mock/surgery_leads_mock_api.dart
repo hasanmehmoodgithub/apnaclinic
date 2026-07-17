@@ -34,6 +34,43 @@ class SurgeryLeadsMockApi {
     };
   }
 
+  Future<Map<String, dynamic>> getSurgeryLeadSuccessResponse({
+    required int leadId,
+  }) async {
+    await Future<void>.delayed(const Duration(milliseconds: 400));
+
+    Map<String, dynamic>? match;
+    for (final item in _mockItems) {
+      if (item['leadId'] == leadId) {
+        match = item;
+        break;
+      }
+    }
+    final lead = Map<String, dynamic>.from(
+      match ??
+          {
+            ..._mockItems.first,
+            'leadId': leadId,
+          },
+    );
+    final provider = lead['provider'];
+    if (provider is Map && provider['logoUrl'] == null) {
+      lead['provider'] = {
+        ...Map<String, dynamic>.from(provider),
+        'logoUrl':
+            'http://bucket-route-minio.apps.jpocp.jazz.com.pk/apna-clinic/019f6574-0e42-711a-beff-919f80951036.png',
+      };
+    }
+
+    return {
+      'success': true,
+      'message': 'Surgery lead retrieved',
+      'code': 200,
+      'data': lead,
+      'timestamp': DateTime.now().toUtc().toIso8601String(),
+    };
+  }
+
   static const List<Map<String, dynamic>> _mockItems = [
     {
       'leadId': 2,

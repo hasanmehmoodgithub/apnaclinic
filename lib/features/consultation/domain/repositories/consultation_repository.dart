@@ -25,6 +25,9 @@ abstract class ConsultationRepository {
     int page = 1,
     int limit = 20,
   });
+  Future<Either<ErrorMsg, ConsultationBookingListItemEntity>> getBooking({
+    required int appointmentId,
+  });
   Future<Either<ErrorMsg, void>> submitBooking(
     SubmitConsultationBookingParams params,
   );

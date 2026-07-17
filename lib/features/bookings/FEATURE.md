@@ -12,7 +12,8 @@ Tabbed bookings hub (doctor consultation, surgery, lab test, pharmacy) with list
 ## Data & APIs
 
 - Doctor consultation list: **GET** `AppUrls.doctorConsultationBookings(page, limit)` via `GetConsultationBookingsUseCase` (consultation module). Maps API items to `DoctorConsultationBookingDetailsModel` in `DoctorConsultationBookingMapper`.
-  - Item fields: `doctorInfo` (`doctorid`, `displayName`, `specialtyName`, `profileImageUrl`, fees/`discountPercent`/`isFree`, `ratings`, `pmdcVerified`, `partner`), `patientRelation`, `slotDate`/`slotStartTime`/`slotEndTime`, `success` (`PAID` → confirmed), `partnerRefNo` (booking id), `meetingLink`, `issue`, `attachments`, `doctorPerscriptions` (API spelling; mapped as `doctorPrescriptions`), `patientReview` (`rating`/`review`/`date`).
+  - Item fields: `appointmentId` (used as booking/navigation id for detail GET), `doctorInfo` (`doctorid`, `displayName`, `specialtyName`, `profileImageUrl`, fees/`discountPercent`/`isFree`, `ratings`, `pmdcVerified`, `partner`), `patientRelation`, `slotDate`/`slotStartTime`/`slotEndTime`, `success` (`PAID` → confirmed), `partnerRefNo` (feedback `refNo`), `meetingLink`, `issue`, `attachments`, `doctorPerscriptions` (API spelling; mapped as `doctorPrescriptions`), `patientReview` (`rating`/`review`/`date`).
+- Doctor consultation details: **GET** `AppUrls.doctorConsultationBookingDetail(appointmentId)` via `GetConsultationBookingUseCase` — single consultation in `data` (same fields as list item). List payload is preload only; details always refetch.
 - Join Now enabled only while current time is within slot `[start, end]` (confirmed + `meetingLink`); disabled before start and after end.
 - Patient’s Review / Feedback submit form is available only after slot end (submitted review always shown if present).
 - Submit feedback (when no existing review, non-cancelled): **POST** `AppUrls.doctorConsultationFeedback` via `SubmitConsultationFeedbackUseCase` — body `{ refNo, rating, review }` (`refNo` = `partnerRefNo` / booking id).
@@ -21,7 +22,7 @@ Tabbed bookings hub (doctor consultation, surgery, lab test, pharmacy) with list
   - Pricing: `fee`, `discount`, `total` (legacy `discountFee`/`quotedPrice`/`finalPrice` still parsed).
   - Appointment: shows API `scheduledDate` only (day/month/weekday/time). If null → “Awaiting confirmation.” + Applied On (no fake created date as schedule). Patient includes `gender`; phones as local `03…`.
   - Card: `surgeryType` + `subSurgeryType`; doctor + specialty/education; clinic `hospitalName` (not partner name); partner logo from `provider` id/name/logo. List and details reuse the same `SurgeryDetailsItem` via `SurgeryBookingCardWidget` (details omits View Details).
-  - Navigation: `SurgeryBookingDetailsArgs(leadId, item, initialStatus)` with `ValueKey(leadId)` so the tapped lead is opened.
+  - Navigation: `SurgeryBookingDetailsArgs(leadId, item, initialStatus)` with `ValueKey(leadId)` so the tapped lead is opened. Details screen then **GET** `AppUrls.surgeryLeadDetail(leadId)` via `GetSurgeryLeadUseCase` and remaps with `SurgeryBookingListMapper` (list payload is only a preload).
 - Surgery pay / book: **POST** `AppUrls.surgeryBookSurgery` via `BookSurgeryUseCase` from booking details **Proceed Checkout** (visible only when `paymentAllowed`). Opens `PaymentMethodSheet` loading active providers from `GetPaymentProvidersUseCase` (`AppUrls.paymentProviders`, same as doctor consultation) with API `iconUrl` and local JazzCash/card fallbacks → JazzCash account sheet when JazzCash → body `{ leadId, paymentMethod, msisdn }`.
 - Surgery details title: `bookingsSurgeryDetailsTitle` (“Details”).
 - Lab test orders list: **GET** `AppUrls.labOrders(page, limit)` via `GetLabOrdersUseCase` (lab_test module). Response shape and models documented in `lib/features/lab_test/FEATURE.md`. Mapped by `LabTestBookingListMapper.fromOrder` into `LabTestBookingItemModel`:
@@ -33,7 +34,7 @@ Tabbed bookings hub (doctor consultation, surgery, lab test, pharmacy) with list
 ## State
 
 - `DoctorConsultationBookingsCubit` — paginated consultation bookings list (page 1, limit 20; infinite scroll load-more). Initial load uses `BookingsListShimmerWidget`. Empty list shows `EmptyBookingWidget` with “No Booking Available”.
-- `DoctorConsultationBookingDetailsCubit` — shows preloaded booking from list args; falls back to mock details when no booking payload; submits feedback and updates local `patientReview` on success.
+- `DoctorConsultationBookingDetailsCubit` — always **GET** detail by `appointmentId` (`GetConsultationBookingUseCase`); optional list `booking` is preload while shimmering; maps via `DoctorConsultationBookingMapper`; submits feedback and updates local `patientReview` on success.
 
 ## UI
 
@@ -43,4 +44,4 @@ Tabbed bookings hub (doctor consultation, surgery, lab test, pharmacy) with list
 
 ## Mocks
 
-- `DoctorConsultationBookingsMockApi` — consultation details fallback mock data when booking not passed in navigation args.
+- Consultation detail/list mocks live in consultation module (`ConsultationBookingsListMockApi`) when `MockConfig.enableConsultationMocks` is true.

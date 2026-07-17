@@ -15,6 +15,7 @@ class ConsultationBookingsListMockApi {
       'data': {
         'data': [
           {
+            'appointmentId': 11,
             'doctorInfo': {
               'doctorid': 6617,
               'displayName': 'Dr. M. Atif Munawar',
@@ -47,6 +48,7 @@ class ConsultationBookingsListMockApi {
             },
           },
           {
+            'appointmentId': 12,
             'doctorInfo': {
               'doctorid': 6538,
               'displayName': 'Dr. Akshai Kumar',
@@ -82,6 +84,75 @@ class ConsultationBookingsListMockApi {
         'page': page,
         'limit': limit,
         'total': 2,
+      },
+    };
+  }
+
+  Future<Map<String, dynamic>> getBookingSuccessResponse({
+    required int appointmentId,
+  }) async {
+    await Future<void>.delayed(const Duration(milliseconds: 400));
+    final list = await getBookingsSuccessResponse();
+    final pageData = list['data'];
+    final items = pageData is Map ? pageData['data'] : null;
+    if (items is List) {
+      for (final item in items) {
+        if (item is! Map) continue;
+        final id = item['appointmentId'];
+        final parsed = id is num
+            ? id.toInt()
+            : int.tryParse(id?.toString() ?? '');
+        if (parsed == appointmentId) {
+          return {
+            'success': true,
+            'message': 'Consultation retrieved',
+            'code': 200,
+            'data': Map<String, dynamic>.from(item),
+          };
+        }
+      }
+    }
+
+    return {
+      'success': true,
+      'message': 'Consultation retrieved',
+      'code': 200,
+      'data': {
+        'appointmentId': appointmentId,
+        'doctorInfo': {
+          'doctorid': 6617,
+          'displayName': 'Dr. M. Atif Munawar',
+          'yearsOfExperience': null,
+          'profileImageUrl':
+              'https://d1t78adged64l7.cloudfront.net/images/profile-pics/doctors-ww-jbxzjskfsd/1586874314_doc_male_orig-png.webp?t=1605656842',
+          'consultationFee': '3000.00',
+          'discountPercent': '0.00',
+          'isFree': false,
+          'education': null,
+          'specialtyName': 'Oncologist',
+          'ratings': 5,
+          'pmdcVerified': true,
+          'partner': {
+            'tenantId': 2,
+            'logoUrl':
+                'http://bucket-route-minio.apps.jpocp.jazz.com.pk/apna-clinic/019f6574-0e42-711a-beff-919f80951036.png',
+          },
+        },
+        'patientRelation': 'Self',
+        'slotDate': '2026-07-13',
+        'slotStartTime': '09:20 AM',
+        'slotEndTime': '09:40 AM',
+        'success': 'PAID',
+        'partnerRefNo': '1ZMVN7Z0',
+        'meetingLink': 'https://demo.oladoc.com/vc/FnqWNcLJ1783692953',
+        'issue': null,
+        'attachments': <String>[],
+        'doctorPerscriptions': <String>[],
+        'patientReview': {
+          'rating': 5,
+          'review': 'Excellent consultation',
+          'date': '2026-07-14',
+        },
       },
     };
   }

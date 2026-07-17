@@ -5,10 +5,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import '../../features/app/presentation/screens/splash_screen.dart';
 import '../../features/bookings/data/models/surgery_details_item.dart';
-import '../../features/bookings/data/mock/doctor_consultation_bookings_mock_api.dart';
 import '../../features/bookings/presentation/cubit/doctor_consultation_booking_details_cubit.dart';
 import '../../features/bookings/presentation/doctor_consultation_booking_details_args.dart';
 import '../../features/bookings/presentation/screens/doctor_consultation_booking_details_screen.dart';
+import '../../features/consultation/domain/use_cases/get_consultation_booking_use_case.dart';
 import '../../features/consultation/domain/use_cases/submit_consultation_feedback_use_case.dart';
 import '../../features/consultation/presentation/cubit/consultation_cubit.dart';
 import '../../features/consultation/presentation/screens/ai_consultation_screen.dart';
@@ -167,7 +167,7 @@ class AppRouter {
         ),
       ),
       GoRoute(
-        path:AppRoutes.path(AppRoutes.aiScreening),
+        path: AppRoutes.path(AppRoutes.aiScreening),
         name: AppRoutes.aiScreening,
         builder: (context, state) => const AiScreeningScreen(),
       ),
@@ -235,7 +235,7 @@ class AppRouter {
           }
           return BlocProvider<DoctorConsultationBookingDetailsCubit>(
             create: (_) => DoctorConsultationBookingDetailsCubit(
-              api: DoctorConsultationBookingsMockApi(),
+              getBookingUseCase: sl<GetConsultationBookingUseCase>(),
               submitFeedbackUseCase: sl<SubmitConsultationFeedbackUseCase>(),
               bookingId: extra.bookingId,
               booking: extra.booking,
@@ -282,8 +282,10 @@ class AppRouter {
             'delivered' => PharmacyBookingTimelineStatus.completed,
             'cancelled' => PharmacyBookingTimelineStatus.cancelled,
             'shipped' => PharmacyBookingTimelineStatus.shipped,
-            'ready_to_dispatch' => PharmacyBookingTimelineStatus.readyForDispatch,
-            'readyForDispatch' => PharmacyBookingTimelineStatus.readyForDispatch,
+            'ready_to_dispatch' =>
+              PharmacyBookingTimelineStatus.readyForDispatch,
+            'readyForDispatch' =>
+              PharmacyBookingTimelineStatus.readyForDispatch,
             'confirmed' => PharmacyBookingTimelineStatus.confirmed,
             _ => PharmacyBookingTimelineStatus.confirmed,
           };
