@@ -8,7 +8,7 @@ Browse lab tests, booking/cart flow, payment details checkout, and order view de
 
 - `AppRoutes.labTest`, `labTestBooking`, `labTestCart`, `labTestCheckout`, `labTestViewDetails`.
 - Tapping a catalog test requires login (`AuthGuard.requireLogin`); guests are redirected to `AppRoutes.authLogin`.
-- Opening cart (`labTestOpenCart`) also requires login; guests are redirected to `AppRoutes.authLogin`.
+- Opening cart (`labTestOpenCart`) also requires login; guests are redirected to `AppRoutes.authLogin`. Cart badge count is hidden for guests.
 
 ## UI
 

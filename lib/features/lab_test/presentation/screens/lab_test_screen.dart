@@ -242,6 +242,7 @@ class _LabTestScreenState extends State<LabTestScreen> {
   }
 
   int _cartCount() {
+    if (!AuthGuard.isLoggedIn(_appPref)) return 0;
     final raw = _appPref.getString(_cartPrefKey)?.trim();
     if (raw == null || raw.isEmpty) return 0;
     try {
