@@ -231,55 +231,59 @@ class _EditPatientCard extends StatelessWidget {
                           Text(
                             l10n.profileGenderLabel,
                             style: theme.textTheme.bodyMedium?.copyWith(
-                              color: AppColors.clr667B99,
-                              fontSize: 12.sp,
+                              color: AppColors.clr061E40,
+                              fontSize: 11.sp,
+                              fontWeight: FontWeight.w500,
                             ),
                           ),
                           SizedBox(height: 6.h),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: _GenderRadio(
-                                  label: l10n.commonMale,
-                                  selected: gender == 'male',
-                                  onTap: () => onGender('male'),
+                          SizedBox(
+                            height: 34.h,
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: _GenderRadio(
+                                    label: l10n.commonMale,
+                                    selected: gender == 'male',
+                                    onTap: () => onGender('male'),
+                                  ),
                                 ),
-                              ),
-                              SizedBox(width: 8.w),
-                              Expanded(
-                                child: _GenderRadio(
-                                  label: l10n.commonFemale,
-                                  selected: gender == 'female',
-                                  onTap: () => onGender('female'),
+                                SizedBox(width: 8.w),
+                                Expanded(
+                                  child: _GenderRadio(
+                                    label: l10n.commonFemale,
+                                    selected: gender == 'female',
+                                    onTap: () => onGender('female'),
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ],
                       ),
                     ),
                     SizedBox(width: 12.w),
                     SizedBox(
-                      width: 72.w,
+                      width: 150.w,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
                             l10n.labTestAgeLabel,
                             style: theme.textTheme.bodyMedium?.copyWith(
-                              color: AppColors.clr667B99,
-                              fontSize: 12.sp,
+                              color: AppColors.clr061E40,
+                              fontSize: 11.sp,
+                              fontWeight: FontWeight.w500,
                             ),
                           ),
                           SizedBox(height: 6.h),
-                          _InputBox(
-                            theme: theme,
-                            controller: ageController,
-                            keyboardType: TextInputType.number,
-                            inputFormatters: [
-                              FilteringTextInputFormatter.digitsOnly,
-                            ],
-                            textAlign: TextAlign.center,
+                          SizedBox(
+                            height: 34.h,
+                            width: double.infinity,
+                            child: _AgeInputBox(
+                              theme: theme,
+                              controller: ageController,
+                            ),
                           ),
                         ],
                       ),
@@ -428,7 +432,7 @@ class _LabeledField extends StatelessWidget {
         Text(
           label,
           style: theme.textTheme.bodyMedium?.copyWith(
-            color: AppColors.clr667B99,
+            color: AppColors.clr061E40,
             fontSize: 12.sp,
           ),
         ),
@@ -494,6 +498,49 @@ class _InputBox extends StatelessWidget {
   }
 }
 
+/// Age field matching gender pill height: light grey fill, slight radius, no border.
+class _AgeInputBox extends StatelessWidget {
+  const _AgeInputBox({
+    required this.theme,
+    required this.controller,
+  });
+
+  final ThemeData theme;
+  final TextEditingController controller;
+
+  @override
+  Widget build(BuildContext context) {
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: AppColors.clrF2F2F2,
+        borderRadius: BorderRadius.circular(8.r),
+      ),
+      child: Align(
+        alignment: Alignment.centerLeft,
+        child: TextField(
+          controller: controller,
+          keyboardType: TextInputType.number,
+          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+          textAlign: TextAlign.left,
+          style: theme.textTheme.bodyMedium?.copyWith(
+            color: AppColors.clr061E40,
+            fontSize: 12.sp,
+            fontWeight: FontWeight.w500,
+            height: 1.2,
+          ),
+          decoration: InputDecoration(
+            isCollapsed: true,
+            border: InputBorder.none,
+            enabledBorder: InputBorder.none,
+            focusedBorder: InputBorder.none,
+            contentPadding: EdgeInsets.symmetric(horizontal: 10.w),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 class _GenderRadio extends StatelessWidget {
   const _GenderRadio({
     required this.label,
@@ -507,57 +554,66 @@ class _GenderRadio extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(20.r),
-      child: Container(
-        width: double.infinity,
-        padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 10.h),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20.r),
-          border: Border.all(
-            color: selected ? AppColors.clr061E40 : AppColors.clrE7E7E7,
-            width: selected ? 1.2 : 1,
+    final active = AppColors.clr024886;
+    final inactive = AppColors.clr667B99;
+
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(20.r),
+        child: Container(
+          width: double.infinity,
+          height: double.infinity,
+          padding: EdgeInsets.symmetric(horizontal: 8.w),
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            color: AppColors.clrWhite,
+            borderRadius: BorderRadius.circular(20.r),
+            border: Border.all(
+              color: selected ? active : AppColors.clrE7E7E7,
+              width: selected ? 1.25 : 1,
+            ),
           ),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              width: 14.w,
-              height: 14.w,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border: Border.all(
-                  color: selected ? AppColors.clr061E40 : AppColors.clr667B99,
-                  width: 1.5,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                width: 13.w,
+                height: 13.w,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: selected ? active : inactive,
+                    width: 1.25,
+                  ),
+                ),
+                alignment: Alignment.center,
+                child: selected
+                    ? Container(
+                        width: 6.w,
+                        height: 6.w,
+                        decoration: BoxDecoration(
+                          color: active,
+                          shape: BoxShape.circle,
+                        ),
+                      )
+                    : null,
+              ),
+              SizedBox(width: 5.w),
+              Flexible(
+                child: Text(
+                  label,
+                  overflow: TextOverflow.ellipsis,
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: selected ? active : inactive,
+                        fontSize: 11.sp,
+                        fontWeight: FontWeight.w500,
+                      ),
                 ),
               ),
-              alignment: Alignment.center,
-              child: selected
-                  ? Container(
-                      width: 7.w,
-                      height: 7.w,
-                      decoration: const BoxDecoration(
-                        color: AppColors.clr061E40,
-                        shape: BoxShape.circle,
-                      ),
-                    )
-                  : null,
-            ),
-            SizedBox(width: 6.w),
-            Flexible(
-              child: Text(
-                label,
-                overflow: TextOverflow.ellipsis,
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: AppColors.clr061E40,
-                      fontSize: 12.sp,
-                      fontWeight: FontWeight.w500,
-                    ),
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
