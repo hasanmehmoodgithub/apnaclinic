@@ -27,6 +27,11 @@ class DoctorConsultationCheckoutCubit extends Cubit<DoctorConsultationCheckoutSt
   Future<void> load(DoctorConsultationCheckoutArgs args) async {
     emit(state.copyWith(isLoading: true, clearError: true));
 
+    if (args.paymentOptions.isNotEmpty) {
+      _emitCheckoutData(args: args, paymentOptions: args.paymentOptions);
+      return;
+    }
+
     final providersResult = await _getPaymentProvidersUseCase(
       const GetPaymentProvidersParams(module: PaymentProviderModule.consultation),
     );
@@ -47,23 +52,28 @@ class DoctorConsultationCheckoutCubit extends Cubit<DoctorConsultationCheckoutSt
               ),
             )
             .toList(growable: false);
-        final billing = ConsultationBookingUtils.resolveBilling(args.doctor);
-
-        emit(
-          state.copyWith(
-            isLoading: false,
-            data: DoctorConsultationCheckoutModel(
-              consultationFee: billing.$1,
-              discount: billing.$2,
-              paymentOptions: paymentOptions,
-            ),
-            selectedPaymentMethodId: paymentOptions.isNotEmpty
-                ? paymentOptions.first.code
-                : null,
-            clearError: true,
-          ),
-        );
+        _emitCheckoutData(args: args, paymentOptions: paymentOptions);
       },
+    );
+  }
+
+  void _emitCheckoutData({
+    required DoctorConsultationCheckoutArgs args,
+    required List<DoctorConsultationPaymentOptionModel> paymentOptions,
+  }) {
+    final billing = ConsultationBookingUtils.resolveBilling(args.doctor);
+    emit(
+      state.copyWith(
+        isLoading: false,
+        data: DoctorConsultationCheckoutModel(
+          consultationFee: billing.$1,
+          discount: billing.$2,
+          paymentOptions: paymentOptions,
+        ),
+        selectedPaymentMethodId:
+            paymentOptions.isNotEmpty ? paymentOptions.first.code : null,
+        clearError: true,
+      ),
     );
   }
 

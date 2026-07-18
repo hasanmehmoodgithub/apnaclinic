@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/constants/app_colors.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../data/models/doctor_consultation_checkout_model.dart';
@@ -16,80 +17,121 @@ class DoctorConsultationCheckoutBillingSectionWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final textTheme = Theme.of(context).textTheme;
+    final discountLabel = data.discount <= 0
+        ? l10n.consultationDiscountNotAvailable
+        : '${data.discount}';
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           l10n.bookingsBillingTitle,
           style: textTheme.titleMedium?.copyWith(
-            color: const Color(0xFF061E40),
-            fontWeight: FontWeight.w600,
+            color: AppColors.clr061E40,
+            fontWeight: FontWeight.w700,
+            fontSize: 16.sp,
           ),
         ),
-        SizedBox(height: 4.h),
+        SizedBox(height: 2.h),
         Text(
           l10n.consultationVideoConsultationLabel,
-          style: textTheme.bodySmall?.copyWith(color: const Color(0xFF98A4B5)),
-        ),
-        SizedBox(height: 14.h),
-        const Divider(color: Color(0xFFD1D6DD), height: 1),
-        SizedBox(height: 14.h),
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: 4.w),
-          child: _row(
-            textTheme,
-            l10n.consultationConsultationFeesLabel,
-            'Rs.${data.consultationFee}',
+          style: textTheme.bodyMedium?.copyWith(
+            color: const Color(0xFF98A4B5),
+            fontSize: 13.sp,
+            fontWeight: FontWeight.w400,
           ),
         ),
         SizedBox(height: 12.h),
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: 4.w),
-          child: _row(
-            textTheme,
-            l10n.consultationDiscountLabel,
-            '${data.discount}',
-          ),
+        const Divider(color: Color(0xFFD1D6DD), thickness: 1, height: 1),
+        SizedBox(height: 16.h),
+        _StackedAmount(
+          label: l10n.consultationConsultationFeesLabel,
+          amount: data.consultationFee,
         ),
         SizedBox(height: 14.h),
-        const Divider(color: Color(0xFFD1D6DD), height: 1),
-        SizedBox(height: 14.h),
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: 4.w),
-          child: _row(
-            textTheme,
-            l10n.consultationTotalChargesLabel,
-            'Rs ${data.total}',
-            isTotal: true,
-          ),
+        _StackedAmount(
+          label: l10n.consultationDiscountLabel,
+          plainValue: discountLabel,
+          isMuted: true,
+        ),
+        SizedBox(height: 16.h),
+        const Divider(color: Color(0xFFD1D6DD), thickness: 1, height: 1),
+        SizedBox(height: 16.h),
+        _StackedAmount(
+          label: l10n.consultationTotalChargesLabel,
+          amount: data.total,
         ),
       ],
     );
   }
+}
 
-  Widget _row(
-    TextTheme textTheme,
-    String title,
-    String value, {
-    bool isTotal = false,
-  }) {
-    return Row(
+class _StackedAmount extends StatelessWidget {
+  const _StackedAmount({
+    required this.label,
+    this.amount,
+    this.plainValue,
+    this.isMuted = false,
+  });
+
+  final String label;
+  final int? amount;
+  final String? plainValue;
+  final bool isMuted;
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+    final valueColor =
+        isMuted ? const Color(0xFF7C8797) : AppColors.clr061E40;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          title,
+          label,
           style: textTheme.bodyMedium?.copyWith(
             color: const Color(0xFF7C8797),
-            fontWeight: isTotal ? FontWeight.w500 : FontWeight.w400,
+            fontSize: 13.sp,
+            fontWeight: FontWeight.w400,
           ),
         ),
-        const Spacer(),
-        Text(
-          value,
-          style: textTheme.titleMedium?.copyWith(
-            color: const Color(0xFF061E40),
-            fontWeight: FontWeight.w500,
+        SizedBox(height: 4.h),
+        if (amount != null)
+          Text.rich(
+            TextSpan(
+              children: [
+                TextSpan(
+                  text: 'Rs. ',
+                  style: textTheme.titleMedium?.copyWith(
+                    color: valueColor,
+                    fontSize: 13.sp,
+                    fontWeight: FontWeight.w600,
+                    height: 1.1,
+                  ),
+                ),
+                TextSpan(
+                  text: '$amount',
+                  style: textTheme.titleMedium?.copyWith(
+                    color: valueColor,
+                    fontSize: 22.sp,
+                    fontWeight: FontWeight.w600,
+                    height: 1.1,
+                  ),
+                ),
+              ],
+            ),
+          )
+        else
+          Text(
+            plainValue ?? '',
+            style: textTheme.titleMedium?.copyWith(
+              color: valueColor,
+              fontSize: 18.sp,
+              fontWeight: FontWeight.w600,
+              height: 1.1,
+            ),
           ),
-        ),
       ],
     );
   }

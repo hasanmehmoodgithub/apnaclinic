@@ -235,7 +235,7 @@ class _DoctorConsultationCheckoutScreenState
                       }
                       final data = state.data!;
                       return Padding(
-                        padding: EdgeInsets.fromLTRB(20.w, 16.h, 20.w, 14.h),
+                        padding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 14.h),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [

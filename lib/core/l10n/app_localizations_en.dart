@@ -1306,10 +1306,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get consultationVideoConsultationLabel => 'Video Consultation';
 
   @override
-  String get consultationConsultationFeesLabel => 'Consultation Fees';
+  String get consultationConsultationFeesLabel => 'Consultation fee';
 
   @override
   String get consultationDiscountLabel => 'Discount';
+
+  @override
+  String get consultationDiscountNotAvailable => 'N/A';
 
   @override
   String get consultationTotalChargesLabel => 'Total Charges';

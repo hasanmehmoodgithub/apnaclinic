@@ -2528,7 +2528,7 @@ abstract class AppLocalizations {
   /// No description provided for @consultationConsultationFeesLabel.
   ///
   /// In en, this message translates to:
-  /// **'Consultation Fees'**
+  /// **'Consultation fee'**
   String get consultationConsultationFeesLabel;
 
   /// No description provided for @consultationDiscountLabel.
@@ -2536,6 +2536,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Discount'**
   String get consultationDiscountLabel;
+
+  /// No description provided for @consultationDiscountNotAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'N/A'**
+  String get consultationDiscountNotAvailable;
 
   /// No description provided for @consultationTotalChargesLabel.
   ///

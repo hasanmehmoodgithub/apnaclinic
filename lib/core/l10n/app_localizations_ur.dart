@@ -1311,6 +1311,9 @@ class AppLocalizationsUr extends AppLocalizations {
   String get consultationDiscountLabel => 'رعایت';
 
   @override
+  String get consultationDiscountNotAvailable => 'دستیاب نہیں';
+
+  @override
   String get consultationTotalChargesLabel => 'کل چارجز';
 
   @override

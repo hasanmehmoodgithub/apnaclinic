@@ -11,18 +11,21 @@ import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/router/app_routes.dart';
+import '../../../../core/widgets/heart_loader_widget.dart';
+import '../../data/models/doctor_consultation_checkout_model.dart';
 import '../../domain/entities/consultation_booking_attachment_entity.dart';
 import '../../domain/entities/consultation_doctor_slots_entity.dart';
 import '../../domain/entities/consultation_selected_slot_entity.dart';
 import '../../domain/use_cases/get_consultation_doctor_slots_use_case.dart';
+import '../../domain/use_cases/get_payment_providers_use_case.dart';
 import '../constants/consultation_booking_attachment_config.dart';
 import '../constants/consultation_ui_config.dart';
-import '../widgets/results_doctor_item.dart';
+import '../doctor_consultation_checkout_args.dart';
 import '../widgets/consultation_hero_banner_widget.dart';
 import '../widgets/consultation_screen_header_widget.dart';
-import '../widgets/doctor_consultation_booking_body_widget.dart';
 import '../widgets/consultation_upload_document_sheet_widget.dart';
-import '../doctor_consultation_checkout_args.dart';
+import '../widgets/doctor_consultation_booking_body_widget.dart';
+import '../widgets/results_doctor_item.dart';
 
 class DoctorConsultationBookDoctorScreen extends StatefulWidget {
   final ResultsDoctorItem doctor;
@@ -221,38 +224,11 @@ class _DoctorConsultationBookDoctorScreenState
                           width: double.infinity,
                           height: 58.h,
                           child: ElevatedButton(
-                            onPressed: () {
-                              final trimmedIssue = _issueController.text.trim();
-                              if (trimmedIssue.isEmpty) {
-                                setState(() {
-                                  _validationErrorMessage =
-                                      l10n.consultationRequiredFieldsError;
-                                });
-                                return;
-                              }
-                              if (_selectedSlot == null) {
-                                setState(() {
-                                  _validationErrorMessage =
-                                      l10n.consultationSelectSlotError;
-                                });
-                                return;
-                              }
-                              setState(() {
-                                _validationErrorMessage = null;
-                              });
-                              context.pushNamed(
-                                AppRoutes.consultationCheckout,
-                                extra: DoctorConsultationCheckoutArgs(
-                                  doctor: doctor,
-                                  issueDescription: trimmedIssue,
-                                  selectedSlot: _selectedSlot!,
-                                  attachments:
-                                      List<ConsultationBookingAttachmentEntity>.unmodifiable(
-                                    _attachments,
-                                  ),
-                                ),
-                              );
-                            },
+                            onPressed: () => _onGetAppointmentPressed(
+                              context: context,
+                              l10n: l10n,
+                              doctor: doctor,
+                            ),
                             style: ElevatedButton.styleFrom(
                               elevation: 0,
                               backgroundColor: ConsultationUiConfig.ctaColor,
@@ -278,6 +254,82 @@ class _DoctorConsultationBookDoctorScreenState
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Future<void> _onGetAppointmentPressed({
+    required BuildContext context,
+    required AppLocalizations l10n,
+    required ResultsDoctorItem doctor,
+  }) async {
+    final trimmedIssue = _issueController.text.trim();
+    if (trimmedIssue.isEmpty) {
+      setState(() {
+        _validationErrorMessage = l10n.consultationRequiredFieldsError;
+      });
+      return;
+    }
+    if (_selectedSlot == null) {
+      setState(() {
+        _validationErrorMessage = l10n.consultationSelectSlotError;
+      });
+      return;
+    }
+    setState(() => _validationErrorMessage = null);
+
+    const loaderId = 'consultation_payment_providers_prefetch';
+    showHeartLoaderDialog(context, id: loaderId);
+
+    final result = await sl<GetPaymentProvidersUseCase>()(
+      const GetPaymentProvidersParams(module: PaymentProviderModule.consultation),
+    );
+
+    if (!mounted) {
+      HeartLoaderDialogController.close(loaderId);
+      return;
+    }
+    HeartLoaderDialogController.close(loaderId);
+
+    final paymentOptions = result.fold(
+      (error) {
+        ScaffoldMessenger.of(this.context)
+          ..hideCurrentSnackBar()
+          ..showSnackBar(SnackBar(content: Text(error)));
+        return null;
+      },
+      (providers) => providers
+          .map(
+            (provider) => DoctorConsultationPaymentOptionModel(
+              code: provider.code,
+              name: provider.name,
+              iconUrl: provider.iconUrl,
+            ),
+          )
+          .toList(growable: false),
+    );
+
+    if (paymentOptions == null || !mounted) return;
+
+    if (paymentOptions.isEmpty) {
+      ScaffoldMessenger.of(this.context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+          SnackBar(content: Text(l10n.consultationBookingFailed)),
+        );
+      return;
+    }
+
+    this.context.pushNamed(
+      AppRoutes.consultationCheckout,
+      extra: DoctorConsultationCheckoutArgs(
+        doctor: doctor,
+        issueDescription: trimmedIssue,
+        selectedSlot: _selectedSlot!,
+        attachments: List<ConsultationBookingAttachmentEntity>.unmodifiable(
+          _attachments,
+        ),
+        paymentOptions: paymentOptions,
       ),
     );
   }

@@ -433,6 +433,7 @@
   "consultationVideoConsultationLabel": "ویڈیو مشاورت",
   "consultationConsultationFeesLabel": "مشاورت فیس",
   "consultationDiscountLabel": "رعایت",
+  "consultationDiscountNotAvailable": "دستیاب نہیں",
   "consultationTotalChargesLabel": "کل چارجز",
   "consultationSelectAccountTitle": "اکاؤنٹ منتخب کریں",
   "consultationProceedCta": "آگے بڑھیں",
