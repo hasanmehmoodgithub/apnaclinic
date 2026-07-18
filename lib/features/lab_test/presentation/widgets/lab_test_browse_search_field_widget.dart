@@ -10,12 +10,20 @@ class LabTestBrowseSearchFieldWidget extends StatelessWidget {
     super.key,
     required this.controller,
     required this.hintText,
-    required this.onChanged,
+    this.onChanged,
+    this.onSearch,
   });
 
   final TextEditingController controller;
   final String hintText;
-  final ValueChanged<String> onChanged;
+
+  /// Optional live typing callback (e.g. city sheet local filter).
+  final ValueChanged<String>? onChanged;
+
+  /// Called when the search icon is tapped or the keyboard submits.
+  final ValueChanged<String>? onSearch;
+
+  void _submit() => onSearch?.call(controller.text);
 
   @override
   Widget build(BuildContext context) {
@@ -37,6 +45,8 @@ class LabTestBrowseSearchFieldWidget extends StatelessWidget {
             child: TextField(
               controller: controller,
               onChanged: onChanged,
+              onSubmitted: (_) => _submit(),
+              textInputAction: TextInputAction.search,
               style: theme.textTheme.bodyMedium?.copyWith(
                 color: const Color(0xFF061E40),
                 fontSize: 14.sp,
@@ -52,10 +62,17 @@ class LabTestBrowseSearchFieldWidget extends StatelessWidget {
               ),
             ),
           ),
-          LabTestFigmaImage(
-            url: Assets.labTestSearchGlyphSmall,
-            width: 13,
-            height: 13,
+          GestureDetector(
+            onTap: onSearch == null ? null : _submit,
+            behavior: HitTestBehavior.opaque,
+            child: Padding(
+              padding: EdgeInsets.all(6.w),
+              child: LabTestFigmaImage(
+                url: Assets.labTestSearchGlyphSmall,
+                width: 13,
+                height: 13,
+              ),
+            ),
           ),
         ],
       ),

@@ -95,53 +95,48 @@ class _ReadonlyPatientCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return _WhiteCard(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Padding(
-            padding: EdgeInsets.fromLTRB(16.w, 12.h, 12.w, 4.h),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    l10n.labTestPatientDetailsTitle,
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      color: AppColors.clr061E40,
-                      fontWeight: FontWeight.w500,
-                      fontSize: 16.sp,
-                    ),
-                  ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Row(
+          children: [
+            Expanded(
+              child: Text(
+                l10n.labTestPatientDetailsTitle,
+                style: theme.textTheme.titleMedium?.copyWith(
+                  color: AppColors.clr061E40,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 16.sp,
                 ),
-                TextButton(
-                  onPressed: onEdit,
-                  style: TextButton.styleFrom(
-                    foregroundColor: AppColors.clr2F80ED,
-                    padding: EdgeInsets.symmetric(horizontal: 8.w),
-                    minimumSize: Size.zero,
-                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                  ),
-                  child: Text(
-                    l10n.commonEdit,
-                    style: TextStyle(
-                      fontSize: 14.sp,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ),
-              ],
+              ),
             ),
-          ),
-          _ReadonlyRow(label: l10n.labTestPatientNameLabel, value: name),
-          _Divider(),
-          _ReadonlyRow(label: l10n.profileGenderLabel, value: genderLabel),
-          _Divider(),
-          _ReadonlyRow(label: l10n.labTestAgeLabel, value: age),
-          _Divider(),
-          _ReadonlyRow(label: l10n.labTestContactNumberLabel, value: phone),
-          SizedBox(height: 8.h),
-        ],
-      ),
+            TextButton(
+              onPressed: onEdit,
+              style: TextButton.styleFrom(
+                foregroundColor: AppColors.clr2F80ED,
+                padding: EdgeInsets.symmetric(horizontal: 4.w),
+                minimumSize: Size.zero,
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              ),
+              child: Text(
+                l10n.commonEdit,
+                style: TextStyle(
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+          ],
+        ),
+        SizedBox(height: 8.h),
+        _ReadonlyRow(label: l10n.labTestPatientNameLabel, value: name),
+        _Divider(),
+        _ReadonlyRow(label: l10n.profileGenderLabel, value: genderLabel),
+        _Divider(),
+        _ReadonlyRow(label: l10n.labTestAgeLabel, value: age),
+        _Divider(),
+        _ReadonlyRow(label: l10n.labTestContactNumberLabel, value: phone),
+      ],
     );
   }
 }
@@ -311,39 +306,34 @@ class _EmergencyContactCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return _WhiteCard(
-      child: Padding(
-        padding: EdgeInsets.fromLTRB(14.w, 12.h, 14.w, 14.h),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Text(
-              l10n.labTestEmergencyContactTitle,
-              style: theme.textTheme.titleMedium?.copyWith(
-                color: AppColors.clr061E40,
-                fontWeight: FontWeight.w500,
-                fontSize: 16.sp,
-              ),
-            ),
-            SizedBox(height: 6.h),
-            Text(
-              l10n.labTestEmergencyContactHintText,
-              style: theme.textTheme.bodySmall?.copyWith(
-                color: AppColors.clr667B99,
-                fontSize: 12.sp,
-                height: 1.35,
-              ),
-            ),
-            SizedBox(height: 10.h),
-            _InputBox(
-              theme: theme,
-              controller: controller,
-              hint: l10n.labTestEmergencyNumberHint,
-              keyboardType: TextInputType.phone,
-            ),
-          ],
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Text(
+          l10n.labTestEmergencyContactTitle,
+          style: theme.textTheme.titleMedium?.copyWith(
+            color: AppColors.clr061E40,
+            fontWeight: FontWeight.w600,
+            fontSize: 16.sp,
+          ),
         ),
-      ),
+        SizedBox(height: 6.h),
+        Text(
+          l10n.labTestEmergencyContactHintText,
+          style: theme.textTheme.bodySmall?.copyWith(
+            color: AppColors.clr667B99,
+            fontSize: 12.sp,
+            height: 1.35,
+          ),
+        ),
+        SizedBox(height: 10.h),
+        _InputBox(
+          theme: theme,
+          controller: controller,
+          hint: l10n.labTestEmergencyNumberHint,
+          keyboardType: TextInputType.phone,
+        ),
+      ],
     );
   }
 }
@@ -359,14 +349,7 @@ class _WhiteCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppColors.clrWhite,
         borderRadius: BorderRadius.circular(14.r),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x14053453),
-            blurRadius: 18,
-            offset: Offset(0, 6),
-            spreadRadius: -6,
-          ),
-        ],
+        border: Border.all(color: AppColors.clrE5E8EC),
       ),
       child: child,
     );
@@ -383,7 +366,7 @@ class _ReadonlyRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
+      padding: EdgeInsets.symmetric(vertical: 10.h),
       child: Row(
         children: [
           Expanded(
@@ -417,7 +400,6 @@ class _Divider extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: 0.5,
-      margin: EdgeInsets.symmetric(horizontal: 16.w),
       color: AppColors.clrE7E7E7,
     );
   }

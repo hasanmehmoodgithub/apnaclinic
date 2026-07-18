@@ -40,6 +40,7 @@ class LabTestCatalogListBlockWidget extends StatelessWidget {
               current.catalogLoadingStateStatus ||
           previous.filteredItems != current.filteredItems ||
           previous.selectedCity != current.selectedCity ||
+          previous.searchQuery != current.searchQuery ||
           previous.errorMessage != current.errorMessage,
       builder: (context, state) {
         final selectedCity = state.selectedCity;
@@ -47,7 +48,10 @@ class LabTestCatalogListBlockWidget extends StatelessWidget {
           if (state.catalogLoadingStateStatus == StateStatus.loading) {
             return const LabTestCatalogShimmerWidget();
           }
-          return LabTestCatalogEmptyWidget(message: selectCityFirstMessage);
+          return LabTestCatalogEmptyWidget(
+            message: selectCityFirstMessage,
+            showIllustration: false,
+          );
         }
 
         if (state.catalogLoadingStateStatus == StateStatus.loading ||

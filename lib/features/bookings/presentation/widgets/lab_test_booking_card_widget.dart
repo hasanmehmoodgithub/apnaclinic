@@ -47,7 +47,7 @@ class LabTestBookingCardWidget extends StatelessWidget {
                 Assets.labTestCardVector,
                 width: 250.w,
                 height: 250.h,
-                fit: BoxFit.contain,
+                  fit: BoxFit.contain,
               ),
             ),
           ),

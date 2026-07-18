@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/cities/domain/repositories/cities_repository.dart';
@@ -16,19 +14,12 @@ class LabTestCubit extends Cubit<LabTestState> {
     required this.appPref,
     required this.citiesRepository,
   }) : super(const LabTestState()) {
-    unawaited(bootstrap());
+    bootstrap();
   }
 
   final GetLabTestCatalogUseCase getLabTestCatalogUseCase;
   final AppPref appPref;
   final CitiesRepository citiesRepository;
-  Timer? _searchDebounce;
-
-  @override
-  Future<void> close() {
-    _searchDebounce?.cancel();
-    return super.close();
-  }
 
   /// Loads cities, restores saved city from prefs, then calls lab tests API.
   Future<void> bootstrap() async {
@@ -138,23 +129,25 @@ class LabTestCubit extends Cubit<LabTestState> {
     );
   }
 
-  void onSearchChanged(String value) {
-    emit(state.copyWith(searchQuery: value));
-    _searchDebounce?.cancel();
+  /// Runs catalog search when the user taps the search button (or submits).
+  Future<void> submitSearch(String value) async {
+    final query = value.trim();
+    emit(state.copyWith(searchQuery: query));
 
     final city = state.selectedCity;
     if (city == null || city.isEmpty) {
       emit(
         state.copyWith(
-          filteredItems: _filter(state.items, value),
+          filteredItems: _filter(state.items, query),
         ),
       );
       return;
     }
 
-    _searchDebounce = Timer(const Duration(milliseconds: 400), () {
-      loadCatalog(cityName: city, search: value.trim());
-    });
+    await loadCatalog(
+      cityName: city,
+      search: query.isEmpty ? null : query,
+    );
   }
 
   Future<void> selectCity(String city) async {

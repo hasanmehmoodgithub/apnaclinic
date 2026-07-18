@@ -19,19 +19,8 @@ class LabTestCheckoutBottomBarWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.fromLTRB(24, 14, 24, 8),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.07),
-            offset: const Offset(0, -5),
-            blurRadius: 30,
-          ),
-        ],
-      ),
+    return Padding(
+      padding: EdgeInsets.fromLTRB(24.w, 8.h, 24.w, 8.h),
       child: SafeArea(
         top: false,
         child: Column(
@@ -39,15 +28,15 @@ class LabTestCheckoutBottomBarWidget extends StatelessWidget {
           children: [
             if (errorMessage != null)
               Padding(
-                padding: const EdgeInsets.only(bottom: 10),
+                padding: EdgeInsets.only(bottom: 10.h),
                 child: Text(
                   errorMessage!,
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: const Color(0xFFD72222),
-                    fontSize: 15.sp,
-                    fontWeight: FontWeight.w500,
-                  ),
+                        color: const Color(0xFFD72222),
+                        fontSize: 15.sp,
+                        fontWeight: FontWeight.w500,
+                      ),
                 ),
               ),
             if (isBusy)
