@@ -844,11 +844,10 @@ class AppLocalizationsUr extends AppLocalizations {
       'براہ کرم ایمرجنسی رابطہ نمبر شامل کریں۔';
 
   @override
-  String get surgeryAgeInvalid => 'براہ کرم درست عمر درج کریں (صرف نمبر)۔';
+  String get surgeryAgeInvalid => 'براہ کرم درست عمر درج کریں۔';
 
   @override
-  String get surgeryPhoneInvalid =>
-      'براہ کرم 11 ہندسوں کا درست فون نمبر درج کریں۔';
+  String get surgeryPhoneInvalid => 'براہ کرم درست نمبر درج کریں۔';
 
   @override
   String get surgerySelectForSurgery => 'سرجری کے لیے منتخب کریں';
@@ -872,6 +871,75 @@ class AppLocalizationsUr extends AppLocalizations {
   String get commonProceed => 'آگے بڑھیں';
 
   @override
+  String get commonApplyFilter => 'فلٹر لگائیں';
+
+  @override
+  String get surgeryPatientDetailsTitle => 'مریض کی تفصیلات';
+
+  @override
+  String get surgeryPatientNameLabel => 'مریض کا نام';
+
+  @override
+  String get surgeryPatientNameHint => 'مریض کا نام';
+
+  @override
+  String get surgeryPatientNameError => 'مریض کا نام درج کریں';
+
+  @override
+  String get surgeryPatientAgeLabel => 'عمر';
+
+  @override
+  String get surgeryPatientAgeHint => 'مریض کی عمر';
+
+  @override
+  String get surgeryPatientAgeError => 'درست عمر درج کریں';
+
+  @override
+  String get surgeryContactNumberLabel => 'رابطہ نمبر';
+
+  @override
+  String get surgeryContactNumberHint => 'مریض کا رابطہ نمبر';
+
+  @override
+  String get surgeryContactNumberError => 'درست نمبر درج کریں';
+
+  @override
+  String get surgeryEmergencyContactLabel => 'ایمرجنسی رابطہ';
+
+  @override
+  String get surgeryEmergencyContactHint => 'مریض کا ایمرجنسی رابطہ';
+
+  @override
+  String get surgeryEmergencyContactError => 'درست نمبر درج کریں';
+
+  @override
+  String get surgeryLabel => 'سرجری';
+
+  @override
+  String get surgeryProceedCheckout => 'چیک آؤٹ جاری رکھیں';
+
+  @override
+  String get surgeryStartingFrom => 'شروع سے';
+
+  @override
+  String get surgeryBookingSubmittedTitle => 'بکنگ کی درخواست جمع ہو گئی';
+
+  @override
+  String get surgeryBookingSubmittedMessage =>
+      'آپ کی سرجری کی درخواست موصول ہو گئی ہے۔ ہمارا نمائندہ تصدیق کے لیے آپ کی طبی تاریخ اور متعلقہ تفصیلات لینے کے لیے 24 گھنٹوں کے اندر آپ سے رابطہ کرے گا۔';
+
+  @override
+  String get surgeryBookingFailedTitle => 'بکنگ کی درخواست ناکام';
+
+  @override
+  String get surgeryTypesLoadFailed =>
+      'سرجری کی اقسام لوڈ نہیں ہو سکیں۔ براہ کرم دوبارہ کوشش کریں۔';
+
+  @override
+  String get surgerySubmitFailed =>
+      'بکنگ کی درخواست جمع نہیں ہو سکی۔ براہ کرم دوبارہ کوشش کریں۔';
+
+  @override
   String get labTestSelectCityPlaceholder => 'شہر منتخب کریں';
 
   @override
@@ -891,6 +959,18 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get labTestSelectCitySheetSearchHint => 'نام سے تلاش کریں';
+
+  @override
+  String get selectCityTitle => 'شہر منتخب کریں';
+
+  @override
+  String get selectCitySearchHint => 'نام سے تلاش کریں';
+
+  @override
+  String get selectCityEmpty => 'کوئی شہر دستیاب نہیں';
+
+  @override
+  String get selectCityNoResults => 'کوئی شہر نہیں ملا';
 
   @override
   String get labTestRequirementLabel => 'ضروریات';

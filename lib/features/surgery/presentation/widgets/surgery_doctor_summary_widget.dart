@@ -1,8 +1,11 @@
-import 'package:flutter/cupertino.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 
+import '../../../../core/constants/app_colors.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
+import '../../../../core/l10n/app_localizations.dart';
+import '../utils/surgery_experience_label.dart';
+import 'surgery_partner_logo_widget.dart';
 
 class SurgeryDoctorSummaryWidget extends StatelessWidget {
   const SurgeryDoctorSummaryWidget({
@@ -33,6 +36,17 @@ class SurgeryDoctorSummaryWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
+    final experienceEducation = [
+      formatSurgeryExperienceLabel(experience),
+      qualifications.trim(),
+    ].where((part) => part.isNotEmpty).join(' | ');
+    final metaStyle = TextStyle(
+      color: const Color(0xFFA6A6A6),
+      fontSize: 12.sp,
+      fontWeight: FontWeight.w400,
+    );
+
     return Container(
       padding: EdgeInsets.all(12.w),
       decoration: BoxDecoration(
@@ -57,14 +71,30 @@ class SurgeryDoctorSummaryWidget extends StatelessWidget {
                 child: SizedBox(
                   width: 56.r,
                   height: 56.r,
-                  child: Image.network(
-                    imageUrl,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) => Container(
-                      color: const Color(0xFFEFEFEF),
-                      child: const Icon(Icons.person, color: Color(0xFFBDBDBD)),
-                    ),
-                  ),
+                  child: imageUrl.trim().isEmpty
+                      ? ColoredBox(
+                          color: const Color(0xFFEFEFEF),
+                          child: Icon(
+                            Icons.person,
+                            color: const Color(0xFFBDBDBD),
+                            size: 28.r,
+                          ),
+                        )
+                      : CachedNetworkImage(
+                          imageUrl: imageUrl,
+                          fit: BoxFit.cover,
+                          placeholder: (_, _) => const ColoredBox(
+                            color: Color(0xFFEFEFEF),
+                          ),
+                          errorWidget: (_, _, _) => ColoredBox(
+                            color: const Color(0xFFEFEFEF),
+                            child: Icon(
+                              Icons.person,
+                              color: const Color(0xFFBDBDBD),
+                              size: 28.r,
+                            ),
+                          ),
+                        ),
                 ),
               ),
               SizedBox(width: 12.w),
@@ -75,42 +105,23 @@ class SurgeryDoctorSummaryWidget extends StatelessWidget {
                     Text(
                       doctorName,
                       style: theme.textTheme.titleMedium?.copyWith(
-                        color: const Color(0xFF061E40),
+                        color: AppColors.clr061E40,
                         fontSize: 13.sp,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
-                    Text(
-                      speciality,
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        color: const Color(0xFFA6A6A6),
-                        fontSize: 12.sp,
-                      ),
-                    ),
-                    Text(
-                      '$experience  $qualifications',
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        color: const Color(0xFFA6A6A6),
-                        fontSize: 12.sp,
-                      ),
-                    ),
+                    if (speciality.trim().isNotEmpty)
+                      Text(speciality.trim(), style: metaStyle),
+                    if (experienceEducation.isNotEmpty)
+                      Text(experienceEducation, style: metaStyle),
                   ],
                 ),
               ),
-              SizedBox(
+              SurgeryPartnerLogoWidget(
+                logoUrl: partnerLogoUrl,
                 width: 35.r,
                 height: 35.r,
-                child: SvgPicture.network(
-                  partnerLogoUrl,
-                  width: 35.r,
-                  height: 35.r,
-                  fit: BoxFit.contain,
-                  placeholderBuilder: (context) => const CupertinoActivityIndicator(),
-                  errorBuilder: (context, error, stackTrace) {
-                    debugPrint("SVG ERROR: $error");
-                    return const Icon(Icons.image_not_supported);
-                  },
-                ),
+                compact: true,
               ),
             ],
           ),
@@ -125,7 +136,7 @@ class SurgeryDoctorSummaryWidget extends StatelessWidget {
                     Text(
                       hospitalName,
                       style: theme.textTheme.titleSmall?.copyWith(
-                        color: const Color(0xFF061E40),
+                        color: AppColors.clr061E40,
                         fontWeight: FontWeight.w700,
                         fontSize: 13.sp,
                       ),
@@ -134,7 +145,7 @@ class SurgeryDoctorSummaryWidget extends StatelessWidget {
                     Text(
                       procedureName,
                       style: theme.textTheme.bodyMedium?.copyWith(
-                        color: const Color(0xFF061E40),
+                        color: AppColors.clr061E40,
                         fontSize: 12.sp,
                       ),
                     ),
@@ -145,7 +156,7 @@ class SurgeryDoctorSummaryWidget extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Text(
-                    'Stating from',
+                    l10n.surgeryStartingFrom,
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: const Color(0xFF777272),
                       fontSize: 10.sp,
@@ -154,7 +165,7 @@ class SurgeryDoctorSummaryWidget extends StatelessWidget {
                   Text(
                     price,
                     style: theme.textTheme.titleSmall?.copyWith(
-                      color: const Color(0xFF061E40),
+                      color: AppColors.clr061E40,
                       fontWeight: FontWeight.w600,
                       fontSize: 13.sp,
                     ),

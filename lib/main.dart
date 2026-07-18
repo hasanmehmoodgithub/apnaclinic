@@ -9,11 +9,9 @@ import 'package:flutter/rendering.dart';
 
 import 'core/debug/device_preview_support.dart';
 import 'core/di/dependency_injection.dart';
-import 'core/cities/domain/repositories/cities_repository.dart';
 import 'core/firebase/firebase_bootstrap.dart';
 import 'core/services/notification_service.dart';
 import 'core/utils/chucker_guard.dart';
-import 'features/dashboard/domain/services/promotional_banner_session.dart';
 import 'features/app/presentation/screens/apna_clinic_app.dart';
 
 void main() {
@@ -37,8 +35,6 @@ void main() {
         // Initialize dependency injection (includes AppPref initialization)
         // Encryption can be enabled/configured through AppPref methods after initialization
         await _initializeDependencyInjection();
-        // Always fetch promo banners on cold start / process restart.
-        unawaited(sl<PromotionalBannerSession>().reload());
 
         runApp(
           wrapWithDevicePreview(child: const ApnaClinicApp()),
@@ -132,43 +128,6 @@ Future<void> _initializeDependencyInjection() async {
     );
     // Re-throw to be caught by main guard
     rethrow;
-  }
-}
-
-Future<void> _prefetchStartupData() async {
-  await Future.wait([
-    _prefetchCities(),
-    _prefetchPromotionalBanner(),
-  ]);
-}
-
-Future<void> _prefetchCities() async {
-  try {
-    developer.log('Prefetching cities...', name: 'main');
-    await sl<CitiesRepository>().loadCities();
-    developer.log('Cities prefetched successfully', name: 'main');
-  } catch (e, stackTrace) {
-    developer.log(
-      'Cities prefetch failed, features will use fallback list: $e',
-      name: 'main',
-      error: e,
-      stackTrace: stackTrace,
-    );
-  }
-}
-
-Future<void> _prefetchPromotionalBanner() async {
-  try {
-    developer.log('Prefetching promotional banner...', name: 'main');
-    await sl<PromotionalBannerSession>().ensureLoaded();
-    developer.log('Promotional banner prefetched successfully', name: 'main');
-  } catch (e, stackTrace) {
-    developer.log(
-      'Promotional banner prefetch failed: $e',
-      name: 'main',
-      error: e,
-      stackTrace: stackTrace,
-    );
   }
 }
 

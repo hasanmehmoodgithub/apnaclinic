@@ -69,9 +69,33 @@ class SurgeryDoctorModel {
               json['imagePath'] ??
               '')
           .toString(),
-      partnerLogoUrl:
-          (json['partnerLogoUrl'] ?? json['partner_logo_url'] ?? '').toString(),
+      partnerLogoUrl: _resolvePartnerLogoUrl(json),
     );
+  }
+
+  static String _resolvePartnerLogoUrl(Map<String, dynamic> json) {
+    final direct = (json['partnerLogoUrl'] ??
+            json['PartnerLogoUrl'] ??
+            json['partner_logo_url'] ??
+            json['logoUrl'] ??
+            json['logo_url'] ??
+            '')
+        .toString()
+        .trim();
+    if (direct.isNotEmpty) return direct;
+
+    final partner = json['partner'];
+    if (partner is Map) {
+      final nested = (partner['logoUrl'] ??
+              partner['logo_url'] ??
+              partner['partnerLogoUrl'] ??
+              partner['PartnerLogoUrl'] ??
+              '')
+          .toString()
+          .trim();
+      if (nested.isNotEmpty) return nested;
+    }
+    return '';
   }
 
   static String _formatExperience(Map<String, dynamic> json) {
@@ -79,14 +103,33 @@ class SurgeryDoctorModel {
     if (years != null) {
       if (years is num) {
         final value = years.toInt();
+        if (value <= 0) return '';
         return value == 1 ? '1 year' : '$value years';
       }
       final text = years.toString().trim();
-      if (text.isNotEmpty) {
-        return text.toLowerCase().contains('year') ? text : '$text years';
+      if (text.isEmpty) return '';
+      final parsed = int.tryParse(text);
+      if (parsed != null) {
+        if (parsed <= 0) return '';
+        return parsed == 1 ? '1 year' : '$parsed years';
       }
+      final match = RegExp(r'(\d+)').firstMatch(text);
+      if (match != null) {
+        final value = int.tryParse(match.group(1)!);
+        if (value != null && value > 0) {
+          return value == 1 ? '1 year' : '$value years';
+        }
+      }
+      return text;
     }
-    return (json['experience'] ?? json['tatMessage'] ?? '').toString();
+    final fallback = (json['experience'] ?? '').toString().trim();
+    if (fallback.isEmpty) return '';
+    final parsed = int.tryParse(fallback);
+    if (parsed != null) {
+      if (parsed <= 0) return '';
+      return parsed == 1 ? '1 year' : '$parsed years';
+    }
+    return fallback;
   }
 
   static String _formatPrice(dynamic amount) {

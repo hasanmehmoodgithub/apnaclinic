@@ -22,7 +22,7 @@ Browse lab tests, booking/cart flow, payment details checkout, and order view de
 
 ## Data & APIs
 
-- **Cities:** `CitiesRepository` (prefetched at app open from `AppUrls.cities`). `cityId` resolved via `cityIdForName` when a city is selected.
+- **Cities:** shared `CitiesRepository` + `showSelectCityDialog` (`lib/core/cities/`). Catalog load resolves `cityId` via `cityIdForName`.
 - **Lab tests catalog:** `GET AppUrls.labTests` → `/acs-aggregator/api/v1/mobile/lab/tests`
   - Required: `cityId`
   - Optional: `page` (default 1), `limit` (default 20, max 50), `search`, `labId`

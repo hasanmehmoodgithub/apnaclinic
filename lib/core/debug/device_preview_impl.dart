@@ -11,7 +11,7 @@ bool get isDevicePreviewEnabled {
   if (kReleaseMode) return false;
   const flag = String.fromEnvironment(
     'ENABLE_DEVICE_PREVIEW',
-    defaultValue: 'true',
+    defaultValue: 'false',
   );
   return flag.toLowerCase() != 'false';
 }

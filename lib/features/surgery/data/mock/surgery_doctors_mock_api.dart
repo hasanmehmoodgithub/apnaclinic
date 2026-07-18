@@ -24,6 +24,8 @@ class SurgeryDoctorsMockApi {
           'price': 100000,
           'discountedPrice': 65000,
           'tatMessage': 'Our representative will contact you within 24 hours',
+          'partnerLogoUrl':
+              'http://bucket-route-minio.apps.jpocp.jazz.com.pk/apna-clinic/019f6574-0e42-711a-beff-919f80951036.png',
         },
         {
           'doctorName': 'Dr. Ayesha',
@@ -33,6 +35,8 @@ class SurgeryDoctorsMockApi {
           'price': 100000,
           'discountedPrice': 65000,
           'tatMessage': 'Our representative will contact you within 24 hours',
+          'partnerLogoUrl':
+              'http://bucket-route-minio.apps.jpocp.jazz.com.pk/apna-clinic/019f6574-0e42-711a-beff-919f80951036.png',
         },
         {
           'doctorName': 'Dr. Raheel Khan',
@@ -42,6 +46,8 @@ class SurgeryDoctorsMockApi {
           'price': 80000,
           'discountedPrice': 50000,
           'tatMessage': 'Our representative will contact you within 24 hours',
+          'partnerLogoUrl':
+              'http://bucket-route-minio.apps.jpocp.jazz.com.pk/apna-clinic/019f6574-0e42-711a-beff-919f80951036.png',
         },
       ],
     };

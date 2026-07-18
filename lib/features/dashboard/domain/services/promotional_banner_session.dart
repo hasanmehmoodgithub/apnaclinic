@@ -2,7 +2,8 @@ import '../../../../core/enums/state_status.dart';
 import '../entities/promotional_banner_entity.dart';
 import '../use_cases/promotional_banner_use_case.dart';
 
-/// Fetches promotional banners on app start / login and queues them for display.
+/// Holds promotional banners for home display. Fetched only from dashboard
+/// (`DashboardCubit.syncPromotionalBannerFromSession`), not on app start.
 class PromotionalBannerSession {
   PromotionalBannerSession({required this.getPromotionalBannerUseCase});
 

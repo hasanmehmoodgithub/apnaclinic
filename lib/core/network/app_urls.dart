@@ -110,7 +110,7 @@ class AppUrls {
   static String get paymentProviders =>
       '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/payment-provider';
 
-  /// Supported cities for lab and surgery (aggregator mobile API).
+  /// Supported cities (aggregator mobile API) — shared Select City dialog.
   static String get cities =>
       '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/cities';
 

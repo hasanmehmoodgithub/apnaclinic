@@ -177,19 +177,17 @@ class PharmacyCheckoutEditableField extends StatelessWidget {
   }
 }
 
-class PharmacyCheckoutCityDropdown extends StatelessWidget {
-  const PharmacyCheckoutCityDropdown({
+class PharmacyCheckoutCityField extends StatelessWidget {
+  const PharmacyCheckoutCityField({
     super.key,
     required this.label,
     required this.value,
-    required this.cities,
-    required this.onChanged,
+    required this.onTap,
   });
 
   final String label;
   final String value;
-  final List<String> cities;
-  final ValueChanged<String?> onChanged;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -206,37 +204,36 @@ class PharmacyCheckoutCityDropdown extends StatelessWidget {
           ),
         ),
         SizedBox(height: 12.h),
-        Container(
-          width: double.infinity,
-          height: 45.h,
-          padding: EdgeInsets.symmetric(horizontal: 10.w),
-          decoration: BoxDecoration(
-            color: AppColors.clrF7F7F7,
+        Material(
+          color: AppColors.clrF7F7F7,
+          borderRadius: BorderRadius.circular(2.r),
+          child: InkWell(
+            onTap: onTap,
             borderRadius: BorderRadius.circular(2.r),
-          ),
-          child: DropdownButtonHideUnderline(
-            child: DropdownButton<String>(
-              value: value,
-              isExpanded: true,
-              icon: Icon(
-                Icons.expand_more_rounded,
-                color: AppColors.clr5D758F,
-                size: 20.r,
-              ),
-              style: theme.textTheme.bodyLarge?.copyWith(
-                color: AppColors.clr5D758F,
-                fontSize: 19.sp / 1.6,
-                fontWeight: FontWeight.w500,
-              ),
-              onChanged: onChanged,
-              items: cities
-                  .map(
-                    (city) => DropdownMenuItem<String>(
-                      value: city,
-                      child: Text(city),
+            child: Container(
+              width: double.infinity,
+              height: 45.h,
+              padding: EdgeInsets.symmetric(horizontal: 10.w),
+              alignment: Alignment.centerLeft,
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      value,
+                      style: theme.textTheme.bodyLarge?.copyWith(
+                        color: AppColors.clr5D758F,
+                        fontSize: 19.sp / 1.6,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
-                  )
-                  .toList(),
+                  ),
+                  Icon(
+                    Icons.expand_more_rounded,
+                    color: AppColors.clr5D758F,
+                    size: 20.r,
+                  ),
+                ],
+              ),
             ),
           ),
         ),

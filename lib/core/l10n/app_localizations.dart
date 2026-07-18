@@ -1658,13 +1658,13 @@ abstract class AppLocalizations {
   /// No description provided for @surgeryAgeInvalid.
   ///
   /// In en, this message translates to:
-  /// **'Enter a valid age (numbers only).'**
+  /// **'Enter a valid age.'**
   String get surgeryAgeInvalid;
 
   /// No description provided for @surgeryPhoneInvalid.
   ///
   /// In en, this message translates to:
-  /// **'Enter a valid 11-digit phone number.'**
+  /// **'Enter a valid number.'**
   String get surgeryPhoneInvalid;
 
   /// No description provided for @surgerySelectForSurgery.
@@ -1709,6 +1709,138 @@ abstract class AppLocalizations {
   /// **'Proceed'**
   String get commonProceed;
 
+  /// No description provided for @commonApplyFilter.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply Filter'**
+  String get commonApplyFilter;
+
+  /// No description provided for @surgeryPatientDetailsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Patient Details'**
+  String get surgeryPatientDetailsTitle;
+
+  /// No description provided for @surgeryPatientNameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Patient Name'**
+  String get surgeryPatientNameLabel;
+
+  /// No description provided for @surgeryPatientNameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Patient Name'**
+  String get surgeryPatientNameHint;
+
+  /// No description provided for @surgeryPatientNameError.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter patient name'**
+  String get surgeryPatientNameError;
+
+  /// No description provided for @surgeryPatientAgeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Age'**
+  String get surgeryPatientAgeLabel;
+
+  /// No description provided for @surgeryPatientAgeHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Patient Age'**
+  String get surgeryPatientAgeHint;
+
+  /// No description provided for @surgeryPatientAgeError.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid age'**
+  String get surgeryPatientAgeError;
+
+  /// No description provided for @surgeryContactNumberLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact Number'**
+  String get surgeryContactNumberLabel;
+
+  /// No description provided for @surgeryContactNumberHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Patient Contact Number'**
+  String get surgeryContactNumberHint;
+
+  /// No description provided for @surgeryContactNumberError.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid number'**
+  String get surgeryContactNumberError;
+
+  /// No description provided for @surgeryEmergencyContactLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Emergency Contact'**
+  String get surgeryEmergencyContactLabel;
+
+  /// No description provided for @surgeryEmergencyContactHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Patient Emergency Contact'**
+  String get surgeryEmergencyContactHint;
+
+  /// No description provided for @surgeryEmergencyContactError.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid number'**
+  String get surgeryEmergencyContactError;
+
+  /// No description provided for @surgeryLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Surgery'**
+  String get surgeryLabel;
+
+  /// No description provided for @surgeryProceedCheckout.
+  ///
+  /// In en, this message translates to:
+  /// **'Proceed Checkout'**
+  String get surgeryProceedCheckout;
+
+  /// No description provided for @surgeryStartingFrom.
+  ///
+  /// In en, this message translates to:
+  /// **'Starting from'**
+  String get surgeryStartingFrom;
+
+  /// No description provided for @surgeryBookingSubmittedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Booking Request Submitted'**
+  String get surgeryBookingSubmittedTitle;
+
+  /// No description provided for @surgeryBookingSubmittedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Your surgery request has been received. Our representative will contact you within 24 hours to gather your medical history and relevant details for confirmation.'**
+  String get surgeryBookingSubmittedMessage;
+
+  /// No description provided for @surgeryBookingFailedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Booking Request Failed'**
+  String get surgeryBookingFailedTitle;
+
+  /// No description provided for @surgeryTypesLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to load surgery types. Please try again.'**
+  String get surgeryTypesLoadFailed;
+
+  /// No description provided for @surgerySubmitFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to submit booking request. Please try again.'**
+  String get surgerySubmitFailed;
+
   /// No description provided for @labTestSelectCityPlaceholder.
   ///
   /// In en, this message translates to:
@@ -1750,6 +1882,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Search by name'**
   String get labTestSelectCitySheetSearchHint;
+
+  /// No description provided for @selectCityTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a city'**
+  String get selectCityTitle;
+
+  /// No description provided for @selectCitySearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search by name'**
+  String get selectCitySearchHint;
+
+  /// No description provided for @selectCityEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No cities available'**
+  String get selectCityEmpty;
+
+  /// No description provided for @selectCityNoResults.
+  ///
+  /// In en, this message translates to:
+  /// **'No cities found'**
+  String get selectCityNoResults;
 
   /// No description provided for @labTestRequirementLabel.
   ///

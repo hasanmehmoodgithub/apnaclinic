@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-import '../../../../core/constants/app_colors.dart';
-import '../../../../core/extensions/screen_util_extensions.dart';
+import '../../../constants/app_colors.dart';
+import '../../../extensions/screen_util_extensions.dart';
 
-/// Single city row with trailing radio indicator for the lab test city dialog.
-class LabTestCityRadioTileWidget extends StatelessWidget {
-  const LabTestCityRadioTileWidget({
+/// Single city row with trailing radio indicator for [SelectCityDialogWidget].
+class SelectCityRadioTileWidget extends StatelessWidget {
+  const SelectCityRadioTileWidget({
     super.key,
     required this.city,
     required this.selected,
@@ -22,7 +22,7 @@ class LabTestCityRadioTileWidget extends StatelessWidget {
       onTap: onTap,
       child: Container(
         color: selected ? AppColors.clrF2F2F2 : Colors.transparent,
-        padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 16.h),
+        padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 12.h),
         child: Row(
           children: [
             Expanded(
@@ -30,7 +30,7 @@ class LabTestCityRadioTileWidget extends StatelessWidget {
                 city,
                 style: TextStyle(
                   color: AppColors.clr060,
-                  fontSize: 15.sp,
+                  fontSize: 13.sp,
                   fontWeight: FontWeight.w400,
                 ),
               ),
@@ -51,8 +51,8 @@ class _RadioCircle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 20.r,
-      height: 20.r,
+      width: 18.r,
+      height: 18.r,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         border: Border.all(
@@ -63,8 +63,8 @@ class _RadioCircle extends StatelessWidget {
       child: selected
           ? Center(
               child: Container(
-                width: 10.r,
-                height: 10.r,
+                width: 8.r,
+                height: 8.r,
                 decoration: const BoxDecoration(
                   color: AppColors.clr060,
                   shape: BoxShape.circle,

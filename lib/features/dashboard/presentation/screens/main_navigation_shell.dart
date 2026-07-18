@@ -111,9 +111,8 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
     sl<ApiService>().refreshToken();
 
     if (_sessionRefresh.consumeReloadPromotionalBanner()) {
-      final bannerSession = sl<PromotionalBannerSession>();
-      bannerSession.prepareForLoginRefresh();
-      await bannerSession.reload();
+      // Clear cached queue; HomeScreen / DashboardCubit fetches on open.
+      sl<PromotionalBannerSession>().prepareForLoginRefresh();
     }
 
     if (!mounted) return;

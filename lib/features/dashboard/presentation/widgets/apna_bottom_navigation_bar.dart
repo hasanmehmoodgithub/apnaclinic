@@ -21,66 +21,61 @@ class ApnaBottomNavigationBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    // Theme.platform respects Device Preview; dart:io Platform does not.
-    final isAndroid = Theme.of(context).platform == TargetPlatform.android;
-    final systemBottomInset = MediaQuery.viewPaddingOf(context).bottom;
-    final bottomPadding = 14.h +
-        (systemBottomInset > 0
-            ? systemBottomInset
-            : (isAndroid ? 24.h : 0));
-    return Container(
-      decoration: BoxDecoration(
-        color: AppColors.clrWhite,
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.clrBlack.withValues(alpha: 0.06),
-            blurRadius: 12.r,
-            offset: Offset(0, -2.h),
-          ),
-        ],
-      ),
-      padding: EdgeInsets.only(bottom: bottomPadding),
-      child: SizedBox(
-        height: 58.h,
-        child: Row(
-          children: [
-            Expanded(
-              child: _NavTab(
-                label: l10n.dashboardBottomHome,
-                filledAsset: Assets.svgNavHomeFilled,
-                outlineAsset: Assets.svgNavHomeOutline,
-                selected: currentIndex == MainNavigationTabs.home,
-                onTap: () => onTap(MainNavigationTabs.home),
-              ),
-            ),
-            Expanded(
-              child: _NavTab(
-                label: l10n.dashboardBottomInstantDoctor,
-                filledAsset: Assets.svgNavInstantDoctorFilled,
-                outlineAsset: Assets.svgNavInstantDoctorOutline,
-                selected: currentIndex == MainNavigationTabs.instantDoctor,
-                onTap: () => onTap(MainNavigationTabs.instantDoctor),
-              ),
-            ),
-            Expanded(
-              child: _NavTab(
-                label: l10n.dashboardBottomBookings,
-                filledAsset: Assets.svgNavBookingsFilled,
-                outlineAsset: Assets.svgNavBookingsOutline,
-                selected: currentIndex == MainNavigationTabs.bookings,
-                onTap: () => onTap(MainNavigationTabs.bookings),
-              ),
-            ),
-            Expanded(
-              child: _NavTab(
-                label: l10n.dashboardBottomSupport,
-                filledAsset: Assets.imgNavSupportFilled,
-                outlineAsset: Assets.svgNavSupportOutline,
-                selected: currentIndex == MainNavigationTabs.support,
-                onTap: () => onTap(MainNavigationTabs.support),
-              ),
+    return SafeArea(
+      bottom: true,
+      child: Container(
+        decoration: BoxDecoration(
+          color: AppColors.clrWhite,
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.clrBlack.withValues(alpha: 0.06),
+              blurRadius: 12.r,
+              offset: Offset(0, -2.h),
             ),
           ],
+        ),
+        child: SizedBox(
+          height: 58.h,
+          child: Row(
+            children: [
+              Expanded(
+                child: _NavTab(
+                  label: l10n.dashboardBottomHome,
+                  filledAsset: Assets.svgNavHomeFilled,
+                  outlineAsset: Assets.svgNavHomeOutline,
+                  selected: currentIndex == MainNavigationTabs.home,
+                  onTap: () => onTap(MainNavigationTabs.home),
+                ),
+              ),
+              Expanded(
+                child: _NavTab(
+                  label: l10n.dashboardBottomInstantDoctor,
+                  filledAsset: Assets.svgNavInstantDoctorFilled,
+                  outlineAsset: Assets.svgNavInstantDoctorOutline,
+                  selected: currentIndex == MainNavigationTabs.instantDoctor,
+                  onTap: () => onTap(MainNavigationTabs.instantDoctor),
+                ),
+              ),
+              Expanded(
+                child: _NavTab(
+                  label: l10n.dashboardBottomBookings,
+                  filledAsset: Assets.svgNavBookingsFilled,
+                  outlineAsset: Assets.svgNavBookingsOutline,
+                  selected: currentIndex == MainNavigationTabs.bookings,
+                  onTap: () => onTap(MainNavigationTabs.bookings),
+                ),
+              ),
+              Expanded(
+                child: _NavTab(
+                  label: l10n.dashboardBottomSupport,
+                  filledAsset: Assets.imgNavSupportFilled,
+                  outlineAsset: Assets.svgNavSupportOutline,
+                  selected: currentIndex == MainNavigationTabs.support,
+                  onTap: () => onTap(MainNavigationTabs.support),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

@@ -1,43 +1,25 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/extensions/screen_util_extensions.dart';
-import '../../../../core/l10n/app_localizations.dart';
-import 'surgery_booking_filter_row_widget.dart';
 
-class SurgeryBookingFilterSelectionContentWidget extends StatefulWidget {
+class SurgeryBookingFilterSelectionContentWidget extends StatelessWidget {
   const SurgeryBookingFilterSelectionContentWidget({
     super.key,
     required this.title,
     required this.options,
     required this.selected,
     required this.onBack,
-    required this.onProceed,
+    required this.onSelected,
   });
 
   final String title;
   final List<String> options;
   final String? selected;
   final VoidCallback onBack;
-  final ValueChanged<String?> onProceed;
-
-  @override
-  State<SurgeryBookingFilterSelectionContentWidget> createState() =>
-      _SurgeryBookingFilterSelectionContentWidgetState();
-}
-
-class _SurgeryBookingFilterSelectionContentWidgetState
-    extends State<SurgeryBookingFilterSelectionContentWidget> {
-  late String? selected;
-
-  @override
-  void initState() {
-    super.initState();
-    selected = widget.selected;
-  }
+  final ValueChanged<String> onSelected;
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
 
     return Column(
@@ -47,7 +29,7 @@ class _SurgeryBookingFilterSelectionContentWidgetState
         Row(
           children: [
             IconButton(
-              onPressed: widget.onBack,
+              onPressed: onBack,
               padding: EdgeInsets.zero,
               constraints: BoxConstraints(minWidth: 32.w, minHeight: 32.h),
               icon: Icon(
@@ -59,7 +41,7 @@ class _SurgeryBookingFilterSelectionContentWidgetState
             SizedBox(width: 4.w),
             Expanded(
               child: Text(
-                widget.title,
+                title,
                 style: theme.textTheme.titleMedium?.copyWith(
                   color: const Color(0xFF061E40),
                   fontWeight: FontWeight.w700,
@@ -70,11 +52,6 @@ class _SurgeryBookingFilterSelectionContentWidgetState
           ],
         ),
         SizedBox(height: 16.h),
-        SurgeryBookingFilterRowWidget(
-          label: selected ?? widget.title,
-          onTap: () {},
-        ),
-        SizedBox(height: 8.h),
         Container(
           constraints: BoxConstraints(maxHeight: 280.h),
           decoration: BoxDecoration(
@@ -84,19 +61,19 @@ class _SurgeryBookingFilterSelectionContentWidgetState
           clipBehavior: Clip.antiAlias,
           child: ListView.builder(
             shrinkWrap: true,
-            itemCount: widget.options.length,
+            itemCount: options.length,
             itemBuilder: (context, index) {
-              final option = widget.options[index];
+              final option = options[index];
               final isSelected = option == selected;
               return InkWell(
-                onTap: () => setState(() => selected = option),
+                onTap: () => onSelected(option),
                 child: Container(
                   height: 44.h,
                   padding: EdgeInsets.symmetric(horizontal: 12.w),
                   decoration: BoxDecoration(
                     color: isSelected ? const Color(0xFFF1F1F1) : Colors.white,
                     border: Border(
-                      bottom: index < widget.options.length - 1
+                      bottom: index < options.length - 1
                           ? const BorderSide(
                               color: Color(0xFFD0D0D0),
                               width: 0.5,
@@ -116,28 +93,6 @@ class _SurgeryBookingFilterSelectionContentWidgetState
                 ),
               );
             },
-          ),
-        ),
-        SizedBox(height: 18.h),
-        SizedBox(
-          width: double.infinity,
-          child: FilledButton(
-            onPressed: () => widget.onProceed(selected),
-            style: FilledButton.styleFrom(
-              backgroundColor: const Color(0xFF0FAA9A),
-              minimumSize: Size.fromHeight(50.h),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12.r),
-              ),
-            ),
-            child: Text(
-              l10n.commonProceed,
-              style: theme.textTheme.titleSmall?.copyWith(
-                color: Colors.white,
-                fontSize: 14.sp,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
           ),
         ),
       ],

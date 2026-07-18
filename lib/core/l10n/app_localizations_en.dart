@@ -844,10 +844,10 @@ class AppLocalizationsEn extends AppLocalizations {
       'Please add emergency contact number.';
 
   @override
-  String get surgeryAgeInvalid => 'Enter a valid age (numbers only).';
+  String get surgeryAgeInvalid => 'Enter a valid age.';
 
   @override
-  String get surgeryPhoneInvalid => 'Enter a valid 11-digit phone number.';
+  String get surgeryPhoneInvalid => 'Enter a valid number.';
 
   @override
   String get surgerySelectForSurgery => 'Select for Surgery';
@@ -871,6 +871,75 @@ class AppLocalizationsEn extends AppLocalizations {
   String get commonProceed => 'Proceed';
 
   @override
+  String get commonApplyFilter => 'Apply Filter';
+
+  @override
+  String get surgeryPatientDetailsTitle => 'Patient Details';
+
+  @override
+  String get surgeryPatientNameLabel => 'Patient Name';
+
+  @override
+  String get surgeryPatientNameHint => 'Patient Name';
+
+  @override
+  String get surgeryPatientNameError => 'Enter patient name';
+
+  @override
+  String get surgeryPatientAgeLabel => 'Age';
+
+  @override
+  String get surgeryPatientAgeHint => 'Patient Age';
+
+  @override
+  String get surgeryPatientAgeError => 'Enter a valid age';
+
+  @override
+  String get surgeryContactNumberLabel => 'Contact Number';
+
+  @override
+  String get surgeryContactNumberHint => 'Patient Contact Number';
+
+  @override
+  String get surgeryContactNumberError => 'Enter a valid number';
+
+  @override
+  String get surgeryEmergencyContactLabel => 'Emergency Contact';
+
+  @override
+  String get surgeryEmergencyContactHint => 'Patient Emergency Contact';
+
+  @override
+  String get surgeryEmergencyContactError => 'Enter a valid number';
+
+  @override
+  String get surgeryLabel => 'Surgery';
+
+  @override
+  String get surgeryProceedCheckout => 'Proceed Checkout';
+
+  @override
+  String get surgeryStartingFrom => 'Starting from';
+
+  @override
+  String get surgeryBookingSubmittedTitle => 'Booking Request Submitted';
+
+  @override
+  String get surgeryBookingSubmittedMessage =>
+      'Your surgery request has been received. Our representative will contact you within 24 hours to gather your medical history and relevant details for confirmation.';
+
+  @override
+  String get surgeryBookingFailedTitle => 'Booking Request Failed';
+
+  @override
+  String get surgeryTypesLoadFailed =>
+      'Unable to load surgery types. Please try again.';
+
+  @override
+  String get surgerySubmitFailed =>
+      'Unable to submit booking request. Please try again.';
+
+  @override
   String get labTestSelectCityPlaceholder => 'Select City';
 
   @override
@@ -890,6 +959,18 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get labTestSelectCitySheetSearchHint => 'Search by name';
+
+  @override
+  String get selectCityTitle => 'Select a city';
+
+  @override
+  String get selectCitySearchHint => 'Search by name';
+
+  @override
+  String get selectCityEmpty => 'No cities available';
+
+  @override
+  String get selectCityNoResults => 'No cities found';
 
   @override
   String get labTestRequirementLabel => 'Requirement';
