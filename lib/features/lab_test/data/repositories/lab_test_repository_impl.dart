@@ -1,5 +1,6 @@
 import '../../../../core/cities/domain/repositories/cities_repository.dart';
 import '../../../../core/functional/functional_export.dart';
+import '../../../../core/utils/error_handler.dart';
 import '../../domain/entities/lab_order_entity.dart';
 import '../../domain/entities/lab_test_catalog_entity.dart';
 import '../../domain/entities/lab_test_detail_entity.dart';
@@ -88,7 +89,7 @@ class LabTestRepositoryImpl implements LabTestRepository {
       );
       return Right(LabTestDetailMapper.toEntity(model));
     } catch (e) {
-      return Left(e.toString());
+      return Left(ErrorHandler.handleExceptions(e));
     }
   }
 
@@ -162,7 +163,7 @@ class LabTestRepositoryImpl implements LabTestRepository {
       await remoteDataSource.bookLabTest(body);
       return const Right(null);
     } catch (e) {
-      return Left(e.toString());
+      return Left(ErrorHandler.handleExceptions(e));
     }
   }
 }

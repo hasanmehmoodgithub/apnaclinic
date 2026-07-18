@@ -8,7 +8,9 @@ import '../../../../components/shimmer/app_shimmer.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/widgets/app_scaffold_gradient.dart';
+import '../../../../core/widgets/heart_loader_widget.dart';
 import '../../../../generated/assets.dart';
+import '../../../bookings/presentation/widgets/alert_dialog_card.dart';
 import '../cubit/lab_test_booking_cubit.dart';
 import '../cubit/lab_test_booking_state.dart';
 import '../lab_test_navigation.dart';
@@ -30,6 +32,10 @@ class LabTestBookingScreen extends StatefulWidget {
 }
 
 class _LabTestBookingScreenState extends State<LabTestBookingScreen> {
+  static const _detailLoaderId = 'lab_test_booking_detail';
+
+  bool _handlingLoadError = false;
+
   @override
   void initState() {
     super.initState();
@@ -38,8 +44,51 @@ class _LabTestBookingScreenState extends State<LabTestBookingScreen> {
       final cubit = context.read<LabTestBookingCubit>();
       await cubit.hydrate();
       if (!mounted) return;
+
+      final needsDetail = cubit.state.args.isPending &&
+          cubit.state.args.testId != null;
+      if (needsDetail) {
+        showHeartLoaderDialog(context, id: _detailLoaderId);
+      }
+
       await cubit.loadDetailIfNeeded();
+      HeartLoaderDialogController.close(_detailLoaderId);
+
+      if (!mounted) return;
+      final error = cubit.state.loadError;
+      if (error != null) {
+        await _showLoadErrorAndLeave(error);
+      }
     });
+  }
+
+  @override
+  void dispose() {
+    HeartLoaderDialogController.close(_detailLoaderId);
+    super.dispose();
+  }
+
+  Future<void> _showLoadErrorAndLeave(String error) async {
+    if (_handlingLoadError || !mounted) return;
+    _handlingLoadError = true;
+
+    final l10n = AppLocalizations.of(context)!;
+    final message = error.trim().isNotEmpty
+        ? error.trim()
+        : l10n.labTestBookingDataUnavailable;
+
+    await showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      useRootNavigator: true,
+      builder: (_) => AlertDialogCard(
+        kind: AlertKind.error,
+        title: l10n.labTestSomethingWentWrong,
+        message: message,
+      ),
+    );
+
+    if (mounted) context.pop();
   }
 
   @override
@@ -47,44 +96,36 @@ class _LabTestBookingScreenState extends State<LabTestBookingScreen> {
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
 
-    return BlocListener<LabTestBookingCubit, LabTestBookingState>(
-      listenWhen: (previous, current) =>
-          previous.loadError != current.loadError && current.loadError != null,
-      listener: (context, state) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n.labTestBookingDataUnavailable)),
-        );
-        context.pop();
-      },
-      child: AppScaffoldGradient(
-        child: Column(
-          children: [
-            BlocSelector<LabTestBookingCubit, LabTestBookingState, int>(
-              selector: (s) => s.cartItems.length,
-              builder: (context, cartCount) {
-                return LabTestBrowseHeaderWidget(
-                  padding: EdgeInsets.fromLTRB(8.w, 4.h, 16.w, 18.h),
-                  title: l10n.labTestScreenTitle,
-                  cartCount: cartCount,
-                  cartBadgeOverflowLabel: l10n.labTestCartBadgeOverflow,
-                  onCartTap: cartCount > 0
-                      ? () async {
-                          await labTestOpenCart(context);
-                          if (context.mounted) {
-                            await context.read<LabTestBookingCubit>().hydrate();
-                          }
+    return AppScaffoldGradient(
+      child: Column(
+        children: [
+          BlocSelector<LabTestBookingCubit, LabTestBookingState, int>(
+            selector: (s) => s.cartItems.length,
+            builder: (context, cartCount) {
+              return LabTestBrowseHeaderWidget(
+                padding: EdgeInsets.fromLTRB(8.w, 4.h, 16.w, 18.h),
+                title: l10n.labTestScreenTitle,
+                cartCount: cartCount,
+                cartBadgeOverflowLabel: l10n.labTestCartBadgeOverflow,
+                onCartTap: cartCount > 0
+                    ? () async {
+                        await labTestOpenCart(context);
+                        if (context.mounted) {
+                          await context.read<LabTestBookingCubit>().hydrate();
                         }
-                      : null,
-                );
-              },
-            ),
-            AppScaffoldGradientPanel(
-              topBorderRadius: 35.r,
-              child: BlocBuilder<LabTestBookingCubit, LabTestBookingState>(
-                builder: (context, state) {
-                      if (state.isLoadingDetail) {
-                        return _buildLoadingBody(context, state, l10n);
                       }
+                    : null,
+              );
+            },
+          ),
+          AppScaffoldGradientPanel(
+            topBorderRadius: 35.r,
+            child: BlocBuilder<LabTestBookingCubit, LabTestBookingState>(
+              builder: (context, state) {
+                    // Keep shimmer while loading or until error dialog is dismissed.
+                    if (state.isLoadingDetail || state.loadError != null) {
+                      return _buildLoadingBody(context, state, l10n);
+                    }
 
                       final partners = state.filteredPartners;
                       final vendors = state.filteredVendors;
@@ -228,7 +269,6 @@ class _LabTestBookingScreenState extends State<LabTestBookingScreen> {
             ),
           ],
         ),
-      ),
     );
   }
 
