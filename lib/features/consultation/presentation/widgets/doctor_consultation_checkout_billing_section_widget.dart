@@ -104,8 +104,8 @@ class _StackedAmount extends StatelessWidget {
                 TextSpan(
                   text: 'Rs. ',
                   style: textTheme.titleMedium?.copyWith(
-                    color: valueColor,
-                    fontSize: 13.sp,
+                    color: AppColors.clr667B99,
+                    fontSize: 12.sp,
                     fontWeight: FontWeight.w600,
                     height: 1.1,
                   ),
@@ -114,7 +114,7 @@ class _StackedAmount extends StatelessWidget {
                   text: '$amount',
                   style: textTheme.titleMedium?.copyWith(
                     color: valueColor,
-                    fontSize: 22.sp,
+                    fontSize: 18.sp,
                     fontWeight: FontWeight.w600,
                     height: 1.1,
                   ),
@@ -128,7 +128,7 @@ class _StackedAmount extends StatelessWidget {
             style: textTheme.titleMedium?.copyWith(
               color: valueColor,
               fontSize: 18.sp,
-              fontWeight: FontWeight.w600,
+              fontWeight: FontWeight.w400,
               height: 1.1,
             ),
           ),
