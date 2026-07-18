@@ -9,6 +9,7 @@ import '../../../../core/preference/app_pref.dart';
 import '../../../../core/utils/phone_format_utils.dart';
 import '../../../../core/widgets/app_scaffold_gradient.dart';
 import '../../../consultation/data/utils/consultation_booking_utils.dart';
+import '../../../consultation/domain/use_cases/get_payment_providers_use_case.dart';
 import '../../../consultation/presentation/models/doctor_consultation_jazzcash_sheet_result.dart';
 import '../../../consultation/presentation/widgets/doctor_consultation_jazzcash_accounts_sheet_widget.dart';
 import '../../../surgery/domain/use_cases/book_surgery_use_case.dart';
@@ -107,7 +108,9 @@ class _SurgeryDetailsScreenState extends State<SurgeryDetailsScreen> {
       context: context,
       backgroundColor: Colors.transparent,
       isScrollControlled: true,
-      builder: (_) => const PaymentMethodSheet(),
+      builder: (_) => const PaymentMethodSheet(
+        module: PaymentProviderModule.surgery,
+      ),
     );
 
     if (!mounted || selected == null) return;

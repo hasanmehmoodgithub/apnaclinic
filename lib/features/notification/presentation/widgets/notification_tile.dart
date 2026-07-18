@@ -24,7 +24,7 @@ class NotificationTile extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       child: Container(
-        padding: EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 12.h),
+        padding: EdgeInsets.fromLTRB(12.w, 12.h, 12.w, 12.h),
         decoration: BoxDecoration(
           border: Border(
             bottom: BorderSide(
@@ -81,7 +81,7 @@ class NotificationTile extends StatelessWidget {
                     style: theme.textTheme.titleMedium?.copyWith(
                       color: AppColors.clr0E2D55,
                       fontWeight: FontWeight.w700,
-                      fontSize: (30 / 1.6).sp,
+                      fontSize: 14.sp,
                     ),
                   ),
                   SizedBox(height: 2.h),

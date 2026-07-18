@@ -78,10 +78,13 @@ class ConsultationRepositoryImpl implements ConsultationRepository {
   }
 
   @override
-  Future<Either<ErrorMsg, List<PaymentProviderEntity>>>
-  getPaymentProviders() async {
+  Future<Either<ErrorMsg, List<PaymentProviderEntity>>> getPaymentProviders({
+    required String module,
+  }) async {
     try {
-      final providers = await remoteDataSource.getPaymentProviders();
+      final providers = await remoteDataSource.getPaymentProviders(
+        module: module,
+      );
       return Right(
         providers
             .map(

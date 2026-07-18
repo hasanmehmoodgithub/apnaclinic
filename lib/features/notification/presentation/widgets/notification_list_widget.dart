@@ -28,7 +28,7 @@ class NotificationListWidget extends StatelessWidget {
       children: [
         for (final entry in groupedItems.entries) ...[
           Padding(
-            padding: EdgeInsets.fromLTRB(23.w, 16.h, 23.w, 8.h),
+            padding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 8.h),
             child: Text(
               entry.key,
               style: theme.textTheme.titleMedium?.copyWith(

@@ -14,7 +14,13 @@ import '../../../consultation/domain/use_cases/get_payment_providers_use_case.da
 import 'payment_option.dart';
 
 class PaymentMethodSheet extends StatefulWidget {
-  const PaymentMethodSheet({super.key});
+  const PaymentMethodSheet({
+    super.key,
+    required this.module,
+  });
+
+  /// One of [PaymentProviderModule] values: consultation, lab, surgery, pharmacy.
+  final String module;
 
   @override
   State<PaymentMethodSheet> createState() => PaymentMethodSheetState();
@@ -41,7 +47,9 @@ class PaymentMethodSheetState extends State<PaymentMethodSheet> {
       _errorMessage = null;
     });
 
-    final result = await _getPaymentProvidersUseCase();
+    final result = await _getPaymentProvidersUseCase(
+      GetPaymentProvidersParams(module: widget.module),
+    );
     if (!mounted) return;
 
     result.fold(

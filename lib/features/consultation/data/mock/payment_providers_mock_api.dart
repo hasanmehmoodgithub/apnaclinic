@@ -3,7 +3,9 @@ import '../../../../core/config/mock_config.dart';
 class PaymentProvidersMockApi {
   static bool useMockResponses = MockConfig.enableConsultationMocks;
 
-  Future<Map<String, dynamic>> getPaymentProvidersSuccessResponse() async {
+  Future<Map<String, dynamic>> getPaymentProvidersSuccessResponse({
+    String? module,
+  }) async {
     await Future<void>.delayed(const Duration(milliseconds: 400));
     return {
       'success': true,

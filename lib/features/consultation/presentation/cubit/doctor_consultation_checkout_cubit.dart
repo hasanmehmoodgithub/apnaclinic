@@ -27,7 +27,9 @@ class DoctorConsultationCheckoutCubit extends Cubit<DoctorConsultationCheckoutSt
   Future<void> load(DoctorConsultationCheckoutArgs args) async {
     emit(state.copyWith(isLoading: true, clearError: true));
 
-    final providersResult = await _getPaymentProvidersUseCase();
+    final providersResult = await _getPaymentProvidersUseCase(
+      const GetPaymentProvidersParams(module: PaymentProviderModule.consultation),
+    );
     providersResult.fold(
       (error) => emit(
         state.copyWith(

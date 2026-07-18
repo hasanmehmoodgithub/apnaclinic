@@ -13,6 +13,7 @@ import '../../../../core/widgets/app_scaffold_gradient.dart';
 import '../../../../generated/assets.dart';
 import '../../../bookings/presentation/widgets/payment_method_sheet.dart';
 import '../../../consultation/data/utils/consultation_booking_utils.dart';
+import '../../../consultation/domain/use_cases/get_payment_providers_use_case.dart';
 import '../../../consultation/presentation/models/doctor_consultation_jazzcash_sheet_result.dart';
 import '../../../consultation/presentation/widgets/doctor_consultation_jazzcash_accounts_sheet_widget.dart';
 import '../../domain/use_cases/book_lab_test_use_case.dart';
@@ -139,7 +140,9 @@ class _LabTestCheckoutScreenState extends State<LabTestCheckoutScreen> {
       context: context,
       backgroundColor: Colors.transparent,
       isScrollControlled: true,
-      builder: (_) => const PaymentMethodSheet(),
+      builder: (_) => const PaymentMethodSheet(
+        module: PaymentProviderModule.lab,
+      ),
     );
     if (!mounted || selected == null) return;
 
