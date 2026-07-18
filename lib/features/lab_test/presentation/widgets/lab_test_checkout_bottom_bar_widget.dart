@@ -39,17 +39,11 @@ class LabTestCheckoutBottomBarWidget extends StatelessWidget {
                       ),
                 ),
               ),
-            if (isBusy)
-              SizedBox(
-                height: 62.h,
-                child: const Center(child: CircularProgressIndicator()),
-              )
-            else
-              AppButtonWidget(
-                title: AppLocalizations.of(context)!.labTestBookCta,
-                bgClr: AppColors.clr1FAFA3,
-                onTap: onProceed,
-              ),
+            AppButtonWidget(
+              title: AppLocalizations.of(context)!.labTestBookCta,
+              bgClr: AppColors.clr1FAFA3,
+              onTap: isBusy ? null : onProceed,
+            ),
           ],
         ),
       ),

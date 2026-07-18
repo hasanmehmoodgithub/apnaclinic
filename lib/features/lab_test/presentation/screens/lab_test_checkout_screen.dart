@@ -10,7 +10,9 @@ import '../../../../core/router/app_routes.dart';
 import '../../../../core/utils/auth_guard.dart';
 import '../../../../core/utils/phone_format_utils.dart';
 import '../../../../core/widgets/app_scaffold_gradient.dart';
+import '../../../../core/widgets/heart_loader_widget.dart';
 import '../../../../generated/assets.dart';
+import '../../../bookings/presentation/widgets/alert_dialog_card.dart';
 import '../../../bookings/presentation/widgets/payment_method_sheet.dart';
 import '../../../consultation/data/utils/consultation_booking_utils.dart';
 import '../../../consultation/domain/use_cases/get_payment_providers_use_case.dart';
@@ -36,6 +38,8 @@ class LabTestCheckoutScreen extends StatefulWidget {
 }
 
 class _LabTestCheckoutScreenState extends State<LabTestCheckoutScreen> {
+  static const _bookLoaderId = 'lab_test_checkout_book';
+
   final _nameController = TextEditingController();
   final _phoneController = TextEditingController();
   final _ageController = TextEditingController();
@@ -55,6 +59,7 @@ class _LabTestCheckoutScreenState extends State<LabTestCheckoutScreen> {
 
   @override
   void dispose() {
+    HeartLoaderDialogController.close(_bookLoaderId);
     _emergencyController.removeListener(_onEmergencyChanged);
     _nameController.dispose();
     _phoneController.dispose();
@@ -190,6 +195,7 @@ class _LabTestCheckoutScreenState extends State<LabTestCheckoutScreen> {
   }) async {
     final args = widget.args;
     setState(() => _isBooking = true);
+    showHeartLoaderDialog(context, id: _bookLoaderId);
 
     final result = await sl<BookLabTestUseCase>()(
       BookLabTestParams(
@@ -209,12 +215,32 @@ class _LabTestCheckoutScreenState extends State<LabTestCheckoutScreen> {
       ),
     );
 
+    HeartLoaderDialogController.close(_bookLoaderId);
     if (!mounted) return;
     setState(() => _isBooking = false);
 
     result.fold(
-      (error) => setState(() => _checkoutErrorMessage = error),
+      (error) => _showBookErrorDialog(error),
       (_) => _showBookedDialog(),
+    );
+  }
+
+  Future<void> _showBookErrorDialog(String error) async {
+    if (!mounted) return;
+    final l10n = AppLocalizations.of(context)!;
+    final message = error.trim().isNotEmpty
+        ? error.trim()
+        : l10n.labTestSomethingWentWrong;
+
+    await showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      useRootNavigator: true,
+      builder: (_) => AlertDialogCard(
+        kind: AlertKind.error,
+        title: l10n.labTestSomethingWentWrong,
+        message: message,
+      ),
     );
   }
 
