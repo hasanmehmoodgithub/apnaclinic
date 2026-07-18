@@ -4,15 +4,18 @@ import 'package:flutter_svg/flutter_svg.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../generated/assets.dart';
+import '../../data/utils/consultation_booking_utils.dart';
 import 'doctor_consultation_summary_card_shell_widget.dart';
 
 class DoctorConsultationSummaryPaymentCardWidget extends StatelessWidget {
   const DoctorConsultationSummaryPaymentCardWidget({
     super.key,
+    required this.paymentMethodCode,
     required this.paymentMethodName,
     required this.accountNumber,
   });
 
+  final String paymentMethodCode;
   final String paymentMethodName;
   final String accountNumber;
 
@@ -20,6 +23,12 @@ class DoctorConsultationSummaryPaymentCardWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final textTheme = Theme.of(context).textTheme;
+    final isJazzCash = ConsultationBookingUtils.isJazzCashPayment(
+      paymentMethodCode,
+      name: paymentMethodName,
+    );
+    final iconAsset =
+        isJazzCash ? Assets.iconsJazzCash : Assets.iconsDebitCard;
 
     return DoctorConsultationSummaryCardShell(
       child: IntrinsicHeight(
@@ -34,7 +43,7 @@ class DoctorConsultationSummaryPaymentCardWidget extends StatelessWidget {
                     width: 30.w,
                     height: 30.w,
                     child: SvgPicture.asset(
-                      Assets.iconsJazzCash,
+                      iconAsset,
                       fit: BoxFit.contain,
                     ),
                   ),
@@ -69,38 +78,40 @@ class DoctorConsultationSummaryPaymentCardWidget extends StatelessWidget {
                 ],
               ),
             ),
-            Container(
-              width: 0.5,
-              margin: EdgeInsets.symmetric(horizontal: 12.w),
-              color: const Color(0xFF9BA6A7),
-            ),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    l10n.consultationSummaryAccountNoLabel,
-                    style: textTheme.bodySmall?.copyWith(
-                      color: const Color(0xFF667B99),
-                      fontSize: 11.sp,
-                      fontWeight: FontWeight.w400,
-                    ),
-                  ),
-                  SizedBox(height: 2.h),
-                  Text(
-                    accountNumber,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: textTheme.titleMedium?.copyWith(
-                      color: const Color(0xFF061E40),
-                      fontSize: 14.sp,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ],
+            if (isJazzCash) ...[
+              Container(
+                width: 0.5,
+                margin: EdgeInsets.symmetric(horizontal: 12.w),
+                color: const Color(0xFF9BA6A7),
               ),
-            ),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      l10n.consultationSummaryAccountNoLabel,
+                      style: textTheme.bodySmall?.copyWith(
+                        color: const Color(0xFF667B99),
+                        fontSize: 11.sp,
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+                    SizedBox(height: 2.h),
+                    Text(
+                      accountNumber,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: textTheme.titleMedium?.copyWith(
+                        color: const Color(0xFF061E40),
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ],
         ),
       ),

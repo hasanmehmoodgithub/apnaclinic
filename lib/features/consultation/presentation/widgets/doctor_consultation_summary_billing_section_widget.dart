@@ -109,19 +109,26 @@ class _AmountValue extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return RichText(
-      text: TextSpan(
-        style: textTheme.titleMedium?.copyWith(
-          color: const Color(0xFF061E40),
-          fontSize: fontSize ?? 14.sp,
-          fontWeight: FontWeight.w400,
-        ),
+    final amountSize = fontSize ?? 14.sp;
+    return Text.rich(
+      TextSpan(
         children: [
           TextSpan(
             text: '$amount',
-            style: const TextStyle(fontWeight: FontWeight.w700),
+            style: textTheme.titleMedium?.copyWith(
+              color: const Color(0xFF061E40),
+              fontSize: amountSize,
+              fontWeight: FontWeight.w600,
+            ),
           ),
-          const TextSpan(text: ' Rs.'),
+          TextSpan(
+            text: ' Rs.',
+            style: textTheme.titleMedium?.copyWith(
+              color: const Color(0xFF667B99),
+              fontSize: 11.sp,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
         ],
       ),
     );

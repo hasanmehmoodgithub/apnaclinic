@@ -162,6 +162,7 @@ class DoctorConsultationSummaryScreen extends StatelessWidget {
                             ),
                             SizedBox(height: 10.h),
                             DoctorConsultationSummaryPaymentCardWidget(
+                              paymentMethodCode: args.paymentMethodCode,
                               paymentMethodName: args.paymentMethodName,
                               accountNumber: args.accountNumber,
                             ),

@@ -29,11 +29,11 @@ class DoctorConsultationCheckoutPaymentMethodTileWidget extends StatelessWidget 
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(12.r),
-          boxShadow: const [
+          boxShadow: [
             BoxShadow(
-              color: Color(0x0A000000),
+              color: Colors.black.withValues(alpha: 0.06),
               blurRadius: 10,
-              offset: Offset(0, 2),
+              offset: const Offset(0, 2),
             ),
           ],
         ),
@@ -78,8 +78,8 @@ class DoctorConsultationCheckoutPaymentMethodTileWidget extends StatelessWidget 
             ),
             SizedBox(width: 8.w),
             Container(
-              width: 24.w,
-              height: 24.h,
+              width: 18.w,
+              height: 18.h,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 border: Border.all(
@@ -90,8 +90,8 @@ class DoctorConsultationCheckoutPaymentMethodTileWidget extends StatelessWidget 
               child: isSelected
                   ? Center(
                       child: Container(
-                        width: 12.w,
-                        height: 12.h,
+                        width: 8.w,
+                        height: 8.h,
                         decoration: const BoxDecoration(
                           color: Color(0xFF0E3D66),
                           shape: BoxShape.circle,
