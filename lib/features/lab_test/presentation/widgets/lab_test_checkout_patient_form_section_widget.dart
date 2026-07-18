@@ -113,7 +113,7 @@ class _ReadonlyPatientCard extends StatelessWidget {
             TextButton(
               onPressed: onEdit,
               style: TextButton.styleFrom(
-                foregroundColor: AppColors.clr2F80ED,
+                foregroundColor: AppColors.clr024886,
                 padding: EdgeInsets.symmetric(horizontal: 4.w),
                 minimumSize: Size.zero,
                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
@@ -123,6 +123,7 @@ class _ReadonlyPatientCard extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 14.sp,
                   fontWeight: FontWeight.w500,
+                  color: AppColors.clr024886,
                 ),
               ),
             ),
@@ -184,7 +185,7 @@ class _EditPatientCard extends StatelessWidget {
               TextButton(
                 onPressed: onDone,
                 style: TextButton.styleFrom(
-                  foregroundColor: AppColors.clr2F80ED,
+                  foregroundColor: AppColors.clr024886,
                   padding: EdgeInsets.symmetric(horizontal: 8.w),
                   minimumSize: Size.zero,
                   tapTargetSize: MaterialTapTargetSize.shrinkWrap,
@@ -194,6 +195,7 @@ class _EditPatientCard extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 14.sp,
                     fontWeight: FontWeight.w500,
+                    color: AppColors.clr024886,
                   ),
                 ),
               ),
@@ -368,17 +370,17 @@ class _ReadonlyRow extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 10.h),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Expanded(
-            child: Text(
-              label,
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: AppColors.clr667B99,
-                fontSize: 13.sp,
-              ),
+          Text(
+            label,
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: AppColors.clr667B99,
+              fontSize: 13.sp,
             ),
           ),
-          Flexible(
+          SizedBox(width: 12.w),
+          Expanded(
             child: Text(
               value.isEmpty ? '—' : value,
               textAlign: TextAlign.right,
