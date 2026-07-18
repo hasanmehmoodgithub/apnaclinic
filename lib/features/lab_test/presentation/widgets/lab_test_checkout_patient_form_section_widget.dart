@@ -338,6 +338,10 @@ class _EmergencyContactCard extends StatelessWidget {
           controller: controller,
           hint: l10n.labTestEmergencyNumberHint,
           keyboardType: TextInputType.phone,
+          inputFormatters: [
+            FilteringTextInputFormatter.digitsOnly,
+            LengthLimitingTextInputFormatter(11),
+          ],
         ),
       ],
     );

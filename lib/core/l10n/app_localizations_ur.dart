@@ -1104,6 +1104,10 @@ class AppLocalizationsUr extends AppLocalizations {
       'براہ کرم تمام ضروری فیلڈز بھریں';
 
   @override
+  String get labTestCheckoutPhoneInvalid =>
+      'براہ کرم درست موبائل یا لینڈ لائن نمبر درج کریں۔';
+
+  @override
   String get labTestCheckoutBookedTitle => 'لیب ٹیسٹ کامیابی سے بک ہو گیا';
 
   @override

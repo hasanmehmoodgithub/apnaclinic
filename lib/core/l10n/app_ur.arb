@@ -360,6 +360,7 @@
   "labTestShowCodeInstruction": "یہ کوڈ لیب نمائندے کو دکھائیں",
   "labTestCheckoutTitle": "ادائیگی کی تفصیلات",
   "labTestCheckoutRequiredFieldsError": "براہ کرم تمام ضروری فیلڈز بھریں",
+  "labTestCheckoutPhoneInvalid": "براہ کرم درست موبائل یا لینڈ لائن نمبر درج کریں۔",
   "labTestCheckoutBookedTitle": "لیب ٹیسٹ کامیابی سے بک ہو گیا",
   "labTestCheckoutBookedMessage": "لیب کا نمائندہ جلد آپ سے رابطہ کرے گا۔\nاپنا ڈسکاؤنٹ کوڈ لیب نمائندے کو دکھائیں۔\nبعد میں کوڈ دیکھنے کے لیے:",
   "labTestCheckoutBookedPathHint": "مینو > میری بکنگز > لیب ٹیسٹ",
