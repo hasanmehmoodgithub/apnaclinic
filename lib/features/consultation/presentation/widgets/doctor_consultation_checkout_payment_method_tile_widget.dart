@@ -27,7 +27,8 @@ class DoctorConsultationCheckoutPaymentMethodTileWidget extends StatelessWidget 
       onTap: onTap,
       borderRadius: BorderRadius.circular(12.r),
       child: Container(
-        padding: EdgeInsets.fromLTRB(12.w, 12.h, 12.w, 12.h),
+        constraints: BoxConstraints(minHeight: 72.h),
+        padding: EdgeInsets.fromLTRB(14.w, 16.h, 14.w, 16.h),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(12.r),

@@ -193,14 +193,17 @@ class ConsultationRemoteDataSourceImpl implements ConsultationRemoteDataSource {
   }
 
   @override
-  Future<List<PaymentProviderModel>> getPaymentProviders() async {
+  Future<List<PaymentProviderModel>> getPaymentProviders({
+    required String module,
+  }) async {
+    final endpoint = AppUrls.paymentProviders(module: module);
     try {
       final Map<String, dynamic> response;
       if (PaymentProvidersMockApi.useMockResponses) {
         response = await paymentProvidersMockApi
-            .getPaymentProvidersSuccessResponse();
+            .getPaymentProvidersSuccessResponse(module: module);
       } else {
-        response = await apiService.get(AppUrls.paymentProviders);
+        response = await apiService.get(endpoint);
         log('getPaymentProviders response: $response');
       }
 
@@ -215,7 +218,7 @@ class ConsultationRemoteDataSourceImpl implements ConsultationRemoteDataSource {
       log('getPaymentProviders error: $e');
       final message = ErrorHandler.handleExceptions(
         e,
-        endpoint: AppUrls.paymentProviders,
+        endpoint: endpoint,
       );
       return Future.error(message);
     }

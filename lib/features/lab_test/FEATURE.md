@@ -32,7 +32,7 @@ Browse lab tests, booking/cart flow, payment details checkout, and order view de
   - Response: `data.partners[]` each with `labs[]` and `pricing.HOME_SAMPLING` / `pricing.WALK_IN` (`price`, `discountPct`, `finalPrice`).
   - Booking screen filters partners/labs by booking method (`WALK_IN` / `HOME_SAMPLING`); when no lab supports home sampling, partner/lab grids are hidden, sample type shows **N/A**, and **Add to Cart** is disabled.
 - **Book lab test:** `POST AppUrls.labBookTest` → `/acs-aggregator/api/v1/mobile/lab/book-test`
-  - Triggered from **checkout** CTA after picking a payment method (JazzCash prompts for an account msisdn; otherwise the patient phone is used).
+  - Triggered from **checkout** CTA after picking a payment method via `PaymentMethodSheet(module: lab)` → `GET payment-provider?module=lab` (JazzCash prompts for an account msisdn; otherwise the patient phone is used).
   - Body: `{ partnerId, labId, cityId, homeSample, paymentMethod, msisdn, patient: { name, age, gender, phoneNumber }, tests: [ { testId } ] }`.
   - `testId`s come from every cart line (supports multiple tests in one booking); `partnerId` / `labId` / `homeSample` come from the first cart line; `cityId` is resolved from the city name via `CitiesRepository`.
 - **Lab orders (bookings list):** `GET AppUrls.labOrders` — response items include optional `invoice` (PDF URL). Mapped through `LabOrderModel` → `LabOrderEntity` → bookings list.

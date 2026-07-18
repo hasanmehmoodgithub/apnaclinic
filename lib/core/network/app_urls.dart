@@ -106,9 +106,11 @@ class AppUrls {
   static String get doctorConsultationFeedback =>
       '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/doctor-consultation/feedback';
 
-  /// Payment providers for consultation checkout (aggregator mobile API).
-  static String get paymentProviders =>
-      '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/payment-provider';
+  /// Payment providers for checkout (aggregator mobile API).
+  /// [module] is one of: `consultation`, `lab`, `surgery`, `pharmacy`.
+  static String paymentProviders({required String module}) =>
+      '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/payment-provider'
+      '?module=${Uri.encodeComponent(module)}';
 
   /// Supported cities (aggregator mobile API) — shared Select City dialog.
   static String get cities =>

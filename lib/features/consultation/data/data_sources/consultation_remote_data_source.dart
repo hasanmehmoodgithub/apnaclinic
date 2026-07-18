@@ -19,7 +19,9 @@ abstract class ConsultationRemoteDataSource {
     required String doctorId,
     String? hospitalId,
   });
-  Future<List<PaymentProviderModel>> getPaymentProviders();
+  Future<List<PaymentProviderModel>> getPaymentProviders({
+    required String module,
+  });
   Future<ConsultationBookingsPageModel> getBookings({
     int page = 1,
     int limit = 20,

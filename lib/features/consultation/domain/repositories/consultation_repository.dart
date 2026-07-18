@@ -20,7 +20,9 @@ abstract class ConsultationRepository {
     required String doctorId,
     String? hospitalId,
   });
-  Future<Either<ErrorMsg, List<PaymentProviderEntity>>> getPaymentProviders();
+  Future<Either<ErrorMsg, List<PaymentProviderEntity>>> getPaymentProviders({
+    required String module,
+  });
   Future<Either<ErrorMsg, ConsultationBookingsPageEntity>> getBookings({
     int page = 1,
     int limit = 20,
