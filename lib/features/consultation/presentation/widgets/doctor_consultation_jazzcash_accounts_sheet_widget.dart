@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
+import '../../../../core/preference/app_pref.dart';
 import '../../../../core/router/app_routes.dart';
-import '../../../../generated/assets.dart';
+import '../../../../core/session/profile_session_sync.dart';
 import '../../../account/data/models/account_item_model.dart';
+import '../../../account/domain/entities/account_item_entity.dart';
 import '../../../account/domain/models/account_method.dart';
 import '../../../account/domain/use_cases/get_accounts_list_use_case.dart';
 import '../../../account/presentation/add_account_launch_source.dart';
@@ -39,13 +40,22 @@ class _DoctorConsultationJazzCashAccountsSheetWidgetState
     _loadAccounts();
   }
 
-  Future<void> _loadAccounts({String? selectPhone}) async {
+  /// Loads from [ProfileSessionSync] / prefs. Hits the API only when
+  /// [forceRefresh] is true (after adding a new account).
+  Future<void> _loadAccounts({
+    String? selectPhone,
+    bool forceRefresh = false,
+  }) async {
+    if (!forceRefresh) {
+      _loadAccountsLocally(selectPhone: selectPhone);
+      return;
+    }
+
     setState(() {
       _isLoading = true;
       _errorMessage = null;
     });
 
-    final l10n = AppLocalizations.of(context)!;
     final result = await sl<GetAccountsListUseCase>().call();
     if (!mounted) return;
 
@@ -57,45 +67,79 @@ class _DoctorConsultationJazzCashAccountsSheetWidgetState
         _accountMsisdns = const [];
         _selectedIndex = 0;
       }),
-      (items) {
-        final accounts = <AccountMethod>[];
-        final msisdns = <String>[];
-
-        for (final item in items) {
-          final msisdn = _resolveMsisdn(item);
-          if (msisdn.isEmpty) continue;
-
-          accounts.add(
-            AccountMethod(
-              bankName: l10n.accountMethodJazzCash,
-              accountHolderName: l10n.accountHolderFallback,
-              accountNumber: item.number.isNotEmpty ? item.number : msisdn,
-              isDefault: item.isDefault,
-            ),
-          );
-          msisdns.add(msisdn);
-        }
-
-        var selectedIndex = -1;
-        final trimmedSelectPhone = selectPhone?.trim();
-        if (trimmedSelectPhone != null && trimmedSelectPhone.isNotEmpty) {
-          selectedIndex = msisdns.indexWhere(
-            (msisdn) => accountPhonesMatch(msisdn, trimmedSelectPhone),
-          );
-        }
-        if (selectedIndex < 0) {
-          selectedIndex = accounts.indexWhere((item) => item.isDefault);
-        }
-        if (selectedIndex < 0 && accounts.isNotEmpty) selectedIndex = 0;
-
-        setState(() {
-          _isLoading = false;
-          _accounts = accounts;
-          _accountMsisdns = msisdns;
-          _selectedIndex = selectedIndex;
-        });
-      },
+      (items) => _applyItems(items, selectPhone: selectPhone),
     );
+  }
+
+  void _loadAccountsLocally({String? selectPhone}) {
+    final session = sl<ProfileSessionSync>();
+    if (session.isSynced || session.cachedAccounts.isNotEmpty) {
+      _applyItems(session.cachedAccounts, selectPhone: selectPhone);
+      return;
+    }
+
+    final phone = sl<AppPref>().getUserLocalModel()?.phone.trim() ?? '';
+    if (phone.isNotEmpty) {
+      _applyItems(
+        [
+          AccountItemEntity(id: '', number: phone, isDefault: true),
+        ],
+        selectPhone: selectPhone,
+      );
+      return;
+    }
+
+    setState(() {
+      _isLoading = false;
+      _errorMessage = null;
+      _accounts = const [];
+      _accountMsisdns = const [];
+      _selectedIndex = 0;
+    });
+  }
+
+  void _applyItems(
+    List<AccountItemEntity> items, {
+    String? selectPhone,
+  }) {
+    final l10n = AppLocalizations.of(context)!;
+    final accounts = <AccountMethod>[];
+    final msisdns = <String>[];
+
+    for (final item in items) {
+      final msisdn = _resolveMsisdn(item);
+      if (msisdn.isEmpty) continue;
+
+      accounts.add(
+        AccountMethod(
+          bankName: l10n.accountMethodJazzCash,
+          accountHolderName: l10n.accountHolderFallback,
+          accountNumber: item.number.isNotEmpty ? item.number : msisdn,
+          isDefault: item.isDefault,
+        ),
+      );
+      msisdns.add(msisdn);
+    }
+
+    var selectedIndex = -1;
+    final trimmedSelectPhone = selectPhone?.trim();
+    if (trimmedSelectPhone != null && trimmedSelectPhone.isNotEmpty) {
+      selectedIndex = msisdns.indexWhere(
+        (msisdn) => accountPhonesMatch(msisdn, trimmedSelectPhone),
+      );
+    }
+    if (selectedIndex < 0) {
+      selectedIndex = accounts.indexWhere((item) => item.isDefault);
+    }
+    if (selectedIndex < 0 && accounts.isNotEmpty) selectedIndex = 0;
+
+    setState(() {
+      _isLoading = false;
+      _errorMessage = null;
+      _accounts = accounts;
+      _accountMsisdns = msisdns;
+      _selectedIndex = selectedIndex;
+    });
   }
 
   Future<void> _openAddAccount() async {
@@ -106,14 +150,14 @@ class _DoctorConsultationJazzCashAccountsSheetWidgetState
     if (!mounted) return;
     final trimmedPhone = addedPhone?.trim();
     if (trimmedPhone == null || trimmedPhone.isEmpty) return;
-    await _loadAccounts(selectPhone: trimmedPhone);
+    await _loadAccounts(selectPhone: trimmedPhone, forceRefresh: true);
   }
 
-  String _resolveMsisdn(dynamic item) {
+  String _resolveMsisdn(AccountItemEntity item) {
     if (item is AccountItemModel && item.msisdn.trim().isNotEmpty) {
       return item.msisdn.trim();
     }
-    return item.number.toString().trim();
+    return item.number.trim();
   }
 
   void _onProceed() {
@@ -123,7 +167,7 @@ class _DoctorConsultationJazzCashAccountsSheetWidgetState
       return;
     }
 
-    Navigator.of(context).pop(
+    context.pop(
       DoctorConsultationJazzCashSheetResult.account(
         msisdn: _accountMsisdns[_selectedIndex],
       ),
@@ -160,8 +204,6 @@ class _DoctorConsultationJazzCashAccountsSheetWidgetState
                 ),
               ),
             ),
-            SizedBox(height: 14.h),
-            _JazzCashTopTile(textTheme: textTheme),
             SizedBox(height: 14.h),
             Text(
               l10n.consultationSelectAccountTitle,
@@ -216,7 +258,7 @@ class _DoctorConsultationJazzCashAccountsSheetWidgetState
             ),
             SizedBox(height: 12.h),
             TextButton(
-              onPressed: _loadAccounts,
+              onPressed: () => _loadAccounts(forceRefresh: true),
               child: Text(l10n.commonRetry),
             ),
           ],
@@ -237,61 +279,6 @@ class _DoctorConsultationJazzCashAccountsSheetWidgetState
         }),
         _AddAccountTile(onTap: _openAddAccount),
       ],
-    );
-  }
-}
-
-class _JazzCashTopTile extends StatelessWidget {
-  const _JazzCashTopTile({required this.textTheme});
-
-  final TextTheme textTheme;
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 12.h),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: const Color(0xFFE7EBF0)),
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 42.w,
-            height: 42.h,
-            decoration: const BoxDecoration(
-              color: Color(0xFFF8FAFC),
-              shape: BoxShape.circle,
-            ),
-            padding: EdgeInsets.all(8.r),
-            child: SvgPicture.asset(Assets.iconsJazzCash),
-          ),
-          SizedBox(width: 10.w),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  l10n.accountMethodJazzCash,
-                  style: textTheme.titleMedium?.copyWith(
-                    color: const Color(0xFF061E40),
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                Text(
-                  l10n.consultationJazzCashChargeDescription,
-                  style: textTheme.bodySmall?.copyWith(
-                    color: const Color(0xFF7B8798),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const _SelectionCircle(isSelected: true),
-        ],
-      ),
     );
   }
 }
