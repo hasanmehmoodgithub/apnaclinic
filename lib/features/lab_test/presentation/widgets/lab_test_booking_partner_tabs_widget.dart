@@ -54,27 +54,11 @@ class LabTestBookingPartnerTabsWidget extends StatelessWidget {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Container(
+                            LabTestFigmaImage(
+                              url: partner.logoUrl,
                               width: 26,
                               height: 26,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(6.r),
-                                color: Colors.white,
-                                border: Border.all(
-                                  color: const Color(0x352F2F2F),
-                                  width: 1.0,
-                                ),
-                              ),
-                              alignment: Alignment.center,
-                              child: Padding(
-                                padding: const EdgeInsets.all(3),
-                                child: LabTestFigmaImage(
-                                  url: partner.logoUrl,
-                                  width: 20,
-                                  height: 20,
-                                  fit: BoxFit.contain,
-                                ),
-                              ),
+                              fit: BoxFit.contain,
                             ),
                             SizedBox(width: 8.w),
                             Text(
