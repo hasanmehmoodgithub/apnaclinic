@@ -15,6 +15,7 @@ import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/preference/app_pref.dart';
 import '../../../../core/preference/app_pref_keys.dart';
 import '../../../../core/router/app_routes.dart';
+import '../../../../core/utils/auth_guard.dart';
 import '../../../../core/widgets/app_scaffold_gradient.dart';
 import '../../domain/entities/lab_test_item_entity.dart';
 import '../cubit/lab_test_cubit.dart';
@@ -114,12 +115,12 @@ class _LabTestScreenState extends State<LabTestScreen> {
                     LabTestBrowseSearchFieldWidget(
                       controller: _searchController,
                       hintText: l10n.labTestSearchFieldHint,
-                      onChanged: cubit.onSearchChanged,
+                      onSearch: cubit.submitSearch,
                     ),
                     Expanded(
                       child: LabTestCatalogListBlockWidget(
                         loadFailedMessage: l10n.labTestCatalogLoadFailed,
-                        emptyMessage: l10n.labTestNoTestsFound,
+                        emptyMessage: l10n.labTestNoRecordFound,
                         selectCityFirstMessage: l10n.labTestPleaseSelectCityFirst,
                         requirementLabel: l10n.labTestRequirementLabel,
                         sampleTypeLabel: l10n.labTestSampleTypeLabel,
@@ -206,6 +207,8 @@ class _LabTestScreenState extends State<LabTestScreen> {
   }
 
   void _onTestTap(BuildContext context, LabTestItemEntity item) {
+    if (!context.requireLogin()) return;
+
     final l10n = AppLocalizations.of(context)!;
     final cubit = context.read<LabTestCubit>();
     final state = cubit.state;

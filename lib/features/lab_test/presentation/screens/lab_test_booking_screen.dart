@@ -79,6 +79,7 @@ class _LabTestBookingScreenState extends State<LabTestBookingScreen> {
               },
             ),
             AppScaffoldGradientPanel(
+              topBorderRadius: 35.r,
               child: BlocBuilder<LabTestBookingCubit, LabTestBookingState>(
                 builder: (context, state) {
                       if (state.isLoadingDetail) {

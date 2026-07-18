@@ -23,19 +23,8 @@ class LabTestBookingBottomBarWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
+    return Padding(
       padding: EdgeInsets.fromLTRB(24.w, 14.h, 24.w, 8.h),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.07),
-            offset: const Offset(0, -5),
-            blurRadius: 30,
-          ),
-        ],
-      ),
       child: SafeArea(
         top: false,
         child: Column(

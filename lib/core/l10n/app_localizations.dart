@@ -1949,6 +1949,12 @@ abstract class AppLocalizations {
   /// **'No tests found'**
   String get labTestNoTestsFound;
 
+  /// No description provided for @labTestNoRecordFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No Record Found'**
+  String get labTestNoRecordFound;
+
   /// No description provided for @labTestCartBadgeOverflow.
   ///
   /// In en, this message translates to:

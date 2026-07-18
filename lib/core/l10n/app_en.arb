@@ -421,6 +421,7 @@
   "labTestDataStillLoading": "Lab test data is still loading.",
   "labTestCatalogLoadFailed": "Failed to load lab tests.",
   "labTestNoTestsFound": "No tests found",
+  "labTestNoRecordFound": "No Record Found",
   "labTestCartBadgeOverflow": "9+",
   "labTestBrowseItemFeeFallback": "Rs. 15,000/-",
   "labTestBookingChooseMethodTitle": "Choose a Booking Method",

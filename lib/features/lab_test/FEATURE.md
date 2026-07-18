@@ -7,14 +7,16 @@ Browse lab tests, booking/cart flow, payment details checkout, and order view de
 ## Routes / entry
 
 - `AppRoutes.labTest`, `labTestBooking`, `labTestCart`, `labTestCheckout`, `labTestViewDetails`.
+- Tapping a catalog test requires login (`AuthGuard.requireLogin`); guests are redirected to `AppRoutes.authLogin`.
 
 ## UI
 
 - `LabTestCheckoutBottomBarWidget` — payment details screen CTA uses shared `AppButtonWidget` (`labTestBookCta`).
 - Checkout **Payment Details** (`LabTestCheckoutScreen`):
-  - Summary card (`LabTestCheckoutSummaryCardWidget`): lab logo, test title, lab name, sample/method pills, fee + strikethrough original, partner logo, right-side `Assets.labTestCardVector`.
-  - Payment breakdown card: fee / discount / total.
-  - Patient details: **before Edit** = read-only name/gender/age/phone with **Edit**; **after Edit** = form (name, contact, gender radios, age) with **Done**. Emergency contact is always a separate card (required).
+  - Summary card (`LabTestCheckoutSummaryCardWidget`): bordered card with lab logo, test title, lab name, sample type label + pill / method pill, fee + strikethrough, partner logo.
+  - Payment breakdown: section title, fee/discount rows, divider, gray total bar (not a nested shadow card).
+  - Patient details: **before Edit** = read-only rows with **Edit**; **after Edit** = form with **Done**. Emergency contact always below (required).
+  - Bottom CTA has no separate white bar behind the button. Panel top radius `20`.
 - On open, `LabTestCubit.bootstrap()` reads `AppPrefKeys.labTestSelectedCity`, loads cities, then immediately calls the lab tests API when a saved city resolves to a `cityId`; first visit without a saved city auto-opens the city selection dialog (tests load after pick).
 - Selected city is persisted in `AppPrefKeys.labTestSelectedCity` and restored on every lab test visit until the user changes it.
 
@@ -35,11 +37,11 @@ Browse lab tests, booking/cart flow, payment details checkout, and order view de
   - `testId`s come from every cart line (supports multiple tests in one booking); `partnerId` / `labId` / `homeSample` come from the first cart line; `cityId` is resolved from the city name via `CitiesRepository`.
 - **Lab orders (bookings list):** `GET AppUrls.labOrders` — response items include optional `invoice` (PDF URL). Mapped through `LabOrderModel` → `LabOrderEntity` → bookings list.
 - **Lab order detail:** `GET AppUrls.labOrderById(id)` → `/acs-aggregator/api/v1/mobile/lab-orders/{id}` via `GetLabOrderDetailUseCase` when opening View Details from bookings. Same order shape as list items (`data` is a single object). When `invoice` is non-empty (or mocked), `LabTestViewDetailsInvoiceCard` opens the PDF via `AppUrlLauncher`.
-- Search debounces (400ms) and re-fetches from the API when a city is selected.
+- Search runs when the user taps the search icon (or keyboard Search); no debounce. Empty results show `LabTestCatalogEmptyWidget` (“No Record Found” + empty box). Re-fetches from the API when a city is selected.
 
 ## State
 
-- `LabTestCubit` — `bootstrap()` on create loads cities then `GET lab/tests` when saved/selected city is set; `selectCity()` / search re-fetches with resolved `cityId`.
+- `LabTestCubit` — `bootstrap()` on create loads cities then `GET lab/tests` when saved/selected city is set; `selectCity()` / `submitSearch()` re-fetches with resolved `cityId`.
 - `LabTestBookingCubit` — cart + partner/vendor selection for a single test.
 
 ## DI

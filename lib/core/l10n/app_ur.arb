@@ -325,6 +325,7 @@
   "labTestDataStillLoading": "لیب ٹیسٹ ڈیٹا ابھی لوڈ ہو رہا ہے۔",
   "labTestCatalogLoadFailed": "لیب ٹیسٹ لوڈ نہیں ہو سکے۔",
   "labTestNoTestsFound": "کوئی ٹیسٹ نہیں ملا",
+  "labTestNoRecordFound": "کوئی ریکارڈ نہیں ملا",
   "labTestCartBadgeOverflow": "9+",
   "labTestBrowseItemFeeFallback": "Rs. 15,000/-",
   "labTestBookingChooseMethodTitle": "بکنگ کا طریقہ منتخب کریں",

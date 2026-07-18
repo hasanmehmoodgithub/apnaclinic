@@ -358,7 +358,10 @@ class AppRouter {
         builder: (context, state) {
           final extra = state.extra;
           if (extra is! LabTestBookingArgs) {
-            return const LabTestScreen();
+            return BlocProvider<LabTestCubit>(
+              create: (_) => sl<LabTestCubit>(),
+              child: const LabTestScreen(),
+            );
           }
           return BlocProvider<LabTestBookingCubit>(
             create: (_) => LabTestBookingCubit(
@@ -376,7 +379,10 @@ class AppRouter {
         builder: (context, state) {
           final extra = state.extra;
           if (extra is! LabTestCheckoutArgs) {
-            return const LabTestScreen();
+            return BlocProvider<LabTestCubit>(
+              create: (_) => sl<LabTestCubit>(),
+              child: const LabTestScreen(),
+            );
           }
           return LabTestCheckoutScreen(args: extra);
         },
@@ -395,7 +401,10 @@ class AppRouter {
         builder: (context, state) {
           final extra = state.extra;
           if (extra is! LabTestViewDetailsArgs) {
-            return const LabTestScreen();
+            return BlocProvider<LabTestCubit>(
+              create: (_) => sl<LabTestCubit>(),
+              child: const LabTestScreen(),
+            );
           }
           return LabTestViewDetailsScreen(args: extra);
         },

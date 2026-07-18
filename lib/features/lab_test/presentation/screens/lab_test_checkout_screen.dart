@@ -361,42 +361,43 @@ class _LabTestCheckoutScreenState extends State<LabTestCheckoutScreen> {
         children: [
           LabTestCheckoutHeaderWidget(title: l10n.labTestCheckoutTitle),
           AppScaffoldGradientPanel(
+            topBorderRadius: 20.r,
             child: Column(
               children: [
                 Expanded(
                   child: SingleChildScrollView(
-                        padding: const EdgeInsets.fromLTRB(24, 30, 24, 24),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            LabTestCheckoutSummaryCardWidget(args: a),
-                            SizedBox(height: 12.h),
-                            LabTestCheckoutPaymentBreakdownCardWidget(args: a),
-                            SizedBox(height: 12.h),
-                            LabTestCheckoutPatientFormSectionWidget(
-                              theme: theme,
-                              nameController: _nameController,
-                              phoneController: _phoneController,
-                              ageController: _ageController,
-                              emergencyController: _emergencyController,
-                              gender: _gender,
-                              onGender: (g) => setState(() => _gender = g),
-                              isEditingPatientDetails: _isEditingPatientDetails,
-                              onToggleEdit: () => setState(
-                                () => _isEditingPatientDetails =
-                                    !_isEditingPatientDetails,
-                              ),
-                            ),
-                          ],
+                    padding: EdgeInsets.fromLTRB(20.w, 20.h, 20.w, 16.h),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        LabTestCheckoutSummaryCardWidget(args: a),
+                        SizedBox(height: 18.h),
+                        LabTestCheckoutPaymentBreakdownCardWidget(args: a),
+                        SizedBox(height: 18.h),
+                        LabTestCheckoutPatientFormSectionWidget(
+                          theme: theme,
+                          nameController: _nameController,
+                          phoneController: _phoneController,
+                          ageController: _ageController,
+                          emergencyController: _emergencyController,
+                          gender: _gender,
+                          onGender: (g) => setState(() => _gender = g),
+                          isEditingPatientDetails: _isEditingPatientDetails,
+                          onToggleEdit: () => setState(
+                            () => _isEditingPatientDetails =
+                                !_isEditingPatientDetails,
+                          ),
                         ),
-                      ),
+                      ],
                     ),
-                    LabTestCheckoutBottomBarWidget(
-                      onProceed: _onProceed,
-                      errorMessage: _checkoutErrorMessage,
-                      isBusy: _isBooking,
-                    ),
-                  ],
+                  ),
+                ),
+                LabTestCheckoutBottomBarWidget(
+                  onProceed: _onProceed,
+                  errorMessage: _checkoutErrorMessage,
+                  isBusy: _isBooking,
+                ),
+              ],
             ),
           ),
         ],

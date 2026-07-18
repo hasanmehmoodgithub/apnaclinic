@@ -994,6 +994,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get labTestNoTestsFound => 'No tests found';
 
   @override
+  String get labTestNoRecordFound => 'No Record Found';
+
+  @override
   String get labTestCartBadgeOverflow => '9+';
 
   @override

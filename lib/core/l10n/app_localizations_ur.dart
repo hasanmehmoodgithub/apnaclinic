@@ -994,6 +994,9 @@ class AppLocalizationsUr extends AppLocalizations {
   String get labTestNoTestsFound => 'کوئی ٹیسٹ نہیں ملا';
 
   @override
+  String get labTestNoRecordFound => 'کوئی ریکارڈ نہیں ملا';
+
+  @override
   String get labTestCartBadgeOverflow => '9+';
 
   @override
