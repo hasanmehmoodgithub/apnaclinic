@@ -7,10 +7,11 @@ import 'package:go_router/go_router.dart';
 import '../../../../components/shimmer/app_shimmer.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
-import '../../../../core/router/app_routes.dart';
 import '../../../../core/widgets/app_scaffold_gradient.dart';
+import '../../../../generated/assets.dart';
 import '../cubit/lab_test_booking_cubit.dart';
 import '../cubit/lab_test_booking_state.dart';
+import '../lab_test_navigation.dart';
 import '../widgets/lab_test_booking_bottom_bar_widget.dart';
 import '../widgets/lab_test_booking_city_box_widget.dart';
 import '../widgets/lab_test_booking_content_shimmer_widget.dart';
@@ -20,7 +21,6 @@ import '../widgets/lab_test_booking_test_summary_card_widget.dart';
 import '../widgets/lab_test_booking_vendor_grid_widget.dart';
 import '../widgets/lab_test_browse_header_widget.dart';
 import '../widgets/lab_test_cart_change_warning_dialog_widget.dart';
-import '../../../../generated/assets.dart';
 
 class LabTestBookingScreen extends StatefulWidget {
   const LabTestBookingScreen({super.key});
@@ -69,7 +69,7 @@ class _LabTestBookingScreenState extends State<LabTestBookingScreen> {
                   cartBadgeOverflowLabel: l10n.labTestCartBadgeOverflow,
                   onCartTap: cartCount > 0
                       ? () async {
-                          await context.pushNamed(AppRoutes.labTestCart);
+                          await labTestOpenCart(context);
                           if (context.mounted) {
                             await context.read<LabTestBookingCubit>().hydrate();
                           }
@@ -286,7 +286,7 @@ class _LabTestBookingScreenState extends State<LabTestBookingScreen> {
     );
     if (!context.mounted || action == null) return;
     if (action == LabTestCartChangeDialogAction.viewCart) {
-      await context.pushNamed(AppRoutes.labTestCart);
+      await labTestOpenCart(context);
       if (context.mounted) await cubit.hydrate();
       return;
     }
@@ -308,7 +308,7 @@ class _LabTestBookingScreenState extends State<LabTestBookingScreen> {
       return;
     }
     if (state.isCurrentSelectionInCart) {
-      await context.pushNamed(AppRoutes.labTestCart);
+      await labTestOpenCart(context);
       if (context.mounted) await cubit.hydrate();
       return;
     }

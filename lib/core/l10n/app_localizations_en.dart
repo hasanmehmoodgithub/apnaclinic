@@ -1105,6 +1105,10 @@ class AppLocalizationsEn extends AppLocalizations {
       'Please fill all the required fields';
 
   @override
+  String get labTestCheckoutPhoneInvalid =>
+      'Enter a valid mobile or landline number.';
+
+  @override
   String get labTestCheckoutBookedTitle => 'Lab Test Booked Successfully';
 
   @override

@@ -128,6 +128,12 @@ class _LabTestCheckoutScreenState extends State<LabTestCheckoutScreen> {
       setState(() => _checkoutErrorMessage = l10n.labTestCheckoutRequiredFieldsError);
       return;
     }
+    if (!PhoneFormatUtils.isValidMobileOrLandline(
+      _emergencyController.text.trim(),
+    )) {
+      setState(() => _checkoutErrorMessage = l10n.labTestCheckoutPhoneInvalid);
+      return;
+    }
     if (widget.args.testIds.isEmpty) {
       setState(() => _checkoutErrorMessage = l10n.labTestCheckoutRequiredFieldsError);
       return;

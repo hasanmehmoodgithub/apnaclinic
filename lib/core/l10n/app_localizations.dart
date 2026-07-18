@@ -2159,6 +2159,12 @@ abstract class AppLocalizations {
   /// **'Please fill all the required fields'**
   String get labTestCheckoutRequiredFieldsError;
 
+  /// No description provided for @labTestCheckoutPhoneInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid mobile or landline number.'**
+  String get labTestCheckoutPhoneInvalid;
+
   /// No description provided for @labTestCheckoutBookedTitle.
   ///
   /// In en, this message translates to:

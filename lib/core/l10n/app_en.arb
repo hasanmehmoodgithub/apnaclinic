@@ -456,6 +456,7 @@
   "labTestShowCodeInstruction": "Show this code to the lab representative",
   "labTestCheckoutTitle": "Payment Details",
   "labTestCheckoutRequiredFieldsError": "Please fill all the required fields",
+  "labTestCheckoutPhoneInvalid": "Enter a valid mobile or landline number.",
   "labTestCheckoutBookedTitle": "Lab Test Booked Successfully",
   "labTestCheckoutBookedMessage": "A lab representative will contact you shortly.\nPresent your discount code to the lab representative.\nTo access your code later:",
   "labTestCheckoutBookedPathHint": "Menu > My Bookings > Lab Test",

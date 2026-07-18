@@ -3,6 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/extensions/screen_util_extensions.dart';
+import '../../../../core/utils/auth_guard.dart';
 import '../../../../generated/assets.dart';
 
 /// Top app bar: back, title, cart with optional count badge.
@@ -25,6 +26,7 @@ class LabTestBrowseHeaderWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final showCartCount = context.isUserLoggedIn && cartCount > 0;
     return Padding(
       padding: padding,
       child: Row(
@@ -81,7 +83,7 @@ class LabTestBrowseHeaderWidget extends StatelessWidget {
                     ),
                   ),
                 ),
-                if (cartCount > 0)
+                if (showCartCount)
                   Positioned(
                     right: 2,
                     top: 2,

@@ -20,6 +20,7 @@ import '../../../../core/widgets/app_scaffold_gradient.dart';
 import '../../domain/entities/lab_test_item_entity.dart';
 import '../cubit/lab_test_cubit.dart';
 import '../cubit/lab_test_state.dart';
+import '../lab_test_navigation.dart';
 import '../lab_test_route_args.dart';
 import '../widgets/lab_test_browse_header_widget.dart';
 import '../widgets/lab_test_browse_search_field_widget.dart';
@@ -83,7 +84,7 @@ class _LabTestScreenState extends State<LabTestScreen> {
               cartCount: _cartCount(),
               cartBadgeOverflowLabel: l10n.labTestCartBadgeOverflow,
               onCartTap: () async {
-                await context.pushNamed(AppRoutes.labTestCart);
+                await labTestOpenCart(context);
                 if (mounted) setState(() {});
               },
             ),
@@ -241,6 +242,7 @@ class _LabTestScreenState extends State<LabTestScreen> {
   }
 
   int _cartCount() {
+    if (!AuthGuard.isLoggedIn(_appPref)) return 0;
     final raw = _appPref.getString(_cartPrefKey)?.trim();
     if (raw == null || raw.isEmpty) return 0;
     try {

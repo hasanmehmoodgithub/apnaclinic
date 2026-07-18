@@ -13,4 +13,10 @@ class PhoneFormatUtils {
     if (digits.startsWith('0')) return digits;
     return msisdn;
   }
+
+  /// Mobile (11 digits) or landline/PTCL (10 digits). Max length 11.
+  static bool isValidMobileOrLandline(String value) {
+    final digits = value.replaceAll(RegExp(r'\D'), '');
+    return digits.length == 10 || digits.length == 11;
+  }
 }
