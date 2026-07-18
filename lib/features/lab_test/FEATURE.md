@@ -29,7 +29,8 @@ Browse lab tests, booking/cart flow, payment details checkout, and order view de
   - Triggered from **checkout** CTA after picking a payment method (JazzCash prompts for an account msisdn; otherwise the patient phone is used).
   - Body: `{ partnerId, labId, cityId, homeSample, paymentMethod, msisdn, patient: { name, age, gender, phoneNumber }, tests: [ { testId } ] }`.
   - `testId`s come from every cart line (supports multiple tests in one booking); `partnerId` / `labId` / `homeSample` come from the first cart line; `cityId` is resolved from the city name via `CitiesRepository`.
-- **Lab orders (bookings list):** `GET AppUrls.labOrders` — response items include optional `invoice` (PDF URL). Mapped through `LabOrderModel` → `LabOrderEntity` → bookings list → view details; when non-empty, `LabTestViewDetailsInvoiceCard` opens the PDF via `AppUrlLauncher`.
+- **Lab orders (bookings list):** `GET AppUrls.labOrders` — response items include optional `invoice` (PDF URL). Mapped through `LabOrderModel` → `LabOrderEntity` → bookings list.
+- **Lab order detail:** `GET AppUrls.labOrderById(id)` → `/acs-aggregator/api/v1/mobile/lab-orders/{id}` via `GetLabOrderDetailUseCase` when opening View Details from bookings. Same order shape as list items (`data` is a single object). When `invoice` is non-empty (or mocked), `LabTestViewDetailsInvoiceCard` opens the PDF via `AppUrlLauncher`.
 - Search debounces (400ms) and re-fetches from the API when a city is selected.
 
 ## State
@@ -39,7 +40,7 @@ Browse lab tests, booking/cart flow, payment details checkout, and order view de
 
 ## DI
 
-- `lab_test_injection.dart` — `LabTestRemoteDataSource`, `LabTestRepository`, `GetLabTestCatalogUseCase`, `GetLabTestDetailUseCase`, `BookLabTestUseCase`, `LabTestCubit`, `LabTestCartCubit`.
+- `lab_test_injection.dart` — `LabTestRemoteDataSource`, `LabTestRepository`, `GetLabTestCatalogUseCase`, `GetLabTestDetailUseCase`, `GetLabOrdersUseCase`, `GetLabOrderDetailUseCase`, `BookLabTestUseCase`, `LabTestCubit`, `LabTestCartCubit`.
 
 ## Mocks
 

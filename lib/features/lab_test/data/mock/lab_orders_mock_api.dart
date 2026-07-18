@@ -115,4 +115,70 @@ class LabOrdersMockApi {
       'timestamp': DateTime.now().toUtc().toIso8601String(),
     };
   }
+
+  Future<Map<String, dynamic>> getLabOrderDetailSuccessResponse({
+    required String orderId,
+  }) async {
+    await Future<void>.delayed(const Duration(milliseconds: 250));
+    final list = await getLabOrdersSuccessResponse(page: 1, limit: 50);
+    final data = list['data'];
+    final items = data is Map ? data['data'] : null;
+    Map<String, dynamic>? matched;
+    if (items is List) {
+      for (final item in items) {
+        if (item is! Map) continue;
+        final map = Map<String, dynamic>.from(item);
+        final id = (map['orderId'] ?? '').toString();
+        final publicId = (map['publicId'] ?? '').toString();
+        if (id == orderId || publicId == orderId) {
+          matched = map;
+          break;
+        }
+      }
+      if (matched == null && items.isNotEmpty && items.first is Map) {
+        matched = Map<String, dynamic>.from(items.first as Map);
+      }
+    }
+    matched ??= {
+      'orderId': int.tryParse(orderId) ?? orderId,
+      'publicId': orderId,
+      'orderType': 'WALK_IN',
+      'status': 'PAID',
+      'reportStatus': 'NOT_AVAILABLE',
+      'paymentMethod': 'CARD',
+      'partnerRef': '1ZV2A246',
+      'discountCode': null,
+      'lab': {'id': 1, 'name': 'Chughtai Lab', 'logoUrl': ''},
+      'partner': {'id': 2, 'name': 'Oladoc', 'logoUrl': ''},
+      'patient': {
+        'name': 'Sample Patient',
+        'age': 30,
+        'gender': 'Male',
+        'phone': '03001234567',
+      },
+      'tests': [
+        {'name': 'Complete Blood Count (CBC)', 'price': 800, 'status': 'PENDING'},
+      ],
+      'pricing': {
+        'subtotal': 800,
+        'discount': 160,
+        'homeSamplingFee': 0,
+        'total': 640,
+        'currency': 'PKR',
+      },
+      'reports': [],
+      'invoice':
+          'https://medicalguidelines.msf.org/sites/default/files/2026-05/guideline-170-en.pdf',
+      'placedAt': '2026-07-16 07:43',
+      'createdAt': '2026-07-16 12:44',
+    };
+
+    return {
+      'success': true,
+      'message': 'Lab order retrieved',
+      'code': 200,
+      'data': matched,
+      'timestamp': DateTime.now().toUtc().toIso8601String(),
+    };
+  }
 }

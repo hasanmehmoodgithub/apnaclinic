@@ -1952,8 +1952,14 @@ abstract class AppLocalizations {
   /// No description provided for @labTestOrderNoPrefix.
   ///
   /// In en, this message translates to:
-  /// **'Order no.'**
+  /// **'Order No.'**
   String get labTestOrderNoPrefix;
+
+  /// No description provided for @labTestBookingCardSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Lab Test Report'**
+  String get labTestBookingCardSubtitle;
 
   /// No description provided for @labTestBookingDateLabel.
   ///

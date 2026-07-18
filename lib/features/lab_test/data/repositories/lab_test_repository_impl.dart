@@ -106,6 +106,22 @@ class LabTestRepositoryImpl implements LabTestRepository {
   }
 
   @override
+  Future<Either<ErrorMsg, LabOrderEntity>> getLabOrderDetail({
+    required String orderId,
+  }) async {
+    try {
+      final trimmed = orderId.trim();
+      if (trimmed.isEmpty) {
+        return const Left('Missing lab order id.');
+      }
+      final model = await remoteDataSource.getLabOrderDetail(orderId: trimmed);
+      return Right(LabOrdersMapper.toEntity(model));
+    } catch (e) {
+      return Left(e.toString());
+    }
+  }
+
+  @override
   Future<Either<ErrorMsg, void>> bookLabTest(BookLabTestParams params) async {
     try {
       if (params.testIds.isEmpty) {

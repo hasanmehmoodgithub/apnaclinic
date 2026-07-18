@@ -21,4 +21,8 @@ abstract class LabTestRepository {
     int page = 1,
     int limit = 20,
   });
+
+  Future<Either<ErrorMsg, LabOrderEntity>> getLabOrderDetail({
+    required String orderId,
+  });
 }

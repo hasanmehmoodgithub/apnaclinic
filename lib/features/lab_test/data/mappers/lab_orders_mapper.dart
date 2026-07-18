@@ -6,14 +6,14 @@ class LabOrdersMapper {
 
   static LabOrdersPageEntity toPageEntity(LabOrdersPageModel model) {
     return LabOrdersPageEntity(
-      items: model.items.map(_toEntity).toList(growable: false),
+      items: model.items.map(toEntity).toList(growable: false),
       page: model.page,
       limit: model.limit,
       total: model.total,
     );
   }
 
-  static LabOrderEntity _toEntity(LabOrderModel model) {
+  static LabOrderEntity toEntity(LabOrderModel model) {
     return LabOrderEntity(
       orderId: model.orderId,
       publicId: model.publicId,

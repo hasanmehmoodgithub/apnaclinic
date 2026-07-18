@@ -103,6 +103,7 @@ class Assets {
   static const String labTestBookingNayaLogo = 'assets/svg/lab_test/booking_naya_logo.svg';
   static const String labTestBookingOladocLogo = 'assets/svg/lab_test/booking_oladoc_logo.svg';
   static const String labTestCardBgVector = 'assets/svg/lab_test/card_bg_vector.svg';
+  static const String labTestCardVector = 'assets/img/lab_test/card_vector.png';
   static const String labTestCheckoutPartnerLogo = 'assets/svg/lab_test/checkout_partner_logo.svg';
   static const String labTestChughtaiLabLogo = 'assets/svg/lab_test/chughtai_lab_logo.svg';
   static const String labTestCityChevron = 'assets/svg/lab_test/city_chevron.svg';

@@ -995,7 +995,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get labTestDiscountCodeCopied => 'Discount code copied';
 
   @override
-  String get labTestOrderNoPrefix => 'Order no.';
+  String get labTestOrderNoPrefix => 'Order No.';
+
+  @override
+  String get labTestBookingCardSubtitle => 'Lab Test Report';
 
   @override
   String get labTestBookingDateLabel => 'Booking Date';

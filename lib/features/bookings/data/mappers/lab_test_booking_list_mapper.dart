@@ -49,12 +49,13 @@ class LabTestBookingListMapper {
     );
   }
 
-  static LabTestViewDetailsArgs toViewDetailsArgs(
-    LabTestBookingItemModel booking,
+  static LabTestViewDetailsContent toViewDetailsContent(
+    LabOrderEntity order,
     AppLocalizations l10n,
   ) {
+    final booking = fromOrder(order);
     final invoice = booking.invoice?.trim();
-    return LabTestViewDetailsArgs(
+    return LabTestViewDetailsContent(
       testTitle: booking.reportTitle,
       labName: booking.labName,
       labLogoUrl: booking.labLogoUrl,
@@ -62,11 +63,8 @@ class LabTestBookingListMapper {
       sampleType: l10n.labTestSampleTypeNotAvailable,
       discountedFee: booking.discountedFee,
       originalFee: booking.originalFee,
-      discountCode: booking.displayCode,
+      discountCode: booking.discountCode,
       patientName: booking.patientName,
-      patientAge: booking.patientAge,
-      patientGender: booking.patientGender,
-      patientPhone: booking.patientPhone,
       orderNo: booking.orderNo,
       bookingDate: booking.dateLabel,
       statusLabel: booking.statusLabel,
