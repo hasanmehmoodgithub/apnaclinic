@@ -36,7 +36,7 @@ In-app notification list and Firebase Cloud Messaging (FCM) push notifications.
 - Tap flow: if unread → heart loader → mark read → navigate by `serviceType` + `entityId`; if already `isRead` → navigate only (no mark-read API).
   - `CONSULTATION` → `doctorConsultationBookingDetails` (`bookingId` = entity id; detail API loads).
   - `SURGERY` → `surgeryBookingDetails` (`leadId` = entity id; lead detail API loads).
-  - `LAB` → `labTestViewDetails` (order no = entity id; placeholder fields until order-detail API).
+  - `LAB` → `labTestViewDetails` (`orderId` = entity id; order detail API loads).
   - `PHARMACY` → `pharmacyBookingDetails` (`orderNo` = entity id).
 
 ## State

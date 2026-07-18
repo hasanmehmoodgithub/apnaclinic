@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../core/l10n/app_localizations.dart';
 import '../../../core/router/app_routes.dart';
 import '../../bookings/data/models/surgery_details_item.dart';
 import '../../bookings/presentation/doctor_consultation_booking_details_args.dart';
@@ -35,27 +34,9 @@ void openNotificationDeepLink(
       );
       return;
     case 'LAB':
-      final l10n = AppLocalizations.of(context)!;
       context.pushNamed(
         AppRoutes.labTestViewDetails,
-        extra: LabTestViewDetailsArgs(
-          testTitle: item.title,
-          labName: '',
-          labLogoUrl: '',
-          partnerLogoUrl: '',
-          sampleType: l10n.labTestSampleTypeNotAvailable,
-          discountedFee: '',
-          originalFee: '',
-          discountCode: '',
-          patientName: '',
-          patientAge: 0,
-          patientGender: '',
-          patientPhone: '',
-          orderNo: entityId,
-          bookingDate: item.dateLabel,
-          statusLabel: item.type.replaceAll('_', ' '),
-          note: item.message,
-        ),
+        extra: LabTestViewDetailsArgs(orderId: entityId),
       );
       return;
     case 'PHARMACY':
