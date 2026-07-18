@@ -243,10 +243,10 @@ class SurgeryPatientDetailsCubit extends Cubit<SurgeryPatientDetailsState> {
     final genderMissing = gender.isEmpty;
     final contactMissing = trimmedPhone.isEmpty;
     final contactInvalid =
-        !contactMissing && !_isValidPakistanMobilePhone(trimmedPhone);
+        !contactMissing && !_isValidContactPhone(trimmedPhone);
     final emergencyMissing = trimmedEmergency.isEmpty;
     final emergencyInvalid =
-        !emergencyMissing && !_isValidPakistanMobilePhone(trimmedEmergency);
+        !emergencyMissing && !_isValidContactPhone(trimmedEmergency);
 
     if (nameMissing ||
         ageMissing ||
@@ -305,10 +305,10 @@ class SurgeryPatientDetailsCubit extends Cubit<SurgeryPatientDetailsState> {
     return null;
   }
 
-  /// Local mobile format: `03013344312` — 11 digits starting with `03`.
-  bool _isValidPakistanMobilePhone(String value) {
+  /// Contact / emergency: 10 digits (e.g. PTCL) or 11 digits (mobile). Max 11.
+  bool _isValidContactPhone(String value) {
     final digits = value.replaceAll(RegExp(r'\D'), '');
-    return digits.length == 11 && digits.startsWith('03');
+    return digits.length == 10 || digits.length == 11;
   }
 
   String? prefillFullName() {
