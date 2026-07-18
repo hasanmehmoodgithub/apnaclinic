@@ -8,8 +8,8 @@ import '../cubit/surgery_cubit.dart';
 import '../cubit/surgery_state.dart';
 import '../../domain/entities/surgery_procedure_entity.dart';
 import '../screens/surgery_booking_screen.dart';
-import 'city_bottom_sheet.dart';
 import 'surgery_location_row_widget.dart';
+import 'surgery_open_city_picker.dart';
 import 'surgery_procedure_info_tooltip_widget.dart';
 import 'surgery_procedure_tile_widget.dart';
 import 'surgery_search_field_widget.dart';
@@ -57,7 +57,7 @@ class _SurgeryContentViewWidgetState extends State<SurgeryContentViewWidget> {
             children: [
               SurgeryLocationRowWidget(
                 city: state.selectedCity,
-                onChangeTap: () => showCityPickerSheet(context),
+                onChangeTap: () => openSurgeryCityPicker(context),
               ),
               SizedBox(height: 22.h),
               Text(

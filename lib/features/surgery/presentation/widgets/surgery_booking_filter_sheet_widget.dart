@@ -76,10 +76,8 @@ class _SurgeryBookingFilterSheetWidgetState
                 options: widget.hospitals,
                 selected: selectedHospital,
                 onBack: _returnToMainStep,
-                onProceed: (value) {
-                  if (value != null) {
-                    selectedHospital = value;
-                  }
+                onSelected: (value) {
+                  selectedHospital = value;
                   _returnToMainStep();
                 },
               ),
@@ -91,10 +89,8 @@ class _SurgeryBookingFilterSheetWidgetState
                 options: widget.specialties,
                 selected: selectedSpecialty,
                 onBack: _returnToMainStep,
-                onProceed: (value) {
-                  if (value != null) {
-                    selectedSpecialty = value;
-                  }
+                onSelected: (value) {
+                  selectedSpecialty = value;
                   _returnToMainStep();
                 },
               ),
@@ -171,7 +167,7 @@ class _SurgeryBookingFilterSheetWidgetState
               ),
             ),
             child: Text(
-              l10n.commonProceed,
+              l10n.commonApplyFilter,
               style: theme.textTheme.titleSmall?.copyWith(
                 color: Colors.white,
                 fontWeight: FontWeight.w700,

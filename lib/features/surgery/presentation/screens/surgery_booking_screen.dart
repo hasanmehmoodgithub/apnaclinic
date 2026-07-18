@@ -11,13 +11,14 @@ import '../../../../core/utils/auth_guard.dart';
 import '../../../../core/widgets/app_scaffold_gradient.dart';
 import '../../domain/entities/surgery_doctor_entity.dart';
 import '../cubit/surgery_cubit.dart';
+import '../cubit/surgery_patient_details_cubit.dart';
 import '../cubit/surgery_state.dart';
-import '../widgets/city_bottom_sheet.dart';
 import '../widgets/surgery_booking_doctor_card_data.dart';
 import '../widgets/surgery_booking_doctor_card_widget.dart';
 import '../widgets/surgery_booking_filter_button_widget.dart';
 import '../widgets/surgery_booking_filter_selection.dart';
 import '../widgets/surgery_booking_filter_sheet_widget.dart';
+import '../widgets/surgery_open_city_picker.dart';
 import '../widgets/surgery_booking_location_row_widget.dart';
 import '../widgets/surgery_booking_search_field_widget.dart';
 import '../widgets/surgery_booking_shimmer_view_widget.dart';
@@ -156,7 +157,7 @@ class _SurgeryBookingScreenState extends State<SurgeryBookingScreen> {
                               SizedBox(height: 12.h),
                               SurgeryBookingLocationRowWidget(
                                 city: state.selectedCity,
-                                onChangeTap: () => showCityPickerSheet(context),
+                                onChangeTap: () => openSurgeryCityPicker(context),
                               ),
                               SizedBox(height: 12.h),
                               Text(
@@ -293,11 +294,10 @@ class _SurgeryBookingScreenState extends State<SurgeryBookingScreen> {
     }
 
     if (!mounted) return;
-    final surgeryCubit = context.read<SurgeryCubit>();
     Navigator.of(context).push(
       MaterialPageRoute<void>(
-        builder: (_) => BlocProvider.value(
-          value: surgeryCubit,
+        builder: (_) => BlocProvider(
+          create: (_) => sl<SurgeryPatientDetailsCubit>(),
           child: SurgeryPatientDetailsScreen(
             surgeryId: widget.surgeryId,
             cityId: cityId,

@@ -1,9 +1,9 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../../core/extensions/screen_util_extensions.dart';
+import '../utils/surgery_experience_label.dart';
 import 'surgery_booking_doctor_card_data.dart';
+import 'surgery_partner_logo_widget.dart';
 
 class SurgeryBookingDoctorCardWidget extends StatelessWidget {
   const SurgeryBookingDoctorCardWidget({
@@ -20,7 +20,6 @@ class SurgeryBookingDoctorCardWidget extends StatelessWidget {
     final theme = Theme.of(context);
     return Container(
       margin: EdgeInsets.only(bottom: 14.h),
-      padding: EdgeInsets.all(8.r),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16.r),
@@ -33,166 +32,183 @@ class SurgeryBookingDoctorCardWidget extends StatelessWidget {
           ),
         ],
       ),
-      child: Column(
-        children: [
-          Row(
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(7.8.r),
-                child: Container(
-                  width: 59.h,
-                  height: 59.h,
-                  color: const Color(0xFFF4F4F4),
-                  child: Image.network(
-                    data.imageUrl,
-                    fit: BoxFit.cover,
-                    errorBuilder:
-                        (context, error, stackTrace) => Icon(
-                          Icons.person_rounded,
-                          size: 28.r,
-                          color: const Color(0xFFB1B1B1),
-                        ),
-                  ),
-                ),
-              ),
-              SizedBox(width: 12.w),
-              Expanded(
-                child: Column(
+      child: Material(
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(16.r),
+        child: InkWell(
+          onTap: onBookNowTap,
+          borderRadius: BorderRadius.circular(16.r),
+          child: Padding(
+            padding: EdgeInsets.all(8.r),
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      data.doctorName,
-                      style: theme.textTheme.titleMedium?.copyWith(
-                        color: const Color(0xFF061E40),
-                        fontWeight: FontWeight.w500,
-                        fontSize: 14.sp,
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(7.8.r),
+                      child: Container(
+                        width: 59.h,
+                        height: 59.h,
+                        color: const Color(0xFFF4F4F4),
+                        child: Image.network(
+                          data.imageUrl,
+                          fit: BoxFit.cover,
+                          errorBuilder:
+                              (context, error, stackTrace) => Icon(
+                                Icons.person_rounded,
+                                size: 28.r,
+                                color: const Color(0xFFB1B1B1),
+                              ),
+                        ),
                       ),
                     ),
-                    Text(
-                      data.speciality,
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        color: const Color(0xFFA6A6A6),
-                        fontSize: 12.sp,
+                    SizedBox(width: 12.w),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            data.doctorName,
+                            style: theme.textTheme.titleMedium?.copyWith(
+                              color: const Color(0xFF061E40),
+                              fontWeight: FontWeight.w500,
+                              fontSize: 14.sp,
+                            ),
+                          ),
+                          if (data.speciality.trim().isNotEmpty)
+                            Text(
+                              data.speciality.trim(),
+                              style: TextStyle(
+                                color: const Color(0xFFA6A6A6),
+                                fontSize: 12.sp,
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                          if (_experienceEducationLine(data).isNotEmpty)
+                            Text(
+                              _experienceEducationLine(data),
+                              style: TextStyle(
+                                color: const Color(0xFFA6A6A6),
+                                fontSize: 12.sp,
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                        ],
                       ),
                     ),
-                    Text(
-                      '${data.experience}  ${data.qualifications}',
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        color: const Color(0xFFA6A6A6),
-                        fontSize: 12.sp,
-                      ),
+                    SurgeryPartnerLogoWidget(
+                      logoUrl: data.partnerLogoUrl,
+                      width: 35.r,
+                      height: 35.r,
+                      compact: true,
                     ),
                   ],
                 ),
-              ),
-              SizedBox(
-                width: 35.r,
-                height: 35.r,
-                child: SvgPicture.network(
-                  data.partnerLogoUrl,
-                  width: 35.r,
-                  height: 35.r,
-                  fit: BoxFit.contain,
-                  placeholderBuilder: (context) => const CupertinoActivityIndicator(),
-                  errorBuilder: (context, error, stackTrace) {
-                    debugPrint("SVG ERROR: $error");
-                    return const Icon(Icons.image_not_supported);
-                  },
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: 8.h),
-          Container(
-            padding: EdgeInsets.symmetric(vertical: 8.h),
-            decoration: const BoxDecoration(
-              border: Border(
-                top: BorderSide(color: Color(0xFFF7F7F7)),
-                bottom: BorderSide(color: Color(0xFFF7F7F7)),
-              ),
-            ),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                SizedBox(height: 8.h),
+                Container(
+                  padding: EdgeInsets.symmetric(vertical: 8.h),
+                  decoration: const BoxDecoration(
+                    border: Border(
+                      top: BorderSide(color: Color(0xFFF7F7F7)),
+                      bottom: BorderSide(color: Color(0xFFF7F7F7)),
+                    ),
+                  ),
+                  child: Row(
                     children: [
-                      Text(
-                        data.hospitalName,
-                        style: theme.textTheme.titleSmall?.copyWith(
-                          color: const Color(0xFF061E40),
-                          fontWeight: FontWeight.w700,
-                          fontSize: 13.sp,
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              data.hospitalName,
+                              style: theme.textTheme.titleSmall?.copyWith(
+                                color: const Color(0xFF061E40),
+                                fontWeight: FontWeight.w700,
+                                fontSize: 13.sp,
+                              ),
+                            ),
+                            SizedBox(height: 3.h),
+                            Text(
+                              data.procedureName,
+                              style: theme.textTheme.bodyMedium?.copyWith(
+                                color: const Color(0xFF061E40),
+                                fontSize: 11.sp,
+                                height: 1.2,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                      SizedBox(height: 3.h),
-                      Text(
-                        data.procedureName,
-                        style: theme.textTheme.bodyMedium?.copyWith(
-                          color: const Color(0xFF061E40),
-                          fontSize: 11.sp,
-                          height: 1.2,
-                        ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Text(
+                            'Stating from',
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              color: const Color(0xFF777272),
+                              fontSize: 10.sp,
+                            ),
+                          ),
+                          Text(
+                            data.price,
+                            style: theme.textTheme.titleMedium?.copyWith(
+                              color: const Color(0xFF061E40),
+                              fontWeight: FontWeight.w500,
+                              fontSize: 13.sp,
+                            ),
+                          ),
+                          SizedBox(height: 1.h),
+                          Text(
+                            data.oldPrice,
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              color: const Color(0xFF979797),
+                              decoration: TextDecoration.lineThrough,
+                              fontSize: 12.sp,
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
                 ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Text(
-                      'Stating from',
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: const Color(0xFF777272),
-                        fontSize: 10.sp,
+                SizedBox(height: 8.h),
+                IgnorePointer(
+                  child: SizedBox(
+                    width: double.infinity,
+                    child: FilledButton(
+                      onPressed: () {},
+                      style: FilledButton.styleFrom(
+                        backgroundColor: const Color(0xFF0FAA9A),
+                        minimumSize: Size.fromHeight(30.h),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8.5.r),
+                        ),
+                      ),
+                      child: Text(
+                        'Book Now',
+                        style: theme.textTheme.titleSmall?.copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 13.sp,
+                        ),
                       ),
                     ),
-                    Text(
-                      data.price,
-                      style: theme.textTheme.titleMedium?.copyWith(
-                        color: const Color(0xFF061E40),
-                        fontWeight: FontWeight.w500,
-                        fontSize: 13.sp,
-                      ),
-                    ),
-                    SizedBox(height: 1.h),
-                    Text(
-                      data.oldPrice,
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        color: const Color(0xFF979797),
-                        decoration: TextDecoration.lineThrough,
-                        fontSize: 12.sp,
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
               ],
             ),
           ),
-          SizedBox(height: 8.h),
-          SizedBox(
-            width: double.infinity,
-            child: FilledButton(
-              onPressed: onBookNowTap,
-              style: FilledButton.styleFrom(
-                backgroundColor: const Color(0xFF0FAA9A),
-                minimumSize: Size.fromHeight(30.h),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8.5.r),
-                ),
-              ),
-              child: Text(
-                'Book Now',
-                style: theme.textTheme.titleSmall?.copyWith(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w700,
-                  fontSize: 13.sp,
-                ),
-              ),
-            ),
-          ),
-        ],
+        ),
       ),
     );
+  }
+
+  static String _experienceEducationLine(SurgeryBookingDoctorCardData data) {
+    return [
+      formatSurgeryExperienceLabel(data.experience),
+      data.qualifications.trim(),
+    ].where((part) => part.isNotEmpty).join(' | ');
   }
 }

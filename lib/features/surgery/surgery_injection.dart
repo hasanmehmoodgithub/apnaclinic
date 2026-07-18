@@ -20,6 +20,7 @@ import 'domain/use_cases/get_surgery_patient_form_use_case.dart';
 import 'domain/use_cases/get_surgery_provider_details_use_case.dart';
 import 'domain/use_cases/submit_surgery_booking_use_case.dart';
 import 'presentation/cubit/surgery_cubit.dart';
+import 'presentation/cubit/surgery_patient_details_cubit.dart';
 
 void initSurgeryInjector() {
   sl.registerLazySingleton<SurgeryMockApi>(() => SurgeryMockApi());
@@ -95,6 +96,14 @@ void initSurgeryInjector() {
       submitSurgeryBookingUseCase: sl<SubmitSurgeryBookingUseCase>(),
       appPref: sl<AppPref>(),
       citiesRepository: sl(),
+    ),
+  );
+
+  sl.registerFactory<SurgeryPatientDetailsCubit>(
+    () => SurgeryPatientDetailsCubit(
+      getSurgeryProviderDetailsUseCase: sl<GetSurgeryProviderDetailsUseCase>(),
+      submitSurgeryBookingUseCase: sl<SubmitSurgeryBookingUseCase>(),
+      appPref: sl<AppPref>(),
     ),
   );
 }

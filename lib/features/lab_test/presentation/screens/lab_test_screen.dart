@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/cities/presentation/show_select_city_dialog.dart';
 import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/enums/state_status.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
@@ -24,7 +25,6 @@ import '../widgets/lab_test_browse_search_field_widget.dart';
 import '../widgets/lab_test_browse_white_panel_widget.dart';
 import '../widgets/lab_test_catalog_list_block_widget.dart';
 import '../widgets/lab_test_city_selector_field_widget.dart';
-import '../widgets/lab_test_select_city_dialog_widget.dart';
 
 class LabTestScreen extends StatefulWidget {
   const LabTestScreen({super.key});
@@ -144,11 +144,11 @@ class _LabTestScreenState extends State<LabTestScreen> {
   ) async {
     if (_isCityDialogOpen) return;
     _isCityDialogOpen = true;
-    final picked = await showLabTestSelectCityDialog(
+    final picked = await showSelectCityDialog(
       context,
       cities: cities,
-      title: l10n.labTestSelectCitySheetTitle,
-      searchHint: l10n.labTestSelectCitySheetSearchHint,
+      title: l10n.selectCityTitle,
+      searchHint: l10n.selectCitySearchHint,
       initialSelectedCity: context.read<LabTestCubit>().state.selectedCity,
     );
     _isCityDialogOpen = false;

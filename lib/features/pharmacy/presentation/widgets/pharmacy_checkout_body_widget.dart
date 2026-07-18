@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../core/cities/presentation/show_select_city_dialog.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
@@ -141,15 +142,21 @@ class PharmacyCheckoutBodyWidget extends StatelessWidget {
                   hint: l10n.pharmacyCheckoutAddressHint,
                 ),
                 SizedBox(height: 20.h),
-                PharmacyCheckoutCityDropdown(
+                PharmacyCheckoutCityField(
                   label: l10n.pharmacyCheckoutCityLabel,
                   value: cities.contains(state.selectedCity)
                       ? state.selectedCity
                       : cities.first,
-                  cities: cities,
-                  onChanged: (city) {
-                    if (city == null) return;
-                    context.read<PharmacyCubit>().selectCheckoutCity(city);
+                  onTap: () async {
+                    final picked = await showSelectCityDialog(
+                      context,
+                      cities: cities,
+                      initialSelectedCity: state.selectedCity,
+                      title: l10n.selectCityTitle,
+                      searchHint: l10n.selectCitySearchHint,
+                    );
+                    if (picked == null || !context.mounted) return;
+                    context.read<PharmacyCubit>().selectCheckoutCity(picked);
                   },
                 ),
                 SizedBox(height: 22.h),

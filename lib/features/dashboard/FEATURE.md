@@ -6,7 +6,7 @@ Home services grid, promotional banner, search entry, and shell navigation. Keep
 
 ## Profile sync on dashboard
 
-- **`DashboardCubit`** (created when `HomeScreen` loads) calls **`GetProfileSetupContentUseCase`** in **`syncUserProfileFromApi()`** after services load, unless **`ProfileSessionSync`** already synced this session and **`AppPref`** has cached profile fields. Promo banner is read from **`PromotionalBannerSession`** (not fetched per cubit).
+- **`DashboardCubit`** (created when `HomeScreen` loads) calls **`GetProfileSetupContentUseCase`** in **`syncUserProfileFromApi()`** after services load, unless **`ProfileSessionSync`** already synced this session and **`AppPref`** has cached profile fields. Promo banners are fetched via **`PromotionalBannerSession.ensureLoaded()`** from this cubit only (not app start / shell login).
 - Skips when **`AppPref.getLoginStatus()`** is false.
 - On success, **`ProfileSetupRepositoryImpl`** already persists **`UserLocalModel`** (name, email, address, gender, DOB, `imageUrl` from API `image`, etc.).
 - **`DashboardServicesState.profileSyncNonce`** increments so **`BlocConsumer`** on home rebuilds and **`HomeHeaderSection`** / greeting reads updated prefs.
@@ -14,7 +14,7 @@ Home services grid, promotional banner, search entry, and shell navigation. Keep
 ## Data & APIs (dashboard-specific)
 
 - Services: `AppUrls.ourServices` → `DashboardRemoteDataSourceImpl` (live CMS). `ServiceCardImage` loads remote icons (PNG, WebP, SVG); on empty URL or load failure shows a styled placeholder only.
-- Promo: `AppUrls.promotionalBanner` → CMS `GET /api/v1/mobile/banners`. Fetched on **every app restart** (`main.dart` → `PromotionalBannerSession.reload()`) and again after **login**. Response may include multiple banners (sorted by `displayOrder`); home shows them **one after another** (close 1st → show 2nd → …). `PromotionalBannerSession` holds the queue; not refetched on logout tab remount unless login refresh runs.
+- Promo: `AppUrls.promotionalBanner` → CMS `GET /api/v1/mobile/banners`. Fetched **only when the dashboard (`HomeScreen`) opens** via `DashboardCubit.syncPromotionalBannerFromSession` → `PromotionalBannerSession.ensureLoaded()`. Login clears the session queue (`prepareForLoginRefresh`) so the next home open refetches; no banner call from `main.dart` or shell. Response may include multiple banners (sorted by `displayOrder`); home shows them **one after another** (close 1st → show 2nd → …).
 - App update: `AppUrls.appVersion(platform: ios|android)` → CMS `GET /api/v1/mobile/app-version?platform=…`. Checked on **every dashboard open** (`DashboardCubit.checkAppUpdate`). CMS `data`: `minVersion`, `latestVersion`, `isForceUpgrade`, `releaseNotes`, `isActive` (inactive ignored). Compares device `package_info` version; shows themed `AppUpdateDialog` (`isForceUpgrade` / below min = non-dismissible). Optional update before promo banners; force blocks banners. No `storeUrl` in CMS → Play/App Store fallbacks in `AppUrls`. Missing record (HTTP 200 + code 404) = no update.
 
 Profile uses **`profile_setup`** remote (`GET …/users/{userId}`) — no duplicate URL in dashboard.
