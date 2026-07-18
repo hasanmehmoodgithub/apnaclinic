@@ -25,4 +25,6 @@ abstract class LabTestRemoteDataSource {
     int page = 1,
     int limit = 20,
   });
+
+  Future<LabOrderModel> getLabOrderDetail({required String orderId});
 }

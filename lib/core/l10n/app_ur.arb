@@ -326,6 +326,7 @@
   "labTestInvoiceFileName": "E-Invoice.pdf",
   "labTestDiscountCodeCopied": "ڈسکاؤنٹ کوڈ کاپی ہو گیا",
   "labTestOrderNoPrefix": "آرڈر نمبر",
+  "labTestBookingCardSubtitle": "لیب ٹیسٹ رپورٹ",
   "labTestBookingDateLabel": "بکنگ کی تاریخ",
   "labTestTotalFeeLabel": "کل فیس",
   "labTestDiscountCodeLabel": "ڈسکاؤنٹ کوڈ",

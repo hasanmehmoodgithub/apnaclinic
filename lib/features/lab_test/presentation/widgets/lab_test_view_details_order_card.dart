@@ -14,19 +14,22 @@ class LabTestViewDetailsOrderCard extends StatelessWidget {
     required this.orderNo,
     required this.bookingDate,
     required this.totalFee,
-    required this.discountCode,
+    this.discountCode,
   });
 
   final String patientName;
   final String orderNo;
   final String bookingDate;
   final String totalFee;
-  final String discountCode;
+  final String? discountCode;
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
+    final code = discountCode?.trim() ?? '';
+    final hasDiscountCode = code.isNotEmpty;
+
     return Container(
       clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
@@ -129,73 +132,73 @@ class LabTestViewDetailsOrderCard extends StatelessWidget {
                   ],
                 ),
               ),
-              InkWell(
-                onTap: () async {
-                  await Clipboard.setData(ClipboardData(text: discountCode));
-                  if (!context.mounted) return;
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(l10n.labTestDiscountCodeCopied)),
-                  );
-                },
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
-                  child: Container(
-
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFF7EFC7),
-                      borderRadius: BorderRadius.vertical(
-                        bottom: Radius.circular(12.r),
+              if (hasDiscountCode)
+                InkWell(
+                  onTap: () async {
+                    await Clipboard.setData(ClipboardData(text: code));
+                    if (!context.mounted) return;
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text(l10n.labTestDiscountCodeCopied)),
+                    );
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFF7EFC7),
+                        borderRadius: BorderRadius.vertical(
+                          bottom: Radius.circular(12.r),
+                        ),
                       ),
-                    ),
-                    padding: EdgeInsets.fromLTRB(16.w, 10.h, 16.w, 10.h),
-                    child: Column(
-                      children: [
-                        Row(
-                          children: [
-                            LabTestFigmaImage(
-                              url: Assets.labTestDiscountIcon,
-                              width: 15.r,
-                              height: 15.r,
-                            ),
-                            SizedBox(width: 6.w),
-                            Expanded(
-                              child: Text(
-                                l10n.labTestDiscountCodeLabel,
-                                style: theme.textTheme.bodyMedium?.copyWith(
-                                  color: const Color(0xFF1C232D),
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 15.sp,
+                      padding: EdgeInsets.fromLTRB(16.w, 10.h, 16.w, 10.h),
+                      child: Column(
+                        children: [
+                          Row(
+                            children: [
+                              LabTestFigmaImage(
+                                url: Assets.labTestDiscountIcon,
+                                width: 15.r,
+                                height: 15.r,
+                              ),
+                              SizedBox(width: 6.w),
+                              Expanded(
+                                child: Text(
+                                  l10n.labTestDiscountCodeLabel,
+                                  style: theme.textTheme.bodyMedium?.copyWith(
+                                    color: const Color(0xFF1C232D),
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 15.sp,
+                                  ),
                                 ),
                               ),
-                            ),
-                            Text(
-                              discountCode,
-                              style: theme.textTheme.bodyLarge?.copyWith(
-                                color: const Color(0xFF1C232D),
-                                fontWeight: FontWeight.w700,
-                                fontSize: 16.sp,
+                              Text(
+                                code,
+                                style: theme.textTheme.bodyLarge?.copyWith(
+                                  color: const Color(0xFF1C232D),
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 16.sp,
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 8.h),
+                          Container(height: 1, color: const Color(0xFFE1D49D)),
+                          SizedBox(height: 8.h),
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              l10n.labTestShowCodeInstruction,
+                              style: theme.textTheme.bodySmall?.copyWith(
+                                color: const Color(0xFF4A5059),
+                                fontSize: 14.sp,
                               ),
                             ),
-                          ],
-                        ),
-                        SizedBox(height: 8.h),
-                        Container(height: 1, color: const Color(0xFFE1D49D)),
-                        SizedBox(height: 8.h),
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            l10n.labTestShowCodeInstruction,
-                            style: theme.textTheme.bodySmall?.copyWith(
-                              color: const Color(0xFF4A5059),
-                              fontSize: 14.sp,
-                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 ),
-              ),
             ],
           ),
         ],

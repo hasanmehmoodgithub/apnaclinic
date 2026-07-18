@@ -999,6 +999,9 @@ class AppLocalizationsUr extends AppLocalizations {
   String get labTestOrderNoPrefix => 'آرڈر نمبر';
 
   @override
+  String get labTestBookingCardSubtitle => 'لیب ٹیسٹ رپورٹ';
+
+  @override
   String get labTestBookingDateLabel => 'بکنگ کی تاریخ';
 
   @override

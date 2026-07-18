@@ -165,6 +165,35 @@ class LabTestRemoteDataSourceImpl implements LabTestRemoteDataSource {
   }
 
   @override
+  Future<LabOrderModel> getLabOrderDetail({required String orderId}) async {
+    final trimmedId = orderId.trim();
+    final endpoint = AppUrls.labOrderById(trimmedId);
+
+    try {
+      final Map<String, dynamic> response;
+      if (LabOrdersMockApi.useMockResponses) {
+        response = await labOrdersMockApi.getLabOrderDetailSuccessResponse(
+          orderId: trimmedId,
+        );
+      } else {
+        response = await apiService.get(endpoint);
+        log('getLabOrderDetail response: $response');
+      }
+
+      if (_isSuccessResponse(response)) {
+        return LabOrderModel.fromDetailResponse(response);
+      }
+
+      final message = (response['message'] ?? AppStrings.ourServicesLoadError)
+          .toString();
+      return Future.error(message);
+    } catch (e) {
+      final message = ErrorHandler.handleExceptions(e, endpoint: endpoint);
+      return Future.error(message);
+    }
+  }
+
+  @override
   Future<void> bookLabTest(Map<String, dynamic> body) async {
     try {
       final Map<String, dynamic> response;

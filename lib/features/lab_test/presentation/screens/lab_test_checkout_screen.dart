@@ -39,7 +39,6 @@ class _LabTestCheckoutScreenState extends State<LabTestCheckoutScreen> {
   final _phoneController = TextEditingController();
   final _ageController = TextEditingController();
   final _emergencyController = TextEditingController();
-  final _addressController = TextEditingController();
   final AppPref _appPref = sl<AppPref>();
   String _gender = 'male';
   bool _isEditingPatientDetails = false;
@@ -60,7 +59,6 @@ class _LabTestCheckoutScreenState extends State<LabTestCheckoutScreen> {
     _phoneController.dispose();
     _ageController.dispose();
     _emergencyController.dispose();
-    _addressController.dispose();
     super.dispose();
   }
 
@@ -84,13 +82,6 @@ class _LabTestCheckoutScreenState extends State<LabTestCheckoutScreen> {
     final phone = user.phone.trim();
     if (phone.isNotEmpty) {
       _phoneController.text = phone;
-      // Use the saved phone as default emergency contact.
-      _emergencyController.text = phone;
-    }
-
-    final address = user.address.trim();
-    if (address.isNotEmpty) {
-      _addressController.text = address;
     }
 
     final normalizedGender = _normalizeGender(user.gender);
@@ -379,21 +370,15 @@ class _LabTestCheckoutScreenState extends State<LabTestCheckoutScreen> {
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
                             LabTestCheckoutSummaryCardWidget(args: a),
-                            const SizedBox(height: 8),
-                            // _RequirementsCheckoutCard(
-                            //   lines: a.requirementLines,
-                            //   fastingLabel: a.requirementLabel,
-                            // ),
-                            const SizedBox(height: 8),
+                            SizedBox(height: 12.h),
                             LabTestCheckoutPaymentBreakdownCardWidget(args: a),
-                            const SizedBox(height: 6),
+                            SizedBox(height: 12.h),
                             LabTestCheckoutPatientFormSectionWidget(
                               theme: theme,
                               nameController: _nameController,
                               phoneController: _phoneController,
                               ageController: _ageController,
                               emergencyController: _emergencyController,
-                              addressController: _addressController,
                               gender: _gender,
                               onGender: (g) => setState(() => _gender = g),
                               isEditingPatientDetails: _isEditingPatientDetails,

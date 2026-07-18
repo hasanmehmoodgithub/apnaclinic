@@ -131,7 +131,15 @@ class LabTestCheckoutArgs {
 }
 
 class LabTestViewDetailsArgs {
-  const LabTestViewDetailsArgs({
+  const LabTestViewDetailsArgs({required this.orderId});
+
+  /// Lab order id for `GET /lab-orders/{id}`.
+  final String orderId;
+}
+
+/// Mapped UI model for the view-details screen (built from order detail API).
+class LabTestViewDetailsContent {
+  const LabTestViewDetailsContent({
     required this.testTitle,
     required this.labName,
     required this.labLogoUrl,
@@ -139,11 +147,8 @@ class LabTestViewDetailsArgs {
     required this.sampleType,
     required this.discountedFee,
     required this.originalFee,
-    required this.discountCode,
+    this.discountCode,
     required this.patientName,
-    required this.patientAge,
-    required this.patientGender,
-    required this.patientPhone,
     required this.orderNo,
     required this.bookingDate,
     required this.statusLabel,
@@ -158,16 +163,13 @@ class LabTestViewDetailsArgs {
   final String sampleType;
   final String discountedFee;
   final String originalFee;
-  final String discountCode;
+
+  /// API `discountCode` only; null/empty hides the discount strip.
+  final String? discountCode;
   final String patientName;
-  final int patientAge;
-  final String patientGender;
-  final String patientPhone;
   final String orderNo;
   final String bookingDate;
   final String statusLabel;
   final String note;
-
-  /// PDF URL from API `invoice` field; empty/null hides the invoice card.
   final String? invoiceUrl;
 }

@@ -235,6 +235,15 @@ class LabOrderModel {
       createdAt: _asString(json['createdAt'] ?? json['created_at']),
     );
   }
+
+  /// Parses `GET /lab-orders/{id}` envelope (`data` is a single order object).
+  factory LabOrderModel.fromDetailResponse(Map<String, dynamic> json) {
+    final data = json['data'];
+    if (data is Map) {
+      return LabOrderModel.fromJson(Map<String, dynamic>.from(data));
+    }
+    return LabOrderModel.fromJson(json);
+  }
 }
 
 class LabOrdersPageModel {
