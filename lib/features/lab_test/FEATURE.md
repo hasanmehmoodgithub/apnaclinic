@@ -11,6 +11,10 @@ Browse lab tests, booking/cart flow, payment details checkout, and order view de
 ## UI
 
 - `LabTestCheckoutBottomBarWidget` — payment details screen CTA uses shared `AppButtonWidget` (`labTestBookCta`).
+- Checkout **Payment Details** (`LabTestCheckoutScreen`):
+  - Summary card (`LabTestCheckoutSummaryCardWidget`): lab logo, test title, lab name, sample/method pills, fee + strikethrough original, partner logo, right-side `Assets.labTestCardVector`.
+  - Payment breakdown card: fee / discount / total.
+  - Patient details: **before Edit** = read-only name/gender/age/phone with **Edit**; **after Edit** = form (name, contact, gender radios, age) with **Done**. Emergency contact is always a separate card (required).
 - On open, `LabTestCubit.bootstrap()` reads `AppPrefKeys.labTestSelectedCity`, loads cities, then immediately calls the lab tests API when a saved city resolves to a `cityId`; first visit without a saved city auto-opens the city selection dialog (tests load after pick).
 - Selected city is persisted in `AppPrefKeys.labTestSelectedCity` and restored on every lab test visit until the user changes it.
 
