@@ -4,6 +4,7 @@ import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/widgets/app_scaffold_gradient.dart';
 import '../../../bookings/data/mappers/lab_test_booking_list_mapper.dart';
+import '../../../bookings/presentation/widgets/empty_booking_widget.dart';
 import '../../domain/use_cases/get_lab_order_detail_use_case.dart';
 import '../lab_test_route_args.dart';
 import '../widgets/lab_test_view_details_header.dart';
@@ -46,11 +47,13 @@ class _LabTestViewDetailsScreenState extends State<LabTestViewDetailsScreen> {
     if (!mounted) return;
 
     result.fold(
-      (error) => setState(() {
-        _isLoading = false;
-        _errorMessage = error;
-        _content = null;
-      }),
+      (error) {
+        setState(() {
+          _isLoading = false;
+          _errorMessage = error;
+          _content = null;
+        });
+      },
       (order) {
         final l10n = AppLocalizations.of(context)!;
         setState(() {
@@ -69,25 +72,21 @@ class _LabTestViewDetailsScreenState extends State<LabTestViewDetailsScreen> {
     if (_isLoading) return const LabTestViewDetailsShimmer();
 
     if (_errorMessage != null || _content == null) {
+      final message = (_errorMessage?.trim().isNotEmpty ?? false)
+          ? _errorMessage!.trim()
+          : l10n.labTestViewDetailsLoadError;
       return AppScaffoldGradient(
         child: Column(
           children: [
             LabTestViewDetailsHeader(title: l10n.labTestScreenTitle),
             Expanded(
-              child: Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(24),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(_errorMessage ?? l10n.labTestSomethingWentWrong),
-                      const SizedBox(height: 10),
-                      FilledButton(
-                        onPressed: _loadDetail,
-                        child: Text(l10n.commonRetry),
-                      ),
-                    ],
-                  ),
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(20, 150, 20, 20),
+                child: EmptyBookingWidget(
+                  description: message,
+                  buttonText: l10n.commonRetry,
+                  backgroundColor: Colors.transparent,
+                  onTap: _loadDetail,
                 ),
               ),
             ),

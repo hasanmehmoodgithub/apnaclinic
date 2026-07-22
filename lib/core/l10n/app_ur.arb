@@ -258,6 +258,8 @@
   "notificationsRetryCta": "دوبارہ کوشش کریں",
   "notificationsEmptyTitle": "ابھی تک کوئی نوٹیفیکیشن نہیں!",
   "notificationsLoadError": "نوٹیفیکیشنز لوڈ نہیں ہو سکیں۔ ریفریش کریں یا دوبارہ کوشش کریں۔",
+  "notificationsDeepLinkUnavailableTitle": "تفصیلات دستیاب نہیں",
+  "notificationsDeepLinkUnavailableMessage": "یہ نوٹیفیکیشن نہیں کھل سکتی۔ بکنگ یا آرڈر کا حوالہ غائب یا غیر معاون ہو سکتا ہے۔",
   "searchScreenTitle": "تلاش",
   "searchListeningHint": "سن رہا ہے...",
   "searchVoicePermissionDenied": "وائس سرچ کے لیے سیٹنگز میں مائیکروفون کی اجازت دیں۔",

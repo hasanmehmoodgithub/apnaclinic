@@ -19,7 +19,7 @@ Browse lab tests, booking/cart flow, payment details checkout, and order view de
   - Patient details: **before Edit** = read-only rows with **Edit**; **after Edit** = form with **Done**. Emergency contact always below (required; accepts 10-digit landline or 11-digit mobile).
   - Bottom CTA has no separate white bar behind the button. Panel top radius `20`.
 - On open, `LabTestCubit.bootstrap()` reads `AppPrefKeys.labTestSelectedCity`, loads cities, then immediately calls the lab tests API when a saved city resolves to a `cityId`; first visit without a saved city auto-opens the city selection dialog (tests load after pick).
-- Booking detail load shows the shared heart loader (`showHeartLoaderDialog`); failure shows shared `AlertDialogCard` (`AlertKind.error`) with the API message, then pops back.
+- Booking detail load shows the shared heart loader (`showHeartLoaderDialog`); failure renders the shared `EmptyBookingWidget` with the API message and a retry CTA.
 - Selected city is persisted in `AppPrefKeys.labTestSelectedCity` and restored on every lab test visit until the user changes it.
 
 ## Data & APIs

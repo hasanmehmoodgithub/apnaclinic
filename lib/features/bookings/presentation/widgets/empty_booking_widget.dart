@@ -10,25 +10,29 @@ class EmptyBookingWidget extends StatelessWidget {
     required this.buttonText,
     required this.onTap,
     this.iconPath = 'assets/icons/empty.svg',
+    this.alignment = Alignment.topCenter,
+    this.backgroundColor = Colors.white,
   });
 
   final String description;
   final String buttonText;
   final VoidCallback onTap;
   final String iconPath;
+  final Alignment alignment;
+  final Color backgroundColor;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Align(
-      alignment: Alignment.topCenter,
+      alignment: alignment,
       child: CustomPaint(
         painter: const _DashedRoundedRectPainter(),
         child: Container(
           width: double.infinity,
           padding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 16.h),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: backgroundColor,
             borderRadius: BorderRadius.circular(18.r),
           ),
           child: Column(

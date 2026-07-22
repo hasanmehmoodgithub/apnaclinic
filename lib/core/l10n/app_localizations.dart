@@ -1547,6 +1547,18 @@ abstract class AppLocalizations {
   /// **'Unable to load notifications. Pull to refresh or try again.'**
   String get notificationsLoadError;
 
+  /// No description provided for @notificationsDeepLinkUnavailableTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Details unavailable'**
+  String get notificationsDeepLinkUnavailableTitle;
+
+  /// No description provided for @notificationsDeepLinkUnavailableMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'This notification cannot be opened. The booking or order reference may be missing or unsupported.'**
+  String get notificationsDeepLinkUnavailableMessage;
+
   /// No description provided for @searchScreenTitle.
   ///
   /// In en, this message translates to:

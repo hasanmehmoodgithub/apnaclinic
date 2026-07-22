@@ -34,6 +34,7 @@ In-app notification list and Firebase Cloud Messaging (FCM) push notifications.
   - Item: `publicId`, `type`, `serviceType` (`CONSULTATION` / `LAB` / `SURGERY` / `PHARMACY`), `priority`, `title`, `body`, `deepLink` (`data.entity_id`, `entity.id`/`kind`, `endpoint`), `isRead`, `readAt`, `createdAt`.
 - **PUT** `AppUrls.notificationMarkRead(publicId)` → `/acs-notification/api/v1/notifications/{publicId}/read` via `MarkNotificationReadUseCase` (body `{}`).
 - Tap flow: if unread → heart loader → mark read → navigate by `serviceType` + `entityId`; if already `isRead` → navigate only (no mark-read API).
+  - When routing fails (missing `entityId`, unsupported `serviceType`, etc.) → `AlertDialogCard` shows the notification title/body (or fallback l10n).
   - `CONSULTATION` → `doctorConsultationBookingDetails` (`bookingId` = entity id; detail API loads).
   - `SURGERY` → `surgeryBookingDetails` (`leadId` = entity id; lead detail API loads).
   - `LAB` → `labTestViewDetails` (`orderId` = entity id; order detail API loads).
