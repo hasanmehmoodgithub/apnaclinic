@@ -1,190 +1,113 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 
-import '../../../../core/l10n/app_localizations.dart';
+import '../../../../core/constants/app_colors.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
+import '../../../../core/l10n/app_localizations.dart';
+import '../constants/consultation_ui_config.dart';
+import '../widgets/ai_screening_shimmer_widget.dart';
 import '../widgets/consultation_screen_header_widget.dart';
 
-class AiScreeningScreen extends StatelessWidget {
+class AiScreeningScreen extends StatefulWidget {
   const AiScreeningScreen({super.key});
+
+  @override
+  State<AiScreeningScreen> createState() => _AiScreeningScreenState();
+}
+
+class _AiScreeningScreenState extends State<AiScreeningScreen> {
+  late final WebViewController _controller;
+  var _isLoading = true;
+  var _hasError = false;
+
+  static const _url = ConsultationUiConfig.apnaDoctorAiUrl;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = WebViewController()
+      ..setJavaScriptMode(JavaScriptMode.unrestricted)
+      ..setNavigationDelegate(
+        NavigationDelegate(
+          onPageStarted: (_) {
+            if (!mounted) return;
+            setState(() {
+              _isLoading = true;
+              _hasError = false;
+            });
+          },
+          onPageFinished: (_) {
+            if (!mounted) return;
+            setState(() => _isLoading = false);
+          },
+          onWebResourceError: (_) {
+            if (!mounted) return;
+            setState(() {
+              _isLoading = false;
+              _hasError = true;
+            });
+          },
+        ),
+      )
+      ..loadRequest(Uri.parse(_url));
+  }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final textTheme = Theme.of(context).textTheme;
 
     return Scaffold(
+      backgroundColor: AppColors.clrWhite,
       body: SafeArea(
         child: Column(
           children: [
-            // ───── Top bar ─────
-            Container(
-              color: const Color(0xFFF2F4F7),
-              child: ConsultationScreenHeaderWidget(
-                title: l10n.consultationAiScreeningTitle,
-                onBackTap: () => context.pop(),
-              ),
+            ConsultationScreenHeaderWidget(
+              title: l10n.consultationAiScreeningTitle,
+              onBackTap: () => context.pop(),
             ),
-
-            // ───── Decorative wave at the top ─────
-            SizedBox(
-              height: 200.h,
-              width: double.infinity,
-              child: _WaveDecoration(),
-            ),
-
-            // ───── Welcome message & CTA (centered) ─────
             Expanded(
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 32.w),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    // Welcome text with "Apna Clinic" highlighted
-                    RichText(
-                      textAlign: TextAlign.center,
-                      text: TextSpan(
-                        style: textTheme.titleLarge?.copyWith(
-                          fontSize: 20.sp,
-                          height: 1.4,
-                          fontWeight: FontWeight.w400,
-                          color: const Color(0xFF4A6B78),
-                        ),
-                        children: [
-                          TextSpan(text: l10n.consultationAiWelcomePrefix),
-                          TextSpan(
-                            text: 'Apna Clinic',
-                            style: TextStyle(
-                              fontWeight: FontWeight.w700,
-                              color: const Color(0xFF0A2540),
-                              fontSize: 20.sp,
+              child: Stack(
+                children: [
+                  WebViewWidget(controller: _controller),
+                  if (_isLoading) const Positioned.fill(
+                    child: AiScreeningShimmerWidget(),
+                  ),
+                  if (_hasError)
+                    Center(
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 24.w),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              l10n.instantDoctorOpenAppError,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: AppColors.clr6C7C92,
+                                fontSize: 15.sp,
+                                fontWeight: FontWeight.w500,
+                              ),
                             ),
-                          ),
-                          TextSpan(text: l10n.consultationAiWelcomeSuffix),
-                        ],
+                            SizedBox(height: 16.h),
+                            TextButton(
+                              onPressed: () {
+                                setState(() {
+                                  _isLoading = true;
+                                  _hasError = false;
+                                });
+                                _controller.loadRequest(Uri.parse(_url));
+                              },
+                              child: Text(l10n.commonRetry),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                    SizedBox(height: 40.h),
-
-                    // "Let's Start" pill button
-                    _LetsStartButton(
-                      onTap: () {
-                        // TODO: Navigate to the next step of AI screening
-                        // e.g. Navigator.of(context).pushNamed(AppRoutes.aiScreeningForm);
-                      },
-                    ),
-
-                    // Push content slightly above vertical center
-                    SizedBox(height: 120.h),
-                  ],
-                ),
+                ],
               ),
             ),
           ],
-        ),
-      ),
-    );
-  }
-}
-
-/// Soft teal wave decoration at the top of the screen.
-class _WaveDecoration extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return CustomPaint(
-      painter: _WavePainter(),
-      size: Size.infinite,
-    );
-  }
-}
-
-class _WavePainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    final waveColors = [
-      const Color(0xFFB8E3EA).withValues(alpha: 0.55),
-      const Color(0xFFA3D8E0).withValues(alpha: 0.45),
-      const Color(0xFF89CAD4).withValues(alpha: 0.35),
-      const Color(0xFF6FBCC8).withValues(alpha: 0.3),
-    ];
-
-    for (int i = 0; i < waveColors.length; i++) {
-      final paint = Paint()
-        ..color = waveColors[i]
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 2.2 + (i * 0.4)
-        ..strokeCap = StrokeCap.round;
-
-      final path = Path();
-      final baseY = 50.0 + (i * 22);
-      path.moveTo(-20, baseY);
-
-      // Smooth flowing wave using cubic bezier curves.
-      path.cubicTo(
-        size.width * 0.18,
-        baseY - 30 - (i * 3),
-        size.width * 0.35,
-        baseY + 40 + (i * 2),
-        size.width * 0.5,
-        baseY + 10 + (i * 2),
-      );
-      path.cubicTo(
-        size.width * 0.65,
-        baseY - 20 - (i * 2),
-        size.width * 0.85,
-        baseY + 35 + (i * 3),
-        size.width + 20,
-        baseY + 5,
-      );
-
-      canvas.drawPath(path, paint);
-    }
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
-}
-
-/// Gradient pill-shaped "Let's Start" button with soft outer glow.
-class _LetsStartButton extends StatelessWidget {
-  const _LetsStartButton({required this.onTap});
-
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      behavior: HitTestBehavior.opaque,
-      child: Container(
-        width: 200.w,
-        height: 56.h,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(32.r),
-          gradient: const LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              Color(0xFF4A8A98),
-              Color(0xFF0E3B48),
-            ],
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: const Color(0xFF4A8A98).withValues(alpha: 0.25),
-              blurRadius: 22,
-              offset: const Offset(0, 10),
-            ),
-          ],
-        ),
-        alignment: Alignment.center,
-        child: Text(
-          AppLocalizations.of(context)!.consultationAiStartCta,
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.w600,
-            fontSize: 16.sp,
-          ),
         ),
       ),
     );

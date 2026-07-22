@@ -6,7 +6,8 @@ Doctor consultation category browse, doctor results, booking, and checkout.
 
 ## Routes / entry
 
-- `AppRoutes.consultation` — category grid (`DoctorConsultationScreen`); tiles use surgery `Assets.iconsD1` / `Assets.iconsD2` background vectors on `ConsultationUiConfig.cardBackground`.
+- `AppRoutes.consultation` — category grid (`DoctorConsultationScreen`); tiles use surgery `Assets.iconsD1` / `Assets.iconsD2` background vectors on `ConsultationUiConfig.cardBackground`. **Apna Doctor → Start now!** opens `AppRoutes.aiScreening`.
+- `AppRoutes.aiScreening` — in-app WebView of `ConsultationUiConfig.apnaDoctorAiUrl` / `AppUrls.apnaDoctorAi` (`https://medai.mediq.com.pk/hudav2/`); no intro UI.
 - `AppRoutes.consultationDoctors` — doctor results; extra: `DoctorConsultationResultsArgs` (`selectedCategory`, `mainCategoryId`, preloaded `categoryOptions` from category grid — avoids duplicate categories API call). Book Now requires login (`AppPref.getLoginStatus()`); guests go to `AppRoutes.authLogin`.
 - `AppRoutes.consultationCheckout` — payment screen; extra: `DoctorConsultationCheckoutArgs` (doctor, issue, selected slot, attachments, prefetched `paymentOptions`). Providers are loaded on **Get Appointment** via `GET payment-provider?module=consultation` before navigation. Submits booking via `POST` `AppUrls.doctorConsultationBooking` (`multipart/form-data`).
 - `AppRoutes.consultationSummary` — booking summary after payment method selection; extra: `DoctorConsultationSummaryArgs`. **JazzCash** → account sheet then summary (selected msisdn). **Card** → summary with card method info (account `N/A`, profile phone as booking msisdn). Proceed submits booking; Cancel returns to checkout.

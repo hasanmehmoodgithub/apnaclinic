@@ -12,6 +12,9 @@ class ConsultationUiConfig {
   static const String searchHint = 'Search for Categories';
   static const String tooltipTitle = 'Category details';
 
+  /// Apna Doctor AI screening (MedIQ Huda).
+  static const String apnaDoctorAiUrl = 'https://medai.mediq.com.pk/hudav2/';
+
   static const String heroDoctorAsset =
       'assets/img/consultation/hero_doctor.png';
   static const String heroVectorAsset =
