@@ -4,7 +4,7 @@ class ConsultationUiConfig {
   ConsultationUiConfig._();
 
   static const String screenTitle = 'Doctor Consultation';
-  static const String assistantTitle = 'Apna Doctor';
+  static const String assistantTitle = 'AI Health Assistant';
   static const String assistantDescription =
       'AI screening to gather your symptoms and recommend a suitable doctor, or choose a doctor category below.';
   static const String startNow = 'Start now!';

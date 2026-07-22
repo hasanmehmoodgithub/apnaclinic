@@ -1193,6 +1193,23 @@ class AppLocalizationsEn extends AppLocalizations {
   String get consultationAiScreeningTitle => 'AI Screening';
 
   @override
+  String get consultationAiScreeningExitTitle => 'Close AI Screening?';
+
+  @override
+  String get consultationAiScreeningExitMessage =>
+      'Are you sure you want to exit the AI Screening?';
+
+  @override
+  String get consultationAiScreeningExitCta => 'Exit';
+
+  @override
+  String get consultationAiScreeningExitCancel => 'Cancel';
+
+  @override
+  String get consultationMicrophonePermissionDenied =>
+      'Allow microphone access in Settings to start the online consultation.';
+
+  @override
   String get consultationAiWelcomePrefix => 'Hello, welcome to ';
 
   @override

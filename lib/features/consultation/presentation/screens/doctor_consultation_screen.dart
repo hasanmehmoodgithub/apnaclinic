@@ -5,7 +5,10 @@ import 'package:flutter_svg/flutter_svg.dart';
 import '../../../../components/shimmer/app_shimmer.dart';
 
 import '../../../../core/extensions/screen_util_extensions.dart';
+import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/router/app_routes.dart';
+import '../../../../core/utils/auth_guard.dart';
+import '../../../../core/utils/microphone_permission_utils.dart';
 import '../../domain/entities/consultation_category_entity.dart';
 import '../constants/consultation_ui_config.dart';
 import '../cubit/consultation_cubit.dart';
@@ -567,7 +570,7 @@ class _AssistantCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(6.r),
                 ),
               ),
-              onPressed: () => _openAiScreening(context),
+              onPressed: () => _onStartNowTap(context),
               child: Text(
                 ConsultationUiConfig.startNow,
                 style: textTheme.labelLarge?.copyWith(
@@ -583,7 +586,22 @@ class _AssistantCard extends StatelessWidget {
     );
   }
 
-  void _openAiScreening(BuildContext context) {
+  Future<void> _onStartNowTap(BuildContext context) async {
+    if (!context.requireLogin()) return;
+
+    final granted = await ensureMicrophonePermission();
+    if (!context.mounted) return;
+
+    if (!granted) {
+      final l10n = AppLocalizations.of(context)!;
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+          SnackBar(content: Text(l10n.consultationMicrophonePermissionDenied)),
+        );
+      return;
+    }
+
     context.pushNamed(AppRoutes.aiScreening);
   }
 }

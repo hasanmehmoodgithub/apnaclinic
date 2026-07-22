@@ -1192,6 +1192,23 @@ class AppLocalizationsUr extends AppLocalizations {
   String get consultationAiScreeningTitle => 'اے آئی اسکریننگ';
 
   @override
+  String get consultationAiScreeningExitTitle => 'اے آئی اسکریننگ بند کریں؟';
+
+  @override
+  String get consultationAiScreeningExitMessage =>
+      'کیا آپ واقعی اے آئی اسکریننگ سے باہر نکلنا چاہتے ہیں؟';
+
+  @override
+  String get consultationAiScreeningExitCta => 'باہر نکلیں';
+
+  @override
+  String get consultationAiScreeningExitCancel => 'منسوخ';
+
+  @override
+  String get consultationMicrophonePermissionDenied =>
+      'آن لائن کنسلٹیشن شروع کرنے کے لیے سیٹنگز میں مائیکروفون کی اجازت دیں۔';
+
+  @override
   String get consultationAiWelcomePrefix => 'ہیلو، خوش آمدید ';
 
   @override

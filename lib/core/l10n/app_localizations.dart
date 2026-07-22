@@ -2327,6 +2327,36 @@ abstract class AppLocalizations {
   /// **'AI Screening'**
   String get consultationAiScreeningTitle;
 
+  /// No description provided for @consultationAiScreeningExitTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Close AI Screening?'**
+  String get consultationAiScreeningExitTitle;
+
+  /// No description provided for @consultationAiScreeningExitMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to exit the AI Screening?'**
+  String get consultationAiScreeningExitMessage;
+
+  /// No description provided for @consultationAiScreeningExitCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Exit'**
+  String get consultationAiScreeningExitCta;
+
+  /// No description provided for @consultationAiScreeningExitCancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get consultationAiScreeningExitCancel;
+
+  /// No description provided for @consultationMicrophonePermissionDenied.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow microphone access in Settings to start the online consultation.'**
+  String get consultationMicrophonePermissionDenied;
+
   /// No description provided for @consultationAiWelcomePrefix.
   ///
   /// In en, this message translates to:
