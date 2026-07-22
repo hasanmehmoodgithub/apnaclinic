@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../cubit/doctor_consultation_booking_details_cubit.dart';
 import '../cubit/doctor_consultation_booking_details_state.dart';
 import '../widgets/doctor_consultation_booking_details_content_widget.dart';
 import '../widgets/doctor_consultation_booking_details_shimmer_widget.dart';
+import '../widgets/empty_booking_widget.dart';
 import '../widgets/surgery_booking_details_header_widget.dart';
 
 class DoctorConsultationBookingDetailsScreen extends StatefulWidget {
@@ -80,20 +80,19 @@ class _DoctorConsultationBookingDetailsScreenState
                         return const DoctorConsultationBookingDetailsShimmerWidget();
                       }
                       if (state.hasError || state.data == null) {
-                        return Center(
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(l10n.bookingsDetailsLoadError),
-                              SizedBox(height: 12.h),
-                              FilledButton(
-                                onPressed: () => context
-                                    .read<
-                                        DoctorConsultationBookingDetailsCubit>()
-                                    .load(),
-                                child: Text(l10n.commonRetry),
-                              ),
-                            ],
+                        final message =
+                            (state.errorMessage?.trim().isNotEmpty ?? false)
+                            ? state.errorMessage!.trim()
+                            : l10n.bookingsDetailsLoadError;
+                        return Padding(
+                          padding: const EdgeInsets.fromLTRB(20, 150, 20, 20),
+                          child: EmptyBookingWidget(
+                            description: message,
+                            buttonText: l10n.commonRetry,
+                            backgroundColor: Colors.transparent,
+                            onTap: () => context
+                                .read<DoctorConsultationBookingDetailsCubit>()
+                                .load(),
                           ),
                         );
                       }

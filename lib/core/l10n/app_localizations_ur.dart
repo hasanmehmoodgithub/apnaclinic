@@ -781,6 +781,13 @@ class AppLocalizationsUr extends AppLocalizations {
       'نوٹیفیکیشنز لوڈ نہیں ہو سکیں۔ ریفریش کریں یا دوبارہ کوشش کریں۔';
 
   @override
+  String get notificationsDeepLinkUnavailableTitle => 'تفصیلات دستیاب نہیں';
+
+  @override
+  String get notificationsDeepLinkUnavailableMessage =>
+      'یہ نوٹیفیکیشن نہیں کھل سکتی۔ بکنگ یا آرڈر کا حوالہ غائب یا غیر معاون ہو سکتا ہے۔';
+
+  @override
   String get searchScreenTitle => 'تلاش';
 
   @override

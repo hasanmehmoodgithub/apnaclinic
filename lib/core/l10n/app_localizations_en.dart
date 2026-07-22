@@ -781,6 +781,13 @@ class AppLocalizationsEn extends AppLocalizations {
       'Unable to load notifications. Pull to refresh or try again.';
 
   @override
+  String get notificationsDeepLinkUnavailableTitle => 'Details unavailable';
+
+  @override
+  String get notificationsDeepLinkUnavailableMessage =>
+      'This notification cannot be opened. The booking or order reference may be missing or unsupported.';
+
+  @override
   String get searchScreenTitle => 'Search';
 
   @override

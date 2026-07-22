@@ -19,6 +19,7 @@ Browse lab tests, booking/cart flow, payment details checkout, and order view de
   - Patient details: **before Edit** = read-only rows with **Edit**; **after Edit** = form with **Done**. Emergency contact always below (required; accepts 10-digit landline or 11-digit mobile).
   - Bottom CTA has no separate white bar behind the button. Panel top radius `20`.
 - On open, `LabTestCubit.bootstrap()` reads `AppPrefKeys.labTestSelectedCity`, loads cities, then immediately calls the lab tests API when a saved city resolves to a `cityId`; first visit without a saved city auto-opens the city selection dialog (tests load after pick).
+- Booking detail load shows the shared heart loader (`showHeartLoaderDialog`); failure renders the shared `EmptyBookingWidget` with the API message and a retry CTA.
 - Selected city is persisted in `AppPrefKeys.labTestSelectedCity` and restored on every lab test visit until the user changes it.
 
 ## Data & APIs
@@ -33,7 +34,8 @@ Browse lab tests, booking/cart flow, payment details checkout, and order view de
   - Response: `data.partners[]` each with `labs[]` and `pricing.HOME_SAMPLING` / `pricing.WALK_IN` (`price`, `discountPct`, `finalPrice`).
   - Booking screen filters partners/labs by booking method (`WALK_IN` / `HOME_SAMPLING`); when no lab supports home sampling, partner/lab grids are hidden, sample type shows **N/A**, and **Add to Cart** is disabled.
 - **Book lab test:** `POST AppUrls.labBookTest` → `/acs-aggregator/api/v1/mobile/lab/book-test`
-  - Triggered from **checkout** CTA after picking a payment method via `PaymentMethodSheet(module: lab)` → `GET payment-provider?module=lab` (JazzCash opens shared Select Account sheet from `ProfileSessionSync`/prefs — no accounts GET on open; API only after Add Account; otherwise the patient phone is used).
+  - Triggered from **checkout** CTA after picking a payment method via `PaymentMethodSheet(module: lab)` → `GET payment-provider?module=lab` (JazzCash prompts for an account msisdn; otherwise the patient phone is used).
+  - While `POST lab/book-test` runs, shows the shared heart loader; on failure shows shared `AlertDialogCard` with the API message.
   - Body: `{ partnerId, labId, cityId, homeSample, paymentMethod, msisdn, patient: { name, age, gender, phoneNumber }, tests: [ { testId } ] }`.
   - `testId`s come from every cart line (supports multiple tests in one booking); `partnerId` / `labId` / `homeSample` come from the first cart line; `cityId` is resolved from the city name via `CitiesRepository`.
 - **Lab orders (bookings list):** `GET AppUrls.labOrders` — response items include optional `invoice` (PDF URL). Mapped through `LabOrderModel` → `LabOrderEntity` → bookings list.

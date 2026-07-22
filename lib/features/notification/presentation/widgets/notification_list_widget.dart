@@ -55,7 +55,7 @@ class NotificationListWidget extends StatelessWidget {
     NotificationEntity item,
   ) async {
     if (item.isRead) {
-      openNotificationDeepLink(context, item);
+      await _openDeepLinkOrShowMessage(context, item);
       return;
     }
 
@@ -76,6 +76,16 @@ class NotificationListWidget extends StatelessWidget {
       return;
     }
 
-    openNotificationDeepLink(context, item);
+    await _openDeepLinkOrShowMessage(context, item);
+  }
+
+  Future<void> _openDeepLinkOrShowMessage(
+    BuildContext context,
+    NotificationEntity item,
+  ) async {
+    final opened = openNotificationDeepLink(context, item);
+    if (!opened && context.mounted) {
+      await showNotificationUnavailableDialog(context, item);
+    }
   }
 }

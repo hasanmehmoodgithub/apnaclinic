@@ -1,19 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/l10n/app_localizations.dart';
 import '../../../core/router/app_routes.dart';
 import '../../bookings/data/models/surgery_details_item.dart';
 import '../../bookings/presentation/doctor_consultation_booking_details_args.dart';
+import '../../bookings/presentation/widgets/alert_dialog_card.dart';
 import '../../lab_test/presentation/lab_test_route_args.dart';
 import '../domain/entities/notification_entity.dart';
 
 /// Opens the booking / order screen for a notification's `serviceType` + `entityId`.
-void openNotificationDeepLink(
+///
+/// Returns `true` when navigation was started; `false` when the notification
+/// cannot be routed (missing entity id, unsupported service type, etc.).
+bool openNotificationDeepLink(
   BuildContext context,
   NotificationEntity item,
 ) {
   final entityId = item.entityId.trim();
-  if (entityId.isEmpty) return;
+  if (entityId.isEmpty) return false;
 
   final service = item.serviceType.trim().toUpperCase();
   switch (service) {
@@ -22,7 +27,7 @@ void openNotificationDeepLink(
         AppRoutes.doctorConsultationBookingDetails,
         extra: DoctorConsultationBookingDetailsArgs(bookingId: entityId),
       );
-      return;
+      return true;
     case 'SURGERY':
       context.pushNamed(
         AppRoutes.surgeryBookingDetails,
@@ -32,13 +37,13 @@ void openNotificationDeepLink(
           initialStatus: SurgeryBookingStatus.inReview,
         ),
       );
-      return;
+      return true;
     case 'LAB':
       context.pushNamed(
         AppRoutes.labTestViewDetails,
         extra: LabTestViewDetailsArgs(orderId: entityId),
       );
-      return;
+      return true;
     case 'PHARMACY':
       context.pushNamed(
         AppRoutes.pharmacyBookingDetails,
@@ -47,10 +52,35 @@ void openNotificationDeepLink(
           'status': 'confirmed',
         },
       );
-      return;
+      return true;
     default:
-      return;
+      return false;
   }
+}
+
+/// Shows notification content when deep link routing is unavailable.
+Future<void> showNotificationUnavailableDialog(
+  BuildContext context,
+  NotificationEntity item,
+) {
+  final l10n = AppLocalizations.of(context)!;
+  final title = item.title.trim().isNotEmpty
+      ? item.title.trim()
+      : l10n.notificationsDeepLinkUnavailableTitle;
+  final message = item.message.trim().isNotEmpty
+      ? item.message.trim()
+      : l10n.notificationsDeepLinkUnavailableMessage;
+
+  return showDialog<void>(
+    context: context,
+    barrierDismissible: false,
+    useRootNavigator: true,
+    builder: (_) => AlertDialogCard(
+      kind: AlertKind.error,
+      title: title,
+      message: message,
+    ),
+  );
 }
 
 SurgeryDetailsItem _placeholderSurgeryItem(String leadId) {
