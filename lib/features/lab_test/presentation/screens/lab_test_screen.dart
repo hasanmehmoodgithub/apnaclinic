@@ -20,6 +20,7 @@ import '../../../../core/widgets/app_scaffold_gradient.dart';
 import '../../domain/entities/lab_test_item_entity.dart';
 import '../cubit/lab_test_cubit.dart';
 import '../cubit/lab_test_state.dart';
+import '../lab_test_cart_change_guard.dart';
 import '../lab_test_navigation.dart';
 import '../lab_test_route_args.dart';
 import '../widgets/lab_test_browse_header_widget.dart';
@@ -146,18 +147,32 @@ class _LabTestScreenState extends State<LabTestScreen> {
   ) async {
     if (_isCityDialogOpen) return;
     _isCityDialogOpen = true;
+    final cubit = context.read<LabTestCubit>();
     final picked = await showSelectCityDialog(
       context,
       cities: cities,
       title: l10n.selectCityTitle,
       searchHint: l10n.selectCitySearchHint,
-      initialSelectedCity: context.read<LabTestCubit>().state.selectedCity,
+      initialSelectedCity: cubit.state.selectedCity,
     );
     _isCityDialogOpen = false;
-    if (picked != null && context.mounted) {
-      _savedCity = picked;
-      await context.read<LabTestCubit>().selectCity(picked);
-    }
+    if (picked == null || !context.mounted) return;
+
+    final currentCity = cubit.state.selectedCity;
+    if (picked == currentCity) return;
+
+    await labTestGuardCartClearingChange(
+      context,
+      onProceed: () async {
+        _savedCity = picked;
+        await cubit.selectCity(picked);
+        if (mounted) setState(() {});
+      },
+      onViewCart: () async {
+        await labTestOpenCart(context);
+        if (mounted) setState(() {});
+      },
+    );
   }
 
   void _resolveInitialCitySelection(

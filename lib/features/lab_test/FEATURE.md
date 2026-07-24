@@ -46,6 +46,7 @@ Browse lab tests, booking/cart flow, payment details checkout, and order view de
 
 - `LabTestCubit` — `bootstrap()` on create loads cities then `GET lab/tests` when saved/selected city is set; `selectCity()` / `submitSearch()` re-fetches with resolved `cityId`.
 - `LabTestBookingCubit` — cart + partner/vendor selection for a single test.
+- Changing **city** (browse), **booking method**, **service provider**, or **lab** while the cart has items shows `LabTestCartChangeWarningDialogWidget` via `labTestGuardCartClearingChange`; Continue clears the cart (`LabTestCartRepository`), View Cart opens the cart without applying the change.
 
 ## DI
 

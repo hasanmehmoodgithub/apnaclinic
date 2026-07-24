@@ -35,7 +35,7 @@ class DoctorConsultationBookingBodyWidget extends StatelessWidget {
     required this.issueController,
     required this.onSlotChanged,
     required this.availabilityDays,
-    required this.isAvailabilityLoading,
+    required     this.isAvailabilityLoading,
     this.availabilityErrorMessage,
     this.patientReviews,
   });
@@ -82,6 +82,7 @@ class DoctorConsultationBookingBodyWidget extends StatelessWidget {
               satisfiedText: satisfiedText,
               rating: rating,
               showPmdcVerified: showPmdcVerified,
+              isStatsLoading: isAvailabilityLoading,
               description: description,
               partner: partner,
               partnerLogoUrl: partnerLogoUrl,

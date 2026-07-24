@@ -34,7 +34,7 @@ Phone entries: `id`, `msisdn`, `jazzCashVerified`, `primary`. UI shows `03…` l
 
 ## Mocks
 
-`AccountMockApi` when `MockConfig.enableAccountMocks` is true (default off; real API in debug).
+`AccountMockApi` when `MockConfig.enableAccountMocks` is true (default off; real API).
 
 Before add/delete phone, the app resolves numeric `data.id` via cached profile (`apiUserId`) or a profile GET using the session user id.
 

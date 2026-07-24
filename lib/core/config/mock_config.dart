@@ -1,67 +1,25 @@
-import 'package:flutter/foundation.dart';
-
 class MockConfig {
   MockConfig._();
 
-  static const String _mockTrueValue = String.fromEnvironment(
-    'MOCKTRUE',
-    defaultValue: 'true',
-  );
+  static bool get enableMocks => false;
 
-  static bool get enableMocks {
-    return _isTruthy(_mockTrueValue) || kDebugMode;
-  }
+  static bool get enableLabTestMocks => false;
 
-  static bool get enableLabTestMocks {
-    return false;
-    return _isTruthy(_mockTrueValue) || kDebugMode;
-  }
-  static bool get enableAuthMocks {
-    return false;
-    return _isTruthy(_mockTrueValue)  || kDebugMode;
-  }
-  static bool get enableProfileMocks {
-    return false;
-    return _isTruthy(_mockTrueValue)  || kDebugMode;
-  }
+  static bool get enableAuthMocks => false;
+
+  static bool get enableProfileMocks => false;
 
   static bool get enableDashboardMocks => false;
 
-  static bool get enableConsultationMocks {
-    return false;
-    return _isTruthy(_mockTrueValue) || kDebugMode;
-  }
+  static bool get enableConsultationMocks => false;
 
-  static bool get enableSurgeryMocks {
-    return false;
-    return _isTruthy(_mockTrueValue) || kDebugMode;
-  }
+  static bool get enableSurgeryMocks => false;
 
-  static bool get enableAccountMocks {
-    return false;
-    return _isTruthy(_mockTrueValue) || kDebugMode;
-  }
+  static bool get enableAccountMocks => false;
 
-  static bool get enableInstantDoctorMocks {
-    return false;
-    return _isTruthy(_mockTrueValue) || kDebugMode;
-  }
-  static bool get enablePharmacyMocks {
-    return false;
-    return _isTruthy(_mockTrueValue) || kDebugMode;
-  }
+  static bool get enableInstantDoctorMocks => false;
 
-  static bool get enableNotificationMocks {
-    return false;
-    return _isTruthy(_mockTrueValue) || kDebugMode;
-  }
+  static bool get enablePharmacyMocks => false;
 
-  static bool _isTruthy(String value) {
-    final normalized = value.trim().toLowerCase();
-    return normalized == 'true' ||
-        normalized == '1' ||
-        normalized == 'yes' ||
-        normalized == 'on' ||
-        normalized == 'mocktrue';
-  }
+  static bool get enableNotificationMocks => false;
 }

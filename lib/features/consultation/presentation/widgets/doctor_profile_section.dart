@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
+import '../../../../components/shimmer/app_shimmer.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/widgets/app_rounded_rating_widget.dart';
 import '../../domain/entities/consultation_doctor_slots_entity.dart';
@@ -18,6 +19,7 @@ class DoctorProfileSection extends StatelessWidget {
   final String? satisfiedText;
   final double? rating;
   final bool showPmdcVerified;
+  final bool isStatsLoading;
   final String description;
   final String partner;
   final String partnerLogoUrl;
@@ -35,6 +37,7 @@ class DoctorProfileSection extends StatelessWidget {
     this.satisfiedText,
     this.rating,
     this.showPmdcVerified = false,
+    this.isStatsLoading = false,
     required this.description,
     required this.partner,
     required this.partnerLogoUrl,
@@ -77,6 +80,7 @@ class DoctorProfileSection extends StatelessWidget {
         ),
       ],
     ];
+    final showStatsRow = isStatsLoading || statCards.isNotEmpty;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -183,12 +187,20 @@ class DoctorProfileSection extends StatelessWidget {
             ],
           ],
         ),
-        if (statCards.isNotEmpty) ...[
+        if (showStatsRow) ...[
           SizedBox(height: 14.h),
           IntrinsicHeight(
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: statCards,
+              children: isStatsLoading
+                  ? [
+                      const Expanded(child: _StatCardShimmer()),
+                      SizedBox(width: 8.w),
+                      const Expanded(child: _StatCardShimmer()),
+                      SizedBox(width: 8.w),
+                      const Expanded(child: _StatCardShimmer()),
+                    ]
+                  : statCards,
             ),
           ),
         ],
@@ -357,12 +369,38 @@ class _StatCard extends StatelessWidget {
           SizedBox(height: 6.h),
           Text(
             value,
-            style: textTheme.bodyMedium?.copyWith(
+            style: textTheme.titleMedium?.copyWith(
               color: const Color(0xFF1E2D3F),
-              fontSize: 15.sp,
-              fontWeight: FontWeight.w700,
+              fontSize: 16.sp,
+              fontWeight: FontWeight.w600,
             ),
           ),
+        ],
+      ),
+    );
+  }
+}
+
+class _StatCardShimmer extends StatelessWidget {
+  const _StatCardShimmer();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.fromLTRB(10.w, 10.h, 10.w, 10.h),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(8.r),
+        border: Border.all(color: const Color(0xFFE2E6EB), width: 1),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          AppShimmerCard(width: 64.w, height: 12.h, borderRadius: 4.r),
+          SizedBox(height: 4.h),
+          AppShimmerCard(width: 48.w, height: 12.h, borderRadius: 4.r),
+          SizedBox(height: 8.h),
+          AppShimmerCard(width: 40.w, height: 16.h, borderRadius: 4.r),
         ],
       ),
     );

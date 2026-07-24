@@ -13,6 +13,7 @@ import '../../../../generated/assets.dart';
 import '../../../bookings/presentation/widgets/alert_dialog_card.dart';
 import '../cubit/lab_test_booking_cubit.dart';
 import '../cubit/lab_test_booking_state.dart';
+import '../lab_test_cart_change_guard.dart';
 import '../lab_test_navigation.dart';
 import '../widgets/lab_test_booking_bottom_bar_widget.dart';
 import '../widgets/lab_test_booking_city_box_widget.dart';
@@ -22,7 +23,6 @@ import '../widgets/lab_test_booking_partner_tabs_widget.dart';
 import '../widgets/lab_test_booking_test_summary_card_widget.dart';
 import '../widgets/lab_test_booking_vendor_grid_widget.dart';
 import '../widgets/lab_test_browse_header_widget.dart';
-import '../widgets/lab_test_cart_change_warning_dialog_widget.dart';
 
 class LabTestBookingScreen extends StatefulWidget {
   const LabTestBookingScreen({super.key});
@@ -309,30 +309,15 @@ class _LabTestBookingScreenState extends State<LabTestBookingScreen> {
     Future<void> Function(LabTestBookingCubit cubit) apply,
   ) async {
     final cubit = context.read<LabTestBookingCubit>();
-    if (cubit.state.cartItems.isEmpty) {
-      await apply(cubit);
-      return;
-    }
-    final l10n = AppLocalizations.of(context)!;
-    final action = await showDialog<LabTestCartChangeDialogAction>(
-      context: context,
-      barrierDismissible: false,
-      builder: (dialogContext) => LabTestCartChangeWarningDialogWidget(
-        title: l10n.labTestCartChangeWarningTitle,
-        body: l10n.labTestCartChangeWarningBody,
-        viewCartLabel: l10n.labTestCartChangeViewCart,
-        continueLabel: l10n.labTestCartChangeContinue,
-      ),
+    await labTestGuardCartClearingChange(
+      context,
+      onCartCleared: cubit.clearCart,
+      onProceed: () => apply(cubit),
+      onViewCart: () async {
+        await labTestOpenCart(context);
+        if (context.mounted) await cubit.hydrate();
+      },
     );
-    if (!context.mounted || action == null) return;
-    if (action == LabTestCartChangeDialogAction.viewCart) {
-      await labTestOpenCart(context);
-      if (context.mounted) await cubit.hydrate();
-      return;
-    }
-    await cubit.clearCart();
-    if (!context.mounted) return;
-    await apply(cubit);
   }
 
   Future<void> _onBottomCta(

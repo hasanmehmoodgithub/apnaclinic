@@ -36,7 +36,7 @@ Doctor consultation category browse, doctor results, booking, and checkout.
   - Used from booking details when `patientReview` is null (not cancelled); `refNo` is `partnerRefNo` (fallback booking id).
 - **GET** `AppUrls.doctorConsultationSlots(doctorId, hospitalId?)` — `/api/v1/mobile/doctor-consultation/doctor/{doctorId}` (optional `?hospitalId=` when doctors list provides it).
   - Response `data.doctorInfo`: `ratings`, `pmdcVerified`, `verifiedPatientsCount`, `patientsSatisfiedPercentage`, `timeslots[]` (`date`, `slots[]` with `startTime`/`endTime` in 12h e.g. `12:40 PM`), `patientReviews` (`totalCount`, `filteredCount`, `reviews[]` with `rating`/`date`/`comment`/`patientName` — flexible keys).
-  - Book-doctor screen shows Patient's Reviews under Description (first review + See More → Feedback bottom sheet). Ratings use shared `AppRoundedRatingWidget` (whole numbers without `.0`).
+  - Book-doctor screen shows Patient's Reviews under Description (first review + See More → Feedback bottom sheet). Ratings use shared `AppRoundedRatingWidget` (whole numbers without `.0`). While slots load, Verified Patients / Experience / Satisfied use shimmer cards (`isStatsLoading`).
   - Parser keeps slot times in 12h AM/PM (e.g. `03:50 PM`) for display and booking submit; legacy `data[]` with `start_time`/`end_time` still supported.
   - Missing dates between the first and last `timeslots` entry are filled as empty days (disabled in UI). First date with slots is auto-selected on load; month label reflects the selected date.
   - Uses `ResultsDoctorItem.partnerDoctorId` when present, else numeric `apiDoctorId` (`id` from doctors list).
