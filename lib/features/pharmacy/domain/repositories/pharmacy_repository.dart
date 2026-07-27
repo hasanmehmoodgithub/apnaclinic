@@ -27,10 +27,10 @@ abstract class PharmacyRepository {
   });
 
   Future<Either<ErrorMsg, PharmacyCheckoutResultEntity>> checkoutOrder({
-    required String bookingId,
-    required String patientId,
-    required String userLocationId,
+    required String guestPhone,
+    required String guestName,
     required String paymentMethod,
+    required String guestAddressCityId,
   });
 
   Future<Either<ErrorMsg, PharmacyAddAddressResultEntity>> addProfileAddress({

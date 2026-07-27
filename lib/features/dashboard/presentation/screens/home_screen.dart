@@ -249,7 +249,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                 return HomeHeaderSection(
                   userName: greetingName,
                   isLoggedIn: _isLoggedIn,
-                  notificationCount: unreadCount,
+                  hasUnreadNotifications: unreadCount > 0,
                   profileImageUrl: profileImageUrl,
                   onMenuTap: () => context.push(
                     AppRoutes.path(AppRoutes.dashboardMenu),

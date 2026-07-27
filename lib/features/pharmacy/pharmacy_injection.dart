@@ -74,7 +74,6 @@ void initPharmacyInjector() {
       addToCartUseCase: sl<AddToCartUseCase>(),
       updatePharmacyCartQuantityUseCase: sl<UpdatePharmacyCartQuantityUseCase>(),
       pharmacyCheckoutUseCase: sl<PharmacyCheckoutUseCase>(),
-      addPharmacyProfileAddressUseCase: sl<AddPharmacyProfileAddressUseCase>(),
       citiesRepository: sl<CitiesRepository>(),
       appPref: sl<AppPref>(),
     ),

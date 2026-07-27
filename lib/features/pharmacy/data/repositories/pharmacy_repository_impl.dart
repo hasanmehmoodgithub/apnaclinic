@@ -103,17 +103,17 @@ class PharmacyRepositoryImpl implements PharmacyRepository {
 
   @override
   Future<Either<ErrorMsg, PharmacyCheckoutResultEntity>> checkoutOrder({
-    required String bookingId,
-    required String patientId,
-    required String userLocationId,
+    required String guestPhone,
+    required String guestName,
     required String paymentMethod,
+    required String guestAddressCityId,
   }) async {
     try {
       final response = await remoteDataSource.checkoutOrder(
-        bookingId: bookingId,
-        patientId: patientId,
-        userLocationId: userLocationId,
+        guestPhone: guestPhone,
+        guestName: guestName,
         paymentMethod: paymentMethod,
+        guestAddressCityId: guestAddressCityId,
       );
       final entity = PharmacyMedicineMapper.toCheckoutResultEntity(response);
       log('Mapped checkout orderNo: ${entity.orderNo}');

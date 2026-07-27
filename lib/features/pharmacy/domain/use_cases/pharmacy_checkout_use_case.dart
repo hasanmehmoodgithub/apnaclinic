@@ -5,16 +5,16 @@ import '../repositories/pharmacy_repository.dart';
 
 class PharmacyCheckoutParams {
   const PharmacyCheckoutParams({
-    required this.bookingId,
-    required this.patientId,
-    required this.userLocationId,
+    required this.guestPhone,
+    required this.guestName,
     required this.paymentMethod,
+    required this.guestAddressCityId,
   });
 
-  final String bookingId;
-  final String patientId;
-  final String userLocationId;
+  final String guestPhone;
+  final String guestName;
   final String paymentMethod;
+  final String guestAddressCityId;
 }
 
 class PharmacyCheckoutUseCase
@@ -28,10 +28,10 @@ class PharmacyCheckoutUseCase
     PharmacyCheckoutParams params,
   ) {
     return repository.checkoutOrder(
-      bookingId: params.bookingId,
-      patientId: params.patientId,
-      userLocationId: params.userLocationId,
+      guestPhone: params.guestPhone,
+      guestName: params.guestName,
       paymentMethod: params.paymentMethod,
+      guestAddressCityId: params.guestAddressCityId,
     );
   }
 }

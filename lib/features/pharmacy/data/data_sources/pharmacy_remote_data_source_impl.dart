@@ -1,5 +1,7 @@
 import 'dart:developer';
 
+import 'package:dio/dio.dart';
+
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/network/api_service.dart';
 import '../../../../core/network/app_urls.dart';
@@ -222,29 +224,31 @@ class PharmacyRemoteDataSourceImpl implements PharmacyRemoteDataSource {
 
   @override
   Future<Map<String, dynamic>> checkoutOrder({
-    required String bookingId,
-    required String patientId,
-    required String userLocationId,
+    required String guestPhone,
+    required String guestName,
     required String paymentMethod,
+    required String guestAddressCityId,
   }) async {
     try {
       final Map<String, dynamic> response;
       if (PharmacyMockApi.useMockResponses) {
         response = await mockApi.checkoutOrderSuccessResponse(
-          bookingId: bookingId,
-          patientId: patientId,
-          userLocationId: userLocationId,
+          guestPhone: guestPhone,
+          guestName: guestName,
           paymentMethod: paymentMethod,
+          guestAddressCityId: guestAddressCityId,
         );
       } else {
+        final formData = FormData.fromMap({
+          'guest_phone': guestPhone,
+          'guest_name': guestName,
+          'payment_method': paymentMethod,
+          'guest_address_city_id': guestAddressCityId,
+        });
         response = await apiService.post(
           AppUrls.pharmacyOrderCheckout,
-          data: <String, dynamic>{
-            'booking_id': bookingId,
-            'patient_id': patientId,
-            'user_location_id': userLocationId,
-            'payment_method': paymentMethod,
-          },
+          data: formData,
+          headers: const {'Content-Type': 'multipart/form-data'},
         );
         log('checkoutOrder response: $response');
       }

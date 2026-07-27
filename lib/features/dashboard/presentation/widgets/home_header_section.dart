@@ -13,7 +13,7 @@ class HomeHeaderSection extends StatelessWidget {
     super.key,
     required this.userName,
     required this.isLoggedIn,
-    required this.notificationCount,
+    required this.hasUnreadNotifications,
     this.profileImageUrl,
     this.onMenuTap,
     this.onNotificationTap,
@@ -25,7 +25,7 @@ class HomeHeaderSection extends StatelessWidget {
 
   final String userName;
   final bool isLoggedIn;
-  final int notificationCount;
+  final bool hasUnreadNotifications;
   final String? profileImageUrl;
   final VoidCallback? onMenuTap;
   final VoidCallback? onNotificationTap;
@@ -78,9 +78,8 @@ class HomeHeaderSection extends StatelessWidget {
                       transparentBackground: true,
                       onMenuTap: onMenuTap,
                       onNotificationTap: onNotificationTap,
-                      notificationCount:
-                          isLoggedIn ? notificationCount : 0,
-                      showNotificationDot: !isLoggedIn,
+                      showNotificationDot:
+                          !isLoggedIn || hasUnreadNotifications,
                       showLoginButton: !isLoggedIn,
                       filledLoginButton: true,
                       onLoginTap: onLoginTap,

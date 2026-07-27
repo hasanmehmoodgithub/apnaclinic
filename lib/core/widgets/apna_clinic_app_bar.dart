@@ -26,7 +26,6 @@ class ApnaClinicAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.transparentBackground = false,
     this.onMenuTap,
     this.onNotificationTap,
-    this.notificationCount,
     this.showNotificationDot = false,
     this.onProfileTap,
     this.onLoginTap,
@@ -45,7 +44,6 @@ class ApnaClinicAppBar extends StatelessWidget implements PreferredSizeWidget {
   final bool transparentBackground;
   final VoidCallback? onMenuTap;
   final VoidCallback? onNotificationTap;
-  final int? notificationCount;
   final bool showNotificationDot;
   final VoidCallback? onProfileTap;
   final VoidCallback? onLoginTap;
@@ -151,31 +149,7 @@ class ApnaClinicAppBar extends StatelessWidget implements PreferredSizeWidget {
                         fit: BoxFit.contain,
                         colorFilter: svgFilter,
                       ),
-                      if ((notificationCount ?? 0) > 0)
-                        Positioned(
-                          right: 0,
-                          top: 0,
-                          child: Container(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 4.w,
-                              vertical: 1.h,
-                            ),
-                            decoration: BoxDecoration(
-                              color: const Color(0xFFFF5353),
-                              borderRadius: BorderRadius.circular(8.r),
-                            ),
-                            child: Text(
-                              '${notificationCount!}',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 9.sp,
-                                fontWeight: FontWeight.w700,
-                                height: 1.0,
-                              ),
-                            ),
-                          ),
-                        )
-                      else if (showNotificationDot)
+                      if (showNotificationDot)
                         Positioned(
                           right: 2.w,
                           top: 2.h,

@@ -337,10 +337,10 @@ class PharmacyMockApi {
   }
 
   Future<Map<String, dynamic>> checkoutOrderSuccessResponse({
-    required String bookingId,
-    required String patientId,
-    required String userLocationId,
+    required String guestPhone,
+    required String guestName,
     required String paymentMethod,
+    required String guestAddressCityId,
   }) async {
     await Future<void>.delayed(const Duration(milliseconds: 500));
     return {
@@ -348,10 +348,10 @@ class PharmacyMockApi {
       'message': 'Order placed successfully',
       'code': 200,
       'data': {
-        'booking_id': bookingId,
-        'patient_id': patientId,
-        'user_location_id': userLocationId,
+        'guest_phone': guestPhone,
+        'guest_name': guestName,
         'payment_method': paymentMethod,
+        'guest_address_city_id': guestAddressCityId,
         'order_no': '1223',
         'status': 'confirmed',
       },

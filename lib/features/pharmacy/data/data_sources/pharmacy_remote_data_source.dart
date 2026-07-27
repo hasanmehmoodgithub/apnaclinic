@@ -21,10 +21,10 @@ abstract class PharmacyRemoteDataSource {
   });
 
   Future<Map<String, dynamic>> checkoutOrder({
-    required String bookingId,
-    required String patientId,
-    required String userLocationId,
+    required String guestPhone,
+    required String guestName,
     required String paymentMethod,
+    required String guestAddressCityId,
   });
 
   Future<Map<String, dynamic>> addProfileAddress({
