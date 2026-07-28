@@ -42,7 +42,19 @@ class LabTestBookingState extends Equatable {
     return list[i];
   }
 
+  /// Cart has a partner, but this test only offers a different single partner.
+  bool get isSolePartnerMismatchWithCart {
+    if (cartItems.isEmpty) return false;
+    final cartPartnerId = cartItems.first.partnerId.trim();
+    if (cartPartnerId.isEmpty) return false;
+    final partners = filteredPartners;
+    if (partners.length != 1) return false;
+    return partners.first.id != cartPartnerId;
+  }
+
   List<LabTestBookingVendorOption> get filteredVendors {
+    if (isSolePartnerMismatchWithCart) return const [];
+
     final partner = selectedPartner;
     if (partner == null) return const [];
 

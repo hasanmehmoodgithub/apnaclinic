@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../domain/entities/lab_test_cart_item.dart';
 import '../../domain/repositories/lab_test_cart_repository.dart';
 import '../../domain/use_cases/get_lab_test_detail_use_case.dart';
+import '../../domain/utils/lab_test_item_booking_helper.dart';
 import '../lab_test_route_args.dart';
 import 'lab_test_booking_state.dart';
 
@@ -21,6 +22,7 @@ class LabTestBookingCubit extends Cubit<LabTestBookingState> {
   Future<void> hydrate() async {
     final items = await _cartRepository.readCart();
     emit(state.copyWith(cartItems: items));
+    _applyCartSelectionPreferences();
   }
 
   Future<void> loadDetailIfNeeded() async {
@@ -55,6 +57,7 @@ class LabTestBookingCubit extends Cubit<LabTestBookingState> {
             selectedVendorIndex: 0,
           ),
         );
+        _applyCartSelectionPreferences();
       },
     );
   }
@@ -75,19 +78,72 @@ class LabTestBookingCubit extends Cubit<LabTestBookingState> {
     emit(state.copyWith(cartItems: next));
   }
 
-  void setLabVisit(bool value) => emit(
-        state.copyWith(
-          labVisit: value,
-          partnerTab: 0,
-          selectedVendorIndex: 0,
-        ),
-      );
+  void setLabVisit(bool value) {
+    emit(
+      state.copyWith(
+        labVisit: value,
+        partnerTab: 0,
+        selectedVendorIndex: 0,
+      ),
+    );
+    _selectCartPartnerForCurrentMethod();
+  }
 
   void setPartnerTab(int index) =>
       emit(state.copyWith(partnerTab: index, selectedVendorIndex: 0));
 
   void setVendorIndex(int index) =>
       emit(state.copyWith(selectedVendorIndex: index));
+
+  /// Prefill booking method + partner (+ lab when available) from the cart.
+  void _applyCartSelectionPreferences() {
+    if (state.cartItems.isEmpty || state.args.isPending) return;
+
+    final first = state.cartItems.first;
+    final labVisit = !first.bookingMethodIsHomeSample;
+    emit(
+      state.copyWith(
+        labVisit: labVisit,
+        partnerTab: 0,
+        selectedVendorIndex: 0,
+      ),
+    );
+    _selectCartPartnerForCurrentMethod();
+  }
+
+  /// Selects the cart's partner tab (and lab) if that partner exists for the
+  /// current booking method on this test.
+  void _selectCartPartnerForCurrentMethod() {
+    if (state.cartItems.isEmpty || state.args.isPending) return;
+
+    final first = state.cartItems.first;
+    final partnerId = first.partnerId.trim();
+    if (partnerId.isEmpty) return;
+
+    final partnerIds = LabTestItemBookingHelper.partnerIdsForBookingMethod(
+      labOffers: state.args.labOffers,
+      labVisit: state.labVisit,
+    );
+    final partners = state.args.partners
+        .where((partner) => partnerIds.contains(partner.id))
+        .toList(growable: false);
+    final partnerIndex = partners.indexWhere((p) => p.id == partnerId);
+    if (partnerIndex < 0) return;
+
+    final vendors = LabTestItemBookingHelper.vendorsForPartner(
+      labOffers: state.args.labOffers,
+      partnerId: partnerId,
+      labVisit: state.labVisit,
+    );
+    final vendorIndex = vendors.indexWhere((v) => v.id == first.labId);
+
+    emit(
+      state.copyWith(
+        partnerTab: partnerIndex,
+        selectedVendorIndex: vendorIndex >= 0 ? vendorIndex : 0,
+      ),
+    );
+  }
 
   LabTestCartItem _buildCartLine({
     required LabTestBookingVendorOption vendor,

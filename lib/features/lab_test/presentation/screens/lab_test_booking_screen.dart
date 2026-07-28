@@ -202,7 +202,8 @@ class _LabTestBookingScreenState extends State<LabTestBookingScreen> {
                                   SizedBox(height: 16.h),
                                   LabTestBookingTestSummaryCardWidget(
                                     title: state.args.testTitle,
-                                    labName: state.isHomeSamplingUnavailable
+                                    labName: state.isHomeSamplingUnavailable ||
+                                            state.selectedVendor == null
                                         ? ''
                                         : (state.selectedVendor?.name ?? ''),
                                     requirement: state.isHomeSamplingUnavailable
@@ -216,7 +217,8 @@ class _LabTestBookingScreenState extends State<LabTestBookingScreen> {
                                     requirementLabel:
                                         l10n.labTestRequirementLabel,
                                     sampleTypeLabel: l10n.labTestSampleTypeLabel,
-                                    showPricing: !state.isHomeSamplingUnavailable,
+                                    showPricing: !state.isHomeSamplingUnavailable &&
+                                        state.selectedVendor != null,
                                   ),
                                   if (!state.isHomeSamplingUnavailable) ...[
                                     SizedBox(height: 16.h),
@@ -224,6 +226,13 @@ class _LabTestBookingScreenState extends State<LabTestBookingScreen> {
                                       partners: partners,
                                       selectedIndex: partnerIndex,
                                       onChanged: (i) {
+                                        if (state.isSolePartnerMismatchWithCart) {
+                                          _guardAndApply(
+                                            context,
+                                            (_) async {},
+                                          );
+                                          return;
+                                        }
                                         if (i == state.partnerTab) return;
                                         _guardAndApply(
                                           context,
@@ -231,20 +240,22 @@ class _LabTestBookingScreenState extends State<LabTestBookingScreen> {
                                         );
                                       },
                                     ),
-                                    SizedBox(height: 12.h),
-                                    LabTestBookingVendorGridWidget(
-                                      vendors: vendors,
-                                      selectedIndex: vendorIndex,
-                                      onSelect: (i) {
-                                        if (i == state.selectedVendorIndex) {
-                                          return;
-                                        }
-                                        _guardAndApply(
-                                          context,
-                                          (c) async => c.setVendorIndex(i),
-                                        );
-                                      },
-                                    ),
+                                    if (vendors.isNotEmpty) ...[
+                                      SizedBox(height: 12.h),
+                                      LabTestBookingVendorGridWidget(
+                                        vendors: vendors,
+                                        selectedIndex: vendorIndex,
+                                        onSelect: (i) {
+                                          if (i == state.selectedVendorIndex) {
+                                            return;
+                                          }
+                                          _guardAndApply(
+                                            context,
+                                            (c) async => c.setVendorIndex(i),
+                                          );
+                                        },
+                                      ),
+                                    ],
                                   ],
                                 ],
                               ),
