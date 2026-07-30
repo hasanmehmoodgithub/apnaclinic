@@ -158,14 +158,25 @@ class _LoginViewState extends State<_LoginView> {
         ).showSnackBar(SnackBar(content: Text(l10n.authOtpValidationError)));
         break;
       case AuthSubmitResult.verifiedGoHome:
-        context.go(AppRoutes.path(AppRoutes.home));
+        // Guest was pushed here from another screen (e.g. Book Now) —
+        // return there instead of replacing the stack with home.
+        if (context.canPop()) {
+          context.pop();
+        } else {
+          context.go(AppRoutes.path(AppRoutes.home));
+        }
         break;
       case AuthSubmitResult.verifiedGoProfileSetup:
         HeartLoaderDialogController.closeAll();
-        context.push(
-          AppRoutes.path(AppRoutes.profileSetup),
-          extra: ProfileSetupLaunchSource.login,
-        );
+        // Replace login when it was pushed from a service screen so that
+        // finishing profile setup can pop back to that screen (not home).
+        final profileSetupPath = AppRoutes.path(AppRoutes.profileSetup);
+        final extra = ProfileSetupLaunchSource.login;
+        if (context.canPop()) {
+          context.pushReplacement(profileSetupPath, extra: extra);
+        } else {
+          context.push(profileSetupPath, extra: extra);
+        }
         break;
       case AuthSubmitResult.validationFailed:
       case AuthSubmitResult.failed:

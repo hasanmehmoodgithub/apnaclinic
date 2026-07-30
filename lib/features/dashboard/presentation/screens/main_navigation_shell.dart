@@ -75,19 +75,29 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
 
   void _onAuthSessionChanged() {
     if (!mounted) return;
-    _applyPendingTabIfNeeded();
+    // Apply pending tab after session sync so it wins over default Home.
     _syncTabsWithSessionIfNeeded();
   }
 
   void _applyPendingTabIfNeeded() {
+    // Keep pending while guest — `requestTabIndex` notifies immediately when
+    // opening login, and must not be consumed until after OTP success.
+    if (!AuthGuard.isLoggedIn()) return;
     final tabIndex = _sessionRefresh.consumePendingTabIndex();
     if (tabIndex == null) return;
     _navigationCubit.setIndex(tabIndex);
+    if (_pageController.hasClients) {
+      _pageController.jumpToPage(tabIndex);
+    }
     _applyStatusBar();
   }
 
   void _syncTabsWithSessionIfNeeded() {
-    if (_sessionRefresh.epoch == _appliedSessionEpoch) return;
+    if (_sessionRefresh.epoch == _appliedSessionEpoch) {
+      // Tab-only requests (e.g. menu My Bookings while already logged in).
+      _applyPendingTabIfNeeded();
+      return;
+    }
     _appliedSessionEpoch = _sessionRefresh.epoch;
     unawaited(_refreshAllTabs());
   }
@@ -135,6 +145,8 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
     if (!isLoggedIn || profileComplete) {
       setState(() => _tabSessionKey++);
     }
+    // Resume Instant Doctor / Bookings (or other) after guest login.
+    _applyPendingTabIfNeeded();
     _applyStatusBar();
   }
 
@@ -145,7 +157,9 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
 
   void _onNavTap(int index) {
     if ((index == _instantDoctorIndex || index == _bookingsIndex) &&
-        !context.requireLogin()) {
+        !AuthGuard.isLoggedIn()) {
+      _sessionRefresh.requestTabIndex(index);
+      context.requireLogin();
       return;
     }
 

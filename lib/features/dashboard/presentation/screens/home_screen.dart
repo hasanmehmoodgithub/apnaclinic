@@ -12,6 +12,7 @@ import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/preference/app_pref.dart';
 import '../../../../core/router/app_routes.dart';
+import '../../../../core/session/auth_session_refresh.dart';
 import '../../../../core/utils/auth_guard.dart';
 import '../../../../core/services/notification_service.dart';
 import '../../../../core/widgets/heart_loader_widget.dart';
@@ -322,7 +323,12 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   }
 
   void _openInstantDoctorTab(BuildContext context) {
-    if (!context.requireLogin()) return;
+    final sessionRefresh = sl<AuthSessionRefresh>();
+    if (!AuthGuard.isLoggedIn()) {
+      sessionRefresh.requestTabIndex(MainNavigationTabs.instantDoctor);
+      context.requireLogin();
+      return;
+    }
     context.read<MainNavigationCubit>().setIndex(MainNavigationTabs.instantDoctor);
   }
 }

@@ -18,7 +18,9 @@ abstract final class AuthGuard {
   /// Returns `true` when logged in.
   ///
   /// When [redirectToLogin] is `true` (default), guests are sent to
-  /// [AppRoutes.authLogin] and this returns `false`.
+  /// [AppRoutes.authLogin] via `push` and this returns `false`.
+  /// After successful login, [LoginScreen] pops back to the caller when
+  /// possible (all guest-gated services share this path).
   static bool requireLogin(
     BuildContext context, {
     AppPref? appPref,
