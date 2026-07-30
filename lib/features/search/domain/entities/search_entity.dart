@@ -46,6 +46,8 @@ class SearchResultEntity {
     this.time,
     this.providerLogo,
     this.labLogo,
+    this.publicId,
+    this.tenantId,
   });
 
   final String id;
@@ -60,6 +62,12 @@ class SearchResultEntity {
   final String? sampleType;
   final String? providerLabel;
   final String? primaryActionLabel;
+
+  /// Doctor `publicId` from search API (preferred booking identity when set).
+  final String? publicId;
+
+  /// Doctor partner `tenantId` for consultation booking.
+  final String? tenantId;
 
   /// Appointment/availability date shown as a pill on doctor cards
   /// (e.g. "10/09/24").

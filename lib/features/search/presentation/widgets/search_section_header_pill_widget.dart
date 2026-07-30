@@ -3,7 +3,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
-import '../../../../core/l10n/app_localizations.dart';
 
 class SearchSectionHeaderPillWidget extends StatelessWidget {
   const SearchSectionHeaderPillWidget({
@@ -17,7 +16,6 @@ class SearchSectionHeaderPillWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
       decoration: BoxDecoration(
@@ -55,14 +53,6 @@ class SearchSectionHeaderPillWidget extends StatelessWidget {
                 fontWeight: FontWeight.w800,
                 fontSize: 16.sp,
               ),
-            ),
-          ),
-          Text(
-            l10n.searchSeeAllCta,
-            style: TextStyle(
-              color: AppColors.clr3D3D3D,
-              fontSize: 13.sp,
-              fontWeight: FontWeight.w500,
             ),
           ),
         ],

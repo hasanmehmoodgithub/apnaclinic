@@ -47,6 +47,8 @@ class SearchMapper {
               time: result.time,
               providerLogo: result.providerLogo,
               labLogo: result.labLogo,
+              publicId: result.publicId,
+              tenantId: result.tenantId,
             ),
           )
               .toList(),

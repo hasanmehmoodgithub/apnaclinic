@@ -30,14 +30,22 @@ class SearchCubit extends Cubit<SearchState> {
     if (state.isListening) {
       await stopListening();
     }
+    // Typing only updates the field — network search runs on submit/search tap.
     emit(
       state.copyWith(
         query: query,
         isListening: false,
         isSubmitted: false,
+        loadingStateStatus: StateStatus.success,
+        errorMessage: null,
+        content: SearchContentEntity(
+          recentSearches: state.content.recentSearches,
+          popularSearches: state.content.popularSearches,
+          suggestions: const [],
+          sections: const [],
+        ),
       ),
     );
-    await _loadContent(query: query, listening: false, submitted: false);
   }
 
   Future<VoiceSearchFailure?> startListening({String? localeId}) async {
@@ -86,16 +94,7 @@ class SearchCubit extends Cubit<SearchState> {
     await _speechToTextService.stop();
     if (isClosed) return;
 
-    final query = state.query;
     emit(state.copyWith(isListening: false));
-
-    if (query.trim().isNotEmpty && !state.isSubmitted) {
-      await _loadContent(
-        query: query,
-        listening: false,
-        submitted: false,
-      );
-    }
   }
 
   Future<void> submitSearch([String? query]) async {

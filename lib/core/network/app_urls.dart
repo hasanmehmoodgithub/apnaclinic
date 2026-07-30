@@ -207,8 +207,18 @@ class AppUrls {
   static String get pharmacyProfileAddressesList =>
       '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/partner/pharmacy/profile/addresses/list';
 
-  /// Search endpoint
-  static String get search => '$_normalizedApiBaseUrl/search';
+  /// Global mobile search (GET). Query: `text`, `limit`.
+  static String mobileSearch({required String text, int limit = 5}) {
+    final q = <String>[
+      'text=${Uri.encodeComponent(text.trim())}',
+      'limit=$limit',
+    ];
+    return '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/search?${q.join('&')}';
+  }
+
+  /// Legacy alias — prefer [mobileSearch].
+  static String get search =>
+      '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/search';
 
   /// Surgery procedures list (aggregator mobile API).
   static String surgeryProcedures({String? cityId}) {
