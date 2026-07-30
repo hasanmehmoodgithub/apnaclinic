@@ -7,7 +7,8 @@ Collect or edit user profile (name, gender, email, address, DOB, optional profil
 ## Routes
 
 - `AppRoutes.profile` — `ProfileScreen` (BlocProvider `ProfileCubit`); guest vs logged-in content; account list, edit profile, add/remove accounts.
-- `AppRoutes.profileSetup` — entry from menu, login (`push`), onboarding/splash (`go` with `ProfileSetupLaunchSource` extra). Back arrow only in **edit** mode (`isProfileCompleted`); first-time setup hides back and blocks system back.
+- `AppRoutes.profileSetup` — entry from menu, login (`push` / `pushReplacement`), onboarding/splash (`go` with `ProfileSetupLaunchSource` extra). Back arrow only in **edit** mode (`isProfileCompleted`); first-time setup hides back and blocks system back.
+- After **first-time** profile save: `pop()` when possible (returns to the service screen that required login), otherwise `go` home. Edit/update mode still `pop(true)` when possible.
 
 ## Data & APIs
 

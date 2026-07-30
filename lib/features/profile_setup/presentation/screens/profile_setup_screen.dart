@@ -269,6 +269,12 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
       }
     }
     sl<AuthSessionRefresh>().notifyLoggedIn();
+    // Guest interrupted a service flow (login → profile setup): return there.
+    // Cold / onboarding entry has nothing to pop — go home.
+    if (context.canPop()) {
+      context.pop();
+      return;
+    }
     context.go(AppRoutes.path(AppRoutes.home));
   }
 

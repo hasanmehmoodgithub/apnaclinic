@@ -7,9 +7,21 @@ Phone OTP request/verify, session persistence via `AppPref`, logout API.
 Login footer legal links (`LoginLegalText`) open `AppUrls.termsAndConditions` and
 `AppUrls.privacyPolicy` in the device browser via `AppUrlLauncher`.
 
-After OTP verification, users go to **home** when the backend marks profile
-complete (`userOnboarding: false` / `isOnboardingCompleted: true`). Otherwise
-they go to **profile setup** (`userOnboarding: true`).
+After OTP verification, users with a completed profile (`userOnboarding: false` /
+`isOnboardingCompleted: true`) return to the previous screen via `pop()` when
+login was pushed from any guest-gated action (`AuthGuard.requireLogin` —
+consultation, pharmacy, lab test, surgery, dashboard menus, etc.). If there is
+nothing to pop (login opened as a root destination), they `go` to **home**.
+
+For **Instant Doctor** and **My Bookings** bottom-nav (and home banner /
+menu entry), the intended tab is stored with
+`AuthSessionRefresh.requestTabIndex` before login; after login the shell
+resumes that tab instead of forcing Home.
+
+Incomplete profiles go to **profile setup**. When login itself was pushed from a
+service screen, login is **replaced** by profile setup so the stack stays
+`… → service → profile setup`; on first save, profile setup `pop()`s back to
+that service. Cold/onboarding entry still ends on **home**.
 
 `AppPref.isOnboardingCompleted` is only for the intro carousel (not overwritten
 on login). `AppPref.isProfileCompleted` tracks whether profile setup is done.
