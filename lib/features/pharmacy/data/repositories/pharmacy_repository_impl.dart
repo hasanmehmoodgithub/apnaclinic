@@ -3,6 +3,7 @@ import 'dart:developer';
 import '../../../../core/functional/functional_export.dart';
 import '../../domain/entities/pharmacy_add_address_result_entity.dart';
 import '../../domain/entities/pharmacy_add_to_cart_result_entity.dart';
+import '../../domain/entities/pharmacy_cart_address_entity.dart';
 import '../../domain/entities/pharmacy_cart_entity.dart';
 import '../../domain/entities/pharmacy_checkout_result_entity.dart';
 import '../../domain/entities/pharmacy_products_page_entity.dart';
@@ -103,17 +104,15 @@ class PharmacyRepositoryImpl implements PharmacyRepository {
 
   @override
   Future<Either<ErrorMsg, PharmacyCheckoutResultEntity>> checkoutOrder({
-    required String guestPhone,
-    required String guestName,
+    required String userLocationId,
     required String paymentMethod,
-    required String guestAddressCityId,
+    List<Map<String, dynamic>> prescriptions = const [],
   }) async {
     try {
       final response = await remoteDataSource.checkoutOrder(
-        guestPhone: guestPhone,
-        guestName: guestName,
+        userLocationId: userLocationId,
         paymentMethod: paymentMethod,
-        guestAddressCityId: guestAddressCityId,
+        prescriptions: prescriptions,
       );
       final entity = PharmacyMedicineMapper.toCheckoutResultEntity(response);
       log('Mapped checkout orderNo: ${entity.orderNo}');
@@ -124,16 +123,42 @@ class PharmacyRepositoryImpl implements PharmacyRepository {
   }
 
   @override
+  Future<Either<ErrorMsg, List<PharmacyCartAddressEntity>>>
+      getProfileAddresses() async {
+    try {
+      final models = await remoteDataSource.getProfileAddresses();
+      final entities = models
+          .map(
+            (model) => PharmacyCartAddressEntity(
+              id: model.id,
+              address: model.address,
+              region: model.region,
+              cityId: model.cityId,
+              isDefault: model.isDefault,
+            ),
+          )
+          .toList(growable: false);
+      return Right(entities);
+    } catch (e) {
+      return Left(e.toString());
+    }
+  }
+
+  @override
   Future<Either<ErrorMsg, PharmacyAddAddressResultEntity>> addProfileAddress({
     required String address,
     required String region,
-    String lat = '',
-    String long = '',
+    required String line1,
+    required String cityId,
+    String lat = '0',
+    String long = '0',
   }) async {
     try {
       final response = await remoteDataSource.addProfileAddress(
         address: address,
         region: region,
+        line1: line1,
+        cityId: cityId,
         lat: lat,
         long: long,
       );

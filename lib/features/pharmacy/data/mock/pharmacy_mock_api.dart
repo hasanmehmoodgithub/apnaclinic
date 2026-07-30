@@ -165,7 +165,7 @@ class PharmacyMockApi {
             'https://mediq-bucket.s3.amazonaws.com/products/webp-images/2sum-1gm-3.webp',
         'price': 485,
         'manufacturer': 'Sami Pharma',
-        'category': 'infections',
+        'category': 'Over the Counter Medicines',
         'prescription_required': false,
         'generic_name': 'Cefoperazone 500 mg + Sulbactam 500 mg',
         'package_type': 'Pack',
@@ -173,6 +173,39 @@ class PharmacyMockApi {
         'contra_indications':
             'Contraindications may include hypersensitivity or allergy to cefoperazone, sulbactam, or any components of the medication. It is important to inform the healthcare professional about any existing medical conditions, such as a history of severe allergic reactions or liver disease. Cefoperazone and sulbactam should be used with caution in patients with impaired liver or kidney function.',
         'images': <String>[],
+        'similar_items': [
+          {
+            'product_id': 178,
+            'display_name': '2Sum 2gm Injection 1 vial',
+            'image_url':
+                'https://mediq-bucket.s3.amazonaws.com/products/webp-images/2sum-2gm-4.webp',
+            'price': 590,
+            'manufacturer': 'Sami Pharma',
+            'category': 'Over the Counter Medicines',
+            'prescription_required': false,
+            'generic_name': 'Cefoperazone 1 gm + Sulbactam 1 gm',
+            'package_type': 'Pack',
+            'indications': '',
+            'contra_indications': '',
+            'images': <String>[],
+          },
+          {
+            'product_id': 176,
+            'display_name': '2Blink 4mg/3mg Drop 15 ml',
+            'image_url':
+                'https://mediq-bucket.s3.amazonaws.com/products/webp-images/2blink-4mg-3mg-8438.webp',
+            'price': 950,
+            'manufacturer': 'Sante Pharma',
+            'category': 'Over the Counter Medicines',
+            'prescription_required': false,
+            'generic_name':
+                'Propylene Glycol 0.3 % + Polyethylene Glycol 0.4 %',
+            'package_type': 'Pack',
+            'indications': '',
+            'contra_indications': '',
+            'images': <String>[],
+          },
+        ],
       },
       'timestamp': DateTime.now().toUtc().toIso8601String(),
     };
@@ -337,10 +370,9 @@ class PharmacyMockApi {
   }
 
   Future<Map<String, dynamic>> checkoutOrderSuccessResponse({
-    required String guestPhone,
-    required String guestName,
+    required String userLocationId,
     required String paymentMethod,
-    required String guestAddressCityId,
+    List<Map<String, dynamic>> prescriptions = const [],
   }) async {
     await Future<void>.delayed(const Duration(milliseconds: 500));
     return {
@@ -348,10 +380,9 @@ class PharmacyMockApi {
       'message': 'Order placed successfully',
       'code': 200,
       'data': {
-        'guest_phone': guestPhone,
-        'guest_name': guestName,
+        'user_location_id': userLocationId,
         'payment_method': paymentMethod,
-        'guest_address_city_id': guestAddressCityId,
+        'prescriptions': prescriptions,
         'order_no': '1223',
         'status': 'confirmed',
       },
@@ -361,8 +392,10 @@ class PharmacyMockApi {
   Future<Map<String, dynamic>> addProfileAddressSuccessResponse({
     required String address,
     required String region,
-    String lat = '',
-    String long = '',
+    required String line1,
+    required String cityId,
+    String lat = '0',
+    String long = '0',
   }) async {
     await Future<void>.delayed(const Duration(milliseconds: 400));
     return {
@@ -376,7 +409,33 @@ class PharmacyMockApi {
         'category': <String, dynamic>{},
         'address': address,
         'region': region,
+        'line1': line1,
+        'city_id': cityId,
       },
+    };
+  }
+
+  Future<Map<String, dynamic>> getProfileAddressesSuccessResponse() async {
+    await Future<void>.delayed(const Duration(milliseconds: 300));
+    return {
+      'success': true,
+      'message': 'Saved addresses retrieved',
+      'code': 200,
+      'data': [
+        {
+          'address_id': '11d432a3-86d3-4471-a4ca-f9187f04904b',
+          'label': 'HOME',
+          'recipient_name': 'Hasan Mehmood',
+          'recipient_phone': '923015077202',
+          'line1': 'cmh Rawalpindi',
+          'line2': null,
+          'city_id': 3,
+          'city_name': 'Islamabad',
+          'latitude': '0.0000000',
+          'longitude': '0.0000000',
+          'is_default': true,
+        },
+      ],
     };
   }
 }

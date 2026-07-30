@@ -92,6 +92,8 @@ class PharmacyMedicineMapper {
               id: item.id,
               address: item.address,
               region: item.region,
+              cityId: item.cityId,
+              isDefault: item.isDefault,
             ),
           )
           .toList(growable: false),
@@ -139,15 +141,24 @@ class PharmacyMedicineMapper {
     final payload = _unwrapCheckoutPayload(response);
     return PharmacyAddAddressResultEntity(
       id: _stringOrNull(
-        payload['id'] ?? payload['address_id'] ?? payload['addressId'],
+        payload['address_id'] ??
+            payload['addressId'] ??
+            payload['id'],
       ),
       address: _stringOrNull(
-            payload['address'] ??
+            payload['line1'] ??
+                payload['address'] ??
                 payload['full_address'] ??
                 payload['fullAddress'],
           ) ??
           '',
-      region: _stringOrNull(payload['region'] ?? payload['city']) ?? '',
+      region: _stringOrNull(
+            payload['city_name'] ??
+                payload['cityName'] ??
+                payload['region'] ??
+                payload['city'],
+          ) ??
+          '',
     );
   }
 

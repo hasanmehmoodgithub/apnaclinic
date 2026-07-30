@@ -12,6 +12,7 @@ import 'domain/use_cases/add_to_cart_use_case.dart';
 import 'domain/use_cases/get_pharmacy_cart_use_case.dart';
 import 'domain/use_cases/get_pharmacy_medicines_use_case.dart';
 import 'domain/use_cases/get_pharmacy_product_detail_use_case.dart';
+import 'domain/use_cases/get_pharmacy_profile_addresses_use_case.dart';
 import 'domain/use_cases/pharmacy_checkout_use_case.dart';
 import 'domain/use_cases/update_pharmacy_cart_quantity_use_case.dart';
 import 'presentation/cubit/pharmacy_cubit.dart';
@@ -60,6 +61,12 @@ void initPharmacyInjector() {
     () => PharmacyCheckoutUseCase(repository: sl<PharmacyRepository>()),
   );
 
+  sl.registerLazySingleton<GetPharmacyProfileAddressesUseCase>(
+    () => GetPharmacyProfileAddressesUseCase(
+      repository: sl<PharmacyRepository>(),
+    ),
+  );
+
   sl.registerLazySingleton<AddPharmacyProfileAddressUseCase>(
     () => AddPharmacyProfileAddressUseCase(
       repository: sl<PharmacyRepository>(),
@@ -74,6 +81,9 @@ void initPharmacyInjector() {
       addToCartUseCase: sl<AddToCartUseCase>(),
       updatePharmacyCartQuantityUseCase: sl<UpdatePharmacyCartQuantityUseCase>(),
       pharmacyCheckoutUseCase: sl<PharmacyCheckoutUseCase>(),
+      getPharmacyProfileAddressesUseCase:
+          sl<GetPharmacyProfileAddressesUseCase>(),
+      addPharmacyProfileAddressUseCase: sl<AddPharmacyProfileAddressUseCase>(),
       citiesRepository: sl<CitiesRepository>(),
       appPref: sl<AppPref>(),
     ),

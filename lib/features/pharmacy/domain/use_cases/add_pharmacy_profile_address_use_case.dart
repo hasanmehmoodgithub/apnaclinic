@@ -7,12 +7,16 @@ class AddPharmacyProfileAddressParams {
   const AddPharmacyProfileAddressParams({
     required this.address,
     required this.region,
-    this.lat = '',
-    this.long = '',
+    required this.line1,
+    required this.cityId,
+    this.lat = '0',
+    this.long = '0',
   });
 
   final String address;
   final String region;
+  final String line1;
+  final String cityId;
   final String lat;
   final String long;
 }
@@ -31,6 +35,8 @@ class AddPharmacyProfileAddressUseCase
     return repository.addProfileAddress(
       address: params.address,
       region: params.region,
+      line1: params.line1,
+      cityId: params.cityId,
       lat: params.lat,
       long: params.long,
     );

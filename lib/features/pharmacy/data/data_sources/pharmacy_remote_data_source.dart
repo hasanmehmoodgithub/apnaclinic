@@ -21,16 +21,19 @@ abstract class PharmacyRemoteDataSource {
   });
 
   Future<Map<String, dynamic>> checkoutOrder({
-    required String guestPhone,
-    required String guestName,
+    required String userLocationId,
     required String paymentMethod,
-    required String guestAddressCityId,
+    List<Map<String, dynamic>> prescriptions = const [],
   });
+
+  Future<List<PharmacyCartAddressModel>> getProfileAddresses();
 
   Future<Map<String, dynamic>> addProfileAddress({
     required String address,
     required String region,
-    String lat = '',
-    String long = '',
+    required String line1,
+    required String cityId,
+    String lat = '0',
+    String long = '0',
   });
 }

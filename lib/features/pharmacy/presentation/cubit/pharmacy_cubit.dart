@@ -8,14 +8,16 @@ import '../../../../core/enums/state_status.dart';
 import '../../../../core/functional/functional_export.dart';
 import '../../../../core/preference/app_pref.dart';
 import '../../../../core/utils/auth_guard.dart';
-import '../../../../core/utils/phone_format_utils.dart';
 import '../../domain/entities/pharmacy_cart_item_entity.dart';
+import '../../domain/entities/pharmacy_cart_address_entity.dart';
 import '../../domain/entities/pharmacy_checkout_result_entity.dart';
 import '../../domain/entities/pharmacy_medicine_entity.dart';
+import '../../domain/use_cases/add_pharmacy_profile_address_use_case.dart';
 import '../../domain/use_cases/add_to_cart_use_case.dart';
 import '../../domain/use_cases/get_pharmacy_cart_use_case.dart';
 import '../../domain/use_cases/get_pharmacy_medicines_use_case.dart';
 import '../../domain/use_cases/get_pharmacy_product_detail_use_case.dart';
+import '../../domain/use_cases/get_pharmacy_profile_addresses_use_case.dart';
 import '../../domain/use_cases/pharmacy_checkout_use_case.dart';
 import '../../domain/use_cases/update_pharmacy_cart_quantity_use_case.dart';
 import 'pharmacy_state.dart';
@@ -28,6 +30,8 @@ class PharmacyCubit extends Cubit<PharmacyState> {
     required this.addToCartUseCase,
     required this.updatePharmacyCartQuantityUseCase,
     required this.pharmacyCheckoutUseCase,
+    required this.getPharmacyProfileAddressesUseCase,
+    required this.addPharmacyProfileAddressUseCase,
     required this.citiesRepository,
     required this.appPref,
   }) : super(const PharmacyState()) {
@@ -44,6 +48,8 @@ class PharmacyCubit extends Cubit<PharmacyState> {
   final AddToCartUseCase addToCartUseCase;
   final UpdatePharmacyCartQuantityUseCase updatePharmacyCartQuantityUseCase;
   final PharmacyCheckoutUseCase pharmacyCheckoutUseCase;
+  final GetPharmacyProfileAddressesUseCase getPharmacyProfileAddressesUseCase;
+  final AddPharmacyProfileAddressUseCase addPharmacyProfileAddressUseCase;
   final CitiesRepository citiesRepository;
   final AppPref appPref;
 
@@ -330,13 +336,17 @@ class PharmacyCubit extends Cubit<PharmacyState> {
   Future<Either<ErrorMsg, PharmacyCheckoutResultEntity>> checkoutOrder({
     required String address,
     required String region,
+    List<PharmacyCheckoutPrescriptionParams> prescriptions = const [],
   }) async {
     if (!AuthGuard.isLoggedIn(appPref)) {
       return const Left(AppStrings.pharmacyCheckoutMissingContextError);
     }
 
-    final trimmedAddress = address.trim();
     final trimmedRegion = region.trim();
+    // If address field is empty, save/use the selected city.
+    final trimmedAddress = address.trim().isNotEmpty
+        ? address.trim()
+        : trimmedRegion;
     if (trimmedAddress.isEmpty) {
       return const Left(AppStrings.pharmacyCheckoutAddressRequiredError);
     }
@@ -345,39 +355,156 @@ class PharmacyCubit extends Cubit<PharmacyState> {
       return const Left(AppStrings.pharmacyCheckoutMissingContextError);
     }
 
-    final guestPhone = _resolveGuestPhone();
-    final guestName = _resolveGuestName();
     final cityId =
         citiesRepository.cityIdForName(trimmedRegion)?.trim() ?? '';
     final paymentMethod = _paymentMethodApiValue(state.selectedPaymentMethod);
-
-    if (guestPhone.isEmpty || guestName.isEmpty || cityId.isEmpty) {
+    if (cityId.isEmpty) {
       return const Left(AppStrings.pharmacyCheckoutMissingContextError);
     }
 
-    return pharmacyCheckoutUseCase(
-      PharmacyCheckoutParams(
-        guestPhone: guestPhone,
-        guestName: guestName,
-        paymentMethod: paymentMethod,
-        guestAddressCityId: cityId,
+    final locationResult = await _resolveUserLocationId(
+      address: trimmedAddress,
+      cityId: cityId,
+      cityName: trimmedRegion,
+    );
+    return locationResult.fold(
+      Left.new,
+      (userLocationId) => pharmacyCheckoutUseCase(
+        PharmacyCheckoutParams(
+          userLocationId: userLocationId,
+          paymentMethod: paymentMethod,
+          prescriptions: prescriptions,
+        ),
       ),
     );
   }
 
-  String _resolveGuestPhone() {
-    final phone = appPref.getUserLocalModel()?.phone.trim() ?? '';
-    if (phone.isEmpty) return '';
-    return PhoneFormatUtils.toMsisdn(phone);
+  /// Loads saved pharmacy addresses. Prefill priority: list → profile → city.
+  Future<String?> loadProfileAddressesForCheckout() async {
+    if (!AuthGuard.isLoggedIn(appPref)) return null;
+
+    final result = await getPharmacyProfileAddressesUseCase();
+    if (isClosed) return null;
+
+    return result.fold(
+      (_) {
+        final profileAddress =
+            appPref.getUserLocalModel()?.address.trim() ?? '';
+        if (profileAddress.isNotEmpty) return profileAddress;
+        return state.selectedCity.trim().isNotEmpty
+            ? state.selectedCity.trim()
+            : null;
+      },
+      (addresses) {
+        emit(state.copyWith(cartAddresses: addresses));
+        if (addresses.isNotEmpty) {
+          final first = addresses.first.address.trim();
+          if (first.isNotEmpty) return first;
+        }
+        final profileAddress =
+            appPref.getUserLocalModel()?.address.trim() ?? '';
+        if (profileAddress.isNotEmpty) return profileAddress;
+        return state.selectedCity.trim().isNotEmpty
+            ? state.selectedCity.trim()
+            : null;
+      },
+    );
   }
 
-  String _resolveGuestName() {
-    final user = appPref.getUserLocalModel();
-    if (user == null) return '';
-    final fullName = '${user.firstName.trim()} ${user.lastName.trim()}'.trim();
-    if (fullName.isNotEmpty) return fullName;
-    return user.firstName.trim();
+  /// Returns address ID from list when checkout address matches an existing
+  /// saved address; otherwise creates a new address and returns its ID.
+  Future<Either<ErrorMsg, String>> _resolveUserLocationId({
+    required String address,
+    required String cityId,
+    required String cityName,
+  }) async {
+    final listResult = await getPharmacyProfileAddressesUseCase();
+    if (isClosed) {
+      return const Left(AppStrings.pharmacyAddAddressError);
+    }
+
+    final existing = listResult.fold(
+      (_) => <PharmacyCartAddressEntity>[],
+      (items) => items,
+    );
+    emit(state.copyWith(cartAddresses: existing));
+
+    final matched = _findMatchingSavedAddress(
+      address: address,
+      cityId: cityId,
+      cityName: cityName,
+      existing: existing,
+    );
+    if (matched != null) {
+      return Right(matched.id.trim());
+    }
+
+    final result = await addPharmacyProfileAddressUseCase(
+      AddPharmacyProfileAddressParams(
+        address: address,
+        region: cityName,
+        line1: address,
+        cityId: cityId,
+        lat: '0',
+        long: '0',
+      ),
+    );
+    if (isClosed) {
+      return const Left(AppStrings.pharmacyAddAddressError);
+    }
+
+    return result.fold(
+      Left.new,
+      (added) {
+        final id = added.id?.trim() ?? '';
+        final next = [
+          ...state.cartAddresses,
+          PharmacyCartAddressEntity(
+            id: id,
+            address: added.address.trim().isNotEmpty ? added.address : address,
+            region: added.region.trim().isNotEmpty ? added.region : cityName,
+            cityId: cityId,
+          ),
+        ];
+        emit(state.copyWith(cartAddresses: next));
+        if (id.isEmpty) {
+          return const Left(AppStrings.pharmacyCheckoutMissingContextError);
+        }
+        return Right(id);
+      },
+    );
   }
+
+  PharmacyCartAddressEntity? _findMatchingSavedAddress({
+    required String address,
+    required String cityId,
+    required String cityName,
+    required List<PharmacyCartAddressEntity> existing,
+  }) {
+    final normalizedAddress = _normalizeAddress(address);
+    final normalizedCity = _normalizeAddress(cityName);
+    final trimmedCityId = cityId.trim();
+
+    for (final item in existing) {
+      if (item.id.trim().isEmpty) continue;
+      if (_normalizeAddress(item.address) != normalizedAddress) continue;
+
+      final sameCityId = trimmedCityId.isNotEmpty &&
+          item.cityId.trim().isNotEmpty &&
+          item.cityId.trim() == trimmedCityId;
+      final sameCityName = normalizedCity.isNotEmpty &&
+          _normalizeAddress(item.region) == normalizedCity;
+      // Match on line1; if city metadata exists, require city match too.
+      if (item.cityId.trim().isEmpty && item.region.trim().isEmpty) {
+        return item;
+      }
+      if (sameCityId || sameCityName) return item;
+    }
+    return null;
+  }
+
+  String _normalizeAddress(String value) =>
+      value.trim().toLowerCase().replaceAll(RegExp(r'\s+'), ' ');
 
   String _paymentMethodApiValue(PharmacyPaymentMethod method) {
     return switch (method) {

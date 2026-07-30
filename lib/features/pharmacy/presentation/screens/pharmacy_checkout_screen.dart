@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/l10n/app_localizations.dart';
-import '../../../../core/preference/app_pref.dart';
 import '../../../../core/widgets/app_scaffold_gradient.dart';
 import '../cubit/pharmacy_cubit.dart';
 import '../widgets/pharmacy_checkout_body_widget.dart';
@@ -20,28 +18,29 @@ class PharmacyCheckoutScreen extends StatefulWidget {
 class _PharmacyCheckoutScreenState extends State<PharmacyCheckoutScreen> {
   late final TextEditingController _addressController;
   late final TextEditingController _specialInstructionsController;
-  final AppPref _appPref = sl<AppPref>();
 
   @override
   void initState() {
     super.initState();
     _addressController = TextEditingController();
     _specialInstructionsController = TextEditingController();
-    _prefillAddressFromSavedProfile();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (!mounted) return;
       final cubit = context.read<PharmacyCubit>();
       cubit.loadCart();
-      cubit.loadCheckoutCities();
+      await cubit.loadCheckoutCities();
+      if (!mounted) return;
+      final preferred = await cubit.loadProfileAddressesForCheckout();
+      if (!mounted) return;
+      if (_addressController.text.trim().isEmpty) {
+        final fallback = preferred?.trim().isNotEmpty == true
+            ? preferred!.trim()
+            : cubit.state.selectedCity.trim();
+        if (fallback.isNotEmpty) {
+          _addressController.text = fallback;
+        }
+      }
     });
-  }
-
-  void _prefillAddressFromSavedProfile() {
-    final user = _appPref.getUserLocalModel();
-    final address = user?.address.trim() ?? '';
-    if (address.isNotEmpty) {
-      _addressController.text = address;
-    }
   }
 
   @override

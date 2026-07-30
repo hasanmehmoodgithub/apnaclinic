@@ -3,18 +3,31 @@ import '../../../../core/use_case/base_use_case.dart';
 import '../entities/pharmacy_checkout_result_entity.dart';
 import '../repositories/pharmacy_repository.dart';
 
-class PharmacyCheckoutParams {
-  const PharmacyCheckoutParams({
-    required this.guestPhone,
-    required this.guestName,
-    required this.paymentMethod,
-    required this.guestAddressCityId,
+class PharmacyCheckoutPrescriptionParams {
+  const PharmacyCheckoutPrescriptionParams({
+    required this.productId,
+    required this.url,
   });
 
-  final String guestPhone;
-  final String guestName;
+  final int productId;
+  final String url;
+
+  Map<String, dynamic> toJson() => <String, dynamic>{
+        'product_id': productId,
+        'url': url,
+      };
+}
+
+class PharmacyCheckoutParams {
+  const PharmacyCheckoutParams({
+    required this.userLocationId,
+    required this.paymentMethod,
+    this.prescriptions = const [],
+  });
+
+  final String userLocationId;
   final String paymentMethod;
-  final String guestAddressCityId;
+  final List<PharmacyCheckoutPrescriptionParams> prescriptions;
 }
 
 class PharmacyCheckoutUseCase
@@ -28,10 +41,11 @@ class PharmacyCheckoutUseCase
     PharmacyCheckoutParams params,
   ) {
     return repository.checkoutOrder(
-      guestPhone: params.guestPhone,
-      guestName: params.guestName,
+      userLocationId: params.userLocationId,
       paymentMethod: params.paymentMethod,
-      guestAddressCityId: params.guestAddressCityId,
+      prescriptions: params.prescriptions
+          .map((item) => item.toJson())
+          .toList(growable: false),
     );
   }
 }

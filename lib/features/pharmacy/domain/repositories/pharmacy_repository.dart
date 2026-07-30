@@ -1,5 +1,6 @@
 import '../../../../core/functional/functional_export.dart';
 import '../entities/pharmacy_add_address_result_entity.dart';
+import '../entities/pharmacy_cart_address_entity.dart';
 import '../entities/pharmacy_cart_entity.dart';
 import '../entities/pharmacy_add_to_cart_result_entity.dart';
 import '../entities/pharmacy_checkout_result_entity.dart';
@@ -27,16 +28,19 @@ abstract class PharmacyRepository {
   });
 
   Future<Either<ErrorMsg, PharmacyCheckoutResultEntity>> checkoutOrder({
-    required String guestPhone,
-    required String guestName,
+    required String userLocationId,
     required String paymentMethod,
-    required String guestAddressCityId,
+    List<Map<String, dynamic>> prescriptions = const [],
   });
+
+  Future<Either<ErrorMsg, List<PharmacyCartAddressEntity>>> getProfileAddresses();
 
   Future<Either<ErrorMsg, PharmacyAddAddressResultEntity>> addProfileAddress({
     required String address,
     required String region,
-    String lat = '',
-    String long = '',
+    required String line1,
+    required String cityId,
+    String lat = '0',
+    String long = '0',
   });
 }

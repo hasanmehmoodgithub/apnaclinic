@@ -1,7 +1,5 @@
 import 'dart:developer';
 
-import 'package:dio/dio.dart';
-
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/network/api_service.dart';
 import '../../../../core/network/app_urls.dart';
@@ -82,7 +80,10 @@ class PharmacyRemoteDataSourceImpl implements PharmacyRemoteDataSource {
 
         response = await apiService.post(
           AppUrls.pharmacyProductDetail,
-          data: <String, dynamic>{'product_id': productIdInt},
+          data: <String, dynamic>{
+            'product_id': productIdInt,
+            'similar_items': true,
+          },
         );
         log('getPharmacyProductDetail response: $response');
       }
@@ -224,31 +225,26 @@ class PharmacyRemoteDataSourceImpl implements PharmacyRemoteDataSource {
 
   @override
   Future<Map<String, dynamic>> checkoutOrder({
-    required String guestPhone,
-    required String guestName,
+    required String userLocationId,
     required String paymentMethod,
-    required String guestAddressCityId,
+    List<Map<String, dynamic>> prescriptions = const [],
   }) async {
     try {
       final Map<String, dynamic> response;
       if (PharmacyMockApi.useMockResponses) {
         response = await mockApi.checkoutOrderSuccessResponse(
-          guestPhone: guestPhone,
-          guestName: guestName,
+          userLocationId: userLocationId,
           paymentMethod: paymentMethod,
-          guestAddressCityId: guestAddressCityId,
+          prescriptions: prescriptions,
         );
       } else {
-        final formData = FormData.fromMap({
-          'guest_phone': guestPhone,
-          'guest_name': guestName,
-          'payment_method': paymentMethod,
-          'guest_address_city_id': guestAddressCityId,
-        });
         response = await apiService.post(
           AppUrls.pharmacyOrderCheckout,
-          data: formData,
-          headers: const {'Content-Type': 'multipart/form-data'},
+          data: <String, dynamic>{
+            'user_location_id': userLocationId,
+            'payment_method': paymentMethod,
+            'prescriptions': prescriptions,
+          },
         );
         log('checkoutOrder response: $response');
       }
@@ -273,8 +269,10 @@ class PharmacyRemoteDataSourceImpl implements PharmacyRemoteDataSource {
   Future<Map<String, dynamic>> addProfileAddress({
     required String address,
     required String region,
-    String lat = '',
-    String long = '',
+    required String line1,
+    required String cityId,
+    String lat = '0',
+    String long = '0',
   }) async {
     try {
       final Map<String, dynamic> response;
@@ -282,6 +280,8 @@ class PharmacyRemoteDataSourceImpl implements PharmacyRemoteDataSource {
         response = await mockApi.addProfileAddressSuccessResponse(
           address: address,
           region: region,
+          line1: line1,
+          cityId: cityId,
           lat: lat,
           long: long,
         );
@@ -289,11 +289,13 @@ class PharmacyRemoteDataSourceImpl implements PharmacyRemoteDataSource {
         response = await apiService.post(
           AppUrls.pharmacyProfileAddress,
           data: <String, dynamic>{
-            'lat': "0.0",
-            'long': "0.0",
+            'lat': lat.isEmpty ? '0' : lat,
+            'long': long.isEmpty ? '0' : long,
             'category': <String, dynamic>{},
             'address': address,
             'region': region,
+            'line1': line1,
+            'city_id': cityId,
           },
         );
         log('addProfileAddress response: $response');
@@ -310,6 +312,48 @@ class PharmacyRemoteDataSourceImpl implements PharmacyRemoteDataSource {
       final message = ErrorHandler.handleExceptions(
         e,
         endpoint: AppUrls.pharmacyProfileAddress,
+      );
+      return Future.error(message);
+    }
+  }
+
+  @override
+  Future<List<PharmacyCartAddressModel>> getProfileAddresses() async {
+    try {
+      final Map<String, dynamic> response;
+      if (PharmacyMockApi.useMockResponses) {
+        response = await mockApi.getProfileAddressesSuccessResponse();
+      } else {
+        response = await apiService.post(
+          AppUrls.pharmacyProfileAddressesList,
+          data: <String, dynamic>{},
+        );
+        log('getProfileAddresses response: $response');
+      }
+
+      if (!_isSuccessResponse(response)) {
+        final message =
+            (response['message'] ?? AppStrings.pharmacyAddAddressError)
+                .toString();
+        return Future.error(message);
+      }
+
+      final data = response['data'];
+      if (data is! List) return const [];
+
+      return data
+          .whereType<Map>()
+          .map(
+            (item) => PharmacyCartAddressModel.fromJson(
+              Map<String, dynamic>.from(item),
+            ),
+          )
+          .where((item) => item.address.isNotEmpty || item.id.isNotEmpty)
+          .toList(growable: false);
+    } catch (e) {
+      final message = ErrorHandler.handleExceptions(
+        e,
+        endpoint: AppUrls.pharmacyProfileAddressesList,
       );
       return Future.error(message);
     }

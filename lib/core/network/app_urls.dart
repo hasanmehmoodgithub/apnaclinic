@@ -203,6 +203,10 @@ class AppUrls {
   static String get pharmacyProfileAddress =>
       '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/partner/pharmacy/profile/address';
 
+  /// Pharmacy saved addresses list (POST).
+  static String get pharmacyProfileAddressesList =>
+      '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/partner/pharmacy/profile/addresses/list';
+
   /// Search endpoint
   static String get search => '$_normalizedApiBaseUrl/search';
 

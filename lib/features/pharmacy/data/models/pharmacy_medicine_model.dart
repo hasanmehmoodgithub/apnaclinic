@@ -292,12 +292,19 @@ class PharmacyProductDetailModel {
   factory PharmacyProductDetailModel.fromJson(Map<String, dynamic> json) {
     final productMap = _resolveProductPayload(json);
 
-    final rawRelated = productMap['related_items'] ??
+    final dataMap = json['data'] is Map
+        ? Map<String, dynamic>.from(json['data'] as Map)
+        : <String, dynamic>{};
+
+    // Current API: `data.similar_items[]`. Legacy: `related_items` / `relatedItems`.
+    final rawRelated = productMap['similar_items'] ??
+        productMap['similarItems'] ??
+        dataMap['similar_items'] ??
+        dataMap['similarItems'] ??
+        productMap['related_items'] ??
         productMap['relatedItems'] ??
-        (json['data'] is Map
-            ? (json['data'] as Map)['related_items'] ??
-                (json['data'] as Map)['relatedItems']
-            : null) ??
+        dataMap['related_items'] ??
+        dataMap['relatedItems'] ??
         <dynamic>[];
     final relatedItems = (rawRelated is List ? rawRelated : <dynamic>[])
         .whereType<Map>()
@@ -317,7 +324,7 @@ class PharmacyProductDetailModel {
     );
   }
 
-  /// Current API: `{ data: { product_id, display_name, ... } }`
+  /// Current API: `{ data: { product_id, display_name, similar_items, ... } }`
   /// Legacy: `{ data: { data: { id, display_name, related_items, ... } } }`
   static Map<String, dynamic> _resolveProductPayload(
     Map<String, dynamic> json,
@@ -327,7 +334,7 @@ class PharmacyProductDetailModel {
 
     final outer = Map<String, dynamic>.from(data);
 
-    // New Partner shape: product fields live directly under `data`.
+    // Partner shape: product fields live directly under `data`.
     if (outer.containsKey('product_id') ||
         outer.containsKey('productId') ||
         outer.containsKey('display_name') ||
@@ -469,22 +476,56 @@ class PharmacyCartAddressModel {
     required this.id,
     required this.address,
     this.region = '',
+    this.cityId = '',
+    this.label = '',
+    this.recipientName = '',
+    this.recipientPhone = '',
+    this.isDefault = false,
   });
 
   final String id;
   final String address;
   final String region;
+  final String cityId;
+  final String label;
+  final String recipientName;
+  final String recipientPhone;
+  final bool isDefault;
 
   factory PharmacyCartAddressModel.fromJson(Map<String, dynamic> json) {
     return PharmacyCartAddressModel(
-      id: (json['id'] ?? json['address_id'] ?? json['addressId'] ?? '')
+      id: (json['address_id'] ??
+              json['addressId'] ??
+              json['id'] ??
+              '')
           .toString()
           .trim(),
-      address:
-          (json['address'] ?? json['full_address'] ?? json['fullAddress'] ?? '')
+      address: (json['line1'] ??
+              json['address'] ??
+              json['full_address'] ??
+              json['fullAddress'] ??
+              '')
+          .toString()
+          .trim(),
+      region: (json['city_name'] ??
+              json['cityName'] ??
+              json['region'] ??
+              json['city'] ??
+              json['line2'] ??
+              '')
+          .toString()
+          .trim(),
+      cityId: (json['city_id'] ?? json['cityId'] ?? '').toString().trim(),
+      label: (json['label'] ?? '').toString().trim(),
+      recipientName:
+          (json['recipient_name'] ?? json['recipientName'] ?? '')
               .toString()
               .trim(),
-      region: (json['region'] ?? json['city'] ?? '').toString().trim(),
+      recipientPhone:
+          (json['recipient_phone'] ?? json['recipientPhone'] ?? '')
+              .toString()
+              .trim(),
+      isDefault: json['is_default'] == true || json['isDefault'] == true,
     );
   }
 }
