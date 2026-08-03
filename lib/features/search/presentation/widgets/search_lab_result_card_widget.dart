@@ -17,8 +17,19 @@ class SearchLabResultCardWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final feeText = (item.price ?? item.fee)?.trim() ?? '';
-    final provider = item.providerLabel?.trim() ?? item.subtitle.trim();
+    final oldFee = item.oldFee?.trim() ?? '';
+    final hasStrike = oldFee.isNotEmpty && oldFee != feeText;
+    final labLocation = [
+      if (item.subtitle.trim().isNotEmpty) item.subtitle.trim(),
+      if ((item.hospital ?? '').trim().isNotEmpty &&
+          item.hospital!.trim() != item.subtitle.trim())
+        item.hospital!.trim(),
+    ].join(' - ');
+    final sampleType = (item.sampleType ?? '').trim().isEmpty
+        ? 'N/A'
+        : item.sampleType!.trim();
 
     return Padding(
       padding: EdgeInsets.only(bottom: 12.h),
@@ -26,161 +37,83 @@ class SearchLabResultCardWidget extends StatelessWidget {
         color: Colors.transparent,
         child: InkWell(
           onTap: onTap,
-          borderRadius: BorderRadius.circular(16.r),
+          borderRadius: BorderRadius.circular(14.r),
           child: Container(
-            padding: EdgeInsets.all(10.r),
+            width: double.infinity,
+            padding: EdgeInsets.fromLTRB(14.w, 14.h, 14.w, 14.h),
             decoration: BoxDecoration(
               color: AppColors.clrWhite,
-              borderRadius: BorderRadius.circular(16.r),
-              boxShadow: [
-                BoxShadow(
-                  color: AppColors.clrBlack.withValues(alpha: 0.05),
-                  blurRadius: 14,
-                  offset: const Offset(0, 2),
-                ),
-              ],
+              borderRadius: BorderRadius.circular(14.r),
+              border: Border.all(color: AppColors.clrE5E8EC),
             ),
-            child: Row(
+            child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
-                  width: 118.r,
-                  height: 142.r,
-                  decoration: BoxDecoration(
-                    color: AppColors.clrF4F4F4,
-                    borderRadius: BorderRadius.circular(10.r),
+                Text(
+                  item.title,
+                  style: TextStyle(
+                    color: AppColors.clr060,
+                    fontSize: 15.sp,
+                    fontWeight: FontWeight.w700,
                   ),
-                  alignment: Alignment.center,
-                  child: item.labLogo != null
-                      ? Image.asset(
-                          item.labLogo!,
-                          width: 72.r,
-                          fit: BoxFit.contain,
-                        )
-                      : Icon(
-                          Icons.biotech_outlined,
-                          size: 44.r,
-                          color: AppColors.clr5D758F,
-                        ),
                 ),
-                SizedBox(width: 12.w),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        item.title,
-                        style: TextStyle(
-                          color: AppColors.clr060,
-                          fontSize: 16.sp,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                      if (item.subtitle.isNotEmpty) ...[
-                        SizedBox(height: 2.h),
-                        Text(
-                          item.subtitle,
-                          style: TextStyle(
-                            color: AppColors.clr667B99,
-                            fontSize: 12.sp,
-                          ),
-                        ),
-                      ],
-                      if ((item.description ?? '').isNotEmpty)
-                        Padding(
-                          padding: EdgeInsets.only(top: 1.h),
-                          child: Text(
-                            item.description!,
-                            style: TextStyle(
-                              color: AppColors.clr667B99,
-                              fontSize: 12.sp,
-                            ),
-                          ),
-                        ),
-                      SizedBox(height: 10.h),
-                      Row(
-                        children: [
-                          Text(
-                            AppLocalizations.of(context)!
-                                .labTestSampleTypeLabel,
-                            style: TextStyle(
-                              color: AppColors.clr667B99,
-                              fontSize: 12.sp,
-                            ),
-                          ),
-                          SizedBox(width: 6.w),
-                          if ((item.sampleType ?? '').isNotEmpty)
-                            Container(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 12.w,
-                                vertical: 4.h,
-                              ),
-                              decoration: BoxDecoration(
-                                border: Border.all(color: AppColors.clrE7E7E7),
-                                borderRadius: BorderRadius.circular(14.r),
-                              ),
-                              child: Text(
-                                item.sampleType!,
-                                style: TextStyle(
-                                  color: AppColors.clr3D3D3D,
-                                  fontSize: 12.sp,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ),
-                        ],
-                      ),
-                      SizedBox(height: 10.h),
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  AppLocalizations.of(context)!
-                                      .labTestCheckoutFeeLabel,
-                                  style: TextStyle(
-                                    color: AppColors.clr667B99,
-                                    fontSize: 12.sp,
-                                  ),
-                                ),
-                                SizedBox(height: 2.h),
-                                Text(
-                                  feeText,
-                                  style: TextStyle(
-                                    color: AppColors.clr110844,
-                                    fontSize: 14.sp,
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          if (provider.isNotEmpty)
-                            Container(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 10.w,
-                                vertical: 5.h,
-                              ),
-                              decoration: BoxDecoration(
-                                color: AppColors.clrDEF8FB,
-                                borderRadius: BorderRadius.circular(14.r),
-                              ),
-                              child: Text(
-                                provider,
-                                style: TextStyle(
-                                  color: AppColors.clr0590A0,
-                                  fontSize: 11.sp,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ),
-                        ],
-                      ),
-                    ],
+                if (labLocation.isNotEmpty) ...[
+                  SizedBox(height: 4.h),
+                  Text(
+                    labLocation,
+                    style: TextStyle(
+                      color: AppColors.clr667B99,
+                      fontSize: 12.sp,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
+                ],
+                SizedBox(height: 12.h),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      child: Text(
+                        '${l10n.labTestSampleTypeLabel}: $sampleType',
+                        style: TextStyle(
+                          color: AppColors.clr667B99,
+                          fontSize: 12.sp,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                    if (hasStrike) ...[
+                      Text(
+                        oldFee,
+                        style: TextStyle(
+                          color: AppColors.clr667B99,
+                          fontSize: 12.sp,
+                          decoration: TextDecoration.lineThrough,
+                          decorationColor: AppColors.clr667B99,
+                        ),
+                      ),
+                      SizedBox(width: 8.w),
+                    ],
+                    if (feeText.isNotEmpty)
+                      Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 12.w,
+                          vertical: 7.h,
+                        ),
+                        decoration: BoxDecoration(
+                          color: AppColors.clr0FAA9A,
+                          borderRadius: BorderRadius.circular(20.r),
+                        ),
+                        child: Text(
+                          feeText,
+                          style: TextStyle(
+                            color: AppColors.clrWhite,
+                            fontSize: 12.sp,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ),
+                  ],
                 ),
               ],
             ),
