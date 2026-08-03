@@ -5,7 +5,8 @@ Browse surgical procedures by city, select a doctor/hospital offer, complete pat
 
 ## Routes / entry
 - `AppRoutes.surgery` → `/surgery` (`SurgeryScreen` with `BlocProvider<SurgeryCubit>`)
-- `AppRoutes.surgeryBooking` → `/surgery-booking` (`SurgeryBookingEntryScreen` → `SurgeryBookingScreen`; used from global search and can open doctor list for a procedure id)
+- `AppRoutes.surgeryBooking` → `/surgery-booking` (`SurgeryBookingEntryScreen` → `SurgeryBookingScreen`; procedure doctor list)
+- `AppRoutes.surgeryPatientDetails` → `/surgery-patient-details` (patient form; also opened from global search surgery offers)
 - Booking flow: `SurgeryBookingScreen` → `SurgeryPatientDetailsScreen` (`BlocProvider<SurgeryPatientDetailsCubit>`). Book Now passes `surgeryId`, `cityId`, and `doctorId`; guests go to `AppRoutes.authLogin`.
 - Bookings: `SurgeryBookingsScreen` (Bookings dashboard tab) → `AppRoutes.surgeryBookingDetails`
 

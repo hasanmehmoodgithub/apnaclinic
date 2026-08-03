@@ -30,6 +30,7 @@ Tabbed bookings hub (doctor consultation, surgery, lab test, pharmacy) with list
   - List card (`LabTestBookingCardWidget`): microscope icon, **Order No.** + id, static subtitle “Lab Test Report”, date (`placedAt` / `createdAt`), footer **Status** | **Total Fee** | **View Details**. Right-side decoration uses `Assets.labTestCardVector`; no partner/lab logos on the list card.
   - Fee: `pricing.total` formatted `Rs. n,nnn/-`.
   - **View Details** opens `LabTestViewDetailsScreen` with `LabTestViewDetailsArgs(orderId)` then loads **GET** `AppUrls.labOrderById` (`/acs-aggregator/api/v1/mobile/lab-orders/{id}`) via `GetLabOrderDetailUseCase`. Response is mapped with `LabTestBookingListMapper.toViewDetailsContent` (patient, fees, logos, `partnerRef`/discount code, report note; mock invoice PDF when `invoice` is missing).
+- Pharmacy bookings list: **GET** `AppUrls.pharmacyBookings(page, limit)` (`…/mobile/bookings?type=pharmacy&…`) via `GetPharmacyBookingsUseCase` (pharmacy module). Items: `orderId`, `productName`, `imageUrl`, `quantity`, `unitPrice`, `total`, `status`, `createdAt`. List card shows product image, qty×unit, total, status label; **View Details** → `AppRoutes.pharmacyBookingDetails` with `orderNo` + mapped timeline status.
 
 ## State
 

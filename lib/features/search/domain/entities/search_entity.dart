@@ -38,6 +38,7 @@ class SearchResultEntity {
     this.rating,
     this.fee,
     this.price,
+    this.oldFee,
     this.hospital,
     this.sampleType,
     this.providerLabel,
@@ -48,6 +49,10 @@ class SearchResultEntity {
     this.labLogo,
     this.publicId,
     this.tenantId,
+    this.doctorId,
+    this.cityId,
+    this.packageId,
+    this.packageName,
   });
 
   final String id;
@@ -58,6 +63,7 @@ class SearchResultEntity {
   final String? rating;
   final String? fee;
   final String? price;
+  final String? oldFee;
   final String? hospital;
   final String? sampleType;
   final String? providerLabel;
@@ -68,6 +74,18 @@ class SearchResultEntity {
 
   /// Doctor partner `tenantId` for consultation booking.
   final String? tenantId;
+
+  /// Surgery offer — doctor id for patient-details booking.
+  final String? doctorId;
+
+  /// Surgery offer — city id from search API.
+  final String? cityId;
+
+  /// Surgery offer — package id.
+  final String? packageId;
+
+  /// Surgery offer — package / procedure display name.
+  final String? packageName;
 
   /// Appointment/availability date shown as a pill on doctor cards
   /// (e.g. "10/09/24").

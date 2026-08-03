@@ -4,12 +4,15 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../components/shimmer/app_shimmer.dart';
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/router/app_routes.dart';
-import '../../../pharmacy/data/mock/pharmacy_mock_api.dart';
+import '../../../pharmacy/domain/entities/pharmacy_booking_entity.dart';
+import '../../../pharmacy/domain/use_cases/get_pharmacy_bookings_use_case.dart';
 import '../../../pharmacy/presentation/widgets/pharmacy_booking_details_body_widget.dart';
 import '../widgets/bookings_list_shimmer_widget.dart';
+import '../widgets/empty_booking_widget.dart';
 
 class PharmacyBookingsScreen extends StatefulWidget {
   const PharmacyBookingsScreen({super.key});
@@ -19,7 +22,7 @@ class PharmacyBookingsScreen extends StatefulWidget {
 }
 
 class _PharmacyBookingsScreenState extends State<PharmacyBookingsScreen> {
-  late final Future<List<_PharmacyBookingItem>> _bookingsFuture;
+  late final Future<List<PharmacyBookingEntity>> _bookingsFuture;
 
   @override
   void initState() {
@@ -27,20 +30,21 @@ class _PharmacyBookingsScreenState extends State<PharmacyBookingsScreen> {
     _bookingsFuture = _loadBookings();
   }
 
-  Future<List<_PharmacyBookingItem>> _loadBookings() async {
-    final response = await PharmacyMockApi().getPharmacyBookingsSuccessResponse();
-    final list = (response['bookings'] as List<dynamic>? ?? []);
-    return list
-        .whereType<Map>()
-        .map((raw) => _PharmacyBookingItem.fromJson(Map<String, dynamic>.from(raw)))
-        .toList();
+  Future<List<PharmacyBookingEntity>> _loadBookings() async {
+    final result = await sl<GetPharmacyBookingsUseCase>()(
+      const GetPharmacyBookingsParams(page: 1, limit: 20),
+    );
+    return result.fold(
+      (_) => const <PharmacyBookingEntity>[],
+      (page) => page.items,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final textTheme = Theme.of(context).textTheme;
-    return FutureBuilder<List<_PharmacyBookingItem>>(
+    return FutureBuilder<List<PharmacyBookingEntity>>(
       future: _bookingsFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
@@ -60,13 +64,16 @@ class _PharmacyBookingsScreenState extends State<PharmacyBookingsScreen> {
           );
         }
 
-        final items = snapshot.data ?? const <_PharmacyBookingItem>[];
+        final items = snapshot.data ?? const <PharmacyBookingEntity>[];
         if (items.isEmpty) {
-          return Center(
-            child: Text(
-              l10n.pharmacyEmptyMedicines,
-              style: textTheme.bodyMedium?.copyWith(color: AppColors.clr667B99),
-            ),
+          return Column(
+            children: [
+              EmptyBookingWidget(
+                description: l10n.pharmacyEmptyMedicines,
+                buttonText: l10n.pharmacyScreenTitle,
+                onTap: () => context.pushNamed(AppRoutes.pharmacyMain),
+              ),
+            ],
           );
         }
 
@@ -80,8 +87,9 @@ class _PharmacyBookingsScreenState extends State<PharmacyBookingsScreen> {
               context.pushNamed(
                 AppRoutes.pharmacyBookingDetails,
                 extra: {
-                  'orderNo': items[index].orderNo,
-                  'status': items[index].toTimelineStatus().name,
+                  'orderNo': items[index].orderId,
+                  'status':
+                      _timelineStatus(items[index].status).name,
                 },
               );
             },
@@ -95,17 +103,17 @@ class _PharmacyBookingsScreenState extends State<PharmacyBookingsScreen> {
 }
 
 class _PharmacyBookingCard extends StatelessWidget {
-  final _PharmacyBookingItem item;
-  final TextTheme textTheme;
-  final AppLocalizations l10n;
-  final VoidCallback onViewDetailsTap;
-
   const _PharmacyBookingCard({
     required this.item,
     required this.textTheme,
     required this.l10n,
     required this.onViewDetailsTap,
   });
+
+  final PharmacyBookingEntity item;
+  final TextTheme textTheme;
+  final AppLocalizations l10n;
+  final VoidCallback onViewDetailsTap;
 
   @override
   Widget build(BuildContext context) {
@@ -147,7 +155,7 @@ class _PharmacyBookingCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    item.title,
+                    item.productName,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: textTheme.titleMedium?.copyWith(
@@ -159,7 +167,7 @@ class _PharmacyBookingCard extends StatelessWidget {
                   ),
                   SizedBox(height: 4.h),
                   Text(
-                    item.quantityPrice,
+                    item.quantityPriceLabel,
                     style: textTheme.bodyMedium?.copyWith(
                       color: AppColors.clr5D758F,
                       fontSize: 12.sp,
@@ -174,16 +182,12 @@ class _PharmacyBookingCard extends StatelessWidget {
                         fontWeight: FontWeight.w500,
                       ),
                       children: [
-                        const TextSpan(
-                          text: '',
-                          style: TextStyle(color: Color(0xFF5D758F)),
-                        ),
                         TextSpan(
                           text: '${l10n.bookingsTotalLabel}  ',
                           style: const TextStyle(color: AppColors.clr5D758F),
                         ),
                         TextSpan(
-                          text: item.total,
+                          text: item.totalLabel,
                           style: const TextStyle(color: AppColors.clr060),
                         ),
                       ],
@@ -194,9 +198,9 @@ class _PharmacyBookingCard extends StatelessWidget {
                     children: [
                       Expanded(
                         child: Text(
-                          item.status,
+                          _statusLabel(item.status),
                           style: textTheme.bodyMedium?.copyWith(
-                            color: item.statusColor,
+                            color: _statusColor(item.status),
                             fontSize: 12.sp,
                             fontWeight: FontWeight.w500,
                           ),
@@ -240,92 +244,89 @@ class _PharmacyBookingCard extends StatelessWidget {
   }
 }
 
-class _PharmacyBookingItem {
-  final String orderNo;
-  final String title;
-  final String imageUrl;
-  final String quantityPrice;
-  final String total;
-  final String status;
-  final Color statusColor;
-
-  const _PharmacyBookingItem({
-    required this.orderNo,
-    required this.title,
-    required this.imageUrl,
-    required this.quantityPrice,
-    required this.total,
-    required this.status,
-    required this.statusColor,
-  });
-
-  factory _PharmacyBookingItem.fromJson(Map<String, dynamic> json) {
-    final quantity = (json['quantity'] as num?)?.toInt() ?? 1;
-    final unitPrice = (json['unitPrice'] as num?)?.toDouble() ?? 0;
-    final total = (json['total'] as num?)?.toDouble() ?? 0;
-    final statusRaw = (json['status'] as String? ?? 'in_progress').trim();
-    final status = _statusLabel(statusRaw);
-    return _PharmacyBookingItem(
-      orderNo: (json['orderNo'] as String? ?? '0000').trim(),
-      title: (json['title'] as String? ?? '').trim(),
-      imageUrl: (json['imageUrl'] as String? ?? '').trim(),
-      quantityPrice: '${quantity}x Rs ${unitPrice.toStringAsFixed(0)}/-',
-      total: 'Rs ${total.toStringAsFixed(0)}/-',
-      status: status,
-      statusColor: _statusColor(statusRaw),
-    );
-  }
-
-  PharmacyBookingTimelineStatus toTimelineStatus() {
-    final normalized = status.toLowerCase();
-    if (normalized.contains('cancel')) {
+PharmacyBookingTimelineStatus _timelineStatus(String raw) {
+  final key = raw.trim().toUpperCase().replaceAll('-', '_');
+  switch (key) {
+    case 'PAYMENT_FAILED':
+    case 'CANCELLED':
+    case 'CANCELED':
+    case 'REJECTED':
       return PharmacyBookingTimelineStatus.cancelled;
-    }
-    if (normalized.contains('complete')) {
+    case 'COMPLETED':
+    case 'DELIVERED':
+    case 'ACCEPTED':
       return PharmacyBookingTimelineStatus.completed;
-    }
-    if (normalized.contains('ship')) {
+    case 'SHIPPED':
       return PharmacyBookingTimelineStatus.shipped;
-    }
-    if (normalized.contains('ready')) {
+    case 'READY_TO_DISPATCH':
+    case 'READY_FOR_DISPATCH':
       return PharmacyBookingTimelineStatus.readyForDispatch;
-    }
-    return PharmacyBookingTimelineStatus.confirmed;
+    default:
+      return PharmacyBookingTimelineStatus.confirmed;
   }
+}
 
-  static Color _statusColor(String raw) {
-    switch (raw) {
-      case 'confirmed':
-        return const Color(0xFF0FAA9A);
-      case 'ready_to_dispatch':
-        return const Color(0xFFFFCC00);
-      case 'shipped':
-        return const Color(0xFF495AFF);
-      case 'completed':
-      case 'delivered':
-        return const Color(0xFF34C759);
-      case 'cancelled':
-        return const Color(0xFFFF4F4F);
-      default:
-        return const Color(0xFFFFCC00);
-    }
+Color _statusColor(String raw) {
+  final key = raw.trim().toUpperCase().replaceAll('-', '_');
+  switch (key) {
+    case 'ACCEPTED':
+    case 'CONFIRMED':
+    case 'COMPLETED':
+    case 'DELIVERED':
+      return const Color(0xFF34C759);
+    case 'PAYMENT_FAILED':
+    case 'CANCELLED':
+    case 'CANCELED':
+    case 'REJECTED':
+      return const Color(0xFFFF4F4F);
+    case 'SHIPPED':
+      return const Color(0xFF495AFF);
+    case 'READY_TO_DISPATCH':
+    case 'READY_FOR_DISPATCH':
+      return const Color(0xFFFFCC00);
+    case 'PENDING':
+    case 'CONFIRMATION_PENDING':
+    case 'ORDER_VERIFICATION':
+      return const Color(0xFFFFCC00);
+    default:
+      return const Color(0xFFFFCC00);
   }
+}
 
-  static String _statusLabel(String raw) {
-    switch (raw) {
-      case 'confirmed':
-        return 'Confirmed';
-      case 'ready_to_dispatch':
-        return 'Ready to Dispatch';
-      case 'shipped':
-        return 'Shipped';
-      case 'completed':
-      case 'delivered':
-        return 'Delivered';
-      case 'cancelled':
-        return 'Cancelled';
-      default:
-        return 'Confirmed';
-    }
+String _statusLabel(String raw) {
+  final key = raw.trim().toUpperCase().replaceAll('-', '_');
+  switch (key) {
+    case 'PENDING':
+      return 'Pending';
+    case 'PAYMENT_FAILED':
+      return 'Payment Failed';
+    case 'ACCEPTED':
+      return 'Accepted';
+    case 'CONFIRMATION_PENDING':
+      return 'Confirmation Pending';
+    case 'ORDER_VERIFICATION':
+      return 'Order Verification';
+    case 'CONFIRMED':
+      return 'Confirmed';
+    case 'READY_TO_DISPATCH':
+    case 'READY_FOR_DISPATCH':
+      return 'Ready to Dispatch';
+    case 'SHIPPED':
+      return 'Shipped';
+    case 'COMPLETED':
+    case 'DELIVERED':
+      return 'Delivered';
+    case 'CANCELLED':
+    case 'CANCELED':
+      return 'Cancelled';
+    default:
+      if (raw.trim().isEmpty) return 'Pending';
+      return raw
+          .trim()
+          .toLowerCase()
+          .split(RegExp(r'[_\s]+'))
+          .where((part) => part.isNotEmpty)
+          .map((part) => '${part[0].toUpperCase()}${part.substring(1)}')
+          .join(' ');
   }
 }

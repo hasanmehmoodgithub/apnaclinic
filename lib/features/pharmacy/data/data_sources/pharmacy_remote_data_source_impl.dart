@@ -5,6 +5,7 @@ import '../../../../core/network/api_service.dart';
 import '../../../../core/network/app_urls.dart';
 import '../../../../core/utils/error_handler.dart';
 import '../mock/pharmacy_mock_api.dart';
+import '../models/pharmacy_booking_model.dart';
 import '../models/pharmacy_medicine_model.dart';
 import 'pharmacy_remote_data_source.dart';
 
@@ -354,6 +355,40 @@ class PharmacyRemoteDataSourceImpl implements PharmacyRemoteDataSource {
       final message = ErrorHandler.handleExceptions(
         e,
         endpoint: AppUrls.pharmacyProfileAddressesList,
+      );
+      return Future.error(message);
+    }
+  }
+
+  @override
+  Future<PharmacyBookingsPageModel> getPharmacyBookings({
+    int page = 1,
+    int limit = 20,
+  }) async {
+    final endpoint = AppUrls.pharmacyBookings(page: page, limit: limit);
+    try {
+      final Map<String, dynamic> response;
+      if (PharmacyMockApi.useMockResponses) {
+        response = await mockApi.getPharmacyBookingsSuccessResponse(
+          page: page,
+          limit: limit,
+        );
+      } else {
+        response = await apiService.get(endpoint);
+        log('getPharmacyBookings response: $response');
+      }
+
+      if (_isSuccessResponse(response)) {
+        return PharmacyBookingsPageModel.fromJson(response);
+      }
+
+      final message = (response['message'] ?? AppStrings.pharmacyLoadError)
+          .toString();
+      return Future.error(message);
+    } catch (e) {
+      final message = ErrorHandler.handleExceptions(
+        e,
+        endpoint: endpoint,
       );
       return Future.error(message);
     }

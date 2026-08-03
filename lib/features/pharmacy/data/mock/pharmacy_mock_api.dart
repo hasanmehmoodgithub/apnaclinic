@@ -309,63 +309,77 @@ class PharmacyMockApi {
     };
   }
 
-  Future<Map<String, dynamic>> getPharmacyBookingsSuccessResponse() async {
+  Future<Map<String, dynamic>> getPharmacyBookingsSuccessResponse({
+    int page = 1,
+    int limit = 20,
+  }) async {
     await Future<void>.delayed(const Duration(milliseconds: 550));
+    final all = <Map<String, dynamic>>[
+      {
+        'status': 'PENDING',
+        'imageUrl':
+            'https://mediq-bucket.s3.amazonaws.com/products/webp-images/panadol-160mg-5ml-920.webp',
+        'productName': 'Panadol 160mg/5ml Liquid 120 ml',
+        'quantity': 1,
+        'unitPrice': 148,
+        'total': 398,
+        'currency': 'PKR',
+        'orderId': '66fb1287-c86d-48f1-8d72-878064118d99',
+        'createdAt': '2026-08-03 16:35',
+      },
+      {
+        'status': 'PAYMENT_FAILED',
+        'imageUrl':
+            'https://mediq-bucket.s3.amazonaws.com/products/webp-images/panadol-500mg-918.webp',
+        'productName': 'Panadol 500mg Tablet (10 tablets)',
+        'quantity': 1,
+        'unitPrice': 50,
+        'total': 300,
+        'currency': 'PKR',
+        'orderId': 'e47c38f5-fd8b-46ce-b895-8a7ad2ec8df2',
+        'createdAt': '2026-07-30 21:51',
+      },
+      {
+        'status': 'ACCEPTED',
+        'imageUrl':
+            'https://mediq-bucket.s3.amazonaws.com/products/webp-images/panadol-160mg-5ml-920.webp',
+        'productName': 'Panadol 160mg/5ml Liquid 120 ml',
+        'quantity': 1,
+        'unitPrice': 148,
+        'total': 398,
+        'currency': 'PKR',
+        'orderId': 'd6a8b21a-146d-4a54-9aa1-69af9c685708',
+        'createdAt': '2026-07-29 18:18',
+      },
+      {
+        'status': 'ORDER_VERIFICATION',
+        'imageUrl':
+            'https://mediq-bucket.s3.amazonaws.com/products/webp-images/2sum-2gm-4.webp',
+        'productName': '2Sum 2gm Injection 1 vial',
+        'quantity': 1,
+        'unitPrice': 590,
+        'total': 908,
+        'currency': 'PKR',
+        'orderId': '61557a75-2127-4df0-89dd-013e2f457547',
+        'createdAt': '2026-07-28 11:39',
+      },
+    ];
+
+    final start = (page - 1) * limit;
+    final end = (start + limit).clamp(0, all.length);
+    final slice = start >= all.length
+        ? const <Map<String, dynamic>>[]
+        : all.sublist(start, end);
+
     return {
       'success': true,
-      'message': 'Bookings fetched successfully',
-      'bookings': [
-        {
-          'orderNo': '1223',
-          'title': 'O-ZEETINE Capsules 6/25MG',
-          'quantity': 2,
-          'unitPrice': 1900.0,
-          'total': 4040.0,
-          'status': 'confirmed',
-          'imageUrl':
-              'https://bio-labs.net/wp-content/uploads/2024/01/75-72-74-mockup.webp',
-        },
-        {
-          'orderNo': '1241',
-          'title': 'O-ZEETINE Capsules 6/25MG',
-          'quantity': 2,
-          'unitPrice': 1900.0,
-          'total': 4040.0,
-          'status': 'ready_to_dispatch',
-          'imageUrl':
-              'https://bio-labs.net/wp-content/uploads/2024/01/75-72-74-mockup.webp',
-        },
-        {
-          'orderNo': '1265',
-          'title': 'Bio-D3 Ampoule',
-          'quantity': 1,
-          'unitPrice': 900.0,
-          'total': 1078.0,
-          'status': 'shipped',
-          'imageUrl':
-              'https://bio-labs.net/wp-content/uploads/2019/12/13-Bio-D3-Inj_.webp',
-        },
-        {
-          'orderNo': '1281',
-          'title': 'Bio-Col Tablets (Vitamin B12 + Folic Acid)',
-          'quantity': 2,
-          'unitPrice': 450.0,
-          'total': 1078.0,
-          'status': 'completed',
-          'imageUrl':
-              'https://bio-labs.net/wp-content/uploads/2022/10/12-Bio-Col-Tabs.webp',
-        },
-        {
-          'orderNo': '1290',
-          'title': 'O-ZEETINE Capsules 6/25MG',
-          'quantity': 2,
-          'unitPrice': 1900.0,
-          'total': 4040.0,
-          'status': 'cancelled',
-          'imageUrl':
-              'https://bio-labs.net/wp-content/uploads/2024/01/75-72-74-mockup.webp',
-        },
-      ],
+      'message': 'Bookings retrieved',
+      'data': {
+        'data': slice,
+        'page': page,
+        'limit': limit,
+        'total': all.length,
+      },
     };
   }
 

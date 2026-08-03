@@ -39,6 +39,7 @@ class SearchMapper {
               rating: result.rating,
               fee: result.fee,
               price: result.price,
+              oldFee: result.oldFee,
               hospital: result.hospital,
               sampleType: result.sampleType,
               providerLabel: result.providerLabel,
@@ -49,6 +50,10 @@ class SearchMapper {
               labLogo: result.labLogo,
               publicId: result.publicId,
               tenantId: result.tenantId,
+              doctorId: result.doctorId,
+              cityId: result.cityId,
+              packageId: result.packageId,
+              packageName: result.packageName,
             ),
           )
               .toList(),

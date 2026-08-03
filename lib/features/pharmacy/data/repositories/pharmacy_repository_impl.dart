@@ -3,6 +3,7 @@ import 'dart:developer';
 import '../../../../core/functional/functional_export.dart';
 import '../../domain/entities/pharmacy_add_address_result_entity.dart';
 import '../../domain/entities/pharmacy_add_to_cart_result_entity.dart';
+import '../../domain/entities/pharmacy_booking_entity.dart';
 import '../../domain/entities/pharmacy_cart_address_entity.dart';
 import '../../domain/entities/pharmacy_cart_entity.dart';
 import '../../domain/entities/pharmacy_checkout_result_entity.dart';
@@ -10,6 +11,7 @@ import '../../domain/entities/pharmacy_products_page_entity.dart';
 import '../../domain/entities/pharmacy_product_detail_entity.dart';
 import '../../domain/repositories/pharmacy_repository.dart';
 import '../data_sources/pharmacy_remote_data_source.dart';
+import '../mappers/pharmacy_bookings_mapper.dart';
 import '../mappers/pharmacy_medicine_mapper.dart';
 import '../models/pharmacy_medicine_model.dart';
 
@@ -164,6 +166,24 @@ class PharmacyRepositoryImpl implements PharmacyRepository {
       );
       final entity = PharmacyMedicineMapper.toAddAddressResultEntity(response);
       log('Mapped add address id: ${entity.id}');
+      return Right(entity);
+    } catch (e) {
+      return Left(e.toString());
+    }
+  }
+
+  @override
+  Future<Either<ErrorMsg, PharmacyBookingsPageEntity>> getPharmacyBookings({
+    int page = 1,
+    int limit = 20,
+  }) async {
+    try {
+      final model = await remoteDataSource.getPharmacyBookings(
+        page: page,
+        limit: limit,
+      );
+      final entity = PharmacyBookingsMapper.toPageEntity(model);
+      log('Mapped pharmacy bookings count: ${entity.items.length}');
       return Right(entity);
     } catch (e) {
       return Left(e.toString());

@@ -62,6 +62,7 @@ class SearchResultModel {
     this.rating,
     this.fee,
     this.price,
+    this.oldFee,
     this.hospital,
     this.sampleType,
     this.providerLabel,
@@ -72,6 +73,10 @@ class SearchResultModel {
     this.labLogo,
     this.publicId,
     this.tenantId,
+    this.doctorId,
+    this.cityId,
+    this.packageId,
+    this.packageName,
   });
 
   final String id;
@@ -82,6 +87,7 @@ class SearchResultModel {
   final String? rating;
   final String? fee;
   final String? price;
+  final String? oldFee;
   final String? hospital;
   final String? sampleType;
   final String? providerLabel;
@@ -92,6 +98,10 @@ class SearchResultModel {
   final String? labLogo;
   final String? publicId;
   final String? tenantId;
+  final String? doctorId;
+  final String? cityId;
+  final String? packageId;
+  final String? packageName;
 
   factory SearchResultModel.fromDoctorJson(Map<String, dynamic> json) {
     final experience = json['yearsOfExperience'] ?? json['years_of_experience'];
@@ -117,6 +127,12 @@ class SearchResultModel {
 
     final ratingRaw = json['ratingScore'] ?? json['rating'] ?? json['ratings'];
     final ratingText = _formatRating(ratingRaw);
+    final fees = _resolveConsultationFees(
+      consultationFee:
+          json['consultationFee'] ?? json['consultation_fee'] ?? json['fee'],
+      discountPercent: json['discountPercent'] ?? json['discount_percent'],
+      isFree: json['isFree'] == true,
+    );
 
     return SearchResultModel(
       id: apiId.isNotEmpty ? apiId : publicId,
@@ -132,9 +148,8 @@ class SearchResultModel {
               json['imageUrl'])
           ?.toString(),
       rating: ratingText,
-      fee: _formatMoney(
-        json['consultationFee'] ?? json['consultation_fee'] ?? json['fee'],
-      ),
+      fee: fees.$1,
+      oldFee: fees.$2,
       providerLogo: partnerLogo?.toString(),
       primaryActionLabel: 'Book Now',
     );
@@ -161,6 +176,12 @@ class SearchResultModel {
         .trim();
     final priceRaw =
         firstLab?['finalPrice'] ?? firstLab?['final_price'] ?? firstLab?['price'];
+    final listPrice = firstLab?['price'];
+    final discountPct = firstLab?['discountPct'] ?? firstLab?['discount_pct'];
+    final hasDiscount = (discountPct is num && discountPct > 0) ||
+        (listPrice != null &&
+            priceRaw != null &&
+            listPrice.toString() != priceRaw.toString());
 
     return SearchResultModel(
       id: (json['testId'] ?? json['test_id'] ?? json['id'] ?? '').toString(),
@@ -170,13 +191,75 @@ class SearchResultModel {
       description: json['description']?.toString(),
       sampleType: sampleType.isEmpty ? null : sampleType,
       price: _formatMoney(priceRaw),
+      fee: _formatMoney(priceRaw),
+      oldFee: hasDiscount ? _formatMoney(listPrice) : null,
       hospital: labName.isEmpty ? null : labName,
       providerLabel: labName.isEmpty ? null : labName,
       primaryActionLabel: 'Book Now',
     );
   }
 
+  /// Aggregator surgery offer (doctor + package), or legacy procedure list item.
   factory SearchResultModel.fromSurgeryJson(Map<String, dynamic> json) {
+    final surgeryId = (json['surgeryId'] ?? json['surgery_id'] ?? '').toString();
+    final doctorName =
+        (json['doctorName'] ?? json['doctor_name'] ?? '').toString().trim();
+
+    if (surgeryId.isNotEmpty || doctorName.isNotEmpty) {
+      final specialty =
+          (json['specialty'] ?? json['specialtyName'] ?? '').toString().trim();
+      final surgeryName =
+          (json['surgeryName'] ?? json['surgery_name'] ?? '').toString().trim();
+      final packageName =
+          (json['packageName'] ?? json['package_name'] ?? surgeryName)
+              .toString()
+              .trim();
+      final experience = json['yearsOfExperience'] ?? json['years_of_experience'];
+      final education = (json['education'] ?? '').toString().trim();
+      final experienceText = experience == null
+          ? ''
+          : '${experience.toString().trim()} years Experience';
+      final descriptionParts = <String>[
+        if (packageName.isNotEmpty) packageName,
+        if (experienceText.isNotEmpty) experienceText,
+        if (education.isNotEmpty) education,
+      ];
+      final discounted = json['discountedPrice'] ?? json['discounted_price'];
+      final listPrice = json['price'];
+      final feeText = _formatMoney(discounted ?? listPrice);
+      final oldFeeText = discounted != null &&
+              listPrice != null &&
+              discounted.toString() != listPrice.toString()
+          ? _formatMoney(listPrice)
+          : null;
+
+      return SearchResultModel(
+        id: surgeryId.isNotEmpty
+            ? surgeryId
+            : (json['id'] ?? '').toString(),
+        doctorId: (json['doctorId'] ?? json['doctor_id'])?.toString(),
+        cityId: (json['cityId'] ?? json['city_id'])?.toString(),
+        packageId: (json['packageId'] ?? json['package_id'])?.toString(),
+        packageName: packageName.isEmpty ? null : packageName,
+        title: doctorName.isNotEmpty ? doctorName : surgeryName,
+        subtitle: specialty.isNotEmpty ? specialty : surgeryName,
+        description:
+            descriptionParts.isEmpty ? null : descriptionParts.join('   '),
+        imageUrl: (json['profileImageUrl'] ??
+                json['profile_image_url'] ??
+                json['imageUrl'])
+            ?.toString(),
+        hospital: (json['hospitalName'] ?? json['hospital_name'])?.toString(),
+        fee: feeText,
+        price: feeText,
+        oldFee: oldFeeText,
+        providerLogo:
+            (json['partnerLogoUrl'] ?? json['partner_logo_url'])?.toString(),
+        providerLabel: (json['partnerName'] ?? json['partner_name'])?.toString(),
+        primaryActionLabel: 'Book Now',
+      );
+    }
+
     return SearchResultModel(
       id: (json['id'] ?? json['slug'] ?? '').toString(),
       title: (json['name'] ?? json['title'] ?? '').toString(),
@@ -248,6 +331,11 @@ class SearchResultModel {
         json['labs'] is List) {
       return SearchResultModel.fromLabTestJson(json);
     }
+    if (json.containsKey('surgeryId') ||
+        json.containsKey('surgery_id') ||
+        (json.containsKey('doctorId') && json.containsKey('packageId'))) {
+      return SearchResultModel.fromSurgeryJson(json);
+    }
     if (json.containsKey('displayName') ||
         json.containsKey('specialtyName') ||
         json.containsKey('consultationFee')) {
@@ -270,6 +358,7 @@ class SearchResultModel {
       rating: _formatRating(json['rating']),
       fee: _formatMoney(json['fee']),
       price: _formatMoney(json['price']),
+      oldFee: _formatMoney(json['oldFee'] ?? json['old_fee']),
       hospital: json['hospital']?.toString(),
       sampleType: json['sampleType']?.toString(),
       providerLabel: json['providerLabel']?.toString(),
@@ -279,6 +368,30 @@ class SearchResultModel {
       providerLogo: json['providerLogo']?.toString(),
       labLogo: json['labLogo']?.toString(),
     );
+  }
+
+  static (String? fee, String? oldFee) _resolveConsultationFees({
+    required Object? consultationFee,
+    required Object? discountPercent,
+    required bool isFree,
+  }) {
+    if (isFree) return ('Free', null);
+    final original = _asDouble(consultationFee);
+    if (original == null || original <= 0) {
+      return (_formatMoney(consultationFee), null);
+    }
+    final discount = _asDouble(discountPercent) ?? 0;
+    if (discount <= 0) {
+      return (_formatMoney(original), null);
+    }
+    final discounted = original * (1 - (discount / 100));
+    return (_formatMoney(discounted), _formatMoney(original));
+  }
+
+  static double? _asDouble(Object? value) {
+    if (value == null) return null;
+    if (value is num) return value.toDouble();
+    return double.tryParse(value.toString().trim());
   }
 
   static String? _formatMoney(Object? value) {

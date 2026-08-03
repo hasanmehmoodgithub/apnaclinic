@@ -9,6 +9,7 @@ import 'data/repositories/pharmacy_repository_impl.dart';
 import 'domain/repositories/pharmacy_repository.dart';
 import 'domain/use_cases/add_pharmacy_profile_address_use_case.dart';
 import 'domain/use_cases/add_to_cart_use_case.dart';
+import 'domain/use_cases/get_pharmacy_bookings_use_case.dart';
 import 'domain/use_cases/get_pharmacy_cart_use_case.dart';
 import 'domain/use_cases/get_pharmacy_medicines_use_case.dart';
 import 'domain/use_cases/get_pharmacy_product_detail_use_case.dart';
@@ -71,6 +72,10 @@ void initPharmacyInjector() {
     () => AddPharmacyProfileAddressUseCase(
       repository: sl<PharmacyRepository>(),
     ),
+  );
+
+  sl.registerLazySingleton<GetPharmacyBookingsUseCase>(
+    () => GetPharmacyBookingsUseCase(repository: sl<PharmacyRepository>()),
   );
 
   sl.registerFactory<PharmacyCubit>(

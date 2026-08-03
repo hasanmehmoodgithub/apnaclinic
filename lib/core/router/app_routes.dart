@@ -30,6 +30,7 @@ class AppRoutes {
   static const String search = 'search';
   static const String surgery = 'surgery';
   static const String surgeryBooking = 'surgery-booking';
+  static const String surgeryPatientDetails = 'surgery-patient-details';
   static const String surgeryBookingDetails = 'surgery-booking-details';
   static const String addAccount = 'add-account';
   static const String accountDetails = 'account-details';

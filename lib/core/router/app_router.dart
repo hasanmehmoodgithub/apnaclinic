@@ -47,9 +47,12 @@ import '../../features/search/presentation/cubit/search_cubit.dart';
 import '../../features/search/presentation/models/search_launch_args.dart';
 import '../../features/search/presentation/screens/search_screen.dart';
 import '../../features/surgery/presentation/cubit/surgery_cubit.dart';
+import '../../features/surgery/presentation/cubit/surgery_patient_details_cubit.dart';
 import '../../features/surgery/presentation/screens/surgery_booking_entry_screen.dart';
+import '../../features/surgery/presentation/screens/surgery_patient_details_screen.dart';
 import '../../features/surgery/presentation/screens/surgery_screen.dart';
 import '../../features/surgery/presentation/surgery_booking_args.dart';
+import '../../features/surgery/presentation/surgery_patient_details_args.dart';
 import '../../features/dashboard/presentation/screens/main_navigation_shell.dart';
 import '../../features/account/presentation/screens/account_details_screen.dart';
 import '../../features/account/presentation/add_account_launch_source.dart';
@@ -342,6 +345,34 @@ class AppRouter {
           return BlocProvider<SurgeryCubit>(
             create: (_) => sl<SurgeryCubit>(),
             child: SurgeryBookingEntryScreen(args: extra),
+          );
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.path(AppRoutes.surgeryPatientDetails),
+        name: AppRoutes.surgeryPatientDetails,
+        builder: (context, state) {
+          final extra = state.extra;
+          if (extra is! SurgeryPatientDetailsArgs) {
+            return const SizedBox.shrink();
+          }
+          return BlocProvider<SurgeryPatientDetailsCubit>(
+            create: (_) => sl<SurgeryPatientDetailsCubit>(),
+            child: SurgeryPatientDetailsScreen(
+              surgeryId: extra.surgeryId,
+              cityId: extra.cityId,
+              doctorId: extra.doctorId,
+              doctorName: extra.doctorName,
+              speciality: extra.speciality,
+              experience: extra.experience,
+              qualifications: extra.qualifications,
+              hospitalName: extra.hospitalName,
+              procedureName: extra.procedureName,
+              price: extra.price,
+              oldPrice: extra.oldPrice,
+              imageUrl: extra.imageUrl,
+              partnerLogoUrl: extra.partnerLogoUrl,
+            ),
           );
         },
       ),

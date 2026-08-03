@@ -12,7 +12,7 @@ import '../../consultation/presentation/widgets/results_doctor_item.dart';
 import '../../lab_test/data/constants/lab_test_catalog_defaults.dart';
 import '../../lab_test/presentation/lab_test_route_args.dart';
 import '../../pharmacy/domain/entities/pharmacy_medicine_entity.dart';
-import '../../surgery/presentation/surgery_booking_args.dart';
+import '../../surgery/presentation/surgery_patient_details_args.dart';
 import '../domain/entities/search_entity.dart';
 
 void openSearchPharmacyDetail(
@@ -65,7 +65,7 @@ void openSearchDoctorBooking(
     experience: item.description ?? '',
     qualification: '',
     fee: item.fee ?? '',
-    oldFee: '',
+    oldFee: item.oldFee ?? '',
     partner: '',
     rating: item.rating ?? '',
     imageUrl: item.imageUrl ?? '',
@@ -120,14 +120,34 @@ void openSearchSurgeryBooking(
   BuildContext context,
   SearchResultEntity item,
 ) {
+  if (!context.requireLogin()) return;
+
   final surgeryId = item.id.trim();
-  if (surgeryId.isEmpty) return;
+  final doctorId = item.doctorId?.trim() ?? '';
+  final cityId = item.cityId?.trim() ?? '';
+  if (surgeryId.isEmpty || doctorId.isEmpty || cityId.isEmpty) return;
+
+  final procedureName =
+      (item.packageName ?? item.subtitle).trim().isNotEmpty
+          ? (item.packageName ?? item.subtitle).trim()
+          : item.title;
 
   context.pushNamed(
-    AppRoutes.surgeryBooking,
-    extra: SurgeryBookingArgs(
+    AppRoutes.surgeryPatientDetails,
+    extra: SurgeryPatientDetailsArgs(
       surgeryId: surgeryId,
-      procedureName: item.title,
+      cityId: cityId,
+      doctorId: doctorId,
+      doctorName: item.title,
+      speciality: item.subtitle,
+      experience: item.description ?? '',
+      qualifications: '',
+      hospitalName: item.hospital ?? '',
+      procedureName: procedureName,
+      price: item.fee ?? item.price ?? '',
+      oldPrice: item.oldFee ?? '',
+      imageUrl: item.imageUrl ?? '',
+      partnerLogoUrl: item.providerLogo ?? '',
     ),
   );
 }
