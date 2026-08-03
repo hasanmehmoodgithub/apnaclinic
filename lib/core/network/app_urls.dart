@@ -232,6 +232,16 @@ class AppUrls {
   static String pharmacyBookings({int page = 1, int limit = 20}) =>
       mobileBookings(type: 'pharmacy', page: page, limit: limit);
 
+  /// Single mobile booking detail by id (GET).
+  /// Example: `…/mobile/bookings/{orderId}`
+  static String mobileBookingDetail(String orderId) =>
+      '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/bookings/'
+      '${Uri.encodeComponent(orderId.trim())}';
+
+  /// Pharmacy booking detail convenience wrapper.
+  static String pharmacyBookingDetail(String orderId) =>
+      mobileBookingDetail(orderId);
+
   /// Global mobile search (GET). Query: `text`, `limit`.
   static String mobileSearch({required String text, int limit = 5}) {
     final q = <String>[

@@ -50,6 +50,7 @@ class PharmacyCheckoutBodyWidget extends StatelessWidget {
         pharmacyGoToOrderDetailsAfterPlace(
           context,
           extra: <String, Object?>{
+            'orderId': checkout.orderNo,
             'orderNo': checkout.orderNo.isNotEmpty ? checkout.orderNo : '—',
             'status': checkout.status,
           },

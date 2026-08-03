@@ -383,6 +383,50 @@ class PharmacyMockApi {
     };
   }
 
+  Future<Map<String, dynamic>> getPharmacyBookingDetailSuccessResponse({
+    required String orderId,
+  }) async {
+    await Future<void>.delayed(const Duration(milliseconds: 450));
+    final id = orderId.trim().isEmpty
+        ? '66fb1287-c86d-48f1-8d72-878064118d99'
+        : orderId.trim();
+    return {
+      'success': true,
+      'message': 'Booking retrieved',
+      'data': {
+        'type': 'pharmacy',
+        'orderId': id,
+        'orderNo': 19,
+        'status': 'PENDING',
+        'statusTimeline': [
+          {'label': 'Confirmed', 'completed': false},
+          {'label': 'Ready for Dispatch', 'completed': false},
+          {'label': 'Dispatched / Shipped', 'completed': false},
+          {'label': 'Completed', 'completed': false},
+        ],
+        'items': [
+          {
+            'productName': 'Panadol 160mg/5ml Liquid 120 ml',
+            'quantity': 1,
+            'unitPrice': 148,
+            'lineTotal': 148,
+            'imageUrl':
+                'https://mediq-bucket.s3.amazonaws.com/products/webp-images/panadol-160mg-5ml-920.webp',
+          },
+        ],
+        'subtotal': 148,
+        'deliveryCharge': 250,
+        'discount': 0,
+        'discountPercent': 0,
+        'total': 398,
+        'currency': 'PKR',
+        'paymentMethod': 'JAZZCASH',
+        'deliveryAddress': 'NASTP, Rawalpindi',
+        'city': 'Rawalpindi',
+      },
+    };
+  }
+
   Future<Map<String, dynamic>> checkoutOrderSuccessResponse({
     required String userLocationId,
     required String paymentMethod,

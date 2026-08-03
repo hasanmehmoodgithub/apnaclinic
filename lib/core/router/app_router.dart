@@ -42,7 +42,6 @@ import '../../features/pharmacy/presentation/screens/pharmacy_cart_screen.dart';
 import '../../features/pharmacy/presentation/screens/pharmacy_checkout_screen.dart';
 import '../../features/pharmacy/presentation/screens/pharmacy_booking_details_screen.dart';
 import '../../features/pharmacy/presentation/screens/pharmacy_screen.dart';
-import '../../features/pharmacy/presentation/widgets/pharmacy_booking_details_body_widget.dart';
 import '../../features/search/presentation/cubit/search_cubit.dart';
 import '../../features/search/presentation/models/search_launch_args.dart';
 import '../../features/search/presentation/screens/search_screen.dart';
@@ -281,24 +280,14 @@ class AppRouter {
         builder: (context, state) {
           final extra = state.extra;
           final data = extra is Map ? Map<String, dynamic>.from(extra) : null;
-          final rawStatus = (data?['status'] as String? ?? '').trim();
-          final status = switch (rawStatus) {
-            'completed' => PharmacyBookingTimelineStatus.completed,
-            'delivered' => PharmacyBookingTimelineStatus.completed,
-            'cancelled' => PharmacyBookingTimelineStatus.cancelled,
-            'shipped' => PharmacyBookingTimelineStatus.shipped,
-            'ready_to_dispatch' =>
-              PharmacyBookingTimelineStatus.readyForDispatch,
-            'readyForDispatch' =>
-              PharmacyBookingTimelineStatus.readyForDispatch,
-            'confirmed' => PharmacyBookingTimelineStatus.confirmed,
-            _ => PharmacyBookingTimelineStatus.confirmed,
-          };
+          final orderId = (data?['orderId'] as String? ??
+                  data?['orderNo'] as String? ??
+                  '')
+              .trim();
+          final fallbackOrderNo = (data?['orderNo'] as String?)?.trim();
           return PharmacyBookingDetailsScreen(
-            orderNo: (data?['orderNo'] as String?)?.trim().isNotEmpty == true
-                ? (data!['orderNo'] as String).trim()
-                : '1223',
-            status: status,
+            orderId: orderId,
+            fallbackOrderNo: fallbackOrderNo,
           );
         },
       ),

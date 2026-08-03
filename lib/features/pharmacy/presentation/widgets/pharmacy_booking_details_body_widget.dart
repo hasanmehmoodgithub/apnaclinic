@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
+import '../../domain/entities/pharmacy_booking_detail_entity.dart';
 import 'pharmacy_booking_feedback_widget.dart';
 import 'pharmacy_booking_invoice_tile_widget.dart';
 import 'pharmacy_booking_medicine_card_widget.dart';
@@ -10,6 +11,7 @@ import 'pharmacy_booking_order_status_widget.dart';
 import 'pharmacy_booking_price_summary_widget.dart';
 import 'pharmacy_booking_section_line_widget.dart';
 
+/// Kept for route/list mapping compatibility.
 enum PharmacyBookingTimelineStatus {
   confirmed,
   readyForDispatch,
@@ -19,29 +21,44 @@ enum PharmacyBookingTimelineStatus {
 }
 
 class PharmacyBookingDetailsBodyWidget extends StatelessWidget {
-  const PharmacyBookingDetailsBodyWidget({super.key, required this.status});
+  const PharmacyBookingDetailsBodyWidget({
+    super.key,
+    required this.detail,
+  });
 
-  final PharmacyBookingTimelineStatus status;
+  final PharmacyBookingDetailEntity detail;
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final invoiceUrl = detail.invoiceUrl?.trim() ?? '';
     return ListView(
       padding: EdgeInsets.fromLTRB(24.w, 18.h, 24.w, 24.h),
       children: [
-        const PharmacyBookingMedicineCardWidget(),
-        const PharmacyBookingSectionLineWidget(top: 18, bottom: 14),
-        const PharmacyBookingPriceSummaryWidget(),
-        SizedBox(height: 22.h),
-        const PharmacyBookingInvoiceTileWidget(),
+        ...detail.items.map(
+          (item) => Padding(
+            padding: EdgeInsets.only(bottom: 12.h),
+            child: PharmacyBookingMedicineCardWidget(item: item),
+          ),
+        ),
+        const PharmacyBookingSectionLineWidget(top: 6, bottom: 14),
+        PharmacyBookingPriceSummaryWidget(
+          deliveryCharge: detail.deliveryChargeLabel,
+          discount: detail.discountLabel,
+          total: detail.totalLabel,
+        ),
+        if (invoiceUrl.isNotEmpty) ...[
+          SizedBox(height: 22.h),
+          const PharmacyBookingInvoiceTileWidget(),
+        ],
         SizedBox(height: 18.h),
         _LabeledValueRow(
           title: l10n.pharmacyCheckoutAddressLabel,
-          value: l10n.pharmacyBookingDeliveryCity,
+          value: detail.city.isEmpty ? '—' : detail.city,
         ),
         SizedBox(height: 10.h),
         Text(
-          l10n.pharmacyBookingDeliveryAddress,
+          detail.deliveryAddress.isEmpty ? '—' : detail.deliveryAddress,
           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
             color: AppColors.clr6C7EA0,
             fontSize: 14.sp,
@@ -51,12 +68,15 @@ class PharmacyBookingDetailsBodyWidget extends StatelessWidget {
         const PharmacyBookingSectionLineWidget(top: 16, bottom: 16),
         _LabeledValueColumn(
           title: l10n.pharmacyCheckoutPaymentMethodTitle,
-          value: l10n.pharmacyPaymentJazzCash,
+          value: detail.paymentMethodLabel,
         ),
         const PharmacyBookingSectionLineWidget(top: 16, bottom: 16),
-        PharmacyBookingOrderStatusWidget(status: status),
+        PharmacyBookingOrderStatusWidget(
+          isCancelled: detail.isCancelled,
+          steps: detail.statusTimeline,
+        ),
         SizedBox(height: 16.h),
-        if (status == PharmacyBookingTimelineStatus.completed) ...[
+        if (detail.isCompleted) ...[
           const PharmacyBookingFeedbackWidget(),
           SizedBox(height: 16.h),
         ],

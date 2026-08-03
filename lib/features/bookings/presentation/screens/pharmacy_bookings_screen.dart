@@ -10,7 +10,6 @@ import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../pharmacy/domain/entities/pharmacy_booking_entity.dart';
 import '../../../pharmacy/domain/use_cases/get_pharmacy_bookings_use_case.dart';
-import '../../../pharmacy/presentation/widgets/pharmacy_booking_details_body_widget.dart';
 import '../widgets/bookings_list_shimmer_widget.dart';
 import '../widgets/empty_booking_widget.dart';
 
@@ -87,9 +86,8 @@ class _PharmacyBookingsScreenState extends State<PharmacyBookingsScreen> {
               context.pushNamed(
                 AppRoutes.pharmacyBookingDetails,
                 extra: {
+                  'orderId': items[index].orderId,
                   'orderNo': items[index].orderId,
-                  'status':
-                      _timelineStatus(items[index].status).name,
                 },
               );
             },
@@ -241,28 +239,6 @@ class _PharmacyBookingCard extends StatelessWidget {
         ],
       ),
     );
-  }
-}
-
-PharmacyBookingTimelineStatus _timelineStatus(String raw) {
-  final key = raw.trim().toUpperCase().replaceAll('-', '_');
-  switch (key) {
-    case 'PAYMENT_FAILED':
-    case 'CANCELLED':
-    case 'CANCELED':
-    case 'REJECTED':
-      return PharmacyBookingTimelineStatus.cancelled;
-    case 'COMPLETED':
-    case 'DELIVERED':
-    case 'ACCEPTED':
-      return PharmacyBookingTimelineStatus.completed;
-    case 'SHIPPED':
-      return PharmacyBookingTimelineStatus.shipped;
-    case 'READY_TO_DISPATCH':
-    case 'READY_FOR_DISPATCH':
-      return PharmacyBookingTimelineStatus.readyForDispatch;
-    default:
-      return PharmacyBookingTimelineStatus.confirmed;
   }
 }
 

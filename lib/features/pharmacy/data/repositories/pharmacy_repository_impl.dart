@@ -3,6 +3,7 @@ import 'dart:developer';
 import '../../../../core/functional/functional_export.dart';
 import '../../domain/entities/pharmacy_add_address_result_entity.dart';
 import '../../domain/entities/pharmacy_add_to_cart_result_entity.dart';
+import '../../domain/entities/pharmacy_booking_detail_entity.dart';
 import '../../domain/entities/pharmacy_booking_entity.dart';
 import '../../domain/entities/pharmacy_cart_address_entity.dart';
 import '../../domain/entities/pharmacy_cart_entity.dart';
@@ -184,6 +185,22 @@ class PharmacyRepositoryImpl implements PharmacyRepository {
       );
       final entity = PharmacyBookingsMapper.toPageEntity(model);
       log('Mapped pharmacy bookings count: ${entity.items.length}');
+      return Right(entity);
+    } catch (e) {
+      return Left(e.toString());
+    }
+  }
+
+  @override
+  Future<Either<ErrorMsg, PharmacyBookingDetailEntity>> getPharmacyBookingDetail({
+    required String orderId,
+  }) async {
+    try {
+      final model = await remoteDataSource.getPharmacyBookingDetail(
+        orderId: orderId,
+      );
+      final entity = PharmacyBookingsMapper.toDetailEntity(model);
+      log('Mapped pharmacy booking detail id: ${entity.orderId}');
       return Right(entity);
     } catch (e) {
       return Left(e.toString());

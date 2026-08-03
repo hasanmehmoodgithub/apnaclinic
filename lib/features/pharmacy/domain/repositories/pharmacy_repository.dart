@@ -1,9 +1,10 @@
 import '../../../../core/functional/functional_export.dart';
+import '../entities/pharmacy_booking_detail_entity.dart';
+import '../entities/pharmacy_booking_entity.dart';
 import '../entities/pharmacy_add_address_result_entity.dart';
 import '../entities/pharmacy_cart_address_entity.dart';
 import '../entities/pharmacy_cart_entity.dart';
 import '../entities/pharmacy_add_to_cart_result_entity.dart';
-import '../entities/pharmacy_booking_entity.dart';
 import '../entities/pharmacy_checkout_result_entity.dart';
 import '../entities/pharmacy_products_page_entity.dart';
 import '../entities/pharmacy_product_detail_entity.dart';
@@ -48,5 +49,9 @@ abstract class PharmacyRepository {
   Future<Either<ErrorMsg, PharmacyBookingsPageEntity>> getPharmacyBookings({
     int page = 1,
     int limit = 20,
+  });
+
+  Future<Either<ErrorMsg, PharmacyBookingDetailEntity>> getPharmacyBookingDetail({
+    required String orderId,
   });
 }

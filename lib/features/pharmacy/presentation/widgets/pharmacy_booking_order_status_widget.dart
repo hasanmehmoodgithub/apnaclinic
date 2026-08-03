@@ -3,12 +3,17 @@ import 'package:flutter/material.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
-import 'pharmacy_booking_details_body_widget.dart';
+import '../../domain/entities/pharmacy_booking_detail_entity.dart';
 
 class PharmacyBookingOrderStatusWidget extends StatelessWidget {
-  const PharmacyBookingOrderStatusWidget({super.key, required this.status});
+  const PharmacyBookingOrderStatusWidget({
+    super.key,
+    required this.isCancelled,
+    required this.steps,
+  });
 
-  final PharmacyBookingTimelineStatus status;
+  final bool isCancelled;
+  final List<PharmacyBookingTimelineStepEntity> steps;
 
   @override
   Widget build(BuildContext context) {
@@ -26,13 +31,14 @@ class PharmacyBookingOrderStatusWidget extends StatelessWidget {
           ),
         ),
         SizedBox(height: 10.h),
-        if (status == PharmacyBookingTimelineStatus.cancelled)
+        if (isCancelled)
           _CancelledRow(label: l10n.pharmacyBookingStatusCancelled)
         else
           ...List.generate(items.length, (index) {
             final item = items[index];
             return Padding(
-              padding: EdgeInsets.only(bottom: index == items.length - 1 ? 0 : 8.h),
+              padding:
+                  EdgeInsets.only(bottom: index == items.length - 1 ? 0 : 8.h),
               child: _TimelineRow(
                 item: item,
                 showConnector: index != items.length - 1,
@@ -44,38 +50,42 @@ class PharmacyBookingOrderStatusWidget extends StatelessWidget {
   }
 
   List<_TimelineItem> _buildItems(AppLocalizations l10n) {
-    switch (status) {
-      case PharmacyBookingTimelineStatus.confirmed:
-        return [
-          _TimelineItem(label: l10n.pharmacyBookingStatusConfirmed, state: _ItemState.active),
-          _TimelineItem(label: l10n.pharmacyBookingStatusReadyForDispatch, state: _ItemState.upcoming),
-          _TimelineItem(label: l10n.pharmacyBookingStatusDispatched, state: _ItemState.upcoming),
-          _TimelineItem(label: l10n.pharmacyBookingStatusCompleted, state: _ItemState.upcoming),
-        ];
-      case PharmacyBookingTimelineStatus.readyForDispatch:
-        return [
-          _TimelineItem(label: l10n.pharmacyBookingStatusConfirmed, state: _ItemState.done),
-          _TimelineItem(label: l10n.pharmacyBookingStatusReadyForDispatch, state: _ItemState.active),
-          _TimelineItem(label: l10n.pharmacyBookingStatusDispatched, state: _ItemState.upcoming),
-          _TimelineItem(label: l10n.pharmacyBookingStatusCompleted, state: _ItemState.upcoming),
-        ];
-      case PharmacyBookingTimelineStatus.shipped:
-        return [
-          _TimelineItem(label: l10n.pharmacyBookingStatusConfirmed, state: _ItemState.done),
-          _TimelineItem(label: l10n.pharmacyBookingStatusReadyForDispatch, state: _ItemState.done),
-          _TimelineItem(label: l10n.pharmacyBookingStatusDispatched, state: _ItemState.active),
-          _TimelineItem(label: l10n.pharmacyBookingStatusCompleted, state: _ItemState.upcoming),
-        ];
-      case PharmacyBookingTimelineStatus.completed:
-        return [
-          _TimelineItem(label: l10n.pharmacyBookingStatusConfirmed, state: _ItemState.done),
-          _TimelineItem(label: l10n.pharmacyBookingStatusReadyForDispatch, state: _ItemState.done),
-          _TimelineItem(label: l10n.pharmacyBookingStatusDispatched, state: _ItemState.done),
-          _TimelineItem(label: l10n.pharmacyBookingStatusCompleted, state: _ItemState.done),
-        ];
-      case PharmacyBookingTimelineStatus.cancelled:
-        return const [];
+    if (steps.isEmpty) {
+      return [
+        _TimelineItem(
+          label: l10n.pharmacyBookingStatusConfirmed,
+          state: _ItemState.active,
+        ),
+        _TimelineItem(
+          label: l10n.pharmacyBookingStatusReadyForDispatch,
+          state: _ItemState.upcoming,
+        ),
+        _TimelineItem(
+          label: l10n.pharmacyBookingStatusDispatched,
+          state: _ItemState.upcoming,
+        ),
+        _TimelineItem(
+          label: l10n.pharmacyBookingStatusCompleted,
+          state: _ItemState.upcoming,
+        ),
+      ];
     }
+
+    final firstIncomplete = steps.indexWhere((step) => !step.completed);
+    return List.generate(steps.length, (index) {
+      final step = steps[index];
+      final _ItemState state;
+      if (step.completed) {
+        state = _ItemState.done;
+      } else if (firstIncomplete == -1) {
+        state = _ItemState.done;
+      } else if (index == firstIncomplete) {
+        state = _ItemState.active;
+      } else {
+        state = _ItemState.upcoming;
+      }
+      return _TimelineItem(label: step.label, state: state);
+    });
   }
 }
 
@@ -95,7 +105,11 @@ class _CancelledRow extends StatelessWidget {
             borderRadius: BorderRadius.circular(20.r),
             border: Border.all(color: const Color(0xFFFF4F4F), width: 0.5),
           ),
-          child: Icon(Icons.close_rounded, color: const Color(0xFFFF4F4F), size: 14.r),
+          child: Icon(
+            Icons.close_rounded,
+            color: const Color(0xFFFF4F4F),
+            size: 14.r,
+          ),
         ),
         SizedBox(width: 10.w),
         Expanded(
@@ -139,7 +153,6 @@ class _TimelineRow extends StatelessWidget {
     final textColor = isDone
         ? AppColors.clrWhite
         : (isActive ? AppColors.clr4A555F : const Color(0xFFC5C5C5));
-    final dot = _TimelineDot(state: item.state);
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -147,7 +160,7 @@ class _TimelineRow extends StatelessWidget {
           width: 28.w,
           child: Column(
             children: [
-              dot,
+              _TimelineDot(state: item.state),
               if (showConnector)
                 Container(
                   width: 1.w,
