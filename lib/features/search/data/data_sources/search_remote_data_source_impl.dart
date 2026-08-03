@@ -16,37 +16,52 @@ class SearchRemoteDataSourceImpl implements SearchRemoteDataSource {
   final ApiService apiService;
   final SearchMockApi mockApi;
 
+  static const int _defaultLimit = 5;
+
   @override
   Future<SearchResponseModel> getSearchContent({
     required String query,
     required bool listening,
     required bool submitted,
   }) async {
+    final trimmed = query.trim();
+    // Search API only after explicit submit (search button / enter / suggestion tap).
+    if (trimmed.isEmpty || !submitted) {
+      return const SearchResponseModel(
+        success: true,
+        message: '',
+        recentSearches: [],
+        popularSearches: [],
+        suggestions: [],
+        sections: [],
+      );
+    }
+
     try {
       final Map<String, dynamic> response;
       if (SearchMockApi.useMockResponses) {
         response = await mockApi.getSearchResponse(
-          query: query,
+          query: trimmed,
           listening: listening,
           submitted: submitted,
         );
       } else {
-        response = await apiService.get(
-          AppUrls.search,
-          queryParameters: {
-            'query': query,
-            'listening': listening,
-            'submitted': submitted,
-          },
+        final endpoint = AppUrls.mobileSearch(
+          text: trimmed,
+          limit: _defaultLimit,
         );
+        response = await apiService.get(endpoint);
         log('getSearchContent response: $response');
       }
 
-      if (response['success'] == true) {
+      if (response['success'] == true ||
+          (response['code'] is num && (response['code'] as num).toInt() == 200)) {
         return SearchResponseModel.fromJson(response);
       }
 
-      return Future.error((response['message'] ?? 'Failed to load search').toString());
+      return Future.error(
+        (response['message'] ?? 'Failed to load search').toString(),
+      );
     } catch (e) {
       final message = ErrorHandler.handleExceptions(
         e,

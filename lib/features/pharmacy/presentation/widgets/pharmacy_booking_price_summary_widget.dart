@@ -5,7 +5,16 @@ import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
 
 class PharmacyBookingPriceSummaryWidget extends StatelessWidget {
-  const PharmacyBookingPriceSummaryWidget({super.key});
+  const PharmacyBookingPriceSummaryWidget({
+    super.key,
+    required this.deliveryCharge,
+    required this.discount,
+    required this.total,
+  });
+
+  final String deliveryCharge;
+  final String discount;
+  final String total;
 
   @override
   Widget build(BuildContext context) {
@@ -14,13 +23,13 @@ class PharmacyBookingPriceSummaryWidget extends StatelessWidget {
       children: [
         _SummaryRow(
           title: l10n.pharmacyCheckoutDeliveryChargesLabel,
-          value: '200',
+          value: deliveryCharge,
           valueColor: AppColors.clr110844,
         ),
         SizedBox(height: 14.h),
         _SummaryRow(
           title: l10n.pharmacyCheckoutDiscountLabel,
-          value: '40',
+          value: discount,
           valueColor: AppColors.clr110844,
         ),
         SizedBox(height: 12.h),
@@ -30,7 +39,7 @@ class PharmacyBookingPriceSummaryWidget extends StatelessWidget {
           color: AppColors.clrE7E7E7,
           child: _SummaryRow(
             title: l10n.pharmacyCheckoutTotalLabel,
-            value: '4040',
+            value: total,
             valueColor: AppColors.clr110844,
             titleColor: AppColors.clr060,
             valueFontSize: 31.sp / 1.6,

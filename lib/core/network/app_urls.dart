@@ -207,8 +207,53 @@ class AppUrls {
   static String get pharmacyProfileAddressesList =>
       '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/partner/pharmacy/profile/addresses/list';
 
-  /// Search endpoint
-  static String get search => '$_normalizedApiBaseUrl/search';
+  /// Aggregator mobile bookings list (GET).
+  /// Example: `…/mobile/bookings?type=pharmacy&page=1&limit=20`
+  static String mobileBookings({
+    required String type,
+    int page = 1,
+    int limit = 20,
+  }) {
+    final query = <String, String>{
+      'type': type.trim(),
+      'page': '$page',
+      'limit': '$limit',
+    };
+    final encoded = query.entries
+        .map(
+          (e) =>
+              '${Uri.encodeQueryComponent(e.key)}=${Uri.encodeQueryComponent(e.value)}',
+        )
+        .join('&');
+    return '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/bookings?$encoded';
+  }
+
+  /// Pharmacy bookings list convenience wrapper.
+  static String pharmacyBookings({int page = 1, int limit = 20}) =>
+      mobileBookings(type: 'pharmacy', page: page, limit: limit);
+
+  /// Single mobile booking detail by id (GET).
+  /// Example: `…/mobile/bookings/{orderId}`
+  static String mobileBookingDetail(String orderId) =>
+      '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/bookings/'
+      '${Uri.encodeComponent(orderId.trim())}';
+
+  /// Pharmacy booking detail convenience wrapper.
+  static String pharmacyBookingDetail(String orderId) =>
+      mobileBookingDetail(orderId);
+
+  /// Global mobile search (GET). Query: `text`, `limit`.
+  static String mobileSearch({required String text, int limit = 5}) {
+    final q = <String>[
+      'text=${Uri.encodeComponent(text.trim())}',
+      'limit=$limit',
+    ];
+    return '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/search?${q.join('&')}';
+  }
+
+  /// Legacy alias — prefer [mobileSearch].
+  static String get search =>
+      '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/search';
 
   /// Surgery procedures list (aggregator mobile API).
   static String surgeryProcedures({String? cityId}) {

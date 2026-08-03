@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../domain/entities/search_entity.dart';
+import '../search_navigation.dart';
 import 'search_doctor_result_card_widget.dart';
 import 'search_lab_result_card_widget.dart';
 import 'search_pharmacy_result_card_widget.dart';
@@ -54,11 +55,25 @@ class SearchSectionBlockWidget extends StatelessWidget {
           ...section.results.map(
             (item) => switch (section.type) {
               SearchSectionType.doctorConsultation =>
-                SearchDoctorResultCardWidget(item: item, showHospital: false),
+                SearchDoctorResultCardWidget(
+                  item: item,
+                  showHospital: false,
+                  onTap: () => openSearchDoctorBooking(context, item),
+                ),
               SearchSectionType.surgeryBooking =>
-                SearchDoctorResultCardWidget(item: item, showHospital: true),
-              SearchSectionType.pharmacy => SearchPharmacyResultCardWidget(item: item),
-              SearchSectionType.laboratoryTests => SearchLabResultCardWidget(item: item),
+                SearchDoctorResultCardWidget(
+                  item: item,
+                  showHospital: true,
+                  onTap: () => openSearchSurgeryBooking(context, item),
+                ),
+              SearchSectionType.pharmacy => SearchPharmacyResultCardWidget(
+                  item: item,
+                  onTap: () => openSearchPharmacyDetail(context, item),
+                ),
+              SearchSectionType.laboratoryTests => SearchLabResultCardWidget(
+                  item: item,
+                  onTap: () => openSearchLabBooking(context, item),
+                ),
             },
           ),
         ],

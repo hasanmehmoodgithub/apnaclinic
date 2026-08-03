@@ -7,10 +7,12 @@ Global search for doctors, pharmacy, lab tests, surgery, and more. Supports text
 ## Routes / entry
 
 - `AppRoutes.search` — `SearchScreen` with optional `SearchLaunchArgs` (`initialQuery`, `startVoiceSearch`).
+- Result taps: pharmacy → `AppRoutes.pharmacy`; doctor → `AppRoutes.consultationBookDoctor` (login); lab → `AppRoutes.labTestBooking` (login + saved city, else lab hub); surgery offer → `AppRoutes.surgeryPatientDetails` (login).
 
 ## Data & APIs
 
-- Search content via `SearchRemoteDataSourceImpl` / `SearchMockApi` when mocks enabled.
+- **GET** `AppUrls.mobileSearch(text:, limit:)` → `/acs-aggregator/api/v1/mobile/search?text=&limit=` (default `limit=5`). Called **only on submit** (search icon / keyboard submit / recent·popular·suggestion tap / voice final). Typing does not hit the network.
+- Response `data`: `doctorConsultation[]` (fee applies `discountPercent`), `labTests[]` (first `labs[]` entry only), `surgeryBooking[]` (doctor/package offers with `surgeryId` / `doctorId` / `cityId` / prices / hospital / partner), `pharmacy[]` (Partner product fields). Mapped into search sections.
 
 ## State
 

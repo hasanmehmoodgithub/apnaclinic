@@ -1,3 +1,5 @@
+import '../models/pharmacy_booking_detail_model.dart';
+import '../models/pharmacy_booking_model.dart';
 import '../models/pharmacy_medicine_model.dart';
 
 abstract class PharmacyRemoteDataSource {
@@ -35,5 +37,14 @@ abstract class PharmacyRemoteDataSource {
     required String cityId,
     String lat = '0',
     String long = '0',
+  });
+
+  Future<PharmacyBookingsPageModel> getPharmacyBookings({
+    int page = 1,
+    int limit = 20,
+  });
+
+  Future<PharmacyBookingDetailModel> getPharmacyBookingDetail({
+    required String orderId,
   });
 }
