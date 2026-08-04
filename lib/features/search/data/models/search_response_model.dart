@@ -151,8 +151,14 @@ class SearchResultModel {
       tenantId: (tenantId == null || tenantId.isEmpty) ? null : tenantId,
       title: (json['displayName'] ?? json['display_name'] ?? json['name'] ?? '')
           .toString(),
-      subtitle: education.isNotEmpty ? education : specialty,
-      description: experienceText.isEmpty ? null : experienceText,
+      subtitle: specialty,
+      description: () {
+        final parts = <String>[
+          if (experienceText.isNotEmpty) experienceText,
+          if (education.isNotEmpty) education,
+        ];
+        return parts.isEmpty ? null : parts.join('\n');
+      }(),
       hospital: hospital.isEmpty ? null : hospital,
       imageUrl: (json['profileImageUrl'] ??
               json['profile_image_url'] ??
@@ -185,6 +191,18 @@ class SearchResultModel {
     final labName = (firstLab?['labName'] ?? firstLab?['lab_name'] ?? '')
         .toString()
         .trim();
+    final city = (firstLab?['city'] ??
+            firstLab?['cityName'] ??
+            firstLab?['city_name'] ??
+            json['city'] ??
+            json['cityName'] ??
+            '')
+        .toString()
+        .trim();
+    final labsSummary = [
+      if (labName.isNotEmpty) labName,
+      if (city.isNotEmpty) city,
+    ].join(' - ');
     final priceRaw =
         firstLab?['finalPrice'] ?? firstLab?['final_price'] ?? firstLab?['price'];
     final listPrice = firstLab?['price'];
@@ -198,13 +216,15 @@ class SearchResultModel {
       id: (json['testId'] ?? json['test_id'] ?? json['id'] ?? '').toString(),
       title: (json['testName'] ?? json['test_name'] ?? json['name'] ?? '')
           .toString(),
-      subtitle: labName,
+      subtitle: labsSummary.isNotEmpty ? labsSummary : labName,
       description: json['description']?.toString(),
       sampleType: sampleType.isEmpty ? null : sampleType,
       price: _formatMoney(priceRaw),
       fee: _formatMoney(priceRaw),
       oldFee: hasDiscount ? _formatMoney(listPrice) : null,
-      hospital: labName.isEmpty ? null : labName,
+      hospital: labsSummary.isNotEmpty
+          ? labsSummary
+          : (labName.isEmpty ? null : labName),
       providerLabel: labName.isEmpty ? null : labName,
       primaryActionLabel: 'Book Now',
     );
@@ -227,14 +247,13 @@ class SearchResultModel {
               .trim();
       final experience = json['yearsOfExperience'] ?? json['years_of_experience'];
       final education = (json['education'] ?? '').toString().trim();
-      final experienceText = experience == null
+      final experiencePart = experience == null
           ? ''
-          : '${experience.toString().trim()} years Experience';
-      final descriptionParts = <String>[
-        if (packageName.isNotEmpty) packageName,
-        if (experienceText.isNotEmpty) experienceText,
+          : '${experience.toString().trim()} years';
+      final credentials = [
+        if (experiencePart.isNotEmpty) experiencePart,
         if (education.isNotEmpty) education,
-      ];
+      ].join(' | ');
       final discounted = json['discountedPrice'] ?? json['discounted_price'];
       final listPrice = json['price'];
       final feeText = _formatMoney(discounted ?? listPrice);
@@ -254,8 +273,7 @@ class SearchResultModel {
         packageName: packageName.isEmpty ? null : packageName,
         title: doctorName.isNotEmpty ? doctorName : surgeryName,
         subtitle: specialty.isNotEmpty ? specialty : surgeryName,
-        description:
-            descriptionParts.isEmpty ? null : descriptionParts.join('   '),
+        description: credentials.isEmpty ? null : credentials,
         imageUrl: (json['profileImageUrl'] ??
                 json['profile_image_url'] ??
                 json['imageUrl'])

@@ -22,8 +22,12 @@ class SearchSurgeryResultCardWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final fee = (item.fee ?? item.price)?.trim() ?? '';
-    final surgeryType = (item.packageName ?? item.subtitle).trim();
+    final oldFee = item.oldFee?.trim() ?? '';
+    final hasStrike = oldFee.isNotEmpty && oldFee != fee;
+    final specialty = item.subtitle.trim();
+    final credentials = (item.description ?? '').trim();
     final hospital = (item.hospital ?? '').trim();
+    final surgeryType = (item.packageName ?? '').trim();
     final partnerLogo = item.providerLogo?.trim() ?? '';
 
     return Padding(
@@ -32,13 +36,20 @@ class SearchSurgeryResultCardWidget extends StatelessWidget {
         color: Colors.transparent,
         child: InkWell(
           onTap: onTap,
-          borderRadius: BorderRadius.circular(14.r),
+          borderRadius: BorderRadius.circular(12.r),
           child: Container(
-            padding: EdgeInsets.all(14.r),
+            padding: EdgeInsets.all(12.r),
             decoration: BoxDecoration(
               color: AppColors.clrWhite,
-              borderRadius: BorderRadius.circular(14.r),
-              border: Border.all(color: AppColors.clrE5E8EC),
+              borderRadius: BorderRadius.circular(12.r),
+              boxShadow: const [
+                BoxShadow(
+                  color: Color(0x14565C67),
+                  blurRadius: 8,
+                  spreadRadius: 0.6,
+                  offset: Offset.zero,
+                ),
+              ],
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -88,11 +99,11 @@ class SearchSurgeryResultCardWidget extends StatelessWidget {
                               fontWeight: FontWeight.w700,
                             ),
                           ),
-                          if (hospital.isNotEmpty) ...[
-                            SizedBox(height: 3.h),
+                          if (specialty.isNotEmpty) ...[
+                            SizedBox(height: 2.h),
                             Text(
-                              hospital,
-                              maxLines: 2,
+                              specialty,
+                              maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: TextStyle(
                                 color: AppColors.clr667B99,
@@ -101,8 +112,54 @@ class SearchSurgeryResultCardWidget extends StatelessWidget {
                               ),
                             ),
                           ],
+                          if (credentials.isNotEmpty) ...[
+                            SizedBox(height: 2.h),
+                            Text(
+                              credentials,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                color: AppColors.clr667B99,
+                                fontSize: 12.sp,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
+                        ],
+                      ),
+                    ),
+                    if (partnerLogo.isNotEmpty) ...[
+                      SizedBox(width: 8.w),
+                      SurgeryPartnerLogoWidget(
+                        logoUrl: partnerLogo,
+                        width: 40.w,
+                        height: 40.h,
+                        compact: true,
+                      ),
+                    ],
+                  ],
+                ),
+                SizedBox(height: 10.h),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          if (hospital.isNotEmpty)
+                            Text(
+                              hospital,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                color: AppColors.clr060,
+                                fontSize: 13.sp,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
                           if (surgeryType.isNotEmpty) ...[
-                            SizedBox(height: 3.h),
+                            SizedBox(height: 2.h),
                             Text(
                               surgeryType,
                               maxLines: 1,
@@ -117,59 +174,54 @@ class SearchSurgeryResultCardWidget extends StatelessWidget {
                         ],
                       ),
                     ),
-                    SizedBox(width: 8.w),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        if (partnerLogo.isNotEmpty) ...[
-                          SurgeryPartnerLogoWidget(
-                            logoUrl: partnerLogo,
-                            width: 48.w,
-                            height: 28.h,
-                            compact: true,
-                          ),
-                          if (fee.isNotEmpty) SizedBox(height: 8.h),
-                        ],
-                        if (fee.isNotEmpty) ...[
+                    if (fee.isNotEmpty) ...[
+                      SizedBox(width: 8.w),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
                           Text(
-                            l10n.surgeryStartingFrom,
-                            style: TextStyle(
-                              color: AppColors.clr667B99,
-                              fontSize: 11.sp,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                          SizedBox(height: 2.h),
-                          Text(
-                            fee,
+                            '${l10n.surgeryStartingFrom} $fee',
                             style: TextStyle(
                               color: AppColors.clr060,
-                              fontSize: 14.sp,
-                              fontWeight: FontWeight.w700,
+                              fontSize: 12.sp,
+                              fontWeight: FontWeight.w600,
                             ),
                           ),
+                          if (hasStrike) ...[
+                            SizedBox(height: 2.h),
+                            Text(
+                              oldFee,
+                              style: TextStyle(
+                                color: AppColors.clr667B99,
+                                fontSize: 12.sp,
+                                decoration: TextDecoration.lineThrough,
+                                decorationColor: AppColors.clr667B99,
+                              ),
+                            ),
+                          ],
                         ],
-                      ],
-                    ),
+                      ),
+                    ],
                   ],
                 ),
-                SizedBox(height: 14.h),
+                SizedBox(height: 12.h),
                 SizedBox(
-                  height: 44.h,
+                  height: 36.h,
                   child: FilledButton(
                     onPressed: onTap,
                     style: FilledButton.styleFrom(
                       backgroundColor: AppColors.clr0FAA9A,
                       elevation: 0,
+                      padding: EdgeInsets.zero,
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.r),
+                        borderRadius: BorderRadius.circular(8.r),
                       ),
                     ),
                     child: Text(
                       item.primaryActionLabel ?? 'Book Now',
                       style: TextStyle(
                         color: AppColors.clrWhite,
-                        fontSize: 15.sp,
+                        fontSize: 14.sp,
                         fontWeight: FontWeight.w700,
                       ),
                     ),

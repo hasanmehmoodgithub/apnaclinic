@@ -27,13 +27,8 @@ class SearchPharmacyResultCardWidget extends StatelessWidget {
         child: InkWell(
           onTap: onTap,
           borderRadius: BorderRadius.circular(14.r),
-          child: Container(
-            padding: EdgeInsets.all(12.r),
-            decoration: BoxDecoration(
-              color: AppColors.clrWhite,
-              borderRadius: BorderRadius.circular(14.r),
-              border: Border.all(color: AppColors.clrE5E8EC),
-            ),
+          child: Padding(
+            padding: EdgeInsets.symmetric(vertical: 8.h),
             child: Row(
               children: [
                 Container(
