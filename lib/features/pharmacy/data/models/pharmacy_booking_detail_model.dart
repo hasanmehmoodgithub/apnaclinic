@@ -81,6 +81,7 @@ class PharmacyBookingDetailModel {
     required this.deliveryAddress,
     required this.city,
     this.invoiceUrl,
+    this.messageAlert,
   });
 
   final String type;
@@ -99,6 +100,7 @@ class PharmacyBookingDetailModel {
   final String deliveryAddress;
   final String city;
   final String? invoiceUrl;
+  final String? messageAlert;
 
   factory PharmacyBookingDetailModel.fromJson(Map<String, dynamic> json) {
     final root = json['data'];
@@ -157,11 +159,19 @@ class PharmacyBookingDetailModel {
               .toString()
               .trim(),
       city: (payload['city'] ?? '').toString().trim(),
-      invoiceUrl: (payload['invoice'] ??
-              payload['invoiceUrl'] ??
-              payload['invoice_url'])
-          ?.toString()
-          .trim(),
+      invoiceUrl: _nullableString(
+        payload['invoiceUrl'] ?? payload['invoice_url'] ?? payload['invoice'],
+      ),
+      messageAlert: _nullableString(
+        payload['messageAlert'] ?? payload['message_alert'],
+      ),
     );
+  }
+
+  static String? _nullableString(Object? value) {
+    if (value == null) return null;
+    final text = value.toString().trim();
+    if (text.isEmpty || text.toLowerCase() == 'null') return null;
+    return text;
   }
 }

@@ -87,7 +87,7 @@ class _PharmacyBookingsScreenState extends State<PharmacyBookingsScreen> {
                 AppRoutes.pharmacyBookingDetails,
                 extra: {
                   'orderId': items[index].orderId,
-                  'orderNo': items[index].orderId,
+                  'orderNo': items[index].displayOrderNo,
                 },
               );
             },
@@ -243,23 +243,24 @@ class _PharmacyBookingCard extends StatelessWidget {
 }
 
 Color _statusColor(String raw) {
-  final key = raw.trim().toUpperCase().replaceAll('-', '_');
+  final key = raw.trim().toUpperCase().replaceAll(RegExp(r'[\s\-]+'), '_');
   switch (key) {
     case 'ACCEPTED':
     case 'CONFIRMED':
     case 'COMPLETED':
     case 'DELIVERED':
       return const Color(0xFF34C759);
+    case 'FAILED':
     case 'PAYMENT_FAILED':
     case 'CANCELLED':
     case 'CANCELED':
     case 'REJECTED':
       return const Color(0xFFFF4F4F);
     case 'SHIPPED':
+    case 'DISPATCHED':
       return const Color(0xFF495AFF);
     case 'READY_TO_DISPATCH':
     case 'READY_FOR_DISPATCH':
-      return const Color(0xFFFFCC00);
     case 'PENDING':
     case 'CONFIRMATION_PENDING':
     case 'ORDER_VERIFICATION':
@@ -270,24 +271,29 @@ Color _statusColor(String raw) {
 }
 
 String _statusLabel(String raw) {
-  final key = raw.trim().toUpperCase().replaceAll('-', '_');
+  final trimmed = raw.trim();
+  if (trimmed.isEmpty) return 'Pending';
+
+  final key = trimmed.toUpperCase().replaceAll(RegExp(r'[\s\-]+'), '_');
   switch (key) {
     case 'PENDING':
       return 'Pending';
+    case 'FAILED':
     case 'PAYMENT_FAILED':
-      return 'Payment Failed';
+      return 'Failed';
     case 'ACCEPTED':
       return 'Accepted';
+    case 'CONFIRMED':
+      return 'Confirmed';
     case 'CONFIRMATION_PENDING':
       return 'Confirmation Pending';
     case 'ORDER_VERIFICATION':
       return 'Order Verification';
-    case 'CONFIRMED':
-      return 'Confirmed';
     case 'READY_TO_DISPATCH':
     case 'READY_FOR_DISPATCH':
       return 'Ready to Dispatch';
     case 'SHIPPED':
+    case 'DISPATCHED':
       return 'Shipped';
     case 'COMPLETED':
     case 'DELIVERED':
@@ -296,13 +302,7 @@ String _statusLabel(String raw) {
     case 'CANCELED':
       return 'Cancelled';
     default:
-      if (raw.trim().isEmpty) return 'Pending';
-      return raw
-          .trim()
-          .toLowerCase()
-          .split(RegExp(r'[_\s]+'))
-          .where((part) => part.isNotEmpty)
-          .map((part) => '${part[0].toUpperCase()}${part.substring(1)}')
-          .join(' ');
+      // API may already send display labels like "Confirmed" / "Failed".
+      return trimmed;
   }
 }

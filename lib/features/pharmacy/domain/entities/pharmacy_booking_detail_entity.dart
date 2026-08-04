@@ -45,6 +45,7 @@ class PharmacyBookingDetailEntity {
     required this.deliveryAddress,
     required this.city,
     this.invoiceUrl,
+    this.messageAlert,
   });
 
   final String type;
@@ -63,6 +64,7 @@ class PharmacyBookingDetailEntity {
   final String deliveryAddress;
   final String city;
   final String? invoiceUrl;
+  final String? messageAlert;
 
   String get displayOrderNo {
     if (orderNo.isNotEmpty) return orderNo;
@@ -75,17 +77,28 @@ class PharmacyBookingDetailEntity {
 
   String get totalLabel => total.toStringAsFixed(0);
 
+  bool get hasInvoiceUrl {
+    final url = invoiceUrl?.trim() ?? '';
+    return url.isNotEmpty;
+  }
+
+  bool get hasMessageAlert {
+    final message = messageAlert?.trim() ?? '';
+    return message.isNotEmpty;
+  }
+
   bool get isCancelled {
-    final key = status.trim().toUpperCase().replaceAll('-', '_');
+    final key = status.trim().toUpperCase().replaceAll(RegExp(r'[\s\-]+'), '_');
     return key == 'CANCELLED' ||
         key == 'CANCELED' ||
+        key == 'FAILED' ||
         key == 'PAYMENT_FAILED' ||
         key == 'REJECTED';
   }
 
   bool get isCompleted {
-    final key = status.trim().toUpperCase().replaceAll('-', '_');
-    return key == 'COMPLETED' || key == 'DELIVERED' || key == 'ACCEPTED';
+    final key = status.trim().toUpperCase().replaceAll(RegExp(r'[\s\-]+'), '_');
+    return key == 'COMPLETED' || key == 'DELIVERED';
   }
 
   String get paymentMethodLabel {

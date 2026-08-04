@@ -31,7 +31,6 @@ class PharmacyBookingDetailsBodyWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final invoiceUrl = detail.invoiceUrl?.trim() ?? '';
     return ListView(
       padding: EdgeInsets.fromLTRB(24.w, 18.h, 24.w, 24.h),
       children: [
@@ -47,7 +46,7 @@ class PharmacyBookingDetailsBodyWidget extends StatelessWidget {
           discount: detail.discountLabel,
           total: detail.totalLabel,
         ),
-        if (invoiceUrl.isNotEmpty) ...[
+        if (detail.hasInvoiceUrl) ...[
           SizedBox(height: 22.h),
           const PharmacyBookingInvoiceTileWidget(),
         ],
@@ -80,36 +79,37 @@ class PharmacyBookingDetailsBodyWidget extends StatelessWidget {
           const PharmacyBookingFeedbackWidget(),
           SizedBox(height: 16.h),
         ],
-        Container(
-          width: double.infinity,
-          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 11.h),
-          decoration: BoxDecoration(
-            color: AppColors.clrFCF5E9,
-            borderRadius: BorderRadius.circular(10.r),
-          ),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: Text(
-                  l10n.pharmacyCheckoutDeliveryInfoMessage,
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: AppColors.clr060,
-                    fontWeight: FontWeight.w500,
-                    fontSize: 14.sp,
-                    height: 1.2,
+        if (detail.hasMessageAlert)
+          Container(
+            width: double.infinity,
+            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 11.h),
+            decoration: BoxDecoration(
+              color: AppColors.clrFCF5E9,
+              borderRadius: BorderRadius.circular(10.r),
+            ),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: Text(
+                    detail.messageAlert!,
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: AppColors.clr060,
+                      fontWeight: FontWeight.w500,
+                      fontSize: 14.sp,
+                      height: 1.2,
+                    ),
                   ),
                 ),
-              ),
-              SizedBox(width: 8.w),
-              Icon(
-                Icons.info_outline_rounded,
-                size: 16.r,
-                color: AppColors.clr4A555F,
-              ),
-            ],
+                SizedBox(width: 8.w),
+                Icon(
+                  Icons.info_outline_rounded,
+                  size: 16.r,
+                  color: AppColors.clr4A555F,
+                ),
+              ],
+            ),
           ),
-        ),
       ],
     );
   }

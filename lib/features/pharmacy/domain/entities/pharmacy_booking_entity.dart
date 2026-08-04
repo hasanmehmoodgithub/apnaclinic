@@ -1,6 +1,7 @@
 class PharmacyBookingEntity {
   const PharmacyBookingEntity({
     required this.orderId,
+    required this.orderNo,
     required this.productName,
     required this.imageUrl,
     required this.quantity,
@@ -12,6 +13,8 @@ class PharmacyBookingEntity {
   });
 
   final String orderId;
+  /// Human-facing order number from API (`orderNo`).
+  final String orderNo;
   final String productName;
   final String imageUrl;
   final int quantity;
@@ -20,6 +23,8 @@ class PharmacyBookingEntity {
   final String currency;
   final String status;
   final String createdAt;
+
+  String get displayOrderNo => orderNo.isNotEmpty ? orderNo : orderId;
 
   String get quantityPriceLabel =>
       '${quantity}x Rs ${unitPrice.toStringAsFixed(0)}/-';

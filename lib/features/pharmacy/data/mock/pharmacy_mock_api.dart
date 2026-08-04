@@ -316,7 +316,8 @@ class PharmacyMockApi {
     await Future<void>.delayed(const Duration(milliseconds: 550));
     final all = <Map<String, dynamic>>[
       {
-        'status': 'PENDING',
+        'orderNo': 19,
+        'status': 'Confirmed',
         'imageUrl':
             'https://mediq-bucket.s3.amazonaws.com/products/webp-images/panadol-160mg-5ml-920.webp',
         'productName': 'Panadol 160mg/5ml Liquid 120 ml',
@@ -328,7 +329,8 @@ class PharmacyMockApi {
         'createdAt': '2026-08-03 16:35',
       },
       {
-        'status': 'PAYMENT_FAILED',
+        'orderNo': 18,
+        'status': 'Failed',
         'imageUrl':
             'https://mediq-bucket.s3.amazonaws.com/products/webp-images/panadol-500mg-918.webp',
         'productName': 'Panadol 500mg Tablet (10 tablets)',
@@ -340,7 +342,8 @@ class PharmacyMockApi {
         'createdAt': '2026-07-30 21:51',
       },
       {
-        'status': 'ACCEPTED',
+        'orderNo': 12,
+        'status': 'Confirmed',
         'imageUrl':
             'https://mediq-bucket.s3.amazonaws.com/products/webp-images/panadol-160mg-5ml-920.webp',
         'productName': 'Panadol 160mg/5ml Liquid 120 ml',
@@ -352,7 +355,8 @@ class PharmacyMockApi {
         'createdAt': '2026-07-29 18:18',
       },
       {
-        'status': 'ORDER_VERIFICATION',
+        'orderNo': 1,
+        'status': 'Cancelled',
         'imageUrl':
             'https://mediq-bucket.s3.amazonaws.com/products/webp-images/2sum-2gm-4.webp',
         'productName': '2Sum 2gm Injection 1 vial',
@@ -423,6 +427,8 @@ class PharmacyMockApi {
         'paymentMethod': 'JAZZCASH',
         'deliveryAddress': 'NASTP, Rawalpindi',
         'city': 'Rawalpindi',
+        'invoiceUrl': null,
+        'messageAlert': null,
       },
     };
   }

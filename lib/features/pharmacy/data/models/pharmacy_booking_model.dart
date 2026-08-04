@@ -1,6 +1,7 @@
 class PharmacyBookingItemModel {
   const PharmacyBookingItemModel({
     required this.orderId,
+    required this.orderNo,
     required this.productName,
     required this.imageUrl,
     required this.quantity,
@@ -12,6 +13,7 @@ class PharmacyBookingItemModel {
   });
 
   final String orderId;
+  final String orderNo;
   final String productName;
   final String imageUrl;
   final int quantity;
@@ -22,10 +24,13 @@ class PharmacyBookingItemModel {
   final String createdAt;
 
   factory PharmacyBookingItemModel.fromJson(Map<String, dynamic> json) {
+    final orderId =
+        (json['orderId'] ?? json['order_id'] ?? '').toString().trim();
+    final orderNo =
+        (json['orderNo'] ?? json['order_no'] ?? '').toString().trim();
     return PharmacyBookingItemModel(
-      orderId: (json['orderId'] ?? json['order_id'] ?? json['orderNo'] ?? '')
-          .toString()
-          .trim(),
+      orderId: orderId.isNotEmpty ? orderId : orderNo,
+      orderNo: orderNo.isNotEmpty ? orderNo : orderId,
       productName: (json['productName'] ??
               json['product_name'] ??
               json['title'] ??

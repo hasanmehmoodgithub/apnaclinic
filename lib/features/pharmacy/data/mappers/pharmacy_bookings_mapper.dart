@@ -20,6 +20,7 @@ class PharmacyBookingsMapper {
   static PharmacyBookingEntity toEntity(PharmacyBookingItemModel model) {
     return PharmacyBookingEntity(
       orderId: model.orderId,
+      orderNo: model.orderNo,
       productName: model.productName,
       imageUrl: model.imageUrl,
       quantity: model.quantity,
@@ -68,6 +69,7 @@ class PharmacyBookingsMapper {
       deliveryAddress: model.deliveryAddress,
       city: model.city,
       invoiceUrl: model.invoiceUrl,
+      messageAlert: model.messageAlert,
     );
   }
 }
