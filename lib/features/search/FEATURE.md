@@ -19,6 +19,7 @@ Global search for doctors, pharmacy, lab tests, surgery, and more. Supports text
 
 ## Data & APIs
 
+- **GET** `AppUrls.mobileSearchPopular` → `/acs-aggregator/api/v1/mobile/search/popular`. Called on initial / cleared state to populate popular chips (`data[]` string list).
 - **GET** `AppUrls.mobileSearch(text:, limit:)` → `/acs-aggregator/api/v1/mobile/search?text=&limit=` (default `limit=5`). Called **only on submit** (search icon / keyboard submit / recent·popular·suggestion tap / voice final). Typing does not hit the network.
 - Response `data`: `doctorConsultation[]` (fee applies `discountPercent`), `labTests[]` (first `labs[]` entry only), `surgeryBooking[]` (doctor/package offers with `surgeryId` / `doctorId` / `cityId` / prices / hospital / partner), `pharmacy[]` (Partner product fields). Mapped into search sections.
 

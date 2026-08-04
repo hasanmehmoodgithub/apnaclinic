@@ -251,6 +251,10 @@ class AppUrls {
     return '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/search?${q.join('&')}';
   }
 
+  /// Popular mobile searches (GET).
+  static String get mobileSearchPopular =>
+      '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/search/popular';
+
   /// Legacy alias — prefer [mobileSearch].
   static String get search =>
       '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/search';

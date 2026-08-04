@@ -3,6 +3,17 @@ import '../../../../core/config/mock_config.dart';
 class SearchMockApi {
   static bool useMockResponses = MockConfig.enableMocks;
 
+  static const List<String> _popularSearches = [
+    'Paracetamol',
+    'Vitamin D',
+    'CBC',
+    'Dermatologist',
+    'Blood Sugar',
+    'COVID PCR',
+    'Panadol',
+    'Physiotherapy',
+  ];
+
   Future<Map<String, dynamic>> getSearchResponse({
     required String query,
     required bool listening,
@@ -39,10 +50,19 @@ class SearchMockApi {
         {'title': 'Dr. Alina', 'subtitle': 'in Doctor Consultation'},
         {'title': 'ALK Eye', 'subtitle': 'in Surgery Booking'},
       ],
-      'popularSearches': ['Eye Surgery', 'Corona Test', 'Panadol', 'Dentist'],
+      'popularSearches': _popularSearches,
       'suggestions': [],
       'sections': [],
       'queryHint': queryHint ?? '',
+    };
+  }
+
+  Future<Map<String, dynamic>> getPopularSearchesResponse() async {
+    await Future<void>.delayed(const Duration(milliseconds: 250));
+    return {
+      'success': true,
+      'message': 'Popular searches fetched successfully.',
+      'data': _popularSearches,
     };
   }
 

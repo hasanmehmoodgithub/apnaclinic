@@ -25,16 +25,9 @@ class SearchRemoteDataSourceImpl implements SearchRemoteDataSource {
     required bool submitted,
   }) async {
     final trimmed = query.trim();
-    // Search API only after explicit submit (search button / enter / suggestion tap).
+    // Initial/cleared state loads popular searches only.
     if (trimmed.isEmpty || !submitted) {
-      return const SearchResponseModel(
-        success: true,
-        message: '',
-        recentSearches: [],
-        popularSearches: [],
-        suggestions: [],
-        sections: [],
-      );
+      return _getPopularSearchContent();
     }
 
     try {
@@ -68,6 +61,54 @@ class SearchRemoteDataSourceImpl implements SearchRemoteDataSource {
         endpoint: AppUrls.search,
       );
       return Future.error(message);
+    }
+  }
+
+  Future<SearchResponseModel> _getPopularSearchContent() async {
+    try {
+      final Map<String, dynamic> response;
+      if (SearchMockApi.useMockResponses) {
+        response = await mockApi.getPopularSearchesResponse();
+      } else {
+        response = await apiService.get(AppUrls.mobileSearchPopular);
+        log('getPopularSearches response: $response');
+      }
+
+      if (response['success'] == true ||
+          (response['code'] is num && (response['code'] as num).toInt() == 200)) {
+        final raw = response['data'];
+        final popular = (raw is List ? raw : const <dynamic>[])
+            .map((e) => e.toString().trim())
+            .where((e) => e.isNotEmpty)
+            .toList(growable: false);
+        return SearchResponseModel(
+          success: true,
+          message: (response['message'] ?? '').toString(),
+          recentSearches: const [],
+          popularSearches: popular,
+          suggestions: const [],
+          sections: const [],
+        );
+      }
+
+      return const SearchResponseModel(
+        success: true,
+        message: '',
+        recentSearches: [],
+        popularSearches: [],
+        suggestions: [],
+        sections: [],
+      );
+    } catch (e) {
+      log('getPopularSearches failed: $e');
+      return const SearchResponseModel(
+        success: true,
+        message: '',
+        recentSearches: [],
+        popularSearches: [],
+        suggestions: [],
+        sections: [],
+      );
     }
   }
 }
