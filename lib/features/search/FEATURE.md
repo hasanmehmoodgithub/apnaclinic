@@ -7,10 +7,11 @@ Global search for doctors, pharmacy, lab tests, surgery, and more. Supports text
 ## UI
 
 - Results show `Search for "{query}"` then section pills (Doctor Consultation / Laboratory Tests / Surgery Booking / Pharmacy).
-- Doctor cards: avatar, credentials/experience/hospital, partner logo (top-right), strikethrough `oldFee` + fee, teal Book Now.
-- Lab cards: title, lab location, sample type, strikethrough + teal price pill.
-- Surgery cards: doctor image, name, hospital, package, partner logo + “Starting from” fee, full-width Book Now.
-- Pharmacy cards: product image, name, price.
+- Doctor cards: match consultation list — avatar, name + rating badge, specialty/experience/education, partner logo, Fee + strikethrough, Book Now; soft shadow.
+- Lab cards: same catalog tile as lab test browse (`LabTestBrowseItemTileWidget`) — grey title header, labs summary, Sample Type pill + price pill.
+- Surgery cards: doctor header + specialty/credentials + partner logo; hospital/procedure + “Starting from”/old fee; shorter full-width Book Now.
+- Pharmacy cards: product image, name, price (no card border).
+- Search field: mic/clear + search icon inside the input (no separate search button).
 
 ## Routes / entry
 
