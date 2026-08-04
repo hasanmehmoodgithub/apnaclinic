@@ -38,4 +38,4 @@ Cart products: each `products[]` row may nest `product { …Partner product fiel
 
 ## Order placed flow
 
-After checkout confirm + order-placed dialog: `pharmacyGoToOrderDetailsAfterPlace` → `home` → `pharmacyMain` → `pharmacyBookingDetails`. Back: details → pharmacy main → home shell. `pharmacyPopOrGoHome` on hub/details headers if the stack is empty.
+After checkout confirm + order-placed dialog: `pharmacyGoToOrderDetailsAfterPlace` → `home` shell with bottom **Bookings** tab and **Pharmacy** sub-tab selected (`AuthSessionRefresh.requestTabIndex` + `BookingsTabs.pharmacy`). `pharmacyPopOrGoHome` on hub/details headers if the stack is empty.

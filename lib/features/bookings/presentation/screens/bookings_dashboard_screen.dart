@@ -14,10 +14,12 @@ class BookingsDashboardScreen extends StatelessWidget {
     super.key,
     this.showBackButton = true,
     this.onBack,
+    this.initialTabIndex = 0,
   });
 
   final bool showBackButton;
   final VoidCallback? onBack;
+  final int initialTabIndex;
 
   @override
   Widget build(BuildContext context) {
@@ -29,8 +31,10 @@ class BookingsDashboardScreen extends StatelessWidget {
       l10n.bookingsTabLabTest,
       l10n.bookingsTabPharmacy,
     ];
+    final safeInitialIndex = initialTabIndex.clamp(0, tabs.length - 1);
     return DefaultTabController(
       length: tabs.length,
+      initialIndex: safeInitialIndex,
       child: AppScaffoldGradient(
         child: Column(
           children: [

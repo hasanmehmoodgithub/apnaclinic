@@ -6,6 +6,7 @@ class AuthSessionRefresh extends ChangeNotifier {
   bool _selectHomeOnNextRefresh = false;
   bool _reloadPromotionalBannerOnNextRefresh = false;
   int? _pendingTabIndex;
+  int? _pendingBookingsSubTabIndex;
 
   int get epoch => _epoch;
 
@@ -26,6 +27,7 @@ class AuthSessionRefresh extends ChangeNotifier {
     _selectHomeOnNextRefresh = false;
     _reloadPromotionalBannerOnNextRefresh = false;
     _pendingTabIndex = null;
+    _pendingBookingsSubTabIndex = null;
     _epoch++;
     notifyListeners();
   }
@@ -48,20 +50,34 @@ class AuthSessionRefresh extends ChangeNotifier {
   ///
   /// Safe to call before login: the shell only consumes this after the user
   /// is logged in (so Instant Doctor / Bookings can resume post-OTP).
-  void requestTabIndex(int index) {
+  ///
+  /// Optional [bookingsSubTabIndex] selects Doctor / Surgery / Lab / Pharmacy
+  /// when opening the Bookings tab.
+  void requestTabIndex(int index, {int? bookingsSubTabIndex}) {
     _pendingTabIndex = index;
+    if (bookingsSubTabIndex != null) {
+      _pendingBookingsSubTabIndex = bookingsSubTabIndex;
+    }
     notifyListeners();
   }
 
   /// Clears a queued tab (e.g. on logout) without switching.
   void clearPendingTabIndex() {
     _pendingTabIndex = null;
+    _pendingBookingsSubTabIndex = null;
   }
 
   /// Consumed by [MainNavigationShell]; returns tab index once per request.
   int? consumePendingTabIndex() {
     final value = _pendingTabIndex;
     _pendingTabIndex = null;
+    return value;
+  }
+
+  /// Consumed with the Bookings tab; Doctor=0 … Pharmacy=3.
+  int? consumePendingBookingsSubTabIndex() {
+    final value = _pendingBookingsSubTabIndex;
+    _pendingBookingsSubTabIndex = null;
     return value;
   }
 }

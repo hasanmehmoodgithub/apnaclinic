@@ -53,17 +53,21 @@ class ProfileSetupModel {
 
 class ProfileUserPhoneModel {
   const ProfileUserPhoneModel({
+    required this.id,
     required this.msisdn,
     required this.jazzCashVerified,
     required this.primary,
   });
 
+  final String id;
   final String msisdn;
   final bool jazzCashVerified;
   final bool primary;
 
   factory ProfileUserPhoneModel.fromJson(Map<String, dynamic> json) {
+    final rawId = json['id'] ?? json['phoneId'];
     return ProfileUserPhoneModel(
+      id: rawId != null ? rawId.toString() : '',
       msisdn: (json['msisdn'] ?? '').toString(),
       jazzCashVerified: json['jazzCashVerified'] == true,
       primary: json['primary'] == true,

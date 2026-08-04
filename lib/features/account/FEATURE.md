@@ -38,4 +38,4 @@ Phone entries: `id`, `msisdn`, `jazzCashVerified`, `primary`. UI shows `03…` l
 
 Before add/delete phone, the app resolves numeric `data.id` via cached profile (`apiUserId`) or a profile GET using the session user id.
 
-After add/delete, account details refresh via `GetAccountsListUseCase` (GET profile → `data.phones`). Profile tab uses the same single call after phone changes; full profile fields reload separately via `GetProfileSetupContentUseCase` on screen open / edit.
+After add/delete, account details refresh via `GetAccountsListUseCase` (GET profile → `data.phones`). Profile tab caches phones via `ProfileSessionSync` from the same profile GET (must include phone `id`); full profile fields reload separately via `GetProfileSetupContentUseCase` on screen open / edit.

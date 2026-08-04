@@ -8,7 +8,7 @@ List<AccountItemEntity> mapProfilePhonesToAccountItems(
   return phones
       .map(
         (phone) => AccountItemEntity(
-          id: '',
+          id: phone.id,
           number: PhoneFormatUtils.toLocalDisplay(phone.msisdn),
           isDefault: phone.primary,
         ),

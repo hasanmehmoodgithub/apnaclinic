@@ -21,6 +21,7 @@ Collect or edit user profile (name, gender, email, address, DOB, optional profil
 - GET profile response is read from `data` and supports backend `dob` (for example `02-03-2000 00:00:00`).
 - API gender values are normalized to `male` or `female` before binding to the picker.
 - `data.image` is stored on `UserLocalModel.imageUrl` and shown on home app bar / profile / menu when non-empty (`UserProfileAvatar` + `CachedNetworkImage`).
+- Profile `data.phones[]` entries include `id` / `phoneId`, `msisdn`, `jazzCashVerified`, `primary`; mapper keeps `id` on `AccountItemEntity` for delete.
 - `ProfileSetupScreen` calls `loadProfile()` only when the profile is already completed, so edit/update mode hydrates from API while first-time onboarding stays in setup mode. `AppPref.isProfileCompleted` is set on **save** only (not on GET).
 - Dismisses any global heart loader overlay on open (home banner loader uses root navigator). Edit avatar shows API/local `imageUrl` via `UserProfileAvatar`; a newly picked file takes priority until save.
 - Completed profiles show edit/update wording; pending onboarding shows setup/save wording.
@@ -28,7 +29,7 @@ Collect or edit user profile (name, gender, email, address, DOB, optional profil
 
 ## State
 
-- `ProfileCubit` / `ProfileState` — profile screen: reads UI from `AppPref`; fetches GET profile only when `ProfileSessionSync` says the session is not synced and cached prefs exist. After login, logout, or app launch (in-memory reset), the first home/profile open syncs once; revisiting profile uses `AppPref` + cached linked phones without another GET. Explicit `refreshProfile(force: true)` / `loadAccounts(force: true)` after edit, add account, or delete account.
+- `ProfileCubit` / `ProfileState` — profile screen: reads UI from `AppPref`; fetches GET profile only when `ProfileSessionSync` says the session is not synced and cached prefs exist. After login, logout, or app launch (in-memory reset), the first home/profile open syncs once; revisiting profile uses `AppPref` + cached linked phones without another GET. Explicit `refreshProfile(force: true)` / `loadAccounts(force: true)` after edit, add account, or delete account. Linked phones from GET include phone record `id` (needed for DELETE `/users/{id}/phone/{phoneId}`); if `id` is missing at delete time, cubit force-refreshes the accounts list first.
 - `ProfileSetupCubit` / `ProfileSetupState` — `dateOfBirth` drives the date picker label and initial picker date.
 
 ## Session cache

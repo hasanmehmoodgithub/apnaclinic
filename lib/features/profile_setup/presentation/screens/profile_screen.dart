@@ -97,7 +97,10 @@ class ProfileScreen extends StatelessWidget {
     );
     if (!confirmed || !context.mounted) return;
 
-    final error = await cubit.deleteAccount(item.id);
+    final error = await cubit.deleteAccount(
+      item.id,
+      displayNumber: item.number,
+    );
     if (error != null && context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(error)),

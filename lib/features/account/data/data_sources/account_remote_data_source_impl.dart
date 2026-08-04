@@ -109,7 +109,12 @@ class AccountRemoteDataSourceImpl implements AccountRemoteDataSource {
           return Future.error(AppStrings.profileSetupLoadError);
         }
         if (trimmedPhoneId.isEmpty || !_isNumericId(trimmedPhoneId)) {
-          return Future.error(AppStrings.genericErrorMessage);
+          log(
+            'deleteUserPhone skipped: invalid phoneId="$trimmedPhoneId"',
+          );
+          return Future.error(
+            'Unable to remove this account. Please refresh and try again.',
+          );
         }
         final endpoint = AppUrls.deleteUserPhone(userId, trimmedPhoneId);
         log('deleteUserPhone DELETE $endpoint userId=$userId phoneId=$trimmedPhoneId');

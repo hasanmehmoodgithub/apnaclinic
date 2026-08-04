@@ -15,11 +15,13 @@ class ProfileSetupMockApi {
         'publicId': '6eb5e735d13e1fc3f6c8630b26',
         'phones': [
           {
+            'id': 1,
             'msisdn': '923012123411',
             'jazzCashVerified': false,
             'primary': true,
           },
           {
+            'id': 2,
             'msisdn': '923012123412',
             'jazzCashVerified': false,
             'primary': false,

@@ -65,45 +65,48 @@ class _InstantDoctorConsultationWebViewScreenState
       appBar: InstantDoctorConsultationAppBarWidget(
         title: widget.args.title,
       ),
-      body: Stack(
-          children: [
-            WebViewWidget(controller: _controller),
-            if (_isLoading)
-              const Center(
-                child: CircularProgressIndicator(color: AppColors.clr0FAA9A),
-              ),
-            if (_hasError)
-              Center(
-                child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 24.w),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        l10n.instantDoctorOpenAppError,
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: AppColors.clr6C7C92,
-                          fontSize: 15.sp,
-                          fontWeight: FontWeight.w500,
+      body: SafeArea(
+        top: false,
+        child: Stack(
+            children: [
+              WebViewWidget(controller: _controller),
+              if (_isLoading)
+                const Center(
+                  child: CircularProgressIndicator(color: AppColors.clr0FAA9A),
+                ),
+              if (_hasError)
+                Center(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 24.w),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          l10n.instantDoctorOpenAppError,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: AppColors.clr6C7C92,
+                            fontSize: 15.sp,
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
-                      ),
-                      SizedBox(height: 16.h),
-                      TextButton(
-                        onPressed: () {
-                          setState(() {
-                            _isLoading = true;
-                            _hasError = false;
-                          });
-                          _controller.loadRequest(Uri.parse(widget.args.url));
-                        },
-                        child: Text(l10n.commonRetry),
-                      ),
-                    ],
+                        SizedBox(height: 16.h),
+                        TextButton(
+                          onPressed: () {
+                            setState(() {
+                              _isLoading = true;
+                              _hasError = false;
+                            });
+                            _controller.loadRequest(Uri.parse(widget.args.url));
+                          },
+                          child: Text(l10n.commonRetry),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-        ],
+          ],
+        ),
       ),
     );
   }

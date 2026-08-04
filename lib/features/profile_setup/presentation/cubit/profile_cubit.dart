@@ -112,9 +112,25 @@ class ProfileCubit extends Cubit<ProfileState> {
     );
   }
 
-  Future<String?> deleteAccount(String phoneId) async {
+  Future<String?> deleteAccount(String phoneId, {String? displayNumber}) async {
+    var resolvedPhoneId = phoneId.trim();
+
+    // Profile GET cache previously omitted phone ids; refresh list if missing.
+    if (resolvedPhoneId.isEmpty) {
+      await loadAccounts(force: true);
+      final number = displayNumber?.trim() ?? '';
+      if (number.isNotEmpty) {
+        for (final account in state.accounts) {
+          if (account.number == number && account.id.trim().isNotEmpty) {
+            resolvedPhoneId = account.id.trim();
+            break;
+          }
+        }
+      }
+    }
+
     final result = await deleteUserPhoneUseCase(
-      DeleteUserPhoneParams(phoneId: phoneId),
+      DeleteUserPhoneParams(phoneId: resolvedPhoneId),
     );
 
     return result.fold(

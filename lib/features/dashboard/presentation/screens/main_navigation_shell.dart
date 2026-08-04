@@ -52,6 +52,8 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
   late final AuthSessionRefresh _sessionRefresh;
   int _appliedSessionEpoch = -1;
   int _tabSessionKey = 0;
+  int _bookingsInitialTabIndex = 0;
+  int _bookingsDashboardKey = 0;
 
   @override
   void initState() {
@@ -83,6 +85,13 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
     // Keep pending while guest — `requestTabIndex` notifies immediately when
     // opening login, and must not be consumed until after OTP success.
     if (!AuthGuard.isLoggedIn()) return;
+    final bookingsSubTab = _sessionRefresh.consumePendingBookingsSubTabIndex();
+    if (bookingsSubTab != null) {
+      setState(() {
+        _bookingsInitialTabIndex = bookingsSubTab;
+        _bookingsDashboardKey++;
+      });
+    }
     final tabIndex = _sessionRefresh.consumePendingTabIndex();
     if (tabIndex == null) return;
     _navigationCubit.setIndex(tabIndex);
@@ -213,7 +222,11 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
                     ),
                     KeepAliveTabPage(
                       key: ValueKey('bookings_$_tabSessionKey'),
-                      child: const BookingsDashboardScreen(showBackButton: false),
+                      child: BookingsDashboardScreen(
+                        key: ValueKey('bookings_dash_$_bookingsDashboardKey'),
+                        showBackButton: false,
+                        initialTabIndex: _bookingsInitialTabIndex,
+                      ),
                     ),
                     KeepAliveTabPage(
                       key: ValueKey('support_$_tabSessionKey'),
