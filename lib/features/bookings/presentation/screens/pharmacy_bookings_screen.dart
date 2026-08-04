@@ -115,128 +115,135 @@ class _PharmacyBookingCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 118.h,
-      child: Row(
-        children: [
-          Container(
-            width: 130.w,
-            height: 118.h,
-            decoration: BoxDecoration(
-              color: AppColors.clrF9F9F9,
-              borderRadius: BorderRadius.circular(8.54.r),
-            ),
-            clipBehavior: Clip.antiAlias,
-            child: CachedNetworkImage(
-              imageUrl: item.imageUrl,
-              fit: BoxFit.cover,
-              placeholder: (context, url) => AppShimmer(
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onViewDetailsTap,
+        borderRadius: BorderRadius.circular(8.54.r),
+        child: SizedBox(
+          height: 118.h,
+          child: Row(
+            children: [
+              Container(
                 width: 130.w,
                 height: 118.h,
-                borderRadius: 8.54.r,
-                shape: ShimmerShape.roundedRectangle,
-              ),
-              errorWidget: (context, url, error) => Center(
-                child: Icon(
-                  Icons.medication_rounded,
-                  color: AppColors.clr5D758F,
-                  size: 52.r,
+                decoration: BoxDecoration(
+                  color: AppColors.clrF9F9F9,
+                  borderRadius: BorderRadius.circular(8.54.r),
+                ),
+                clipBehavior: Clip.antiAlias,
+                child: CachedNetworkImage(
+                  imageUrl: item.imageUrl,
+                  fit: BoxFit.cover,
+                  placeholder: (context, url) => AppShimmer(
+                    width: 130.w,
+                    height: 118.h,
+                    borderRadius: 8.54.r,
+                    shape: ShimmerShape.roundedRectangle,
+                  ),
+                  errorWidget: (context, url, error) => Center(
+                    child: Icon(
+                      Icons.medication_rounded,
+                      color: AppColors.clr5D758F,
+                      size: 52.r,
+                    ),
+                  ),
                 ),
               ),
-            ),
-          ),
-          SizedBox(width: 10.w),
-          Expanded(
-            child: Padding(
-              padding: EdgeInsets.only(top: 4.h, bottom: 4.h),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    item.productName,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: textTheme.titleMedium?.copyWith(
-                      color: AppColors.clr060,
-                      fontSize: 14.sp,
-                      fontWeight: FontWeight.w700,
-                      height: 1.15,
-                    ),
-                  ),
-                  SizedBox(height: 4.h),
-                  Text(
-                    item.quantityPriceLabel,
-                    style: textTheme.bodyMedium?.copyWith(
-                      color: AppColors.clr5D758F,
-                      fontSize: 12.sp,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  SizedBox(height: 6.h),
-                  RichText(
-                    text: TextSpan(
-                      style: textTheme.bodyMedium?.copyWith(
-                        fontSize: 12.sp,
-                        fontWeight: FontWeight.w500,
-                      ),
-                      children: [
-                        TextSpan(
-                          text: '${l10n.bookingsTotalLabel}  ',
-                          style: const TextStyle(color: AppColors.clr5D758F),
-                        ),
-                        TextSpan(
-                          text: item.totalLabel,
-                          style: const TextStyle(color: AppColors.clr060),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const Spacer(),
-                  Row(
+              SizedBox(width: 10.w),
+              Expanded(
+                child: Padding(
+                  padding: EdgeInsets.only(top: 4.h, bottom: 4.h),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Expanded(
-                        child: Text(
-                          _statusLabel(item.status),
+                      Text(
+                        item.productName,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: textTheme.titleMedium?.copyWith(
+                          color: AppColors.clr060,
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w700,
+                          height: 1.15,
+                        ),
+                      ),
+                      SizedBox(height: 4.h),
+                      Text(
+                        item.quantityPriceLabel,
+                        style: textTheme.bodyMedium?.copyWith(
+                          color: AppColors.clr5D758F,
+                          fontSize: 12.sp,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      SizedBox(height: 6.h),
+                      RichText(
+                        text: TextSpan(
                           style: textTheme.bodyMedium?.copyWith(
-                            color: _statusColor(item.status),
                             fontSize: 12.sp,
                             fontWeight: FontWeight.w500,
                           ),
+                          children: [
+                            TextSpan(
+                              text: '${l10n.bookingsTotalLabel}  ',
+                              style: const TextStyle(color: AppColors.clr5D758F),
+                            ),
+                            TextSpan(
+                              text: item.totalLabel,
+                              style: const TextStyle(color: AppColors.clr060),
+                            ),
+                          ],
                         ),
                       ),
-                      OutlinedButton(
-                        onPressed: onViewDetailsTap,
-                        style: OutlinedButton.styleFrom(
-                          side: const BorderSide(
-                            color: AppColors.clrBlack,
-                            width: 0.26,
+                      const Spacer(),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              _statusLabel(item.status),
+                              style: textTheme.bodyMedium?.copyWith(
+                                color: _statusColor(item.status),
+                                fontSize: 12.sp,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
                           ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(36.78.r),
+                          OutlinedButton(
+                            onPressed: onViewDetailsTap,
+                            style: OutlinedButton.styleFrom(
+                              side: const BorderSide(
+                                color: AppColors.clrBlack,
+                                width: 0.26,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(36.78.r),
+                              ),
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 10.w,
+                                vertical: 5.h,
+                              ),
+                              minimumSize: Size(71.w, 24.h),
+                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                            ),
+                            child: Text(
+                              l10n.bookingsViewDetailsCta,
+                              style: textTheme.bodySmall?.copyWith(
+                                color: Colors.black,
+                                fontSize: 8.6.sp,
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
                           ),
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 10.w,
-                            vertical: 5.h,
-                          ),
-                          minimumSize: Size(71.w, 24.h),
-                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                        ),
-                        child: Text(
-                          l10n.bookingsViewDetailsCta,
-                          style: textTheme.bodySmall?.copyWith(
-                            color: Colors.black,
-                            fontSize: 8.6.sp,
-                            fontWeight: FontWeight.w400,
-                          ),
-                        ),
+                        ],
                       ),
                     ],
                   ),
-                ],
+                ),
               ),
-            ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }

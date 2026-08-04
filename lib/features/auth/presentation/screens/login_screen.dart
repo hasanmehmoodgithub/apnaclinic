@@ -88,6 +88,7 @@ class _LoginViewState extends State<_LoginView> {
                       LoginSubmitButton(onPressed: _submit),
                       SizedBox(height: 20.h),
                       const LoginLegalText(),
+                      SizedBox(height: 20.h),
                     ],
                   ),
                 ),
