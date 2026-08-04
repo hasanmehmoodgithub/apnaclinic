@@ -4,6 +4,14 @@
 
 Global search for doctors, pharmacy, lab tests, surgery, and more. Supports text input and **voice search** via the microphone on the home header and search screen.
 
+## UI
+
+- Results show `Search for "{query}"` then section pills (Doctor Consultation / Laboratory Tests / Surgery Booking / Pharmacy).
+- Doctor cards: avatar, credentials/experience/hospital, partner logo (top-right), strikethrough `oldFee` + fee, teal Book Now.
+- Lab cards: title, lab location, sample type, strikethrough + teal price pill.
+- Surgery cards: doctor image, name, hospital, package, partner logo + “Starting from” fee, full-width Book Now.
+- Pharmacy cards: product image, name, price.
+
 ## Routes / entry
 
 - `AppRoutes.search` — `SearchScreen` with optional `SearchLaunchArgs` (`initialQuery`, `startVoiceSearch`).

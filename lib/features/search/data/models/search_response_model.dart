@@ -105,14 +105,25 @@ class SearchResultModel {
 
   factory SearchResultModel.fromDoctorJson(Map<String, dynamic> json) {
     final experience = json['yearsOfExperience'] ?? json['years_of_experience'];
-    final education = (json['education'] ?? '').toString().trim();
+    final education = (json['education'] ??
+            json['qualifications'] ??
+            json['qualification'] ??
+            '')
+        .toString()
+        .trim();
+    final specialty =
+        (json['specialtyName'] ?? json['specialty'] ?? '').toString().trim();
     final experienceText = experience == null
         ? ''
         : '${experience.toString().trim()} years Experience';
-    final descriptionParts = <String>[
-      if (experienceText.isNotEmpty) experienceText,
-      if (education.isNotEmpty) education,
-    ];
+    final hospital = (json['hospitalName'] ??
+            json['hospital_name'] ??
+            json['hospital'] ??
+            json['clinicName'] ??
+            json['clinic_name'] ??
+            '')
+        .toString()
+        .trim();
 
     final partner = json['partner'];
     final partnerMap =
@@ -140,9 +151,9 @@ class SearchResultModel {
       tenantId: (tenantId == null || tenantId.isEmpty) ? null : tenantId,
       title: (json['displayName'] ?? json['display_name'] ?? json['name'] ?? '')
           .toString(),
-      subtitle: (json['specialtyName'] ?? json['specialty'] ?? '').toString(),
-      description:
-          descriptionParts.isEmpty ? null : descriptionParts.join('   '),
+      subtitle: education.isNotEmpty ? education : specialty,
+      description: experienceText.isEmpty ? null : experienceText,
+      hospital: hospital.isEmpty ? null : hospital,
       imageUrl: (json['profileImageUrl'] ??
               json['profile_image_url'] ??
               json['imageUrl'])

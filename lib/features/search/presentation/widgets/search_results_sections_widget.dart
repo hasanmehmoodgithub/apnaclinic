@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/constants/app_colors.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
+import '../../../../core/l10n/app_localizations.dart';
 import '../../domain/entities/search_entity.dart';
 import '../search_navigation.dart';
 import 'search_doctor_result_card_widget.dart';
 import 'search_lab_result_card_widget.dart';
 import 'search_pharmacy_result_card_widget.dart';
 import 'search_section_header_pill_widget.dart';
+import 'search_surgery_result_card_widget.dart';
 import 'search_widget_utils.dart';
 
 class SearchResultsSectionsWidget extends StatelessWidget {
@@ -21,11 +24,25 @@ class SearchResultsSectionsWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return ListView(
-      padding: EdgeInsets.fromLTRB(16.w, 18.h, 16.w, 24.h),
-      children: sections
-          .map((s) => SearchSectionBlockWidget(section: s, query: query))
-          .toList(),
+      padding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 24.h),
+      children: [
+        if (query.trim().isNotEmpty) ...[
+          Text(
+            l10n.searchForQuery(query.trim()),
+            style: TextStyle(
+              color: AppColors.clrBlack,
+              fontWeight: FontWeight.w800,
+              fontSize: 18.sp,
+            ),
+          ),
+          SizedBox(height: 14.h),
+        ],
+        ...sections.map(
+          (s) => SearchSectionBlockWidget(section: s, query: query),
+        ),
+      ],
     );
   }
 }
@@ -57,13 +74,11 @@ class SearchSectionBlockWidget extends StatelessWidget {
               SearchSectionType.doctorConsultation =>
                 SearchDoctorResultCardWidget(
                   item: item,
-                  showHospital: false,
                   onTap: () => openSearchDoctorBooking(context, item),
                 ),
               SearchSectionType.surgeryBooking =>
-                SearchDoctorResultCardWidget(
+                SearchSurgeryResultCardWidget(
                   item: item,
-                  showHospital: true,
                   onTap: () => openSearchSurgeryBooking(context, item),
                 ),
               SearchSectionType.pharmacy => SearchPharmacyResultCardWidget(

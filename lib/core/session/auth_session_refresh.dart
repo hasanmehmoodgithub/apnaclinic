@@ -10,8 +10,12 @@ class AuthSessionRefresh extends ChangeNotifier {
   int get epoch => _epoch;
 
   /// After OTP login: remount tabs and optionally open the Home tab.
+  ///
+  /// When [requestTabIndex] was set before login (e.g. Instant Doctor /
+  /// Bookings), home is not forced so the pending tab can resume.
   void notifyLoggedIn({bool selectHomeTab = true}) {
-    _selectHomeOnNextRefresh = selectHomeTab;
+    _selectHomeOnNextRefresh =
+        _pendingTabIndex != null ? false : selectHomeTab;
     _reloadPromotionalBannerOnNextRefresh = true;
     _epoch++;
     notifyListeners();
@@ -21,6 +25,7 @@ class AuthSessionRefresh extends ChangeNotifier {
   void notifyLoggedOut() {
     _selectHomeOnNextRefresh = false;
     _reloadPromotionalBannerOnNextRefresh = false;
+    _pendingTabIndex = null;
     _epoch++;
     notifyListeners();
   }
@@ -40,9 +45,17 @@ class AuthSessionRefresh extends ChangeNotifier {
   }
 
   /// Switch bottom nav tab after menu (or other overlay) closes.
+  ///
+  /// Safe to call before login: the shell only consumes this after the user
+  /// is logged in (so Instant Doctor / Bookings can resume post-OTP).
   void requestTabIndex(int index) {
     _pendingTabIndex = index;
     notifyListeners();
+  }
+
+  /// Clears a queued tab (e.g. on logout) without switching.
+  void clearPendingTabIndex() {
+    _pendingTabIndex = null;
   }
 
   /// Consumed by [MainNavigationShell]; returns tab index once per request.
