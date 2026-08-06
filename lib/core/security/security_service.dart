@@ -7,6 +7,9 @@ import '../flavor/app_flavor.dart';
 
 /// Comprehensive security service for device integrity checks
 class SecurityService {
+  /// Temporary kill-switch. Set to `true` when re-enabling root/emulator/etc.
+  static const bool securityChecksEnabled = false;
+
   // Method channels
   static const MethodChannel _securityChannel = MethodChannel(
     'security_channel',
@@ -15,6 +18,16 @@ class SecurityService {
 
   /// Perform all security checks and return true if device is compromised
   static Future<bool> isDeviceCompromised() async {
+    if (!securityChecksEnabled) {
+      if (kDebugMode) {
+        developer.log(
+          'Security checks disabled (temporary)',
+          name: 'SecurityService',
+        );
+      }
+      return false;
+    }
+
     try {
       if (Platform.isAndroid) {
         return await _checkAndroidSecurity();
@@ -30,6 +43,8 @@ class SecurityService {
 
   /// Get detailed security status message
   static Future<String?> getSecurityMessage() async {
+    if (!securityChecksEnabled) return null;
+
     try {
       if (Platform.isAndroid) {
         return await _getAndroidSecurityMessage();
