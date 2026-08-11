@@ -1063,6 +1063,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get commonRetry => 'Retry';
 
   @override
+  String get paymentWebViewTitle => 'Card Payment';
+
+  @override
+  String get paymentWebViewLoadError =>
+      'Unable to load the payment page. Please try again.';
+
+  @override
+  String get paymentWebViewFailed => 'Payment failed. Please try again.';
+
+  @override
+  String get paymentWebViewCancelled => 'Payment cancelled.';
+
+  @override
   String get labTestViewDetailsResultsTitle => 'Test Results';
 
   @override

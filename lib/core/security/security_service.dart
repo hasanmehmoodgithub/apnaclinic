@@ -7,8 +7,8 @@ import '../flavor/app_flavor.dart';
 
 /// Comprehensive security service for device integrity checks
 class SecurityService {
-  /// Temporary kill-switch. Set to `true` when re-enabling root/emulator/etc.
-  static const bool securityChecksEnabled = false;
+  /// Master switch for device integrity checks (root, jailbreak, Frida, etc.).
+  static const bool securityChecksEnabled = true;
 
   // Method channels
   static const MethodChannel _securityChannel = MethodChannel(
@@ -62,7 +62,12 @@ class SecurityService {
   static Future<bool> _checkAndroidSecurity() async {
     // Check using native method channel
     final nativeRooted = await _checkRootNative();
-    final nativeEmulator = await _checkEmulatorNative();
+
+    // Emulators are OK for local/debug flavors; production still blocks them.
+    final shouldBlockEmulator =
+        FlavorConfig.currentFlavor == AppFlavor.production;
+    final nativeEmulator =
+        shouldBlockEmulator ? await _checkEmulatorNative() : false;
 
     // Developer mode check - only enforce in production
     final shouldCheckDevMode =
@@ -73,7 +78,8 @@ class SecurityService {
 
     // Advanced checks (obfuscated channel)
     final advancedRoot = await _checkRootAdvanced();
-    final advancedEmulator = await _checkEmulatorAdvanced();
+    final advancedEmulator =
+        shouldBlockEmulator ? await _checkEmulatorAdvanced() : false;
     final advancedDevMode = shouldCheckDevMode
         ? await _checkDeveloperModeAdvanced()
         : false;
@@ -157,7 +163,10 @@ class SecurityService {
   static Future<bool> _checkIOSSecurity() async {
     try {
       final jailbroken = await _checkJailbreakNative();
-      final simulator = await _checkSimulatorNative();
+      final shouldBlockSimulator =
+          FlavorConfig.currentFlavor == AppFlavor.production;
+      final simulator =
+          shouldBlockSimulator ? await _checkSimulatorNative() : false;
       final frida = await _checkFridaNative();
 
       if (kDebugMode) {

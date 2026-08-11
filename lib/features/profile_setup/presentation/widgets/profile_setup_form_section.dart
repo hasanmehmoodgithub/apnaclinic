@@ -135,7 +135,8 @@ class ProfileSetupFormSection extends StatelessWidget {
                   ),
                   validator: (value) {
                     final email = (value ?? '').trim();
-                    if (email.isEmpty || !email.contains('@')) {
+                    if (email.isEmpty) return null;
+                    if (!email.contains('@')) {
                       return l10n.profileEmailRequired;
                     }
                     return null;

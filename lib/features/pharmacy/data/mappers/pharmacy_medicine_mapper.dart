@@ -127,11 +127,15 @@ class PharmacyMedicineMapper {
         bookingId ??
         '';
     final status = _stringOrNull(payload['status']) ?? 'confirmed';
+    final paymentUrl = _stringOrNull(
+      payload['paymentUrl'] ?? payload['payment_url'],
+    );
 
     return PharmacyCheckoutResultEntity(
       orderNo: orderNo,
       bookingId: bookingId,
       status: status,
+      paymentUrl: paymentUrl,
     );
   }
 

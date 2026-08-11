@@ -8,6 +8,7 @@ import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/session/auth_session_refresh.dart';
 import '../../../dashboard/presentation/constants/main_navigation_tabs.dart';
+import '../../../payment/presentation/payment_navigation.dart';
 import '../cubit/doctor_consultation_checkout_cubit.dart';
 import '../cubit/doctor_consultation_checkout_state.dart';
 import '../doctor_consultation_summary_args.dart';
@@ -29,14 +30,14 @@ class DoctorConsultationSummaryScreen extends StatelessWidget {
   Future<void> _submitBooking(BuildContext context) async {
     final l10n = AppLocalizations.of(context)!;
     final cubit = context.read<DoctorConsultationCheckoutCubit>();
-    final success = await cubit.submitBooking(
+    final initiation = await cubit.submitBooking(
       args: args.checkoutArgs,
       paymentMethodCode: args.paymentMethodCode,
       msisdn: args.msisdn,
     );
     if (!context.mounted) return;
 
-    if (!success) {
+    if (initiation == null) {
       final message = cubit.state.errorMessage;
       final displayMessage = switch (message) {
         'invalid_booking_context' => l10n.consultationBookingInvalidContextError,
@@ -48,6 +49,14 @@ class DoctorConsultationSummaryScreen extends StatelessWidget {
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
         ..showSnackBar(SnackBar(content: Text(displayMessage)));
+      return;
+    }
+
+    final paymentResult =
+        await settleCardPaymentIfNeeded(context, initiation);
+    if (!context.mounted) return;
+    if (!paymentResult.isSuccess) {
+      showCardPaymentOutcomeSnackBar(context, paymentResult);
       return;
     }
 

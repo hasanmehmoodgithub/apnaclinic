@@ -1,3 +1,4 @@
+import '../../../payment/domain/entities/payment_initiation_result.dart';
 import '../../domain/use_cases/submit_consultation_booking_use_case.dart';
 import '../../domain/use_cases/submit_consultation_feedback_use_case.dart';
 import '../models/consultation_booking_list_model.dart';
@@ -29,6 +30,8 @@ abstract class ConsultationRemoteDataSource {
   Future<ConsultationBookingListItemModel> getBooking({
     required int appointmentId,
   });
-  Future<void> submitBooking(SubmitConsultationBookingParams params);
+  Future<PaymentInitiationResult> submitBooking(
+    SubmitConsultationBookingParams params,
+  );
   Future<void> submitFeedback(SubmitConsultationFeedbackParams params);
 }

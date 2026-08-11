@@ -47,9 +47,10 @@ class _MenuScreenState extends State<MenuScreen> {
 
   void _onAuthSessionChanged() {
     if (!mounted) return;
-    final loggedIn = AuthGuard.isLoggedIn(_appPref);
-    if (loggedIn == _isLoggedIn) return;
-    setState(() => _isLoggedIn = loggedIn);
+    // Always rebuild so name/phone from prefs appear after OTP → profile hydrate.
+    setState(() {
+      _isLoggedIn = AuthGuard.isLoggedIn(_appPref);
+    });
   }
 
   void _openEditProfile() {

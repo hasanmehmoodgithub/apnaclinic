@@ -1,6 +1,7 @@
 import '../../../../core/cities/domain/repositories/cities_repository.dart';
 import '../../../../core/functional/functional_export.dart';
 import '../../../../core/utils/error_handler.dart';
+import '../../../payment/domain/entities/payment_initiation_result.dart';
 import '../../domain/entities/lab_order_entity.dart';
 import '../../domain/entities/lab_test_catalog_entity.dart';
 import '../../domain/entities/lab_test_detail_entity.dart';
@@ -123,7 +124,9 @@ class LabTestRepositoryImpl implements LabTestRepository {
   }
 
   @override
-  Future<Either<ErrorMsg, void>> bookLabTest(BookLabTestParams params) async {
+  Future<Either<ErrorMsg, PaymentInitiationResult>> bookLabTest(
+    BookLabTestParams params,
+  ) async {
     try {
       if (params.testIds.isEmpty) {
         return const Left('No lab tests selected to book.');
@@ -160,8 +163,8 @@ class LabTestRepositoryImpl implements LabTestRepository {
             .toList(growable: false),
       };
 
-      await remoteDataSource.bookLabTest(body);
-      return const Right(null);
+      final result = await remoteDataSource.bookLabTest(body);
+      return Right(result);
     } catch (e) {
       return Left(ErrorHandler.handleExceptions(e));
     }

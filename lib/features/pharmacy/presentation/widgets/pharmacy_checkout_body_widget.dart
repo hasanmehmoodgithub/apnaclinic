@@ -7,6 +7,8 @@ import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/widgets/app_button_widget.dart';
 import '../../../../core/widgets/heart_loader_widget.dart';
+import '../../../payment/domain/entities/payment_initiation_result.dart';
+import '../../../payment/presentation/payment_navigation.dart';
 import '../cubit/pharmacy_cubit.dart';
 import '../cubit/pharmacy_state.dart';
 import '../pharmacy_navigation.dart';
@@ -44,6 +46,20 @@ class PharmacyCheckoutBodyWidget extends StatelessWidget {
         );
       },
       (checkout) async {
+        final paymentResult = await settleCardPaymentIfNeeded(
+          context,
+          PaymentInitiationResult(
+            paymentUrl: checkout.paymentUrl,
+            orderId: checkout.orderNo,
+            status: checkout.status,
+          ),
+        );
+        if (!context.mounted) return;
+        if (!paymentResult.isSuccess) {
+          showCardPaymentOutcomeSnackBar(context, paymentResult);
+          return;
+        }
+
         await showPharmacyOrderPlacedDialog(context);
         if (!context.mounted) return;
         cubit.clearCart();

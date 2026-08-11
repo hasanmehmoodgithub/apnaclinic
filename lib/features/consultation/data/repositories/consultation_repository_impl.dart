@@ -1,4 +1,5 @@
 import '../../../../core/functional/functional_export.dart';
+import '../../../payment/domain/entities/payment_initiation_result.dart';
 import '../../domain/entities/consultation_booking_list_entity.dart';
 import '../../domain/entities/consultation_category_entity.dart';
 import '../../domain/entities/consultation_doctor_slots_entity.dart';
@@ -141,12 +142,12 @@ class ConsultationRepositoryImpl implements ConsultationRepository {
   }
 
   @override
-  Future<Either<ErrorMsg, void>> submitBooking(
+  Future<Either<ErrorMsg, PaymentInitiationResult>> submitBooking(
     SubmitConsultationBookingParams params,
   ) async {
     try {
-      await remoteDataSource.submitBooking(params);
-      return const Right(null);
+      final result = await remoteDataSource.submitBooking(params);
+      return Right(result);
     } catch (e) {
       if (e is String && e.trim().isNotEmpty) {
         return Left(e.trim());

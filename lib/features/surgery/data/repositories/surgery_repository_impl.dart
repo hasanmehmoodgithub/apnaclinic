@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import '../../../../core/cities/domain/repositories/cities_repository.dart';
 import '../../../../core/functional/functional_export.dart';
+import '../../../payment/domain/entities/payment_initiation_result.dart';
 import '../../domain/entities/surgery_booking_request_entity.dart';
 import '../../domain/entities/surgery_doctor_entity.dart';
 import '../../domain/entities/surgery_lead_entity.dart';
@@ -169,14 +170,16 @@ class SurgeryRepositoryImpl implements SurgeryRepository {
   }
 
   @override
-  Future<Either<ErrorMsg, void>> bookSurgery(BookSurgeryParams params) async {
+  Future<Either<ErrorMsg, PaymentInitiationResult>> bookSurgery(
+    BookSurgeryParams params,
+  ) async {
     try {
-      await remoteDataSource.bookSurgery(
+      final result = await remoteDataSource.bookSurgery(
         leadId: params.leadId,
         paymentMethod: params.paymentMethod,
         msisdn: params.msisdn,
       );
-      return const Right(null);
+      return Right(result);
     } catch (e) {
       log('bookSurgery repository error: $e');
       return Left(e.toString());

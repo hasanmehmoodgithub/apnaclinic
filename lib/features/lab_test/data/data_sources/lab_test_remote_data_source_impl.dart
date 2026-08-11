@@ -4,6 +4,7 @@ import '../../../../core/constants/app_strings.dart';
 import '../../../../core/network/api_service.dart';
 import '../../../../core/network/app_urls.dart';
 import '../../../../core/utils/error_handler.dart';
+import '../../../payment/domain/entities/payment_initiation_result.dart';
 import '../mock/lab_orders_mock_api.dart';
 import '../mock/lab_test_mock_api.dart';
 import '../models/lab_order_model.dart';
@@ -194,7 +195,7 @@ class LabTestRemoteDataSourceImpl implements LabTestRemoteDataSource {
   }
 
   @override
-  Future<void> bookLabTest(Map<String, dynamic> body) async {
+  Future<PaymentInitiationResult> bookLabTest(Map<String, dynamic> body) async {
     try {
       final Map<String, dynamic> response;
       if (LabTestMockApi.useMockResponses) {
@@ -205,7 +206,7 @@ class LabTestRemoteDataSourceImpl implements LabTestRemoteDataSource {
       }
 
       if (_isSuccessResponse(response)) {
-        return;
+        return PaymentInitiationResult.fromBookingResponse(response);
       }
 
       final message = (response['message'] ?? AppStrings.ourServicesLoadError)

@@ -18,6 +18,7 @@ import '../../../consultation/data/utils/consultation_booking_utils.dart';
 import '../../../consultation/domain/use_cases/get_payment_providers_use_case.dart';
 import '../../../consultation/presentation/models/doctor_consultation_jazzcash_sheet_result.dart';
 import '../../../consultation/presentation/widgets/doctor_consultation_jazzcash_accounts_sheet_widget.dart';
+import '../../../payment/presentation/payment_navigation.dart';
 import '../../domain/use_cases/book_lab_test_use_case.dart';
 import '../lab_test_route_args.dart';
 import '../widgets/lab_test_checkout_bottom_bar_widget.dart';
@@ -221,7 +222,16 @@ class _LabTestCheckoutScreenState extends State<LabTestCheckoutScreen> {
 
     result.fold(
       (error) => _showBookErrorDialog(error),
-      (_) => _showBookedDialog(),
+      (initiation) async {
+        final paymentResult =
+            await settleCardPaymentIfNeeded(context, initiation);
+        if (!mounted) return;
+        if (!paymentResult.isSuccess) {
+          showCardPaymentOutcomeSnackBar(context, paymentResult);
+          return;
+        }
+        _showBookedDialog();
+      },
     );
   }
 

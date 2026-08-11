@@ -183,10 +183,28 @@ class AccountRemoteDataSourceImpl implements AccountRemoteDataSource {
     }
     primaryMsisdn ??= phones.isNotEmpty ? phones.first.msisdn : null;
 
+    final firstName = (data['firstName'] ?? '').toString().trim();
+    final lastName = (data['lastName'] ?? '').toString().trim();
+    final email = (data['email'] ?? '').toString().trim();
+    final gender = (data['gender'] ?? '').toString().trim();
+    final address = (data['address'] ?? '').toString().trim();
+    final dateOfBirth =
+        (data['dateOfBirth'] ?? data['dob'] ?? '').toString().trim();
+    final imageUrl =
+        (data['image'] ?? data['imageUrl'] ?? '').toString().trim();
+
     final existing = appPref.getUserLocalModel() ?? const UserLocalModel();
     await appPref.setUserLocalModel(
       existing.copyWith(
         apiUserId: apiUserId,
+        firstName: firstName.isNotEmpty ? firstName : existing.firstName,
+        lastName: lastName.isNotEmpty ? lastName : existing.lastName,
+        email: email.isNotEmpty ? email : existing.email,
+        gender: gender.isNotEmpty ? gender : existing.gender,
+        address: address.isNotEmpty ? address : existing.address,
+        dateOfBirth:
+            dateOfBirth.isNotEmpty ? dateOfBirth : existing.dateOfBirth,
+        imageUrl: imageUrl.isNotEmpty ? imageUrl : existing.imageUrl,
         phone: primaryMsisdn != null && primaryMsisdn.isNotEmpty
             ? PhoneFormatUtils.toLocalDisplay(primaryMsisdn)
             : existing.phone,

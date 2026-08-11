@@ -1,4 +1,5 @@
 import '../../../../core/functional/functional_export.dart';
+import '../../../payment/domain/entities/payment_initiation_result.dart';
 import '../entities/consultation_doctors_page_entity.dart';
 import '../entities/consultation_booking_list_entity.dart';
 import '../entities/consultation_category_entity.dart';
@@ -30,7 +31,7 @@ abstract class ConsultationRepository {
   Future<Either<ErrorMsg, ConsultationBookingListItemEntity>> getBooking({
     required int appointmentId,
   });
-  Future<Either<ErrorMsg, void>> submitBooking(
+  Future<Either<ErrorMsg, PaymentInitiationResult>> submitBooking(
     SubmitConsultationBookingParams params,
   );
   Future<Either<ErrorMsg, void>> submitFeedback(

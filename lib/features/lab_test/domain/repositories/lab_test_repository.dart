@@ -1,4 +1,5 @@
 import '../../../../core/functional/functional_export.dart';
+import '../../../payment/domain/entities/payment_initiation_result.dart';
 import '../entities/lab_order_entity.dart';
 import '../entities/lab_test_catalog_entity.dart';
 import '../entities/lab_test_detail_entity.dart';
@@ -15,7 +16,9 @@ abstract class LabTestRepository {
     GetLabTestDetailParams params,
   );
 
-  Future<Either<ErrorMsg, void>> bookLabTest(BookLabTestParams params);
+  Future<Either<ErrorMsg, PaymentInitiationResult>> bookLabTest(
+    BookLabTestParams params,
+  );
 
   Future<Either<ErrorMsg, LabOrdersPageEntity>> getLabOrders({
     int page = 1,

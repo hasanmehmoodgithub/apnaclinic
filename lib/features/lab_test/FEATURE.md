@@ -36,6 +36,7 @@ Browse lab tests, booking/cart flow, payment details checkout, and order view de
 - **Book lab test:** `POST AppUrls.labBookTest` → `/acs-aggregator/api/v1/mobile/lab/book-test`
   - Triggered from **checkout** CTA after picking a payment method via `PaymentMethodSheet(module: lab)` → `GET payment-provider?module=lab` (JazzCash prompts for an account msisdn; otherwise the patient phone is used).
   - While `POST lab/book-test` runs, shows the shared heart loader; on failure shows shared `AlertDialogCard` with the API message.
+  - Response may include `data.paymentUrl` → opens shared card payment WebView (`AppRoutes.cardPayment`) before the booked success dialog.
   - Body: `{ partnerId, labId, cityId, homeSample, paymentMethod, msisdn, patient: { name, age, gender, phoneNumber }, tests: [ { testId } ] }`.
   - `testId`s come from every cart line (supports multiple tests in one booking); `partnerId` / `labId` / `homeSample` come from the first cart line; `cityId` is resolved from the city name via `CitiesRepository`.
 - **Lab orders (bookings list):** `GET AppUrls.labOrders` — response items include optional `invoice` (PDF URL). Mapped through `LabOrderModel` → `LabOrderEntity` → bookings list.

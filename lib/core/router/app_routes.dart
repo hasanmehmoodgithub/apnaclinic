@@ -36,6 +36,7 @@ class AppRoutes {
   static const String accountDetails = 'account-details';
   static const String aiScreening = 'ai-screening';
   static const String instantDoctorConsultation = 'instant-doctor-consultation';
+  static const String cardPayment = 'card-payment';
 
   static const String examples = 'examples';
 

@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/enums/state_status.dart';
 import '../../../../core/preference/app_pref.dart';
+import '../../../../core/session/auth_session_refresh.dart';
 import '../../../../core/session/profile_session_sync.dart';
 import '../../../../core/utils/auth_guard.dart';
 import '../../../profile_setup/domain/use_cases/get_profile_setup_content_use_case.dart';
@@ -133,6 +134,7 @@ class DashboardCubit extends Cubit<DashboardServicesState> {
     result.fold(
       (_) {},
       (_) {
+        sl<AuthSessionRefresh>().notifyProfileUpdated();
         _safeEmit(
           state.copyWith(profileSyncNonce: state.profileSyncNonce + 1),
         );

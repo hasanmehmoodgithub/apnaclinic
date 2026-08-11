@@ -3,11 +3,16 @@ import 'package:flutter/foundation.dart';
 /// Signals login/logout so [MainNavigationShell] can remount tabs and reload data.
 class AuthSessionRefresh extends ChangeNotifier {
   int _epoch = 0;
+  int _profileRevision = 0;
   bool _selectHomeOnNextRefresh = false;
   bool _reloadPromotionalBannerOnNextRefresh = false;
   int? _pendingTabIndex;
 
   int get epoch => _epoch;
+
+  /// Increments when local profile prefs change (name, image, etc.).
+  /// Listeners like menu can rebuild without remounting shell tabs.
+  int get profileRevision => _profileRevision;
 
   /// After OTP login: remount tabs and optionally open the Home tab.
   ///
@@ -27,6 +32,12 @@ class AuthSessionRefresh extends ChangeNotifier {
     _reloadPromotionalBannerOnNextRefresh = false;
     _pendingTabIndex = null;
     _epoch++;
+    notifyListeners();
+  }
+
+  /// Call after persisting profile fields so open surfaces (menu, header) refresh.
+  void notifyProfileUpdated() {
+    _profileRevision++;
     notifyListeners();
   }
 

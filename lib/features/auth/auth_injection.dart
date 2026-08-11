@@ -2,9 +2,9 @@ import '../../core/di/dependency_injection.dart';
 import '../../core/network/api_service.dart';
 import '../../core/preference/app_pref.dart';
 import '../../core/session/auth_session_refresh.dart';
+import '../profile_setup/domain/use_cases/get_profile_setup_content_use_case.dart';
 import 'data/data_sources/auth_remote_data_source.dart';
 import 'data/data_sources/auth_remote_data_source_impl.dart';
-import 'data/mock/auth_mock_api.dart';
 import 'data/repositories/auth_repository_impl.dart';
 import 'domain/repositories/auth_repository.dart';
 import 'domain/use_cases/logout_use_case.dart';
@@ -54,6 +54,7 @@ void initAuthInjector() {
       () => AuthCubit(
         requestOtpUseCase: sl<RequestOtpUseCase>(),
         verifyOtpUseCase: sl<VerifyOtpUseCase>(),
+        getProfileSetupContentUseCase: sl<GetProfileSetupContentUseCase>(),
         appPref: sl<AppPref>(),
         sessionRefresh: sl<AuthSessionRefresh>(),
       ),

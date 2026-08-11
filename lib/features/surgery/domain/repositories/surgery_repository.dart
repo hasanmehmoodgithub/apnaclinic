@@ -1,4 +1,5 @@
 import '../../../../core/functional/functional_export.dart';
+import '../../../payment/domain/entities/payment_initiation_result.dart';
 import '../entities/surgery_booking_request_entity.dart';
 import '../entities/surgery_doctor_entity.dart';
 import '../entities/surgery_lead_entity.dart';
@@ -16,7 +17,8 @@ abstract class SurgeryRepository {
     required String procedureName,
     required String city,
   });
-  Future<Either<ErrorMsg, SurgeryProviderDetailsEntity>> getSurgeryProviderDetails({
+  Future<Either<ErrorMsg, SurgeryProviderDetailsEntity>>
+      getSurgeryProviderDetails({
     required String surgeryId,
     required String cityId,
     required String doctorId,
@@ -36,5 +38,7 @@ abstract class SurgeryRepository {
   Future<Either<ErrorMsg, void>> submitSurgeryBooking(
     SurgeryBookingRequestEntity request,
   );
-  Future<Either<ErrorMsg, void>> bookSurgery(BookSurgeryParams params);
+  Future<Either<ErrorMsg, PaymentInitiationResult>> bookSurgery(
+    BookSurgeryParams params,
+  );
 }

@@ -2081,6 +2081,30 @@ abstract class AppLocalizations {
   /// **'Retry'**
   String get commonRetry;
 
+  /// No description provided for @paymentWebViewTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Card Payment'**
+  String get paymentWebViewTitle;
+
+  /// No description provided for @paymentWebViewLoadError.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to load the payment page. Please try again.'**
+  String get paymentWebViewLoadError;
+
+  /// No description provided for @paymentWebViewFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment failed. Please try again.'**
+  String get paymentWebViewFailed;
+
+  /// No description provided for @paymentWebViewCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment cancelled.'**
+  String get paymentWebViewCancelled;
+
   /// No description provided for @labTestViewDetailsResultsTitle.
   ///
   /// In en, this message translates to:

@@ -32,8 +32,8 @@ bool hasCachedUserProfile(AppPref appPref) {
   final user = appPref.getUserLocalModel();
   if (user == null) return false;
 
+  // Phone alone is not enough — OTP always stores msisdn before GET /users/{id}.
   return user.firstName.trim().isNotEmpty ||
       user.lastName.trim().isNotEmpty ||
-      user.phone.trim().isNotEmpty ||
       user.email.trim().isNotEmpty;
 }

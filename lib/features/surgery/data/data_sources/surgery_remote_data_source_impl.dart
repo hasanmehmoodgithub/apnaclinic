@@ -4,6 +4,7 @@ import '../../../../core/constants/app_strings.dart';
 import '../../../../core/network/api_service.dart';
 import '../../../../core/network/app_urls.dart';
 import '../../../../core/utils/error_handler.dart';
+import '../../../payment/domain/entities/payment_initiation_result.dart';
 import '../../domain/entities/surgery_booking_request_entity.dart';
 import '../mock/surgery_checkout_mock_api.dart';
 import '../mock/surgery_doctors_mock_api.dart';
@@ -350,7 +351,7 @@ class SurgeryRemoteDataSourceImpl implements SurgeryRemoteDataSource {
   }
 
   @override
-  Future<void> bookSurgery({
+  Future<PaymentInitiationResult> bookSurgery({
     required int leadId,
     required String paymentMethod,
     required String msisdn,
@@ -378,7 +379,7 @@ class SurgeryRemoteDataSourceImpl implements SurgeryRemoteDataSource {
       }
 
       if (_isSuccessResponse(response)) {
-        return;
+        return PaymentInitiationResult.fromBookingResponse(response);
       }
 
       final message = (response['message'] ?? AppStrings.surgeryLoadError)

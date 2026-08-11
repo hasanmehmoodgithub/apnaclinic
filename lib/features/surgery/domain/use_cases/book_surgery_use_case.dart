@@ -1,5 +1,6 @@
 import '../../../../core/functional/functional_export.dart';
 import '../../../../core/use_case/base_use_case.dart';
+import '../../../payment/domain/entities/payment_initiation_result.dart';
 import '../repositories/surgery_repository.dart';
 
 class BookSurgeryParams {
@@ -14,13 +15,16 @@ class BookSurgeryParams {
   final String msisdn;
 }
 
-class BookSurgeryUseCase implements UseCaseVoid<BookSurgeryParams> {
+class BookSurgeryUseCase
+    implements UseCase<PaymentInitiationResult, BookSurgeryParams> {
   BookSurgeryUseCase({required this.repository});
 
   final SurgeryRepository repository;
 
   @override
-  Future<Either<ErrorMsg, void>> call(BookSurgeryParams params) {
+  Future<Either<ErrorMsg, PaymentInitiationResult>> call(
+    BookSurgeryParams params,
+  ) {
     return repository.bookSurgery(params);
   }
 }

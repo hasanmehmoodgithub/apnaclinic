@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/preference/app_pref.dart';
 import '../../../../core/utils/auth_api_utils.dart';
 import '../../../../core/utils/jwt_utils.dart';
+import '../../../payment/domain/entities/payment_initiation_result.dart';
 import '../../data/models/doctor_consultation_checkout_model.dart';
 import '../../data/utils/consultation_booking_utils.dart';
 import '../../domain/use_cases/get_payment_providers_use_case.dart';
@@ -10,7 +11,8 @@ import '../../domain/use_cases/submit_consultation_booking_use_case.dart';
 import '../doctor_consultation_checkout_args.dart';
 import 'doctor_consultation_checkout_state.dart';
 
-class DoctorConsultationCheckoutCubit extends Cubit<DoctorConsultationCheckoutState> {
+class DoctorConsultationCheckoutCubit
+    extends Cubit<DoctorConsultationCheckoutState> {
   DoctorConsultationCheckoutCubit({
     required GetPaymentProvidersUseCase getPaymentProvidersUseCase,
     required SubmitConsultationBookingUseCase submitBookingUseCase,
@@ -33,7 +35,9 @@ class DoctorConsultationCheckoutCubit extends Cubit<DoctorConsultationCheckoutSt
     }
 
     final providersResult = await _getPaymentProvidersUseCase(
-      const GetPaymentProvidersParams(module: PaymentProviderModule.consultation),
+      const GetPaymentProvidersParams(
+        module: PaymentProviderModule.consultation,
+      ),
     );
     providersResult.fold(
       (error) => emit(
@@ -81,7 +85,8 @@ class DoctorConsultationCheckoutCubit extends Cubit<DoctorConsultationCheckoutSt
     emit(state.copyWith(selectedPaymentMethodId: code));
   }
 
-  Future<bool> submitBooking({
+  /// Returns payment initiation on success, or `null` on failure.
+  Future<PaymentInitiationResult?> submitBooking({
     required DoctorConsultationCheckoutArgs args,
     required String paymentMethodCode,
     required String msisdn,
@@ -104,7 +109,7 @@ class DoctorConsultationCheckoutCubit extends Cubit<DoctorConsultationCheckoutSt
           errorMessage: 'invalid_booking_context',
         ),
       );
-      return false;
+      return null;
     }
 
     if (normalizedMsisdn.isEmpty) {
@@ -114,7 +119,7 @@ class DoctorConsultationCheckoutCubit extends Cubit<DoctorConsultationCheckoutSt
           errorMessage: 'missing_msisdn',
         ),
       );
-      return false;
+      return null;
     }
 
     final result = await _submitBookingUseCase(
@@ -144,11 +149,11 @@ class DoctorConsultationCheckoutCubit extends Cubit<DoctorConsultationCheckoutSt
             errorMessage: error,
           ),
         );
-        return false;
+        return null;
       },
-      (_) {
+      (initiation) {
         emit(state.copyWith(isSubmitting: false, clearError: true));
-        return true;
+        return initiation;
       },
     );
   }

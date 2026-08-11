@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Collect or edit user profile (name, gender, email, address, DOB, optional profile image) and sync with user-auth service.
+Collect or edit user profile (name, gender, optional email, address, DOB, optional profile image) and sync with user-auth service. Email may be left empty; if filled, it must look like an email (contains `@`).
 
 ## Routes
 
@@ -29,7 +29,7 @@ Collect or edit user profile (name, gender, email, address, DOB, optional profil
 ## State
 
 - `ProfileCubit` / `ProfileState` — profile screen: reads UI from `AppPref`; fetches GET profile only when `ProfileSessionSync` says the session is not synced and cached prefs exist. After login, logout, or app launch (in-memory reset), the first home/profile open syncs once; revisiting profile uses `AppPref` + cached linked phones without another GET. Explicit `refreshProfile(force: true)` / `loadAccounts(force: true)` after edit, add account, or delete account.
-- `ProfileSetupCubit` / `ProfileSetupState` — `dateOfBirth` drives the date picker label and initial picker date.
+- `ProfileSetupCubit` / `ProfileSetupState` — `dateOfBirth` drives the date picker label and initial picker date. Manual calendar entry uses `TextInputType.text` so `/` and other date separators are available on the keyboard.
 
 ## Session cache
 

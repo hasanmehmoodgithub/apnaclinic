@@ -12,6 +12,7 @@ import '../../../consultation/data/utils/consultation_booking_utils.dart';
 import '../../../consultation/domain/use_cases/get_payment_providers_use_case.dart';
 import '../../../consultation/presentation/models/doctor_consultation_jazzcash_sheet_result.dart';
 import '../../../consultation/presentation/widgets/doctor_consultation_jazzcash_accounts_sheet_widget.dart';
+import '../../../payment/presentation/payment_navigation.dart';
 import '../../../surgery/domain/use_cases/book_surgery_use_case.dart';
 import '../../../surgery/domain/use_cases/get_surgery_lead_use_case.dart';
 import '../../data/mappers/surgery_booking_list_mapper.dart';
@@ -178,7 +179,14 @@ class _SurgeryDetailsScreenState extends State<SurgeryDetailsScreen> {
       (error) async {
         await _showPaymentFailedDialog(message: error);
       },
-      (_) async {
+      (initiation) async {
+        final paymentResult =
+            await settleCardPaymentIfNeeded(context, initiation);
+        if (!mounted) return;
+        if (!paymentResult.isSuccess) {
+          showCardPaymentOutcomeSnackBar(context, paymentResult);
+          return;
+        }
         setState(() {
           _statusLabel = 'Paid';
           _paymentAllowed = false;
