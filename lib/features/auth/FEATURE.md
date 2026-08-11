@@ -3,6 +3,7 @@
 ## Purpose
 
 Phone OTP request/verify, session persistence via `AppPref`, logout API.
+After successful OTP, `AppsFlyerService.setCustomerUserId` is called when the SDK is configured (see `lib/core/services/APPSFLYER.md`).
 
 Login footer legal links (`LoginLegalText`) open `AppUrls.termsAndConditions` and
 `AppUrls.privacyPolicy` in the device browser via `AppUrlLauncher`.
@@ -40,7 +41,7 @@ profile setup.
   - If login shows “unable to reach server”, check device network/VPN, iOS ATS (HTTP allowed for Jazz domains), and dev SSL config (`dio_app_network_config.dart`).
   - Request OTP `data.expiresIn` is in **seconds** (e.g. `300` → 5 min resend timer).
   - Logout: `AppUrls.logout` (POST body `{ "refreshToken": "<stored refresh token>" }`). Local session is **always** cleared via `LocalLogoutService` even if the API fails; a snackbar may show the server error.
-  - After successful OTP when onboarding is complete, may fetch `AppUrls.userProfileById` and merge into response.
+  - After successful OTP when onboarding is complete, `AuthCubit` calls `GetProfileSetupContentUseCase` (`GET …/users/{id}`) and persists name/email/etc. into `UserLocalModel` before `notifyLoggedIn`, so menu/home do not briefly stick on “Guest User”.
 
 ## Shared core helpers
 

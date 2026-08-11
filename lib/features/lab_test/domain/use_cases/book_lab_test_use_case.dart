@@ -1,5 +1,6 @@
 import '../../../../core/functional/functional_export.dart';
 import '../../../../core/use_case/base_use_case.dart';
+import '../../../payment/domain/entities/payment_initiation_result.dart';
 import '../repositories/lab_test_repository.dart';
 
 class BookLabTestPatientParams {
@@ -38,13 +39,16 @@ class BookLabTestParams {
   final List<int> testIds;
 }
 
-class BookLabTestUseCase implements UseCaseVoid<BookLabTestParams> {
+class BookLabTestUseCase
+    implements UseCase<PaymentInitiationResult, BookLabTestParams> {
   BookLabTestUseCase({required this.repository});
 
   final LabTestRepository repository;
 
   @override
-  Future<Either<ErrorMsg, void>> call(BookLabTestParams params) {
+  Future<Either<ErrorMsg, PaymentInitiationResult>> call(
+    BookLabTestParams params,
+  ) {
     return repository.bookLabTest(params);
   }
 }

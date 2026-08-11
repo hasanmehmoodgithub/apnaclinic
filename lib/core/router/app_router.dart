@@ -63,6 +63,8 @@ import '../preference/app_pref.dart';
 import '../utils/chucker_guard.dart';
 import '../../features/instant_doctor/presentation/instant_doctor_consultation_args.dart';
 import '../../features/instant_doctor/presentation/screens/instant_doctor_consultation_webview_screen.dart';
+import '../../features/payment/presentation/payment_webview_args.dart';
+import '../../features/payment/presentation/screens/payment_webview_screen.dart';
 import '../../features/profile_setup/presentation/profile_setup_launch_source.dart';
 import '../../features/profile_setup/presentation/cubit/profile_cubit.dart';
 import '../../features/profile_setup/presentation/screens/profile_screen.dart';
@@ -456,6 +458,19 @@ class AppRouter {
             );
           }
           return InstantDoctorConsultationWebViewScreen(args: args);
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.path(AppRoutes.cardPayment),
+        name: AppRoutes.cardPayment,
+        builder: (context, state) {
+          final args = paymentWebViewArgsFromExtra(state.extra);
+          if (args == null) {
+            return const Scaffold(
+              body: Center(child: Text('Invalid payment link')),
+            );
+          }
+          return PaymentWebViewScreen(args: args);
         },
       ),
     ],

@@ -4,6 +4,7 @@ import '../models/surgery_doctor_model.dart';
 import '../models/surgery_lead_model.dart';
 import '../models/surgery_patient_form_model.dart';
 import '../models/surgery_provider_details_model.dart';
+import '../../../payment/domain/entities/payment_initiation_result.dart';
 
 abstract class SurgeryRemoteDataSource {
   Future<SurgeryContentModel> getSurgeryContent({String? cityId});
@@ -29,7 +30,7 @@ abstract class SurgeryRemoteDataSource {
   Future<SurgeryLeadModel> getSurgeryLead({required int leadId});
 
   Future<void> submitSurgeryBooking(SurgeryBookingRequestEntity request);
-  Future<void> bookSurgery({
+  Future<PaymentInitiationResult> bookSurgery({
     required int leadId,
     required String paymentMethod,
     required String msisdn,

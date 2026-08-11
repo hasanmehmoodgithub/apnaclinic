@@ -136,6 +136,10 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
       initialDate: initial,
       firstDate: DateTime(1900),
       lastDate: now,
+      // Default `TextInputType.datetime` opens a numbers-only pad on many
+      // devices (no `/`). Use text so the calendar edit field can type
+      // locale formats like dd/MM/yyyy.
+      keyboardType: TextInputType.text,
       builder: (context, child) {
         return Theme(
           data: theme.copyWith(

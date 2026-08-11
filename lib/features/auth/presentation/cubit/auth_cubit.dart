@@ -1,3 +1,4 @@
+
 import 'dart:async';
 import 'dart:developer' as developer;
 
@@ -8,11 +9,13 @@ import '../../../../core/enums/app_enums.dart';
 import '../../../../core/enums/state_status.dart';
 import '../../../../core/preference/app_pref.dart';
 import '../../../../core/preference/app_pref_keys.dart';
+import '../../../../core/services/appsflyer_service.dart';
 import '../../../../core/services/notification_service.dart';
 import '../../../../core/session/auth_session_refresh.dart';
 import '../../../../core/session/profile_session_sync.dart';
 import '../../../../core/preference/user_local_model.dart';
 import '../../../../core/utils/jwt_utils.dart';
+import '../../../profile_setup/domain/use_cases/get_profile_setup_content_use_case.dart';
 import '../../domain/entities/auth_entity.dart';
 import '../../domain/use_cases/request_otp_use_case.dart';
 import '../../domain/use_cases/verify_otp_use_case.dart';
@@ -22,16 +25,19 @@ class AuthCubit extends Cubit<AuthState> {
   AuthCubit({
     required RequestOtpUseCase requestOtpUseCase,
     required VerifyOtpUseCase verifyOtpUseCase,
+    required GetProfileSetupContentUseCase getProfileSetupContentUseCase,
     required AppPref appPref,
     required AuthSessionRefresh sessionRefresh,
   }) : _requestOtpUseCase = requestOtpUseCase,
        _verifyOtpUseCase = verifyOtpUseCase,
+       _getProfileSetupContentUseCase = getProfileSetupContentUseCase,
        _appPref = appPref,
        _sessionRefresh = sessionRefresh,
        super(const AuthState());
 
   final RequestOtpUseCase _requestOtpUseCase;
   final VerifyOtpUseCase _verifyOtpUseCase;
+  final GetProfileSetupContentUseCase _getProfileSetupContentUseCase;
   final AppPref _appPref;
   final AuthSessionRefresh _sessionRefresh;
   Timer? _timer;
@@ -269,6 +275,9 @@ class AuthCubit extends Cubit<AuthState> {
     await _appPref.setLoginStatus(true);
     sl<ProfileSessionSync>().invalidate();
     await _appPref.setUserId(resolvedUserId);
+    if (sl.isRegistered<AppsFlyerService>()) {
+      sl<AppsFlyerService>().setCustomerUserId(resolvedUserId);
+    }
     await _appPref.setToken(entity.token ?? '');
     await _appPref.setRefreshToken(entity.refreshToken ?? '');
     await _appPref.setAccessTokenExpiresIn(entity.accessTokenExpiresIn ?? 0);
@@ -286,6 +295,8 @@ class AuthCubit extends Cubit<AuthState> {
           dateOfBirth: entity.dateOfBirth ?? '',
         ),
       );
+      // OTP payload often omits name; load GET /users/{id} before UI remounts.
+      await _hydrateProfileAfterLogin();
     } else {
       await _appPref.setProfileCompleted(false);
       await _appPref.setUserLocalModel(
@@ -298,6 +309,21 @@ class AuthCubit extends Cubit<AuthState> {
     if (entity.isOnboardingCompleted == true) {
       _sessionRefresh.notifyLoggedIn();
     }
+  }
+
+  Future<void> _hydrateProfileAfterLogin() async {
+    final result = await _getProfileSetupContentUseCase.call();
+    result.fold(
+      (error) {
+        developer.log(
+          'Post-OTP profile hydrate failed: $error',
+          name: 'AuthCubit',
+        );
+      },
+      (_) {
+        _sessionRefresh.notifyProfileUpdated();
+      },
+    );
   }
 
   void _startOtpTimer({int? expiresInSeconds}) {

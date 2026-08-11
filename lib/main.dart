@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:developer' as developer;
+import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:apnaclinic/core/constants/app_system_ui.dart';
@@ -10,6 +11,9 @@ import 'package:flutter/rendering.dart';
 import 'core/debug/device_preview_support.dart';
 import 'core/di/dependency_injection.dart';
 import 'core/firebase/firebase_bootstrap.dart';
+import 'core/network/app_http_overrides.dart';
+import 'core/security/security_widget.dart';
+import 'core/services/appsflyer_service.dart';
 import 'core/services/notification_service.dart';
 import 'core/utils/chucker_guard.dart';
 import 'features/app/presentation/screens/apna_clinic_app.dart';
@@ -26,22 +30,29 @@ void main() {
       debugPaintPointersEnabled = false;
       debugPaintLayerBordersEnabled = false;
       ChuckerGuard.configureIfEnabled();
+      FlavorConfig.initialize();
+      HttpOverrides.global = AppHttpOverrides();
+      await AppHttpOverrides.detectActiveProxy();
       AppSystemUi.apply();
 
       try {
-        // Initialize flavor-specific configurations
-        FlavorConfig.initialize();
+        // Flavor already initialized above (needed before DI / Dio network config).
 
         // Initialize dependency injection (includes AppPref initialization)
         // Encryption can be enabled/configured through AppPref methods after initialization
         await _initializeDependencyInjection();
 
         runApp(
-          wrapWithDevicePreview(child: const ApnaClinicApp()),
+          wrapWithDevicePreview(
+            child: const SecurityGate(
+              child: ApnaClinicApp(),
+            ),
+          ),
         );
 
-        // FCM can hang on emulators without Play Services — never block first frame.
+        // FCM / AppsFlyer can hang or fail on some devices — never block first frame.
         unawaited(_initializePushNotifications());
+        unawaited(_initializeAppsFlyer());
       } catch (e, stackTrace) {
         // Guard: Handle initialization errors gracefully
         developer.log(
@@ -150,6 +161,19 @@ Future<void> _initializePushNotifications() async {
   } catch (e, stackTrace) {
     developer.log(
       'FCM init failed: $e',
+      name: 'main',
+      error: e,
+      stackTrace: stackTrace,
+    );
+  }
+}
+
+Future<void> _initializeAppsFlyer() async {
+  try {
+    await sl<AppsFlyerService>().initialize();
+  } catch (e, stackTrace) {
+    developer.log(
+      'AppsFlyer init failed: $e',
       name: 'main',
       error: e,
       stackTrace: stackTrace,

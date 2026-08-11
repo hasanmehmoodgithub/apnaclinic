@@ -1063,6 +1063,19 @@ class AppLocalizationsUr extends AppLocalizations {
   String get commonRetry => 'دوبارہ کوشش کریں';
 
   @override
+  String get paymentWebViewTitle => 'کارڈ ادائیگی';
+
+  @override
+  String get paymentWebViewLoadError =>
+      'ادائیگی کا صفحہ لوڈ نہیں ہو سکا۔ دوبارہ کوشش کریں۔';
+
+  @override
+  String get paymentWebViewFailed => 'ادائیگی ناکام رہی۔ دوبارہ کوشش کریں۔';
+
+  @override
+  String get paymentWebViewCancelled => 'ادائیگی منسوخ کر دی گئی۔';
+
+  @override
   String get labTestViewDetailsResultsTitle => 'ٹیسٹ نتائج';
 
   @override

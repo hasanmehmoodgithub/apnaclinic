@@ -2,6 +2,7 @@ import '../di/dependency_injection.dart';
 import '../network/api_service.dart';
 import '../preference/app_pref.dart';
 import '../preference/app_pref_keys.dart';
+import '../services/appsflyer_service.dart';
 import '../services/notification_service.dart';
 import 'auth_session_refresh.dart';
 import 'profile_session_sync.dart';
@@ -44,6 +45,10 @@ class LocalLogoutService {
       if (pushService.isInitialized) {
         await pushService.deleteToken();
       }
+    }
+
+    if (sl.isRegistered<AppsFlyerService>()) {
+      sl<AppsFlyerService>().clearCustomerUserId();
     }
 
     if (notifyShell) {

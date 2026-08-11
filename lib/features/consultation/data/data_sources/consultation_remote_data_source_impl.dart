@@ -6,6 +6,7 @@ import '../../../../core/constants/app_strings.dart';
 import '../../../../core/network/api_service.dart';
 import '../../../../core/network/app_urls.dart';
 import '../../../../core/utils/error_handler.dart';
+import '../../../payment/domain/entities/payment_initiation_result.dart';
 import '../mock/consultation_booking_mock_api.dart';
 import '../mock/consultation_bookings_list_mock_api.dart';
 import '../mock/payment_providers_mock_api.dart';
@@ -295,7 +296,9 @@ class ConsultationRemoteDataSourceImpl implements ConsultationRemoteDataSource {
   }
 
   @override
-  Future<void> submitBooking(SubmitConsultationBookingParams params) async {
+  Future<PaymentInitiationResult> submitBooking(
+    SubmitConsultationBookingParams params,
+  ) async {
     try {
       final Map<String, dynamic> response;
       if (ConsultationBookingMockApi.useMockResponses) {
@@ -311,7 +314,7 @@ class ConsultationRemoteDataSourceImpl implements ConsultationRemoteDataSource {
       }
 
       if (_isBookingSubmitSuccess(response)) {
-        return;
+        return PaymentInitiationResult.fromBookingResponse(response);
       }
 
       final message = (response['message'] ?? AppStrings.genericErrorMessage)
@@ -320,7 +323,7 @@ class ConsultationRemoteDataSourceImpl implements ConsultationRemoteDataSource {
     } catch (e) {
       log('submitBooking error: $e');
       if (_isSuccessfulBookingTransportError(e)) {
-        return;
+        return const PaymentInitiationResult();
       }
       final message = ErrorHandler.handleExceptions(
         e,

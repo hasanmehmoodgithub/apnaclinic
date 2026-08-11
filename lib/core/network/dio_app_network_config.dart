@@ -1,13 +1,25 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
+import 'package:dio/io.dart';
 
 import '../flavor/flavor_config.dart';
-import 'dio_ssl_config_stub.dart'
-    if (dart.library.io) 'dio_ssl_config_io.dart';
+import 'app_http_overrides.dart';
 
-/// TLS/cleartext fixes for Jazz OpenShift hosts (corporate certs, HTTP auth API).
+/// Applies proxy (`AppHttpOverrides.activeProxy`) + TLS trust for mitm / Jazz certs.
 void configureDioForAppNetwork(Dio dio) {
-  configureDioSslForDev(
-    dio,
-    enabled: FlavorConfig.enableDebugFeatures,
-  );
+  final adapter = IOHttpClientAdapter();
+  adapter.createHttpClient = () {
+    final client = HttpClient();
+    client.findProxy = AppHttpOverrides.findProxyForUri;
+
+    final allowBadCert = AppHttpOverrides.activeProxy != null ||
+        FlavorConfig.enableDebugFeatures;
+    if (allowBadCert) {
+      client.badCertificateCallback =
+          (X509Certificate cert, String host, int port) => true;
+    }
+    return client;
+  };
+  dio.httpClientAdapter = adapter;
 }
