@@ -528,6 +528,10 @@ class AppLocalizationsEn extends AppLocalizations {
       'Could not open subscription page right now.';
 
   @override
+  String get instantDoctorMediaPermissionDenied =>
+      'Allow camera and microphone access in Settings to start the video consultation.';
+
+  @override
   String get instantDoctorSubscribe => 'Subscribe';
 
   @override

@@ -246,6 +246,7 @@
   "instantDoctorTitle": "Instant Doctor",
   "instantDoctorOpenAppCta": "Subscribe Now!",
   "instantDoctorOpenAppError": "Could not open subscription page right now.",
+  "instantDoctorMediaPermissionDenied": "Allow camera and microphone access in Settings to start the video consultation.",
   "instantDoctorSubscribe": "Subscribe",
   "instantDoctorStartConsultation": "Start Consultation",
   "instantDoctorSubscribed": "Subscribed",

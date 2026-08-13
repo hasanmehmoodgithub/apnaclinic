@@ -6,8 +6,8 @@ Block the app on compromised devices (root / jailbreak, emulator / simulator, Fr
 
 ## Dart
 
-- `SecurityService.securityChecksEnabled = true`
-- App wrapped in `SecurityGate` from `main.dart`
+- `SecurityService.securityChecksEnabled = false` (temporarily off; no startup gate)
+- `SecurityGate` is not wrapping the app in `main.dart`
 - MethodChannels: `security_channel`, advanced `qwe_rty_123` (Android)
 
 ## Native

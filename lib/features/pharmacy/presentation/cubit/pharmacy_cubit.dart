@@ -423,13 +423,16 @@ class PharmacyCubit extends Cubit<PharmacyState> {
     required String region,
     String? paymentMethod,
     List<PharmacyCheckoutPrescriptionParams>? prescriptions,
+    String? jazzCashNumber,
+    String? deliveryInstructions,
+    List<PharmacyCheckoutPrescriptionParams> prescriptions = const [],
   }) async {
     if (!AuthGuard.isLoggedIn(appPref)) {
       return const Left(AppStrings.pharmacyCheckoutMissingContextError);
     }
 
     final trimmedRegion = region.trim();
-    // If address field is empty, save/use the selected city.
+    // If address field is empty, use the selected city.
     final trimmedAddress = address.trim().isNotEmpty
         ? address.trim()
         : trimmedRegion;
@@ -453,6 +456,12 @@ class PharmacyCubit extends Cubit<PharmacyState> {
     final checkoutPrescriptions =
         prescriptions ?? _prescriptionsFromCartItems();
 
+    final isJazzCash = paymentMethod == 'JAZZCASH';
+    final jazzCash = jazzCashNumber?.trim() ?? '';
+    if (isJazzCash && jazzCash.isEmpty) {
+      return const Left(AppStrings.pharmacyCheckoutMissingContextError);
+    }
+
     final locationResult = await _resolveUserLocationId(
       address: trimmedAddress,
       cityId: cityId,
@@ -463,8 +472,10 @@ class PharmacyCubit extends Cubit<PharmacyState> {
       (userLocationId) => pharmacyCheckoutUseCase(
         PharmacyCheckoutParams(
           userLocationId: userLocationId,
-          paymentMethod: resolvedPaymentMethod,
-          prescriptions: checkoutPrescriptions,
+          paymentMethod: paymentMethod,
+          jazzCashNumber: isJazzCash ? jazzCash : null,
+          deliveryInstructions: deliveryInstructions,
+          prescriptions: prescriptions,
         ),
       ),
     );

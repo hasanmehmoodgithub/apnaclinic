@@ -1,5 +1,6 @@
 import '../../../../core/functional/functional_export.dart';
 import '../entities/pharmacy_booking_detail_entity.dart';
+import '../use_cases/pharmacy_checkout_use_case.dart';
 import '../entities/pharmacy_booking_entity.dart';
 import '../entities/pharmacy_add_address_result_entity.dart';
 import '../entities/pharmacy_cart_address_entity.dart';
@@ -40,6 +41,9 @@ abstract class PharmacyRepository {
     required String paymentMethod,
     List<Map<String, dynamic>> prescriptions = const [],
   });
+  Future<Either<ErrorMsg, PharmacyCheckoutResultEntity>> checkoutOrder(
+    PharmacyCheckoutParams params,
+  );
 
   Future<Either<ErrorMsg, List<PharmacyCartAddressEntity>>> getProfileAddresses();
 

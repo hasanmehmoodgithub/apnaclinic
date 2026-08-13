@@ -1,4 +1,5 @@
 import '../../../../core/config/mock_config.dart';
+import '../../domain/use_cases/pharmacy_checkout_use_case.dart';
 
 class PharmacyMockApi {
   static bool useMockResponses = MockConfig.enablePharmacyMocks;
@@ -452,20 +453,16 @@ class PharmacyMockApi {
     };
   }
 
-  Future<Map<String, dynamic>> checkoutOrderSuccessResponse({
-    required String userLocationId,
-    required String paymentMethod,
-    List<Map<String, dynamic>> prescriptions = const [],
-  }) async {
+  Future<Map<String, dynamic>> checkoutOrderSuccessResponse(
+    PharmacyCheckoutParams params,
+  ) async {
     await Future<void>.delayed(const Duration(milliseconds: 500));
     return {
       'success': true,
       'message': 'Order placed successfully',
       'code': 200,
       'data': {
-        'user_location_id': userLocationId,
-        'payment_method': paymentMethod,
-        'prescriptions': prescriptions,
+        ...params.toJson(),
         'order_no': '1223',
         'status': 'confirmed',
       },

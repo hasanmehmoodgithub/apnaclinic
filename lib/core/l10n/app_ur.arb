@@ -164,6 +164,7 @@
   "instantDoctorTitle": "انسٹنٹ ڈاکٹر",
   "instantDoctorOpenAppCta": "ابھی سبسکرائب کریں!",
   "instantDoctorOpenAppError": "اس وقت سبسکرپشن صفحہ نہیں کھل سکا۔",
+  "instantDoctorMediaPermissionDenied": "ویڈیو مشاورت شروع کرنے کے لیے سیٹنگز میں کیمرہ اور مائیکروفون کی اجازت دیں۔",
   "instantDoctorSubscribe": "سبسکرائب کریں",
   "instantDoctorStartConsultation": "مشاورت شروع کریں",
   "instantDoctorSubscribed": "سبسکرائبڈ",

@@ -12,7 +12,6 @@ import 'core/debug/device_preview_support.dart';
 import 'core/di/dependency_injection.dart';
 import 'core/firebase/firebase_bootstrap.dart';
 import 'core/network/app_http_overrides.dart';
-import 'core/security/security_widget.dart';
 import 'core/services/appsflyer_service.dart';
 import 'core/services/notification_service.dart';
 import 'core/utils/chucker_guard.dart';
@@ -43,11 +42,7 @@ void main() {
         await _initializeDependencyInjection();
 
         runApp(
-          wrapWithDevicePreview(
-            child: const SecurityGate(
-              child: ApnaClinicApp(),
-            ),
-          ),
+          wrapWithDevicePreview(child: const ApnaClinicApp()),
         );
 
         // FCM / AppsFlyer can hang or fail on some devices — never block first frame.
