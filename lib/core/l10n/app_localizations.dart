@@ -992,6 +992,12 @@ abstract class AppLocalizations {
   /// **'Could not open subscription page right now.'**
   String get instantDoctorOpenAppError;
 
+  /// No description provided for @instantDoctorMediaPermissionDenied.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow camera and microphone access in Settings to start the video consultation.'**
+  String get instantDoctorMediaPermissionDenied;
+
   /// No description provided for @instantDoctorSubscribe.
   ///
   /// In en, this message translates to:

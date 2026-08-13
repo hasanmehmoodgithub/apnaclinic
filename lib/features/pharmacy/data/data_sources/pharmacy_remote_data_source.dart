@@ -1,3 +1,4 @@
+import '../../domain/use_cases/pharmacy_checkout_use_case.dart';
 import '../models/pharmacy_booking_detail_model.dart';
 import '../models/pharmacy_booking_model.dart';
 import '../models/pharmacy_medicine_model.dart';
@@ -22,11 +23,7 @@ abstract class PharmacyRemoteDataSource {
     required String quantity,
   });
 
-  Future<Map<String, dynamic>> checkoutOrder({
-    required String userLocationId,
-    required String paymentMethod,
-    List<Map<String, dynamic>> prescriptions = const [],
-  });
+  Future<Map<String, dynamic>> checkoutOrder(PharmacyCheckoutParams params);
 
   Future<List<PharmacyCartAddressModel>> getProfileAddresses();
 

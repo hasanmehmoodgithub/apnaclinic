@@ -11,6 +11,7 @@ import '../../domain/entities/pharmacy_checkout_result_entity.dart';
 import '../../domain/entities/pharmacy_products_page_entity.dart';
 import '../../domain/entities/pharmacy_product_detail_entity.dart';
 import '../../domain/repositories/pharmacy_repository.dart';
+import '../../domain/use_cases/pharmacy_checkout_use_case.dart';
 import '../data_sources/pharmacy_remote_data_source.dart';
 import '../mappers/pharmacy_bookings_mapper.dart';
 import '../mappers/pharmacy_medicine_mapper.dart';
@@ -106,17 +107,11 @@ class PharmacyRepositoryImpl implements PharmacyRepository {
   }
 
   @override
-  Future<Either<ErrorMsg, PharmacyCheckoutResultEntity>> checkoutOrder({
-    required String userLocationId,
-    required String paymentMethod,
-    List<Map<String, dynamic>> prescriptions = const [],
-  }) async {
+  Future<Either<ErrorMsg, PharmacyCheckoutResultEntity>> checkoutOrder(
+    PharmacyCheckoutParams params,
+  ) async {
     try {
-      final response = await remoteDataSource.checkoutOrder(
-        userLocationId: userLocationId,
-        paymentMethod: paymentMethod,
-        prescriptions: prescriptions,
-      );
+      final response = await remoteDataSource.checkoutOrder(params);
       final entity = PharmacyMedicineMapper.toCheckoutResultEntity(response);
       log('Mapped checkout orderNo: ${entity.orderNo}');
       return Right(entity);

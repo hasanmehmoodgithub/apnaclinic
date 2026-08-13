@@ -4,6 +4,7 @@ import '../../../../core/constants/app_strings.dart';
 import '../../../../core/network/api_service.dart';
 import '../../../../core/network/app_urls.dart';
 import '../../../../core/utils/error_handler.dart';
+import '../../domain/use_cases/pharmacy_checkout_use_case.dart';
 import '../mock/pharmacy_mock_api.dart';
 import '../models/pharmacy_booking_detail_model.dart';
 import '../models/pharmacy_booking_model.dart';
@@ -226,27 +227,17 @@ class PharmacyRemoteDataSourceImpl implements PharmacyRemoteDataSource {
   }
 
   @override
-  Future<Map<String, dynamic>> checkoutOrder({
-    required String userLocationId,
-    required String paymentMethod,
-    List<Map<String, dynamic>> prescriptions = const [],
-  }) async {
+  Future<Map<String, dynamic>> checkoutOrder(
+    PharmacyCheckoutParams params,
+  ) async {
     try {
       final Map<String, dynamic> response;
       if (PharmacyMockApi.useMockResponses) {
-        response = await mockApi.checkoutOrderSuccessResponse(
-          userLocationId: userLocationId,
-          paymentMethod: paymentMethod,
-          prescriptions: prescriptions,
-        );
+        response = await mockApi.checkoutOrderSuccessResponse(params);
       } else {
         response = await apiService.post(
           AppUrls.pharmacyOrderCheckout,
-          data: <String, dynamic>{
-            'user_location_id': userLocationId,
-            'payment_method': paymentMethod,
-            'prescriptions': prescriptions,
-          },
+          data: params.toJson(),
         );
         log('checkoutOrder response: $response');
       }

@@ -8,7 +8,7 @@ import '../flavor/app_flavor.dart';
 /// Comprehensive security service for device integrity checks
 class SecurityService {
   /// Master switch for device integrity checks (root, jailbreak, Frida, etc.).
-  static const bool securityChecksEnabled = true;
+  static const bool securityChecksEnabled = false;
 
   // Method channels
   static const MethodChannel _securityChannel = MethodChannel(

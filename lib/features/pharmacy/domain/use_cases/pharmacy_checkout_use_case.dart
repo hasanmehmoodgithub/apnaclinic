@@ -22,12 +22,48 @@ class PharmacyCheckoutParams {
   const PharmacyCheckoutParams({
     required this.userLocationId,
     required this.paymentMethod,
+    this.jazzCashNumber,
+    this.name,
+    this.deliveryInstructions,
     this.prescriptions = const [],
   });
 
   final String userLocationId;
   final String paymentMethod;
+  final String? jazzCashNumber;
+  final String? name;
+  final String? deliveryInstructions;
   final List<PharmacyCheckoutPrescriptionParams> prescriptions;
+
+  Map<String, dynamic> toJson() {
+    final data = <String, dynamic>{
+      'user_location_id': userLocationId,
+      'payment_method': paymentMethod,
+      'prescriptions': prescriptions
+          .map((item) => item.toJson())
+          .toList(growable: false),
+    };
+    final jazzCash = _digitsOnly(jazzCashNumber);
+    if (jazzCash.isNotEmpty) {
+      data['jazz_cash_number'] = jazzCash;
+    }
+    final trimmedName = name?.trim() ?? '';
+    if (trimmedName.isNotEmpty) {
+      data['name'] = trimmedName.length > 100
+          ? trimmedName.substring(0, 100)
+          : trimmedName;
+    }
+    final instructions = deliveryInstructions?.trim() ?? '';
+    if (instructions.isNotEmpty) {
+      data['delivery_instructions'] = instructions.length > 500
+          ? instructions.substring(0, 500)
+          : instructions;
+    }
+    return data;
+  }
+
+  static String _digitsOnly(String? value) =>
+      (value ?? '').replaceAll(RegExp(r'\D'), '');
 }
 
 class PharmacyCheckoutUseCase
@@ -40,12 +76,6 @@ class PharmacyCheckoutUseCase
   Future<Either<ErrorMsg, PharmacyCheckoutResultEntity>> call(
     PharmacyCheckoutParams params,
   ) {
-    return repository.checkoutOrder(
-      userLocationId: params.userLocationId,
-      paymentMethod: params.paymentMethod,
-      prescriptions: params.prescriptions
-          .map((item) => item.toJson())
-          .toList(growable: false),
-    );
+    return repository.checkoutOrder(params);
   }
 }

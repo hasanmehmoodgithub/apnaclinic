@@ -5,8 +5,12 @@ import '../../../../core/cities/presentation/show_select_city_dialog.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
+import '../../../../core/utils/phone_format_utils.dart';
 import '../../../../core/widgets/app_button_widget.dart';
 import '../../../../core/widgets/heart_loader_widget.dart';
+import '../../../consultation/data/utils/consultation_booking_utils.dart';
+import '../../../consultation/presentation/models/doctor_consultation_jazzcash_sheet_result.dart';
+import '../../../consultation/presentation/widgets/doctor_consultation_jazzcash_accounts_sheet_widget.dart';
 import '../../../payment/domain/entities/payment_initiation_result.dart';
 import '../../../payment/presentation/payment_navigation.dart';
 import '../cubit/pharmacy_cubit.dart';
@@ -31,10 +35,24 @@ class PharmacyCheckoutBodyWidget extends StatelessWidget {
 
   Future<void> _onConfirm(BuildContext context) async {
     final cubit = context.read<PharmacyCubit>();
+    final paymentMethod = _paymentMethodApiValue(cubit.state.selectedPaymentMethod);
+    String? jazzCashNumber;
+    if (ConsultationBookingUtils.isJazzCashPayment(paymentMethod)) {
+      jazzCashNumber = await _resolveJazzCashMsisdn(context);
+      if (!context.mounted ||
+          jazzCashNumber == null ||
+          jazzCashNumber.isEmpty) {
+        return;
+      }
+      jazzCashNumber = PhoneFormatUtils.toMsisdn(jazzCashNumber);
+    }
+
     showHeartLoaderDialog(context, id: _checkoutLoaderId, size: 120);
     final result = await cubit.checkoutOrder(
       address: addressController.text,
       region: cubit.state.selectedCity,
+      jazzCashNumber: jazzCashNumber,
+      deliveryInstructions: specialInstructionsController.text,
     );
     HeartLoaderDialogController.close(_checkoutLoaderId);
     if (!context.mounted) return;
@@ -73,6 +91,25 @@ class PharmacyCheckoutBodyWidget extends StatelessWidget {
         );
       },
     );
+  }
+
+  Future<String?> _resolveJazzCashMsisdn(BuildContext context) async {
+    final result =
+        await showModalBottomSheet<DoctorConsultationJazzCashSheetResult>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => const DoctorConsultationJazzCashAccountsSheetWidget(),
+    );
+    return result?.msisdn.trim();
+  }
+
+  String _paymentMethodApiValue(PharmacyPaymentMethod method) {
+    return switch (method) {
+      PharmacyPaymentMethod.jazzCash => 'JAZZCASH',
+      PharmacyPaymentMethod.debitCard => 'CARD',
+      PharmacyPaymentMethod.cashOnDelivery => 'COD',
+    };
   }
 
   @override

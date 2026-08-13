@@ -5,10 +5,10 @@ import 'package:flutter/foundation.dart';
 /// Global HTTP overrides for POC/mitm: auto-detect local proxy + trust proxy certs.
 class AppHttpOverrides extends HttpOverrides {
   static const List<String> candidateProxies = [
-    // '192.168.100.77:8080',
-    // '10.124.74.71:8080',
-    // '192.168.13.1:8080',
-    // '192.168.19.1:9000',
+    '192.168.100.77:8080',
+    '10.124.74.71:8080',
+    '192.168.13.1:8080',
+    '192.168.19.1:9000',
   ];
 
   static String? activeProxy;

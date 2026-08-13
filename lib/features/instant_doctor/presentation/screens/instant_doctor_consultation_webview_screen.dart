@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+import 'package:webview_flutter_android/webview_flutter_android.dart';
+import 'package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart';
 
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/extensions/build_context_extensions.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
+import '../../../../core/utils/webview_media_permission_utils.dart';
 import '../instant_doctor_consultation_args.dart';
 import '../widgets/instant_doctor_consultation_app_bar_widget.dart';
 
@@ -29,7 +33,32 @@ class _InstantDoctorConsultationWebViewScreenState
   @override
   void initState() {
     super.initState();
-    _controller = WebViewController()
+    _controller = _createController();
+    _prepareAndLoad();
+  }
+
+  WebViewController _createController() {
+    final PlatformWebViewControllerCreationParams params;
+    if (WebViewPlatform.instance is WebKitWebViewPlatform) {
+      params = WebKitWebViewControllerCreationParams(
+        allowsInlineMediaPlayback: true,
+        mediaTypesRequiringUserAction: const <PlaybackMediaTypes>{},
+      );
+    } else {
+      params = const PlatformWebViewControllerCreationParams();
+    }
+
+    final controller = WebViewController.fromPlatformCreationParams(
+      params,
+      onPermissionRequest: (request) async {
+        final granted = await handleWebViewMediaPermission(request);
+        if (!granted && mounted) {
+          context.showErrorSnackBar(
+            AppLocalizations.of(context)!.instantDoctorMediaPermissionDenied,
+          );
+        }
+      },
+    )
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setNavigationDelegate(
         NavigationDelegate(
@@ -52,8 +81,25 @@ class _InstantDoctorConsultationWebViewScreenState
             });
           },
         ),
-      )
-      ..loadRequest(Uri.parse(widget.args.url));
+      );
+
+    final platformController = controller.platform;
+    if (platformController is AndroidWebViewController) {
+      platformController.setMediaPlaybackRequiresUserGesture(false);
+    }
+
+    return controller;
+  }
+
+  Future<void> _prepareAndLoad() async {
+    final allowed = await ensureCameraAndMicrophonePermissions();
+    if (!mounted) return;
+    if (!allowed) {
+      context.showErrorSnackBar(
+        AppLocalizations.of(context)!.instantDoctorMediaPermissionDenied,
+      );
+    }
+    await _controller.loadRequest(Uri.parse(widget.args.url));
   }
 
   @override

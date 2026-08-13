@@ -473,6 +473,10 @@ class AppLocalizationsUr extends AppLocalizations {
   String get instantDoctorOpenAppError => 'اس وقت سبسکرپشن صفحہ نہیں کھل سکا۔';
 
   @override
+  String get instantDoctorMediaPermissionDenied =>
+      'ویڈیو مشاورت شروع کرنے کے لیے سیٹنگز میں کیمرہ اور مائیکروفون کی اجازت دیں۔';
+
+  @override
   String get instantDoctorSubscribe => 'سبسکرائب کریں';
 
   @override

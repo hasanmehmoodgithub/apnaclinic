@@ -7,7 +7,7 @@
 ## Routes / entry
 
 - Bottom nav tab: `dashboardBottomInstantDoctor` → `InstantDoctorScreen` (via main navigation shell). **Login required** — guests are sent to `AppRoutes.authLogin` (bottom nav and home banner).
-- `AppRoutes.instantDoctorConsultation` — `InstantDoctorConsultationWebViewScreen`; extra: `InstantDoctorConsultationArgs` (`url`, `title`).
+- `AppRoutes.instantDoctorConsultation` — `InstantDoctorConsultationWebViewScreen`; extra: `InstantDoctorConsultationArgs` (`url`, `title`). Opens after OS camera + mic permission; WebView `onPermissionRequest` grants camera/mic to the page (deny → snackbar).
 
 ## Data & APIs
 
@@ -23,6 +23,7 @@
 
 - `InstantDoctorCubit` — loads providers; `onProviderPrimaryTap` / `onCancelSubscriptionConfirmed` orchestrate subscribe/unsubscribe OTP; `verifyOtp` reloads content on success; `consultationUrl` returns provider `redirectUrl`.
 - `InstantDoctorScreen` — layout and UI reactions (OTP sheet, dialogs, snackbars); opens consultation via `AppRoutes.instantDoctorConsultation` web view screen; reloads providers when web view closes.
+- `InstantDoctorConsultationWebViewScreen` — requests camera + microphone, then loads `redirectUrl`. When the page asks for media, `handleWebViewMediaPermission` requests OS access and `grant()`s the WebView (Android `onPermissionRequest`; iOS uses Info.plist + runtime prompt).
 
 ## DI
 

@@ -336,6 +336,8 @@ class PharmacyCubit extends Cubit<PharmacyState> {
   Future<Either<ErrorMsg, PharmacyCheckoutResultEntity>> checkoutOrder({
     required String address,
     required String region,
+    String? jazzCashNumber,
+    String? deliveryInstructions,
     List<PharmacyCheckoutPrescriptionParams> prescriptions = const [],
   }) async {
     if (!AuthGuard.isLoggedIn(appPref)) {
@@ -343,7 +345,7 @@ class PharmacyCubit extends Cubit<PharmacyState> {
     }
 
     final trimmedRegion = region.trim();
-    // If address field is empty, save/use the selected city.
+    // If address field is empty, use the selected city.
     final trimmedAddress = address.trim().isNotEmpty
         ? address.trim()
         : trimmedRegion;
@@ -362,6 +364,12 @@ class PharmacyCubit extends Cubit<PharmacyState> {
       return const Left(AppStrings.pharmacyCheckoutMissingContextError);
     }
 
+    final isJazzCash = paymentMethod == 'JAZZCASH';
+    final jazzCash = jazzCashNumber?.trim() ?? '';
+    if (isJazzCash && jazzCash.isEmpty) {
+      return const Left(AppStrings.pharmacyCheckoutMissingContextError);
+    }
+
     final locationResult = await _resolveUserLocationId(
       address: trimmedAddress,
       cityId: cityId,
@@ -373,6 +381,8 @@ class PharmacyCubit extends Cubit<PharmacyState> {
         PharmacyCheckoutParams(
           userLocationId: userLocationId,
           paymentMethod: paymentMethod,
+          jazzCashNumber: isJazzCash ? jazzCash : null,
+          deliveryInstructions: deliveryInstructions,
           prescriptions: prescriptions,
         ),
       ),
@@ -494,7 +504,6 @@ class PharmacyCubit extends Cubit<PharmacyState> {
           item.cityId.trim() == trimmedCityId;
       final sameCityName = normalizedCity.isNotEmpty &&
           _normalizeAddress(item.region) == normalizedCity;
-      // Match on line1; if city metadata exists, require city match too.
       if (item.cityId.trim().isEmpty && item.region.trim().isEmpty) {
         return item;
       }
