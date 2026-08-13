@@ -20,6 +20,7 @@ import '../../domain/use_cases/get_pharmacy_product_detail_use_case.dart';
 import '../../domain/use_cases/get_pharmacy_profile_addresses_use_case.dart';
 import '../../domain/use_cases/pharmacy_checkout_use_case.dart';
 import '../../domain/use_cases/update_pharmacy_cart_quantity_use_case.dart';
+import '../../domain/use_cases/upload_pharmacy_prescription_use_case.dart';
 import 'pharmacy_state.dart';
 
 class PharmacyCubit extends Cubit<PharmacyState> {
@@ -29,6 +30,7 @@ class PharmacyCubit extends Cubit<PharmacyState> {
     required this.getPharmacyCartUseCase,
     required this.addToCartUseCase,
     required this.updatePharmacyCartQuantityUseCase,
+    required this.uploadPharmacyPrescriptionUseCase,
     required this.pharmacyCheckoutUseCase,
     required this.getPharmacyProfileAddressesUseCase,
     required this.addPharmacyProfileAddressUseCase,
@@ -47,6 +49,7 @@ class PharmacyCubit extends Cubit<PharmacyState> {
   final GetPharmacyCartUseCase getPharmacyCartUseCase;
   final AddToCartUseCase addToCartUseCase;
   final UpdatePharmacyCartQuantityUseCase updatePharmacyCartQuantityUseCase;
+  final UploadPharmacyPrescriptionUseCase uploadPharmacyPrescriptionUseCase;
   final PharmacyCheckoutUseCase pharmacyCheckoutUseCase;
   final GetPharmacyProfileAddressesUseCase getPharmacyProfileAddressesUseCase;
   final AddPharmacyProfileAddressUseCase addPharmacyProfileAddressUseCase;
@@ -175,7 +178,7 @@ class PharmacyCubit extends Cubit<PharmacyState> {
       (cart) => emit(
         state.copyWith(
           cartBookingId: cart.bookingId,
-          cartItems: cart.items,
+          cartItems: _mergePrescriptionUrls(cart.items),
           cartAddresses: cart.addresses,
           paymentBreakdown: cart.paymentBreakdown,
         ),
@@ -183,9 +186,30 @@ class PharmacyCubit extends Cubit<PharmacyState> {
     );
   }
 
+  /// Uploads prescription file; returns URL on success, null on failure.
+  Future<String?> uploadPrescription({
+    required String productId,
+    required String filePath,
+    required String fileName,
+  }) async {
+    if (!AuthGuard.isLoggedIn(appPref)) return null;
+
+    final result = await uploadPharmacyPrescriptionUseCase(
+      UploadPharmacyPrescriptionParams(
+        productId: productId,
+        filePath: filePath,
+        fileName: fileName,
+      ),
+    );
+    if (isClosed) return null;
+
+    return result.fold((_) => null, (url) => url.trim().isEmpty ? null : url);
+  }
+
   Future<bool> addToCartApi(
     PharmacyMedicineEntity medicine, {
     int quantity = 1,
+    String prescriptionUrl = '',
   }) async {
     if (!AuthGuard.isLoggedIn(appPref)) return false;
 
@@ -196,11 +220,16 @@ class PharmacyCubit extends Cubit<PharmacyState> {
 
     // Product already in cart → increase quantity via update API only.
     if (existingIndex >= 0) {
-      final nextQty = state.cartItems[existingIndex].quantity + addQty;
-      return _setCartQuantity(
+      final existing = state.cartItems[existingIndex];
+      final nextQty = existing.quantity + addQty;
+      final updated = await _setCartQuantity(
         medicineId: medicine.id,
         quantity: nextQty,
       );
+      if (updated && prescriptionUrl.trim().isNotEmpty) {
+        _setPrescriptionUrl(medicine.id, prescriptionUrl.trim());
+      }
+      return updated;
     }
 
     final result = await addToCartUseCase(
@@ -220,6 +249,7 @@ class PharmacyCubit extends Cubit<PharmacyState> {
           bookingId: addResult.bookingId,
           items: addResult.items,
           hasProductList: addResult.hasProductList,
+          prescriptionUrl: prescriptionUrl.trim(),
         );
         return true;
       },
@@ -232,6 +262,7 @@ class PharmacyCubit extends Cubit<PharmacyState> {
     required String? bookingId,
     required List<PharmacyCartItemEntity> items,
     required bool hasProductList,
+    String prescriptionUrl = '',
   }) {
     final nextBookingId =
         (bookingId != null && bookingId.trim().isNotEmpty)
@@ -239,10 +270,20 @@ class PharmacyCubit extends Cubit<PharmacyState> {
         : state.cartBookingId;
 
     if (hasProductList) {
+      var nextItems = _mergePrescriptionUrls(items);
+      if (prescriptionUrl.isNotEmpty) {
+        nextItems = nextItems
+            .map(
+              (item) => item.medicine.id == medicine.id
+                  ? item.copyWith(prescriptionUrl: prescriptionUrl)
+                  : item,
+            )
+            .toList(growable: false);
+      }
       emit(
         state.copyWith(
           cartBookingId: nextBookingId,
-          cartItems: items,
+          cartItems: nextItems,
           paymentBreakdown: null,
         ),
       );
@@ -254,10 +295,17 @@ class PharmacyCubit extends Cubit<PharmacyState> {
     if (index >= 0) {
       cartItems[index] = cartItems[index].copyWith(
         quantity: cartItems[index].quantity + quantity,
+        prescriptionUrl: prescriptionUrl.isNotEmpty
+            ? prescriptionUrl
+            : cartItems[index].prescriptionUrl,
       );
     } else {
       cartItems.add(
-        PharmacyCartItemEntity(medicine: medicine, quantity: quantity),
+        PharmacyCartItemEntity(
+          medicine: medicine,
+          quantity: quantity,
+          prescriptionUrl: prescriptionUrl,
+        ),
       );
     }
 
@@ -268,6 +316,38 @@ class PharmacyCubit extends Cubit<PharmacyState> {
         paymentBreakdown: null,
       ),
     );
+  }
+
+  void _setPrescriptionUrl(String medicineId, String url) {
+    final cartItems = state.cartItems
+        .map(
+          (item) => item.medicine.id == medicineId
+              ? item.copyWith(prescriptionUrl: url)
+              : item,
+        )
+        .toList(growable: false);
+    emit(state.copyWith(cartItems: cartItems));
+  }
+
+  List<PharmacyCartItemEntity> _mergePrescriptionUrls(
+    List<PharmacyCartItemEntity> items,
+  ) {
+    if (state.cartItems.isEmpty) return items;
+    final byId = <String, String>{
+      for (final item in state.cartItems)
+        if (item.prescriptionUrl.trim().isNotEmpty)
+          item.medicine.id: item.prescriptionUrl.trim(),
+    };
+    if (byId.isEmpty) return items;
+    return items
+        .map((item) {
+          // Prefer server `prescription_url` when present.
+          if (item.prescriptionUrl.trim().isNotEmpty) return item;
+          final local = byId[item.medicine.id];
+          if (local == null || local.isEmpty) return item;
+          return item.copyWith(prescriptionUrl: local);
+        })
+        .toList(growable: false);
   }
 
   Future<void> increaseQuantity(String medicineId) async {
@@ -286,6 +366,11 @@ class PharmacyCubit extends Cubit<PharmacyState> {
             .toList(),
       ),
     );
+  }
+
+  /// Removes item via quantity update API (`quantity: 0`).
+  Future<bool> removeCartItem(String medicineId) async {
+    return _setCartQuantity(medicineId: medicineId, quantity: 0);
   }
 
   void selectPaymentMethod(PharmacyPaymentMethod method) {
@@ -336,7 +421,8 @@ class PharmacyCubit extends Cubit<PharmacyState> {
   Future<Either<ErrorMsg, PharmacyCheckoutResultEntity>> checkoutOrder({
     required String address,
     required String region,
-    List<PharmacyCheckoutPrescriptionParams> prescriptions = const [],
+    String? paymentMethod,
+    List<PharmacyCheckoutPrescriptionParams>? prescriptions,
   }) async {
     if (!AuthGuard.isLoggedIn(appPref)) {
       return const Left(AppStrings.pharmacyCheckoutMissingContextError);
@@ -357,10 +443,15 @@ class PharmacyCubit extends Cubit<PharmacyState> {
 
     final cityId =
         citiesRepository.cityIdForName(trimmedRegion)?.trim() ?? '';
-    final paymentMethod = _paymentMethodApiValue(state.selectedPaymentMethod);
+    final resolvedPaymentMethod = (paymentMethod?.trim().isNotEmpty == true)
+        ? paymentMethod!.trim().toUpperCase()
+        : _paymentMethodApiValue(state.selectedPaymentMethod);
     if (cityId.isEmpty) {
       return const Left(AppStrings.pharmacyCheckoutMissingContextError);
     }
+
+    final checkoutPrescriptions =
+        prescriptions ?? _prescriptionsFromCartItems();
 
     final locationResult = await _resolveUserLocationId(
       address: trimmedAddress,
@@ -372,11 +463,25 @@ class PharmacyCubit extends Cubit<PharmacyState> {
       (userLocationId) => pharmacyCheckoutUseCase(
         PharmacyCheckoutParams(
           userLocationId: userLocationId,
-          paymentMethod: paymentMethod,
-          prescriptions: prescriptions,
+          paymentMethod: resolvedPaymentMethod,
+          prescriptions: checkoutPrescriptions,
         ),
       ),
     );
+  }
+
+  List<PharmacyCheckoutPrescriptionParams> _prescriptionsFromCartItems() {
+    final list = <PharmacyCheckoutPrescriptionParams>[];
+    for (final item in state.cartItems) {
+      final url = item.prescriptionUrl.trim();
+      if (url.isEmpty) continue;
+      final productId = int.tryParse(item.medicine.id.trim());
+      if (productId == null) continue;
+      list.add(
+        PharmacyCheckoutPrescriptionParams(productId: productId, url: url),
+      );
+    }
+    return list;
   }
 
   /// Loads saved pharmacy addresses. Prefill priority: list → profile → city.

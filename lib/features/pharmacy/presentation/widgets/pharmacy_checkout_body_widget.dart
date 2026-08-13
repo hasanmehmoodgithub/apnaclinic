@@ -7,6 +7,8 @@ import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/widgets/app_button_widget.dart';
 import '../../../../core/widgets/heart_loader_widget.dart';
+import '../../../consultation/presentation/models/doctor_consultation_jazzcash_sheet_result.dart';
+import '../../../consultation/presentation/widgets/doctor_consultation_jazzcash_accounts_sheet_widget.dart';
 import '../../../payment/domain/entities/payment_initiation_result.dart';
 import '../../../payment/presentation/payment_navigation.dart';
 import '../cubit/pharmacy_cubit.dart';
@@ -31,6 +33,22 @@ class PharmacyCheckoutBodyWidget extends StatelessWidget {
 
   Future<void> _onConfirm(BuildContext context) async {
     final cubit = context.read<PharmacyCubit>();
+    final l10n = AppLocalizations.of(context)!;
+    final selected = cubit.state.selectedPaymentMethod;
+
+    // JazzCash account picker lives in the shared consultation/account feature.
+    if (selected == PharmacyPaymentMethod.jazzCash) {
+      final jazzResult =
+          await showModalBottomSheet<DoctorConsultationJazzCashSheetResult>(
+        context: context,
+        isScrollControlled: true,
+        backgroundColor: Colors.transparent,
+        builder: (_) => const DoctorConsultationJazzCashAccountsSheetWidget(),
+      );
+      final msisdn = jazzResult?.msisdn.trim() ?? '';
+      if (!context.mounted || msisdn.isEmpty) return;
+    }
+
     showHeartLoaderDialog(context, id: _checkoutLoaderId, size: 120);
     final result = await cubit.checkoutOrder(
       address: addressController.text,
@@ -46,6 +64,7 @@ class PharmacyCheckoutBodyWidget extends StatelessWidget {
         );
       },
       (checkout) async {
+        // Card WebView lives in the shared payment feature.
         final paymentResult = await settleCardPaymentIfNeeded(
           context,
           PaymentInitiationResult(
@@ -53,6 +72,7 @@ class PharmacyCheckoutBodyWidget extends StatelessWidget {
             orderId: checkout.orderNo,
             status: checkout.status,
           ),
+          title: l10n.pharmacyCheckoutTitle,
         );
         if (!context.mounted) return;
         if (!paymentResult.isSuccess) {

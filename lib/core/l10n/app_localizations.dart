@@ -974,6 +974,96 @@ abstract class AppLocalizations {
   /// **'Add to cart'**
   String get pharmacyAddToCartLower;
 
+  /// Badge shown when a medicine requires a prescription
+  ///
+  /// In en, this message translates to:
+  /// **'REQUIRES PRESCRIPTION'**
+  String get pharmacyRequiresPrescription;
+
+  /// No description provided for @pharmacyPrescriptionRequiredMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'This medicine requires a valid doctor prescription. Please upload a prescription.'**
+  String get pharmacyPrescriptionRequiredMessage;
+
+  /// No description provided for @pharmacyPrescriptionUploadHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Click to upload prescription'**
+  String get pharmacyPrescriptionUploadHint;
+
+  /// No description provided for @pharmacyPrescriptionUploadFormats.
+  ///
+  /// In en, this message translates to:
+  /// **'PNG, JPEG, WEBP, PDF supported (Max 5MB)'**
+  String get pharmacyPrescriptionUploadFormats;
+
+  /// No description provided for @pharmacyPrescriptionRemoveFile.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove file'**
+  String get pharmacyPrescriptionRemoveFile;
+
+  /// No description provided for @pharmacyPrescriptionRequiredToAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'Please upload a prescription before adding to cart.'**
+  String get pharmacyPrescriptionRequiredToAdd;
+
+  /// No description provided for @pharmacyPrescriptionUploadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Prescription upload failed. Please try again.'**
+  String get pharmacyPrescriptionUploadFailed;
+
+  /// No description provided for @pharmacyPrescriptionPickFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to pick prescription file. Please try again.'**
+  String get pharmacyPrescriptionPickFailed;
+
+  /// No description provided for @pharmacyPrescriptionInvalidType.
+  ///
+  /// In en, this message translates to:
+  /// **'Unsupported file type. Use PNG, JPEG, WEBP, or PDF.'**
+  String get pharmacyPrescriptionInvalidType;
+
+  /// No description provided for @pharmacyPrescriptionTooLarge.
+  ///
+  /// In en, this message translates to:
+  /// **'File is too large. Maximum size is 5MB.'**
+  String get pharmacyPrescriptionTooLarge;
+
+  /// No description provided for @pharmacyPrescriptionUploadedLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Prescription uploaded'**
+  String get pharmacyPrescriptionUploadedLabel;
+
+  /// No description provided for @pharmacyPrescriptionUploadedHint.
+  ///
+  /// In en, this message translates to:
+  /// **'A prescription is already attached for this medicine.'**
+  String get pharmacyPrescriptionUploadedHint;
+
+  /// No description provided for @pharmacyPrescriptionReupload.
+  ///
+  /// In en, this message translates to:
+  /// **'Re-upload'**
+  String get pharmacyPrescriptionReupload;
+
+  /// No description provided for @pharmacyPrescriptionKeepCurrent.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep current'**
+  String get pharmacyPrescriptionKeepCurrent;
+
+  /// No description provided for @pharmacyAddToCartFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to add to cart right now. Please try again.'**
+  String get pharmacyAddToCartFailed;
+
   /// No description provided for @instantDoctorTitle.
   ///
   /// In en, this message translates to:
@@ -1477,6 +1567,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Cancel'**
   String get dashboardCancel;
+
+  /// No description provided for @dashboardCloseAppTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Exit App'**
+  String get dashboardCloseAppTitle;
+
+  /// No description provided for @dashboardCloseAppMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to exit Apna Clinic?'**
+  String get dashboardCloseAppMessage;
+
+  /// No description provided for @dashboardCloseAppCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Exit'**
+  String get dashboardCloseAppCta;
 
   /// No description provided for @dashboardAppUpdateAvailableTitle.
   ///

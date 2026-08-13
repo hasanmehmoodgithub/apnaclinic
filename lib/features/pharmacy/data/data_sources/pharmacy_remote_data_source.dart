@@ -22,6 +22,12 @@ abstract class PharmacyRemoteDataSource {
     required String quantity,
   });
 
+  Future<Map<String, dynamic>> uploadPrescription({
+    required String productId,
+    required String filePath,
+    required String fileName,
+  });
+
   Future<Map<String, dynamic>> checkoutOrder({
     required String userLocationId,
     required String paymentMethod,

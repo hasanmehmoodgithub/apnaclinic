@@ -191,6 +191,10 @@ class AppUrls {
   static String get pharmacyAddToCart =>
       '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/partner/pharmacy/cart/add';
 
+  /// Pharmacy prescription upload (POST multipart).
+  static String get pharmacyPrescriptionUpload =>
+      '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/partner/pharmacy/prescription/upload/cart';
+
   /// Pharmacy cart quantity update (POST).
   static String get pharmacyUpdateCartQuantity =>
       '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/partner/pharmacy/cart/quantity/update';

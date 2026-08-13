@@ -230,6 +230,7 @@ class PharmacyMockApi {
               'unitPrice': 590,
               'line_total': 590,
               'quantity': 1,
+              'prescription_url': '',
               'product': {
                 'product_id': 178,
                 'display_name': '2Sum 2gm Injection 1 vial',
@@ -429,6 +430,24 @@ class PharmacyMockApi {
         'city': 'Rawalpindi',
         'invoiceUrl': null,
         'messageAlert': null,
+      },
+    };
+  }
+
+  Future<Map<String, dynamic>> uploadPrescriptionSuccessResponse({
+    required String productId,
+    required String fileName,
+  }) async {
+    await Future<void>.delayed(const Duration(milliseconds: 500));
+    return {
+      'success': true,
+      'message': 'Prescription uploaded successfully',
+      'code': 200,
+      'data': {
+        'product_id': int.tryParse(productId) ?? productId,
+        'url':
+            'https://mediq-bucket.s3.amazonaws.com/prescriptions/mock/$fileName',
+        'file_name': fileName,
       },
     };
   }

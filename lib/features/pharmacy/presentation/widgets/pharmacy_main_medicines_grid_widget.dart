@@ -26,9 +26,9 @@ class PharmacyMainMedicinesGridWidget extends StatelessWidget {
       itemCount: medicines.length,
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
-        mainAxisSpacing: 0.h,
-        crossAxisSpacing: 7.w,
-        childAspectRatio: 0.72
+        mainAxisSpacing: 10.h,
+        crossAxisSpacing: 10.w,
+        childAspectRatio: 0.62,
       ),
       itemBuilder: (context, index) {
         final item = medicines[index];

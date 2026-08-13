@@ -55,7 +55,7 @@ class PharmacyMedicineContentSection extends StatelessWidget {
             final mainSpacing = 16.h;
             final itemWidth =
                 (width - (crossAxisCount - 1) * crossSpacing) / crossAxisCount;
-            final itemHeight = width >= 640 ? 242.h : 220.h;
+            final itemHeight = width >= 640 ? 280.h : 260.h;
             final childAspectRatio = itemWidth / itemHeight;
 
             return GridView.builder(

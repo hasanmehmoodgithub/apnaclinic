@@ -29,6 +29,12 @@ abstract class PharmacyRepository {
     required String quantity,
   });
 
+  Future<Either<ErrorMsg, String>> uploadPrescription({
+    required String productId,
+    required String filePath,
+    required String fileName,
+  });
+
   Future<Either<ErrorMsg, PharmacyCheckoutResultEntity>> checkoutOrder({
     required String userLocationId,
     required String paymentMethod,

@@ -65,6 +65,7 @@ class PharmacyMedicineMapper {
       lineId: item.lineId,
       unitPrice: item.unitPrice,
       lineTotal: item.lineTotal,
+      prescriptionUrl: item.prescriptionUrl,
     );
   }
 
@@ -182,6 +183,26 @@ class PharmacyMedicineMapper {
     if (value == null) return null;
     final text = value.toString().trim();
     return text.isEmpty ? null : text;
+  }
+
+  /// Parses prescription upload response for a stored file URL.
+  static String prescriptionUrlFromUploadResponse(
+    Map<String, dynamic> response,
+  ) {
+    final data = _unwrapCheckoutPayload(response);
+    final candidates = <Object?>[
+      data['url'],
+      data['prescription_url'],
+      data['prescriptionUrl'],
+      data['file_url'],
+      data['fileUrl'],
+      data['path'],
+    ];
+    for (final candidate in candidates) {
+      final url = _stringOrNull(candidate);
+      if (url != null) return url;
+    }
+    return '';
   }
 
   static List<PharmacyCartItemEntity> toCartItemEntityList(

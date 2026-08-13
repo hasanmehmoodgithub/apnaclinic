@@ -54,6 +54,7 @@ class Assets {
   static const String fontsSatoshiVariableItalic = 'assets/fonts/satoshi/Satoshi_Complete/Fonts/WEB/fonts/Satoshi-VariableItalic.eot';
   static const String gifsPlaceholder = 'assets/gifs/placeholder.txt';
   static const String iconsBasket = 'assets/icons/basket.svg';
+  static const String iconsAddToCart = 'assets/icons/add_to_cart.png';
   static const String iconsBooking = 'assets/icons/booking.svg';
   static const String iconsCalendar = 'assets/icons/calendar.svg';
   static const String iconsCash = 'assets/icons/cash.svg';

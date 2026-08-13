@@ -7,6 +7,7 @@ class PharmacyCartItemEntity {
     this.lineId = '',
     this.unitPrice,
     this.lineTotal,
+    this.prescriptionUrl = '',
   });
 
   final PharmacyMedicineEntity medicine;
@@ -14,6 +15,7 @@ class PharmacyCartItemEntity {
   final String lineId;
   final double? unitPrice;
   final double? lineTotal;
+  final String prescriptionUrl;
 
   PharmacyCartItemEntity copyWith({
     PharmacyMedicineEntity? medicine,
@@ -21,6 +23,7 @@ class PharmacyCartItemEntity {
     String? lineId,
     double? unitPrice,
     double? lineTotal,
+    String? prescriptionUrl,
   }) {
     return PharmacyCartItemEntity(
       medicine: medicine ?? this.medicine,
@@ -28,6 +31,7 @@ class PharmacyCartItemEntity {
       lineId: lineId ?? this.lineId,
       unitPrice: unitPrice ?? this.unitPrice,
       lineTotal: lineTotal ?? this.lineTotal,
+      prescriptionUrl: prescriptionUrl ?? this.prescriptionUrl,
     );
   }
 

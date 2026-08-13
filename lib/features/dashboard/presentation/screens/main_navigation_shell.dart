@@ -20,6 +20,7 @@ import '../../../instant_doctor/presentation/screens/instant_doctor_screen.dart'
 import '../../../profile_setup/presentation/cubit/profile_setup_cubit.dart';
 import '../constants/main_navigation_tabs.dart';
 import '../widgets/apna_bottom_navigation_bar.dart';
+import '../widgets/app_close_dialog.dart';
 import '../widgets/keep_alive_tab_page.dart';
 import '../cubit/main_navigation_cubit.dart';
 import '../cubit/main_navigation_state.dart';
@@ -54,6 +55,7 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
   int _tabSessionKey = 0;
   int _bookingsInitialTabIndex = 0;
   int _bookingsDashboardKey = 0;
+  bool _isCloseDialogVisible = false;
 
   @override
   void initState() {
@@ -115,6 +117,21 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
     _navigationCubit.setIndex(_homeIndex);
     if (_pageController.hasClients) {
       _pageController.jumpToPage(_homeIndex);
+    }
+    _applyStatusBar();
+  }
+
+  Future<void> _onBackRequested() async {
+    if (_navigationCubit.state.currentIndex != _homeIndex) {
+      _goToHomeTab();
+      return;
+    }
+    if (_isCloseDialogVisible) return;
+    _isCloseDialogVisible = true;
+    final shouldExit = await showAppCloseDialog(context);
+    _isCloseDialogVisible = false;
+    if (shouldExit && mounted) {
+      SystemNavigator.pop();
     }
   }
 
@@ -205,38 +222,47 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
           builder: (context, state) {
             return AnnotatedRegion<SystemUiOverlayStyle>(
               value: _shellSystemUi,
-              child: Scaffold(
-                backgroundColor: Colors.white,
-                body: PageView(
-                  controller: _pageController,
-                  onPageChanged: _onPageChanged,
-                  physics: const NeverScrollableScrollPhysics(),
-                  children: [
-                    KeepAliveTabPage(
-                      key: ValueKey('home_$_tabSessionKey'),
-                      child: const HomeScreen(),
-                    ),
-                    KeepAliveTabPage(
-                      key: ValueKey('instant_doctor_$_tabSessionKey'),
-                      child: const InstantDoctorScreen(showBackButton: false),
-                    ),
-                    KeepAliveTabPage(
-                      key: ValueKey('bookings_$_tabSessionKey'),
-                      child: BookingsDashboardScreen(
-                        key: ValueKey('bookings_dash_$_bookingsDashboardKey'),
-                        showBackButton: false,
-                        initialTabIndex: _bookingsInitialTabIndex,
+              child: PopScope(
+                canPop: false,
+                onPopInvokedWithResult: (didPop, _) {
+                  if (didPop) return;
+                  _onBackRequested();
+                },
+                child: Scaffold(
+                  backgroundColor: Colors.white,
+                  body: PageView(
+                    controller: _pageController,
+                    onPageChanged: _onPageChanged,
+                    physics: const NeverScrollableScrollPhysics(),
+                    children: [
+                      KeepAliveTabPage(
+                        key: ValueKey('home_$_tabSessionKey'),
+                        child: const HomeScreen(),
                       ),
-                    ),
-                    KeepAliveTabPage(
-                      key: ValueKey('support_$_tabSessionKey'),
-                      child: const CustomerSupportScreen(showBackButton: false),
-                    ),
-                  ],
-                ),
-                bottomNavigationBar: ApnaBottomNavigationBar(
-                  currentIndex: state.currentIndex,
-                  onTap: _onNavTap,
+                      KeepAliveTabPage(
+                        key: ValueKey('instant_doctor_$_tabSessionKey'),
+                        child: const InstantDoctorScreen(showBackButton: false),
+                      ),
+                      KeepAliveTabPage(
+                        key: ValueKey('bookings_$_tabSessionKey'),
+                        child: BookingsDashboardScreen(
+                          key: ValueKey('bookings_dash_$_bookingsDashboardKey'),
+                          showBackButton: false,
+                          initialTabIndex: _bookingsInitialTabIndex,
+                        ),
+                      ),
+                      KeepAliveTabPage(
+                        key: ValueKey('support_$_tabSessionKey'),
+                        child: const CustomerSupportScreen(
+                          showBackButton: false,
+                        ),
+                      ),
+                    ],
+                  ),
+                  bottomNavigationBar: ApnaBottomNavigationBar(
+                    currentIndex: state.currentIndex,
+                    onTap: _onNavTap,
+                  ),
                 ),
               ),
             );

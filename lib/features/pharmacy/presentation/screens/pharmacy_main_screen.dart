@@ -40,15 +40,18 @@ class PharmacyMainScreen extends StatelessWidget {
               ),
             ),
             Expanded(
-              child: Container(
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: AppColors.clrWhite,
-                  borderRadius: BorderRadius.vertical(
-                    top: Radius.circular(42.r),
+              child: SafeArea(
+                top: false,
+                child: Container(
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: AppColors.clrWhite,
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(42.r),
+                    ),
                   ),
+                  child: const PharmacyMainMedicinesBodyWidget(),
                 ),
-                child: const PharmacyMainMedicinesBodyWidget(),
               ),
             ),
           ],

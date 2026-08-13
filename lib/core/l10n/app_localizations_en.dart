@@ -464,6 +464,60 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pharmacyAddToCartLower => 'Add to cart';
 
   @override
+  String get pharmacyRequiresPrescription => 'REQUIRES PRESCRIPTION';
+
+  @override
+  String get pharmacyPrescriptionRequiredMessage =>
+      'This medicine requires a valid doctor prescription. Please upload a prescription.';
+
+  @override
+  String get pharmacyPrescriptionUploadHint => 'Click to upload prescription';
+
+  @override
+  String get pharmacyPrescriptionUploadFormats =>
+      'PNG, JPEG, WEBP, PDF supported (Max 5MB)';
+
+  @override
+  String get pharmacyPrescriptionRemoveFile => 'Remove file';
+
+  @override
+  String get pharmacyPrescriptionRequiredToAdd =>
+      'Please upload a prescription before adding to cart.';
+
+  @override
+  String get pharmacyPrescriptionUploadFailed =>
+      'Prescription upload failed. Please try again.';
+
+  @override
+  String get pharmacyPrescriptionPickFailed =>
+      'Unable to pick prescription file. Please try again.';
+
+  @override
+  String get pharmacyPrescriptionInvalidType =>
+      'Unsupported file type. Use PNG, JPEG, WEBP, or PDF.';
+
+  @override
+  String get pharmacyPrescriptionTooLarge =>
+      'File is too large. Maximum size is 5MB.';
+
+  @override
+  String get pharmacyPrescriptionUploadedLabel => 'Prescription uploaded';
+
+  @override
+  String get pharmacyPrescriptionUploadedHint =>
+      'A prescription is already attached for this medicine.';
+
+  @override
+  String get pharmacyPrescriptionReupload => 'Re-upload';
+
+  @override
+  String get pharmacyPrescriptionKeepCurrent => 'Keep current';
+
+  @override
+  String get pharmacyAddToCartFailed =>
+      'Unable to add to cart right now. Please try again.';
+
+  @override
   String get instantDoctorTitle => 'Instant Doctor';
 
   @override
@@ -738,6 +792,16 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get dashboardCancel => 'Cancel';
+
+  @override
+  String get dashboardCloseAppTitle => 'Exit App';
+
+  @override
+  String get dashboardCloseAppMessage =>
+      'Are you sure you want to exit Apna Clinic?';
+
+  @override
+  String get dashboardCloseAppCta => 'Exit';
 
   @override
   String get dashboardAppUpdateAvailableTitle => 'Update Available';

@@ -464,6 +464,61 @@ class AppLocalizationsUr extends AppLocalizations {
   String get pharmacyAddToCartLower => 'کارٹ میں شامل کریں';
 
   @override
+  String get pharmacyRequiresPrescription => 'نسخہ درکار ہے';
+
+  @override
+  String get pharmacyPrescriptionRequiredMessage =>
+      'اس دوا کے لیے درست ڈاکٹر کا نسخہ درکار ہے۔ براہ کرم نسخہ اپ لوڈ کریں۔';
+
+  @override
+  String get pharmacyPrescriptionUploadHint =>
+      'نسخہ اپ لوڈ کرنے کے لیے کلک کریں';
+
+  @override
+  String get pharmacyPrescriptionUploadFormats =>
+      'PNG، JPEG، WEBP، PDF معاونت یافتہ (زیادہ سے زیادہ 5MB)';
+
+  @override
+  String get pharmacyPrescriptionRemoveFile => 'فائل ہٹائیں';
+
+  @override
+  String get pharmacyPrescriptionRequiredToAdd =>
+      'کارٹ میں شامل کرنے سے پہلے براہ کرم نسخہ اپ لوڈ کریں۔';
+
+  @override
+  String get pharmacyPrescriptionUploadFailed =>
+      'نسخہ اپ لوڈ ناکام رہا۔ براہ کرم دوبارہ کوشش کریں۔';
+
+  @override
+  String get pharmacyPrescriptionPickFailed =>
+      'نسخہ فائل منتخب نہیں ہو سکی۔ براہ کرم دوبارہ کوشش کریں۔';
+
+  @override
+  String get pharmacyPrescriptionInvalidType =>
+      'غیر معاون فائل قسم۔ PNG، JPEG، WEBP، یا PDF استعمال کریں۔';
+
+  @override
+  String get pharmacyPrescriptionTooLarge =>
+      'فائل بہت بڑی ہے۔ زیادہ سے زیادہ سائز 5MB ہے۔';
+
+  @override
+  String get pharmacyPrescriptionUploadedLabel => 'نسخہ اپ لوڈ ہو چکا ہے';
+
+  @override
+  String get pharmacyPrescriptionUploadedHint =>
+      'اس دوا کے لیے نسخہ پہلے سے منسلک ہے۔';
+
+  @override
+  String get pharmacyPrescriptionReupload => 'دوبارہ اپ لوڈ کریں';
+
+  @override
+  String get pharmacyPrescriptionKeepCurrent => 'موجودہ رکھیں';
+
+  @override
+  String get pharmacyAddToCartFailed =>
+      'اس وقت کارٹ میں شامل نہیں کیا جا سکا۔ براہ کرم دوبارہ کوشش کریں۔';
+
+  @override
   String get instantDoctorTitle => 'انسٹنٹ ڈاکٹر';
 
   @override
@@ -738,6 +793,16 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get dashboardCancel => 'منسوخ کریں';
+
+  @override
+  String get dashboardCloseAppTitle => 'ایپ بند کریں';
+
+  @override
+  String get dashboardCloseAppMessage =>
+      'کیا آپ واقعی اپنا کلینک بند کرنا چاہتے ہیں؟';
+
+  @override
+  String get dashboardCloseAppCta => 'بند کریں';
 
   @override
   String get dashboardAppUpdateAvailableTitle => 'اپ ڈیٹ دستیاب ہے';

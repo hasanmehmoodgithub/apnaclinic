@@ -51,6 +51,18 @@ class _PharmacyCartBodyWidgetState extends State<PharmacyCartBodyWidget> {
     }
   }
 
+  Future<void> _removeItem(String medicineId) async {
+    if (!mounted) return;
+    if (!HeartLoaderDialogController.isOpen(_qtyLoaderId)) {
+      showHeartLoaderDialog(context, id: _qtyLoaderId, size: 120);
+    }
+    try {
+      await context.read<PharmacyCubit>().removeCartItem(medicineId);
+    } finally {
+      HeartLoaderDialogController.close(_qtyLoaderId);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
@@ -76,6 +88,7 @@ class _PharmacyCartBodyWidgetState extends State<PharmacyCartBodyWidget> {
                       medicineId: item.medicine.id,
                       increase: false,
                     ),
+                    onRemove: () => _removeItem(item.medicine.id),
                   );
                 },
                 separatorBuilder: (_, _) => SizedBox(height: 30.h),

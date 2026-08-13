@@ -10,6 +10,7 @@ import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../generated/assets.dart';
 import '../../domain/entities/pharmacy_medicine_entity.dart';
+import 'pharmacy_requires_prescription_badge.dart';
 
 class PharmacySelectedCard extends StatelessWidget {
   const PharmacySelectedCard({
@@ -26,35 +27,45 @@ class PharmacySelectedCard extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
     return Column(
       children: [
-        Container(
-          height: 260.h,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(26.r),
-            color: AppColors.clrE6EDF1,
-          ),
-          clipBehavior: Clip.antiAlias,
-          child: CachedNetworkImage(
-            imageUrl: featured.imageUrl,
-            width: double.infinity,
-            fit: BoxFit.contain,
-            placeholder: (context, url) => AppShimmer(
-              width: double.infinity,
+        Stack(
+          children: [
+            Container(
               height: 260.h,
-              borderRadius: 26.r,
-              shape: ShimmerShape.roundedRectangle,
-            ),
-            errorWidget: (context, url, error) {
-              return Container(
-                color: AppColors.clrE9EEF3,
-                alignment: Alignment.center,
-                child: const Icon(
-                  Icons.medication_rounded,
-                  size: 52,
-                  color: AppColors.clr8091A8,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(26.r),
+                color: AppColors.clrE6EDF1,
+              ),
+              clipBehavior: Clip.antiAlias,
+              child: CachedNetworkImage(
+                imageUrl: featured.imageUrl,
+                width: double.infinity,
+                fit: BoxFit.contain,
+                placeholder: (context, url) => AppShimmer(
+                  width: double.infinity,
+                  height: 260.h,
+                  borderRadius: 26.r,
+                  shape: ShimmerShape.roundedRectangle,
                 ),
-              );
-            },
-          ),
+                errorWidget: (context, url, error) {
+                  return Container(
+                    color: AppColors.clrE9EEF3,
+                    alignment: Alignment.center,
+                    child: const Icon(
+                      Icons.medication_rounded,
+                      size: 52,
+                      color: AppColors.clr8091A8,
+                    ),
+                  );
+                },
+              ),
+            ),
+            if (featured.prescriptionRequired)
+              Positioned(
+                left: 0,
+                top: 0,
+                child: const PharmacyRequiresPrescriptionBadge(),
+              ),
+          ],
         ),
         SizedBox(height: 16.h),
         Row(

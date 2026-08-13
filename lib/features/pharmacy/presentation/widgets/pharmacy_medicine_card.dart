@@ -1,8 +1,5 @@
-import 'dart:convert';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../../components/shimmer/app_shimmer.dart';
 import '../../../../core/constants/app_colors.dart';
@@ -10,6 +7,7 @@ import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../generated/assets.dart';
 import '../../domain/entities/pharmacy_medicine_entity.dart';
+import 'pharmacy_requires_prescription_badge.dart';
 
 class PharmacyMedicineCard extends StatelessWidget {
   const PharmacyMedicineCard({
@@ -27,157 +25,170 @@ class PharmacyMedicineCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(18.r),
-      child: Container(
-        padding: EdgeInsets.only(bottom: 6.h),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Stack(
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(18.r),
-                  child: SizedBox(
-                    height: 132.h,
-                    width: double.infinity,
-                    child: CachedNetworkImage(
-                      imageUrl: medicine.imageUrl,
-                      fit: BoxFit.contain,
-                      placeholder: (context, url) => AppShimmer(
-                        width: double.infinity,
-                        height: 132.h,
-                        borderRadius: 18.r,
-                        shape: ShimmerShape.roundedRectangle,
-                      ),
-                      errorWidget: (context, url, error) {
-                        return const ColoredBox(
+    final packageLabel = medicine.packageType.trim();
+
+    return Material(
+      color: AppColors.clrWhite,
+      borderRadius: BorderRadius.circular(16.r),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(16.r),
+        child: Container(
+          decoration: BoxDecoration(
+            color: AppColors.clrWhite,
+            borderRadius: BorderRadius.circular(16.r),
+            border: Border.all(color: AppColors.clrE3E8EE, width: 1),
+          ),
+          padding: EdgeInsets.all(10.r),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                flex: 5,
+                child: Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    Positioned.fill(
+                      child: DecoratedBox(
+                        decoration: BoxDecoration(
                           color: AppColors.clrF0F4F8,
-                          child: Center(
-                            child: Icon(
-                              Icons.medication_rounded,
-                              color: AppColors.clr8A9AAE,
+                          borderRadius: BorderRadius.circular(12.r),
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(12.r),
+                          child: CachedNetworkImage(
+                            imageUrl: medicine.imageUrl,
+                            fit: BoxFit.contain,
+                            placeholder: (context, url) => AppShimmer(
+                              width: double.infinity,
+                              height: double.infinity,
+                              borderRadius: 12.r,
+                              shape: ShimmerShape.roundedRectangle,
                             ),
+                            errorWidget: (context, url, error) {
+                              return const ColoredBox(
+                                color: AppColors.clrF0F4F8,
+                                child: Center(
+                                  child: Icon(
+                                    Icons.medication_rounded,
+                                    color: AppColors.clr8A9AAE,
+                                  ),
+                                ),
+                              );
+                            },
                           ),
-                        );
-                      },
-                    ),
-                  ),
-                ),
-                Positioned(
-                  right: 0,
-                  top: 0,
-                  child: IconButton(
-                    onPressed: onAddToCart,
-                    icon: SvgPicture.asset(
-                      Assets.iconsBasket,
-                      colorFilter: const ColorFilter.mode(
-                        AppColors.clr060,
-                        BlendMode.srcIn,
+                        ),
                       ),
                     ),
-                    style: IconButton.styleFrom(
-                      backgroundColor: AppColors.clrWhite,
-                      side: const BorderSide(
-                        color: AppColors.clr9BA6A7,
-                        width: 0.8,
+                    if (medicine.prescriptionRequired)
+                      const Positioned(
+                        left: 0,
+                        top: 0,
+                        child: PharmacyRequiresPrescriptionBadge(compact: true),
                       ),
-                      minimumSize: Size(32.r, 32.r),
-                      maximumSize: Size(32.r, 32.r),
-                      padding: EdgeInsets.all(8.r),
-                    ),
-                  ),
+                  ],
                 ),
-              ],
-            ),
-            Padding(
-              padding: EdgeInsets.fromLTRB(8.w, 8.h, 8.w, 0),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              ),
+              SizedBox(height: 10.h),
+              CustomPaint(
+                painter: const _PharmacyDashedLinePainter(
+                  color: AppColors.clrD9DEE6,
+                ),
+                child: SizedBox(width: double.infinity, height: 1.h),
+              ),
+              SizedBox(height: 8.h),
+              Text(
+                medicine.name,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: theme.textTheme.titleSmall?.copyWith(
+                  color: AppColors.clr060,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 12.sp,
+                  height: 1.25,
+                ),
+              ),
+              const Spacer(),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  _CompanyLogo(companyUrl: medicine.companyUrl),
-                  SizedBox(width: 5.w),
                   Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          medicine.name,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: theme.textTheme.titleSmall?.copyWith(
-                            color: AppColors.clr060,
-                            fontWeight: FontWeight.w700,
-                            fontSize: 12.sp,
-                            height: 1.25,
-                          ),
-                        ),
-                        SizedBox(height: 4.h),
-                        Text(
-                          '${l10n.pharmacyCurrencyPrefix}${medicine.price.toStringAsFixed(0)}',
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: theme.textTheme.titleSmall?.copyWith(
-                            color: AppColors.clr203A59,
-                            fontWeight: FontWeight.w700,
-                            fontSize: 14.sp,
-                          ),
-                        ),
-                        if (medicine.oldPrice > medicine.price)
-                          Text(
-                            '${l10n.pharmacyCurrencyPrefix}${medicine.oldPrice.toStringAsFixed(0)}',
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: theme.textTheme.bodySmall?.copyWith(
-                              color: AppColors.clr7C8EA5,
-                              decoration: TextDecoration.lineThrough,
-                              fontSize: 10.sp,
+                    child: RichText(
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      text: TextSpan(
+                        children: [
+                          TextSpan(
+                            text:
+                                '${l10n.pharmacyCurrencyPrefix}${medicine.price.toStringAsFixed(0)}',
+                            style: theme.textTheme.titleSmall?.copyWith(
+                              color: AppColors.clr15A9A0,
+                              fontWeight: FontWeight.w700,
+                              fontSize: 14.sp,
                             ),
                           ),
-                      ],
+                          if (packageLabel.isNotEmpty)
+                            TextSpan(
+                              text: ' / $packageLabel',
+                              style: theme.textTheme.bodySmall?.copyWith(
+                                color: AppColors.clr8A9AAE,
+                                fontWeight: FontWeight.w400,
+                                fontSize: 11.sp,
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 6.w),
+                  InkWell(
+                    onTap: onAddToCart,
+                    customBorder: const CircleBorder(),
+                    child: Image.asset(
+                      Assets.iconsAddToCart,
+                      width: 36.r,
+                      height: 36.r,
+                      fit: BoxFit.contain,
                     ),
                   ),
                 ],
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
   }
 }
 
-class _CompanyLogo extends StatelessWidget {
-  const _CompanyLogo({required this.companyUrl});
+class _PharmacyDashedLinePainter extends CustomPainter {
+  const _PharmacyDashedLinePainter({required this.color});
 
-  final String companyUrl;
+  final Color color;
 
   @override
-  Widget build(BuildContext context) {
-    if (companyUrl.isEmpty || !companyUrl.startsWith('data:image')) {
-      return const SizedBox.shrink();
-    }
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = color
+      ..strokeWidth = 1
+      ..style = PaintingStyle.stroke;
 
-    final commaIndex = companyUrl.indexOf(',');
-    if (commaIndex == -1 || commaIndex + 1 >= companyUrl.length) {
-      return const SizedBox.shrink();
-    }
-
-    try {
-      final bytes = base64Decode(companyUrl.substring(commaIndex + 1));
-      return Container(
-        width: 28,
-        height: 28,
-        decoration: BoxDecoration(
-          color: AppColors.clrWhite,
-          borderRadius: BorderRadius.circular(8),
-        ),
-        clipBehavior: Clip.antiAlias,
-        child: Image.memory(bytes, fit: BoxFit.contain),
+    const dashWidth = 4.0;
+    const dashSpace = 3.0;
+    var startX = 0.0;
+    final y = size.height / 2;
+    while (startX < size.width) {
+      canvas.drawLine(
+        Offset(startX, y),
+        Offset((startX + dashWidth).clamp(0, size.width), y),
+        paint,
       );
-    } catch (_) {
-      return const SizedBox.shrink();
+      startX += dashWidth + dashSpace;
     }
+  }
+
+  @override
+  bool shouldRepaint(covariant _PharmacyDashedLinePainter oldDelegate) {
+    return oldDelegate.color != color;
   }
 }

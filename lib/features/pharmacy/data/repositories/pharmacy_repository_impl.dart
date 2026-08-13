@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import '../../../../core/constants/app_strings.dart';
 import '../../../../core/functional/functional_export.dart';
 import '../../domain/entities/pharmacy_add_address_result_entity.dart';
 import '../../domain/entities/pharmacy_add_to_cart_result_entity.dart';
@@ -100,6 +101,31 @@ class PharmacyRepositoryImpl implements PharmacyRepository {
       final entity = PharmacyMedicineMapper.toAddToCartResultEntity(model);
       log('Mapped update-cart bookingId: ${entity.bookingId}');
       return Right(entity);
+    } catch (e) {
+      return Left(e.toString());
+    }
+  }
+
+  @override
+  Future<Either<ErrorMsg, String>> uploadPrescription({
+    required String productId,
+    required String filePath,
+    required String fileName,
+  }) async {
+    try {
+      final response = await remoteDataSource.uploadPrescription(
+        productId: productId,
+        filePath: filePath,
+        fileName: fileName,
+      );
+      final url = PharmacyMedicineMapper.prescriptionUrlFromUploadResponse(
+        response,
+      );
+      if (url.isEmpty) {
+        return const Left(AppStrings.pharmacyPrescriptionUploadError);
+      }
+      log('Mapped prescription upload url: $url');
+      return Right(url);
     } catch (e) {
       return Left(e.toString());
     }

@@ -381,6 +381,7 @@ class PharmacyCartItemModel {
     this.lineId = '',
     this.unitPrice,
     this.lineTotal,
+    this.prescriptionUrl = '',
   });
 
   final PharmacyMedicineModel medicine;
@@ -394,6 +395,9 @@ class PharmacyCartItemModel {
 
   /// Line total from the cart (`total` / `subtotal`), if present.
   final double? lineTotal;
+
+  /// Prescription file URL for this cart line (`prescription_url`).
+  final String prescriptionUrl;
 
   factory PharmacyCartItemModel.fromJson(Map<String, dynamic> json) {
     final nestedProduct = json['product'];
@@ -413,6 +417,8 @@ class PharmacyCartItemModel {
         ..remove('lineTotal')
         ..remove('unitPrice')
         ..remove('unit_price')
+        ..remove('prescription_url')
+        ..remove('prescriptionUrl')
         ..remove('pivot');
     }
 
@@ -456,12 +462,23 @@ class PharmacyCartItemModel {
         ? _asString(json['id'])
         : '';
 
+    final prescriptionUrl = _asString(
+      json['prescription_url'] ??
+          json['prescriptionUrl'] ??
+          (pivot is Map
+              ? (pivot['prescription_url'] ?? pivot['prescriptionUrl'])
+              : null) ??
+          productJson['prescription_url'] ??
+          productJson['prescriptionUrl'],
+    );
+
     return PharmacyCartItemModel(
       medicine: PharmacyMedicineModel.fromJson(productJson),
       quantity: _parseQuantity(quantityRaw),
       lineId: lineId,
       unitPrice: unitPrice,
       lineTotal: lineTotal,
+      prescriptionUrl: prescriptionUrl,
     );
   }
 

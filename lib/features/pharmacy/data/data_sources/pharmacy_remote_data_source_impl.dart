@@ -1,5 +1,7 @@
 import 'dart:developer';
 
+import 'package:dio/dio.dart';
+
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/network/api_service.dart';
 import '../../../../core/network/app_urls.dart';
@@ -220,6 +222,58 @@ class PharmacyRemoteDataSourceImpl implements PharmacyRemoteDataSource {
       final message = ErrorHandler.handleExceptions(
         e,
         endpoint: AppUrls.pharmacyUpdateCartQuantity,
+      );
+      return Future.error(message);
+    }
+  }
+
+  @override
+  Future<Map<String, dynamic>> uploadPrescription({
+    required String productId,
+    required String filePath,
+    required String fileName,
+  }) async {
+    try {
+      final Map<String, dynamic> response;
+      if (PharmacyMockApi.useMockResponses) {
+        response = await mockApi.uploadPrescriptionSuccessResponse(
+          productId: productId,
+          fileName: fileName,
+        );
+      } else {
+        final productIdInt = int.tryParse(productId.trim());
+        if (productIdInt == null) {
+          return Future.error(AppStrings.pharmacyPrescriptionUploadError);
+        }
+
+        final formData = FormData.fromMap(<String, dynamic>{
+          'product_id': productIdInt,
+          'prescription': await MultipartFile.fromFile(
+            filePath,
+            filename: fileName,
+          ),
+        });
+
+        response = await apiService.post(
+          AppUrls.pharmacyPrescriptionUpload,
+          data: formData,
+          headers: const {'Content-Type': 'multipart/form-data'},
+        );
+        log('uploadPrescription response: $response');
+      }
+
+      if (_isSuccessResponse(response)) {
+        return response;
+      }
+
+      final message =
+          (response['message'] ?? AppStrings.pharmacyPrescriptionUploadError)
+              .toString();
+      return Future.error(message);
+    } catch (e) {
+      final message = ErrorHandler.handleExceptions(
+        e,
+        endpoint: AppUrls.pharmacyPrescriptionUpload,
       );
       return Future.error(message);
     }
