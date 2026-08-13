@@ -1334,6 +1334,18 @@ abstract class AppLocalizations {
   /// **'Payment Method Added Successfully'**
   String get accountMethodAddedSuccess;
 
+  /// No description provided for @accountAddFailedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to Add Account'**
+  String get accountAddFailedTitle;
+
+  /// No description provided for @accountAddFailedFallback.
+  ///
+  /// In en, this message translates to:
+  /// **'Account could not be added. Please try again.'**
+  String get accountAddFailedFallback;
+
   /// No description provided for @accountLinkedMessagePrefix.
   ///
   /// In en, this message translates to:

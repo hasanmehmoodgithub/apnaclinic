@@ -13,7 +13,7 @@ class ProfileSetupMapper {
       gender: model.content.gender,
       email: model.content.email,
       address: model.content.address,
-      dateOfBirth: _tryParseDate(model.content.dateOfBirth),
+      dateOfBirth: tryParseDate(model.content.dateOfBirth),
       imageUrl: _normalizeImageUrl(model.content.imageUrl),
     );
   }
@@ -23,7 +23,7 @@ class ProfileSetupMapper {
     return trimmed.isEmpty ? null : trimmed;
   }
 
-  static DateTime? _tryParseDate(String value) {
+  static DateTime? tryParseDate(String value) {
     final trimmed = value.trim();
     if (trimmed.isEmpty) return null;
 

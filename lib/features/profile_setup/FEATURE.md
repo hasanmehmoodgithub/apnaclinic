@@ -17,7 +17,7 @@ Collect or edit user profile (name, gender, optional email, address, DOB, option
 
 ## Parsing & UI
 
-- `ProfileSetupMapper` maps API strings to `DateTime?` using ISO `DateTime.tryParse` first, then `dd-MM-yyyy HH:mm:ss`, `dd-MM-yyyy`, and `yyyy-MM-dd` via `intl`.
+- `ProfileSetupMapper` maps API strings to `DateTime?` using ISO `DateTime.tryParse` first, then `dd-MM-yyyy HH:mm:ss`, `dd-MM-yyyy`, and `yyyy-MM-dd` via `intl`. Profile tiles and account-list cache use the same parser so DOB does not show `--` after add-account refresh.
 - GET profile response is read from `data` and supports backend `dob` (for example `02-03-2000 00:00:00`).
 - API gender values are normalized to `male` or `female` before binding to the picker.
 - `data.image` is stored on `UserLocalModel.imageUrl` and shown on home app bar / profile / menu when non-empty (`UserProfileAvatar` + `CachedNetworkImage`).
@@ -28,7 +28,7 @@ Collect or edit user profile (name, gender, optional email, address, DOB, option
 
 ## State
 
-- `ProfileCubit` / `ProfileState` — profile screen: reads UI from `AppPref`; fetches GET profile only when `ProfileSessionSync` says the session is not synced and cached prefs exist. After login, logout, or app launch (in-memory reset), the first home/profile open syncs once; revisiting profile uses `AppPref` + cached linked phones without another GET. Explicit `refreshProfile(force: true)` / `loadAccounts(force: true)` after edit, add account, or delete account.
+- `ProfileCubit` / `ProfileState` — profile screen: reads UI from `AppPref`; fetches GET profile only when `ProfileSessionSync` says the session is not synced and cached prefs exist. After login, logout, or app launch (in-memory reset), the first home/profile open syncs once; revisiting profile uses `AppPref` + cached linked phones without another GET. Explicit `refreshProfile(force: true)` / `loadAccounts(force: true)` after edit or delete account. Add Account from profile pops the new number, opens Account Details (one GET via `GetAccountsListUseCase` + `markSynced`), then `loadAccounts()` without force so Profile tiles reuse `ProfileSessionSync` (no extra GET; network only if details fetch failed).
 - `ProfileSetupCubit` / `ProfileSetupState` — `dateOfBirth` drives the date picker label and initial picker date. Manual calendar entry uses `TextInputType.text` so `/` and other date separators are available on the keyboard.
 
 ## Session cache

@@ -295,6 +295,8 @@
   "accountSaveCta": "Save",
   "accountContinueCta": "Continue",
   "accountMethodAddedSuccess": "Payment Method Added Successfully",
+  "accountAddFailedTitle": "Unable to Add Account",
+  "accountAddFailedFallback": "Account could not be added. Please try again.",
   "accountLinkedMessagePrefix": "Your",
   "accountLinkedMessageMiddle": "account no.",
   "accountLinkedMessageSuffix": "has been linked successfully",

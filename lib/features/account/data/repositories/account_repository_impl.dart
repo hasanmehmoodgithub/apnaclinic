@@ -32,6 +32,7 @@ class AccountRepositoryImpl implements AccountRepository {
   Future<Either<ErrorMsg, void>> addUserPhone({required String phone}) async {
     try {
       await remoteDataSource.addUserPhone(phone: phone);
+      _profileSessionSync.invalidate();
       return const Right(null);
     } catch (e) {
       log('addUserPhone repository error: $e');
