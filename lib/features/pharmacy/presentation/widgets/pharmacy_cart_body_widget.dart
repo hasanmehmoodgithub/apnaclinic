@@ -10,6 +10,7 @@ import '../../../../core/widgets/heart_loader_widget.dart';
 import '../cubit/pharmacy_cubit.dart';
 import '../cubit/pharmacy_state.dart';
 import 'pharmacy_cart_item_tile.dart';
+import 'pharmacy_error_dialog.dart';
 
 /// Cart panel content: cart list/empty-state and sticky checkout button.
 class PharmacyCartBodyWidget extends StatefulWidget {
@@ -39,16 +40,17 @@ class _PharmacyCartBodyWidgetState extends State<PharmacyCartBodyWidget> {
     if (!HeartLoaderDialogController.isOpen(_qtyLoaderId)) {
       showHeartLoaderDialog(context, id: _qtyLoaderId, size: 120);
     }
+    String? error;
     try {
       final cubit = context.read<PharmacyCubit>();
-      if (increase) {
-        await cubit.increaseQuantity(medicineId);
-      } else {
-        await cubit.decreaseQuantity(medicineId);
-      }
+      error = increase
+          ? await cubit.increaseQuantity(medicineId)
+          : await cubit.decreaseQuantity(medicineId);
     } finally {
       HeartLoaderDialogController.close(_qtyLoaderId);
     }
+    if (!mounted || error == null) return;
+    await _showCartError(error);
   }
 
   Future<void> _removeItem(String medicineId) async {
@@ -56,11 +58,25 @@ class _PharmacyCartBodyWidgetState extends State<PharmacyCartBodyWidget> {
     if (!HeartLoaderDialogController.isOpen(_qtyLoaderId)) {
       showHeartLoaderDialog(context, id: _qtyLoaderId, size: 120);
     }
+    String? error;
     try {
-      await context.read<PharmacyCubit>().removeCartItem(medicineId);
+      error = await context.read<PharmacyCubit>().removeCartItem(medicineId);
     } finally {
       HeartLoaderDialogController.close(_qtyLoaderId);
     }
+    if (!mounted || error == null) return;
+    await _showCartError(error);
+  }
+
+  Future<void> _showCartError(String error) {
+    final l10n = AppLocalizations.of(context)!;
+    return showPharmacyErrorDialog(
+      context,
+      title: l10n.pharmacyCartTitle,
+      message: error.trim().isNotEmpty
+          ? error.trim()
+          : l10n.pharmacyCartUpdateFailed,
+    );
   }
 
   @override
