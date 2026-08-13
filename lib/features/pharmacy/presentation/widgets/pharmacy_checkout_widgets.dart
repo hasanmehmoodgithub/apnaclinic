@@ -258,7 +258,7 @@ class PharmacyCheckoutCartItemRow extends StatelessWidget {
           width: 130.r,
           height: 88.r,
           decoration: BoxDecoration(
-            color: AppColors.clrECECEC,
+            color: AppColors.clrWhite,
             borderRadius: BorderRadius.circular(22.r),
           ),
           clipBehavior: Clip.antiAlias,

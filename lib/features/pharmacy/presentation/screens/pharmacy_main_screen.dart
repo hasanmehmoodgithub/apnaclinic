@@ -11,10 +11,23 @@ import '../widgets/pharmacy_main_medicines_body_widget.dart';
 import '../widgets/pharmacy_main_top_header_widget.dart';
 
 /// Pharmacy hub: banner header, then medicines list / search in the white panel.
-class PharmacyMainScreen extends StatelessWidget {
+class PharmacyMainScreen extends StatefulWidget {
   const PharmacyMainScreen({super.key});
 
+  @override
+  State<PharmacyMainScreen> createState() => _PharmacyMainScreenState();
+}
+
+class _PharmacyMainScreenState extends State<PharmacyMainScreen> {
   static const double _topBannerFraction = 0.32;
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      context.read<PharmacyCubit>().loadCart();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {

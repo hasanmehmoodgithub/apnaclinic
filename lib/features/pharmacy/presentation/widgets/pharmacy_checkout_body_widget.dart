@@ -17,6 +17,7 @@ import '../cubit/pharmacy_cubit.dart';
 import '../cubit/pharmacy_state.dart';
 import '../pharmacy_navigation.dart';
 import 'pharmacy_checkout_widgets.dart';
+import 'pharmacy_error_dialog.dart';
 import 'pharmacy_order_placed_dialog.dart';
 import 'pharmacy_payment_option_tile.dart';
 
@@ -60,8 +61,13 @@ class PharmacyCheckoutBodyWidget extends StatelessWidget {
 
     await result.fold(
       (error) async {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(error)),
+        final l10n = AppLocalizations.of(context)!;
+        await showPharmacyErrorDialog(
+          context,
+          title: l10n.pharmacyCheckoutTitle,
+          message: error.trim().isNotEmpty
+              ? error.trim()
+              : l10n.pharmacyCheckoutFailed,
         );
       },
       (checkout) async {

@@ -273,6 +273,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pharmacyCartEmpty => 'Your cart is empty';
 
   @override
+  String get pharmacyCartUpdateFailed =>
+      'Unable to update cart right now. Please try again.';
+
+  @override
   String get pharmacyCheckoutCta => 'Check Out';
 
   @override
@@ -334,6 +338,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get pharmacyCheckoutConfirmCta => 'Confirm';
+
+  @override
+  String get pharmacyCheckoutFailed =>
+      'Unable to place pharmacy order right now. Please try again.';
 
   @override
   String get pharmacyOrderPlacedTitle => 'Order Placed';

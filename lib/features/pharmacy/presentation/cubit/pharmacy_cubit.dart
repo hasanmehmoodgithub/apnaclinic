@@ -38,10 +38,6 @@ class PharmacyCubit extends Cubit<PharmacyState> {
     required this.appPref,
   }) : super(const PharmacyState()) {
     loadMedicines();
-    // Active cart requires auth — skip for guests.
-    if (AuthGuard.isLoggedIn(appPref)) {
-      loadCart();
-    }
   }
 
   final GetPharmacyMedicinesUseCase getPharmacyMedicinesUseCase;
@@ -206,12 +202,15 @@ class PharmacyCubit extends Cubit<PharmacyState> {
     return result.fold((_) => null, (url) => url.trim().isEmpty ? null : url);
   }
 
-  Future<bool> addToCartApi(
+  /// Returns `null` on success, otherwise a user-facing error message.
+  Future<String?> addToCartApi(
     PharmacyMedicineEntity medicine, {
     int quantity = 1,
     String prescriptionUrl = '',
   }) async {
-    if (!AuthGuard.isLoggedIn(appPref)) return false;
+    if (!AuthGuard.isLoggedIn(appPref)) {
+      return AppStrings.pharmacyLoadError;
+    }
 
     final addQty = quantity < 1 ? 1 : quantity;
     final existingIndex = state.cartItems.indexWhere(
@@ -222,14 +221,15 @@ class PharmacyCubit extends Cubit<PharmacyState> {
     if (existingIndex >= 0) {
       final existing = state.cartItems[existingIndex];
       final nextQty = existing.quantity + addQty;
-      final updated = await _setCartQuantity(
+      final error = await _setCartQuantity(
         medicineId: medicine.id,
         quantity: nextQty,
       );
-      if (updated && prescriptionUrl.trim().isNotEmpty) {
+      if (error != null) return error;
+      if (prescriptionUrl.trim().isNotEmpty) {
         _setPrescriptionUrl(medicine.id, prescriptionUrl.trim());
       }
-      return updated;
+      return null;
     }
 
     final result = await addToCartUseCase(
@@ -238,10 +238,10 @@ class PharmacyCubit extends Cubit<PharmacyState> {
         quantity: addQty,
       ),
     );
-    if (isClosed) return false;
+    if (isClosed) return AppStrings.pharmacyLoadError;
 
     return result.fold(
-      (_) => false,
+      (error) => error,
       (addResult) {
         _applyAddToCartResult(
           medicine: medicine,
@@ -251,7 +251,7 @@ class PharmacyCubit extends Cubit<PharmacyState> {
           hasProductList: addResult.hasProductList,
           prescriptionUrl: prescriptionUrl.trim(),
         );
-        return true;
+        return null;
       },
     );
   }
@@ -350,12 +350,12 @@ class PharmacyCubit extends Cubit<PharmacyState> {
         .toList(growable: false);
   }
 
-  Future<void> increaseQuantity(String medicineId) async {
-    await _updateQuantity(medicineId, delta: 1);
+  Future<String?> increaseQuantity(String medicineId) {
+    return _updateQuantity(medicineId, delta: 1);
   }
 
-  Future<void> decreaseQuantity(String medicineId) async {
-    await _updateQuantity(medicineId, delta: -1);
+  Future<String?> decreaseQuantity(String medicineId) {
+    return _updateQuantity(medicineId, delta: -1);
   }
 
   void removeFromCart(String medicineId) {
@@ -369,7 +369,8 @@ class PharmacyCubit extends Cubit<PharmacyState> {
   }
 
   /// Removes item via quantity update API (`quantity: 0`).
-  Future<bool> removeCartItem(String medicineId) async {
+  /// Returns `null` on success, otherwise a user-facing error message.
+  Future<String?> removeCartItem(String medicineId) {
     return _setCartQuantity(medicineId: medicineId, quantity: 0);
   }
 
@@ -629,22 +630,23 @@ class PharmacyCubit extends Cubit<PharmacyState> {
     };
   }
 
-  Future<void> _updateQuantity(String medicineId, {required int delta}) async {
+  Future<String?> _updateQuantity(String medicineId, {required int delta}) async {
     final items = state.cartItems;
     final index = items.indexWhere((item) => item.medicine.id == medicineId);
-    if (index < 0) return;
+    if (index < 0) return null;
 
     final nextQty = items[index].quantity + delta;
-    if (nextQty < 0) return;
+    if (nextQty < 0) return null;
 
-    await _setCartQuantity(medicineId: medicineId, quantity: nextQty);
+    return _setCartQuantity(medicineId: medicineId, quantity: nextQty);
   }
 
-  Future<bool> _setCartQuantity({
+  /// Returns `null` on success, otherwise the error message.
+  Future<String?> _setCartQuantity({
     required String medicineId,
     required int quantity,
   }) async {
-    if (!AuthGuard.isLoggedIn(appPref)) return false;
+    if (!AuthGuard.isLoggedIn(appPref)) return AppStrings.pharmacyLoadError;
 
     final result = await updatePharmacyCartQuantityUseCase(
       UpdatePharmacyCartQuantityParams(
@@ -652,12 +654,12 @@ class PharmacyCubit extends Cubit<PharmacyState> {
         quantity: quantity.toString(),
       ),
     );
-    if (isClosed) return false;
+    if (isClosed) return AppStrings.pharmacyLoadError;
 
     return result.fold(
       (error) {
         log('updateCartQuantity failed: $error');
-        return false;
+        return error;
       },
       (updateResult) {
         final nextBookingId =
@@ -678,7 +680,7 @@ class PharmacyCubit extends Cubit<PharmacyState> {
               paymentBreakdown: null,
             ),
           );
-          return true;
+          return null;
         }
 
         _applyLocalQuantityUpdate(
@@ -686,7 +688,7 @@ class PharmacyCubit extends Cubit<PharmacyState> {
           quantity: quantity,
           bookingId: updateResult.bookingId,
         );
-        return true;
+        return null;
       },
     );
   }

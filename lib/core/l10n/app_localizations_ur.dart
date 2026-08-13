@@ -273,6 +273,10 @@ class AppLocalizationsUr extends AppLocalizations {
   String get pharmacyCartEmpty => 'آپ کی کارٹ خالی ہے';
 
   @override
+  String get pharmacyCartUpdateFailed =>
+      'اس وقت کارٹ اپ ڈیٹ نہیں ہو سکی۔ براہ کرم دوبارہ کوشش کریں۔';
+
+  @override
   String get pharmacyCheckoutCta => 'چیک آؤٹ';
 
   @override
@@ -334,6 +338,10 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get pharmacyCheckoutConfirmCta => 'تصدیق کریں';
+
+  @override
+  String get pharmacyCheckoutFailed =>
+      'اس وقت فارمیسی آرڈر نہیں دیا جا سکا۔ براہ کرم دوبارہ کوشش کریں۔';
 
   @override
   String get pharmacyOrderPlacedTitle => 'آرڈر ہو گیا';

@@ -13,6 +13,7 @@ import '../../../../core/widgets/heart_loader_widget.dart';
 import '../../../../core/utils/auth_guard.dart';
 import '../../domain/entities/pharmacy_medicine_entity.dart';
 import '../cubit/pharmacy_cubit.dart';
+import 'pharmacy_error_dialog.dart';
 import 'pharmacy_prescription_attached_section.dart';
 import 'pharmacy_prescription_upload_section.dart';
 import 'pharmacy_quantity_stepper.dart';
@@ -25,6 +26,20 @@ const Set<String> _kAllowedPrescriptionExtensions = {
   'webp',
   'pdf',
 };
+
+Future<void> _showAddToCartErrorDialog(
+  BuildContext context,
+  String message,
+) {
+  final l10n = AppLocalizations.of(context)!;
+  return showPharmacyErrorDialog(
+    context,
+    title: l10n.pharmacyAddToCart,
+    message: message.trim().isNotEmpty
+        ? message
+        : l10n.pharmacyAddToCartFailed,
+  );
+}
 
 Future<void> showPharmacyAddToCartSheet(
   BuildContext context,
@@ -85,10 +100,9 @@ Future<void> showPharmacyAddToCartSheet(
 
                 if (path.isEmpty || name.isEmpty) {
                   if (sheetContext.mounted) {
-                    ScaffoldMessenger.of(sheetContext).showSnackBar(
-                      SnackBar(
-                        content: Text(l10n.pharmacyPrescriptionPickFailed),
-                      ),
+                    await _showAddToCartErrorDialog(
+                      sheetContext,
+                      l10n.pharmacyPrescriptionPickFailed,
                     );
                   }
                   return;
@@ -96,10 +110,9 @@ Future<void> showPharmacyAddToCartSheet(
 
                 if (!_kAllowedPrescriptionExtensions.contains(ext)) {
                   if (sheetContext.mounted) {
-                    ScaffoldMessenger.of(sheetContext).showSnackBar(
-                      SnackBar(
-                        content: Text(l10n.pharmacyPrescriptionInvalidType),
-                      ),
+                    await _showAddToCartErrorDialog(
+                      sheetContext,
+                      l10n.pharmacyPrescriptionInvalidType,
                     );
                   }
                   return;
@@ -108,10 +121,9 @@ Future<void> showPharmacyAddToCartSheet(
                 final size = file.size;
                 if (size > _kMaxPrescriptionBytes) {
                   if (sheetContext.mounted) {
-                    ScaffoldMessenger.of(sheetContext).showSnackBar(
-                      SnackBar(
-                        content: Text(l10n.pharmacyPrescriptionTooLarge),
-                      ),
+                    await _showAddToCartErrorDialog(
+                      sheetContext,
+                      l10n.pharmacyPrescriptionTooLarge,
                     );
                   }
                   return;
@@ -123,10 +135,9 @@ Future<void> showPharmacyAddToCartSheet(
                 });
               } catch (_) {
                 if (sheetContext.mounted) {
-                  ScaffoldMessenger.of(sheetContext).showSnackBar(
-                    SnackBar(
-                      content: Text(l10n.pharmacyPrescriptionPickFailed),
-                    ),
+                  await _showAddToCartErrorDialog(
+                    sheetContext,
+                    l10n.pharmacyPrescriptionPickFailed,
                   );
                 }
               }
@@ -278,18 +289,16 @@ Future<void> showPharmacyAddToCartSheet(
                         title: l10n.pharmacyAddToCart,
                         bgClr: AppColors.clr27B3A6,
                         onTap: () async {
-                          final messenger = ScaffoldMessenger.of(sheetContext);
                           String prescriptionUrl = existingPrescriptionUrl;
 
                           if (needsPrescriptionUpload) {
                             if (!hasLocalFile) {
-                              messenger.showSnackBar(
-                                SnackBar(
-                                  content: Text(
-                                    l10n.pharmacyPrescriptionRequiredToAdd,
-                                  ),
-                                ),
-                              );
+                              if (sheetContext.mounted) {
+                                await _showAddToCartErrorDialog(
+                                  sheetContext,
+                                  l10n.pharmacyPrescriptionRequiredToAdd,
+                                );
+                              }
                               return;
                             }
 
@@ -314,12 +323,9 @@ Future<void> showPharmacyAddToCartSheet(
                               );
                               if (uploaded == null || uploaded.isEmpty) {
                                 if (sheetContext.mounted) {
-                                  messenger.showSnackBar(
-                                    SnackBar(
-                                      content: Text(
-                                        l10n.pharmacyPrescriptionUploadFailed,
-                                      ),
-                                    ),
+                                  await _showAddToCartErrorDialog(
+                                    sheetContext,
+                                    l10n.pharmacyPrescriptionUploadFailed,
                                   );
                                 }
                                 return;
@@ -340,9 +346,9 @@ Future<void> showPharmacyAddToCartSheet(
                               size: 120,
                             );
                           }
-                          var success = false;
+                          String? addError;
                           try {
-                            success = await pharmacyCubit.addToCartApi(
+                            addError = await pharmacyCubit.addToCartApi(
                               medicine,
                               quantity: qty,
                               prescriptionUrl: prescriptionUrl,
@@ -350,13 +356,13 @@ Future<void> showPharmacyAddToCartSheet(
                           } finally {
                             HeartLoaderDialogController.close(loaderId);
                           }
-                          if (success && sheetContext.mounted) {
+                          if (addError == null && sheetContext.mounted) {
                             sheetContext.pop();
-                          } else if (!success && sheetContext.mounted) {
-                            messenger.showSnackBar(
-                              SnackBar(
-                                content: Text(l10n.pharmacyAddToCartFailed),
-                              ),
+                          } else if (addError != null &&
+                              sheetContext.mounted) {
+                            await _showAddToCartErrorDialog(
+                              sheetContext,
+                              addError,
                             );
                           }
                         },

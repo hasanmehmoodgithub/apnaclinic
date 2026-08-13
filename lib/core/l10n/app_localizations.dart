@@ -614,6 +614,12 @@ abstract class AppLocalizations {
   /// **'Your cart is empty'**
   String get pharmacyCartEmpty;
 
+  /// No description provided for @pharmacyCartUpdateFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to update cart right now. Please try again.'**
+  String get pharmacyCartUpdateFailed;
+
   /// No description provided for @pharmacyCheckoutCta.
   ///
   /// In en, this message translates to:
@@ -733,6 +739,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Confirm'**
   String get pharmacyCheckoutConfirmCta;
+
+  /// No description provided for @pharmacyCheckoutFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to place pharmacy order right now. Please try again.'**
+  String get pharmacyCheckoutFailed;
 
   /// No description provided for @pharmacyOrderPlacedTitle.
   ///
