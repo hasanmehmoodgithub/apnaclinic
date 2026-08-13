@@ -1,4 +1,5 @@
 import '../../../../core/preference/app_pref.dart';
+import '../../data/mappers/profile_setup_mapper.dart';
 
 class ProfileViewData {
   const ProfileViewData({
@@ -37,8 +38,8 @@ class ProfileViewData {
     );
   }
 
-  static String _formatDob(String iso) {
-    final dob = DateTime.tryParse(iso);
+  static String _formatDob(String raw) {
+    final dob = ProfileSetupMapper.tryParseDate(raw);
     if (dob == null) return '';
 
     const monthNames = [

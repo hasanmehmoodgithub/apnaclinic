@@ -665,6 +665,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get accountMethodAddedSuccess => 'Payment Method Added Successfully';
 
   @override
+  String get accountAddFailedTitle => 'Unable to Add Account';
+
+  @override
+  String get accountAddFailedFallback =>
+      'Account could not be added. Please try again.';
+
+  @override
   String get accountLinkedMessagePrefix => 'Your';
 
   @override

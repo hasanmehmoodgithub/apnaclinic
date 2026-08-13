@@ -90,6 +90,7 @@ class ProfileCubit extends Cubit<ProfileState> {
         state.copyWith(
           accountsStatus: StateStatus.error,
           accountsError: error,
+          profileRevision: state.profileRevision + 1,
         ),
       ),
       (accounts) => emit(
@@ -97,6 +98,7 @@ class ProfileCubit extends Cubit<ProfileState> {
           accountsStatus: StateStatus.success,
           accounts: accounts,
           accountsError: null,
+          profileRevision: state.profileRevision + 1,
         ),
       ),
     );

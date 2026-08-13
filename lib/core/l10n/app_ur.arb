@@ -211,6 +211,8 @@
   "accountSaveCta": "محفوظ کریں",
   "accountContinueCta": "جاری رکھیں",
   "accountMethodAddedSuccess": "ادائیگی کا طریقہ کامیابی سے شامل ہو گیا",
+  "accountAddFailedTitle": "اکاؤنٹ شامل نہیں ہو سکا",
+  "accountAddFailedFallback": "اکاؤنٹ شامل نہیں ہو سکا۔ براہ کرم دوبارہ کوشش کریں۔",
   "accountLinkedMessagePrefix": "آپ کا",
   "accountLinkedMessageMiddle": "اکاؤنٹ نمبر",
   "accountLinkedMessageSuffix": "کامیابی سے لنک ہو گیا ہے",

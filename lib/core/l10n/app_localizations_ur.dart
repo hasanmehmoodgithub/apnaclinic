@@ -666,6 +666,13 @@ class AppLocalizationsUr extends AppLocalizations {
       'ادائیگی کا طریقہ کامیابی سے شامل ہو گیا';
 
   @override
+  String get accountAddFailedTitle => 'اکاؤنٹ شامل نہیں ہو سکا';
+
+  @override
+  String get accountAddFailedFallback =>
+      'اکاؤنٹ شامل نہیں ہو سکا۔ براہ کرم دوبارہ کوشش کریں۔';
+
+  @override
   String get accountLinkedMessagePrefix => 'آپ کا';
 
   @override

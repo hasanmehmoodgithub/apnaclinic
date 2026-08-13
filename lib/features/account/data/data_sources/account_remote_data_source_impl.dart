@@ -7,6 +7,7 @@ import '../../../../core/preference/app_pref.dart';
 import '../../../../core/preference/user_local_model.dart';
 import '../../../../core/utils/error_handler.dart';
 import '../../../../core/utils/phone_format_utils.dart';
+import '../../../profile_setup/data/mappers/profile_setup_mapper.dart';
 import '../mock/account_mock_api.dart';
 import '../models/account_item_model.dart';
 import '../models/user_phone_model.dart';
@@ -195,6 +196,7 @@ class AccountRemoteDataSourceImpl implements AccountRemoteDataSource {
     final address = (data['address'] ?? '').toString().trim();
     final dateOfBirth =
         (data['dateOfBirth'] ?? data['dob'] ?? '').toString().trim();
+    final parsedDob = ProfileSetupMapper.tryParseDate(dateOfBirth);
     final imageUrl =
         (data['image'] ?? data['imageUrl'] ?? '').toString().trim();
 
@@ -207,8 +209,9 @@ class AccountRemoteDataSourceImpl implements AccountRemoteDataSource {
         email: email.isNotEmpty ? email : existing.email,
         gender: gender.isNotEmpty ? gender : existing.gender,
         address: address.isNotEmpty ? address : existing.address,
-        dateOfBirth:
-            dateOfBirth.isNotEmpty ? dateOfBirth : existing.dateOfBirth,
+        dateOfBirth: parsedDob != null
+            ? parsedDob.toIso8601String()
+            : existing.dateOfBirth,
         imageUrl: imageUrl.isNotEmpty ? imageUrl : existing.imageUrl,
         phone: primaryMsisdn != null && primaryMsisdn.isNotEmpty
             ? PhoneFormatUtils.toLocalDisplay(primaryMsisdn)

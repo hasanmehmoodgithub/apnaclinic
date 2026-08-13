@@ -9,6 +9,7 @@ import '../../../../core/router/app_routes.dart';
 import '../../../../core/widgets/app_scaffold_gradient.dart';
 import '../../domain/use_cases/add_user_phone_use_case.dart';
 import '../add_account_launch_source.dart';
+import '../widgets/account_add_failed_dialog_widget.dart';
 import '../widgets/account_app_bar_widget.dart';
 import '../widgets/add_account_form_widget.dart';
 
@@ -61,13 +62,12 @@ class _AddAccountScreenState extends State<AddAccountScreen> {
 
     result.fold(
       (error) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(error)),
-        );
+        showAccountAddFailedDialog(context, message: error);
       },
       (_) {
         if (!mounted) return;
-        if (widget.launchSource == AddAccountLaunchSource.consultationCheckout) {
+        if (widget.launchSource == AddAccountLaunchSource.consultationCheckout ||
+            widget.launchSource == AddAccountLaunchSource.profile) {
           context.pop(phone);
           return;
         }

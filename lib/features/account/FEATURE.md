@@ -6,8 +6,8 @@ Manage linked JazzCash phone numbers on the user profile (account details).
 
 ## Routes / entry
 
-- `AppRoutes.accountDetails` — list linked phones via `GetAccountsListUseCase`. Optional route `extra`: `showSuccessDialog`, `addedPhone`. After add-account, success dialog shows, then Account Details lists **all** saved phones (newly added first when present). Continue / back pops `true` so Profile refreshes.
-- `AppRoutes.addAccount` — add a new phone number (`AddAccountFormWidget`). On success: navigates to account details with success dialog (default / profile); pops with added phone when `AddAccountLaunchSource.consultationCheckout` (shared JazzCash Select Account sheet used by consultation / lab / surgery).
+- `AppRoutes.accountDetails` — list linked phones via `GetAccountsListUseCase`. Optional route `extra`: `showSuccessDialog`, `addedPhone`. After add-account, success dialog shows, then Account Details lists **all** saved phones (newly added first when present). Continue / back pops so Profile can apply `ProfileSessionSync` cache.
+- `AppRoutes.addAccount` — add a new phone number (`AddAccountFormWidget`). On success: pops the added phone for `profile` / `consultationCheckout`; Account Details + success dialog is opened by Profile (or via `pushReplacement` from Account Details). Successful add invalidates `ProfileSessionSync`; Account Details GET re-syncs it.
 
 ## Data & APIs
 
@@ -26,7 +26,7 @@ Phone entries: `id`, `msisdn`, `jazzCashVerified`, `primary`. UI shows `03…` l
 ## State
 
 - Profile tab loads phones via `GetAccountsListUseCase`.
-- Add/delete via `AddUserPhoneUseCase` / `DeleteUserPhoneUseCase`.
+- Add/delete via `AddUserPhoneUseCase` / `DeleteUserPhoneUseCase`. Add-account API failure / `success: false` shows `AccountAddFailedDialogWidget` with the API `message` (fallback copy if empty).
 
 ## DI
 
@@ -38,4 +38,4 @@ Phone entries: `id`, `msisdn`, `jazzCashVerified`, `primary`. UI shows `03…` l
 
 Before add/delete phone, the app resolves numeric `data.id` via cached profile (`apiUserId`) or a profile GET using the session user id.
 
-After add/delete, account details refresh via `GetAccountsListUseCase` (GET profile → `data.phones`). Profile tab caches phones via `ProfileSessionSync` from the same profile GET (must include phone `id`); full profile fields reload separately via `GetProfileSetupContentUseCase` on screen open / edit.
+After add/delete, account details refresh via `GetAccountsListUseCase` (GET profile → `data.phones`). Profile tab caches phones via `ProfileSessionSync` from the same profile GET (must include phone `id`); DOB from `dob`/`dateOfBirth` is parsed to ISO before writing `AppPref` so Profile tiles keep showing the date. Full profile fields reload separately via `GetProfileSetupContentUseCase` on screen open / edit. Add from Profile: one GET on Account Details; Profile `loadAccounts()` after close uses cache unless that GET failed.

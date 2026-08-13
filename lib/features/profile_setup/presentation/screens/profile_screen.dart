@@ -69,12 +69,25 @@ class ProfileScreen extends StatelessWidget {
   }
 
   Future<void> _openAddAccount(BuildContext context) async {
-    final added = await context.push<bool>(
+    final addedPhone = await context.push<String>(
       AppRoutes.path(AppRoutes.addAccount),
       extra: AddAccountLaunchSource.profile,
     );
-    if (!context.mounted || added != true) return;
-    await context.read<ProfileCubit>().loadAccounts(force: true);
+    if (!context.mounted) return;
+
+    final phone = addedPhone?.trim() ?? '';
+    if (phone.isEmpty) return;
+
+    await context.push<Object?>(
+      AppRoutes.path(AppRoutes.accountDetails),
+      extra: <String, dynamic>{
+        'showSuccessDialog': true,
+        'addedPhone': phone,
+      },
+    );
+    if (!context.mounted) return;
+    // Details already GETs phones and markSynced; reuse cache (no extra GET).
+    await context.read<ProfileCubit>().loadAccounts();
   }
 
   Future<void> _deleteAccountDetail(
