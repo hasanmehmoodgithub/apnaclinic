@@ -36,11 +36,6 @@ abstract class PharmacyRepository {
     required String fileName,
   });
 
-  Future<Either<ErrorMsg, PharmacyCheckoutResultEntity>> checkoutOrder({
-    required String userLocationId,
-    required String paymentMethod,
-    List<Map<String, dynamic>> prescriptions = const [],
-  });
   Future<Either<ErrorMsg, PharmacyCheckoutResultEntity>> checkoutOrder(
     PharmacyCheckoutParams params,
   );

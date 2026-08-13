@@ -29,11 +29,6 @@ abstract class PharmacyRemoteDataSource {
     required String fileName,
   });
 
-  Future<Map<String, dynamic>> checkoutOrder({
-    required String userLocationId,
-    required String paymentMethod,
-    List<Map<String, dynamic>> prescriptions = const [],
-  });
   Future<Map<String, dynamic>> checkoutOrder(PharmacyCheckoutParams params);
 
   Future<List<PharmacyCartAddressModel>> getProfileAddresses();

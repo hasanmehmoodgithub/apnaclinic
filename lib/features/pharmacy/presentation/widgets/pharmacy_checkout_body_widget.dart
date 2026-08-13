@@ -8,8 +8,6 @@ import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/utils/phone_format_utils.dart';
 import '../../../../core/widgets/app_button_widget.dart';
 import '../../../../core/widgets/heart_loader_widget.dart';
-import '../../../consultation/presentation/models/doctor_consultation_jazzcash_sheet_result.dart';
-import '../../../consultation/presentation/widgets/doctor_consultation_jazzcash_accounts_sheet_widget.dart';
 import '../../../consultation/data/utils/consultation_booking_utils.dart';
 import '../../../consultation/presentation/models/doctor_consultation_jazzcash_sheet_result.dart';
 import '../../../consultation/presentation/widgets/doctor_consultation_jazzcash_accounts_sheet_widget.dart';
@@ -37,23 +35,8 @@ class PharmacyCheckoutBodyWidget extends StatelessWidget {
 
   Future<void> _onConfirm(BuildContext context) async {
     final cubit = context.read<PharmacyCubit>();
-    final l10n = AppLocalizations.of(context)!;
-    final selected = cubit.state.selectedPaymentMethod;
-
-    // JazzCash account picker lives in the shared consultation/account feature.
-    if (selected == PharmacyPaymentMethod.jazzCash) {
-      final jazzResult =
-          await showModalBottomSheet<DoctorConsultationJazzCashSheetResult>(
-        context: context,
-        isScrollControlled: true,
-        backgroundColor: Colors.transparent,
-        builder: (_) => const DoctorConsultationJazzCashAccountsSheetWidget(),
-      );
-      final msisdn = jazzResult?.msisdn.trim() ?? '';
-      if (!context.mounted || msisdn.isEmpty) return;
-    }
-
-    final paymentMethod = _paymentMethodApiValue(cubit.state.selectedPaymentMethod);
+    final paymentMethod =
+        _paymentMethodApiValue(cubit.state.selectedPaymentMethod);
     String? jazzCashNumber;
     if (ConsultationBookingUtils.isJazzCashPayment(paymentMethod)) {
       jazzCashNumber = await _resolveJazzCashMsisdn(context);
