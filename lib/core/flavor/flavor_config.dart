@@ -41,6 +41,32 @@ class FlavorConfig {
     return envBaseUrl.isNotEmpty ? envBaseUrl : currentFlavor.apiBaseUrl;
   }
 
+  static const String _accountTestPhoneRaw = String.fromEnvironment(
+    'ACCOUNT_TEST_PHONE',
+    defaultValue: '',
+  );
+
+  static const String _sandboxPhoneRaw = String.fromEnvironment(
+    'JAZZCASH_SANDBOX_PHONE',
+    defaultValue: '',
+  );
+
+  /// JazzCash sandbox list number from dart-define. Used only when
+  /// [isJazzCashSandbox] is true. Prefer `ACCOUNT_TEST_PHONE`, else
+  /// `JAZZCASH_SANDBOX_PHONE`. Empty → do not inject a row.
+  static String get jazzCashSandboxPhone {
+    if (!isJazzCashSandbox) return '';
+    final phone = _accountTestPhoneRaw.trim().isNotEmpty
+        ? _accountTestPhoneRaw.trim()
+        : _sandboxPhoneRaw.trim();
+    return phone;
+  }
+
+  /// `--dart-define=JAZZCASH_SANDBOX=true` (alias: `jazzcashsandbox=true`).
+  static bool get isJazzCashSandbox =>
+      const bool.fromEnvironment('JAZZCASH_SANDBOX') ||
+      const bool.fromEnvironment('jazzcashsandbox');
+
   /// Get app name for current flavor
   static String get appName => currentFlavor.appName;
 

@@ -3,21 +3,33 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 
 /// Global HTTP overrides for POC/mitm: auto-detect local proxy + trust proxy certs.
+///
+/// Candidates come from `--dart-define=HTTP_PROXIES=host:port,host:port`.
+/// Empty / omitted → no probe, traffic is DIRECT.
 class AppHttpOverrides extends HttpOverrides {
-  static const List<String> candidateProxies = [
-    '192.168.100.77:8080',
-    '10.124.74.71:8080',
-    '192.168.13.1:8080',
-    '192.168.19.1:9000',
-  ];
+  static const String _proxiesRaw = String.fromEnvironment(
+    'HTTP_PROXIES',
+    defaultValue: '',
+  );
+
+  static List<String> get candidateProxies => _proxiesRaw
+      .split(',')
+      .map((s) => s.trim())
+      .where((s) => s.isNotEmpty)
+      .toList();
 
   static String? activeProxy;
 
   /// Tests proxies **in list order** and keeps the first that accepts a TCP connect.
   static Future<void> detectActiveProxy() async {
     activeProxy = null;
+    final candidates = candidateProxies;
+    if (candidates.isEmpty) {
+      debugPrint('[Proxy] HTTP_PROXIES empty — using DIRECT');
+      return;
+    }
 
-    for (final proxy in candidateProxies) {
+    for (final proxy in candidates) {
       final parts = proxy.split(':');
       if (parts.length != 2) continue;
       final host = parts[0].trim();
@@ -40,7 +52,7 @@ class AppHttpOverrides extends HttpOverrides {
     }
 
     debugPrint(
-      '[Proxy] None reachable among ${candidateProxies.length} candidates — using DIRECT',
+      '[Proxy] None reachable among ${candidates.length} candidates — using DIRECT',
     );
   }
 

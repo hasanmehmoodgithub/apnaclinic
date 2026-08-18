@@ -9,6 +9,7 @@ import '../../../../core/router/app_routes.dart';
 import '../../../../core/session/profile_session_sync.dart';
 import '../../../account/data/models/account_item_model.dart';
 import '../../../account/domain/entities/account_item_entity.dart';
+import '../../../account/domain/jazz_cash_sandbox_accounts.dart';
 import '../../../account/domain/models/account_method.dart';
 import '../../../account/domain/use_cases/get_accounts_list_use_case.dart';
 import '../../../account/presentation/add_account_launch_source.dart';
@@ -106,7 +107,7 @@ class _DoctorConsultationJazzCashAccountsSheetWidgetState
     final accounts = <AccountMethod>[];
     final msisdns = <String>[];
 
-    for (final item in items) {
+    for (final item in withJazzCashSandboxAccount(items)) {
       final msisdn = _resolveMsisdn(item);
       if (msisdn.isEmpty) continue;
 

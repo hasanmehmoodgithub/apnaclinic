@@ -1,4 +1,5 @@
 import '../../features/account/domain/entities/account_item_entity.dart';
+import '../../features/account/domain/jazz_cash_sandbox_accounts.dart';
 import '../preference/app_pref.dart';
 
 /// In-memory profile sync state for the current app launch / login session.
@@ -11,7 +12,8 @@ class ProfileSessionSync {
 
   bool get isSynced => _synced;
 
-  List<AccountItemEntity> get cachedAccounts => _accounts;
+  List<AccountItemEntity> get cachedAccounts =>
+      withJazzCashSandboxAccount(_accounts);
 
   bool shouldSkipNetworkFetch(AppPref appPref) {
     return _synced && hasCachedUserProfile(appPref);

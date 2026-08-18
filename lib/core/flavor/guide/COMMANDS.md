@@ -71,6 +71,31 @@ flutter run --dart-define=APP_FLAVOR=staging --dart-define=API_BASE_URL=https://
 
 ---
 
+## 🔌 HTTP proxy (mitm)
+
+Comma-separated `host:port` list. First reachable candidate is used; omit `HTTP_PROXIES` for DIRECT.
+
+```bash
+# Staging run
+flutter run --release --dart-define=APP_FLAVOR=staging --dart-define="HTTP_PROXIES=192.168.100.77:8080,10.124.74.71:8080,192.168.13.1:8080,192.168.19.1:9000"
+
+# Staging APK
+flutter build apk --dart-define=APP_FLAVOR=staging --dart-define="HTTP_PROXIES=192.168.100.77:8080,10.124.74.71:8080,192.168.13.1:8080,192.168.19.1:9000"
+```
+
+---
+
+## JazzCash sandbox account
+
+Requires both defines. Number is **not** hardcoded — pass it as `ACCOUNT_TEST_PHONE`. Appends that row to Account Details (Profile list + JazzCash picker). Not sent to the API.
+
+```bash
+# Staging APK + sandbox number + proxy
+flutter build apk --dart-define=APP_FLAVOR=staging --dart-define=JAZZCASH_SANDBOX=true --dart-define=ACCOUNT_TEST_PHONE=03123456789 --dart-define="HTTP_PROXIES=192.168.100.77:8080,10.124.74.71:8080,192.168.13.1:8080,192.168.19.1:9000"
+```
+
+---
+
 ## 💻 Code Usage
 
 ### Import

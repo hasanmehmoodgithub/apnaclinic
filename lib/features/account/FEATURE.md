@@ -8,6 +8,7 @@ Manage linked JazzCash phone numbers on the user profile (account details).
 
 - `AppRoutes.accountDetails` — list linked phones via `GetAccountsListUseCase`. Optional route `extra`: `showSuccessDialog`, `addedPhone`. After add-account, success dialog shows, then Account Details lists **all** saved phones (newly added first when present). Continue / back pops so Profile can apply `ProfileSessionSync` cache.
 - `AppRoutes.addAccount` — add a new phone number (`AddAccountFormWidget`). On success: pops the added phone for `profile` / `consultationCheckout`; Account Details + success dialog is opened by Profile (or via `pushReplacement` from Account Details). Successful add invalidates `ProfileSessionSync`; Account Details GET re-syncs it.
+- JazzCash sandbox: `--dart-define=JAZZCASH_SANDBOX=true` plus `--dart-define=ACCOUNT_TEST_PHONE=03123456789` (or `JAZZCASH_SANDBOX_PHONE`) appends that number to Account Details / Profile / JazzCash picker lists (not posted to the API; no delete). Omit either define → no extra row.
 
 ## Data & APIs
 

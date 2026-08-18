@@ -65,7 +65,7 @@ class ProfileAccountDetailsSectionWidget extends StatelessWidget {
                   fullName: fullName,
                 ),
                 onTap: () {},
-                onDelete: entry.value.isDefault
+                onDelete: entry.value.isDefault || entry.value.id.trim().isEmpty
                     ? null
                     : () => onDeleteAccount(entry.key, entry.value),
               ),

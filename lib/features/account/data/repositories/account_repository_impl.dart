@@ -4,6 +4,7 @@ import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/functional/functional_export.dart';
 import '../../../../core/session/profile_session_sync.dart';
 import '../../domain/entities/account_item_entity.dart';
+import '../../domain/jazz_cash_sandbox_accounts.dart';
 import '../../domain/repositories/account_repository.dart';
 import '../data_sources/account_remote_data_source.dart';
 
@@ -21,7 +22,7 @@ class AccountRepositoryImpl implements AccountRepository {
     try {
       final items = await remoteDataSource.getAccountsList();
       _profileSessionSync.markSynced(items);
-      return Right(items);
+      return Right(withJazzCashSandboxAccount(items));
     } catch (e) {
       log('getAccountsList repository error: $e');
       return Left(e.toString());
