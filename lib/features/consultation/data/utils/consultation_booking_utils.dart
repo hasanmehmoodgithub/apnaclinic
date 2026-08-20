@@ -23,6 +23,7 @@ class ConsultationBookingUtils {
     return int.tryParse(match?.group(1) ?? '') ?? 0;
   }
 
+  /// Full (pre-discount) fee and discount amount. Booking API expects the full fee.
   static (int consultationFee, int discount) resolveBilling(ResultsDoctorItem doctor) {
     final payable = resolveConsultationFee(doctor);
     final oldMatch =

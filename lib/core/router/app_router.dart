@@ -282,14 +282,12 @@ class AppRouter {
         builder: (context, state) {
           final extra = state.extra;
           final data = extra is Map ? Map<String, dynamic>.from(extra) : null;
-          final orderId = (data?['orderId'] as String? ??
-                  data?['orderNo'] as String? ??
-                  '')
-              .trim();
-          final fallbackOrderNo = (data?['orderNo'] as String?)?.trim();
+          final orderId = (data?['orderId'] ?? '').toString().trim();
+          final fallbackOrderNo = (data?['orderNo'] ?? '').toString().trim();
           return PharmacyBookingDetailsScreen(
             orderId: orderId,
-            fallbackOrderNo: fallbackOrderNo,
+            fallbackOrderNo:
+                fallbackOrderNo.isEmpty ? null : fallbackOrderNo,
           );
         },
       ),

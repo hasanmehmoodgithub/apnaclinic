@@ -87,12 +87,18 @@ class NotificationMockApi {
           'body': 'Your pharmacy order has been placed successfully.',
           'deepLink': {
             'data': {
-              'entity_id': '1223',
+              'entity_id': '66fb1287-c86d-48f1-8d72-878064118d99',
+              'orderId': '66fb1287-c86d-48f1-8d72-878064118d99',
+              'order_no': 1223,
               'entity_kind': 'PHARMACY_ORDER',
               'service_type': 'PHARMACY',
             },
-            'entity': {'id': 1223, 'kind': 'PHARMACY_ORDER'},
-            'endpoint': 'mobile/pharmacy/orders/1223',
+            'entity': {
+              'id': '66fb1287-c86d-48f1-8d72-878064118d99',
+              'kind': 'PHARMACY_ORDER',
+            },
+            'endpoint':
+                'mobile/bookings/66fb1287-c86d-48f1-8d72-878064118d99',
           },
           'isRead': false,
           'readAt': null,

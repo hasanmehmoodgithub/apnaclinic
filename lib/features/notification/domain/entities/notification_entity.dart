@@ -29,7 +29,7 @@ class NotificationEntity {
   final String serviceType;
   final bool isRead;
 
-  /// Booking / order id from `deepLink.entity.id` or `deepLink.data.entity_id`.
+  /// Booking / order id from `deepLink.data.orderId`, `entity.id`, or `entity_id`.
   final String entityId;
   final String entityKind;
   final String deepLinkEndpoint;

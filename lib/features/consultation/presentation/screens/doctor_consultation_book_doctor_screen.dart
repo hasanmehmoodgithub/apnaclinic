@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart' as p;
+import '../../../../core/constants/app_colors.dart';
 import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
@@ -224,14 +225,21 @@ class _DoctorConsultationBookDoctorScreenState
                           width: double.infinity,
                           height: 58.h,
                           child: ElevatedButton(
-                            onPressed: () => _onGetAppointmentPressed(
-                              context: context,
-                              l10n: l10n,
-                              doctor: doctor,
-                            ),
+                            onPressed: _selectedSlot == null
+                                ? null
+                                : () => _onGetAppointmentPressed(
+                                      context: context,
+                                      l10n: l10n,
+                                      doctor: doctor,
+                                    ),
                             style: ElevatedButton.styleFrom(
                               elevation: 0,
                               backgroundColor: ConsultationUiConfig.ctaColor,
+                              disabledBackgroundColor: ConsultationUiConfig
+                                  .ctaColor
+                                  .withValues(alpha: 0.28),
+                              disabledForegroundColor:
+                                  AppColors.clrWhite.withValues(alpha: 0.35),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(18.r),
                               ),
@@ -239,7 +247,9 @@ class _DoctorConsultationBookDoctorScreenState
                             child: Text(
                               l10n.consultationGetAppointmentCta,
                               style: textTheme.titleMedium?.copyWith(
-                                color: Colors.white,
+                                color: AppColors.clrWhite.withValues(
+                                  alpha: _selectedSlot == null ? 0.35 : 1,
+                                ),
                                 fontSize: 18.sp,
                                 fontWeight: FontWeight.w700,
                               ),

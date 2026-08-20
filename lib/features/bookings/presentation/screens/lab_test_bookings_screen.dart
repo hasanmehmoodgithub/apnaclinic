@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
+import '../../../../core/router/app_routes.dart';
 import '../../../lab_test/domain/use_cases/get_lab_orders_use_case.dart';
 import '../../data/mappers/lab_test_booking_list_mapper.dart';
 import '../../data/models/lab_test_booking_item_model.dart';
@@ -60,7 +62,7 @@ class _LabTestBookingsScreenState extends State<LabTestBookingsScreen> {
                 EmptyBookingWidget(
                   description: l10n.bookingsLabTestEmptyDescription,
                   buttonText: l10n.labTestBookCta,
-                  onTap: () {},
+                  onTap: () => context.pushNamed(AppRoutes.labTest),
                 ),
               ],
             );

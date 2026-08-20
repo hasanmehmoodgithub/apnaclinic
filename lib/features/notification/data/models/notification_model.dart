@@ -50,7 +50,11 @@ class NotificationItemModel {
         'service_type',
       ], nested: deepData, nestedKeys: const ['service_type', 'serviceType']),
       isRead: _isRead(json),
-      entityId: _resolveEntityId(entity: entity, deepData: deepData),
+      entityId: _resolveEntityId(
+        json: json,
+        entity: entity,
+        deepData: deepData,
+      ),
       entityKind: _readString(
         entity ?? const {},
         const ['kind'],
@@ -84,9 +88,22 @@ class NotificationItemModel {
   }
 
   static String _resolveEntityId({
+    required Map<String, dynamic> json,
     required Map<String, dynamic>? entity,
     required Map<String, dynamic>? deepData,
   }) {
+    final nested = <String, dynamic>{
+      ...?deepData,
+      ...?entity,
+    };
+    final orderId = _readString(
+      json,
+      const ['orderId', 'order_id'],
+      nested: nested,
+      nestedKeys: const ['orderId', 'order_id'],
+    );
+    if (orderId.isNotEmpty) return orderId;
+
     final fromEntity = entity?['id'];
     if (fromEntity != null && fromEntity.toString().trim().isNotEmpty) {
       return fromEntity.toString().trim();

@@ -29,7 +29,7 @@ App registers JS channel **`AndroidInterface`**, parses JSON or plain `"success"
 Also:
 
 - On pages whose URL contains `/api/subscription/v1/jazzcash/callback`, app auto-runs `handleSuccess()` and falls back to success after a short delay if the bridge does not fire.
-- Closing the WebView early → `cancelled`.
+- Back/close is disabled (`allowBack: false`); the screen stays until the gateway reports success or failure.
 - **Android SSL:** `NavigationDelegate.onSslAuthError` calls `proceed()` so staging payment hosts (corp/self-signed certs) load in WebView the same way Dio trust-alls via `AppHttpOverrides`.
 
 ## Data

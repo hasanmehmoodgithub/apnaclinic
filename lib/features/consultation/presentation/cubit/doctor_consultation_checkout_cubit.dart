@@ -127,7 +127,7 @@ class DoctorConsultationCheckoutCubit
         doctorId: doctorId,
         tenantId: tenantId,
         consultationFee:
-            ConsultationBookingUtils.resolveConsultationFee(args.doctor),
+            ConsultationBookingUtils.resolveBilling(args.doctor).$1,
         patientId: patientId,
         patientRelation: 'self',
         slotDate: args.selectedSlot.date,

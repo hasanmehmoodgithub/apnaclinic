@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
-import '../../../../generated/assets.dart';
 
 class PharmacyQuantityStepper extends StatelessWidget {
   const PharmacyQuantityStepper({
@@ -11,8 +9,6 @@ class PharmacyQuantityStepper extends StatelessWidget {
     required this.quantity,
     required this.onAdd,
     required this.onRemove,
-    this.onBasketTap,
-    this.showBasketIcon = false,
     this.height,
     this.horizontalPadding,
     this.itemSpacing,
@@ -24,8 +20,6 @@ class PharmacyQuantityStepper extends StatelessWidget {
   final int quantity;
   final VoidCallback onAdd;
   final VoidCallback onRemove;
-  final VoidCallback? onBasketTap;
-  final bool showBasketIcon;
   final double? height;
   final double? horizontalPadding;
   final double? itemSpacing;
@@ -54,21 +48,6 @@ class PharmacyQuantityStepper extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          if (showBasketIcon) ...[
-            InkWell(
-              onTap: onBasketTap,
-              borderRadius: BorderRadius.circular(12.r),
-              child: Padding(
-                padding: EdgeInsets.all(2.r),
-                child: SvgPicture.asset(
-                  Assets.iconsBasket,
-                  width: 14.r,
-                  height: 14.r,
-                ),
-              ),
-            ),
-            SizedBox(width: spacing),
-          ],
           _ActionIconButton(label: '-', onTap: onRemove, fontSize: actionFont),
           SizedBox(width: spacing),
           Text(

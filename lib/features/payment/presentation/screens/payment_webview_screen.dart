@@ -199,11 +199,6 @@ class _PaymentWebViewScreenState extends State<PaymentWebViewScreen> {
     context.pop(result);
   }
 
-  void _onClosePressed() {
-    if (_didComplete) return;
-    _complete(PaymentWebViewResult.cancelled());
-  }
-
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
@@ -213,29 +208,18 @@ class _PaymentWebViewScreenState extends State<PaymentWebViewScreen> {
 
     return PopScope(
       canPop: false,
-      onPopInvokedWithResult: (didPop, _) {
-        if (didPop || _didComplete) return;
-        _onClosePressed();
-      },
       child: Scaffold(
         backgroundColor: AppColors.clrWhite,
         appBar: AppBar(
           backgroundColor: AppColors.clrWhite,
           elevation: 0,
+          automaticallyImplyLeading: false,
           title: Text(
             title,
             style: TextStyle(
               color: AppColors.clr060,
               fontWeight: FontWeight.w700,
               fontSize: 18.sp,
-            ),
-          ),
-          leading: IconButton(
-            onPressed: _onClosePressed,
-            icon: Icon(
-              Icons.close_rounded,
-              color: AppColors.clr060,
-              size: 24.r,
             ),
           ),
         ),

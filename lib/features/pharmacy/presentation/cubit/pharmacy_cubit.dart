@@ -358,22 +358,6 @@ class PharmacyCubit extends Cubit<PharmacyState> {
     return _updateQuantity(medicineId, delta: -1);
   }
 
-  void removeFromCart(String medicineId) {
-    emit(
-      state.copyWith(
-        cartItems: state.cartItems
-            .where((item) => item.medicine.id != medicineId)
-            .toList(),
-      ),
-    );
-  }
-
-  /// Removes item via quantity update API (`quantity: 0`).
-  /// Returns `null` on success, otherwise a user-facing error message.
-  Future<String?> removeCartItem(String medicineId) {
-    return _setCartQuantity(medicineId: medicineId, quantity: 0);
-  }
-
   void selectPaymentMethod(PharmacyPaymentMethod method) {
     emit(state.copyWith(selectedPaymentMethod: method));
   }
@@ -636,7 +620,7 @@ class PharmacyCubit extends Cubit<PharmacyState> {
     if (index < 0) return null;
 
     final nextQty = items[index].quantity + delta;
-    if (nextQty < 0) return null;
+    if (nextQty < 1) return null;
 
     return _setCartQuantity(medicineId: medicineId, quantity: nextQty);
   }

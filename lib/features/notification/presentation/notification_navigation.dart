@@ -48,8 +48,7 @@ bool openNotificationDeepLink(
       context.pushNamed(
         AppRoutes.pharmacyBookingDetails,
         extra: {
-          'orderNo': entityId,
-          'status': 'confirmed',
+          'orderId': entityId,
         },
       );
       return true;

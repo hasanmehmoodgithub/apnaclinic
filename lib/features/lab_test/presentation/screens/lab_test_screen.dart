@@ -118,6 +118,7 @@ class _LabTestScreenState extends State<LabTestScreen> {
                       controller: _searchController,
                       hintText: l10n.labTestSearchFieldHint,
                       onSearch: cubit.submitSearch,
+                      onClear: () => cubit.submitSearch(''),
                     ),
                     Expanded(
                       child: LabTestCatalogListBlockWidget(

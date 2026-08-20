@@ -29,8 +29,8 @@ class PharmacyBookingItemModel {
     final orderNo =
         (json['orderNo'] ?? json['order_no'] ?? '').toString().trim();
     return PharmacyBookingItemModel(
-      orderId: orderId.isNotEmpty ? orderId : orderNo,
-      orderNo: orderNo.isNotEmpty ? orderNo : orderId,
+      orderId: orderId,
+      orderNo: orderNo,
       productName: (json['productName'] ??
               json['product_name'] ??
               json['title'] ??

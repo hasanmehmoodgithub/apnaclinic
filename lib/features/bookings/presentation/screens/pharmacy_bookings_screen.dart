@@ -83,11 +83,13 @@ class _PharmacyBookingsScreenState extends State<PharmacyBookingsScreen> {
             textTheme: textTheme,
             l10n: l10n,
             onViewDetailsTap: () {
+              final orderId = items[index].orderId.trim();
+              if (orderId.isEmpty) return;
               context.pushNamed(
                 AppRoutes.pharmacyBookingDetails,
                 extra: {
-                  'orderId': items[index].orderId,
-                  'orderNo': items[index].displayOrderNo,
+                  'orderId': orderId,
+                  'orderNo': items[index].orderNo,
                 },
               );
             },
