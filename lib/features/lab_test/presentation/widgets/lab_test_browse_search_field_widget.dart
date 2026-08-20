@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/constants/app_colors.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/utils/no_emoji_text_input_formatter.dart';
 import '../../../../generated/assets.dart';
@@ -13,6 +14,7 @@ class LabTestBrowseSearchFieldWidget extends StatelessWidget {
     required this.hintText,
     this.onChanged,
     this.onSearch,
+    this.onClear,
   });
 
   final TextEditingController controller;
@@ -24,7 +26,17 @@ class LabTestBrowseSearchFieldWidget extends StatelessWidget {
   /// Called when the search icon is tapped or the keyboard submits.
   final ValueChanged<String>? onSearch;
 
+  /// Called after the field is cleared via the cross icon.
+  final VoidCallback? onClear;
+
   void _submit() => onSearch?.call(controller.text);
+
+  void _clear() {
+    if (controller.text.isEmpty) return;
+    controller.clear();
+    onChanged?.call('');
+    onClear?.call();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +48,7 @@ class LabTestBrowseSearchFieldWidget extends StatelessWidget {
         color: Colors.white,
         borderRadius: BorderRadius.circular(39.988.r),
         border: Border.all(
-          color: const Color(0xFF9BA6A7),
+          color: AppColors.clr9BA6A7,
           width: 1.0,
         ),
       ),
@@ -58,23 +70,46 @@ class LabTestBrowseSearchFieldWidget extends StatelessWidget {
                 border: InputBorder.none,
                 hintText: hintText,
                 hintStyle: theme.textTheme.bodyMedium?.copyWith(
-                  color: const Color(0xFF667B99),
+                  color: AppColors.clr667B99,
                   fontSize: 14.sp,
                 ),
               ),
             ),
           ),
-          GestureDetector(
-            onTap: onSearch == null ? null : _submit,
-            behavior: HitTestBehavior.opaque,
-            child: Padding(
-              padding: EdgeInsets.all(6.w),
-              child: LabTestFigmaImage(
-                url: Assets.labTestSearchGlyphSmall,
-                width: 13,
-                height: 13,
-              ),
-            ),
+          ListenableBuilder(
+            listenable: controller,
+            builder: (context, _) {
+              return Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (controller.text.isNotEmpty)
+                    GestureDetector(
+                      onTap: _clear,
+                      behavior: HitTestBehavior.opaque,
+                      child: Padding(
+                        padding: EdgeInsets.all(6.w),
+                        child: Icon(
+                          Icons.close_rounded,
+                          size: 16.r,
+                          color: AppColors.clr667B99,
+                        ),
+                      ),
+                    ),
+                  GestureDetector(
+                    onTap: onSearch == null ? null : _submit,
+                    behavior: HitTestBehavior.opaque,
+                    child: Padding(
+                      padding: EdgeInsets.all(6.w),
+                      child: LabTestFigmaImage(
+                        url: Assets.labTestSearchGlyphSmall,
+                        width: 13,
+                        height: 13,
+                      ),
+                    ),
+                  ),
+                ],
+              );
+            },
           ),
         ],
       ),
