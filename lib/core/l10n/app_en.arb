@@ -170,6 +170,8 @@
   "pharmacyCartTitle": "Cart",
   "pharmacyCartEmpty": "Your cart is empty",
   "pharmacyCartUpdateFailed": "Unable to update cart right now. Please try again.",
+  "pharmacyAbandonUnpaidOrderCta": "Didn't pay? Cancel and return to cart",
+  "pharmacyAbandonUnpaidOrderFailed": "Unable to cancel the unpaid order right now. Please try again.",
   "pharmacyCheckoutCta": "Check Out",
   "pharmacyCheckoutTitle": "Check Out",
   "pharmacyCheckoutPatientDetailTitle": "Patient Detail",

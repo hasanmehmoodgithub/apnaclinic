@@ -10,16 +10,25 @@ class AlertDialogCard extends StatelessWidget {
   final AlertKind kind;
   final String title;
   final String message;
+  final String closeLabel;
+  final String? secondaryLabel;
+  final VoidCallback? onSecondary;
+
   const AlertDialogCard({
     required this.kind,
     required this.title,
     required this.message,
+    this.closeLabel = 'Close',
+    this.secondaryLabel,
+    this.onSecondary,
   });
 
   @override
   Widget build(BuildContext context) {
     final isSuccess = kind == AlertKind.success;
     final textTheme = Theme.of(context).textTheme;
+    final hasSecondary =
+        (secondaryLabel?.trim().isNotEmpty ?? false) && onSecondary != null;
     return Dialog(
       backgroundColor: Colors.transparent,
       insetPadding: EdgeInsets.symmetric(horizontal: 24.w),
@@ -85,7 +94,7 @@ class AlertDialogCard extends StatelessWidget {
                   ),
                 ),
                 child: Text(
-                  'Close',
+                  closeLabel,
                   style: textTheme.titleMedium?.copyWith(
                     color: Colors.white,
                     fontSize: 16.sp,
@@ -94,6 +103,31 @@ class AlertDialogCard extends StatelessWidget {
                 ),
               ),
             ),
+            if (hasSecondary) ...[
+              SizedBox(height: 12.h),
+              SizedBox(
+                width: double.infinity,
+                child: TextButton(
+                  onPressed: onSecondary,
+                  style: TextButton.styleFrom(
+                    foregroundColor: const Color(0xFF1AB6A1),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 8.w,
+                      vertical: 12.h,
+                    ),
+                  ),
+                  child: Text(
+                    secondaryLabel!.trim(),
+                    textAlign: TextAlign.center,
+                    style: textTheme.titleMedium?.copyWith(
+                      color: const Color(0xFF1AB6A1),
+                      fontSize: 14.sp,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ],
         ),
       ),

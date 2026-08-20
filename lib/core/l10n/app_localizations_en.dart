@@ -290,6 +290,14 @@ class AppLocalizationsEn extends AppLocalizations {
       'Unable to update cart right now. Please try again.';
 
   @override
+  String get pharmacyAbandonUnpaidOrderCta =>
+      'Didn\'t pay? Cancel and return to cart';
+
+  @override
+  String get pharmacyAbandonUnpaidOrderFailed =>
+      'Unable to cancel the unpaid order right now. Please try again.';
+
+  @override
   String get pharmacyCheckoutCta => 'Check Out';
 
   @override

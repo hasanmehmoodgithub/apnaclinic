@@ -7,6 +7,7 @@ import 'data/data_sources/pharmacy_remote_data_source_impl.dart';
 import 'data/mock/pharmacy_mock_api.dart';
 import 'data/repositories/pharmacy_repository_impl.dart';
 import 'domain/repositories/pharmacy_repository.dart';
+import 'domain/use_cases/abandon_pharmacy_order_use_case.dart';
 import 'domain/use_cases/add_pharmacy_profile_address_use_case.dart';
 import 'domain/use_cases/add_to_cart_use_case.dart';
 import 'domain/use_cases/get_pharmacy_booking_detail_use_case.dart';
@@ -70,6 +71,10 @@ void initPharmacyInjector() {
     () => PharmacyCheckoutUseCase(repository: sl<PharmacyRepository>()),
   );
 
+  sl.registerLazySingleton<AbandonPharmacyOrderUseCase>(
+    () => AbandonPharmacyOrderUseCase(repository: sl<PharmacyRepository>()),
+  );
+
   sl.registerLazySingleton<GetPharmacyProfileAddressesUseCase>(
     () => GetPharmacyProfileAddressesUseCase(
       repository: sl<PharmacyRepository>(),
@@ -102,6 +107,8 @@ void initPharmacyInjector() {
       uploadPharmacyPrescriptionUseCase:
           sl<UploadPharmacyPrescriptionUseCase>(),
       pharmacyCheckoutUseCase: sl<PharmacyCheckoutUseCase>(),
+      abandonPharmacyOrderUseCase: sl<AbandonPharmacyOrderUseCase>(),
+      getPharmacyBookingsUseCase: sl<GetPharmacyBookingsUseCase>(),
       getPharmacyProfileAddressesUseCase:
           sl<GetPharmacyProfileAddressesUseCase>(),
       addPharmacyProfileAddressUseCase: sl<AddPharmacyProfileAddressUseCase>(),

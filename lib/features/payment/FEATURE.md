@@ -30,7 +30,7 @@ Also:
 
 - On pages whose URL contains `/api/subscription/v1/jazzcash/callback`, app auto-runs `handleSuccess()` and falls back to success after a short delay if the bridge does not fire.
 - Back/close is disabled by default (`allowClose: false`); the screen stays until the gateway reports success or failure.
-- Lab checkout opens with `allowClose: true` so the user can dismiss via an **X** (or system back); that returns `cancelled`.
+- Lab and pharmacy checkout open with `allowClose: true` so the user can dismiss via an **X** (or system back); that returns `cancelled`.
 - **Android SSL:** `NavigationDelegate.onSslAuthError` calls `proceed()` so staging payment hosts (corp/self-signed certs) load in WebView the same way Dio trust-alls via `AppHttpOverrides`.
 
 ## Data

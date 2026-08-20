@@ -6,6 +6,7 @@ import '../../../../core/constants/app_strings.dart';
 import '../../../../core/network/api_service.dart';
 import '../../../../core/network/app_urls.dart';
 import '../../../../core/utils/error_handler.dart';
+import '../../domain/use_cases/abandon_pharmacy_order_use_case.dart';
 import '../../domain/use_cases/pharmacy_checkout_use_case.dart';
 import '../mock/pharmacy_mock_api.dart';
 import '../models/pharmacy_booking_detail_model.dart';
@@ -25,7 +26,9 @@ class PharmacyRemoteDataSourceImpl implements PharmacyRemoteDataSource {
   static bool _isSuccessResponse(Map<String, dynamic> response) {
     if (response['success'] == true) return true;
     final code = response['code'];
-    return code is num && code.toInt() == 200;
+    if (code is! num) return false;
+    final status = code.toInt();
+    return status >= 200 && status < 300;
   }
 
   @override
@@ -307,6 +310,39 @@ class PharmacyRemoteDataSourceImpl implements PharmacyRemoteDataSource {
       final message = ErrorHandler.handleExceptions(
         e,
         endpoint: AppUrls.pharmacyOrderCheckout,
+      );
+      return Future.error(message);
+    }
+  }
+
+  @override
+  Future<Map<String, dynamic>> abandonOrder(
+    AbandonPharmacyOrderParams params,
+  ) async {
+    try {
+      final Map<String, dynamic> response;
+      if (PharmacyMockApi.useMockResponses) {
+        response = await mockApi.abandonOrderSuccessResponse(params);
+      } else {
+        response = await apiService.post(
+          AppUrls.pharmacyOrderAbandon,
+          data: params.toJson(),
+        );
+        log('abandonOrder response: $response');
+      }
+
+      if (_isSuccessResponse(response)) {
+        return response;
+      }
+
+      final message =
+          (response['message'] ?? AppStrings.pharmacyAbandonOrderError)
+              .toString();
+      return Future.error(message);
+    } catch (e) {
+      final message = ErrorHandler.handleExceptions(
+        e,
+        endpoint: AppUrls.pharmacyOrderAbandon,
       );
       return Future.error(message);
     }

@@ -37,6 +37,7 @@ Future<void> _showAddToCartErrorDialog(
     message: message.trim().isNotEmpty
         ? message
         : l10n.pharmacyAddToCartFailed,
+    offerAbandonPayment: true,
   );
 }
 

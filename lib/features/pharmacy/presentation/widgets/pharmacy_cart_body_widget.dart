@@ -61,6 +61,7 @@ class _PharmacyCartBodyWidgetState extends State<PharmacyCartBodyWidget> {
       message: error.trim().isNotEmpty
           ? error.trim()
           : l10n.pharmacyCartUpdateFailed,
+      offerAbandonPayment: true,
     );
   }
 

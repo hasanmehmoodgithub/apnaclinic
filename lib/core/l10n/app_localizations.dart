@@ -644,6 +644,18 @@ abstract class AppLocalizations {
   /// **'Unable to update cart right now. Please try again.'**
   String get pharmacyCartUpdateFailed;
 
+  /// No description provided for @pharmacyAbandonUnpaidOrderCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Didn\'t pay? Cancel and return to cart'**
+  String get pharmacyAbandonUnpaidOrderCta;
+
+  /// No description provided for @pharmacyAbandonUnpaidOrderFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to cancel the unpaid order right now. Please try again.'**
+  String get pharmacyAbandonUnpaidOrderFailed;
+
   /// No description provided for @pharmacyCheckoutCta.
   ///
   /// In en, this message translates to:

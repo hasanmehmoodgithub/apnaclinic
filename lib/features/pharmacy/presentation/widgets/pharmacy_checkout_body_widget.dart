@@ -79,6 +79,7 @@ class PharmacyCheckoutBodyWidget extends StatelessWidget {
             orderId: checkout.orderNo,
             status: checkout.status,
           ),
+          allowClose: true,
         );
         if (!context.mounted) return;
         if (!paymentResult.isSuccess) {
@@ -86,6 +87,8 @@ class PharmacyCheckoutBodyWidget extends StatelessWidget {
           return;
         }
 
+        await cubit.clearPendingCardPayment();
+        if (!context.mounted) return;
         cubit.clearCart();
         await showPharmacyOrderPlacedDialog(
           context,

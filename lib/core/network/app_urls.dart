@@ -203,6 +203,10 @@ class AppUrls {
   static String get pharmacyOrderCheckout =>
       '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/partner/pharmacy/order/checkout';
 
+  /// Pharmacy order abandon (POST) — unlock cart after unpaid card checkout.
+  static String get pharmacyOrderAbandon =>
+      '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/partner/pharmacy/order/abandon';
+
   /// Pharmacy profile address create (POST).
   static String get pharmacyProfileAddress =>
       '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/partner/pharmacy/profile/address';

@@ -98,6 +98,9 @@ class PharmacyMedicineMapper {
             ),
           )
           .toList(growable: false),
+      status: model.status,
+      orderId: model.orderId,
+      unifiedOrderId: model.unifiedOrderId,
     );
   }
 
@@ -119,14 +122,27 @@ class PharmacyMedicineMapper {
     final bookingId = _stringOrNull(
       payload['booking_id'] ?? payload['bookingId'],
     );
+    final publicId = _stringOrNull(
+      payload['public_id'] ?? payload['publicId'],
+    );
+    final orderIdRaw = payload['order_id'] ?? payload['orderId'];
+    final orderIdAsInt = _intOrNull(orderIdRaw);
+    // Prefer explicit string order_id / publicId over numeric orderId.
+    final orderIdAsString = orderIdRaw is String
+        ? _stringOrNull(orderIdRaw)
+        : null;
     final orderNo = _stringOrNull(
-          payload['order_no'] ??
-              payload['orderNo'] ??
-              payload['order_id'] ??
-              payload['orderId'],
+          payload['order_no'] ?? payload['orderNo'],
         ) ??
+        orderIdAsString ??
+        publicId ??
+        (orderIdAsInt != null ? '$orderIdAsInt' : null) ??
         bookingId ??
         '';
+    final unifiedOrderId = _intOrNull(
+          payload['unified_order_id'] ?? payload['unifiedOrderId'],
+        ) ??
+        orderIdAsInt;
     final status = _stringOrNull(payload['status']) ?? 'confirmed';
     final paymentUrl = _stringOrNull(
       payload['paymentUrl'] ?? payload['payment_url'],
@@ -134,6 +150,8 @@ class PharmacyMedicineMapper {
 
     return PharmacyCheckoutResultEntity(
       orderNo: orderNo,
+      orderId: orderIdAsString ?? publicId ?? orderNo,
+      unifiedOrderId: unifiedOrderId,
       bookingId: bookingId,
       status: status,
       paymentUrl: paymentUrl,
@@ -183,6 +201,13 @@ class PharmacyMedicineMapper {
     if (value == null) return null;
     final text = value.toString().trim();
     return text.isEmpty ? null : text;
+  }
+
+  static int? _intOrNull(Object? value) {
+    if (value == null) return null;
+    if (value is int) return value;
+    if (value is num) return value.toInt();
+    return int.tryParse(value.toString().trim());
   }
 
   /// Parses prescription upload response for a stored file URL.
