@@ -33,7 +33,7 @@ Surgery mocks use `MockConfig.enableSurgeryMocks` (default false).
 - Last selected city persists in `AppPrefKeys.surgerySelectedCity` (restored on open; saved in `changeCity`)
 - Status fields: `loadingStateStatus`, `doctorsLoadingStateStatus`, `providerDetailsLoadingStateStatus`, `patientFormLoadingStateStatus`
 - Booking doctors filter dialog (`SurgeryBookingFilterSheetWidget`): main step shows Hospital / Speciality rows + **Apply Filter**; tapping a hospital or specialty option immediately returns to the main step (no nested Proceed)
-- Patient details (`SurgeryPatientDetailsScreen`): no `setState` — UI/form/submit driven by `SurgeryPatientDetailsCubit` (`BlocBuilder` / `BlocListener`); text controllers only for field input. Validation: name required; age > 0; contact & emergency = 10 or 11 digits (max input 11; user-facing copy says “valid number”). Booking API success → submitted dialog (**View My Bookings** → Bookings → Surgery tab); failure → failed dialog (API message or fallback)
+- Patient details (`SurgeryPatientDetailsScreen`): no `setState` — UI/form/submit driven by `SurgeryPatientDetailsCubit` (`BlocBuilder` / `BlocListener`); text controllers only for field input. Validation: name required; age > 0; contact & emergency = 10 or 11 digits (max input 11; user-facing copy says “valid number”). Booking API success → submitted dialog (non-cancelable: barrier + back blocked; **View My Bookings** → Bookings → Surgery tab); failure → failed dialog (API message or fallback)
 
 ## DI
 `initSurgeryInjector()` registers mocks, `SurgeryRemoteDataSourceImpl`, repository, use cases (`GetSurgeryLeadsUseCase`, `GetSurgeryLeadUseCase` included), factory `SurgeryCubit`, factory `SurgeryPatientDetailsCubit`.
