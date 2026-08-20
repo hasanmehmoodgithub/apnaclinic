@@ -12,6 +12,7 @@ Future<PaymentWebViewResult?> openCardPaymentWebView(
   BuildContext context, {
   required String paymentUrl,
   String? title,
+  bool allowClose = false,
 }) {
   final url = paymentUrl.trim();
   if (url.isEmpty) {
@@ -22,7 +23,11 @@ Future<PaymentWebViewResult?> openCardPaymentWebView(
 
   return context.pushNamed<PaymentWebViewResult>(
     AppRoutes.cardPayment,
-    extra: PaymentWebViewArgs(paymentUrl: url, title: title),
+    extra: PaymentWebViewArgs(
+      paymentUrl: url,
+      title: title,
+      allowClose: allowClose,
+    ),
   );
 }
 
@@ -32,6 +37,7 @@ Future<PaymentWebViewResult> settleCardPaymentIfNeeded(
   BuildContext context,
   PaymentInitiationResult initiation, {
   String? title,
+  bool allowClose = false,
 }) async {
   if (!initiation.requiresCardPayment) {
     return PaymentWebViewResult.success();
@@ -41,6 +47,7 @@ Future<PaymentWebViewResult> settleCardPaymentIfNeeded(
     context,
     paymentUrl: initiation.paymentUrl!,
     title: title,
+    allowClose: allowClose,
   );
   return result ?? PaymentWebViewResult.cancelled();
 }

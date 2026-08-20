@@ -5,6 +5,7 @@ import '../../../../core/enums/state_status.dart';
 import '../../../../core/preference/app_pref.dart';
 import '../../../../core/preference/app_pref_keys.dart';
 import '../../domain/entities/lab_test_item_entity.dart';
+import '../../domain/entities/lab_test_vendor_entity.dart';
 import '../../domain/use_cases/get_lab_test_catalog_use_case.dart';
 import 'lab_test_state.dart';
 
@@ -16,6 +17,8 @@ class LabTestCubit extends Cubit<LabTestState> {
   }) : super(const LabTestState()) {
     bootstrap();
   }
+
+  static const int _pageSize = 20;
 
   final GetLabTestCatalogUseCase getLabTestCatalogUseCase;
   final AppPref appPref;
@@ -89,6 +92,10 @@ class LabTestCubit extends Cubit<LabTestState> {
             ? StateStatus.refreshing
             : StateStatus.loading,
         selectedCity: resolvedCity,
+        isLoadingMore: false,
+        currentPage: 1,
+        totalPages: 1,
+        totalItems: 0,
         clearErrorMessage: true,
       ),
     );
@@ -96,6 +103,8 @@ class LabTestCubit extends Cubit<LabTestState> {
     final result = await getLabTestCatalogUseCase(
       GetLabTestCatalogParams.forCity(
         cityName: resolvedCity,
+        page: 1,
+        limit: _pageSize,
         search: search,
       ),
     );
@@ -106,6 +115,7 @@ class LabTestCubit extends Cubit<LabTestState> {
         state.copyWith(
           catalogLoadingStateStatus: StateStatus.error,
           errorMessage: error,
+          isLoadingMore: false,
         ),
       ),
       (catalog) {
@@ -122,6 +132,64 @@ class LabTestCubit extends Cubit<LabTestState> {
             partners: catalog.partners,
             vendors: catalog.vendors,
             pricing: catalog.pricing,
+            currentPage: catalog.page,
+            totalPages: catalog.totalPages,
+            totalItems: catalog.total,
+            isLoadingMore: false,
+            clearErrorMessage: true,
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> loadMoreCatalog() async {
+    if (state.isLoadingMore || !state.hasMoreItems) return;
+    final city = state.selectedCity;
+    if (city == null || city.isEmpty) return;
+    if (state.catalogLoadingStateStatus != StateStatus.success &&
+        state.catalogLoadingStateStatus != StateStatus.empty) {
+      return;
+    }
+
+    emit(state.copyWith(isLoadingMore: true, clearErrorMessage: true));
+
+    final nextPage = state.currentPage + 1;
+    final result = await getLabTestCatalogUseCase(
+      GetLabTestCatalogParams.forCity(
+        cityName: city,
+        page: nextPage,
+        limit: _pageSize,
+        search: state.searchQuery.trim().isEmpty
+            ? null
+            : state.searchQuery.trim(),
+      ),
+    );
+    if (isClosed) return;
+
+    result.fold(
+      (error) => emit(
+        state.copyWith(
+          isLoadingMore: false,
+          errorMessage: error,
+        ),
+      ),
+      (catalog) {
+        final mergedItems = _mergeItems(state.items, catalog.items);
+        final mergedVendors = _mergeVendors(state.vendors, catalog.vendors);
+        emit(
+          state.copyWith(
+            catalogLoadingStateStatus: mergedItems.isEmpty
+                ? StateStatus.empty
+                : StateStatus.success,
+            items: mergedItems,
+            filteredItems: mergedItems,
+            vendors: mergedVendors,
+            pricing: catalog.pricing ?? state.pricing,
+            currentPage: catalog.page,
+            totalPages: catalog.totalPages,
+            totalItems: catalog.total,
+            isLoadingMore: false,
             clearErrorMessage: true,
           ),
         );
@@ -180,6 +248,35 @@ class LabTestCubit extends Cubit<LabTestState> {
     }
 
     return trimmed;
+  }
+
+  static List<LabTestItemEntity> _mergeItems(
+    List<LabTestItemEntity> existing,
+    List<LabTestItemEntity> next,
+  ) {
+    if (next.isEmpty) return existing;
+    final seen = <String>{for (final item in existing) item.id};
+    final merged = List<LabTestItemEntity>.from(existing);
+    for (final item in next) {
+      if (seen.add(item.id)) {
+        merged.add(item);
+      }
+    }
+    return merged;
+  }
+
+  static List<LabTestVendorEntity> _mergeVendors(
+    List<LabTestVendorEntity> existing,
+    List<LabTestVendorEntity> next,
+  ) {
+    if (next.isEmpty) return existing;
+    final byId = <String, LabTestVendorEntity>{
+      for (final vendor in existing) vendor.id: vendor,
+    };
+    for (final vendor in next) {
+      byId.putIfAbsent(vendor.id, () => vendor);
+    }
+    return byId.values.toList(growable: false);
   }
 
   static List<LabTestItemEntity> _filter(

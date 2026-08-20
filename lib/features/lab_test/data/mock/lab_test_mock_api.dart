@@ -245,16 +245,24 @@ class LabTestMockApi {
       }
     }
 
+    final total = items.length;
+    final safeLimit = limit <= 0 ? 20 : limit;
+    final totalPages = total == 0 ? 1 : ((total + safeLimit - 1) ~/ safeLimit);
+    final safePage = page < 1 ? 1 : page;
+    final start = ((safePage - 1) * safeLimit).clamp(0, total);
+    final end = (start + safeLimit).clamp(0, total);
+    final pageItems = items.sublist(start, end);
+
     return {
       'success': true,
       'message': 'Tests retrieved',
       'code': 200,
       'data': {
-        'items': items,
-        'total': items.length,
-        'page': page,
-        'limit': limit,
-        'totalPages': 1,
+        'items': pageItems,
+        'total': total,
+        'page': safePage,
+        'limit': safeLimit,
+        'totalPages': totalPages,
       },
       'timestamp': DateTime.now().toUtc().toIso8601String(),
     };

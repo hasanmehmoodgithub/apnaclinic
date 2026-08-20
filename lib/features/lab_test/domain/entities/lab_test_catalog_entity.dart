@@ -13,6 +13,10 @@ class LabTestCatalogEntity extends Equatable {
     required this.partners,
     required this.vendors,
     this.pricing,
+    this.page = 1,
+    this.limit = 20,
+    this.total = 0,
+    this.totalPages = 1,
   });
 
   final List<String> cities;
@@ -21,6 +25,12 @@ class LabTestCatalogEntity extends Equatable {
   final List<LabTestPartnerEntity> partners;
   final List<LabTestVendorEntity> vendors;
   final LabTestPricingEntity? pricing;
+  final int page;
+  final int limit;
+  final int total;
+  final int totalPages;
+
+  bool get hasMore => page < totalPages;
 
   @override
   List<Object?> get props => [
@@ -30,5 +40,9 @@ class LabTestCatalogEntity extends Equatable {
     partners,
     vendors,
     pricing,
+    page,
+    limit,
+    total,
+    totalPages,
   ];
 }

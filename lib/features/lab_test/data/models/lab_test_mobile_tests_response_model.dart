@@ -10,6 +10,7 @@ class LabTestMobileLabModel {
     required this.supportsWalkIn,
     required this.homeSamplingFee,
     required this.supportsHomeSampling,
+    this.logoUrl,
   });
 
   final int labId;
@@ -22,6 +23,7 @@ class LabTestMobileLabModel {
   final bool supportsWalkIn;
   final int homeSamplingFee;
   final bool supportsHomeSampling;
+  final String? logoUrl;
 
   factory LabTestMobileLabModel.fromJson(Map<String, dynamic> json) {
     return LabTestMobileLabModel(
@@ -35,6 +37,7 @@ class LabTestMobileLabModel {
       supportsWalkIn: _toBool(json['supportsWalkIn']),
       homeSamplingFee: (json['homeSamplingFee'] as num?)?.toInt() ?? 0,
       supportsHomeSampling: _toBool(json['supportsHomeSampling']),
+      logoUrl: json['logoUrl']?.toString() ?? json['labLogoUrl']?.toString(),
     );
   }
 

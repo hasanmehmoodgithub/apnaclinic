@@ -224,11 +224,16 @@ class _LabTestCheckoutScreenState extends State<LabTestCheckoutScreen> {
     if (!mounted) return;
     setState(() => _isBooking = false);
 
-    result.fold(
-      (error) => _showBookErrorDialog(error),
+    await result.fold(
+      (error) async => _showBookErrorDialog(error),
       (initiation) async {
-        final paymentResult =
-            await settleCardPaymentIfNeeded(context, initiation);
+        // Same shared card WebView path as pharmacy checkout.
+        // Lab allows closing the WebView with X / system back.
+        final paymentResult = await settleCardPaymentIfNeeded(
+          context,
+          initiation,
+          allowClose: true,
+        );
         if (!mounted) return;
         if (!paymentResult.isSuccess) {
           showCardPaymentOutcomeSnackBar(context, paymentResult);

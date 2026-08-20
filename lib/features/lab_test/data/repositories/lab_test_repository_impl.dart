@@ -66,6 +66,10 @@ class LabTestRepositoryImpl implements LabTestRepository {
           partners: mapped.partners,
           vendors: mapped.vendors,
           pricing: mapped.pricing,
+          page: mapped.page,
+          limit: mapped.limit,
+          total: mapped.total,
+          totalPages: mapped.totalPages,
         ),
       );
     } catch (e) {
