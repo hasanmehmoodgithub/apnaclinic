@@ -293,6 +293,14 @@ class AppLocalizationsUr extends AppLocalizations {
   String get pharmacyRemoveFromCart => 'کارٹ سے ہٹائیں';
 
   @override
+  String get pharmacyAbandonUnpaidOrderCta =>
+      'ادائیگی نہیں کی؟ منسوخ کریں اور کارٹ پر واپس جائیں';
+
+  @override
+  String get pharmacyAbandonUnpaidOrderFailed =>
+      'اس وقت غیر ادا شدہ آرڈر منسوخ نہیں ہو سکا۔ براہ کرم دوبارہ کوشش کریں۔';
+
+  @override
   String get pharmacyCheckoutCta => 'چیک آؤٹ';
 
   @override

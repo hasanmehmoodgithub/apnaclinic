@@ -12,6 +12,7 @@ import '../../domain/entities/pharmacy_checkout_result_entity.dart';
 import '../../domain/entities/pharmacy_products_page_entity.dart';
 import '../../domain/entities/pharmacy_product_detail_entity.dart';
 import '../../domain/repositories/pharmacy_repository.dart';
+import '../../domain/use_cases/abandon_pharmacy_order_use_case.dart';
 import '../../domain/use_cases/pharmacy_checkout_use_case.dart';
 import '../data_sources/pharmacy_remote_data_source.dart';
 import '../mappers/pharmacy_bookings_mapper.dart';
@@ -141,6 +142,18 @@ class PharmacyRepositoryImpl implements PharmacyRepository {
       final entity = PharmacyMedicineMapper.toCheckoutResultEntity(response);
       log('Mapped checkout orderNo: ${entity.orderNo}');
       return Right(entity);
+    } catch (e) {
+      return Left(e.toString());
+    }
+  }
+
+  @override
+  Future<Either<ErrorMsg, bool>> abandonOrder(
+    AbandonPharmacyOrderParams params,
+  ) async {
+    try {
+      await remoteDataSource.abandonOrder(params);
+      return const Right(true);
     } catch (e) {
       return Left(e.toString());
     }

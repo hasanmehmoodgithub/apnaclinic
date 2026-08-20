@@ -1,4 +1,5 @@
 import '../../../../core/config/mock_config.dart';
+import '../../domain/use_cases/abandon_pharmacy_order_use_case.dart';
 import '../../domain/use_cases/pharmacy_checkout_use_case.dart';
 
 class PharmacyMockApi {
@@ -464,7 +465,26 @@ class PharmacyMockApi {
       'data': {
         ...params.toJson(),
         'order_no': '1223',
+        'order_id': 'mock-order-1223',
+        'unified_order_id': 1223,
         'status': 'confirmed',
+        if (params.paymentMethod.toUpperCase() == 'CARD')
+          'payment_url': 'https://example.com/mock-pharmacy-payment',
+      },
+    };
+  }
+
+  Future<Map<String, dynamic>> abandonOrderSuccessResponse(
+    AbandonPharmacyOrderParams params,
+  ) async {
+    await Future<void>.delayed(const Duration(milliseconds: 400));
+    return {
+      'success': true,
+      'message': 'Order abandoned successfully',
+      'code': 201,
+      'data': {
+        'order_id': params.orderId,
+        'unified_order_id': params.unifiedOrderId,
       },
     };
   }

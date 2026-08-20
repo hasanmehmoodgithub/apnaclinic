@@ -92,6 +92,8 @@
   "pharmacyCartEmpty": "آپ کی کارٹ خالی ہے",
   "pharmacyCartUpdateFailed": "اس وقت کارٹ اپ ڈیٹ نہیں ہو سکی۔ براہ کرم دوبارہ کوشش کریں۔",
   "pharmacyRemoveFromCart": "کارٹ سے ہٹائیں",
+  "pharmacyAbandonUnpaidOrderCta": "ادائیگی نہیں کی؟ منسوخ کریں اور کارٹ پر واپس جائیں",
+  "pharmacyAbandonUnpaidOrderFailed": "اس وقت غیر ادا شدہ آرڈر منسوخ نہیں ہو سکا۔ براہ کرم دوبارہ کوشش کریں۔",
   "pharmacyCheckoutCta": "چیک آؤٹ",
   "pharmacyCheckoutTitle": "چیک آؤٹ",
   "pharmacyCheckoutPatientDetailTitle": "مریض کی تفصیل",

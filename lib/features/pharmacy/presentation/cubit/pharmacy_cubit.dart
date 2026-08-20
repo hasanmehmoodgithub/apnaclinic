@@ -7,13 +7,17 @@ import '../../../../core/constants/app_strings.dart';
 import '../../../../core/enums/state_status.dart';
 import '../../../../core/functional/functional_export.dart';
 import '../../../../core/preference/app_pref.dart';
+import '../../../../core/preference/app_pref_keys.dart';
 import '../../../../core/utils/auth_guard.dart';
+import '../../domain/entities/pharmacy_cart_entity.dart';
 import '../../domain/entities/pharmacy_cart_item_entity.dart';
 import '../../domain/entities/pharmacy_cart_address_entity.dart';
 import '../../domain/entities/pharmacy_checkout_result_entity.dart';
 import '../../domain/entities/pharmacy_medicine_entity.dart';
+import '../../domain/use_cases/abandon_pharmacy_order_use_case.dart';
 import '../../domain/use_cases/add_pharmacy_profile_address_use_case.dart';
 import '../../domain/use_cases/add_to_cart_use_case.dart';
+import '../../domain/use_cases/get_pharmacy_bookings_use_case.dart';
 import '../../domain/use_cases/get_pharmacy_cart_use_case.dart';
 import '../../domain/use_cases/get_pharmacy_medicines_use_case.dart';
 import '../../domain/use_cases/get_pharmacy_product_detail_use_case.dart';
@@ -32,6 +36,8 @@ class PharmacyCubit extends Cubit<PharmacyState> {
     required this.updatePharmacyCartQuantityUseCase,
     required this.uploadPharmacyPrescriptionUseCase,
     required this.pharmacyCheckoutUseCase,
+    required this.abandonPharmacyOrderUseCase,
+    required this.getPharmacyBookingsUseCase,
     required this.getPharmacyProfileAddressesUseCase,
     required this.addPharmacyProfileAddressUseCase,
     required this.citiesRepository,
@@ -47,10 +53,51 @@ class PharmacyCubit extends Cubit<PharmacyState> {
   final UpdatePharmacyCartQuantityUseCase updatePharmacyCartQuantityUseCase;
   final UploadPharmacyPrescriptionUseCase uploadPharmacyPrescriptionUseCase;
   final PharmacyCheckoutUseCase pharmacyCheckoutUseCase;
+  final AbandonPharmacyOrderUseCase abandonPharmacyOrderUseCase;
+  final GetPharmacyBookingsUseCase getPharmacyBookingsUseCase;
   final GetPharmacyProfileAddressesUseCase getPharmacyProfileAddressesUseCase;
   final AddPharmacyProfileAddressUseCase addPharmacyProfileAddressUseCase;
   final CitiesRepository citiesRepository;
   final AppPref appPref;
+
+  /// In-session fallback when prefs were not written (e.g. older checkout).
+  String? _pendingPaymentOrderId;
+  int? _pendingPaymentUnifiedOrderId;
+
+  /// Backend locks cart while an unpaid card checkout is in flight.
+  static bool isPaymentInProgressCartError(String message) {
+    final normalized = message.trim().toLowerCase();
+    if (normalized.isEmpty) return false;
+    return normalized.contains(
+          'payment for your current order is being processed',
+        ) ||
+        (normalized.contains('resolve your payment') &&
+            normalized.contains('modifying your cart'));
+  }
+
+  bool get hasPendingCardPaymentOrder {
+    final orderId = _resolvePendingOrderId();
+    return orderId.isNotEmpty || (_resolvePendingUnifiedOrderId() != 0);
+  }
+
+  String _resolvePendingOrderId() {
+    final fromPref =
+        (appPref.getString(AppPrefKeys.pharmacyPendingPaymentOrderId) ?? '')
+            .trim();
+    if (fromPref.isNotEmpty) return fromPref;
+    final fromMemory = (_pendingPaymentOrderId ?? '').trim();
+    if (fromMemory.isNotEmpty) return fromMemory;
+    return (state.cartBookingId ?? '').trim();
+  }
+
+  int _resolvePendingUnifiedOrderId() {
+    final fromPref =
+        appPref.getInt(AppPrefKeys.pharmacyPendingPaymentUnifiedOrderId);
+    if (fromPref != null && fromPref != 0) return fromPref;
+    final fromMemory = _pendingPaymentUnifiedOrderId;
+    if (fromMemory != null && fromMemory != 0) return fromMemory;
+    return 0;
+  }
 
   Future<void> loadMedicines({bool refresh = false}) async {
     final displayName = state.searchQuery.trim();
@@ -169,17 +216,46 @@ class PharmacyCubit extends Cubit<PharmacyState> {
     final result = await getPharmacyCartUseCase(const GetPharmacyCartParams());
     if (isClosed) return;
 
-    result.fold(
-      (_) {},
-      (cart) => emit(
-        state.copyWith(
-          cartBookingId: cart.bookingId,
-          cartItems: _mergePrescriptionUrls(cart.items),
-          cartAddresses: cart.addresses,
-          paymentBreakdown: cart.paymentBreakdown,
-        ),
-      ),
+    await result.fold(
+      (_) async {},
+      (cart) async {
+        emit(
+          state.copyWith(
+            cartBookingId: cart.bookingId,
+            cartItems: _mergePrescriptionUrls(cart.items),
+            cartAddresses: cart.addresses,
+            paymentBreakdown: cart.paymentBreakdown,
+          ),
+        );
+        if (cart.isAwaitingPayment) {
+          await _syncPendingPaymentFromCart(cart);
+        }
+      },
     );
+  }
+
+  Future<void> _syncPendingPaymentFromCart(PharmacyCartEntity cart) async {
+    final orderId = (cart.orderId ?? cart.bookingId ?? '').trim();
+    final unified = cart.unifiedOrderId ?? 0;
+    if (orderId.isEmpty && unified == 0) return;
+
+    _pendingPaymentOrderId =
+        orderId.isNotEmpty ? orderId : _pendingPaymentOrderId;
+    _pendingPaymentUnifiedOrderId =
+        unified != 0 ? unified : _pendingPaymentUnifiedOrderId;
+
+    if (orderId.isNotEmpty) {
+      await appPref.setString(
+        AppPrefKeys.pharmacyPendingPaymentOrderId,
+        orderId,
+      );
+    }
+    if (unified != 0) {
+      await appPref.setInt(
+        AppPrefKeys.pharmacyPendingPaymentUnifiedOrderId,
+        unified,
+      );
+    }
   }
 
   /// Uploads prescription file; returns URL on success, null on failure.
@@ -407,6 +483,99 @@ class PharmacyCubit extends Cubit<PharmacyState> {
     );
   }
 
+  Future<void> rememberPendingCardPayment(
+    PharmacyCheckoutResultEntity checkout,
+  ) async {
+    if (!checkout.requiresCardPayment) return;
+    final orderId = checkout.abandonOrderId;
+    final unifiedId = checkout.unifiedOrderId ?? 0;
+    if (orderId.isEmpty && unifiedId == 0) return;
+
+    _pendingPaymentOrderId = orderId.isNotEmpty ? orderId : null;
+    _pendingPaymentUnifiedOrderId = unifiedId != 0 ? unifiedId : null;
+
+    if (orderId.isNotEmpty) {
+      await appPref.setString(
+        AppPrefKeys.pharmacyPendingPaymentOrderId,
+        orderId,
+      );
+    }
+    await appPref.setInt(
+      AppPrefKeys.pharmacyPendingPaymentUnifiedOrderId,
+      unifiedId,
+    );
+    log(
+      'rememberPendingCardPayment orderId=$orderId unifiedOrderId=$unifiedId',
+    );
+  }
+
+  Future<void> clearPendingCardPayment() async {
+    _pendingPaymentOrderId = null;
+    _pendingPaymentUnifiedOrderId = null;
+    await appPref.remove(AppPrefKeys.pharmacyPendingPaymentOrderId);
+    await appPref.remove(AppPrefKeys.pharmacyPendingPaymentUnifiedOrderId);
+  }
+
+  Future<Either<ErrorMsg, bool>> abandonPendingPaymentOrder() async {
+    var orderId = _resolvePendingOrderId();
+    var unifiedOrderId = _resolvePendingUnifiedOrderId();
+
+    if (orderId.isEmpty && unifiedOrderId == 0) {
+      final recovered = await _recoverPendingPaymentIdsFromBookings();
+      orderId = recovered.$1;
+      unifiedOrderId = recovered.$2;
+    }
+
+    log(
+      'abandonPendingPaymentOrder orderId=$orderId unifiedOrderId=$unifiedOrderId',
+    );
+
+    final result = await abandonPharmacyOrderUseCase(
+      AbandonPharmacyOrderParams(
+        orderId: orderId,
+        unifiedOrderId: unifiedOrderId,
+      ),
+    );
+    if (isClosed) return result;
+    if (result.isLeft) return result;
+
+    await clearPendingCardPayment();
+    await loadCart();
+    return const Right(true);
+  }
+
+  /// Last-resort: find an in-flight pharmacy booking to abandon.
+  Future<(String, int)> _recoverPendingPaymentIdsFromBookings() async {
+    final result = await getPharmacyBookingsUseCase(
+      const GetPharmacyBookingsParams(page: 1, limit: 20),
+    );
+    return result.fold(
+      (_) => ('', 0),
+      (page) {
+        for (final booking in page.items) {
+          final status = booking.status.trim().toUpperCase();
+          final isPending = status.contains('PAYMENT') ||
+              status.contains('PENDING') ||
+              status.contains('AWAITING');
+          if (!isPending) continue;
+
+          final orderId = booking.orderId.trim().isNotEmpty
+              ? booking.orderId.trim()
+              : booking.orderNo.trim();
+          final unified = int.tryParse(booking.orderId.trim()) ??
+              int.tryParse(booking.orderNo.trim()) ??
+              0;
+          if (orderId.isEmpty && unified == 0) continue;
+
+          _pendingPaymentOrderId = orderId.isNotEmpty ? orderId : null;
+          _pendingPaymentUnifiedOrderId = unified != 0 ? unified : null;
+          return (orderId, unified);
+        }
+        return ('', 0);
+      },
+    );
+  }
+
   Future<Either<ErrorMsg, PharmacyCheckoutResultEntity>> checkoutOrder({
     required String address,
     required String region,
@@ -455,18 +624,29 @@ class PharmacyCubit extends Cubit<PharmacyState> {
       cityId: cityId,
       cityName: trimmedRegion,
     );
-    return locationResult.fold(
-      Left.new,
-      (userLocationId) => pharmacyCheckoutUseCase(
-        PharmacyCheckoutParams(
-          userLocationId: userLocationId,
-          paymentMethod: resolvedPaymentMethod,
-          jazzCashNumber: isJazzCash ? jazzCash : null,
-          deliveryInstructions: deliveryInstructions,
-          prescriptions: checkoutPrescriptions,
-        ),
+    if (locationResult.isLeft) {
+      return Left(locationResult.left);
+    }
+
+    final checkoutResult = await pharmacyCheckoutUseCase(
+      PharmacyCheckoutParams(
+        userLocationId: locationResult.right,
+        paymentMethod: resolvedPaymentMethod,
+        jazzCashNumber: isJazzCash ? jazzCash : null,
+        deliveryInstructions: deliveryInstructions,
+        prescriptions: checkoutPrescriptions,
       ),
     );
+
+    await checkoutResult.fold(
+      (_) async {},
+      (checkout) async {
+        if (checkout.requiresCardPayment) {
+          await rememberPendingCardPayment(checkout);
+        }
+      },
+    );
+    return checkoutResult;
   }
 
   List<PharmacyCheckoutPrescriptionParams> _prescriptionsFromCartItems() {

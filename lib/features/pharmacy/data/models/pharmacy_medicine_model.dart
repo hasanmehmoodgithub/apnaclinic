@@ -580,6 +580,9 @@ class PharmacyCartResponseModel {
     this.hasProductList = false,
     this.paymentBreakdown,
     this.addresses = const [],
+    this.status,
+    this.orderId,
+    this.unifiedOrderId,
   });
 
   final bool success;
@@ -589,6 +592,9 @@ class PharmacyCartResponseModel {
   final bool hasProductList;
   final PharmacyPaymentBreakdownModel? paymentBreakdown;
   final List<PharmacyCartAddressModel> addresses;
+  final String? status;
+  final String? orderId;
+  final int? unifiedOrderId;
 
   factory PharmacyCartResponseModel.fromJson(Map<String, dynamic> json) {
     final payload = _unwrapCartPayload(json);
@@ -606,6 +612,18 @@ class PharmacyCartResponseModel {
         )
         .toList(growable: false);
 
+    final orderIdRaw = payload['order_id'] ?? payload['orderId'];
+    final orderIdAsInt = _parseInt(orderIdRaw);
+    final orderIdAsString = orderIdRaw is String
+        ? (orderIdRaw.trim().isEmpty ? null : orderIdRaw.trim())
+        : null;
+    final publicId = _stringOrNull(
+      payload['public_id'] ?? payload['publicId'],
+    );
+    final orderNo = _stringOrNull(
+      payload['order_no'] ?? payload['orderNo'],
+    );
+
     return PharmacyCartResponseModel(
       success: json['success'] == true ||
           (json['code'] is num && (json['code'] as num).toInt() == 200),
@@ -619,7 +637,29 @@ class PharmacyCartResponseModel {
         payload['payment_breakdown'] ?? payload['paymentBreakdown'],
       ),
       addresses: _parseFamilyMemberAddresses(payload),
+      status: _stringOrNull(payload['status']),
+      orderId: orderIdAsString ??
+          publicId ??
+          orderNo ??
+          (orderIdAsInt != null ? '$orderIdAsInt' : null),
+      unifiedOrderId: _parseInt(
+            payload['unified_order_id'] ?? payload['unifiedOrderId'],
+          ) ??
+          orderIdAsInt,
     );
+  }
+
+  static String? _stringOrNull(Object? value) {
+    if (value == null) return null;
+    final text = value.toString().trim();
+    return text.isEmpty || text == 'null' ? null : text;
+  }
+
+  static int? _parseInt(Object? value) {
+    if (value == null) return null;
+    if (value is int) return value;
+    if (value is num) return value.toInt();
+    return int.tryParse(value.toString().trim());
   }
 
   /// Collects addresses from `family_members[].addresses` (null → empty).

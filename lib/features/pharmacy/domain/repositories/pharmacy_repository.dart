@@ -1,5 +1,6 @@
 import '../../../../core/functional/functional_export.dart';
 import '../entities/pharmacy_booking_detail_entity.dart';
+import '../use_cases/abandon_pharmacy_order_use_case.dart';
 import '../use_cases/pharmacy_checkout_use_case.dart';
 import '../entities/pharmacy_booking_entity.dart';
 import '../entities/pharmacy_add_address_result_entity.dart';
@@ -38,6 +39,10 @@ abstract class PharmacyRepository {
 
   Future<Either<ErrorMsg, PharmacyCheckoutResultEntity>> checkoutOrder(
     PharmacyCheckoutParams params,
+  );
+
+  Future<Either<ErrorMsg, bool>> abandonOrder(
+    AbandonPharmacyOrderParams params,
   );
 
   Future<Either<ErrorMsg, List<PharmacyCartAddressEntity>>> getProfileAddresses();

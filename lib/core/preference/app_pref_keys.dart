@@ -40,4 +40,8 @@ class AppPrefKeys {
       _encryption.obfuscateKey('lab_test_selected_city$_prefVersion');
   static String get surgerySelectedCity =>
       _encryption.obfuscateKey('surgery_selected_city$_prefVersion');
+  static String get pharmacyPendingPaymentOrderId =>
+      _encryption.obfuscateKey('pharmacy_pending_payment_order_id$_prefVersion');
+  static String get pharmacyPendingPaymentUnifiedOrderId => _encryption
+      .obfuscateKey('pharmacy_pending_payment_unified_order_id$_prefVersion');
 }
