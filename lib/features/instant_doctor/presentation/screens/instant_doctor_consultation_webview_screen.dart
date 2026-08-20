@@ -43,21 +43,15 @@ class _InstantDoctorConsultationWebViewScreenState
       params = WebKitWebViewControllerCreationParams(
         allowsInlineMediaPlayback: true,
         mediaTypesRequiringUserAction: const <PlaybackMediaTypes>{},
+        javaScriptCanOpenWindowsAutomatically: true,
       );
     } else {
-      params = const PlatformWebViewControllerCreationParams();
+      params = AndroidWebViewControllerCreationParams();
     }
 
     final controller = WebViewController.fromPlatformCreationParams(
       params,
-      onPermissionRequest: (request) async {
-        final granted = await handleWebViewMediaPermission(request);
-        if (!granted && mounted) {
-          context.showErrorSnackBar(
-            AppLocalizations.of(context)!.instantDoctorMediaPermissionDenied,
-          );
-        }
-      },
+      onPermissionRequest: grantWebViewMediaPermission,
     )
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setNavigationDelegate(
@@ -86,6 +80,7 @@ class _InstantDoctorConsultationWebViewScreenState
     final platformController = controller.platform;
     if (platformController is AndroidWebViewController) {
       platformController.setMediaPlaybackRequiresUserGesture(false);
+      platformController.setMixedContentMode(MixedContentMode.alwaysAllow);
     }
 
     return controller;
@@ -99,7 +94,39 @@ class _InstantDoctorConsultationWebViewScreenState
         AppLocalizations.of(context)!.instantDoctorMediaPermissionDenied,
       );
     }
+
+    await configureWebViewMediaSession();
+    if (!mounted) return;
+    await _useChromeLikeUserAgent();
+    if (!mounted) return;
     await _controller.loadRequest(Uri.parse(widget.args.url));
+  }
+
+  /// Video-consult sites often treat the Android WebView UA (`wv`) as a
+  /// browser that cannot use camera/mic.
+  Future<void> _useChromeLikeUserAgent() async {
+    final ua = await _controller.getUserAgent();
+    if (ua == null || ua.isEmpty) return;
+    final chromeLike = ua
+        .replaceAll('; wv', '')
+        .replaceAll('Version/4.0 ', '');
+    if (chromeLike == ua) return;
+    await _controller.setUserAgent(chromeLike);
+  }
+
+  Widget _buildWebView() {
+    if (WebViewPlatform.instance is AndroidWebViewPlatform) {
+      return WebViewWidget.fromPlatformCreationParams(
+        params:
+            AndroidWebViewWidgetCreationParams.fromPlatformWebViewWidgetCreationParams(
+          PlatformWebViewWidgetCreationParams(
+            controller: _controller.platform,
+          ),
+          displayWithHybridComposition: true,
+        ),
+      );
+    }
+    return WebViewWidget(controller: _controller);
   }
 
   @override
@@ -114,43 +141,43 @@ class _InstantDoctorConsultationWebViewScreenState
       body: SafeArea(
         top: false,
         child: Stack(
-            children: [
-              WebViewWidget(controller: _controller),
-              if (_isLoading)
-                const Center(
-                  child: CircularProgressIndicator(color: AppColors.clr0FAA9A),
-                ),
-              if (_hasError)
-                Center(
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 24.w),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          l10n.instantDoctorOpenAppError,
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: AppColors.clr6C7C92,
-                            fontSize: 15.sp,
-                            fontWeight: FontWeight.w500,
-                          ),
+          children: [
+            _buildWebView(),
+            if (_isLoading)
+              const Center(
+                child: CircularProgressIndicator(color: AppColors.clr0FAA9A),
+              ),
+            if (_hasError)
+              Center(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 24.w),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        l10n.instantDoctorOpenAppError,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: AppColors.clr6C7C92,
+                          fontSize: 15.sp,
+                          fontWeight: FontWeight.w500,
                         ),
-                        SizedBox(height: 16.h),
-                        TextButton(
-                          onPressed: () {
-                            setState(() {
-                              _isLoading = true;
-                              _hasError = false;
-                            });
-                            _controller.loadRequest(Uri.parse(widget.args.url));
-                          },
-                          child: Text(l10n.commonRetry),
-                        ),
-                      ],
-                    ),
+                      ),
+                      SizedBox(height: 16.h),
+                      TextButton(
+                        onPressed: () {
+                          setState(() {
+                            _isLoading = true;
+                            _hasError = false;
+                          });
+                          _controller.loadRequest(Uri.parse(widget.args.url));
+                        },
+                        child: Text(l10n.commonRetry),
+                      ),
+                    ],
                   ),
                 ),
+              ),
           ],
         ),
       ),

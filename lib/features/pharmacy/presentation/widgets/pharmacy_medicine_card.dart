@@ -49,13 +49,10 @@ class PharmacyMedicineCard extends StatelessWidget {
                   clipBehavior: Clip.none,
                   children: [
                     Positioned.fill(
-                      child: DecoratedBox(
-                        decoration: BoxDecoration(
-                          color: AppColors.clrF0F4F8,
-                          borderRadius: BorderRadius.circular(12.r),
-                        ),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(12.r),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(12.r),
+                        child: ColoredBox(
+                          color: AppColors.clrWhite,
                           child: CachedNetworkImage(
                             imageUrl: medicine.imageUrl,
                             fit: BoxFit.contain,
@@ -67,7 +64,7 @@ class PharmacyMedicineCard extends StatelessWidget {
                             ),
                             errorWidget: (context, url, error) {
                               return const ColoredBox(
-                                color: AppColors.clrF0F4F8,
+                                color: AppColors.clrWhite,
                                 child: Center(
                                   child: Icon(
                                     Icons.medication_rounded,

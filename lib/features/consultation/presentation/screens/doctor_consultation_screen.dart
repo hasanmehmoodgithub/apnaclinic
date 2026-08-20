@@ -135,6 +135,7 @@ class _DoctorConsultationScreenState extends State<DoctorConsultationScreen> {
                                 ),
                               ),
                             ),
+                            SizedBox(height: 40.h),
                           ],
                         ),
                       );

@@ -7,7 +7,7 @@
 ## Routes / entry
 
 - Bottom nav tab: `dashboardBottomInstantDoctor` → `InstantDoctorScreen` (via main navigation shell). **Login required** — guests are sent to `AppRoutes.authLogin` (bottom nav and home banner).
-- `AppRoutes.instantDoctorConsultation` — `InstantDoctorConsultationWebViewScreen`; extra: `InstantDoctorConsultationArgs` (`url`, `title`). Opens after OS camera + mic permission; WebView `onPermissionRequest` grants camera/mic to the page (deny → snackbar).
+- `AppRoutes.instantDoctorConsultation` — `InstantDoctorConsultationWebViewScreen`; extra: `InstantDoctorConsultationArgs` (`url`, `title`). Opens after OS camera + mic permission; WebView grants getUserMedia immediately (deny of OS permission → snackbar).
 
 ## Data & APIs
 
@@ -24,7 +24,7 @@
 - `InstantDoctorCubit` — loads providers; `onProviderPrimaryTap` / `onCancelSubscriptionConfirmed` orchestrate subscribe/unsubscribe OTP; `verifyOtp` reloads content on success; `consultationUrl` returns provider `redirectUrl`.
 - `InstantDoctorScreen` — layout and UI reactions (OTP sheet is not swipe/tap-outside dismissible; close via X; dialogs, snackbars); opens consultation via `AppRoutes.instantDoctorConsultation` web view screen; reloads providers when web view closes and after a successful unsubscribe.
 - Start Consultation CTAs include a phone icon.
-- `InstantDoctorConsultationWebViewScreen` — requests camera + microphone, then loads `redirectUrl`. When the page asks for media, `handleWebViewMediaPermission` requests OS access and `grant()`s the WebView (Android `onPermissionRequest`; iOS uses Info.plist + runtime prompt).
+- `InstantDoctorConsultationWebViewScreen` — requests OS camera + microphone **before** loading `redirectUrl`, then **immediately** `grant()`s WebView getUserMedia (waiting in that callback lets Android/iOS auto-deny). Android uses hybrid composition + a Chrome-like user agent. iOS: `PERMISSION_CAMERA` + `PERMISSION_MICROPHONE` in the Podfile, inline playback, PlayAndRecord audio session (`apna_clinic/media_session`), and `audio` background mode.
 
 ## DI
 

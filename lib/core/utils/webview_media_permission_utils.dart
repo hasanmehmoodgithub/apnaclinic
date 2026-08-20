@@ -1,8 +1,11 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 import 'microphone_permission_utils.dart';
+
+const _mediaSessionChannel = MethodChannel('apna_clinic/media_session');
 
 /// Requests camera access; returns true when granted.
 Future<bool> ensureCameraPermission() async {
@@ -26,33 +29,22 @@ Future<bool> ensureCameraAndMicrophonePermissions() async {
   return cameraGranted && microphoneGranted;
 }
 
-/// Handles a WebView media permission prompt: ask OS first, then grant/deny.
-Future<bool> handleWebViewMediaPermission(
-  WebViewPermissionRequest request,
-) async {
-  final needsCamera = request.types.contains(WebViewPermissionResourceType.camera);
-  final needsMicrophone = request.types.contains(
-    WebViewPermissionResourceType.microphone,
-  );
-
-  if (!needsCamera && !needsMicrophone) {
-    await request.grant();
-    return true;
+/// iOS WKWebView getUserMedia needs PlayAndRecord + speaker for camera/mic.
+Future<void> configureWebViewMediaSession() async {
+  if (defaultTargetPlatform != TargetPlatform.iOS) return;
+  try {
+    await _mediaSessionChannel.invokeMethod<void>('configureForWebRtc');
+  } on MissingPluginException {
+    return;
+  } on PlatformException {
+    return;
   }
+}
 
-  var allowed = true;
-  if (needsCamera) {
-    allowed = await ensureCameraPermission();
-  }
-  if (allowed && needsMicrophone) {
-    allowed = await ensureMicrophonePermission();
-  }
-
-  if (allowed) {
-    await request.grant();
-    return true;
-  }
-
-  await request.deny();
-  return false;
+/// Grants a WebView getUserMedia request immediately.
+///
+/// Android/iOS auto-deny camera/mic if this callback waits on OS permission
+/// dialogs. Call [ensureCameraAndMicrophonePermissions] before loading the page.
+void grantWebViewMediaPermission(WebViewPermissionRequest request) {
+  request.grant();
 }

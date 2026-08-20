@@ -33,7 +33,7 @@ class PharmacySelectedCard extends StatelessWidget {
               height: 260.h,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(26.r),
-                color: AppColors.clrE6EDF1,
+                color: AppColors.clrWhite,
               ),
               clipBehavior: Clip.antiAlias,
               child: CachedNetworkImage(
@@ -48,7 +48,7 @@ class PharmacySelectedCard extends StatelessWidget {
                 ),
                 errorWidget: (context, url, error) {
                   return Container(
-                    color: AppColors.clrE9EEF3,
+                    color: AppColors.clrWhite,
                     alignment: Alignment.center,
                     child: const Icon(
                       Icons.medication_rounded,
