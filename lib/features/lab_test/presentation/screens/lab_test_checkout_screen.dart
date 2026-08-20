@@ -20,6 +20,8 @@ import '../../../consultation/presentation/models/doctor_consultation_jazzcash_s
 import '../../../consultation/presentation/widgets/doctor_consultation_jazzcash_accounts_sheet_widget.dart';
 import '../../../dashboard/presentation/constants/main_navigation_tabs.dart';
 import '../../../payment/presentation/payment_navigation.dart';
+import '../../domain/entities/lab_test_cart_item.dart';
+import '../../domain/repositories/lab_test_cart_repository.dart';
 import '../../domain/use_cases/book_lab_test_use_case.dart';
 import '../lab_test_route_args.dart';
 import '../widgets/lab_test_booking_confirmation_dialog_widget.dart';
@@ -232,6 +234,10 @@ class _LabTestCheckoutScreenState extends State<LabTestCheckoutScreen> {
           showCardPaymentOutcomeSnackBar(context, paymentResult);
           return;
         }
+        await sl<LabTestCartRepository>().writeCart(
+          const <LabTestCartItem>[],
+        );
+        if (!mounted) return;
         _showBookedDialog();
       },
     );
@@ -260,6 +266,7 @@ class _LabTestCheckoutScreenState extends State<LabTestCheckoutScreen> {
     showDialog<void>(
       context: context,
       barrierDismissible: false,
+      useRootNavigator: true,
       builder: (dialogContext) {
         return LabTestBookingConfirmationDialogWidget(
           onViewBookings: () {
