@@ -1,6 +1,8 @@
 import 'dart:developer';
 
 import '../../../../core/functional/functional_export.dart';
+import '../../../../core/network/app_urls.dart';
+import '../../../../core/utils/error_handler.dart';
 import '../../domain/entities/instant_doctor_entity.dart';
 import '../../domain/entities/instant_doctor_verify_otp_entity.dart';
 import '../../domain/repositories/instant_doctor_repository.dart';
@@ -26,7 +28,12 @@ class InstantDoctorRepositoryImpl implements InstantDoctorRepository {
       return Right(InstantDoctorMapper.toEntity(model));
     } catch (e) {
       log('getInstantDoctorContent repository error: $e');
-      return Left(e.toString());
+      return Left(
+        ErrorHandler.handleExceptions(
+          e,
+          endpoint: AppUrls.instantDoctorConsultation(params.msisdn),
+        ),
+      );
     }
   }
 
@@ -44,7 +51,12 @@ class InstantDoctorRepositoryImpl implements InstantDoctorRepository {
       return const Right(null);
     } catch (e) {
       log('sendSubscriptionOtp repository error: $e');
-      return Left(e.toString());
+      return Left(
+        ErrorHandler.handleExceptions(
+          e,
+          endpoint: AppUrls.instantDoctorSendOtp,
+        ),
+      );
     }
   }
 
@@ -63,7 +75,12 @@ class InstantDoctorRepositoryImpl implements InstantDoctorRepository {
       return Right(InstantDoctorMapper.toVerifyOtpEntity(model));
     } catch (e) {
       log('verifySubscriptionOtp repository error: $e');
-      return Left(e.toString());
+      return Left(
+        ErrorHandler.handleExceptions(
+          e,
+          endpoint: AppUrls.instantDoctorVerifyOtp,
+        ),
+      );
     }
   }
 }

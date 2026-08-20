@@ -15,7 +15,6 @@ import '../widgets/instant_doctor_cancel_subscription_dialog.dart';
 import '../widgets/instant_doctor_otp_verification_sheet.dart';
 import '../widgets/instant_doctor_provider_list_widget.dart';
 import '../widgets/instant_doctor_screen_error_listener.dart';
-import '../widgets/instant_doctor_subscription_failure_dialog.dart';
 import '../widgets/instant_doctor_subscription_success_dialog.dart';
 import '../widgets/instant_doctor_top_header_widget.dart';
 
@@ -206,30 +205,38 @@ class _InstantDoctorScreenState extends State<InstantDoctorScreen> {
     required InstantDoctorOtpVerifyOutcome outcome,
   }) async {
     if (!sheetContext.mounted) return;
-    sheetContext.pop();
-    if (!mounted) return;
 
     final otpAction = outcome.action ?? _cubit.state.otpAction;
-    _cubit.clearOtpFlow();
-    if (outcome.isSuccess) {
+
+    if (!outcome.isSuccess) {
+      final backendMessage = outcome.errorMessage?.trim();
       if (otpAction == InstantDoctorOtpAction.unsubscribe) {
-        _showSnackBar(_l10n.instantDoctorCancelSubscriptionSuccess);
-        await _cubit.loadContent();
+        sheetContext.pop();
+        if (!mounted) return;
+        _cubit.clearOtpFlow();
+        _showSnackBar(
+          (backendMessage != null && backendMessage.isNotEmpty)
+              ? backendMessage
+              : _l10n.instantDoctorCancelSubscriptionFailed,
+        );
         return;
       }
-      await _showSubscribeSuccessDialog(provider, outcome);
+
+      // Subscribe wrong OTP: keep sheet open and show backend message under pins.
       return;
     }
+
+    sheetContext.pop();
+    if (!mounted) return;
+    _cubit.clearOtpFlow();
 
     if (otpAction == InstantDoctorOtpAction.unsubscribe) {
-      _showSnackBar(_l10n.instantDoctorCancelSubscriptionFailed);
+      _showSnackBar(_l10n.instantDoctorCancelSubscriptionSuccess);
+      await _cubit.loadContent();
       return;
     }
 
-    await showDialog<void>(
-      context: context,
-      builder: (_) => const InstantDoctorSubscriptionFailureDialog(),
-    );
+    await _showSubscribeSuccessDialog(provider, outcome);
   }
 
   Future<void> _showSubscribeSuccessDialog(

@@ -19,6 +19,10 @@ class LabTestState extends Equatable {
     this.searchQuery = '',
     this.selectedCity,
     this.errorMessage,
+    this.currentPage = 1,
+    this.totalPages = 1,
+    this.totalItems = 0,
+    this.isLoadingMore = false,
   });
 
   final StateStatus catalogLoadingStateStatus;
@@ -32,6 +36,12 @@ class LabTestState extends Equatable {
   final String searchQuery;
   final String? selectedCity;
   final String? errorMessage;
+  final int currentPage;
+  final int totalPages;
+  final int totalItems;
+  final bool isLoadingMore;
+
+  bool get hasMoreItems => currentPage < totalPages;
 
   LabTestState copyWith({
     StateStatus? catalogLoadingStateStatus,
@@ -45,6 +55,10 @@ class LabTestState extends Equatable {
     String? searchQuery,
     String? selectedCity,
     String? errorMessage,
+    int? currentPage,
+    int? totalPages,
+    int? totalItems,
+    bool? isLoadingMore,
     bool clearSelectedCity = false,
     bool clearErrorMessage = false,
   }) {
@@ -65,6 +79,10 @@ class LabTestState extends Equatable {
       errorMessage: clearErrorMessage
           ? null
           : (errorMessage ?? this.errorMessage),
+      currentPage: currentPage ?? this.currentPage,
+      totalPages: totalPages ?? this.totalPages,
+      totalItems: totalItems ?? this.totalItems,
+      isLoadingMore: isLoadingMore ?? this.isLoadingMore,
     );
   }
 
@@ -81,5 +99,9 @@ class LabTestState extends Equatable {
     searchQuery,
     selectedCity,
     errorMessage,
+    currentPage,
+    totalPages,
+    totalItems,
+    isLoadingMore,
   ];
 }

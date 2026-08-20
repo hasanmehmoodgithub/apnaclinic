@@ -2,10 +2,14 @@ class PaymentWebViewArgs {
   const PaymentWebViewArgs({
     required this.paymentUrl,
     this.title,
+    this.allowClose = false,
   });
 
   final String paymentUrl;
   final String? title;
+
+  /// When true, shows a close control and allows leaving without gateway result.
+  final bool allowClose;
 }
 
 PaymentWebViewArgs? paymentWebViewArgsFromExtra(Object? extra) {
@@ -16,6 +20,7 @@ PaymentWebViewArgs? paymentWebViewArgsFromExtra(Object? extra) {
     return PaymentWebViewArgs(
       paymentUrl: url,
       title: extra['title']?.toString(),
+      allowClose: extra['allowClose'] == true,
     );
   }
   return null;

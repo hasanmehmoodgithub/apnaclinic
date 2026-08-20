@@ -24,8 +24,14 @@ class InstantDoctorOtpVerifyOutcome {
           redirectUrl: redirectUrl,
         );
 
-  const InstantDoctorOtpVerifyOutcome.failure([String? errorMessage])
-      : this._(isSuccess: false, errorMessage: errorMessage);
+  const InstantDoctorOtpVerifyOutcome.failure({
+    InstantDoctorOtpAction? action,
+    String? errorMessage,
+  }) : this._(
+          isSuccess: false,
+          action: action,
+          errorMessage: errorMessage,
+        );
 
   final bool isSuccess;
   final InstantDoctorOtpAction? action;

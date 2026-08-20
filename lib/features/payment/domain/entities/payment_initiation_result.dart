@@ -25,10 +25,7 @@ class PaymentInitiationResult {
   factory PaymentInitiationResult.fromBookingResponse(
     Map<String, dynamic> response,
   ) {
-    final data = response['data'];
-    final map = data is Map
-        ? Map<String, dynamic>.from(data)
-        : <String, dynamic>{};
+    final map = _unwrapPayload(response);
 
     String? read(List<String> keys) {
       for (final key in keys) {
@@ -41,7 +38,16 @@ class PaymentInitiationResult {
     }
 
     return PaymentInitiationResult(
-      paymentUrl: read(const ['paymentUrl', 'payment_url']),
+      paymentUrl: read(const [
+        'paymentUrl',
+        'payment_url',
+        'redirectUrl',
+        'redirect_url',
+        'checkoutUrl',
+        'checkout_url',
+        'paymentLink',
+        'payment_link',
+      ]),
       orderId: read(const [
         'orderId',
         'order_id',
@@ -56,5 +62,19 @@ class PaymentInitiationResult {
           map['inProgress'] == true || map['in_progress'] == true,
       message: response['message']?.toString(),
     );
+  }
+
+  /// Matches pharmacy checkout unwrap: `data` or nested `data.data`.
+  static Map<String, dynamic> _unwrapPayload(Map<String, dynamic> response) {
+    final data = response['data'];
+    if (data is Map) {
+      final outer = Map<String, dynamic>.from(data);
+      final nested = outer['data'];
+      if (nested is Map) {
+        return Map<String, dynamic>.from(nested);
+      }
+      return outer;
+    }
+    return response;
   }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../core/constants/app_colors.dart';
 import '../../../../core/enums/state_status.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../domain/entities/lab_test_item_entity.dart';
@@ -12,7 +13,7 @@ import 'lab_test_catalog_error_widget.dart';
 import 'lab_test_catalog_shimmer_widget.dart';
 
 /// Scrollable catalog area: loading, error, empty, or list — scoped Bloc rebuilds.
-class LabTestCatalogListBlockWidget extends StatelessWidget {
+class LabTestCatalogListBlockWidget extends StatefulWidget {
   const LabTestCatalogListBlockWidget({
     super.key,
     required this.onItemTap,
@@ -33,6 +34,36 @@ class LabTestCatalogListBlockWidget extends StatelessWidget {
   final String feeFallbackText;
 
   @override
+  State<LabTestCatalogListBlockWidget> createState() =>
+      _LabTestCatalogListBlockWidgetState();
+}
+
+class _LabTestCatalogListBlockWidgetState
+    extends State<LabTestCatalogListBlockWidget> {
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_onScroll);
+  }
+
+  @override
+  void dispose() {
+    _scrollController
+      ..removeListener(_onScroll)
+      ..dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    if (!_scrollController.hasClients) return;
+    final position = _scrollController.position;
+    if (position.pixels < position.maxScrollExtent - 200) return;
+    context.read<LabTestCubit>().loadMoreCatalog();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return BlocBuilder<LabTestCubit, LabTestState>(
       buildWhen: (previous, current) =>
@@ -41,7 +72,9 @@ class LabTestCatalogListBlockWidget extends StatelessWidget {
           previous.filteredItems != current.filteredItems ||
           previous.selectedCity != current.selectedCity ||
           previous.searchQuery != current.searchQuery ||
-          previous.errorMessage != current.errorMessage,
+          previous.errorMessage != current.errorMessage ||
+          previous.isLoadingMore != current.isLoadingMore ||
+          previous.hasMoreItems != current.hasMoreItems,
       builder: (context, state) {
         final selectedCity = state.selectedCity;
         if (selectedCity == null || selectedCity.isEmpty) {
@@ -49,7 +82,7 @@ class LabTestCatalogListBlockWidget extends StatelessWidget {
             return const LabTestCatalogShimmerWidget();
           }
           return LabTestCatalogEmptyWidget(
-            message: selectCityFirstMessage,
+            message: widget.selectCityFirstMessage,
             showIllustration: false,
           );
         }
@@ -59,29 +92,51 @@ class LabTestCatalogListBlockWidget extends StatelessWidget {
           return const LabTestCatalogShimmerWidget();
         }
 
-        if (state.catalogLoadingStateStatus == StateStatus.error) {
+        if (state.catalogLoadingStateStatus == StateStatus.error &&
+            state.filteredItems.isEmpty) {
           return LabTestCatalogErrorWidget(
-            fallbackMessage: loadFailedMessage,
+            fallbackMessage: widget.loadFailedMessage,
             detailMessage: state.errorMessage,
           );
         }
 
         if (state.filteredItems.isEmpty) {
-          return LabTestCatalogEmptyWidget(message: emptyMessage);
+          return LabTestCatalogEmptyWidget(message: widget.emptyMessage);
         }
 
+        final showFooter = state.isLoadingMore;
+        final itemCount =
+            state.filteredItems.length + (showFooter ? 1 : 0);
+
         return ListView.separated(
+          controller: _scrollController,
           padding: EdgeInsets.symmetric(vertical: 10.h),
-          itemCount: state.filteredItems.length,
+          itemCount: itemCount,
           separatorBuilder: (context, index) => SizedBox(height: 14.h),
           itemBuilder: (context, index) {
+            if (index >= state.filteredItems.length) {
+              return Padding(
+                padding: EdgeInsets.symmetric(vertical: 16.h),
+                child: Center(
+                  child: SizedBox(
+                    width: 24.r,
+                    height: 24.r,
+                    child: const CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: AppColors.clr0FAA9A,
+                    ),
+                  ),
+                ),
+              );
+            }
+
             final item = state.filteredItems[index];
             return LabTestBrowseItemTileWidget(
               item: item,
-              onTap: () => onItemTap(item),
-              requirementLabel: requirementLabel,
-              sampleTypeLabel: sampleTypeLabel,
-              feeFallbackText: feeFallbackText,
+              onTap: () => widget.onItemTap(item),
+              requirementLabel: widget.requirementLabel,
+              sampleTypeLabel: widget.sampleTypeLabel,
+              feeFallbackText: widget.feeFallbackText,
             );
           },
         );

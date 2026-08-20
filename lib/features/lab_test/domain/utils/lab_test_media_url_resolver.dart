@@ -1,24 +1,21 @@
 import '../../../../generated/assets.dart';
-import 'lab_test_lab_logo_resolver.dart';
 
+/// Resolves lab/partner media URLs.
+///
+/// Lab logos use the API HTTP URL only (no remapping another lab's bundled
+/// asset). Missing/unusable lab logos return empty so the UI shows a placeholder.
 class LabTestMediaUrlResolver {
   LabTestMediaUrlResolver._();
 
-  static String resolveLabLogo(String? raw, {required String labSlug, String? labName}) {
-    final local = LabTestLabLogoResolver.logoUrlForLab(
-      labSlug: labSlug,
-      labName: labName ?? labSlug,
-    );
-    if (local.isNotEmpty) return local;
-
+  static String resolveLabLogo(
+    String? raw, {
+    String labSlug = '',
+    String? labName,
+  }) {
+    // labSlug / labName kept for call-site compatibility; logos come from API only.
+    final _ = (labSlug, labName);
     final value = raw?.trim() ?? '';
-    if (value.startsWith('http')) {
-      final host = Uri.tryParse(value)?.host.toLowerCase() ?? '';
-      if (host.isNotEmpty && host != 'localhost' && host != '127.0.0.1') {
-        return value;
-      }
-    }
-    return '';
+    return _isUsableHttpUrl(value) ? value : '';
   }
 
   static String resolvePartnerLogo({

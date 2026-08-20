@@ -29,7 +29,8 @@ App registers JS channel **`AndroidInterface`**, parses JSON or plain `"success"
 Also:
 
 - On pages whose URL contains `/api/subscription/v1/jazzcash/callback`, app auto-runs `handleSuccess()` and falls back to success after a short delay if the bridge does not fire.
-- Back/close is disabled (`allowBack: false`); the screen stays until the gateway reports success or failure.
+- Back/close is disabled by default (`allowClose: false`); the screen stays until the gateway reports success or failure.
+- Lab checkout opens with `allowClose: true` so the user can dismiss via an **X** (or system back); that returns `cancelled`.
 - **Android SSL:** `NavigationDelegate.onSslAuthError` calls `proceed()` so staging payment hosts (corp/self-signed certs) load in WebView the same way Dio trust-alls via `AppHttpOverrides`.
 
 ## Data
@@ -39,6 +40,8 @@ Also:
 Wired when `paymentUrl` is present:
 
 - Consultation summary → after `SubmitConsultationBookingUseCase`
-- Lab checkout → after `BookLabTestUseCase`
+- Lab checkout → after `BookLabTestUseCase` (same `settleCardPaymentIfNeeded` WebView path as pharmacy)
 - Pharmacy checkout → after order checkout result
 - Surgery booking details → after `BookSurgeryUseCase`
+
+`PaymentInitiationResult.fromBookingResponse` unwraps `data` / nested `data.data` (pharmacy-style) and reads `paymentUrl` / `payment_url` plus common redirect aliases.

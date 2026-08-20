@@ -2,7 +2,6 @@ import '../entities/lab_test_item_entity.dart';
 import '../entities/lab_test_lab_offer_entity.dart';
 import '../entities/lab_test_pricing_entity.dart';
 import '../entities/lab_test_vendor_entity.dart';
-import 'lab_test_lab_logo_resolver.dart';
 import 'lab_test_price_formatter.dart';
 
 class LabTestItemBookingHelper {
@@ -52,12 +51,7 @@ class LabTestItemBookingHelper {
         () => LabTestVendorEntity(
           id: offer.labId.toString(),
           name: offer.labName,
-          logoUrl: offer.labLogoUrl.isNotEmpty
-              ? offer.labLogoUrl
-              : LabTestLabLogoResolver.logoUrlForLab(
-                  labSlug: offer.labSlug,
-                  labName: offer.labName,
-                ),
+          logoUrl: offer.labLogoUrl,
         ),
       );
     }
@@ -96,12 +90,7 @@ class LabTestItemBookingHelper {
     return LabTestVendorEntity(
       id: offer.labId.toString(),
       name: offer.labName,
-      logoUrl: offer.labLogoUrl.isNotEmpty
-          ? offer.labLogoUrl
-          : LabTestLabLogoResolver.logoUrlForLab(
-              labSlug: offer.labSlug,
-              labName: offer.labName,
-            ),
+      logoUrl: offer.labLogoUrl,
     );
   }
 

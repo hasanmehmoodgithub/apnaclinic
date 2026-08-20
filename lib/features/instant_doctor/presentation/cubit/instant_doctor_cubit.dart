@@ -249,10 +249,10 @@ class InstantDoctorCubit extends Cubit<InstantDoctorState> {
     final uuid = state.subscriptionUuid;
     final msisdn = _resolveMsisdn();
     if (provider == null || action == null || uuid == null || msisdn == null) {
-      return const InstantDoctorOtpVerifyOutcome.failure();
+      return InstantDoctorOtpVerifyOutcome.failure(action: action);
     }
     if (otp.trim().length != 4) {
-      return const InstantDoctorOtpVerifyOutcome.failure();
+      return InstantDoctorOtpVerifyOutcome.failure(action: action);
     }
 
     emit(
@@ -280,7 +280,10 @@ class InstantDoctorCubit extends Cubit<InstantDoctorState> {
             otpErrorMessage: error,
           ),
         );
-        return InstantDoctorOtpVerifyOutcome.failure(error);
+        return InstantDoctorOtpVerifyOutcome.failure(
+          action: action,
+          errorMessage: error,
+        );
       },
       (verifyResult) async {
         emit(
