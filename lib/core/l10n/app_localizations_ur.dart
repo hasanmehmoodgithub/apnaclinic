@@ -290,6 +290,9 @@ class AppLocalizationsUr extends AppLocalizations {
       'اس وقت کارٹ اپ ڈیٹ نہیں ہو سکی۔ براہ کرم دوبارہ کوشش کریں۔';
 
   @override
+  String get pharmacyRemoveFromCart => 'کارٹ سے ہٹائیں';
+
+  @override
   String get pharmacyCheckoutCta => 'چیک آؤٹ';
 
   @override

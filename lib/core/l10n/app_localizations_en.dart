@@ -290,6 +290,9 @@ class AppLocalizationsEn extends AppLocalizations {
       'Unable to update cart right now. Please try again.';
 
   @override
+  String get pharmacyRemoveFromCart => 'Remove from cart';
+
+  @override
   String get pharmacyCheckoutCta => 'Check Out';
 
   @override

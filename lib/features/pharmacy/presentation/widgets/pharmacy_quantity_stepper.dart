@@ -9,6 +9,8 @@ class PharmacyQuantityStepper extends StatelessWidget {
     required this.quantity,
     required this.onAdd,
     required this.onRemove,
+    this.onDelete,
+    this.deleteTooltip,
     this.height,
     this.horizontalPadding,
     this.itemSpacing,
@@ -20,6 +22,8 @@ class PharmacyQuantityStepper extends StatelessWidget {
   final int quantity;
   final VoidCallback onAdd;
   final VoidCallback onRemove;
+  final VoidCallback? onDelete;
+  final String? deleteTooltip;
   final double? height;
   final double? horizontalPadding;
   final double? itemSpacing;
@@ -48,6 +52,11 @@ class PharmacyQuantityStepper extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
+          if (onDelete != null)
+            _DeleteIconButton(
+              onTap: onDelete!,
+              tooltip: deleteTooltip,
+            ),
           _ActionIconButton(label: '-', onTap: onRemove, fontSize: actionFont),
           SizedBox(width: spacing),
           Text(
@@ -63,6 +72,35 @@ class PharmacyQuantityStepper extends StatelessWidget {
         ],
       ),
     );
+  }
+}
+
+class _DeleteIconButton extends StatelessWidget {
+  const _DeleteIconButton({required this.onTap, this.tooltip});
+
+  final VoidCallback onTap;
+  final String? tooltip;
+
+  static const double _tapSize = 36;
+
+  @override
+  Widget build(BuildContext context) {
+    final iconSize = 18.sp;
+    final icon = SizedBox(
+      width: iconSize,
+      height: _tapSize,
+      child: InkWell(
+        onTap: onTap,
+        child: Icon(
+          Icons.delete_outline,
+          size: iconSize,
+          color: AppColors.clr667B99,
+        ),
+      ),
+    );
+    final message = tooltip;
+    if (message == null || message.isEmpty) return icon;
+    return Tooltip(message: message, child: icon);
   }
 }
 

@@ -644,6 +644,12 @@ abstract class AppLocalizations {
   /// **'Unable to update cart right now. Please try again.'**
   String get pharmacyCartUpdateFailed;
 
+  /// No description provided for @pharmacyRemoveFromCart.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove from cart'**
+  String get pharmacyRemoveFromCart;
+
   /// No description provided for @pharmacyCheckoutCta.
   ///
   /// In en, this message translates to:

@@ -358,6 +358,10 @@ class PharmacyCubit extends Cubit<PharmacyState> {
     return _updateQuantity(medicineId, delta: -1);
   }
 
+  Future<String?> removeFromCart(String medicineId) {
+    return _setCartQuantity(medicineId: medicineId, quantity: 0);
+  }
+
   void selectPaymentMethod(PharmacyPaymentMethod method) {
     emit(state.copyWith(selectedPaymentMethod: method));
   }

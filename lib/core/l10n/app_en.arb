@@ -170,6 +170,7 @@
   "pharmacyCartTitle": "Cart",
   "pharmacyCartEmpty": "Your cart is empty",
   "pharmacyCartUpdateFailed": "Unable to update cart right now. Please try again.",
+  "pharmacyRemoveFromCart": "Remove from cart",
   "pharmacyCheckoutCta": "Check Out",
   "pharmacyCheckoutTitle": "Check Out",
   "pharmacyCheckoutPatientDetailTitle": "Patient Detail",

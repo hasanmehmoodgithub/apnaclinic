@@ -13,11 +13,13 @@ class PharmacyCartItemTile extends StatelessWidget {
     required this.item,
     required this.onIncrease,
     required this.onDecrease,
+    required this.onDelete,
   });
 
   final PharmacyCartItemEntity item;
   final VoidCallback onIncrease;
   final VoidCallback onDecrease;
+  final VoidCallback onDelete;
 
   @override
   Widget build(BuildContext context) {
@@ -69,6 +71,8 @@ class PharmacyCartItemTile extends StatelessWidget {
                       quantity: item.quantity,
                       onAdd: onIncrease,
                       onRemove: onDecrease,
+                      onDelete: onDelete,
+                      deleteTooltip: l10n.pharmacyRemoveFromCart,
                       itemSpacing: 18.r,
                     ),
                     SizedBox(width: 8.w),

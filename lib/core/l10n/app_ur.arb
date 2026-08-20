@@ -91,6 +91,7 @@
   "pharmacyCartTitle": "کارٹ",
   "pharmacyCartEmpty": "آپ کی کارٹ خالی ہے",
   "pharmacyCartUpdateFailed": "اس وقت کارٹ اپ ڈیٹ نہیں ہو سکی۔ براہ کرم دوبارہ کوشش کریں۔",
+  "pharmacyRemoveFromCart": "کارٹ سے ہٹائیں",
   "pharmacyCheckoutCta": "چیک آؤٹ",
   "pharmacyCheckoutTitle": "چیک آؤٹ",
   "pharmacyCheckoutPatientDetailTitle": "مریض کی تفصیل",
