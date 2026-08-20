@@ -29,9 +29,9 @@ Doctor consultation category browse, doctor results, booking, and checkout.
 - **GET** `AppUrls.doctorConsultationBookings(page, limit)` — `/api/v1/mobile/doctor-consultation?page=&limit=` (subscriber's booked consultations).
   - Response `data`: `{ data: [], page, limit, total }`.
   - Item: `appointmentId`, `doctorInfo` (`doctorid`, `displayName`, `yearsOfExperience`, `profileImageUrl`, `consultationFee`, `discountPercent`, `isFree`, `education`, `specialtyName`, `ratings`, `pmdcVerified`, `partner`), `patientRelation`, `slot*`, `success`, `partnerRefNo`, `meetingLink`, `issue`, `attachments`, `doctorPerscriptions` (API typo; also accepts `doctorPrescriptions`), `patientReview` (`rating`/`review`/`date`, nullable).
-  - `bookingId` resolves from `appointmentId` first (needed for detail GET); `partnerRefNo` kept separately for feedback.
-  - Maps to `ConsultationBookingListItemEntity` → bookings UI via `DoctorConsultationBookingMapper`.
-- **GET** `AppUrls.doctorConsultationBookingDetail(appointmentId)` — `/api/v1/mobile/doctor-consultation/{appointmentId}` — single consultation in `data` (same item shape as list). Used by Bookings **View Details** via `GetConsultationBookingUseCase`.
+  - `bookingId` resolves from `orderId` first (needed for detail GET), then `appointmentId`; `partnerRefNo` kept separately for feedback.
+  - Maps to `ConsultationBookingListItemEntity` → bookings UI via `DoctorConsultationBookingMapper`. `success`: `PAID` → Confirmed, `PENDING_PAYMENT` → Pending, `FAILED` → Failed (list and details).
+- **GET** `AppUrls.doctorConsultationBookingDetail(id)` — `/api/v1/mobile/doctor-consultation/{orderId}` — single consultation in `data` (same item shape as list). Used by Bookings **View Details** via `GetConsultationBookingUseCase`.
 - **POST** `AppUrls.doctorConsultationFeedback` — `/api/v1/mobile/doctor-consultation/feedback` JSON `{ refNo, rating, review }`.
   - Used from booking details when `patientReview` is null (not cancelled); `refNo` is `partnerRefNo` (fallback booking id).
 - **GET** `AppUrls.doctorConsultationSlots(doctorId, hospitalId?)` — `/api/v1/mobile/doctor-consultation/doctor/{doctorId}` (optional `?hospitalId=` when doctors list provides it).

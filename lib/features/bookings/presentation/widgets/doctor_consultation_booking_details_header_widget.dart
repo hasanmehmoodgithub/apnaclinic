@@ -24,6 +24,7 @@ class DoctorConsultationBookingDetailsHeaderWidget extends StatelessWidget {
       DoctorConsultationBookingStatus.pending => l10n.bookingsStatusPending,
       DoctorConsultationBookingStatus.confirmed => l10n.bookingsStatusConfirmed,
       DoctorConsultationBookingStatus.cancel => l10n.bookingsStatusCancel,
+      DoctorConsultationBookingStatus.failed => l10n.bookingsStatusFailed,
       DoctorConsultationBookingStatus.completed => l10n.bookingsStatusCompleted,
     };
 

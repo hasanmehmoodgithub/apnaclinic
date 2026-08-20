@@ -16,6 +16,7 @@ class ConsultationBookingsListMockApi {
         'data': [
           {
             'appointmentId': 11,
+            'orderId': 55,
             'doctorInfo': {
               'doctorid': 6617,
               'displayName': 'Dr. M. Atif Munawar',
@@ -49,6 +50,7 @@ class ConsultationBookingsListMockApi {
           },
           {
             'appointmentId': 12,
+            'orderId': 63,
             'doctorInfo': {
               'doctorid': 6538,
               'displayName': 'Dr. Akshai Kumar',
@@ -68,7 +70,7 @@ class ConsultationBookingsListMockApi {
             'slotDate': '2026-07-07',
             'slotStartTime': '17:40',
             'slotEndTime': '17:50',
-            'success': 'PAID',
+            'success': 'FAILED',
             'partnerRefNo': '1ZIGLGUT',
             'meetingLink': 'https://demo.oladoc.com/vc/mock-meeting-2',
             'issue': null,
@@ -98,11 +100,15 @@ class ConsultationBookingsListMockApi {
     if (items is List) {
       for (final item in items) {
         if (item is! Map) continue;
-        final id = item['appointmentId'];
-        final parsed = id is num
-            ? id.toInt()
-            : int.tryParse(id?.toString() ?? '');
-        if (parsed == appointmentId) {
+        final itemAppointmentId = item['appointmentId'];
+        final itemOrderId = item['orderId'];
+        bool matches(dynamic raw) {
+          final parsed = raw is num
+              ? raw.toInt()
+              : int.tryParse(raw?.toString() ?? '');
+          return parsed == appointmentId;
+        }
+        if (matches(itemAppointmentId) || matches(itemOrderId)) {
           return {
             'success': true,
             'message': 'Consultation retrieved',

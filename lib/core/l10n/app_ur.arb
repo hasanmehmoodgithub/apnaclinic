@@ -537,6 +537,7 @@
   "bookingsStatusPending": "Pending",
   "bookingsStatusConfirmed": "Confirmed",
   "bookingsStatusCancel": "Cancel",
+  "bookingsStatusFailed": "Failed",
   "bookingsStatusCompleted": "Completed",
   "bookingsPatientLabel": "مریض",
   "bookingsIssueLabel": "مسئلہ",

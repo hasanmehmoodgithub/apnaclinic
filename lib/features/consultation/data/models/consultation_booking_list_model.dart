@@ -249,7 +249,13 @@ class ConsultationBookingListItemModel {
     required Map<String, dynamic> json,
     required String doctorId,
   }) {
-    // Detail API is GET .../doctor-consultation/{appointmentId}.
+    // Detail API is GET .../doctor-consultation/{orderId}.
+    final orderId = _readString(json, const [
+      'orderId',
+      'order_id',
+    ]);
+    if (orderId.isNotEmpty) return orderId;
+
     final appointmentId = _readString(json, const [
       'appointmentId',
       'appointment_id',

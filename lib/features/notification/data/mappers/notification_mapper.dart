@@ -15,6 +15,7 @@ class NotificationMapper {
       entityId: model.entityId,
       entityKind: model.entityKind,
       unifiedOrderId: model.unifiedOrderId,
+      entityPublicId: model.entityPublicId,
       deepLinkEndpoint: model.deepLinkEndpoint,
       priority: model.priority,
       createdAt: model.createdAt,

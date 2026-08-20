@@ -11,6 +11,7 @@ class NotificationEntity {
     this.entityId = '',
     this.entityKind = '',
     this.unifiedOrderId = '',
+    this.entityPublicId = '',
     this.deepLinkEndpoint = '',
     this.priority = '',
     this.createdAt,
@@ -36,6 +37,9 @@ class NotificationEntity {
 
   /// Booking number used to open bookings: `deepLink.data.unified_order_id`.
   final String unifiedOrderId;
+
+  /// Pharmacy order UUID from `deepLink.entity.publicId`.
+  final String entityPublicId;
   final String deepLinkEndpoint;
   final String priority;
   final DateTime? createdAt;
@@ -52,6 +56,7 @@ class NotificationEntity {
     String? entityId,
     String? entityKind,
     String? unifiedOrderId,
+    String? entityPublicId,
     String? deepLinkEndpoint,
     String? priority,
     DateTime? createdAt,
@@ -68,6 +73,7 @@ class NotificationEntity {
       entityId: entityId ?? this.entityId,
       entityKind: entityKind ?? this.entityKind,
       unifiedOrderId: unifiedOrderId ?? this.unifiedOrderId,
+      entityPublicId: entityPublicId ?? this.entityPublicId,
       deepLinkEndpoint: deepLinkEndpoint ?? this.deepLinkEndpoint,
       priority: priority ?? this.priority,
       createdAt: createdAt ?? this.createdAt,

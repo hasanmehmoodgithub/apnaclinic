@@ -12,7 +12,8 @@ import '../domain/entities/notification_entity.dart';
 /// Opens the booking / order screen for a notification's `serviceType`.
 ///
 /// Prefers `deepLink.data.unified_order_id`; falls back to `entity.id` /
-/// `entity_id` when the unified id is missing.
+/// `entity_id` when the unified id is missing. Pharmacy uses
+/// `deepLink.entity.publicId`.
 ///
 /// Returns `true` when navigation was started; `false` when the notification
 /// cannot be routed (missing booking id, unsupported service type, etc.).
@@ -48,10 +49,14 @@ bool openNotificationDeepLink(
       );
       return true;
     case 'PHARMACY':
+      final pharmacyOrderId = item.entityPublicId.trim().isNotEmpty
+          ? item.entityPublicId.trim()
+          : bookingId;
+      if (pharmacyOrderId.isEmpty) return false;
       context.pushNamed(
         AppRoutes.pharmacyBookingDetails,
         extra: {
-          'orderId': bookingId,
+          'orderId': pharmacyOrderId,
         },
       );
       return true;

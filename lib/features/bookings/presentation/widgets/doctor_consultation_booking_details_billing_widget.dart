@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
-import '../../../../generated/assets.dart';
 import '../../data/models/doctor_consultation_booking_details_model.dart';
 
 class DoctorConsultationBookingDetailsBillingWidget extends StatelessWidget {
@@ -22,32 +21,15 @@ class DoctorConsultationBookingDetailsBillingWidget extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          children: [
-            Text(
-              l10n.bookingsBillingTitle,
-              style: textTheme.titleMedium?.copyWith(
-                color: AppColors.clr061E40,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            const Spacer(),
-            Image.asset(
-              Assets.consultationEInvoiceDownload,
-              width: 16.w,
-              height: 16.h,
-              fit: BoxFit.contain,
-              color: AppColors.clr024886,
-            ),
-            SizedBox(width: 4.w),
-            Text(
-              l10n.bookingsEInvoiceLabel,
-              style: textTheme.bodyMedium?.copyWith(
-                color: AppColors.clr024886,
-              ),
-            ),
-          ],
+        Text(
+          l10n.bookingsBillingTitle,
+          style: textTheme.titleMedium?.copyWith(
+            color: AppColors.clr061E40,
+            fontWeight: FontWeight.w600,
+          ),
         ),
+        // TODO: Restore E-Invoice download when the consultation API
+        // returns an invoice URL.
         SizedBox(height: 8.h),
         Container(
           decoration: BoxDecoration(

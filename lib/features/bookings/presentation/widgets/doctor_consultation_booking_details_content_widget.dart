@@ -31,7 +31,8 @@ class DoctorConsultationBookingDetailsContentWidget extends StatelessWidget {
     final showSubmittedFeedback = data.patientReview != null;
     final showFeedbackForm = !showSubmittedFeedback &&
         data.canShowFeedbackSection &&
-        data.status != DoctorConsultationBookingStatus.cancel;
+        data.status != DoctorConsultationBookingStatus.cancel &&
+        data.status != DoctorConsultationBookingStatus.failed;
 
     return Column(
       children: [

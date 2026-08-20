@@ -2,11 +2,13 @@ enum DoctorConsultationBookingStatus {
   pending,
   confirmed,
   cancel,
-  completed;
+  completed,
+  failed;
 
   static DoctorConsultationBookingStatus fromApi(String value) {
-    switch (value.toUpperCase()) {
+    switch (value.trim().toUpperCase().replaceAll(' ', '_')) {
       case 'PENDING':
+      case 'PENDING_PAYMENT':
         return DoctorConsultationBookingStatus.pending;
       case 'CONFIRMED':
       case 'PAID':
@@ -15,9 +17,12 @@ enum DoctorConsultationBookingStatus {
       case 'CANCELLED':
       case 'CANCELED':
         return DoctorConsultationBookingStatus.cancel;
+      case 'FAILED':
+        return DoctorConsultationBookingStatus.failed;
       case 'COMPLETED':
-      default:
         return DoctorConsultationBookingStatus.completed;
+      default:
+        return DoctorConsultationBookingStatus.pending;
     }
   }
 }

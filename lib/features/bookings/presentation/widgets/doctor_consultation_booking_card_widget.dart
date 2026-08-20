@@ -402,6 +402,8 @@ String _localizedStatus(
       return l10n.bookingsStatusConfirmed;
     case DoctorConsultationBookingStatus.cancel:
       return l10n.bookingsStatusCancel;
+    case DoctorConsultationBookingStatus.failed:
+      return l10n.bookingsStatusFailed;
     case DoctorConsultationBookingStatus.completed:
       return l10n.bookingsStatusCompleted;
   }

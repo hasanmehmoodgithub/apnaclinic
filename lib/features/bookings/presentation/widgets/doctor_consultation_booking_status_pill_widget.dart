@@ -27,6 +27,10 @@ class DoctorConsultationBookingStatusPillWidget extends StatelessWidget {
           const Color(0xFFFBDEDE),
           const Color(0xFFBA2025),
         ),
+      DoctorConsultationBookingStatus.failed => (
+          const Color(0xFFFBDEDE),
+          const Color(0xFFBA2025),
+        ),
       DoctorConsultationBookingStatus.completed => (
           const Color(0xFFE5F7EA),
           const Color(0xFF1F8F4A),

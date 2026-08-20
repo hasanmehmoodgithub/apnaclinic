@@ -12,8 +12,8 @@ Tabbed bookings hub (Instant Doctor, Pharmacy, Doctor Consultation, Lab Tests, S
 ## Data & APIs
 
 - Doctor consultation list: **GET** `AppUrls.doctorConsultationBookings(page, limit)` via `GetConsultationBookingsUseCase` (consultation module). Maps API items to `DoctorConsultationBookingDetailsModel` in `DoctorConsultationBookingMapper`.
-  - Item fields: `appointmentId` (used as booking/navigation id for detail GET), `doctorInfo` (`doctorid`, `displayName`, `specialtyName`, `profileImageUrl`, fees/`discountPercent`/`isFree`, `ratings`, `pmdcVerified`, `partner`), `patientRelation`, `slotDate`/`slotStartTime`/`slotEndTime`, `success` (`PAID` → confirmed), `partnerRefNo` (feedback `refNo`), `meetingLink`, `issue`, `attachments`, `doctorPerscriptions` (API spelling; mapped as `doctorPrescriptions`), `patientReview` (`rating`/`review`/`date`).
-- Doctor consultation details: **GET** `AppUrls.doctorConsultationBookingDetail(appointmentId)` via `GetConsultationBookingUseCase` — single consultation in `data` (same fields as list item). List payload is preload only; details always refetch. Failed loads render shared `EmptyBookingWidget` with the API message and retry CTA.
+  - Item fields: `appointmentId`, **`orderId`** (used as booking/navigation id for detail GET), `doctorInfo` (`doctorid`, `displayName`, `specialtyName`, `profileImageUrl`, fees/`discountPercent`/`isFree`, `ratings`, `pmdcVerified`, `partner`), `patientRelation`, `slotDate`/`slotStartTime`/`slotEndTime`, `success` (`PAID` → Confirmed, `PENDING_PAYMENT` → Pending, `FAILED` → **Failed** on list and details), `partnerRefNo` (feedback `refNo`), `meetingLink`, `issue`, `attachments`, `doctorPerscriptions` (API spelling; mapped as `doctorPrescriptions`), `patientReview` (`rating`/`review`/`date`).
+- Doctor consultation details: **GET** `AppUrls.doctorConsultationBookingDetail(orderId)` via `GetConsultationBookingUseCase` — single consultation in `data` (same fields as list item). List payload is preload only; details always refetch. Failed loads render shared `EmptyBookingWidget` with the API message and retry CTA.
 - Join Consultation (on booking details, after **View Details**) is enabled only while current time is within slot `[start, end]` (confirmed + `meetingLink`). Outside that window the CTA is disabled and the label is faded so it is not readable.
 - Patient’s Review / Feedback submit form is available only after slot end (submitted review always shown if present).
 - Submit feedback (when no existing review, non-cancelled): **POST** `AppUrls.doctorConsultationFeedback` via `SubmitConsultationFeedbackUseCase` — body `{ refNo, rating, review }` (`refNo` = `partnerRefNo` / booking id).
@@ -35,12 +35,12 @@ Tabbed bookings hub (Instant Doctor, Pharmacy, Doctor Consultation, Lab Tests, S
 ## State
 
 - `DoctorConsultationBookingsCubit` — paginated consultation bookings list (page 1, limit 20; infinite scroll load-more). Initial load uses `BookingsListShimmerWidget`. Empty list shows `EmptyBookingWidget` with “No Booking Available”.
-- `DoctorConsultationBookingDetailsCubit` — always **GET** detail by `appointmentId` (`GetConsultationBookingUseCase`); optional list `booking` is preload while shimmering; maps via `DoctorConsultationBookingMapper`; submits feedback and updates local `patientReview` on success.
+- `DoctorConsultationBookingDetailsCubit` — always **GET** detail by `orderId` (`GetConsultationBookingUseCase`); optional list `booking` is preload while shimmering; maps via `DoctorConsultationBookingMapper`; submits feedback and updates local `patientReview` on success.
 
 ## UI
 
 - `DoctorConsultationBookingCardWidget` — consultation list card; whole card opens booking details on tap; **View Details** button uses the same navigation.
-- `DoctorConsultationBookingDetailsContentWidget` — thin composer for details body; sections: header (doctor + date card), patient/issue fields, review or feedback form, documents (name + Download under icon), billing, join CTA. Rating badge uses shared `AppRoundedRatingWidget` (whole numbers without decimals).
+- `DoctorConsultationBookingDetailsContentWidget` — thin composer for details body; sections: header (doctor + date card), patient/issue fields, review or feedback form, documents (name + Download under icon), billing (fee breakdown only; **E-Invoice** is hidden until the API provides an invoice URL), join CTA. Rating badge uses shared `AppRoundedRatingWidget` (whole numbers without decimals).
 - `DoctorConsultationBookingFeedbackFormWidget` — rating + review + submit when `patientReview` is missing (hidden for cancelled); layout matches submitted review card (title, “Your Feedback” + date, stars + score chip, `#F7F7F7` text area).
 
 ## Mocks

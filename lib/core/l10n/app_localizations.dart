@@ -3119,6 +3119,12 @@ abstract class AppLocalizations {
   /// **'Cancel'**
   String get bookingsStatusCancel;
 
+  /// No description provided for @bookingsStatusFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed'**
+  String get bookingsStatusFailed;
+
   /// No description provided for @bookingsStatusCompleted.
   ///
   /// In en, this message translates to:

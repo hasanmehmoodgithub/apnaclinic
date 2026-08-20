@@ -31,14 +31,14 @@ In-app notification list and Firebase Cloud Messaging (FCM) push notifications.
 
 - **GET** `AppUrls.notifications(page, limit)` → `/acs-notification/api/v1/notifications?page=&limit=` via `GetNotificationsUseCase`.
   - Response: `{ success, message, data: { items[], page, limit, total, totalPages } }` (also accepts a top-level `items` list).
-  - Item: `publicId`, `type`, `serviceType` (`CONSULTATION` / `LAB` / `SURGERY` / `PHARMACY`), `priority`, `title`, `body`, `deepLink` (`data.unified_order_id`, `data.entity_id` / `entity_kind` / `service_type`, `entity.id`/`kind`, `endpoint` — may be null), `isRead`, `readAt`, `createdAt`.
+  - Item: `publicId`, `type`, `serviceType` (`CONSULTATION` / `LAB` / `SURGERY` / `PHARMACY`), `priority`, `title`, `body`, `deepLink` (`data.unified_order_id`, `data.entity_id` / `entity_kind` / `service_type`, `entity.id`/`kind`/`publicId`, `endpoint` — may be null), `isRead`, `readAt`, `createdAt`.
 - **PUT** `AppUrls.notificationMarkRead(publicId)` → `/acs-notification/api/v1/notifications/{publicId}/read` via `MarkNotificationReadUseCase` (body `{}`).
 - Tap flow: if unread → heart loader → mark read → navigate by `serviceType` + **`deepLink.data.unified_order_id`**; if already `isRead` → navigate only (no mark-read API). Falls back to `entity.id` / `entity_id` when `unified_order_id` is missing.
   - When routing fails (missing booking id, unsupported `serviceType`, etc.) → `AlertDialogCard` shows the notification title/body (or fallback l10n).
   - `CONSULTATION` → `doctorConsultationBookingDetails` (`bookingId` = unified order id).
   - `SURGERY` → `surgeryBookingDetails` (`leadId` = unified order id).
   - `LAB` → `labTestViewDetails` (`orderId` = unified order id, e.g. `62`).
-  - `PHARMACY` → `pharmacyBookingDetails` (`orderId` = unified order id, e.g. `44`). `endpoint` may be null; still opens from `serviceType` + unified id.
+  - `PHARMACY` → `pharmacyBookingDetails` with **`deepLink.entity.publicId`** (pharmacy order UUID). Falls back to unified order id if `publicId` is missing.
 
 ## State
 
