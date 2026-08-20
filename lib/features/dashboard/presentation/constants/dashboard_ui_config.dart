@@ -52,6 +52,11 @@ abstract final class DashboardUiConfig {
   static const double instantDoctorTitleArrowGap = 2;
   static const double instantDoctorTitleBodyGap = 2;
 
+  /// Promo dialog image while the network banner loads (portrait CMS art).
+  static const double promotionalBannerPlaceholderAspectRatio = 3 / 4;
+  static const double promotionalBannerBorderRadius = 16;
+  static const double promotionalBannerShimmerOpacity = 0.8;
+
   /// Teal home header (`HomeHeaderSection`).
   static const double homeHeaderBottomRadius = 30;
   static const double homeHeaderHorizontalPadding = 20;

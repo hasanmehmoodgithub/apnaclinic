@@ -23,6 +23,7 @@ Collect or edit user profile (name, gender, optional email, address, DOB, option
 - `data.image` is stored on `UserLocalModel.imageUrl` and shown on home app bar / profile / menu when non-empty (`UserProfileAvatar` + `CachedNetworkImage`).
 - `ProfileSetupScreen` calls `loadProfile()` only when the profile is already completed, so edit/update mode hydrates from API while first-time onboarding stays in setup mode. `AppPref.isProfileCompleted` is set on **save** only (not on GET).
 - Dismisses any global heart loader overlay on open (home banner loader uses root navigator). Edit avatar shows API/local `imageUrl` via `UserProfileAvatar`; a newly picked file takes priority until save.
+- Tapping the avatar (full circle or camera badge) opens `ProfileImageSourceSheet` with **Use camera** and **Choose from gallery** (same flow for first-time onboarding and profile update).
 - Completed profiles show edit/update wording; pending onboarding shows setup/save wording.
 - On successful update, the PUT runs first, local `AppPref` profile is updated in the repository, and `ProfileScreen` refreshes after the edit route returns.
 

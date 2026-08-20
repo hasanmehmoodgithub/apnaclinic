@@ -5,6 +5,7 @@ import '../../../../core/constants/app_colors.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../generated/assets.dart';
+import 'search_voice_listening_lottie.dart';
 
 class SearchInputRowWidget extends StatelessWidget {
   const SearchInputRowWidget({
@@ -66,7 +67,14 @@ class SearchInputRowWidget extends StatelessWidget {
               ),
             ),
           ),
-          if (hasText) ...[
+          if (isListening) ...[
+            InkWell(
+              onTap: onMicTap,
+              borderRadius: BorderRadius.circular(20.r),
+              child: SearchVoiceListeningLottie(size: 36.r),
+            ),
+            SizedBox(width: 8.w),
+          ] else if (hasText) ...[
             InkWell(
               onTap: onClear,
               borderRadius: BorderRadius.circular(20.r),

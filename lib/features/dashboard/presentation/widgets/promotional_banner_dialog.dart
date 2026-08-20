@@ -4,12 +4,13 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../../../../core/constants/app_colors.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/utils/app_url_launcher.dart';
 import '../../../../generated/assets.dart';
 import '../../domain/entities/promotional_banner_entity.dart';
+import '../constants/dashboard_ui_config.dart';
+import 'promotional_banner_shimmer_widget.dart';
 
 Future<void> showPromotionalBannerDialog(
   BuildContext context, {
@@ -44,7 +45,10 @@ Future<void> showPromotionalBannerDialog(
               ),
             ),
             ClipRRect(
-              borderRadius: BorderRadius.circular(14.r),
+              borderRadius: BorderRadius.circular(
+                DashboardUiConfig.promotionalBannerBorderRadius.r,
+              ),
+              clipBehavior: Clip.antiAlias,
               child: InkWell(
                 onTap: () => _onBannerTap(dialogContext, context, banner),
                 child: _BannerImage(url: banner.url),
@@ -87,22 +91,46 @@ class _BannerImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (url.startsWith('assets/')) {
+    final source = url.trim();
+    if (source.isEmpty) return const _BannerFallbackAsset();
+
+    if (source.startsWith('assets/')) {
       return Image.asset(
-        url,
+        source,
+        width: double.infinity,
         fit: BoxFit.cover,
-        errorBuilder: (_, _, _) =>
-            Image.asset(Assets.imgBanner, fit: BoxFit.cover),
+        errorBuilder: (_, _, _) => const _BannerFallbackAsset(),
       );
     }
 
+    if (!source.startsWith('http')) return const _BannerFallbackAsset();
+
     return CachedNetworkImage(
-      imageUrl: url,
+      imageUrl: source,
+      width: double.infinity,
       fit: BoxFit.cover,
-      errorWidget: (context, _, _) =>
-          Image.asset(Assets.imgBanner, fit: BoxFit.cover),
-      placeholder: (context, _) => Container(
-        color: AppColors.clrEAF6F1,
+      fadeInDuration: Duration.zero,
+      placeholderFadeInDuration: Duration.zero,
+      placeholder: (_, _) => const PromotionalBannerShimmer(),
+      errorWidget: (_, _, _) => const _BannerFallbackAsset(),
+    );
+  }
+}
+
+class _BannerFallbackAsset extends StatelessWidget {
+  const _BannerFallbackAsset();
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(
+        DashboardUiConfig.promotionalBannerBorderRadius.r,
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: Image.asset(
+        Assets.imgBanner,
+        width: double.infinity,
+        fit: BoxFit.cover,
       ),
     );
   }

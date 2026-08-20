@@ -24,44 +24,41 @@ class ProfileSetupAvatarPicker extends StatelessWidget {
   Widget build(BuildContext context) {
     final hasLocalImage = selectedImageFile != null;
 
-    return Stack(
-      clipBehavior: Clip.none,
-      children: [
-        if (hasLocalImage)
-          CircleAvatar(
-            radius: 56.r,
-            backgroundColor: AppColors.clrWhite.withValues(alpha: 0.95),
-            backgroundImage: FileImage(selectedImageFile!),
-          )
-        else
-          UserProfileAvatar(
-            imageUrl: imageUrl,
-            size: _avatarSize.r,
-          ),
-        Positioned(
-          right: 2.w,
-          bottom: 4.h,
-          child: Material(
-            color: Colors.transparent,
-            child: InkWell(
-              borderRadius: BorderRadius.circular(16.r),
-              onTap: onPickImage,
-              child: Container(
-                padding: EdgeInsets.all(6.r),
-                decoration: const BoxDecoration(
-                  color: AppColors.clrDDF3EE,
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(
-                  Icons.camera_alt_outlined,
-                  size: 16.r,
-                  color: AppColors.clr0FAA9A,
-                ),
+    return GestureDetector(
+      onTap: onPickImage,
+      behavior: HitTestBehavior.opaque,
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          if (hasLocalImage)
+            CircleAvatar(
+              radius: 56.r,
+              backgroundColor: AppColors.clrWhite.withValues(alpha: 0.95),
+              backgroundImage: FileImage(selectedImageFile!),
+            )
+          else
+            UserProfileAvatar(
+              imageUrl: imageUrl,
+              size: _avatarSize.r,
+            ),
+          Positioned(
+            right: 2.w,
+            bottom: 4.h,
+            child: Container(
+              padding: EdgeInsets.all(6.r),
+              decoration: const BoxDecoration(
+                color: AppColors.clrDDF3EE,
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.camera_alt_outlined,
+                size: 16.r,
+                color: AppColors.clr0FAA9A,
               ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

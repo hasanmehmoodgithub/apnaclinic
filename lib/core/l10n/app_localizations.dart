@@ -506,6 +506,30 @@ abstract class AppLocalizations {
   /// **'Could not pick image. Please try again.'**
   String get profileImagePickerFailedMessage;
 
+  /// No description provided for @profileImageSourceTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose photo'**
+  String get profileImageSourceTitle;
+
+  /// No description provided for @profileUseCamera.
+  ///
+  /// In en, this message translates to:
+  /// **'Use camera'**
+  String get profileUseCamera;
+
+  /// No description provided for @profileChooseFromGallery.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose from gallery'**
+  String get profileChooseFromGallery;
+
+  /// No description provided for @profileCameraUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Camera access is unavailable right now.'**
+  String get profileCameraUnavailable;
+
   /// No description provided for @profileGuestUserTitle.
   ///
   /// In en, this message translates to:
@@ -1756,6 +1780,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Search for \"{query}\"'**
   String searchForQuery(String query);
+
+  /// No description provided for @searchNoResultsFor.
+  ///
+  /// In en, this message translates to:
+  /// **'No result found for \"{query}\"'**
+  String searchNoResultsFor(String query);
 
   /// Title for the lab test browse screen app bar
   ///

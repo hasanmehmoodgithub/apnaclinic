@@ -216,6 +216,19 @@ class AppLocalizationsEn extends AppLocalizations {
       'Could not pick image. Please try again.';
 
   @override
+  String get profileImageSourceTitle => 'Choose photo';
+
+  @override
+  String get profileUseCamera => 'Use camera';
+
+  @override
+  String get profileChooseFromGallery => 'Choose from gallery';
+
+  @override
+  String get profileCameraUnavailable =>
+      'Camera access is unavailable right now.';
+
+  @override
   String get profileGuestUserTitle => 'Guest User';
 
   @override
@@ -906,6 +919,11 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String searchForQuery(String query) {
     return 'Search for \"$query\"';
+  }
+
+  @override
+  String searchNoResultsFor(String query) {
+    return 'No result found for \"$query\"';
   }
 
   @override

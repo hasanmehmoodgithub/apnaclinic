@@ -18,6 +18,7 @@ import '../../../notification/presentation/widgets/profile_setup_loading_shimmer
 import '../../domain/models/profile_setup_data.dart';
 import '../cubit/profile_setup_cubit.dart';
 import '../cubit/profile_setup_state.dart';
+import '../widgets/profile_image_source_sheet.dart';
 import '../widgets/profile_setup_avatar_picker.dart';
 import '../widgets/profile_setup_form_section.dart';
 import '../profile_setup_launch_source.dart';
@@ -96,9 +97,12 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
   }
 
   Future<void> _pickProfileImage() async {
+    final source = await showProfileImageSourceSheet(context);
+    if (source == null || !mounted) return;
+
     try {
       final picked = await _imagePicker.pickImage(
-        source: ImageSource.gallery,
+        source: source,
         imageQuality: 85,
         maxWidth: 1200,
       );
@@ -106,10 +110,13 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
       setState(() => _selectedProfileImage = File(picked.path));
     } on PlatformException {
       if (!mounted) return;
+      final l10n = AppLocalizations.of(context)!;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            AppLocalizations.of(context)!.profileImagePickerRestartMessage,
+            source == ImageSource.camera
+                ? l10n.profileCameraUnavailable
+                : l10n.profileImagePickerRestartMessage,
           ),
         ),
       );

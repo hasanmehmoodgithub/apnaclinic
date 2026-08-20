@@ -216,6 +216,19 @@ class AppLocalizationsUr extends AppLocalizations {
       'تصویر منتخب نہیں ہو سکی۔ براہ کرم دوبارہ کوشش کریں۔';
 
   @override
+  String get profileImageSourceTitle => 'تصویر منتخب کریں';
+
+  @override
+  String get profileUseCamera => 'کیمرہ استعمال کریں';
+
+  @override
+  String get profileChooseFromGallery => 'گیلری سے منتخب کریں';
+
+  @override
+  String get profileCameraUnavailable =>
+      'فی الحال کیمرہ تک رسائی دستیاب نہیں ہے۔';
+
+  @override
   String get profileGuestUserTitle => 'مہمان صارف';
 
   @override
@@ -907,6 +920,11 @@ class AppLocalizationsUr extends AppLocalizations {
   @override
   String searchForQuery(String query) {
     return '\"$query\" تلاش کریں';
+  }
+
+  @override
+  String searchNoResultsFor(String query) {
+    return '\"$query\" کے لیے کوئی نتیجہ نہیں ملا';
   }
 
   @override

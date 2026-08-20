@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/enums/state_status.dart';
+import '../../../../core/utils/auth_guard.dart';
 import '../../domain/entities/notification_entity.dart';
 import '../../domain/use_cases/get_notifications_use_case.dart';
 import '../../domain/use_cases/mark_notification_read_use_case.dart';
@@ -10,14 +11,17 @@ class NotificationCubit extends Cubit<NotificationState> {
   NotificationCubit({
     required this.getNotificationsUseCase,
     required this.markNotificationReadUseCase,
-  }) : super(const NotificationState()) {
-    loadNotifications();
-  }
+  }) : super(const NotificationState());
 
   final GetNotificationsUseCase getNotificationsUseCase;
   final MarkNotificationReadUseCase markNotificationReadUseCase;
 
   Future<void> loadNotifications({bool refresh = false}) async {
+    if (!AuthGuard.isLoggedIn()) {
+      emit(const NotificationState());
+      return;
+    }
+
     emit(
       state.copyWith(
         loadingStateStatus:
@@ -52,6 +56,7 @@ class NotificationCubit extends Cubit<NotificationState> {
   /// Marks the notification read on the server, then updates local state.
   /// Returns `null` on success (or if already read), or an error message on failure.
   Future<String?> markAsRead(String notificationId) async {
+    if (!AuthGuard.isLoggedIn()) return null;
     final trimmedId = notificationId.trim();
     if (trimmedId.isEmpty) return 'Missing notification id.';
 

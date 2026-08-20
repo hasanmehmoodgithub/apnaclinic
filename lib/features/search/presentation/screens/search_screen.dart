@@ -6,15 +6,16 @@ import '../../../../core/constants/app_colors.dart';
 import '../../../../core/enums/state_status.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
-import '../../../../core/services/speech_to_text_service.dart';
 import '../../../../core/widgets/app_scaffold_gradient.dart';
 import '../cubit/search_cubit.dart';
 import '../cubit/search_state.dart';
+import '../widgets/search_empty_results_widget.dart';
 import '../widgets/search_initial_content_widget.dart';
 import '../widgets/search_input_row_widget.dart';
 import '../widgets/search_results_sections_widget.dart';
 import '../widgets/search_shimmer_view_widget.dart';
 import '../widgets/search_suggestions_list_widget.dart';
+import '../widgets/search_voice_listening_view.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({
@@ -64,27 +65,7 @@ class _SearchScreenState extends State<SearchScreen> {
     final localeId = locale.countryCode == null || locale.countryCode!.isEmpty
         ? locale.languageCode
         : '${locale.languageCode}_${locale.countryCode}';
-    final failure = await context.read<SearchCubit>().startListening(
-          localeId: localeId,
-        );
-    if (!mounted || failure == null) return;
-
-    final l10n = AppLocalizations.of(context)!;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(_voiceFailureMessage(l10n, failure))),
-    );
-  }
-
-  String _voiceFailureMessage(
-    AppLocalizations l10n,
-    VoiceSearchFailure failure,
-  ) {
-    return switch (failure) {
-      VoiceSearchFailure.notAvailable => l10n.searchVoiceNotAvailable,
-      VoiceSearchFailure.permissionDenied => l10n.searchVoicePermissionDenied,
-      VoiceSearchFailure.pluginNotLinked => l10n.searchVoiceRebuildRequired,
-      VoiceSearchFailure.failed => l10n.searchVoiceFailed,
-    };
+    await context.read<SearchCubit>().startListening(localeId: localeId);
   }
 
   @override
@@ -176,12 +157,20 @@ class _SearchScreenState extends State<SearchScreen> {
 
   Widget _buildBody(BuildContext context, SearchState state) {
     final query = state.query.trim();
-    final hasSections = state.content.sections.isNotEmpty;
+    final hasResults = state.content.sections.any(
+      (section) => section.results.isNotEmpty,
+    );
     final hasSuggestions = state.content.suggestions.isNotEmpty;
     final isInitial = query.isEmpty &&
         !state.isSubmitted &&
         !state.isListening &&
-        !hasSections;
+        !hasResults;
+
+    if (state.isListening) {
+      return SearchVoiceListeningView(
+        onStop: () => context.read<SearchCubit>().stopListening(),
+      );
+    }
 
     if (state.loadingStateStatus == StateStatus.loading) {
       return SearchShimmerViewWidget(showResultsStyle: !isInitial);
@@ -193,11 +182,14 @@ class _SearchScreenState extends State<SearchScreen> {
         ),
       );
     }
-    if (state.isSubmitted && hasSections) {
+    if (state.isSubmitted && hasResults) {
       return SearchResultsSectionsWidget(
         sections: state.content.sections,
         query: query,
       );
+    }
+    if (state.isSubmitted && query.isNotEmpty) {
+      return SearchEmptyResultsWidget(query: query);
     }
     if (hasSuggestions) {
       return SearchSuggestionsListWidget(

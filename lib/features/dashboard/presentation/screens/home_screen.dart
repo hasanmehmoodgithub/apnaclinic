@@ -58,6 +58,9 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     _bannerSession = sl<PromotionalBannerSession>();
     _dashboardCubit = sl<DashboardCubit>();
     _notificationCubit = sl<NotificationCubit>();
+    if (AuthGuard.isLoggedIn()) {
+      _notificationCubit.loadNotifications();
+    }
     _bindPushRefresh();
   }
 
@@ -67,7 +70,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     if (!service.isInitialized) return;
 
     _pushSubscription = service.notificationStream.listen((_) {
-      if (!mounted) return;
+      if (!mounted || !AuthGuard.isLoggedIn()) return;
       _notificationCubit.loadNotifications(refresh: true);
     });
   }

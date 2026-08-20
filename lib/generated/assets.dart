@@ -77,6 +77,8 @@ class Assets {
   static const String iconsTick = 'assets/icons/tick.svg';
   static const String iconsWarningTriangle = 'assets/icons/warning_triangle.svg';
   static const String imagesDashboardLoader = 'assets/images/dashboard_loader.json';
+  static const String imagesVoiceSearchRecord =
+      'assets/images/voice_search_record.json';
   static const String imagesPlaceholder = 'assets/images/placeholder.txt';
   static const String imgBanner = 'assets/img/banner.png';
   static const String imgBrandAlfahealth = 'assets/img/brand_alfahealth.png';

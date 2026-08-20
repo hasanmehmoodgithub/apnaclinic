@@ -60,32 +60,30 @@ class SearchCubit extends Cubit<SearchState> {
 
     final failure = await _speechToTextService.startListening(
       localeId: localeId,
-      onResult: (text, isFinal) async {
+      onResult: (text, _) {
         if (isClosed) return;
-
         emit(state.copyWith(query: text));
-
-        if (isFinal) {
-          await stopListening();
-          final trimmed = text.trim();
-          if (trimmed.isNotEmpty) {
-            await submitSearch(trimmed);
-          }
-        }
+      },
+      onSessionDone: () {
+        if (isClosed) return;
+        _completeVoiceSearch();
       },
     );
 
     if (isClosed) return failure;
-
     if (failure != null) {
       emit(state.copyWith(isListening: false));
-      return failure;
     }
+    return failure;
+  }
 
-    if (!_speechToTextService.isListening) {
-      emit(state.copyWith(isListening: false));
-    }
-    return null;
+  Future<void> _completeVoiceSearch() async {
+    if (!state.isListening) return;
+
+    final query = state.query.trim();
+    emit(state.copyWith(isListening: false));
+    if (query.isEmpty) return;
+    await submitSearch(query);
   }
 
   Future<void> stopListening() async {
@@ -93,8 +91,7 @@ class SearchCubit extends Cubit<SearchState> {
 
     await _speechToTextService.stop();
     if (isClosed) return;
-
-    emit(state.copyWith(isListening: false));
+    await _completeVoiceSearch();
   }
 
   Future<void> submitSearch([String? query]) async {

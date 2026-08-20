@@ -122,6 +122,10 @@
   "profileSetupHeaderTitle": "Profile Setup",
   "profileImagePickerRestartMessage": "Image picker not ready yet. Please fully restart the app.",
   "profileImagePickerFailedMessage": "Could not pick image. Please try again.",
+  "profileImageSourceTitle": "Choose photo",
+  "profileUseCamera": "Use camera",
+  "profileChooseFromGallery": "Choose from gallery",
+  "profileCameraUnavailable": "Camera access is unavailable right now.",
   "profileGuestUserTitle": "Guest User",
   "profileSignupLoginCta": "Sign Up / Login",
   "profileEditCta": "Edit",
@@ -390,6 +394,14 @@
   "searchSeeAllCta": "See All",
   "searchForQuery": "Search for \"{query}\"",
   "@searchForQuery": {
+    "placeholders": {
+      "query": {
+        "type": "String"
+      }
+    }
+  },
+  "searchNoResultsFor": "No result found for \"{query}\"",
+  "@searchNoResultsFor": {
     "placeholders": {
       "query": {
         "type": "String"

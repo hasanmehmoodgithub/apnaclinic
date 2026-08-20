@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+import 'package:speech_to_text/speech_recognition_error.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 
@@ -13,18 +14,37 @@ enum VoiceSearchFailure {
 
 /// Thin wrapper around [SpeechToText] for search voice input.
 class SpeechToTextService {
-  SpeechToTextService({SpeechToText? speech}) : _speech = speech ?? SpeechToText();
+  SpeechToTextService({SpeechToText? speech})
+    : _speech = speech ?? SpeechToText();
 
   final SpeechToText _speech;
 
-  bool get isListening => _speech.isListening;
+  bool _sessionActive = false;
+  String? _localeId;
+  DateTime? _sessionStartedAt;
+  void Function(String text, bool isFinal)? _onResult;
+  VoidCallback? _onSessionDone;
+
+  static const Duration _defaultListenFor = Duration(seconds: 60);
+  static const Duration _defaultPauseFor = Duration(seconds: 3);
+  Duration _listenFor = _defaultListenFor;
+  Duration _pauseFor = _defaultPauseFor;
+
+  bool get isListening => _sessionActive;
 
   Future<VoiceSearchFailure?> startListening({
     required void Function(String text, bool isFinal) onResult,
+    VoidCallback? onSessionDone,
     String? localeId,
-    Duration listenFor = const Duration(seconds: 30),
-    Duration pauseFor = const Duration(seconds: 3),
+    Duration listenFor = _defaultListenFor,
+    Duration pauseFor = _defaultPauseFor,
   }) async {
+    _onResult = onResult;
+    _onSessionDone = onSessionDone;
+    _localeId = localeId;
+    _listenFor = listenFor;
+    _pauseFor = pauseFor;
+
     final initFailure = await _initializeSpeech();
     if (initFailure != null) {
       return initFailure;
@@ -34,41 +54,45 @@ class SpeechToTextService {
       await stop();
     }
 
-    var started = false;
+    _sessionActive = true;
+    _sessionStartedAt = DateTime.now();
+    return _beginListen();
+  }
+
+  Future<VoiceSearchFailure?> _beginListen() async {
     try {
-      started = await _speech.listen(
+      // [listen] returns void; do not treat the Future value as a bool.
+      await _speech.listen(
         onResult: (SpeechRecognitionResult result) {
-          onResult(result.recognizedWords, result.finalResult);
+          _onResult?.call(result.recognizedWords, result.finalResult);
         },
         listenOptions: SpeechListenOptions(
-          cancelOnError: true,
+          cancelOnError: false,
           partialResults: true,
-          localeId: localeId,
-          listenFor: listenFor,
-          pauseFor: pauseFor,
+          listenMode: ListenMode.search,
+          localeId: _localeId,
+          listenFor: _listenFor,
+          pauseFor: _pauseFor,
         ),
       );
     } on MissingPluginException {
+      _endSession(notify: false);
       return VoiceSearchFailure.pluginNotLinked;
     } on PlatformException catch (error) {
+      _endSession(notify: false);
       return _mapPlatformException(error);
     } on Object {
+      _endSession(notify: false);
       return VoiceSearchFailure.failed;
-    }
-
-    if (!started) {
-      return _mapListenFailure();
     }
     return null;
   }
 
   Future<VoiceSearchFailure?> _initializeSpeech() async {
-    if (_speech.isAvailable) return null;
-
     try {
       final initialized = await _speech.initialize(
-        onError: (_) {},
-        onStatus: (_) {},
+        onError: _handleError,
+        onStatus: _handleStatus,
         debugLogging: kDebugMode,
       );
       if (initialized && _speech.isAvailable) {
@@ -89,6 +113,62 @@ class SpeechToTextService {
     }
   }
 
+  void _handleStatus(String status) {
+    if (!_sessionActive) return;
+    if (status != SpeechToText.doneStatus) return;
+
+    final hasWords = _speech.lastRecognizedWords.trim().isNotEmpty;
+    final elapsed = _sessionStartedAt == null
+        ? Duration.zero
+        : DateTime.now().difference(_sessionStartedAt!);
+
+    if (hasWords || elapsed >= _listenFor) {
+      _endSession(notify: true);
+      return;
+    }
+
+    _restartIfTimeRemains();
+  }
+
+  void _handleError(SpeechRecognitionError error) {
+    if (!_sessionActive) return;
+
+    switch (error.errorMsg) {
+      case 'error_no_match':
+      case 'error_speech_timeout':
+      case 'error_busy':
+        _restartIfTimeRemains();
+        return;
+      default:
+        if (error.permanent) {
+          _endSession(notify: true);
+        }
+    }
+  }
+
+  Future<void> _restartIfTimeRemains() async {
+    if (!_sessionActive) return;
+
+    final startedAt = _sessionStartedAt;
+    if (startedAt != null &&
+        DateTime.now().difference(startedAt) >= _listenFor) {
+      _endSession(notify: true);
+      return;
+    }
+
+    await Future<void>.delayed(const Duration(milliseconds: 250));
+    if (!_sessionActive || _speech.isListening) return;
+    await _beginListen();
+  }
+
+  void _endSession({required bool notify}) {
+    if (!_sessionActive) return;
+    _sessionActive = false;
+    if (notify) {
+      _onSessionDone?.call();
+    }
+  }
+
   VoiceSearchFailure _mapPlatformException(PlatformException error) {
     switch (error.code) {
       case 'recognizerNotAvailable':
@@ -102,26 +182,8 @@ class SpeechToTextService {
     }
   }
 
-  VoiceSearchFailure _mapListenFailure() {
-    final lastError = _speech.lastError;
-    if (lastError == null) return VoiceSearchFailure.failed;
-
-    switch (lastError.errorMsg) {
-      case 'error_audio':
-      case 'error_permission':
-      case 'error_permission_denied':
-        return VoiceSearchFailure.permissionDenied;
-      case 'recognizerNotAvailable':
-        return VoiceSearchFailure.notAvailable;
-      default:
-        if (lastError.permanent) {
-          return VoiceSearchFailure.notAvailable;
-        }
-        return VoiceSearchFailure.failed;
-    }
-  }
-
   Future<void> stop() async {
+    _endSession(notify: false);
     try {
       if (_speech.isListening) {
         await _speech.stop();
@@ -132,6 +194,7 @@ class SpeechToTextService {
   }
 
   Future<void> cancel() async {
+    _endSession(notify: false);
     try {
       if (_speech.isListening) {
         await _speech.cancel();
