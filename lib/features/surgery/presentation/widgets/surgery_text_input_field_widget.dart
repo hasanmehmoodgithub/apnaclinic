@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../../../core/extensions/screen_util_extensions.dart';
+import '../../../../core/utils/no_emoji_text_input_formatter.dart';
 
 class SurgeryTextInputFieldWidget extends StatelessWidget {
   const SurgeryTextInputFieldWidget({
@@ -57,7 +58,12 @@ class SurgeryTextInputFieldWidget extends StatelessWidget {
           child: TextField(
             controller: controller,
             keyboardType: keyboardType,
-            inputFormatters: inputFormatters,
+            inputFormatters: NoEmojiTextInputFormatter.merge(
+              inputFormatters,
+              allowEmailSymbols: keyboardType == TextInputType.emailAddress,
+              allowBasicPunctuation: keyboardType != TextInputType.number &&
+                  keyboardType != TextInputType.phone,
+            ),
             maxLength: maxLength,
             style: theme.textTheme.bodyLarge?.copyWith(
               color: hasError ? const Color(0xFFBA2025) : const Color(0xFF4A555F),

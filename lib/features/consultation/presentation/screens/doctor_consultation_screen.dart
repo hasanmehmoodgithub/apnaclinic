@@ -8,6 +8,7 @@ import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/utils/auth_guard.dart';
+import '../../../../core/utils/no_emoji_text_input_formatter.dart';
 import '../../../../core/utils/microphone_permission_utils.dart';
 import '../../domain/entities/consultation_category_entity.dart';
 import '../constants/consultation_ui_config.dart';
@@ -624,6 +625,7 @@ class _SearchField extends StatelessWidget {
       height: 44.565.h,
       child: TextField(
         onChanged: onChanged,
+        inputFormatters: NoEmojiTextInputFormatter.merge(null),
         decoration: InputDecoration(
           hintText: AppLocalizations.of(context)!.consultationSearchCategoryHint,
           hintStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
+import '../../../../core/utils/no_emoji_text_input_formatter.dart';
 
 class IssueSection extends StatelessWidget {
   const IssueSection({
@@ -37,6 +38,10 @@ class IssueSection extends StatelessWidget {
           ),
           child: TextField(
             controller: controller,
+            inputFormatters: NoEmojiTextInputFormatter.merge(
+              null,
+              allowBasicPunctuation: true,
+            ),
             maxLines: null,
             expands: true,
             textAlignVertical: TextAlignVertical.top,

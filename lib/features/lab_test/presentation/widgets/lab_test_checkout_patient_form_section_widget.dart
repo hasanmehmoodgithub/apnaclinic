@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
+import '../../../../core/utils/no_emoji_text_input_formatter.dart';
 
 /// Patient details + emergency contact for checkout.
 ///
@@ -479,7 +480,12 @@ class _InputBox extends StatelessWidget {
       child: TextField(
         controller: controller,
         keyboardType: keyboardType,
-        inputFormatters: inputFormatters,
+        inputFormatters: NoEmojiTextInputFormatter.merge(
+          inputFormatters,
+          allowEmailSymbols: keyboardType == TextInputType.emailAddress,
+          allowBasicPunctuation: keyboardType != TextInputType.number &&
+              keyboardType != TextInputType.phone,
+        ),
         textAlign: textAlign,
         style: theme.textTheme.bodyMedium?.copyWith(
           color: AppColors.clr061E40,
@@ -524,7 +530,9 @@ class _AgeInputBox extends StatelessWidget {
         child: TextField(
           controller: controller,
           keyboardType: TextInputType.number,
-          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+          inputFormatters: NoEmojiTextInputFormatter.merge([
+            FilteringTextInputFormatter.digitsOnly,
+          ]),
           textAlign: TextAlign.left,
           style: theme.textTheme.bodyMedium?.copyWith(
             color: AppColors.clr061E40,

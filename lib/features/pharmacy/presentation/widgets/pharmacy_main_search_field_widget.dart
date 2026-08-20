@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
+import '../../../../core/utils/no_emoji_text_input_formatter.dart';
 
 /// Search input used by the pharmacy main panel.
 class PharmacyMainSearchFieldWidget extends StatefulWidget {
@@ -74,6 +75,7 @@ class _PharmacyMainSearchFieldWidgetState
       child: TextFormField(
         controller: _controller,
         focusNode: _focusNode,
+        inputFormatters: NoEmojiTextInputFormatter.merge(null),
         textInputAction: TextInputAction.search,
         onFieldSubmitted: (_) => _submitSearch(),
         decoration: InputDecoration(

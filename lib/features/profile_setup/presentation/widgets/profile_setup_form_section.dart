@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../../../../components/widgets/app_button.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
+import '../../../../core/utils/no_emoji_text_input_formatter.dart';
 import '../cubit/profile_setup_state.dart';
 
 class ProfileSetupFormSection extends StatelessWidget {
@@ -79,6 +81,10 @@ class ProfileSetupFormSection extends StatelessWidget {
                 _ProfileFieldLabel(text: l10n.profileFirstNameLabel),
                 TextFormField(
                   controller: firstNameController,
+                  inputFormatters: NoEmojiTextInputFormatter.merge(
+                    const <TextInputFormatter>[],
+                    allowBasicPunctuation: true,
+                  ),
                   decoration: inputDecorationBuilder(
                     hintText: l10n.profileFirstNameHint,
                   ),
@@ -93,6 +99,10 @@ class ProfileSetupFormSection extends StatelessWidget {
                 _ProfileFieldLabel(text: l10n.profileLastNameLabel),
                 TextFormField(
                   controller: lastNameController,
+                  inputFormatters: NoEmojiTextInputFormatter.merge(
+                    const <TextInputFormatter>[],
+                    allowBasicPunctuation: true,
+                  ),
                   decoration: inputDecorationBuilder(
                     hintText: l10n.profileLastNameHint,
                   ),
@@ -130,6 +140,10 @@ class ProfileSetupFormSection extends StatelessWidget {
                 TextFormField(
                   controller: emailController,
                   keyboardType: TextInputType.emailAddress,
+                  inputFormatters: NoEmojiTextInputFormatter.merge(
+                    const <TextInputFormatter>[],
+                    allowEmailSymbols: true,
+                  ),
                   decoration: inputDecorationBuilder(
                     hintText: l10n.profileEmailHint,
                   ),
@@ -146,6 +160,10 @@ class ProfileSetupFormSection extends StatelessWidget {
                 _ProfileFieldLabel(text: l10n.profileAddressLabel),
                 TextFormField(
                   controller: addressController,
+                  inputFormatters: NoEmojiTextInputFormatter.merge(
+                    const <TextInputFormatter>[],
+                    allowBasicPunctuation: true,
+                  ),
                   decoration: inputDecorationBuilder(
                     hintText: l10n.profileAddressHint,
                   ),
