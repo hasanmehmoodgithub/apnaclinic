@@ -12,7 +12,12 @@ class LabTestMediaUrlResolver {
     if (local.isNotEmpty) return local;
 
     final value = raw?.trim() ?? '';
-    if (value.startsWith('http')) return value;
+    if (value.startsWith('http')) {
+      final host = Uri.tryParse(value)?.host.toLowerCase() ?? '';
+      if (host.isNotEmpty && host != 'localhost' && host != '127.0.0.1') {
+        return value;
+      }
+    }
     return '';
   }
 
@@ -21,11 +26,17 @@ class LabTestMediaUrlResolver {
     String? raw,
   }) {
     final value = raw?.trim() ?? '';
-    if (value.startsWith('http')) return value;
+    if (_isUsableHttpUrl(value)) return value;
 
     final name = partnerName.trim().toLowerCase();
     if (name.contains('mediq')) return Assets.labTestMedIQLogo;
     if (name.contains('oladoc')) return Assets.labTestOladocOgo;
     return '';
+  }
+
+  static bool _isUsableHttpUrl(String value) {
+    if (!value.startsWith('http')) return false;
+    final host = Uri.tryParse(value)?.host.toLowerCase() ?? '';
+    return host.isNotEmpty && host != 'localhost' && host != '127.0.0.1';
   }
 }

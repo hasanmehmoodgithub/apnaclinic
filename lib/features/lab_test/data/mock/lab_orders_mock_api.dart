@@ -11,90 +11,161 @@ class LabOrdersMockApi {
 
     final orders = <Map<String, dynamic>>[
       {
-        'orderId': 1,
-        'publicId': '7adcea8f-dc64-4cf6-9aa0-761171ccad6f',
+        'orderId': 60,
         'orderType': 'WALK_IN',
-        'status': 'PLACED',
+        'status': 'Confirmed',
         'reportStatus': 'NOT_AVAILABLE',
         'paymentMethod': 'CARD',
         'partnerRef': null,
         'discountCode': null,
-        'lab': {
-          'id': 1,
-          'name': 'Chughtai Lab',
-          'logoUrl':
-              'http://bucket-route-minio.apps.jpocp.jazz.com.pk/apna-clinic/d23b9145-c84c-45ce-97ae-4c2ab662a8dd.svg',
-        },
+        'lab': {'id': 33, 'name': 'Chughtai Lab', 'logoUrl': null},
         'partner': {
-          'id': 2,
-          'name': 'Oladoc',
+          'id': 13,
+          'name': 'MedIQ',
           'logoUrl':
-              'http://bucket-route-minio.apps.jpocp.jazz.com.pk/apna-clinic/019f6574-0e42-711a-beff-919f80951036.png',
+              'http://localhost:9000/main/019f5f96-27ef-73f7-8952-7afbd0cb367b.png',
         },
         'patient': {
-          'name': 'Iram Iram',
-          'age': 39,
-          'gender': 'Female',
-          'phone': '03035613453',
+          'name': 'hasan aaa',
+          'age': 20,
+          'gender': 'Male',
+          'phone': '03012123411',
         },
         'tests': [
-          {'name': 'Complete Blood Count (CBC)', 'price': 800, 'status': 'PENDING'},
+          {
+            'name': 'glycosylated hemoglobin (hba1c)',
+            'price': 2100,
+            'status': 'PENDING',
+          },
         ],
         'pricing': {
-          'subtotal': 800,
-          'discount': 160,
+          'subtotal': 2100,
+          'discount': 0,
           'homeSamplingFee': 0,
-          'total': 640,
+          'total': 2100,
           'currency': 'PKR',
         },
         'reports': [],
-        'invoice':
-            'https://medicalguidelines.msf.org/sites/default/files/2026-05/guideline-170-en.pdf',
-        'placedAt': '2026-07-16 06:31',
-        'createdAt': '2026-07-16 11:31',
+        'placedAt': '2026-08-20 19:00',
+        'createdAt': '2026-08-20 19:00',
       },
       {
-        'orderId': 2,
-        'publicId': 'b1a2c3d4-1111-2222-3333-444455556666',
-        'orderType': 'HOME_SAMPLING',
-        'status': 'COMPLETED',
-        'reportStatus': 'AVAILABLE',
-        'paymentMethod': 'CASH',
+        'orderId': 59,
+        'orderType': 'WALK_IN',
+        'status': 'Payment Pending',
+        'reportStatus': 'NOT_AVAILABLE',
+        'paymentMethod': 'CARD',
         'partnerRef': null,
-        'discountCode': 'SAVE10',
-        'lab': {
-          'id': 2,
-          'name': 'Islamabad Diagnostic Centre',
-          'logoUrl':
-              'http://bucket-route-minio.apps.jpocp.jazz.com.pk/apna-clinic/d23b9145-c84c-45ce-97ae-4c2ab662a8dd.svg',
-        },
+        'discountCode': null,
+        'lab': {'id': 36, 'name': 'Excel Lab', 'logoUrl': null},
         'partner': {
-          'id': 2,
-          'name': 'Oladoc',
+          'id': 13,
+          'name': 'MedIQ',
           'logoUrl':
-              'http://bucket-route-minio.apps.jpocp.jazz.com.pk/apna-clinic/019f6574-0e42-711a-beff-919f80951036.png',
+              'http://localhost:9000/main/019f5f96-27ef-73f7-8952-7afbd0cb367b.png',
         },
         'patient': {
-          'name': 'Ahmed Raza',
-          'age': 28,
+          'name': 'hasan aaa',
+          'age': 20,
           'gender': 'Male',
-          'phone': '03011234567',
+          'phone': '03012123411',
         },
         'tests': [
-          {'name': 'Lipid Profile', 'price': 2400, 'status': 'COMPLETED'},
+          {
+            'name': '24 hrs holter monitor',
+            'price': 6900,
+            'status': 'PENDING',
+          },
         ],
         'pricing': {
-          'subtotal': 2400,
-          'discount': 480,
-          'homeSamplingFee': 200,
-          'total': 2120,
+          'subtotal': 6900,
+          'discount': 0,
+          'homeSamplingFee': 0,
+          'total': 6900,
           'currency': 'PKR',
         },
-        'reports': ['https://example.com/reports/lipid-profile.pdf'],
-        'invoice':
-            'https://medicalguidelines.msf.org/sites/default/files/2026-05/guideline-170-en.pdf',
-        'placedAt': '2025-02-11 09:15',
-        'createdAt': '2025-02-11 09:15',
+        'reports': [],
+        'placedAt': '2026-08-20 18:55',
+        'createdAt': '2026-08-20 18:55',
+      },
+      {
+        'orderId': 58,
+        'orderType': 'HOME_SAMPLING',
+        'status': 'Confirmed',
+        'reportStatus': 'NOT_AVAILABLE',
+        'paymentMethod': 'JAZZCASH',
+        'partnerRef': null,
+        'discountCode': null,
+        'lab': {'id': 33, 'name': 'Chughtai Lab', 'logoUrl': null},
+        'partner': {
+          'id': 13,
+          'name': 'MedIQ',
+          'logoUrl':
+              'http://localhost:9000/main/019f5f96-27ef-73f7-8952-7afbd0cb367b.png',
+        },
+        'patient': {
+          'name': 'hasan aaa',
+          'age': 20,
+          'gender': 'Male',
+          'phone': '923012123411',
+        },
+        'tests': [
+          {
+            'name':
+                '1666 gtt / gct (75 grams glucose tolerance test ( for pregnantpatient) (fasting 75gm glucose 1 hours 2 hours)',
+            'price': 1500,
+            'status': 'PENDING',
+          },
+        ],
+        'pricing': {
+          'subtotal': 1500,
+          'discount': 0,
+          'homeSamplingFee': 0,
+          'total': 1500,
+          'currency': 'PKR',
+        },
+        'reports': [],
+        'placedAt': '2026-08-20 17:45',
+        'createdAt': '2026-08-20 17:45',
+      },
+      {
+        'orderId': 9,
+        'orderType': 'HOME_SAMPLING',
+        'status': 'Confirmed',
+        'reportStatus': 'NOT_AVAILABLE',
+        'paymentMethod': 'COD',
+        'partnerRef': '202P7NF7',
+        'discountCode': '19910955',
+        'lab': {'id': 1, 'name': 'Chughtai Lab', 'logoUrl': null},
+        'partner': {
+          'id': 12,
+          'name': 'Oladoc',
+          'logoUrl':
+              'http://localhost:9000/main/019f5fa5-8c28-7759-91cb-4fb7c93bad91.png',
+        },
+        'patient': {
+          'name': 'Bilal Ali',
+          'age': 26,
+          'gender': 'Female',
+          'phone': '03012123411',
+        },
+        'tests': [
+          {
+            'name': 'Blood Sugar (Fasting)',
+            'price': 500,
+            'status': 'PENDING',
+          },
+        ],
+        'pricing': {
+          'subtotal': 500,
+          'discount': 100,
+          'homeSamplingFee': 0,
+          'total': 400,
+          'currency': 'PKR',
+        },
+        'reports': [],
+        'placedAt': '2026-07-21 21:00',
+        'createdAt': '2026-07-21 21:00',
       },
     ];
 
@@ -105,14 +176,12 @@ class LabOrdersMockApi {
     return {
       'success': true,
       'message': 'Lab orders retrieved',
-      'code': 200,
       'data': {
         'data': pageItems,
         'page': page,
         'limit': limit,
         'total': orders.length,
       },
-      'timestamp': DateTime.now().toUtc().toIso8601String(),
     };
   }
 
@@ -129,8 +198,7 @@ class LabOrdersMockApi {
         if (item is! Map) continue;
         final map = Map<String, dynamic>.from(item);
         final id = (map['orderId'] ?? '').toString();
-        final publicId = (map['publicId'] ?? '').toString();
-        if (id == orderId || publicId == orderId) {
+        if (id == orderId) {
           matched = map;
           break;
         }
@@ -141,15 +209,14 @@ class LabOrdersMockApi {
     }
     matched ??= {
       'orderId': int.tryParse(orderId) ?? orderId,
-      'publicId': orderId,
       'orderType': 'WALK_IN',
-      'status': 'PAID',
+      'status': 'Confirmed',
       'reportStatus': 'NOT_AVAILABLE',
       'paymentMethod': 'CARD',
-      'partnerRef': '1ZV2A246',
+      'partnerRef': null,
       'discountCode': null,
-      'lab': {'id': 1, 'name': 'Chughtai Lab', 'logoUrl': ''},
-      'partner': {'id': 2, 'name': 'Oladoc', 'logoUrl': ''},
+      'lab': {'id': 33, 'name': 'Chughtai Lab', 'logoUrl': null},
+      'partner': {'id': 13, 'name': 'MedIQ', 'logoUrl': null},
       'patient': {
         'name': 'Sample Patient',
         'age': 30,
@@ -161,24 +228,20 @@ class LabOrdersMockApi {
       ],
       'pricing': {
         'subtotal': 800,
-        'discount': 160,
+        'discount': 0,
         'homeSamplingFee': 0,
-        'total': 640,
+        'total': 800,
         'currency': 'PKR',
       },
       'reports': [],
-      'invoice':
-          'https://medicalguidelines.msf.org/sites/default/files/2026-05/guideline-170-en.pdf',
-      'placedAt': '2026-07-16 07:43',
-      'createdAt': '2026-07-16 12:44',
+      'placedAt': '2026-08-20 19:00',
+      'createdAt': '2026-08-20 19:00',
     };
 
     return {
       'success': true,
       'message': 'Lab order retrieved',
-      'code': 200,
       'data': matched,
-      'timestamp': DateTime.now().toUtc().toIso8601String(),
     };
   }
 }

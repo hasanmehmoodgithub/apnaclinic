@@ -1,10 +1,9 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
-import '../../../../components/shimmer/app_shimmer.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../domain/entities/pharmacy_booking_detail_entity.dart';
+import 'pharmacy_network_image.dart';
 
 class PharmacyBookingMedicineCardWidget extends StatelessWidget {
   const PharmacyBookingMedicineCardWidget({
@@ -28,24 +27,14 @@ class PharmacyBookingMedicineCardWidget extends StatelessWidget {
               borderRadius: BorderRadius.circular(8.r),
             ),
             clipBehavior: Clip.antiAlias,
-            child: CachedNetworkImage(
+            child: PharmacyNetworkImage(
               imageUrl: item.imageUrl,
+              width: 130.w,
+              height: 91.h,
               fit: BoxFit.cover,
-              placeholder: (context, url) => AppShimmer(
-                width: 130.w,
-                height: 91.h,
-                borderRadius: 8.r,
-                shape: ShimmerShape.roundedRectangle,
-              ),
-              errorWidget: (context, url, error) => const ColoredBox(
-                color: AppColors.clrE9EEF3,
-                child: Center(
-                  child: Icon(
-                    Icons.medication_rounded,
-                    color: AppColors.clr8091A8,
-                  ),
-                ),
-              ),
+              placeholderBorderRadius: 8.r,
+              memCacheWidth: 400,
+              errorBackgroundColor: AppColors.clrE9EEF3,
             ),
           ),
           SizedBox(width: 12.w),

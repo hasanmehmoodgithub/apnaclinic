@@ -39,17 +39,15 @@ class PharmacyRequiresPrescriptionBadge extends StatelessWidget {
             height: iconSize,
           ),
           SizedBox(width: compact ? 4.w : 6.w),
-          Flexible(
-            child: Text(
-              l10n.pharmacyRequiresPrescription,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                color: AppColors.clrC85600,
-                fontWeight: FontWeight.w700,
-                fontSize: fontSize,
-                letterSpacing: 0.2,
-              ),
+          Text(
+            l10n.pharmacyRequiresPrescription,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: Theme.of(context).textTheme.labelMedium?.copyWith(
+              color: AppColors.clrC85600,
+              fontWeight: FontWeight.w700,
+              fontSize: fontSize,
+              letterSpacing: 0.2,
             ),
           ),
         ],

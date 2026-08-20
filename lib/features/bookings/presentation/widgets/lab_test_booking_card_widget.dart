@@ -19,9 +19,23 @@ class LabTestBookingCardWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
-    final statusText = booking.isConfirmed
-        ? l10n.bookingsStatusConfirmed
-        : booking.statusLabel;
+    final statusKind = LabTestBookingStatusKind.fromStatus(booking.statusLabel);
+    final String statusText;
+    final Color statusBg;
+    final Color statusFg;
+    if (statusKind == LabTestBookingStatusKind.pending) {
+      statusText = l10n.bookingsStatusPending;
+      statusBg = AppColors.clrFFF4E5;
+      statusFg = AppColors.clrC85600;
+    } else if (statusKind == LabTestBookingStatusKind.failed) {
+      statusText = booking.statusLabel;
+      statusBg = AppColors.clrFBDEDE;
+      statusFg = AppColors.clrBA2025;
+    } else {
+      statusText = l10n.bookingsStatusConfirmed;
+      statusBg = AppColors.clrDEF8FB;
+      statusFg = AppColors.clr15A9A0;
+    }
 
     return Container(
       clipBehavior: Clip.antiAlias,
@@ -121,17 +135,13 @@ class LabTestBookingCardWidget extends StatelessWidget {
                             vertical: 2.h,
                           ),
                           decoration: BoxDecoration(
-                            color: booking.isConfirmed
-                                ? AppColors.clrDEF8FB
-                                : AppColors.clrFBDEDE,
+                            color: statusBg,
                             borderRadius: BorderRadius.circular(13.r),
                           ),
                           child: Text(
                             statusText,
-                            style: theme.textTheme.bodyMedium?.copyWith(
-                              color: booking.isConfirmed
-                                  ? AppColors.clr15A9A0
-                                  : AppColors.clrBA2025,
+                            style: TextStyle(
+                              color: statusFg,
                               fontSize: 10.sp,
                               fontWeight: FontWeight.w500,
                               height: 1.2,

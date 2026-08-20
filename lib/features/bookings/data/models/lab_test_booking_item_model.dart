@@ -10,6 +10,37 @@ class LabTestBookingTestItem {
   final String status;
 }
 
+enum LabTestBookingStatusKind {
+  pending,
+  confirmed,
+  failed;
+
+  static LabTestBookingStatusKind fromStatus(String raw) {
+    final normalized = raw
+        .trim()
+        .toLowerCase()
+        .replaceAll(RegExp(r'[^a-z0-9]+'), ' ')
+        .trim();
+    if (normalized.contains('cancel') ||
+        normalized.contains('reject') ||
+        normalized.contains('fail')) {
+      return LabTestBookingStatusKind.failed;
+    }
+    if (normalized.contains('pending') ||
+        normalized == 'placed' ||
+        normalized.contains('unpaid') ||
+        normalized.contains('awaiting')) {
+      return LabTestBookingStatusKind.pending;
+    }
+    if (normalized.contains('confirm') ||
+        normalized == 'completed' ||
+        normalized == 'paid') {
+      return LabTestBookingStatusKind.confirmed;
+    }
+    return LabTestBookingStatusKind.pending;
+  }
+}
+
 class LabTestBookingItemModel {
   const LabTestBookingItemModel({
     required this.orderId,
@@ -19,7 +50,6 @@ class LabTestBookingItemModel {
     required this.statusLabel,
     required this.reportStatus,
     required this.paymentMethod,
-    required this.isConfirmed,
     required this.totalFee,
     required this.discountedFee,
     required this.originalFee,
@@ -45,7 +75,6 @@ class LabTestBookingItemModel {
   final String statusLabel;
   final String reportStatus;
   final String paymentMethod;
-  final bool isConfirmed;
   final String totalFee;
   final String discountedFee;
   final String originalFee;

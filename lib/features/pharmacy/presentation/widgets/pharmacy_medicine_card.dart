@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../components/shimmer/app_shimmer.dart';
@@ -7,6 +6,7 @@ import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../generated/assets.dart';
 import '../../domain/entities/pharmacy_medicine_entity.dart';
+import 'pharmacy_network_image.dart';
 import 'pharmacy_requires_prescription_badge.dart';
 
 class PharmacyMedicineCard extends StatelessWidget {
@@ -51,29 +51,12 @@ class PharmacyMedicineCard extends StatelessWidget {
                     Positioned.fill(
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(12.r),
-                        child: ColoredBox(
-                          color: AppColors.clrWhite,
-                          child: CachedNetworkImage(
-                            imageUrl: medicine.imageUrl,
-                            fit: BoxFit.contain,
-                            placeholder: (context, url) => AppShimmer(
-                              width: double.infinity,
-                              height: double.infinity,
-                              borderRadius: 12.r,
-                              shape: ShimmerShape.roundedRectangle,
-                            ),
-                            errorWidget: (context, url, error) {
-                              return const ColoredBox(
-                                color: AppColors.clrWhite,
-                                child: Center(
-                                  child: Icon(
-                                    Icons.medication_rounded,
-                                    color: AppColors.clr8A9AAE,
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
+                        child: PharmacyNetworkImage(
+                          imageUrl: medicine.imageUrl,
+                          fit: BoxFit.contain,
+                          placeholderBorderRadius: 12.r,
+                          memCacheWidth: 400,
+                          errorBackgroundColor: AppColors.clrWhite,
                         ),
                       ),
                     ),

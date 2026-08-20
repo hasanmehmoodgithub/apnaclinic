@@ -10,6 +10,7 @@ class NotificationEntity {
     required this.isRead,
     this.entityId = '',
     this.entityKind = '',
+    this.unifiedOrderId = '',
     this.deepLinkEndpoint = '',
     this.priority = '',
     this.createdAt,
@@ -29,9 +30,12 @@ class NotificationEntity {
   final String serviceType;
   final bool isRead;
 
-  /// Booking / order id from `deepLink.data.orderId`, `entity.id`, or `entity_id`.
+  /// Booking / order id from `deepLink.entity.id` or `deepLink.data.entity_id`.
   final String entityId;
   final String entityKind;
+
+  /// Booking number used to open bookings: `deepLink.data.unified_order_id`.
+  final String unifiedOrderId;
   final String deepLinkEndpoint;
   final String priority;
   final DateTime? createdAt;
@@ -47,6 +51,7 @@ class NotificationEntity {
     bool? isRead,
     String? entityId,
     String? entityKind,
+    String? unifiedOrderId,
     String? deepLinkEndpoint,
     String? priority,
     DateTime? createdAt,
@@ -62,6 +67,7 @@ class NotificationEntity {
       isRead: isRead ?? this.isRead,
       entityId: entityId ?? this.entityId,
       entityKind: entityKind ?? this.entityKind,
+      unifiedOrderId: unifiedOrderId ?? this.unifiedOrderId,
       deepLinkEndpoint: deepLinkEndpoint ?? this.deepLinkEndpoint,
       priority: priority ?? this.priority,
       createdAt: createdAt ?? this.createdAt,

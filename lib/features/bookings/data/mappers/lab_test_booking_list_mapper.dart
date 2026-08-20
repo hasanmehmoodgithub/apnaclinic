@@ -8,13 +8,8 @@ import '../models/lab_test_booking_item_model.dart';
 class LabTestBookingListMapper {
   LabTestBookingListMapper._();
 
-  /// Temporary sample PDF until the API always returns `invoice`.
-  static const String mockInvoicePdfUrl =
-      'https://medicalguidelines.msf.org/sites/default/files/2026-05/guideline-170-en.pdf';
-
   static LabTestBookingItemModel fromOrder(LabOrderEntity order) {
     final pricing = order.pricing;
-    final isConfirmed = _isConfirmedStatus(order.status);
     final invoice = order.invoice?.trim();
 
     return LabTestBookingItemModel(
@@ -22,10 +17,9 @@ class LabTestBookingListMapper {
       publicId: order.publicId,
       orderType: order.orderType,
       reportTitle: order.tests.map((t) => t.name).where((n) => n.isNotEmpty).join(', '),
-      statusLabel: _displayStatus(order.status),
+      statusLabel: order.status,
       reportStatus: order.reportStatus,
       paymentMethod: order.paymentMethod,
-      isConfirmed: isConfirmed,
       totalFee: _formatAmount(pricing.total, pricing.currency),
       discountedFee: _formatAmount(pricing.total, pricing.currency),
       originalFee: _formatAmount(pricing.subtotal, pricing.currency),
@@ -45,7 +39,7 @@ class LabTestBookingListMapper {
           .toList(growable: false),
       discountCode: order.discountCode,
       partnerRef: order.partnerRef,
-      invoice: (invoice != null && invoice.isNotEmpty) ? invoice : mockInvoicePdfUrl,
+      invoice: (invoice != null && invoice.isNotEmpty) ? invoice : null,
     );
   }
 
@@ -69,8 +63,7 @@ class LabTestBookingListMapper {
       bookingDate: booking.dateLabel,
       statusLabel: booking.statusLabel,
       note: _reportNote(booking.reportStatus, l10n),
-      invoiceUrl:
-          (invoice != null && invoice.isNotEmpty) ? invoice : mockInvoicePdfUrl,
+      invoiceUrl: (invoice != null && invoice.isNotEmpty) ? invoice : null,
     );
   }
 
@@ -79,24 +72,6 @@ class LabTestBookingListMapper {
       return l10n.labTestReportAvailableNote;
     }
     return l10n.labTestReportPendingNote;
-  }
-
-  static bool _isConfirmedStatus(String status) {
-    final normalized = status.trim().toUpperCase();
-    return normalized != 'CANCELLED' &&
-        normalized != 'CANCELED' &&
-        normalized != 'REJECTED' &&
-        normalized != 'FAILED';
-  }
-
-  static String _displayStatus(String raw) {
-    final normalized = raw.trim().replaceAll('_', ' ').toLowerCase();
-    if (normalized.isEmpty) return 'Placed';
-    return normalized
-        .split(' ')
-        .where((part) => part.isNotEmpty)
-        .map((part) => '${part[0].toUpperCase()}${part.substring(1)}')
-        .join(' ');
   }
 
   static String _formatAmount(int amount, String currency) {

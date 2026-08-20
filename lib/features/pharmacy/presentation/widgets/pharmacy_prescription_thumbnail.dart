@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import '../../../../components/shimmer/app_shimmer.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
+import 'pharmacy_network_image.dart';
 
 /// Square preview of a local or remote prescription (image or PDF).
 class PharmacyPrescriptionThumbnail extends StatelessWidget {
@@ -71,13 +72,16 @@ class PharmacyPrescriptionThumbnail extends StatelessWidget {
     }
 
     final url = networkUrl?.trim() ?? '';
-    if (url.isEmpty) return _fallbackIcon(isPdf: false);
+    if (!PharmacyNetworkImage.isHttpUrl(url)) {
+      return _fallbackIcon(isPdf: false);
+    }
 
     return CachedNetworkImage(
       imageUrl: url,
       width: dim,
       height: dim,
       fit: BoxFit.cover,
+      memCacheWidth: 300,
       placeholder: (_, _) => AppShimmer(
         width: dim,
         height: dim,

@@ -12,6 +12,7 @@ class NotificationItemModel {
     required this.isRead,
     required this.entityId,
     required this.entityKind,
+    required this.unifiedOrderId,
     required this.deepLinkEndpoint,
     required this.priority,
     this.createdAt,
@@ -27,6 +28,7 @@ class NotificationItemModel {
   final bool isRead;
   final String entityId;
   final String entityKind;
+  final String unifiedOrderId;
   final String deepLinkEndpoint;
   final String priority;
   final DateTime? createdAt;
@@ -60,6 +62,10 @@ class NotificationItemModel {
         const ['kind'],
         nested: deepData,
         nestedKeys: const ['entity_kind', 'entityKind'],
+      ),
+      unifiedOrderId: _readString(
+        deepData ?? const {},
+        const ['unified_order_id', 'unifiedOrderId'],
       ),
       deepLinkEndpoint: _readString(
         deepLink ?? const {},

@@ -1,4 +1,5 @@
 import '../../domain/entities/lab_order_entity.dart';
+import '../../domain/utils/lab_test_media_url_resolver.dart';
 import '../models/lab_order_model.dart';
 
 class LabOrdersMapper {
@@ -24,9 +25,16 @@ class LabOrdersMapper {
       discountCode: model.discountCode,
       partnerRef: model.partnerRef,
       labName: model.lab.name,
-      labLogoUrl: model.lab.logoUrl,
+      labLogoUrl: LabTestMediaUrlResolver.resolveLabLogo(
+        model.lab.logoUrl,
+        labSlug: model.lab.id,
+        labName: model.lab.name,
+      ),
       partnerName: model.partner.name,
-      partnerLogoUrl: model.partner.logoUrl,
+      partnerLogoUrl: LabTestMediaUrlResolver.resolvePartnerLogo(
+        partnerName: model.partner.name,
+        raw: model.partner.logoUrl,
+      ),
       patientName: model.patient.name,
       patientAge: model.patient.age,
       patientGender: model.patient.gender,

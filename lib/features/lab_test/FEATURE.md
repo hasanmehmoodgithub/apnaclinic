@@ -39,7 +39,7 @@ Browse lab tests, booking/cart flow, payment details checkout, and order view de
   - Response may include `data.paymentUrl` → opens shared card payment WebView (`AppRoutes.cardPayment`) before the booked success dialog (`LabTestBookingConfirmationDialogWidget`: **Lab Test Booked!** + **View My Bookings** → Bookings → Labs tab).
   - Body: `{ partnerId, labId, cityId, homeSample, paymentMethod, msisdn, patient: { name, age, gender, phoneNumber }, tests: [ { testId } ] }`.
   - `testId`s come from every cart line (supports multiple tests in one booking); `partnerId` / `labId` / `homeSample` come from the first cart line; `cityId` is resolved from the city name via `CitiesRepository`.
-- **Lab orders (bookings list):** `GET AppUrls.labOrders` — response items include optional `invoice` (PDF URL). Mapped through `LabOrderModel` → `LabOrderEntity` → bookings list.
+- **Lab orders (bookings list):** `GET AppUrls.labOrders` — envelope `{ success, message, data: { data[], page, limit, total } }`. Items use `orderId` (int), display `status` (`Confirmed` / `Payment Pending`), `orderType` (`WALK_IN` / `HOME_SAMPLING`), nested `lab` / `partner` / `patient` / `tests[]` / `pricing`, optional `reports[]` (no `invoice` / `publicId` on current API). Mapped through `LabOrderModel` → `LabOrderEntity` → bookings list. Localhost `logoUrl` values are ignored; Chughtai/Excel/MedIQ/Oladoc fall back to bundled assets.
 - **Lab order detail:** `GET AppUrls.labOrderById(id)` → `/acs-aggregator/api/v1/mobile/lab-orders/{id}` via `GetLabOrderDetailUseCase` when opening View Details from bookings. Same order shape as list items (`data` is a single object). E-invoice (`LabTestViewDetailsInvoiceCard`) is disabled on this screen.
 - Search runs when the user taps the search icon (or keyboard Search); no debounce. A cross icon appears while the field has text and clears the query (`submitSearch('')`). Empty results show `LabTestCatalogEmptyWidget` (“No Record Found” + empty box). Re-fetches from the API when a city is selected.
 
@@ -55,4 +55,4 @@ Browse lab tests, booking/cart flow, payment details checkout, and order view de
 
 ## Mocks
 
-- When `MockConfig.enableLabTestMocks` is true, `LabTestMockApi` returns sample mobile API shapes (defaults to real API).
+- When `MockConfig.enableLabTestMocks` is true, `LabTestMockApi` / `LabOrdersMockApi` return sample mobile API shapes (defaults to real API). Lab orders mock matches the nested `data.data[]` list (`Confirmed` / `Payment Pending`, no invoice).

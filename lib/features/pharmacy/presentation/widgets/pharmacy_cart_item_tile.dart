@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 
-import '../../../../components/shimmer/app_shimmer.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../domain/entities/pharmacy_cart_item_entity.dart';
+import 'pharmacy_network_image.dart';
 import 'pharmacy_quantity_stepper.dart';
 
 class PharmacyCartItemTile extends StatelessWidget {
@@ -35,24 +34,14 @@ class PharmacyCartItemTile extends StatelessWidget {
             borderRadius: BorderRadius.circular(22.r),
           ),
           clipBehavior: Clip.antiAlias,
-          child: CachedNetworkImage(
+          child: PharmacyNetworkImage(
             imageUrl: item.medicine.imageUrl,
+            width: 108.r,
+            height: 88.r,
             fit: BoxFit.contain,
-            placeholder: (context, url) => AppShimmer(
-              width: 130.r,
-              height: 88.r,
-              borderRadius: 22.r,
-              shape: ShimmerShape.roundedRectangle,
-            ),
-            errorWidget: (context, url, error) => const ColoredBox(
-              color: AppColors.clrE9EEF3,
-              child: Center(
-                child: Icon(
-                  Icons.medication_rounded,
-                  color: AppColors.clr8091A8,
-                ),
-              ),
-            ),
+            placeholderBorderRadius: 22.r,
+            memCacheWidth: 400,
+            errorBackgroundColor: AppColors.clrE9EEF3,
           ),
         ),
         SizedBox(width: 10.w),

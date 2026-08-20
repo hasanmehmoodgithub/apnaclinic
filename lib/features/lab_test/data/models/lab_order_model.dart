@@ -168,7 +168,7 @@ class LabOrderModel {
   final String publicId;
   final String orderType;
 
-  /// e.g. `PLACED`, `CONFIRMED`, `CANCELLED`, `COMPLETED`.
+  /// e.g. `Confirmed`, `Payment Pending`, `PLACED`.
   final String status;
 
   /// e.g. `NOT_AVAILABLE`, `AVAILABLE`.
@@ -203,15 +203,16 @@ class LabOrderModel {
         : const <LabOrderTestModel>[];
 
     final rawReports = json['reports'];
-    final reports = rawReports is List
-        ? rawReports.map((r) => r.toString()).toList(growable: false)
-        : const <String>[];
+    final reports = _parseReports(rawReports);
+    final invoice =
+        _usableHttpUrl(_nullableString(json['invoice'])) ??
+        _firstUsableUrl(reports);
 
     return LabOrderModel(
-      orderId: _asString(json['orderId'] ?? json['order_id']),
+      orderId: _asString(json['orderId'] ?? json['order_id'] ?? json['id']),
       publicId: _asString(json['publicId'] ?? json['public_id']),
       orderType: _asString(json['orderType'] ?? json['order_type']),
-      status: _asString(json['status']),
+      status: _parseStatus(json),
       reportStatus: _asString(json['reportStatus'] ?? json['report_status']),
       paymentMethod: _asString(json['paymentMethod'] ?? json['payment_method']),
       partnerRef: _nullableString(json['partnerRef'] ?? json['partner_ref']),
@@ -230,10 +231,72 @@ class LabOrderModel {
           ? LabOrderPricingModel.fromJson(Map<String, dynamic>.from(pricing))
           : LabOrderPricingModel.empty,
       reports: reports,
-      invoice: _nullableString(json['invoice']),
+      invoice: invoice,
       placedAt: _asString(json['placedAt'] ?? json['placed_at']),
       createdAt: _asString(json['createdAt'] ?? json['created_at']),
     );
+  }
+
+  static String _parseStatus(Map<String, dynamic> json) {
+    final raw = json['status'] ??
+        json['orderStatus'] ??
+        json['order_status'] ??
+        json['paymentStatus'] ??
+        json['payment_status'];
+    if (raw is Map) {
+      return _asString(
+        raw['label'] ??
+            raw['name'] ??
+            raw['value'] ??
+            raw['code'] ??
+            raw['status'],
+      );
+    }
+    return _asString(raw);
+  }
+
+  static List<String> _parseReports(dynamic raw) {
+    if (raw is! List) return const <String>[];
+    return raw
+        .map(_reportUrl)
+        .where((url) => url.isNotEmpty)
+        .toList(growable: false);
+  }
+
+  static String _reportUrl(dynamic raw) {
+    if (raw == null) return '';
+    if (raw is String) return _usableHttpUrl(_asString(raw)) ?? '';
+    if (raw is Map) {
+      return _usableHttpUrl(
+            _asString(
+              raw['url'] ??
+                  raw['fileUrl'] ??
+                  raw['file_url'] ??
+                  raw['reportUrl'] ??
+                  raw['pdfUrl'],
+            ),
+          ) ??
+          '';
+    }
+    return _usableHttpUrl(_asString(raw)) ?? '';
+  }
+
+  static String? _usableHttpUrl(String? raw) {
+    final value = raw?.trim() ?? '';
+    if (!value.startsWith('http')) return null;
+    final host = Uri.tryParse(value)?.host.toLowerCase() ?? '';
+    if (host.isEmpty || host == 'localhost' || host == '127.0.0.1') {
+      return null;
+    }
+    return value;
+  }
+
+  static String? _firstUsableUrl(List<String> urls) {
+    for (final url in urls) {
+      final usable = _usableHttpUrl(url);
+      if (usable != null) return usable;
+    }
+    return null;
   }
 
   /// Parses `GET /lab-orders/{id}` envelope (`data` is a single order object).
@@ -261,6 +324,19 @@ class LabOrdersPageModel {
 
   factory LabOrdersPageModel.fromJson(Map<String, dynamic> json) {
     final data = json['data'];
+    if (data is List) {
+      final items = data
+          .whereType<Map>()
+          .map((item) => LabOrderModel.fromJson(Map<String, dynamic>.from(item)))
+          .toList(growable: false);
+      return LabOrdersPageModel(
+        items: items,
+        page: _asInt(json['page'], fallback: 1),
+        limit: _asInt(json['limit'], fallback: items.length),
+        total: _asInt(json['total'], fallback: items.length),
+      );
+    }
+
     final dataMap =
         data is Map ? Map<String, dynamic>.from(data) : <String, dynamic>{};
     final rawItems = dataMap['data'];
@@ -275,7 +351,7 @@ class LabOrdersPageModel {
       items: items,
       page: _asInt(dataMap['page'], fallback: 1),
       limit: _asInt(dataMap['limit'], fallback: 20),
-      total: _asInt(dataMap['total']),
+      total: _asInt(dataMap['total'], fallback: items.length),
     );
   }
 }

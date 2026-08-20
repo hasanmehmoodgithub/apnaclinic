@@ -1,15 +1,14 @@
 import 'dart:convert';
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-import '../../../../components/shimmer/app_shimmer.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../generated/assets.dart';
 import '../../domain/entities/pharmacy_medicine_entity.dart';
+import 'pharmacy_network_image.dart';
 import 'pharmacy_requires_prescription_badge.dart';
 
 class PharmacySelectedCard extends StatelessWidget {
@@ -36,27 +35,14 @@ class PharmacySelectedCard extends StatelessWidget {
                 color: AppColors.clrWhite,
               ),
               clipBehavior: Clip.antiAlias,
-              child: CachedNetworkImage(
+              child: PharmacyNetworkImage(
                 imageUrl: featured.imageUrl,
                 width: double.infinity,
+                height: 260.h,
                 fit: BoxFit.contain,
-                placeholder: (context, url) => AppShimmer(
-                  width: double.infinity,
-                  height: 260.h,
-                  borderRadius: 26.r,
-                  shape: ShimmerShape.roundedRectangle,
-                ),
-                errorWidget: (context, url, error) {
-                  return Container(
-                    color: AppColors.clrWhite,
-                    alignment: Alignment.center,
-                    child: const Icon(
-                      Icons.medication_rounded,
-                      size: 52,
-                      color: AppColors.clr8091A8,
-                    ),
-                  );
-                },
+                placeholderBorderRadius: 26.r,
+                memCacheWidth: 900,
+                errorBackgroundColor: AppColors.clrWhite,
               ),
             ),
             if (featured.prescriptionRequired)

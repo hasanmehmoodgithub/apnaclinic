@@ -31,7 +31,7 @@ class NotificationCubit extends Cubit<NotificationState> {
     );
 
     final result = await getNotificationsUseCase(
-      const GetNotificationsParams(),
+      const GetNotificationsParams(limit: 50),
     );
     if (isClosed) return;
 
@@ -46,7 +46,7 @@ class NotificationCubit extends Cubit<NotificationState> {
         state.copyWith(
           loadingStateStatus:
               data.isEmpty ? StateStatus.empty : StateStatus.success,
-          notifications: _sortUnreadFirst(data),
+          notifications: _sortByCreatedAt(data),
           errorMessage: null,
         ),
       ),
@@ -80,24 +80,23 @@ class NotificationCubit extends Cubit<NotificationState> {
                   : item,
             )
             .toList(growable: false);
-        emit(state.copyWith(notifications: _sortUnreadFirst(updated)));
+        emit(state.copyWith(notifications: _sortByCreatedAt(updated)));
         return null;
       },
     );
   }
 
-  List<NotificationEntity> _sortUnreadFirst(List<NotificationEntity> source) {
+  List<NotificationEntity> _sortByCreatedAt(List<NotificationEntity> source) {
     final copy = [...source];
     copy.sort((a, b) {
-      if (a.isRead == b.isRead) {
-        final aCreated = a.createdAt;
-        final bCreated = b.createdAt;
-        if (aCreated != null && bCreated != null) {
-          return bCreated.compareTo(aCreated);
-        }
-        return 0;
+      final aCreated = a.createdAt;
+      final bCreated = b.createdAt;
+      if (aCreated != null && bCreated != null) {
+        return bCreated.compareTo(aCreated);
       }
-      return a.isRead ? 1 : -1;
+      if (aCreated != null) return -1;
+      if (bCreated != null) return 1;
+      return 0;
     });
     return copy;
   }

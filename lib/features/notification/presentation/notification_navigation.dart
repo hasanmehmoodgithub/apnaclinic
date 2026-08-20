@@ -9,31 +9,34 @@ import '../../bookings/presentation/widgets/alert_dialog_card.dart';
 import '../../lab_test/presentation/lab_test_route_args.dart';
 import '../domain/entities/notification_entity.dart';
 
-/// Opens the booking / order screen for a notification's `serviceType` + `entityId`.
+/// Opens the booking / order screen for a notification's `serviceType`.
+///
+/// Prefers `deepLink.data.unified_order_id`; falls back to `entity.id` /
+/// `entity_id` when the unified id is missing.
 ///
 /// Returns `true` when navigation was started; `false` when the notification
-/// cannot be routed (missing entity id, unsupported service type, etc.).
+/// cannot be routed (missing booking id, unsupported service type, etc.).
 bool openNotificationDeepLink(
   BuildContext context,
   NotificationEntity item,
 ) {
-  final entityId = item.entityId.trim();
-  if (entityId.isEmpty) return false;
+  final bookingId = _bookingId(item);
+  if (bookingId.isEmpty) return false;
 
   final service = item.serviceType.trim().toUpperCase();
   switch (service) {
     case 'CONSULTATION':
       context.pushNamed(
         AppRoutes.doctorConsultationBookingDetails,
-        extra: DoctorConsultationBookingDetailsArgs(bookingId: entityId),
+        extra: DoctorConsultationBookingDetailsArgs(bookingId: bookingId),
       );
       return true;
     case 'SURGERY':
       context.pushNamed(
         AppRoutes.surgeryBookingDetails,
         extra: SurgeryBookingDetailsArgs(
-          leadId: entityId,
-          item: _placeholderSurgeryItem(entityId),
+          leadId: bookingId,
+          item: _placeholderSurgeryItem(bookingId),
           initialStatus: SurgeryBookingStatus.inReview,
         ),
       );
@@ -41,20 +44,26 @@ bool openNotificationDeepLink(
     case 'LAB':
       context.pushNamed(
         AppRoutes.labTestViewDetails,
-        extra: LabTestViewDetailsArgs(orderId: entityId),
+        extra: LabTestViewDetailsArgs(orderId: bookingId),
       );
       return true;
     case 'PHARMACY':
       context.pushNamed(
         AppRoutes.pharmacyBookingDetails,
         extra: {
-          'orderId': entityId,
+          'orderId': bookingId,
         },
       );
       return true;
     default:
       return false;
   }
+}
+
+String _bookingId(NotificationEntity item) {
+  final unified = item.unifiedOrderId.trim();
+  if (unified.isNotEmpty) return unified;
+  return item.entityId.trim();
 }
 
 /// Shows notification content when deep link routing is unavailable.

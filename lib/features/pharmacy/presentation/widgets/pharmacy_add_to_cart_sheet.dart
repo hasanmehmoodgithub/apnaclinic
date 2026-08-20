@@ -1,10 +1,8 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../../components/shimmer/app_shimmer.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
@@ -14,6 +12,7 @@ import '../../../../core/utils/auth_guard.dart';
 import '../../domain/entities/pharmacy_medicine_entity.dart';
 import '../cubit/pharmacy_cubit.dart';
 import 'pharmacy_error_dialog.dart';
+import 'pharmacy_network_image.dart';
 import 'pharmacy_prescription_attached_section.dart';
 import 'pharmacy_prescription_upload_section.dart';
 import 'pharmacy_quantity_stepper.dart';
@@ -168,27 +167,13 @@ Future<void> showPharmacyAddToCartSheet(
                       children: [
                         ClipRRect(
                           borderRadius: BorderRadius.circular(12.r),
-                          child: CachedNetworkImage(
+                          child: PharmacyNetworkImage(
                             imageUrl: medicine.imageUrl,
                             width: 88.r,
                             height: 88.r,
                             fit: BoxFit.cover,
-                            placeholder: (context, url) => AppShimmer(
-                              width: 88.r,
-                              height: 88.r,
-                              borderRadius: 12.r,
-                              shape: ShimmerShape.roundedRectangle,
-                            ),
-                            errorWidget: (context, url, error) =>
-                                const ColoredBox(
-                              color: AppColors.clrF0F4F8,
-                              child: Center(
-                                child: Icon(
-                                  Icons.medication_rounded,
-                                  color: AppColors.clr8A9AAE,
-                                ),
-                              ),
-                            ),
+                            placeholderBorderRadius: 12.r,
+                            memCacheWidth: 300,
                           ),
                         ),
                         SizedBox(width: 10.w),

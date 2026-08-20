@@ -23,9 +23,31 @@ int _parseInt(dynamic value, {required int fallback}) {
   return int.tryParse(value?.toString() ?? '') ?? fallback;
 }
 
+bool _isHttpUrl(String value) {
+  final url = value.trim().toLowerCase();
+  return url.startsWith('http://') || url.startsWith('https://');
+}
+
+String _asImageUrl(dynamic value) {
+  if (value == null) return '';
+  if (value is Map) {
+    return _asString(
+      value['url'] ??
+          value['file'] ??
+          value['image_url'] ??
+          value['imageUrl'] ??
+          value['src'],
+    );
+  }
+  return _asString(value);
+}
+
 List<String> _parseStringList(dynamic value) {
   if (value is! List) return const [];
-  return value.map((item) => item.toString()).toList(growable: false);
+  return value
+      .map(_asImageUrl)
+      .where(_isHttpUrl)
+      .toList(growable: false);
 }
 
 class PharmacyMedicineModel {
@@ -159,9 +181,11 @@ class PharmacyMedicineModel {
     required String imageUrl,
     required List<String> images,
   }) {
-    if (imageFromMedia.isNotEmpty) return imageFromMedia;
-    if (imageUrl.isNotEmpty) return imageUrl;
-    if (images.isNotEmpty) return images.first;
+    if (_isHttpUrl(imageFromMedia)) return imageFromMedia.trim();
+    if (_isHttpUrl(imageUrl)) return imageUrl.trim();
+    for (final item in images) {
+      if (_isHttpUrl(item)) return item.trim();
+    }
     return '';
   }
 

@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/constants/app_colors.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
+import '../../../../core/l10n/app_localizations.dart';
+import '../../../bookings/data/models/lab_test_booking_item_model.dart';
 import '../../domain/utils/lab_test_price_formatter.dart';
 import 'lab_test_figma_image.dart';
 
@@ -29,6 +32,24 @@ class LabTestViewDetailsResultCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
+    final statusKind = LabTestBookingStatusKind.fromStatus(status);
+    final Color statusBg;
+    final Color statusFg;
+    final String statusText;
+    if (statusKind == LabTestBookingStatusKind.pending) {
+      statusText = l10n.bookingsStatusPending;
+      statusBg = AppColors.clrFFF4E5;
+      statusFg = AppColors.clrC85600;
+    } else if (statusKind == LabTestBookingStatusKind.failed) {
+      statusText = status;
+      statusBg = AppColors.clrFBDEDE;
+      statusFg = AppColors.clrBA2025;
+    } else {
+      statusText = l10n.bookingsStatusConfirmed;
+      statusBg = AppColors.clrDEF8FB;
+      statusFg = AppColors.clr15A9A0;
+    }
     return Container(
       padding: EdgeInsets.all(10.r),
       decoration: BoxDecoration(
@@ -147,15 +168,15 @@ class LabTestViewDetailsResultCard extends StatelessWidget {
                               vertical: 5.h,
                             ),
                             decoration: BoxDecoration(
-                              color: const Color(0xFFD8F5EE),
+                              color: statusBg,
                               borderRadius: BorderRadius.circular(20.r),
                             ),
                             child: Text(
-                              status,
+                              statusText,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: theme.textTheme.bodySmall?.copyWith(
-                                color: const Color(0xFF0DAA9A),
+                              style: TextStyle(
+                                color: statusFg,
                                 fontWeight: FontWeight.w600,
                                 fontSize: 10.sp,
                               ),
