@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../../core/extensions/screen_util_extensions.dart';
+import '../../../../core/utils/no_emoji_text_input_formatter.dart';
 import '../constants/consultation_ui_config.dart';
 
 class ResultsSearchField extends StatelessWidget {
@@ -30,6 +31,7 @@ class ResultsSearchField extends StatelessWidget {
       height: 48.h,
       child: TextField(
         controller: controller,
+        inputFormatters: NoEmojiTextInputFormatter.merge(null),
         textInputAction: TextInputAction.search,
         onSubmitted: (_) => onSearch(),
         decoration: InputDecoration(

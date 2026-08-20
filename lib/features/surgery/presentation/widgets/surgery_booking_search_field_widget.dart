@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/extensions/screen_util_extensions.dart';
+import '../../../../core/utils/no_emoji_text_input_formatter.dart';
 
 class SurgeryBookingSearchFieldWidget extends StatelessWidget {
   const SurgeryBookingSearchFieldWidget({
@@ -23,6 +24,7 @@ class SurgeryBookingSearchFieldWidget extends StatelessWidget {
       ),
       child: TextField(
         controller: controller,
+        inputFormatters: NoEmojiTextInputFormatter.merge(null),
         onChanged: onChanged,
         decoration: InputDecoration(
           border: InputBorder.none,

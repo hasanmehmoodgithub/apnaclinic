@@ -3,6 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
+import '../../../../core/utils/no_emoji_text_input_formatter.dart';
 import '../constants/consultation_partner_filter_defaults.dart';
 import '../constants/consultation_ui_config.dart';
 import 'consultation_partner_logo_widget.dart';
@@ -114,6 +115,7 @@ class _ConsultationSelectPartnerSheetWidgetState
               height: 48.h,
               child: TextField(
                 controller: _searchController,
+                inputFormatters: NoEmojiTextInputFormatter.merge(null),
                 onChanged: (value) => setState(() => _query = value),
                 decoration: InputDecoration(
                   hintText: l10n.consultationSearchPartner,

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
+import '../../../../core/utils/no_emoji_text_input_formatter.dart';
 
 class SurgerySearchFieldWidget extends StatefulWidget {
   const SurgerySearchFieldWidget({
@@ -55,6 +56,7 @@ class _SurgerySearchFieldWidgetState extends State<SurgerySearchFieldWidget> {
       ),
       child: TextField(
         controller: _controller,
+        inputFormatters: NoEmojiTextInputFormatter.merge(null),
         onChanged: widget.onChanged,
         decoration: InputDecoration(
           border: InputBorder.none,

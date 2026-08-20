@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/extensions/screen_util_extensions.dart';
+import '../../../../core/utils/no_emoji_text_input_formatter.dart';
 import '../../../../generated/assets.dart';
 import 'lab_test_figma_image.dart';
 
@@ -44,6 +45,7 @@ class LabTestBrowseSearchFieldWidget extends StatelessWidget {
           Expanded(
             child: TextField(
               controller: controller,
+              inputFormatters: NoEmojiTextInputFormatter.merge(null),
               onChanged: onChanged,
               onSubmitted: (_) => _submit(),
               textInputAction: TextInputAction.search,

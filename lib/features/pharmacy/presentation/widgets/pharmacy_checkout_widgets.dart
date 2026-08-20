@@ -1,10 +1,12 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../../../../components/shimmer/app_shimmer.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
+import '../../../../core/utils/no_emoji_text_input_formatter.dart';
 import '../../domain/entities/pharmacy_cart_item_entity.dart';
 
 class PharmacySummaryRow extends StatelessWidget {
@@ -163,6 +165,10 @@ class PharmacyCheckoutEditableField extends StatelessWidget {
           child: Center(
             child: TextField(
               controller: controller,
+              inputFormatters: NoEmojiTextInputFormatter.merge(
+                const <TextInputFormatter>[],
+                allowBasicPunctuation: true,
+              ),
               style: theme.textTheme.bodyLarge?.copyWith(
                 color: AppColors.clr5D758F,
                 fontSize: fieldFontSize,

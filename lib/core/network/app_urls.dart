@@ -130,8 +130,14 @@ class AppUrls {
       '$_normalizedApiBaseUrl/acs-cmsbe/api/v1/mobile/support';
 
   /// Instant doctor consultation info (aggregator mobile API).
-  static String instantDoctorConsultation(String msisdn) =>
-      '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/doctor-consultation/instant?msisdn=${Uri.encodeComponent(msisdn)}';
+  /// Guest browse omits `msisdn`; subscribed state is returned when present.
+  static String instantDoctorConsultation([String msisdn = '']) {
+    final base =
+        '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/doctor-consultation/instant';
+    final trimmed = msisdn.trim();
+    if (trimmed.isEmpty) return base;
+    return '$base?msisdn=${Uri.encodeComponent(trimmed)}';
+  }
 
   /// Instant doctor subscription OTP — send.
   static String get instantDoctorSendOtp =>

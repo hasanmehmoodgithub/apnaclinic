@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
+import '../../../../core/utils/no_emoji_text_input_formatter.dart';
 import '../../../../core/widgets/app_rounded_rating_widget.dart';
 import '../cubit/doctor_consultation_booking_details_cubit.dart';
 import '../cubit/doctor_consultation_booking_details_state.dart';
@@ -104,6 +106,10 @@ class _DoctorConsultationBookingFeedbackFormWidgetState
             TextField(
               controller: _reviewController,
               enabled: !state.isSubmittingFeedback,
+              inputFormatters: NoEmojiTextInputFormatter.merge(
+                const <TextInputFormatter>[],
+                allowBasicPunctuation: true,
+              ),
               maxLines: 3,
               minLines: 2,
               onChanged: (_) => setState(() {}),

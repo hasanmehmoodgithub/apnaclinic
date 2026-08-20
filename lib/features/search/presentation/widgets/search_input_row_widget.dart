@@ -4,6 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
+import '../../../../core/utils/no_emoji_text_input_formatter.dart';
 import '../../../../generated/assets.dart';
 
 class SearchInputRowWidget extends StatelessWidget {
@@ -43,6 +44,7 @@ class SearchInputRowWidget extends StatelessWidget {
           Expanded(
             child: TextField(
               controller: controller,
+              inputFormatters: NoEmojiTextInputFormatter.merge(null),
               onChanged: onChanged,
               onSubmitted: onSubmit,
               textInputAction: TextInputAction.search,

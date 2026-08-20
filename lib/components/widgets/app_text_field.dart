@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../core/constants/app_sizes.dart';
+import '../../core/utils/no_emoji_text_input_formatter.dart';
 
 /// Reusable text field widget for the entire app
 class AppTextField extends StatelessWidget {
@@ -80,7 +81,11 @@ class AppTextField extends StatelessWidget {
       onChanged: onChanged,
       onFieldSubmitted: onSubmitted,
       onTap: onTap,
-      inputFormatters: inputFormatters,
+      inputFormatters: NoEmojiTextInputFormatter.merge(
+        inputFormatters,
+        allowEmailSymbols: keyboardType == TextInputType.emailAddress,
+        allowBasicPunctuation: (maxLines ?? 1) != 1,
+      ),
       autofocus: autofocus,
       autofillHints: autofillHints != null ? [autofillHints!] : null,
       style: TextStyle(

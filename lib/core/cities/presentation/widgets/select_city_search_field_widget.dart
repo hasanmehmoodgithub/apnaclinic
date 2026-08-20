@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../constants/app_colors.dart';
 import '../../../extensions/screen_util_extensions.dart';
+import '../../../utils/no_emoji_text_input_formatter.dart';
 
 /// Search field used inside the shared Select City dialog.
 class SelectCitySearchFieldWidget extends StatelessWidget {
@@ -32,6 +33,7 @@ class SelectCitySearchFieldWidget extends StatelessWidget {
           Expanded(
             child: TextField(
               controller: controller,
+              inputFormatters: NoEmojiTextInputFormatter.merge(null),
               onChanged: onChanged,
               style: theme.textTheme.bodyMedium?.copyWith(
                 color: AppColors.clr060,
