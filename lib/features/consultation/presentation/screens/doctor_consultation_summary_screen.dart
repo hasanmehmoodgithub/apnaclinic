@@ -54,7 +54,11 @@ class DoctorConsultationSummaryScreen extends StatelessWidget {
     }
 
     final paymentResult =
-        await settleCardPaymentIfNeeded(context, initiation);
+        await settleCardPaymentIfNeeded(
+          context,
+          initiation,
+          allowClose: true,
+        );
     if (!context.mounted) return;
     if (!paymentResult.isSuccess) {
       showCardPaymentOutcomeSnackBar(context, paymentResult);
