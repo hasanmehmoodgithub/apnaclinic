@@ -79,7 +79,7 @@ class HomeHeaderSection extends StatelessWidget {
                       onMenuTap: onMenuTap,
                       onNotificationTap: onNotificationTap,
                       showNotificationDot:
-                          !isLoggedIn || hasUnreadNotifications,
+                          isLoggedIn && hasUnreadNotifications,
                       showLoginButton: !isLoggedIn,
                       filledLoginButton: true,
                       onLoginTap: onLoginTap,

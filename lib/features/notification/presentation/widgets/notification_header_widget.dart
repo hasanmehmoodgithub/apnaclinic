@@ -37,13 +37,7 @@ class NotificationHeaderWidget extends StatelessWidget {
               ),
             ),
           ),
-          IconButton(
-            onPressed: () {},
-            icon: const Icon(
-              Icons.more_horiz,
-              color: AppColors.clr08294D,
-            ),
-          ),
+            SizedBox(width: 48.w),
         ],
       ),
     );

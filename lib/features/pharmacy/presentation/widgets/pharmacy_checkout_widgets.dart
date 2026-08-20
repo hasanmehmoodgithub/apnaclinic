@@ -15,6 +15,8 @@ class PharmacySummaryRow extends StatelessWidget {
     this.isBold = false,
     this.bgColor,
     this.padding = EdgeInsets.zero,
+    this.titleFontSize,
+    this.valueFontSize,
   });
 
   final String title;
@@ -22,14 +24,17 @@ class PharmacySummaryRow extends StatelessWidget {
   final bool isBold;
   final Color? bgColor;
   final EdgeInsetsGeometry padding;
+  final double? titleFontSize;
+  final double? valueFontSize;
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final amountSize = valueFontSize ?? (isBold ? 17.sp / 1.6 : 16.sp / 1.6);
     final style = Theme.of(context).textTheme.bodyLarge?.copyWith(
       color: AppColors.clr060,
       fontWeight: isBold ? FontWeight.w700 : FontWeight.w400,
-      fontSize: isBold ? 17.sp / 1.6 : 16.sp / 1.6,
+      fontSize: amountSize,
     );
     return Container(
       color: bgColor,
@@ -43,7 +48,7 @@ class PharmacySummaryRow extends StatelessWidget {
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                   color: AppColors.clr060,
                   fontWeight: FontWeight.w400,
-                  fontSize: 13.sp,
+                  fontSize: titleFontSize ?? 13.sp,
                 ),
               ),
             ),
@@ -123,15 +128,18 @@ class PharmacyCheckoutEditableField extends StatelessWidget {
     required this.label,
     required this.controller,
     required this.hint,
+    this.inputFontSize,
   });
 
   final String label;
   final TextEditingController controller;
   final String hint;
+  final double? inputFontSize;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final fieldFontSize = inputFontSize ?? (16.sp / 1.6);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -157,7 +165,7 @@ class PharmacyCheckoutEditableField extends StatelessWidget {
               controller: controller,
               style: theme.textTheme.bodyLarge?.copyWith(
                 color: AppColors.clr5D758F,
-                fontSize: 16.sp / 1.6,
+                fontSize: fieldFontSize,
                 fontWeight: FontWeight.w400,
               ),
               decoration: InputDecoration(
@@ -166,7 +174,7 @@ class PharmacyCheckoutEditableField extends StatelessWidget {
                 hintText: hint,
                 hintStyle: theme.textTheme.bodyLarge?.copyWith(
                   color: AppColors.clr8C9CB0,
-                  fontSize: 16.sp / 1.6,
+                  fontSize: fieldFontSize,
                 ),
               ),
             ),

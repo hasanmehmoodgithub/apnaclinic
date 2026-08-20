@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:path/path.dart' as p;
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
+import 'pharmacy_prescription_thumbnail.dart';
 
 /// Shows an already-attached prescription URL on the add-to-cart sheet.
 class PharmacyPrescriptionAttachedSection extends StatelessWidget {
@@ -20,7 +20,6 @@ class PharmacyPrescriptionAttachedSection extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
-    final displayName = _fileNameFromUrl(prescriptionUrl);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -44,35 +43,19 @@ class PharmacyPrescriptionAttachedSection extends StatelessWidget {
           ),
           child: Row(
             children: [
-              Icon(
-                Icons.check_circle_rounded,
-                color: AppColors.clr15A9A0,
-                size: 22.r,
+              PharmacyPrescriptionThumbnail(
+                networkUrl: prescriptionUrl,
+                size: 64.r,
               ),
               SizedBox(width: 10.w),
               Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      l10n.pharmacyPrescriptionUploadedLabel,
-                      style: theme.textTheme.titleSmall?.copyWith(
-                        color: AppColors.clr060,
-                        fontWeight: FontWeight.w700,
-                        fontSize: 13.sp,
-                      ),
-                    ),
-                    SizedBox(height: 2.h),
-                    Text(
-                      displayName,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: AppColors.clr667B99,
-                        fontSize: 11.sp,
-                      ),
-                    ),
-                  ],
+                child: Text(
+                  l10n.pharmacyPrescriptionUploadedLabel,
+                  style: theme.textTheme.titleSmall?.copyWith(
+                    color: AppColors.clr060,
+                    fontWeight: FontWeight.w700,
+                    fontSize: 13.sp,
+                  ),
                 ),
               ),
               TextButton(
@@ -97,16 +80,5 @@ class PharmacyPrescriptionAttachedSection extends StatelessWidget {
         ),
       ],
     );
-  }
-
-  static String _fileNameFromUrl(String url) {
-    final trimmed = url.trim();
-    if (trimmed.isEmpty) return trimmed;
-    try {
-      final uri = Uri.parse(trimmed);
-      final name = p.basename(uri.path);
-      if (name.isNotEmpty && name != '/' && name != '.') return name;
-    } catch (_) {}
-    return trimmed;
   }
 }

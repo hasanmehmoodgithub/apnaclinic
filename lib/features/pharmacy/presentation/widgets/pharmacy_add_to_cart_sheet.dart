@@ -227,11 +227,11 @@ Future<void> showPharmacyAddToCartSheet(
                         const Spacer(),
                         PharmacyQuantityStepper(
                           quantity: qty,
-                          height: 38.h,
-                          horizontalPadding: 20.w,
-                          itemSpacing: 24.w,
+                          height: 44.h,
+                          horizontalPadding: 8.w,
+                          itemSpacing: 8.w,
                           quantityFontSize: 19.sp,
-                          actionFontSize: 16.sp,
+                          actionFontSize: 18.sp,
                           borderRadius: 40.r,
                           onAdd: () => setSheetState(() => qty++),
                           onRemove: () {
@@ -255,6 +255,7 @@ Future<void> showPharmacyAddToCartSheet(
                       SizedBox(height: 16.h),
                       PharmacyPrescriptionUploadSection(
                         fileName: pickedName,
+                        filePath: pickedPath,
                         onPickFile: pickPrescription,
                         onClearFile: hasLocalFile
                             ? () => setSheetState(() {

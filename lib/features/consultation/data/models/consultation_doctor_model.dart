@@ -132,6 +132,7 @@ class ConsultationDoctorModel {
       oldFee: fees.$2,
       partner: partnerLabel,
       rating: ratingText,
+      ratingScore: ratingScore ?? 0,
       imageUrl: profileImageUrl,
       description: bio,
       partnerLogoUrl: partnerLogoUrl,

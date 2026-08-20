@@ -264,7 +264,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pharmacyMainChooseMedicineTitle => 'Choose Medicine';
 
   @override
-  String get pharmacyMainSearchHint => 'Search medicine..';
+  String get pharmacyMainSearchHint => 'Search medicine';
 
   @override
   String get pharmacyCartTitle => 'Cart';
@@ -295,7 +295,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pharmacyCheckoutSpecialInstructionsLabel => 'Special Instructions';
 
   @override
-  String get pharmacyCheckoutSpecialInstructionsHint => '----';
+  String get pharmacyCheckoutSpecialInstructionsHint =>
+      'Write any special instructions here';
 
   @override
   String get pharmacyCheckoutOrderDetailsTitle => 'Order Details';
@@ -344,14 +345,15 @@ class AppLocalizationsEn extends AppLocalizations {
       'Unable to place pharmacy order right now. Please try again.';
 
   @override
-  String get pharmacyOrderPlacedTitle => 'Order Placed';
+  String get pharmacyOrderPlacedTitle => 'Order Successfully Placed!';
 
   @override
-  String get pharmacyOrderPlacedMessage =>
-      'Orders received b/w 8 AM - 8 PM will be delivered within 3 business hrs.';
+  String pharmacyOrderPlacedMessage(String orderNo) {
+    return 'Your order number $orderNo has been placed and will be processed soon. A representative will reach out to you for order confirmation.';
+  }
 
   @override
-  String get pharmacyOrderPlacedClose => 'Close';
+  String get pharmacyOrderPlacedViewOrdersCta => 'View My Orders';
 
   @override
   String get pharmacyPaymentJazzCash => 'Jazz Cash';
@@ -1006,7 +1008,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get surgeryLabel => 'Surgery';
 
   @override
-  String get surgeryProceedCheckout => 'Proceed Checkout';
+  String get surgeryProceedCheckout => 'Confirm Booking';
 
   @override
   String get surgeryStartingFrom => 'Starting from';
@@ -1017,6 +1019,9 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get surgeryBookingSubmittedMessage =>
       'Your surgery request has been received. Our representative will contact you within 24 hours to gather your medical history and relevant details for confirmation.';
+
+  @override
+  String get surgeryBookingViewBookingsCta => 'View My Bookings';
 
   @override
   String get surgeryBookingFailedTitle => 'Booking Request Failed';
@@ -1212,14 +1217,14 @@ class AppLocalizationsEn extends AppLocalizations {
       'Enter a valid mobile or landline number.';
 
   @override
-  String get labTestCheckoutBookedTitle => 'Lab Test Booked Successfully';
+  String get labTestCheckoutBookedTitle => 'Lab Test Booked!';
 
   @override
   String get labTestCheckoutBookedMessage =>
-      'A lab representative will contact you shortly.\nPresent your discount code to the lab representative.\nTo access your code later:';
+      'A lab representative will reach out to you soon to confirm your booking.\nYou can view your booking in Bookings Tab.';
 
   @override
-  String get labTestCheckoutBookedPathHint => 'Menu > My Bookings > Lab Test';
+  String get labTestCheckoutViewBookingsCta => 'View My Bookings';
 
   @override
   String get commonClose => 'Close';
@@ -1253,7 +1258,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'Please provide an emergency contact number, incase you are unavailable.';
 
   @override
-  String get labTestEmergencyNumberHint => 'Enter Number here...';
+  String get labTestEmergencyNumberHint => 'Enter Number here.';
 
   @override
   String get labTestPatientNameLabel => 'Patient Name';
@@ -1315,6 +1320,20 @@ class AppLocalizationsEn extends AppLocalizations {
   String get consultationAiStartCta => 'Let\'s Start';
 
   @override
+  String get consultationAiAssistantHeading =>
+      'Not sure which doctor to consult?';
+
+  @override
+  String get consultationAiAssistantSubheading =>
+      'Apna Clinic AI will help you find the right doctor';
+
+  @override
+  String get consultationChooseCategoryTitle => 'Choose Category';
+
+  @override
+  String get consultationSearchCategoryHint => 'Search category';
+
+  @override
   String get consultationSelectCategoriesTitle => 'Select Categories';
 
   @override
@@ -1349,8 +1368,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get consultationBookingConfirmedTitle => 'Appointment Confirmed!';
 
   @override
+  String get consultationViewBookingsCta => 'View Bookings';
+
+  @override
   String consultationBookingConfirmedMessage(Object doctorName) {
-    return 'Your consultation has been booked with $doctorName. You can join the call from Appointments.';
+    return 'Your appointment has been booked with $doctorName. You can join the consultation call from booking screen at the time of appointment';
   }
 
   @override
@@ -1402,6 +1424,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get consultationDocumentsTitle => 'Documents';
+
+  @override
+  String get consultationIssueTitle => 'Issue';
+
+  @override
+  String get consultationIssueHint => 'Explain how are you feeling?';
 
   @override
   String get consultationDocumentsBrowse => 'Browse';
@@ -1504,16 +1532,23 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bookingsSurgeryDetailsTitle => 'Details';
 
   @override
+  String get bookingsTabInstantDoctor => 'Instant Doctor';
+
+  @override
+  String get bookingsTabPharmacy => 'Pharmacy';
+
+  @override
   String get bookingsTabDoctorConsultation => 'Doctor Consultation';
+
+  @override
+  String get bookingsTabLabTest => 'Lab Tests';
 
   @override
   String get bookingsTabSurgery => 'Surgery';
 
   @override
-  String get bookingsTabLabTest => 'Lab Test';
-
-  @override
-  String get bookingsTabPharmacy => 'Pharmacy';
+  String get bookingsInstantDoctorEmptyDescription =>
+      'No instant doctor bookings yet.';
 
   @override
   String get bookingsLabTestEmptyDescription => 'No lab test bookings yet.';
@@ -1536,6 +1571,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get bookingsViewDetailsCta => 'View Details';
+
+  @override
+  String get bookingsJoinConsultationCta => 'Join Consultation';
+
+  @override
+  String get bookingsJoinConsultationDisabledTooltip =>
+      'You will be able to join the consultation at the time of appointment';
 
   @override
   String get bookingsFeeLabel => 'Fee';

@@ -12,9 +12,9 @@ Browse lab tests, booking/cart flow, payment details checkout, and order view de
 
 ## UI
 
-- `LabTestCheckoutBottomBarWidget` — payment details screen CTA uses shared `AppButtonWidget` (`labTestBookCta`).
+- `LabTestPricePill` (catalog, booking, cart) hides the strikethrough original price when it matches the discounted price.
 - Checkout **Payment Details** (`LabTestCheckoutScreen`):
-  - Summary card (`LabTestCheckoutSummaryCardWidget`): bordered card with lab logo, test title, lab name, sample type label + pill / method pill, fee + strikethrough, partner logo.
+  - Summary card (`LabTestCheckoutSummaryCardWidget`): bordered card with lab logo, test title, lab name, sample type label + pill / method pill, fee + strikethrough **only when original price differs from discounted**, partner logo.
   - Payment breakdown: section title, fee/discount rows, divider, gray total bar (not a nested shadow card).
   - Patient details: **before Edit** = read-only rows with **Edit**; **after Edit** = form with **Done**. Emergency contact always below (required; accepts 10-digit landline or 11-digit mobile).
   - Bottom CTA has no separate white bar behind the button. Panel top radius `20`.
@@ -34,13 +34,13 @@ Browse lab tests, booking/cart flow, payment details checkout, and order view de
   - Response: `data.partners[]` each with `labs[]` and `pricing.HOME_SAMPLING` / `pricing.WALK_IN` (`price`, `discountPct`, `finalPrice`).
   - Booking screen filters partners/labs by booking method (`WALK_IN` / `HOME_SAMPLING`); when no lab supports home sampling, partner/lab grids are hidden, sample type shows **N/A**, and **Add to Cart** is disabled.
 - **Book lab test:** `POST AppUrls.labBookTest` → `/acs-aggregator/api/v1/mobile/lab/book-test`
-  - Triggered from **checkout** CTA after picking a payment method via `PaymentMethodSheet(module: lab)` → `GET payment-provider?module=lab` (JazzCash prompts for an account msisdn; otherwise the patient phone is used).
+  - Triggered from **checkout** CTA after picking a payment method via `PaymentMethodSheet(module: lab, includeLocalCashOption: true)` → `GET payment-provider?module=lab` plus a local **Pay via Cash** row (`paymentMethod`: `COD`, not from the API). JazzCash prompts for an account msisdn; otherwise the patient phone is used.
   - While `POST lab/book-test` runs, shows the shared heart loader; on failure shows shared `AlertDialogCard` with the API message.
-  - Response may include `data.paymentUrl` → opens shared card payment WebView (`AppRoutes.cardPayment`) before the booked success dialog.
+  - Response may include `data.paymentUrl` → opens shared card payment WebView (`AppRoutes.cardPayment`) before the booked success dialog (`LabTestBookingConfirmationDialogWidget`: **Lab Test Booked!** + **View My Bookings** → Bookings → Labs tab).
   - Body: `{ partnerId, labId, cityId, homeSample, paymentMethod, msisdn, patient: { name, age, gender, phoneNumber }, tests: [ { testId } ] }`.
   - `testId`s come from every cart line (supports multiple tests in one booking); `partnerId` / `labId` / `homeSample` come from the first cart line; `cityId` is resolved from the city name via `CitiesRepository`.
 - **Lab orders (bookings list):** `GET AppUrls.labOrders` — response items include optional `invoice` (PDF URL). Mapped through `LabOrderModel` → `LabOrderEntity` → bookings list.
-- **Lab order detail:** `GET AppUrls.labOrderById(id)` → `/acs-aggregator/api/v1/mobile/lab-orders/{id}` via `GetLabOrderDetailUseCase` when opening View Details from bookings. Same order shape as list items (`data` is a single object). When `invoice` is non-empty (or mocked), `LabTestViewDetailsInvoiceCard` opens the PDF via `AppUrlLauncher`.
+- **Lab order detail:** `GET AppUrls.labOrderById(id)` → `/acs-aggregator/api/v1/mobile/lab-orders/{id}` via `GetLabOrderDetailUseCase` when opening View Details from bookings. Same order shape as list items (`data` is a single object). E-invoice (`LabTestViewDetailsInvoiceCard`) is disabled on this screen.
 - Search runs when the user taps the search icon (or keyboard Search); no debounce. Empty results show `LabTestCatalogEmptyWidget` (“No Record Found” + empty box). Re-fetches from the API when a city is selected.
 
 ## State

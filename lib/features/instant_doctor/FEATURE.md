@@ -22,7 +22,8 @@
 ## State
 
 - `InstantDoctorCubit` — loads providers; `onProviderPrimaryTap` / `onCancelSubscriptionConfirmed` orchestrate subscribe/unsubscribe OTP; `verifyOtp` reloads content on success; `consultationUrl` returns provider `redirectUrl`.
-- `InstantDoctorScreen` — layout and UI reactions (OTP sheet, dialogs, snackbars); opens consultation via `AppRoutes.instantDoctorConsultation` web view screen; reloads providers when web view closes.
+- `InstantDoctorScreen` — layout and UI reactions (OTP sheet is not swipe/tap-outside dismissible; close via X; dialogs, snackbars); opens consultation via `AppRoutes.instantDoctorConsultation` web view screen; reloads providers when web view closes and after a successful unsubscribe.
+- Start Consultation CTAs include a phone icon.
 - `InstantDoctorConsultationWebViewScreen` — requests camera + microphone, then loads `redirectUrl`. When the page asks for media, `handleWebViewMediaPermission` requests OS access and `grant()`s the WebView (Android `onPermissionRequest`; iOS uses Info.plist + runtime prompt).
 
 ## DI

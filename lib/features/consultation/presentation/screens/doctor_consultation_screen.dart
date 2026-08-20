@@ -154,12 +154,13 @@ class _DoctorConsultationScreenState extends State<DoctorConsultationScreen> {
     ConsultationState state,
     TextTheme textTheme,
   ) {
+    final l10n = AppLocalizations.of(context)!;
     final slivers = <Widget>[
       SliverToBoxAdapter(
         child: state.isLoading
             ? AppShimmerText(width: 180.w, height: 18.h, borderRadius: 6.r)
             : Text(
-                ConsultationUiConfig.chooseCategories,
+                l10n.consultationChooseCategoryTitle,
                 style: textTheme.titleMedium?.copyWith(
                   fontSize: 16.sp,
                   fontWeight: FontWeight.w500,
@@ -516,6 +517,7 @@ class _AssistantCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       width: double.infinity,
       padding: EdgeInsets.fromLTRB(13.w, 11.h, 13.w, 11.h),
@@ -538,19 +540,23 @@ class _AssistantCard extends StatelessWidget {
                 ),
               ),
               SizedBox(width: 8.w),
-              Text(
-                ConsultationUiConfig.assistantTitle,
-                style: textTheme.titleMedium?.copyWith(
-                  fontSize: 16.sp,
-                  fontWeight: FontWeight.w500,
-                  color: ConsultationUiConfig.primaryText,
+              Expanded(
+                child: Text(
+                  l10n.consultationAiAssistantHeading,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: textTheme.titleMedium?.copyWith(
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.w500,
+                    color: ConsultationUiConfig.primaryText,
+                  ),
                 ),
               ),
             ],
           ),
           SizedBox(height: 9.h),
           Text(
-            ConsultationUiConfig.assistantDescription,
+            l10n.consultationAiAssistantSubheading,
             style: textTheme.bodyMedium?.copyWith(
               fontSize: 13.sp,
               height: 1.2,
@@ -618,7 +624,7 @@ class _SearchField extends StatelessWidget {
       child: TextField(
         onChanged: onChanged,
         decoration: InputDecoration(
-          hintText: ConsultationUiConfig.searchHint,
+          hintText: AppLocalizations.of(context)!.consultationSearchCategoryHint,
           hintStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
             color: const Color(0xFF9E9E9E),
             fontWeight: FontWeight.w500,

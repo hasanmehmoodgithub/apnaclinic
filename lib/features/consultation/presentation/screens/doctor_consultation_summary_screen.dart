@@ -7,6 +7,7 @@ import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/session/auth_session_refresh.dart';
+import '../../../bookings/presentation/constants/bookings_tabs.dart';
 import '../../../dashboard/presentation/constants/main_navigation_tabs.dart';
 import '../../../payment/presentation/payment_navigation.dart';
 import '../cubit/doctor_consultation_checkout_cubit.dart';
@@ -66,10 +67,13 @@ class DoctorConsultationSummaryScreen extends StatelessWidget {
       builder: (dialogContext) {
         return ConsultationBookingConfirmationDialogWidget(
           doctorName: args.checkoutArgs.doctorName,
-          onOk: () {
+          onViewBookings: () {
             Navigator.of(dialogContext).pop();
             if (!context.mounted) return;
-            sl<AuthSessionRefresh>().requestTabIndex(MainNavigationTabs.bookings);
+            sl<AuthSessionRefresh>().requestTabIndex(
+              MainNavigationTabs.bookings,
+              bookingsSubTabIndex: BookingsTabs.doctorConsultation,
+            );
             context.go(AppRoutes.path(AppRoutes.home));
           },
         );

@@ -62,8 +62,8 @@ class AuthSessionRefresh extends ChangeNotifier {
   /// Safe to call before login: the shell only consumes this after the user
   /// is logged in (so Instant Doctor / Bookings can resume post-OTP).
   ///
-  /// Optional [bookingsSubTabIndex] selects Doctor / Surgery / Lab / Pharmacy
-  /// when opening the Bookings tab.
+  /// Optional [bookingsSubTabIndex] selects Instant Doctor / Pharmacy /
+  /// Doctor Consultation / Lab Tests / Surgery when opening the Bookings tab.
   void requestTabIndex(int index, {int? bookingsSubTabIndex}) {
     _pendingTabIndex = index;
     if (bookingsSubTabIndex != null) {

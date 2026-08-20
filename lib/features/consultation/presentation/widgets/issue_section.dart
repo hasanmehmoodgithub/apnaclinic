@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/extensions/screen_util_extensions.dart';
+import '../../../../core/l10n/app_localizations.dart';
 
 class IssueSection extends StatelessWidget {
   const IssueSection({
@@ -14,11 +15,12 @@ class IssueSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Issue',
+          l10n.consultationIssueTitle,
           style: textTheme.titleMedium?.copyWith(
             color: const Color(0xFF1E2D3F),
             fontSize: 15.sp,
@@ -43,7 +45,7 @@ class IssueSection extends StatelessWidget {
               fontSize: 13.sp,
             ),
             decoration: InputDecoration(
-              hintText: 'Explain How are You Feeling..',
+              hintText: l10n.consultationIssueHint,
               hintStyle: textTheme.bodyMedium?.copyWith(
                 color: const Color(0xFF727F90),
                 fontSize: 13.sp,

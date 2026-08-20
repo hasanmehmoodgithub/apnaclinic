@@ -295,7 +295,8 @@ class AppLocalizationsUr extends AppLocalizations {
   String get pharmacyCheckoutSpecialInstructionsLabel => 'خصوصی ہدایات';
 
   @override
-  String get pharmacyCheckoutSpecialInstructionsHint => '----';
+  String get pharmacyCheckoutSpecialInstructionsHint =>
+      'یہاں کوئی خصوصی ہدایات لکھیں';
 
   @override
   String get pharmacyCheckoutOrderDetailsTitle => 'آرڈر کی تفصیل';
@@ -344,14 +345,15 @@ class AppLocalizationsUr extends AppLocalizations {
       'اس وقت فارمیسی آرڈر نہیں دیا جا سکا۔ براہ کرم دوبارہ کوشش کریں۔';
 
   @override
-  String get pharmacyOrderPlacedTitle => 'آرڈر ہو گیا';
+  String get pharmacyOrderPlacedTitle => 'آرڈر کامیابی سے دے دیا گیا!';
 
   @override
-  String get pharmacyOrderPlacedMessage =>
-      '8 AM سے 8 PM کے درمیان موصول آرڈرز 3 کاروباری گھنٹوں میں پہنچائے جائیں گے۔';
+  String pharmacyOrderPlacedMessage(String orderNo) {
+    return 'آپ کا آرڈر نمبر $orderNo دے دیا گیا ہے اور جلد اس پر کارروائی کی جائے گی۔ آرڈر کی تصدیق کے لیے ایک نمائندہ آپ سے رابطہ کرے گا۔';
+  }
 
   @override
-  String get pharmacyOrderPlacedClose => 'بند کریں';
+  String get pharmacyOrderPlacedViewOrdersCta => 'میرے آرڈرز دیکھیں';
 
   @override
   String get pharmacyPaymentJazzCash => 'جاز کیش';
@@ -1007,7 +1009,7 @@ class AppLocalizationsUr extends AppLocalizations {
   String get surgeryLabel => 'سرجری';
 
   @override
-  String get surgeryProceedCheckout => 'چیک آؤٹ جاری رکھیں';
+  String get surgeryProceedCheckout => 'بکنگ کی تصدیق کریں';
 
   @override
   String get surgeryStartingFrom => 'شروع سے';
@@ -1018,6 +1020,9 @@ class AppLocalizationsUr extends AppLocalizations {
   @override
   String get surgeryBookingSubmittedMessage =>
       'آپ کی سرجری کی درخواست موصول ہو گئی ہے۔ ہمارا نمائندہ تصدیق کے لیے آپ کی طبی تاریخ اور متعلقہ تفصیلات لینے کے لیے 24 گھنٹوں کے اندر آپ سے رابطہ کرے گا۔';
+
+  @override
+  String get surgeryBookingViewBookingsCta => 'میری بکنگز دیکھیں';
 
   @override
   String get surgeryBookingFailedTitle => 'بکنگ کی درخواست ناکام';
@@ -1212,14 +1217,14 @@ class AppLocalizationsUr extends AppLocalizations {
       'براہ کرم درست موبائل یا لینڈ لائن نمبر درج کریں۔';
 
   @override
-  String get labTestCheckoutBookedTitle => 'لیب ٹیسٹ کامیابی سے بک ہو گیا';
+  String get labTestCheckoutBookedTitle => 'لیب ٹیسٹ بک ہو گیا!';
 
   @override
   String get labTestCheckoutBookedMessage =>
-      'لیب کا نمائندہ جلد آپ سے رابطہ کرے گا۔\nاپنا ڈسکاؤنٹ کوڈ لیب نمائندے کو دکھائیں۔\nبعد میں کوڈ دیکھنے کے لیے:';
+      'لیب کا نمائندہ جلد آپ سے رابطہ کرے گا تاکہ آپ کی بکنگ کی تصدیق کی جا سکے۔\nآپ اپنی بکنگ بکنگز ٹیب میں دیکھ سکتے ہیں۔';
 
   @override
-  String get labTestCheckoutBookedPathHint => 'مینو > میری بکنگز > لیب ٹیسٹ';
+  String get labTestCheckoutViewBookingsCta => 'میری بکنگز دیکھیں';
 
   @override
   String get commonClose => 'بند کریں';
@@ -1253,7 +1258,7 @@ class AppLocalizationsUr extends AppLocalizations {
       'براہ کرم ہنگامی رابطے کا نمبر فراہم کریں، اگر آپ دستیاب نہ ہوں۔';
 
   @override
-  String get labTestEmergencyNumberHint => 'یہاں نمبر درج کریں...';
+  String get labTestEmergencyNumberHint => 'یہاں نمبر درج کریں.';
 
   @override
   String get labTestPatientNameLabel => 'مریض کا نام';
@@ -1315,6 +1320,20 @@ class AppLocalizationsUr extends AppLocalizations {
   String get consultationAiStartCta => 'آئیے شروع کریں';
 
   @override
+  String get consultationAiAssistantHeading =>
+      'معلوم نہیں کس ڈاکٹر سے مشورہ کریں؟';
+
+  @override
+  String get consultationAiAssistantSubheading =>
+      'اپنا کلینک اے آئی آپ کو درست ڈاکٹر تلاش کرنے میں مدد دے گی';
+
+  @override
+  String get consultationChooseCategoryTitle => 'زمرہ منتخب کریں';
+
+  @override
+  String get consultationSearchCategoryHint => 'زمرہ تلاش کریں';
+
+  @override
   String get consultationSelectCategoriesTitle => 'زمرہ منتخب کریں';
 
   @override
@@ -1349,8 +1368,11 @@ class AppLocalizationsUr extends AppLocalizations {
   String get consultationBookingConfirmedTitle => 'اپائنٹمنٹ کنفرم ہو گئی!';
 
   @override
+  String get consultationViewBookingsCta => 'بکنگز دیکھیں';
+
+  @override
   String consultationBookingConfirmedMessage(Object doctorName) {
-    return 'آپ کی مشاورت $doctorName کے ساتھ بک ہو گئی ہے۔ آپ کال میں اپائنٹمنٹس سے شامل ہو سکتے ہیں۔';
+    return 'آپ کی اپائنٹمنٹ $doctorName کے ساتھ بک ہو گئی ہے۔ آپ اپائنٹمنٹ کے وقت بکنگ اسکرین سے مشاورت کال میں شامل ہو سکتے ہیں۔';
   }
 
   @override
@@ -1402,6 +1424,12 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get consultationDocumentsTitle => 'دستاویزات';
+
+  @override
+  String get consultationIssueTitle => 'مسئلہ';
+
+  @override
+  String get consultationIssueHint => 'بتائیں آپ کیسا محسوس کر رہے ہیں؟';
 
   @override
   String get consultationDocumentsBrowse => 'براؤز کریں';
@@ -1504,16 +1532,23 @@ class AppLocalizationsUr extends AppLocalizations {
   String get bookingsSurgeryDetailsTitle => 'تفصیلات';
 
   @override
-  String get bookingsTabDoctorConsultation => 'ڈاکٹر مشاورت';
+  String get bookingsTabInstantDoctor => 'انسٹنٹ ڈاکٹر';
 
   @override
-  String get bookingsTabSurgery => 'سرجری';
+  String get bookingsTabPharmacy => 'فارمیسی';
+
+  @override
+  String get bookingsTabDoctorConsultation => 'ڈاکٹر مشاورت';
 
   @override
   String get bookingsTabLabTest => 'لیب ٹیسٹ';
 
   @override
-  String get bookingsTabPharmacy => 'فارمیسی';
+  String get bookingsTabSurgery => 'سرجری';
+
+  @override
+  String get bookingsInstantDoctorEmptyDescription =>
+      'ابھی تک کوئی انسٹنٹ ڈاکٹر بکنگ نہیں ہے۔';
 
   @override
   String get bookingsLabTestEmptyDescription =>
@@ -1538,6 +1573,13 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get bookingsViewDetailsCta => 'تفصیلات دیکھیں';
+
+  @override
+  String get bookingsJoinConsultationCta => 'مشاورت میں شامل ہوں';
+
+  @override
+  String get bookingsJoinConsultationDisabledTooltip =>
+      'آپ اپائنٹمنٹ کے وقت مشاورت میں شامل ہو سکیں گے';
 
   @override
   String get bookingsFeeLabel => 'فیس';

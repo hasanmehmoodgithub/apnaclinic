@@ -44,33 +44,25 @@ class _LoginLegalTextState extends State<LoginLegalText> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
 
-    return Padding(
-      padding: const EdgeInsets.only(
-        bottom: 24.0,
-        left: 20.0,
-        right: 20.0,
-        top: 2.0,
+    return Text.rich(
+      TextSpan(
+        children: [
+          TextSpan(text: '${l10n.authLegalPrefix} '),
+          TextSpan(
+            text: l10n.authTermsLabel,
+            style: AppTextStyles.loginLegalLink,
+            recognizer: _termsRecognizer,
+          ),
+          TextSpan(text: ' ${l10n.authLegalConnector} '),
+          TextSpan(
+            text: l10n.authPrivacyLabel,
+            style: AppTextStyles.loginLegalLink,
+            recognizer: _privacyRecognizer,
+          ),
+        ],
       ),
-      child: Text.rich(
-        TextSpan(
-          children: [
-            TextSpan(text: '${l10n.authLegalPrefix} '),
-            TextSpan(
-              text: l10n.authTermsLabel,
-              style: AppTextStyles.loginLegalLink,
-              recognizer: _termsRecognizer,
-            ),
-            TextSpan(text: ' ${l10n.authLegalConnector} '),
-            TextSpan(
-              text: l10n.authPrivacyLabel,
-              style: AppTextStyles.loginLegalLink,
-              recognizer: _privacyRecognizer,
-            ),
-          ],
-        ),
-        textAlign: TextAlign.center,
-        style: AppTextStyles.loginLegal,
-      ),
+      textAlign: TextAlign.center,
+      style: AppTextStyles.loginLegal,
     );
   }
 }

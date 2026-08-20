@@ -68,28 +68,30 @@ class _LoginViewState extends State<_LoginView> {
                   top: Radius.circular(30.r),
                 ),
               ),
-              child: Padding(
-                padding: EdgeInsets.fromLTRB(30.w, 22.h, 30.w, 20.h),
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      LoginPhoneInputSection(
-                        controller: _phoneController,
-                        onChanged: _handlePhoneChanged,
-                      ),
-                      LoginOtpSection(
-                        controller: _otpController,
-                        focusNode: _otpFocusNode,
-                        onResendTap: _handleResendOtp,
-                      ),
-                      const Spacer(),
-                      LoginSubmitButton(onPressed: _submit),
-                      SizedBox(height: 20.h),
-                      const LoginLegalText(),
-                      SizedBox(height: 20.h),
-                    ],
+              child: SafeArea(
+                top: false,
+                child: Padding(
+                  padding: EdgeInsets.fromLTRB(30.w, 22.h, 30.w, 12.h),
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        LoginPhoneInputSection(
+                          controller: _phoneController,
+                          onChanged: _handlePhoneChanged,
+                        ),
+                        LoginOtpSection(
+                          controller: _otpController,
+                          focusNode: _otpFocusNode,
+                          onResendTap: _handleResendOtp,
+                        ),
+                        const Spacer(),
+                        LoginSubmitButton(onPressed: _submit),
+                        SizedBox(height: 12.h),
+                        const LoginLegalText(),
+                      ],
+                    ),
                   ),
                 ),
               ),

@@ -49,7 +49,7 @@ class NotificationItemModel {
         'serviceType',
         'service_type',
       ], nested: deepData, nestedKeys: const ['service_type', 'serviceType']),
-      isRead: json['isRead'] == true || json['is_read'] == true,
+      isRead: _isRead(json),
       entityId: _resolveEntityId(entity: entity, deepData: deepData),
       entityKind: _readString(
         entity ?? const {},
@@ -64,6 +64,23 @@ class NotificationItemModel {
       priority: _readString(json, const ['priority']),
       createdAt: createdAt,
     );
+  }
+
+  static bool _isRead(Map<String, dynamic> json) {
+    if (_asBool(json['isRead'] ?? json['is_read'])) return true;
+    final readAt = json['readAt'] ?? json['read_at'];
+    if (readAt == null) return false;
+    final text = readAt.toString().trim();
+    return text.isNotEmpty && text.toLowerCase() != 'null';
+  }
+
+  static bool _asBool(dynamic value) {
+    if (value == true || value == 1) return true;
+    if (value is String) {
+      final normalized = value.trim().toLowerCase();
+      return normalized == 'true' || normalized == '1';
+    }
+    return false;
   }
 
   static String _resolveEntityId({

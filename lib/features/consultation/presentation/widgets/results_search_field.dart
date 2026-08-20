@@ -37,7 +37,7 @@ class ResultsSearchField extends StatelessWidget {
           hintStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
             color: const Color(0xFF9E9E9E),
             fontWeight: FontWeight.w400,
-            fontSize: 12.sp,
+            fontSize: 14.sp,
           ),
           suffixIconConstraints: BoxConstraints(
             minWidth: showClear ? 84.w : 48.w,

@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../components/widgets/app_button.dart';
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/router/app_routes.dart';
+import '../../../../core/session/auth_session_refresh.dart';
+import '../../../bookings/presentation/constants/bookings_tabs.dart';
+import '../../../dashboard/presentation/constants/main_navigation_tabs.dart';
 
 Future<void> showSurgeryBookingSubmittedDialog(BuildContext context) {
   return showDialog<void>(
@@ -23,7 +28,7 @@ Future<void> showSurgeryBookingSubmittedDialog(BuildContext context) {
           padding: EdgeInsets.fromLTRB(32.w, 24.h, 32.w, 24.h),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(15.r),
-            color: Colors.white,
+            color: AppColors.clrWhite,
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -57,26 +62,23 @@ Future<void> showSurgeryBookingSubmittedDialog(BuildContext context) {
               SizedBox(height: 24.h),
               SizedBox(
                 width: double.infinity,
-                child: FilledButton(
+                child: AppButton.primary(
+                  text: l10n.surgeryBookingViewBookingsCta,
                   onPressed: () {
-                    dialogContext.pop();
+                    if (dialogContext.canPop()) dialogContext.pop();
+                    if (!context.mounted) return;
+                    sl<AuthSessionRefresh>().requestTabIndex(
+                      MainNavigationTabs.bookings,
+                      bookingsSubTabIndex: BookingsTabs.surgery,
+                    );
                     context.go(AppRoutes.path(AppRoutes.home));
                   },
-                  style: FilledButton.styleFrom(
-                    backgroundColor: AppColors.clr0FAA9A,
-                    minimumSize: Size.fromHeight(54.h),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10.r),
-                    ),
-                  ),
-                  child: Text(
-                    l10n.commonClose,
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w700,
-                      fontSize: 17.sp,
-                    ),
-                  ),
+                  backgroundColor: AppColors.clr0FAA9A,
+                  foregroundColor: AppColors.clrWhite,
+                  height: 54.h,
+                  borderRadius: 10.r,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 17.sp,
                 ),
               ),
             ],

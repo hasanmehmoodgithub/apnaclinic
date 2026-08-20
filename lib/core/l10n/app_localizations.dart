@@ -599,7 +599,7 @@ abstract class AppLocalizations {
   /// Search field hint on pharmacy hub
   ///
   /// In en, this message translates to:
-  /// **'Search medicine..'**
+  /// **'Search medicine'**
   String get pharmacyMainSearchHint;
 
   /// No description provided for @pharmacyCartTitle.
@@ -659,7 +659,7 @@ abstract class AppLocalizations {
   /// No description provided for @pharmacyCheckoutSpecialInstructionsHint.
   ///
   /// In en, this message translates to:
-  /// **'----'**
+  /// **'Write any special instructions here'**
   String get pharmacyCheckoutSpecialInstructionsHint;
 
   /// No description provided for @pharmacyCheckoutOrderDetailsTitle.
@@ -749,20 +749,20 @@ abstract class AppLocalizations {
   /// No description provided for @pharmacyOrderPlacedTitle.
   ///
   /// In en, this message translates to:
-  /// **'Order Placed'**
+  /// **'Order Successfully Placed!'**
   String get pharmacyOrderPlacedTitle;
 
   /// No description provided for @pharmacyOrderPlacedMessage.
   ///
   /// In en, this message translates to:
-  /// **'Orders received b/w 8 AM - 8 PM will be delivered within 3 business hrs.'**
-  String get pharmacyOrderPlacedMessage;
+  /// **'Your order number {orderNo} has been placed and will be processed soon. A representative will reach out to you for order confirmation.'**
+  String pharmacyOrderPlacedMessage(String orderNo);
 
-  /// No description provided for @pharmacyOrderPlacedClose.
+  /// No description provided for @pharmacyOrderPlacedViewOrdersCta.
   ///
   /// In en, this message translates to:
-  /// **'Close'**
-  String get pharmacyOrderPlacedClose;
+  /// **'View My Orders'**
+  String get pharmacyOrderPlacedViewOrdersCta;
 
   /// No description provided for @pharmacyPaymentJazzCash.
   ///
@@ -1952,7 +1952,7 @@ abstract class AppLocalizations {
   /// No description provided for @surgeryProceedCheckout.
   ///
   /// In en, this message translates to:
-  /// **'Proceed Checkout'**
+  /// **'Confirm Booking'**
   String get surgeryProceedCheckout;
 
   /// No description provided for @surgeryStartingFrom.
@@ -1972,6 +1972,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Your surgery request has been received. Our representative will contact you within 24 hours to gather your medical history and relevant details for confirmation.'**
   String get surgeryBookingSubmittedMessage;
+
+  /// No description provided for @surgeryBookingViewBookingsCta.
+  ///
+  /// In en, this message translates to:
+  /// **'View My Bookings'**
+  String get surgeryBookingViewBookingsCta;
 
   /// No description provided for @surgeryBookingFailedTitle.
   ///
@@ -2342,20 +2348,20 @@ abstract class AppLocalizations {
   /// No description provided for @labTestCheckoutBookedTitle.
   ///
   /// In en, this message translates to:
-  /// **'Lab Test Booked Successfully'**
+  /// **'Lab Test Booked!'**
   String get labTestCheckoutBookedTitle;
 
   /// No description provided for @labTestCheckoutBookedMessage.
   ///
   /// In en, this message translates to:
-  /// **'A lab representative will contact you shortly.\nPresent your discount code to the lab representative.\nTo access your code later:'**
+  /// **'A lab representative will reach out to you soon to confirm your booking.\nYou can view your booking in Bookings Tab.'**
   String get labTestCheckoutBookedMessage;
 
-  /// No description provided for @labTestCheckoutBookedPathHint.
+  /// No description provided for @labTestCheckoutViewBookingsCta.
   ///
   /// In en, this message translates to:
-  /// **'Menu > My Bookings > Lab Test'**
-  String get labTestCheckoutBookedPathHint;
+  /// **'View My Bookings'**
+  String get labTestCheckoutViewBookingsCta;
 
   /// No description provided for @commonClose.
   ///
@@ -2420,7 +2426,7 @@ abstract class AppLocalizations {
   /// No description provided for @labTestEmergencyNumberHint.
   ///
   /// In en, this message translates to:
-  /// **'Enter Number here...'**
+  /// **'Enter Number here.'**
   String get labTestEmergencyNumberHint;
 
   /// No description provided for @labTestPatientNameLabel.
@@ -2537,6 +2543,30 @@ abstract class AppLocalizations {
   /// **'Let\'s Start'**
   String get consultationAiStartCta;
 
+  /// No description provided for @consultationAiAssistantHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Not sure which doctor to consult?'**
+  String get consultationAiAssistantHeading;
+
+  /// No description provided for @consultationAiAssistantSubheading.
+  ///
+  /// In en, this message translates to:
+  /// **'Apna Clinic AI will help you find the right doctor'**
+  String get consultationAiAssistantSubheading;
+
+  /// No description provided for @consultationChooseCategoryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose Category'**
+  String get consultationChooseCategoryTitle;
+
+  /// No description provided for @consultationSearchCategoryHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search category'**
+  String get consultationSearchCategoryHint;
+
   /// No description provided for @consultationSelectCategoriesTitle.
   ///
   /// In en, this message translates to:
@@ -2603,10 +2633,16 @@ abstract class AppLocalizations {
   /// **'Appointment Confirmed!'**
   String get consultationBookingConfirmedTitle;
 
+  /// No description provided for @consultationViewBookingsCta.
+  ///
+  /// In en, this message translates to:
+  /// **'View Bookings'**
+  String get consultationViewBookingsCta;
+
   /// No description provided for @consultationBookingConfirmedMessage.
   ///
   /// In en, this message translates to:
-  /// **'Your consultation has been booked with {doctorName}. You can join the call from Appointments.'**
+  /// **'Your appointment has been booked with {doctorName}. You can join the consultation call from booking screen at the time of appointment'**
   String consultationBookingConfirmedMessage(Object doctorName);
 
   /// No description provided for @consultationBookingFailed.
@@ -2692,6 +2728,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Documents'**
   String get consultationDocumentsTitle;
+
+  /// No description provided for @consultationIssueTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Issue'**
+  String get consultationIssueTitle;
+
+  /// No description provided for @consultationIssueHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Explain how are you feeling?'**
+  String get consultationIssueHint;
 
   /// No description provided for @consultationDocumentsBrowse.
   ///
@@ -2873,11 +2921,29 @@ abstract class AppLocalizations {
   /// **'Details'**
   String get bookingsSurgeryDetailsTitle;
 
+  /// No description provided for @bookingsTabInstantDoctor.
+  ///
+  /// In en, this message translates to:
+  /// **'Instant Doctor'**
+  String get bookingsTabInstantDoctor;
+
+  /// No description provided for @bookingsTabPharmacy.
+  ///
+  /// In en, this message translates to:
+  /// **'Pharmacy'**
+  String get bookingsTabPharmacy;
+
   /// No description provided for @bookingsTabDoctorConsultation.
   ///
   /// In en, this message translates to:
   /// **'Doctor Consultation'**
   String get bookingsTabDoctorConsultation;
+
+  /// No description provided for @bookingsTabLabTest.
+  ///
+  /// In en, this message translates to:
+  /// **'Lab Tests'**
+  String get bookingsTabLabTest;
 
   /// No description provided for @bookingsTabSurgery.
   ///
@@ -2885,17 +2951,11 @@ abstract class AppLocalizations {
   /// **'Surgery'**
   String get bookingsTabSurgery;
 
-  /// No description provided for @bookingsTabLabTest.
+  /// No description provided for @bookingsInstantDoctorEmptyDescription.
   ///
   /// In en, this message translates to:
-  /// **'Lab Test'**
-  String get bookingsTabLabTest;
-
-  /// No description provided for @bookingsTabPharmacy.
-  ///
-  /// In en, this message translates to:
-  /// **'Pharmacy'**
-  String get bookingsTabPharmacy;
+  /// **'No instant doctor bookings yet.'**
+  String get bookingsInstantDoctorEmptyDescription;
 
   /// No description provided for @bookingsLabTestEmptyDescription.
   ///
@@ -2938,6 +2998,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'View Details'**
   String get bookingsViewDetailsCta;
+
+  /// No description provided for @bookingsJoinConsultationCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Join Consultation'**
+  String get bookingsJoinConsultationCta;
+
+  /// No description provided for @bookingsJoinConsultationDisabledTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'You will be able to join the consultation at the time of appointment'**
+  String get bookingsJoinConsultationDisabledTooltip;
 
   /// No description provided for @bookingsFeeLabel.
   ///

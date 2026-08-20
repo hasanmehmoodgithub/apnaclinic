@@ -13,9 +13,10 @@ abstract final class DashboardUiConfig {
   static const double serviceCardBottomPadding = 8;
   static const double serviceCardTitleHorizontalPadding = 8;
   static const double serviceCardIconTitleGap = 4;
+  static const double serviceCardTitleFontSize = 14;
 
-  /// Approximate title block for shimmer placeholders (2 lines @ 12sp).
-  static const double serviceCardTitleBlockHeight = 30;
+  /// Approximate title block for shimmer placeholders (2 lines).
+  static const double serviceCardTitleBlockHeight = 34;
 
   /// Minimum shimmer height while service cards load (icon + title + padding).
   static double get serviceCardShimmerHeight =>
@@ -25,9 +26,9 @@ abstract final class DashboardUiConfig {
       serviceCardTitleBlockHeight +
       serviceCardBottomPadding;
 
-  /// CMS / Figma icon frame (`viewBox="0 0 63 72"`).
-  static const double serviceIconWidth = 63;
-  static const double serviceIconHeight = 72;
+  /// Home service image size (larger than the original 63×72 CMS frame).
+  static const double serviceIconWidth = 90;
+  static const double serviceIconHeight = 103;
 
   static const double serviceDiscountBadgeTop = 8;
   static const double serviceDiscountBadgeRight = 8;
@@ -37,17 +38,19 @@ abstract final class DashboardUiConfig {
   /// Keeps long API discount copy inside the card (wraps when exceeded).
   static const double serviceDiscountBadgeMaxWidth = 160;
 
-  /// `instant_doc.svg` viewBox (doctor + 24 badge artwork).
-  static const double instantDoctorArtworkWidth = 112;
-  static const double instantDoctorArtworkHeight = 101;
+  /// Instant Doctor artwork (Figma).
+  static const double instantDoctorArtworkWidth = 104.22074890136719;
+  static const double instantDoctorArtworkHeight = 94.35057067871094;
 
-  /// Instant Doctor home banner card.
-  static const double instantDoctorCardBorderRadius = 14;
+  /// Instant Doctor home banner (Figma 398×98.35).
+  static const double instantDoctorCardWidth = 398;
+  static const double instantDoctorCardHeight = 98.35057067871094;
+  static const double instantDoctorCardBorderRadius = 16;
+  static const double instantDoctorCardPadding = 4;
   static const double instantDoctorCardPaddingLeft = 16;
-  static const double instantDoctorCardPaddingVertical = 14;
   static const double instantDoctorTextImageGap = 4;
   static const double instantDoctorTitleArrowGap = 2;
-  static const double instantDoctorTitleBodyGap = 8;
+  static const double instantDoctorTitleBodyGap = 2;
 
   /// Teal home header (`HomeHeaderSection`).
   static const double homeHeaderBottomRadius = 30;

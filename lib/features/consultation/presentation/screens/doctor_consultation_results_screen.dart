@@ -220,8 +220,13 @@ class _DoctorConsultationResultsScreenState
         _hasMore = false;
       }),
       (pageData) => setState(() {
+        final incoming = List<ResultsDoctorItem>.from(pageData.doctors)
+          ..sort((a, b) => b.ratingScore.compareTo(a.ratingScore));
         _allDoctors =
-            append ? [..._allDoctors, ...pageData.doctors] : pageData.doctors;
+            append ? [..._allDoctors, ...incoming] : incoming;
+        if (append) {
+          _allDoctors.sort((a, b) => b.ratingScore.compareTo(a.ratingScore));
+        }
         if (!append && pageData.partners.isNotEmpty) {
           _filterPartners = pageData.partners;
           final selected = _selectedPartnerId;

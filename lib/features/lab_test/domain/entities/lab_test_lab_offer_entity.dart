@@ -31,6 +31,8 @@ class LabTestLabOfferEntity extends Equatable {
 
   int get effectivePrice => finalPrice;
 
+  bool get hasReducedPrice => price > effectivePrice;
+
   @override
   List<Object?> get props => [
     labId,

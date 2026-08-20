@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../lab_test/domain/entities/lab_test_item_entity.dart';
+import '../../../lab_test/domain/utils/lab_test_price_formatter.dart';
 import '../../../lab_test/presentation/widgets/lab_test_browse_item_tile_widget.dart';
 import '../../domain/entities/search_entity.dart';
 
@@ -43,7 +44,9 @@ class SearchLabResultCardWidget extends StatelessWidget {
               ? null
               : discounted,
           originalFee:
-              (original == null || original.isEmpty || original == discounted)
+              (original == null ||
+                      original.isEmpty ||
+                      LabTestPriceFormatter.isSameFee(original, discounted))
                   ? null
                   : original,
         ),

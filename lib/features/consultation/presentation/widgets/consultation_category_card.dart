@@ -68,7 +68,7 @@ class ConsultationCategoryCard extends StatelessWidget {
                   maxLines: 3,
                   overflow: TextOverflow.ellipsis,
                   style: textTheme.titleMedium?.copyWith(
-                    fontSize: responsive.sp(context, 12.5),
+                    fontSize: responsive.sp(context, 14),
                     height: 1.0,
                     fontWeight: FontWeight.w500,
                     color: ConsultationUiConfig.primaryText,

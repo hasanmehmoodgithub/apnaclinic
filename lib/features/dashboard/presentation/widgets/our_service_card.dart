@@ -78,7 +78,7 @@ class OurServiceCardWidget extends StatelessWidget {
               style: theme.textTheme.titleSmall?.copyWith(
                 fontWeight: FontWeight.w700,
                 color: AppColors.clr09,
-                fontSize: 12.sp,
+                fontSize: DashboardUiConfig.serviceCardTitleFontSize.sp,
                 height: 1.2,
               ),
             ),

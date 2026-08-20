@@ -75,6 +75,8 @@ class PharmacyBookingDetailEntity {
 
   String get discountLabel => discount.toStringAsFixed(0);
 
+  bool get hasDiscount => discount > 0;
+
   String get totalLabel => total.toStringAsFixed(0);
 
   bool get hasInvoiceUrl {

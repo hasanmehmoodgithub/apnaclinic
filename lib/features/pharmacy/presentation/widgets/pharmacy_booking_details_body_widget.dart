@@ -43,7 +43,7 @@ class PharmacyBookingDetailsBodyWidget extends StatelessWidget {
         const PharmacyBookingSectionLineWidget(top: 6, bottom: 14),
         PharmacyBookingPriceSummaryWidget(
           deliveryCharge: detail.deliveryChargeLabel,
-          discount: detail.discountLabel,
+          discount: detail.hasDiscount ? detail.discountLabel : null,
           total: detail.totalLabel,
         ),
         if (detail.hasInvoiceUrl) ...[

@@ -82,8 +82,8 @@ class PharmacyMedicineCard extends StatelessWidget {
                     ),
                     if (medicine.prescriptionRequired)
                       const Positioned(
-                        left: 0,
-                        top: 0,
+                        left: 6,
+                        top: 6,
                         child: PharmacyRequiresPrescriptionBadge(compact: true),
                       ),
                   ],
@@ -104,7 +104,7 @@ class PharmacyMedicineCard extends StatelessWidget {
                 style: theme.textTheme.titleSmall?.copyWith(
                   color: AppColors.clr060,
                   fontWeight: FontWeight.w700,
-                  fontSize: 12.sp,
+                  fontSize: 14.sp,
                   height: 1.25,
                 ),
               ),
@@ -190,5 +190,80 @@ class _PharmacyDashedLinePainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant _PharmacyDashedLinePainter oldDelegate) {
     return oldDelegate.color != color;
+  }
+}
+
+class PharmacyMedicineCardShimmer extends StatelessWidget {
+  const PharmacyMedicineCardShimmer({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColors.clrWhite,
+        borderRadius: BorderRadius.circular(16.r),
+        border: Border.all(color: AppColors.clrE3E8EE, width: 1),
+      ),
+      padding: EdgeInsets.all(10.r),
+      child: AppShimmer(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              flex: 5,
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  color: AppColors.clrF0F4F8,
+                  borderRadius: BorderRadius.circular(12.r),
+                ),
+              ),
+            ),
+            SizedBox(height: 10.h),
+            ColoredBox(
+              color: AppColors.clrD9DEE6,
+              child: SizedBox(width: double.infinity, height: 1.h),
+            ),
+            SizedBox(height: 8.h),
+            _ShimmerBar(height: 14.h),
+            SizedBox(height: 6.h),
+            _ShimmerBar(height: 14.h, width: 88.w),
+            const Spacer(),
+            Row(
+              children: [
+                Expanded(child: _ShimmerBar(height: 16.h)),
+                SizedBox(width: 6.w),
+                Container(
+                  width: 36.r,
+                  height: 36.r,
+                  decoration: const BoxDecoration(
+                    color: AppColors.clrF0F4F8,
+                    shape: BoxShape.circle,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ShimmerBar extends StatelessWidget {
+  const _ShimmerBar({required this.height, this.width});
+
+  final double height;
+  final double? width;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: height,
+      width: width ?? double.infinity,
+      decoration: BoxDecoration(
+        color: AppColors.clrF0F4F8,
+        borderRadius: BorderRadius.circular(6.r),
+      ),
+    );
   }
 }

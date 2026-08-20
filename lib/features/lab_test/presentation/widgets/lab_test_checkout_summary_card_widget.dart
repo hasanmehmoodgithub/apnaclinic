@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
+import '../../domain/utils/lab_test_price_formatter.dart';
 import '../lab_test_route_args.dart';
 import 'lab_test_figma_image.dart';
 
@@ -123,7 +124,10 @@ class LabTestCheckoutSummaryCardWidget extends StatelessWidget {
                       ),
                     ),
                     if (args.originalFee.trim().isNotEmpty &&
-                        args.originalFee != args.discountedFee) ...[
+                        !LabTestPriceFormatter.isSameFee(
+                          args.originalFee,
+                          args.discountedFee,
+                        )) ...[
                       SizedBox(width: 8.w),
                       Text(
                         args.originalFee,

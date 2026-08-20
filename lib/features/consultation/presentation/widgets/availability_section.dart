@@ -331,7 +331,9 @@ class _TimeSlotChip extends StatelessWidget {
       borderRadius: BorderRadius.circular(16.r),
       onTap: onTap,
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 5.h),
+        height: 30.h,
+        alignment: Alignment.center,
+        padding: EdgeInsets.symmetric(horizontal: 12.w),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16.r),
           border: Border.all(
@@ -346,11 +348,13 @@ class _TimeSlotChip extends StatelessWidget {
         ),
         child: Text(
           text,
+          textAlign: TextAlign.center,
           style: textTheme.bodySmall?.copyWith(
             color: isSelected
                 ? ConsultationUiConfig.ctaColor
                 : const Color(0xFF5F6C7C),
             fontSize: 12.sp,
+            height: 1.0,
             fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
           ),
         ),

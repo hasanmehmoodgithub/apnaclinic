@@ -41,7 +41,7 @@ class DocumentsSection extends StatelessWidget {
           l10n.consultationDocumentsUploadHint,
           style: textTheme.bodySmall?.copyWith(
             color: ConsultationUiConfig.tertiaryText,
-            fontSize: 11.sp,
+            fontSize: 13.sp,
             height: 1.35,
           ),
         ),

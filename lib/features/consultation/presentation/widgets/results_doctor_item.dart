@@ -13,6 +13,7 @@ class ResultsDoctorItem {
   final String oldFee;
   final String partner;
   final String rating;
+  final double ratingScore;
   final String imageUrl;
   final String verifiedPatientsCount;
   final String satisfiedText;
@@ -33,6 +34,7 @@ class ResultsDoctorItem {
     required this.oldFee,
     required this.partner,
     required this.rating,
+    this.ratingScore = 0,
     required this.imageUrl,
     this.verifiedPatientsCount = '0',
     this.satisfiedText = '0',
@@ -55,11 +57,20 @@ class ResultsDoctorItem {
       oldFee: map['oldFee'] as String? ?? '',
       partner: map['partner'] as String? ?? '',
       rating: map['rating'] as String? ?? '',
+      ratingScore: _readRatingScore(map['ratingScore'] ?? map['rating']),
       imageUrl: map['imageUrl'] as String? ?? '',
       verifiedPatientsCount: map['verifiedPatientsCount'] as String? ?? '0',
       satisfiedText: map['satisfiedText'] as String? ?? '0',
       description: (map['description'] ?? map['bio'] ?? '').toString(),
       partnerLogoUrl: (map['partnerLogoUrl'] ?? '').toString(),
     );
+  }
+
+  static double _readRatingScore(dynamic value) {
+    if (value is num) return value.toDouble();
+    final raw = value?.toString().trim() ?? '';
+    if (raw.isEmpty) return 0;
+    final match = RegExp(r'(\d+(\.\d+)?)').firstMatch(raw);
+    return double.tryParse(match?.group(1) ?? '') ?? 0;
   }
 }

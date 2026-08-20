@@ -7,7 +7,7 @@ In-app notification list and Firebase Cloud Messaging (FCM) push notifications.
 ## Routes / entry
 
 - `AppRoutes.notifications` — notification inbox screen.
-- Home app bar badge reads unread count from `NotificationCubit`.
+- Home app bar red dot shows only when the user is logged in and `NotificationCubit` has unread items (`isRead == false`). Opening the inbox refreshes the shared cubit, so the dot clears as soon as there are no unread notifications.
 
 ## Push (Firebase)
 
@@ -46,7 +46,7 @@ In-app notification list and Firebase Cloud Messaging (FCM) push notifications.
 
 ## DI
 
-- `notification_injection.dart` — repository, get/mark-read use cases, `NotificationCubit`.
+- `notification_injection.dart` — repository, get/mark-read use cases, shared `NotificationCubit` singleton (home badge + inbox).
 - `NotificationService` registered in core DI (`dependency_injection.dart`).
 
 ## Mocks

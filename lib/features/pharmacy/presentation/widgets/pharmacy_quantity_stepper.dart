@@ -35,15 +35,16 @@ class PharmacyQuantityStepper extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final containerHeight = height ?? 32.h;
+    const tapSize = 36.0;
+    final containerHeight = height ?? tapSize;
     final containerPadding = horizontalPadding ?? 8.w;
-    final spacing = itemSpacing ?? 14.w;
+    final spacing = itemSpacing ?? 8.w;
     final qtyFont = quantityFontSize ?? 16.sp;
     final actionFont = actionFontSize ?? 13.sp;
     final radius = borderRadius ?? 36.r;
 
     return Container(
-      height: containerHeight,
+      height: containerHeight < tapSize ? tapSize : containerHeight,
       padding: EdgeInsets.symmetric(horizontal: containerPadding),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(radius),
@@ -97,17 +98,25 @@ class _ActionIconButton extends StatelessWidget {
   final VoidCallback onTap;
   final double fontSize;
 
+  static const double _tapSize = 36;
+
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(12.r),
-      child: Text(
-        label,
-        style: Theme.of(context).textTheme.titleSmall?.copyWith(
-          color: AppColors.clr667B99,
-          fontWeight: FontWeight.w700,
-          fontSize: fontSize,
+    return SizedBox(
+      width: _tapSize,
+      height: _tapSize,
+      child: InkWell(
+        onTap: onTap,
+        customBorder: const CircleBorder(),
+        child: Center(
+          child: Text(
+            label,
+            style: Theme.of(context).textTheme.titleSmall?.copyWith(
+              color: AppColors.clr667B99,
+              fontWeight: FontWeight.w700,
+              fontSize: fontSize,
+            ),
+          ),
         ),
       ),
     );

@@ -145,7 +145,7 @@ class SurgeryBookingDoctorCardWidget extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           Text(
-                            'Stating from',
+                            'Starting from',
                             style: theme.textTheme.bodySmall?.copyWith(
                               color: const Color(0xFF777272),
                               fontSize: 10.sp,

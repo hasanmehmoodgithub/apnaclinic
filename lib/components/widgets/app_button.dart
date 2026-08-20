@@ -134,6 +134,10 @@ class AppButton extends StatelessWidget {
             mainAxisAlignment: iconAlignment ?? MainAxisAlignment.center,
             mainAxisSize: MainAxisSize.min,
             children: [
+              if (icon != null) ...[
+                Icon(icon, size: 20, color: effectiveForegroundColor),
+                SizedBox(width: AppSizes.paddingS),
+              ],
               Text(
                 text,
                 style: TextStyle(
@@ -143,10 +147,6 @@ class AppButton extends StatelessWidget {
                   color: effectiveForegroundColor,
                 ),
               ),
-              if (icon != null) ...[
-                SizedBox(width: AppSizes.paddingS),
-                Icon(icon, size: 20, color: effectiveForegroundColor),
-              ],
             ],
           );
 

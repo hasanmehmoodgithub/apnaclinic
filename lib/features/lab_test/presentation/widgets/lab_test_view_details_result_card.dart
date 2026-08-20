@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/extensions/screen_util_extensions.dart';
+import '../../domain/utils/lab_test_price_formatter.dart';
 import 'lab_test_figma_image.dart';
 
 class LabTestViewDetailsResultCard extends StatelessWidget {
@@ -194,14 +195,19 @@ class LabTestViewDetailsResultCard extends StatelessWidget {
                                     height: 1,
                                   ),
                                 ),
-                                Text(
-                                  originalFee,
-                                  style: theme.textTheme.bodySmall?.copyWith(
-                                    color: const Color(0xFF9A9A9A),
-                                    fontSize: 9.sp,
-                                    decoration: TextDecoration.lineThrough,
+                                if (originalFee.trim().isNotEmpty &&
+                                    !LabTestPriceFormatter.isSameFee(
+                                      originalFee,
+                                      discountedFee,
+                                    ))
+                                  Text(
+                                    originalFee,
+                                    style: theme.textTheme.bodySmall?.copyWith(
+                                      color: const Color(0xFF9A9A9A),
+                                      fontSize: 9.sp,
+                                      decoration: TextDecoration.lineThrough,
+                                    ),
                                   ),
-                                ),
                               ],
                             ),
                           ),

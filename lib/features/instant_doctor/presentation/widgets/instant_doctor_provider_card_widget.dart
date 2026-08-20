@@ -229,6 +229,7 @@ class _SubscribedActions extends StatelessWidget {
         Expanded(
           child: AppButton.primary(
             text: startConsultationLabel,
+            icon: Icons.phone_in_talk_rounded,
             isLoading: isLoading,
             onPressed: onPrimaryAction,
             width: double.infinity,

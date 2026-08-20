@@ -140,8 +140,8 @@ class AppRouter {
       GoRoute(
         path: AppRoutes.path(AppRoutes.notifications),
         name: AppRoutes.notifications,
-        builder: (context, state) => BlocProvider<NotificationCubit>(
-          create: (_) => sl<NotificationCubit>(),
+        builder: (context, state) => BlocProvider<NotificationCubit>.value(
+          value: sl<NotificationCubit>()..loadNotifications(refresh: true),
           child: const NotificationScreen(),
         ),
       ),

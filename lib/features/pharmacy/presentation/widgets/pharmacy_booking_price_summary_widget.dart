@@ -8,17 +8,18 @@ class PharmacyBookingPriceSummaryWidget extends StatelessWidget {
   const PharmacyBookingPriceSummaryWidget({
     super.key,
     required this.deliveryCharge,
-    required this.discount,
+    this.discount,
     required this.total,
   });
 
   final String deliveryCharge;
-  final String discount;
+  final String? discount;
   final String total;
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final discountValue = discount?.trim() ?? '';
     return Column(
       children: [
         _SummaryRow(
@@ -26,12 +27,14 @@ class PharmacyBookingPriceSummaryWidget extends StatelessWidget {
           value: deliveryCharge,
           valueColor: AppColors.clr110844,
         ),
-        SizedBox(height: 14.h),
-        _SummaryRow(
-          title: l10n.pharmacyCheckoutDiscountLabel,
-          value: discount,
-          valueColor: AppColors.clr110844,
-        ),
+        if (discountValue.isNotEmpty) ...[
+          SizedBox(height: 14.h),
+          _SummaryRow(
+            title: l10n.pharmacyCheckoutDiscountLabel,
+            value: discountValue,
+            valueColor: AppColors.clr110844,
+          ),
+        ],
         SizedBox(height: 12.h),
         Container(
           width: double.infinity,

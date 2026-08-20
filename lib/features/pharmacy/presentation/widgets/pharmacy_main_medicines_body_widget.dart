@@ -102,7 +102,7 @@ class _PharmacyMainMedicinesBodyWidgetState
   ) {
     if (state.medicinesLoadingStateStatus == StateStatus.loading ||
         state.medicinesLoadingStateStatus == StateStatus.refreshing) {
-      return const PharmacyScreenStateView.loading();
+      return const PharmacyMainMedicinesGridShimmer();
     }
 
     if (state.medicinesLoadingStateStatus == StateStatus.error) {

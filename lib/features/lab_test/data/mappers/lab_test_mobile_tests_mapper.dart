@@ -46,7 +46,7 @@ class LabTestMobileTestsMapper {
       discountedFee: bestOffer == null
           ? null
           : LabTestPriceFormatter.formatRs(bestOffer.effectivePrice),
-      originalFee: bestOffer == null || bestOffer.discountPct <= 0
+      originalFee: bestOffer == null || !bestOffer.hasReducedPrice
           ? null
           : LabTestPriceFormatter.formatRs(bestOffer.price),
       labOffers: labOffers,
@@ -105,11 +105,11 @@ class LabTestMobileTestsMapper {
 
     return LabTestPricingEntity(
       discountedFee: LabTestPriceFormatter.formatRs(offer.effectivePrice),
-      originalFee: offer.discountPct > 0
+      originalFee: offer.hasReducedPrice
           ? LabTestPriceFormatter.formatRs(offer.price)
           : LabTestPriceFormatter.formatRs(offer.effectivePrice),
-      discountPercent: offer.discountPct,
-      discountAmount: offer.discountPct > 0
+      discountPercent: offer.hasReducedPrice ? offer.discountPct : 0,
+      discountAmount: offer.hasReducedPrice
           ? (offer.price - offer.effectivePrice).toString()
           : '0',
       discountCode: '',

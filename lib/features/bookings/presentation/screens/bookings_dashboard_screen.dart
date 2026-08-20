@@ -5,6 +5,7 @@ import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/widgets/app_scaffold_gradient.dart';
 
 import 'doctor_consultation_bookings_screen.dart';
+import 'instant_doctor_bookings_screen.dart';
 import 'lab_test_bookings_screen.dart';
 import 'pharmacy_bookings_screen.dart';
 import 'surgery_bookings_screen.dart';
@@ -26,10 +27,11 @@ class BookingsDashboardScreen extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final tabs = <String>[
-      l10n.bookingsTabDoctorConsultation,
-      l10n.bookingsTabSurgery,
-      l10n.bookingsTabLabTest,
+      l10n.bookingsTabInstantDoctor,
       l10n.bookingsTabPharmacy,
+      l10n.bookingsTabDoctorConsultation,
+      l10n.bookingsTabLabTest,
+      l10n.bookingsTabSurgery,
     ];
     final safeInitialIndex = initialTabIndex.clamp(0, tabs.length - 1);
     return DefaultTabController(
@@ -111,10 +113,11 @@ class BookingsDashboardScreen extends StatelessWidget {
                         child: TabBarView(
                           physics: BouncingScrollPhysics(),
                           children: [
-                            DoctorConsultationBookingsScreen(),
-                            SurgeryBookingsScreen(),
-                            LabTestBookingsScreen(),
+                            InstantDoctorBookingsScreen(),
                             PharmacyBookingsScreen(),
+                            DoctorConsultationBookingsScreen(),
+                            LabTestBookingsScreen(),
+                            SurgeryBookingsScreen(),
                           ],
                         ),
                       ),

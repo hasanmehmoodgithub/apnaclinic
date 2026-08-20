@@ -32,11 +32,11 @@ class LabTestItemBookingHelper {
 
     return LabTestPricingEntity(
       discountedFee: LabTestPriceFormatter.formatRs(offer.effectivePrice),
-      originalFee: offer.discountPct > 0
+      originalFee: offer.hasReducedPrice
           ? LabTestPriceFormatter.formatRs(offer.price)
           : LabTestPriceFormatter.formatRs(offer.effectivePrice),
-      discountPercent: offer.discountPct,
-      discountAmount: offer.discountPct > 0
+      discountPercent: offer.hasReducedPrice ? offer.discountPct : 0,
+      discountAmount: offer.hasReducedPrice
           ? (offer.price - offer.effectivePrice).toString()
           : '0',
       discountCode: '',

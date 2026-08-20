@@ -78,7 +78,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     HeartLoaderDialogController.close(_bannerLoaderId);
     WidgetsBinding.instance.removeObserver(this);
     _dashboardCubit.close();
-    _notificationCubit.close();
     super.dispose();
   }
 
@@ -283,8 +282,10 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                   SliverPadding(
                     padding: EdgeInsets.fromLTRB(20.w, 20.h, 20.w, 0),
                     sliver: SliverToBoxAdapter(
-                      child: InstantDoctorHomeBanner(
-                        onTap: () => _openInstantDoctorTab(context),
+                      child: Center(
+                        child: InstantDoctorHomeBanner(
+                          onTap: () => _openInstantDoctorTab(context),
+                        ),
                       ),
                     ),
                   ),
@@ -329,6 +330,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       context.requireLogin();
       return;
     }
-    context.read<MainNavigationCubit>().setIndex(MainNavigationTabs.instantDoctor);
+    context.read<MainNavigationCubit>().setIndex(
+      MainNavigationTabs.instantDoctor,
+    );
   }
 }

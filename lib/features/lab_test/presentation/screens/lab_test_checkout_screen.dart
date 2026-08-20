@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/di/dependency_injection.dart';
@@ -7,26 +6,28 @@ import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/preference/app_pref.dart';
 import '../../../../core/router/app_routes.dart';
+import '../../../../core/session/auth_session_refresh.dart';
 import '../../../../core/utils/auth_guard.dart';
 import '../../../../core/utils/phone_format_utils.dart';
 import '../../../../core/widgets/app_scaffold_gradient.dart';
 import '../../../../core/widgets/heart_loader_widget.dart';
-import '../../../../generated/assets.dart';
+import '../../../bookings/presentation/constants/bookings_tabs.dart';
 import '../../../bookings/presentation/widgets/alert_dialog_card.dart';
 import '../../../bookings/presentation/widgets/payment_method_sheet.dart';
 import '../../../consultation/data/utils/consultation_booking_utils.dart';
 import '../../../consultation/domain/use_cases/get_payment_providers_use_case.dart';
 import '../../../consultation/presentation/models/doctor_consultation_jazzcash_sheet_result.dart';
 import '../../../consultation/presentation/widgets/doctor_consultation_jazzcash_accounts_sheet_widget.dart';
+import '../../../dashboard/presentation/constants/main_navigation_tabs.dart';
 import '../../../payment/presentation/payment_navigation.dart';
 import '../../domain/use_cases/book_lab_test_use_case.dart';
 import '../lab_test_route_args.dart';
+import '../widgets/lab_test_booking_confirmation_dialog_widget.dart';
 import '../widgets/lab_test_checkout_bottom_bar_widget.dart';
 import '../widgets/lab_test_checkout_header_widget.dart';
 import '../widgets/lab_test_checkout_patient_form_section_widget.dart';
 import '../widgets/lab_test_checkout_payment_breakdown_card_widget.dart';
 import '../widgets/lab_test_checkout_summary_card_widget.dart';
-import '../widgets/lab_test_figma_image.dart';
 
 /// Checkout + patient details (Figma node `2303:63721`). Success overlay matches `2303:64679`.
 class LabTestCheckoutScreen extends StatefulWidget {
@@ -154,6 +155,7 @@ class _LabTestCheckoutScreenState extends State<LabTestCheckoutScreen> {
       isScrollControlled: true,
       builder: (_) => const PaymentMethodSheet(
         module: PaymentProviderModule.lab,
+        includeLocalCashOption: true,
       ),
     );
     if (!mounted || selected == null) return;
@@ -255,141 +257,20 @@ class _LabTestCheckoutScreenState extends State<LabTestCheckoutScreen> {
   }
 
   void _showBookedDialog() {
-    final l10n = AppLocalizations.of(context)!;
-    final code = widget.args.discountCode;
     showDialog<void>(
       context: context,
       barrierDismissible: false,
       builder: (dialogContext) {
-        return Dialog(
-          insetPadding: const EdgeInsets.symmetric(horizontal: 26, vertical: 28),
-          backgroundColor: Colors.transparent,
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(30),
-            child: Container(
-              color: const Color(0xFFF3F4F7),
-              padding: const EdgeInsets.fromLTRB(18, 22, 18, 18),
-              child: ConstrainedBox(
-                constraints: BoxConstraints(
-                  maxWidth: 380,
-                  maxHeight: MediaQuery.sizeOf(dialogContext).height * 0.82,
-                ),
-                child: SingleChildScrollView(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      LabTestFigmaImage(
-                        url: Assets.labTestBookingConfirmationGreenCheck,
-                        width: 60,
-                        height: 60,
-                      ),
-                      const SizedBox(height: 6),
-                      Text(
-                        l10n.labTestCheckoutBookedTitle,
-                        textAlign: TextAlign.center,
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          color: const Color(0xFF0E2650),
-                          fontWeight: FontWeight.w500,
-                          fontSize: 20.sp,
-                          height: 1.1,
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      Text(
-                        l10n.labTestCheckoutBookedMessage,
-                        textAlign: TextAlign.center,
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: const Color(0xFF5676A8),
-                          fontSize: 14.sp,
-                          height: 1.45,
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      Text(
-                        l10n.labTestCheckoutBookedPathHint,
-                        textAlign: TextAlign.center,
-                        style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                          color: const Color(0xFF0D1218),
-                          fontWeight: FontWeight.w700,
-                          fontSize: 16.sp,
-                          height: 1.2,
-                        ),
-                      ),
-                      const SizedBox(height: 20),
-                      Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 14,
-                          vertical: 14,
-                        ),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFE8F0FA),
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                        child: Row(
-                          children: [
-                            SvgPicture.asset(
-                              Assets.labTestDiscountIcon,
-                              width: 16,
-                              height: 16,
-                              colorFilter: const ColorFilter.mode(
-                                Color(0xFF0D1218),
-                                BlendMode.srcIn,
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: Text(
-                                l10n.labTestDiscountCodeLabel,
-                                style: Theme.of(context).textTheme.titleSmall
-                                    ?.copyWith(
-                                      color: const Color(0xFF0D1218),
-                                      fontWeight: FontWeight.w700,
-                                      fontSize: 16.sp,
-                                    ),
-                              ),
-                            ),
-                            Text(
-                              code,
-                              style: Theme.of(context).textTheme.titleSmall
-                                  ?.copyWith(
-                                    fontWeight: FontWeight.w700,
-                                    color: const Color(0xFF22185F),
-                                    fontSize: 16.sp,
-                                  ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 18),
-                      SizedBox(
-                        width: double.infinity,
-                        height: 66,
-                        child: FilledButton(
-                          style: FilledButton.styleFrom(
-                            backgroundColor: const Color(0xFF20A99D),
-                            foregroundColor: Colors.white,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(22),
-                            ),
-                            textStyle: TextStyle(
-                              fontWeight: FontWeight.w700,
-                              fontSize: 18.sp,
-                            ),
-                          ),
-                          onPressed: () {
-                            dialogContext.pop();
-                            context.go(AppRoutes.path(AppRoutes.home));
-                          },
-                          child: Text(l10n.commonClose),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ),
+        return LabTestBookingConfirmationDialogWidget(
+          onViewBookings: () {
+            if (dialogContext.canPop()) dialogContext.pop();
+            if (!mounted) return;
+            sl<AuthSessionRefresh>().requestTabIndex(
+              MainNavigationTabs.bookings,
+              bookingsSubTabIndex: BookingsTabs.labTest,
+            );
+            context.go(AppRoutes.path(AppRoutes.home));
+          },
         );
       },
     );

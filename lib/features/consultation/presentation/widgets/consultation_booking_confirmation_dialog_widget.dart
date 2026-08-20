@@ -11,11 +11,11 @@ class ConsultationBookingConfirmationDialogWidget extends StatelessWidget {
   const ConsultationBookingConfirmationDialogWidget({
     super.key,
     required this.doctorName,
-    required this.onOk,
+    required this.onViewBookings,
   });
 
   final String doctorName;
-  final VoidCallback onOk;
+  final VoidCallback onViewBookings;
 
   @override
   Widget build(BuildContext context) {
@@ -65,8 +65,8 @@ class ConsultationBookingConfirmationDialogWidget extends StatelessWidget {
             SizedBox(
               width: double.infinity,
               child: AppButton.primary(
-                text: l10n.commonOk,
-                onPressed: onOk,
+                text: l10n.consultationViewBookingsCta,
+                onPressed: onViewBookings,
                 backgroundColor: AppColors.clr0FAA9A,
                 foregroundColor: AppColors.clrWhite,
                 height: 52.h,

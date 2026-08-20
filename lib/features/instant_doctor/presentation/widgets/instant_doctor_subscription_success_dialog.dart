@@ -64,6 +64,7 @@ class InstantDoctorSubscriptionSuccessDialog extends StatelessWidget {
               width: double.infinity,
               child: AppButton.primary(
                 text: l10n.instantDoctorStartConsultation,
+                icon: Icons.phone_in_talk_rounded,
                 onPressed: onStartConsultation,
                 backgroundColor: AppColors.clr0FAA9A,
                 foregroundColor: AppColors.clrWhite,

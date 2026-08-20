@@ -37,7 +37,7 @@ void initNotificationInjector() {
     ),
   );
 
-  sl.registerFactory<NotificationCubit>(
+  sl.registerLazySingleton<NotificationCubit>(
     () => NotificationCubit(
       getNotificationsUseCase: sl<GetNotificationsUseCase>(),
       markNotificationReadUseCase: sl<MarkNotificationReadUseCase>(),

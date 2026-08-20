@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:pinput/pinput.dart';
 
 import '../../../../components/widgets/app_button.dart';
@@ -87,24 +88,34 @@ class _InstantDoctorOtpVerificationSheetState
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Center(
-                  child: Container(
-                    width: 44.w,
-                    height: 4.h,
-                    decoration: BoxDecoration(
-                      color: AppColors.clrD6DCE2,
-                      borderRadius: BorderRadius.circular(4.r),
-                    ),
-                  ),
-                ),
-                SizedBox(height: 18.h),
-                Text(
-                  l10n.authOtpVerificationTitle,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: AppColors.clr060,
-                    fontSize: 20.sp,
-                    fontWeight: FontWeight.w700,
+                SizedBox(
+                  height: 40.h,
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      Text(
+                        l10n.authOtpVerificationTitle,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: AppColors.clr060,
+                          fontSize: 20.sp,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: IconButton(
+                          onPressed: () => context.pop(),
+                          icon: Icon(
+                            Icons.close_rounded,
+                            color: AppColors.clr303D4F,
+                            size: 24.r,
+                          ),
+                          tooltip: l10n.instantDoctorClose,
+                          visualDensity: VisualDensity.compact,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
                 SizedBox(height: 16.h),

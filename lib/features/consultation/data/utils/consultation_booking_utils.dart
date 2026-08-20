@@ -47,6 +47,14 @@ class ConsultationBookingUtils {
     return normalizedName == 'jazzcash' || normalizedName.contains('jazzcash');
   }
 
+  static const cashPaymentCode = 'COD';
+
+  static bool isCashPayment(String code) {
+    final normalized =
+        code.trim().toUpperCase().replaceAll(RegExp(r'[\s_-]'), '');
+    return normalized == cashPaymentCode;
+  }
+
   static String paymentMethodApiValue(String paymentMethodCode) =>
       paymentMethodCode.trim().toUpperCase();
 }

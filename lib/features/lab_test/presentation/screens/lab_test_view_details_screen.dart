@@ -8,7 +8,6 @@ import '../../../bookings/presentation/widgets/empty_booking_widget.dart';
 import '../../domain/use_cases/get_lab_order_detail_use_case.dart';
 import '../lab_test_route_args.dart';
 import '../widgets/lab_test_view_details_header.dart';
-import '../widgets/lab_test_view_details_invoice_card.dart';
 import '../widgets/lab_test_view_details_note_card.dart';
 import '../widgets/lab_test_view_details_order_card.dart';
 import '../widgets/lab_test_view_details_result_card.dart';
@@ -96,7 +95,6 @@ class _LabTestViewDetailsScreenState extends State<LabTestViewDetailsScreen> {
     }
 
     final a = _content!;
-    final invoiceUrl = a.invoiceUrl?.trim() ?? '';
 
     return AppScaffoldGradient(
       child: Column(
@@ -146,10 +144,6 @@ class _LabTestViewDetailsScreenState extends State<LabTestViewDetailsScreen> {
                   ),
                   const SizedBox(height: 16),
                   LabTestViewDetailsNoteCard(note: a.note),
-                  if (invoiceUrl.isNotEmpty) ...[
-                    const SizedBox(height: 16),
-                    LabTestViewDetailsInvoiceCard(invoiceUrl: invoiceUrl),
-                  ],
                 ],
               ),
             ),

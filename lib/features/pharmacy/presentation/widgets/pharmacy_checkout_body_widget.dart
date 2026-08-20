@@ -86,10 +86,15 @@ class PharmacyCheckoutBodyWidget extends StatelessWidget {
           return;
         }
 
-        await showPharmacyOrderPlacedDialog(context);
-        if (!context.mounted) return;
         cubit.clearCart();
-        pharmacyGoToOrderDetailsAfterPlace(context);
+        await showPharmacyOrderPlacedDialog(
+          context,
+          orderNo: checkout.orderNo,
+          onViewOrders: () {
+            if (!context.mounted) return;
+            pharmacyGoToOrderDetailsAfterPlace(context);
+          },
+        );
       },
     );
   }
@@ -150,6 +155,7 @@ class PharmacyCheckoutBodyWidget extends StatelessWidget {
                   label: l10n.pharmacyCheckoutSpecialInstructionsLabel,
                   controller: specialInstructionsController,
                   hint: l10n.pharmacyCheckoutSpecialInstructionsHint,
+                  inputFontSize: 14.sp,
                 ),
                 SizedBox(height: 22.h),
                 Text(
@@ -189,12 +195,15 @@ class PharmacyCheckoutBodyWidget extends StatelessWidget {
                   isBold: true,
                   bgColor: AppColors.clrBBBBBB,
                   padding: const EdgeInsets.all(8),
+                  titleFontSize: 16.sp,
+                  valueFontSize: 18.sp,
                 ),
                 SizedBox(height: 24.h),
                 PharmacyCheckoutEditableField(
                   label: l10n.pharmacyCheckoutAddressLabel,
                   controller: addressController,
                   hint: l10n.pharmacyCheckoutAddressHint,
+                  inputFontSize: 16.sp,
                 ),
                 SizedBox(height: 20.h),
                 PharmacyCheckoutCityField(

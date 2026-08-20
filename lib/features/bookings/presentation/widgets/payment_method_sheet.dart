@@ -17,10 +17,14 @@ class PaymentMethodSheet extends StatefulWidget {
   const PaymentMethodSheet({
     super.key,
     required this.module,
+    this.includeLocalCashOption = false,
   });
 
   /// One of [PaymentProviderModule] values: consultation, lab, surgery, pharmacy.
   final String module;
+
+  /// Adds a local **Pay via Cash** row (`COD`) that is not returned by the API.
+  final bool includeLocalCashOption;
 
   @override
   State<PaymentMethodSheet> createState() => PaymentMethodSheetState();
@@ -53,19 +57,44 @@ class PaymentMethodSheetState extends State<PaymentMethodSheet> {
     if (!mounted) return;
 
     result.fold(
-      (error) => setState(() {
-        _isLoading = false;
-        _errorMessage = error;
-        _providers = const [];
-        _selectedCode = null;
-      }),
-      (providers) => setState(() {
-        _isLoading = false;
-        _providers = providers;
-        _selectedCode = providers.isNotEmpty ? providers.first.code : null;
-        _errorMessage = providers.isEmpty ? AppStrings.genericErrorMessage : null;
-      }),
+      (error) {
+        final providers = _withLocalCash(const []);
+        setState(() {
+          _isLoading = false;
+          _providers = providers;
+          _selectedCode = providers.isNotEmpty ? providers.first.code : null;
+          _errorMessage = providers.isEmpty ? error : null;
+        });
+      },
+      (providers) {
+        final merged = _withLocalCash(providers);
+        setState(() {
+          _isLoading = false;
+          _providers = merged;
+          _selectedCode = merged.isNotEmpty ? merged.first.code : null;
+          _errorMessage =
+              merged.isEmpty ? AppStrings.genericErrorMessage : null;
+        });
+      },
     );
+  }
+
+  List<PaymentProviderEntity> _withLocalCash(
+    List<PaymentProviderEntity> providers,
+  ) {
+    if (!widget.includeLocalCashOption) return providers;
+    final alreadyHasCash = providers.any(
+      (provider) => ConsultationBookingUtils.isCashPayment(provider.code),
+    );
+    if (alreadyHasCash) return providers;
+    return [
+      ...providers,
+      const PaymentProviderEntity(
+        name: '',
+        code: ConsultationBookingUtils.cashPaymentCode,
+        iconUrl: '',
+      ),
+    ];
   }
 
   @override
@@ -183,6 +212,7 @@ class PaymentMethodSheetState extends State<PaymentMethodSheet> {
   }
 
   List<Widget> _buildProviderOptions() {
+    final l10n = AppLocalizations.of(context)!;
     final widgets = <Widget>[];
     for (var index = 0; index < _providers.length; index++) {
       final provider = _providers[index];
@@ -200,7 +230,9 @@ class PaymentMethodSheetState extends State<PaymentMethodSheet> {
           value: provider.code,
           groupValue: _selectedCode ?? '',
           onChanged: (value) => setState(() => _selectedCode = value),
-          label: provider.name,
+          label: ConsultationBookingUtils.isCashPayment(provider.code)
+              ? l10n.pharmacyPaymentCash
+              : provider.name,
           iconBuilder: () => _paymentIcon(
             child: _providerIcon(provider),
           ),
@@ -226,6 +258,15 @@ class PaymentMethodSheetState extends State<PaymentMethodSheet> {
   }
 
   Widget _fallbackProviderIcon(PaymentProviderEntity provider) {
+    if (ConsultationBookingUtils.isCashPayment(provider.code)) {
+      return SvgPicture.asset(
+        Assets.iconsCash,
+        width: 34.w,
+        height: 18.h,
+        fit: BoxFit.contain,
+      );
+    }
+
     if (ConsultationBookingUtils.isJazzCashPayment(
       provider.code,
       name: provider.name,

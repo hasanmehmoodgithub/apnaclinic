@@ -61,8 +61,8 @@ class PharmacySelectedCard extends StatelessWidget {
             ),
             if (featured.prescriptionRequired)
               Positioned(
-                left: 0,
-                top: 0,
+                left: 8,
+                top: 8,
                 child: const PharmacyRequiresPrescriptionBadge(),
               ),
           ],
@@ -87,7 +87,7 @@ class PharmacySelectedCard extends StatelessWidget {
                               ?.copyWith(
                                 color: AppColors.clr060,
                                 fontWeight: FontWeight.w700,
-                                fontSize: 12.sp,
+                                fontSize: 14.sp,
                               ),
                         ),
                         Align(

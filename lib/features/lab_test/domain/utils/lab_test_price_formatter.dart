@@ -3,6 +3,19 @@ class LabTestPriceFormatter {
 
   static String formatRs(int amount) => 'Rs. ${_formatAmount(amount)}/-';
 
+  static bool isSameFee(String? a, String? b) {
+    final left = (a ?? '').trim();
+    final right = (b ?? '').trim();
+    if (left.isEmpty || right.isEmpty) return left == right;
+    if (left == right) return true;
+    final leftDigits = _digitsOnly(left);
+    final rightDigits = _digitsOnly(right);
+    return leftDigits.isNotEmpty && leftDigits == rightDigits;
+  }
+
+  static String _digitsOnly(String value) =>
+      value.replaceAll(RegExp(r'[^0-9]'), '');
+
   static String _formatAmount(int amount) {
     final text = amount.toString();
     final buffer = StringBuffer();

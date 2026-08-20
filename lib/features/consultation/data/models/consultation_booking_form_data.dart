@@ -19,7 +19,7 @@ Future<FormData> consultationBookingFormData(
     'slotEndTime': _to12HourAmPm(params.slotEndTime),
     'paymentMethod': params.paymentMethod,
     'msisdn': params.msisdn,
-    'issue': params.issue,
+    'issue': params.issue.trim().isEmpty ? 'N/A' : params.issue.trim(),
   };
 
   final attachmentFiles = <MultipartFile>[];

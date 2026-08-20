@@ -17,6 +17,15 @@ class PharmacyMainMedicinesGridWidget extends StatelessWidget {
   final ValueChanged<PharmacyMedicineEntity> onMedicineTap;
   final ValueChanged<PharmacyMedicineEntity> onAddToCartTap;
 
+  static SliverGridDelegate gridDelegate() {
+    return SliverGridDelegateWithFixedCrossAxisCount(
+      crossAxisCount: 2,
+      mainAxisSpacing: 10.h,
+      crossAxisSpacing: 10.w,
+      childAspectRatio: 0.62,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return GridView.builder(
@@ -24,12 +33,7 @@ class PharmacyMainMedicinesGridWidget extends StatelessWidget {
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       itemCount: medicines.length,
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        mainAxisSpacing: 10.h,
-        crossAxisSpacing: 10.w,
-        childAspectRatio: 0.62,
-      ),
+      gridDelegate: gridDelegate(),
       itemBuilder: (context, index) {
         final item = medicines[index];
         return PharmacyMedicineCard(
@@ -38,6 +42,22 @@ class PharmacyMainMedicinesGridWidget extends StatelessWidget {
           onAddToCart: () => onAddToCartTap(item),
         );
       },
+    );
+  }
+}
+
+class PharmacyMainMedicinesGridShimmer extends StatelessWidget {
+  const PharmacyMainMedicinesGridShimmer({super.key, this.itemCount = 6});
+
+  final int itemCount;
+
+  @override
+  Widget build(BuildContext context) {
+    return GridView.builder(
+      padding: EdgeInsets.fromLTRB(18.w, 10.h, 18.w, 24.h),
+      itemCount: itemCount,
+      gridDelegate: PharmacyMainMedicinesGridWidget.gridDelegate(),
+      itemBuilder: (_, _) => const PharmacyMedicineCardShimmer(),
     );
   }
 }

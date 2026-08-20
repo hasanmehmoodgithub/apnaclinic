@@ -178,6 +178,8 @@ class _InstantDoctorScreenState extends State<InstantDoctorScreen> {
     await showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
+      isDismissible: false,
+      enableDrag: false,
       backgroundColor: AppColors.clrWhite,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
@@ -212,6 +214,7 @@ class _InstantDoctorScreenState extends State<InstantDoctorScreen> {
     if (outcome.isSuccess) {
       if (otpAction == InstantDoctorOtpAction.unsubscribe) {
         _showSnackBar(_l10n.instantDoctorCancelSubscriptionSuccess);
+        await _cubit.loadContent();
         return;
       }
       await _showSubscribeSuccessDialog(provider, outcome);

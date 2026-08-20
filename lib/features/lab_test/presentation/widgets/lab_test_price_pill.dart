@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../domain/utils/lab_test_price_formatter.dart';
+
 class LabTestPricePill extends StatelessWidget {
   const LabTestPricePill({
     super.key,
@@ -49,7 +51,9 @@ class LabTestPricePill extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final hasOriginal = originalFee != null && originalFee!.trim().isNotEmpty;
+    final original = originalFee?.trim() ?? '';
+    final hasOriginal = original.isNotEmpty &&
+        !LabTestPriceFormatter.isSameFee(original, discountedFee);
 
     if (!hasOriginal) {
       return Container(
@@ -79,7 +83,7 @@ class LabTestPricePill extends StatelessWidget {
           Padding(
             padding: originalPadding,
             child: Text(
-              originalFee!,
+              original,
               style: (originalTextStyle ?? theme.textTheme.bodySmall)?.copyWith(
                 color: originalTextColor,
                 decoration: TextDecoration.lineThrough,

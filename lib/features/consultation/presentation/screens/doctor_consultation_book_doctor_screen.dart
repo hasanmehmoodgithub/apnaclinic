@@ -264,12 +264,6 @@ class _DoctorConsultationBookDoctorScreenState
     required ResultsDoctorItem doctor,
   }) async {
     final trimmedIssue = _issueController.text.trim();
-    if (trimmedIssue.isEmpty) {
-      setState(() {
-        _validationErrorMessage = l10n.consultationRequiredFieldsError;
-      });
-      return;
-    }
     if (_selectedSlot == null) {
       setState(() {
         _validationErrorMessage = l10n.consultationSelectSlotError;
