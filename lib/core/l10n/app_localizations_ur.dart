@@ -480,7 +480,7 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get onboardingLaboratorySubtitle =>
-      'قابلِ اعتماد لیبارٹریوں سے درست نتائج کے ساتھ لیب ٹیسٹس حاصل کریں۔';
+      'اپنی قابلِ اعتماد لیبارٹریوں سے لیب ٹیسٹس حاصل کریں، مفت گھریلو نمونہ لینے کے ساتھ';
 
   @override
   String get onboardingSurgeryTitle => 'سرجری بکنگ';

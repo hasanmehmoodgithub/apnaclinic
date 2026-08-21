@@ -23,6 +23,7 @@ import '../../../payment/presentation/payment_navigation.dart';
 import '../../domain/entities/lab_test_cart_item.dart';
 import '../../domain/repositories/lab_test_cart_repository.dart';
 import '../../domain/use_cases/book_lab_test_use_case.dart';
+import '../cubit/lab_test_cart_cubit.dart';
 import '../lab_test_route_args.dart';
 import '../widgets/lab_test_booking_confirmation_dialog_widget.dart';
 import '../widgets/lab_test_checkout_bottom_bar_widget.dart';
@@ -242,6 +243,7 @@ class _LabTestCheckoutScreenState extends State<LabTestCheckoutScreen> {
         await sl<LabTestCartRepository>().writeCart(
           const <LabTestCartItem>[],
         );
+        sl<LabTestCartCubit>().replaceItems(const <LabTestCartItem>[]);
         if (!mounted) return;
         _showBookedDialog();
       },
@@ -308,7 +310,10 @@ class _LabTestCheckoutScreenState extends State<LabTestCheckoutScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        LabTestCheckoutSummaryCardWidget(args: a),
+                        for (var i = 0; i < a.lines.length; i++) ...[
+                          if (i > 0) SizedBox(height: 12.h),
+                          LabTestCheckoutSummaryCardWidget(line: a.lines[i]),
+                        ],
                         SizedBox(height: 18.h),
                         LabTestCheckoutPaymentBreakdownCardWidget(args: a),
                         SizedBox(height: 18.h),

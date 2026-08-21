@@ -54,7 +54,7 @@ class LabTestBookingListMapper {
       labName: booking.labName,
       labLogoUrl: booking.labLogoUrl,
       partnerLogoUrl: booking.partnerLogoUrl,
-      sampleType: l10n.labTestSampleTypeNotAvailable,
+      sampleType: _orderTypeLabel(order.orderType, l10n),
       discountedFee: booking.discountedFee,
       originalFee: booking.originalFee,
       discountCode: booking.discountCode,
@@ -65,6 +65,19 @@ class LabTestBookingListMapper {
       note: _reportNote(booking.reportStatus, l10n),
       invoiceUrl: (invoice != null && invoice.isNotEmpty) ? invoice : null,
     );
+  }
+
+  /// Maps API `orderType` (`HOME_SAMPLING` / `WALK_IN`) for the Sample Type pill.
+  static String _orderTypeLabel(String orderType, AppLocalizations l10n) {
+    switch (orderType.trim().toUpperCase()) {
+      case 'HOME_SAMPLING':
+        return l10n.labTestBookingMethodHomeSample;
+      case 'WALK_IN':
+        return l10n.labTestBookingMethodWalkIn;
+      default:
+        final raw = orderType.trim();
+        return raw.isEmpty ? l10n.labTestSampleTypeNotAvailable : raw;
+    }
   }
 
   static String _reportNote(String reportStatus, AppLocalizations l10n) {

@@ -995,7 +995,7 @@ abstract class AppLocalizations {
   /// No description provided for @onboardingLaboratorySubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Access reliable lab tests from reputable labs with accurate results.'**
+  /// **'Access lab tests from your trusted labs with free home sampling'**
   String get onboardingLaboratorySubtitle;
 
   /// No description provided for @onboardingSurgeryTitle.

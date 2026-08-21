@@ -480,7 +480,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get onboardingLaboratorySubtitle =>
-      'Access reliable lab tests from reputable labs with accurate results.';
+      'Access lab tests from your trusted labs with free home sampling';
 
   @override
   String get onboardingSurgeryTitle => 'Surgery Booking';

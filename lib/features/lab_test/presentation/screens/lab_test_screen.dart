@@ -1,8 +1,6 @@
 // Lab test browse: composes gradient shell + white panel; city prompt runs once
 // after catalog load via BlocListener + post-frame (avoids sheet during loading).
 
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -18,6 +16,8 @@ import '../../../../core/router/app_routes.dart';
 import '../../../../core/utils/auth_guard.dart';
 import '../../../../core/widgets/app_scaffold_gradient.dart';
 import '../../domain/entities/lab_test_item_entity.dart';
+import '../cubit/lab_test_cart_cubit.dart';
+import '../cubit/lab_test_cart_state.dart';
 import '../cubit/lab_test_cubit.dart';
 import '../cubit/lab_test_state.dart';
 import '../lab_test_cart_change_guard.dart';
@@ -40,8 +40,6 @@ class _LabTestScreenState extends State<LabTestScreen> {
   final TextEditingController _searchController = TextEditingController();
   final AppPref _appPref = sl<AppPref>();
 
-  static const String _cartPrefKey = 'lab_test_cart_items';
-
   bool _hasResolvedInitialCity = false;
   bool _hasPromptedCitySelection = false;
   bool _isCityDialogOpen = false;
@@ -50,11 +48,16 @@ class _LabTestScreenState extends State<LabTestScreen> {
   @override
   void initState() {
     super.initState();
-    final rawSavedCity = _appPref.getString(AppPrefKeys.labTestSelectedCity)?.trim();
+    final rawSavedCity =
+        _appPref.getString(AppPrefKeys.labTestSelectedCity)?.trim();
     _savedCity = (rawSavedCity == null || rawSavedCity.isEmpty)
         ? null
         : rawSavedCity;
 
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || !AuthGuard.isLoggedIn(_appPref)) return;
+      context.read<LabTestCartCubit>().load();
+    });
   }
 
   @override
@@ -79,14 +82,24 @@ class _LabTestScreenState extends State<LabTestScreen> {
       child: AppScaffoldGradient(
         child: Column(
           children: [
-            LabTestBrowseHeaderWidget(
-              padding: EdgeInsets.fromLTRB(12.w, 4.h, 16.w, 18.h),
-              title: l10n.labTestScreenTitle,
-              cartCount: _cartCount(),
-              cartBadgeOverflowLabel: l10n.labTestCartBadgeOverflow,
-              onCartTap: () async {
-                await labTestOpenCart(context);
-                if (mounted) setState(() {});
+            BlocBuilder<LabTestCartCubit, LabTestCartState>(
+              buildWhen: (previous, current) =>
+                  previous.items.length != current.items.length,
+              builder: (context, cartState) {
+                final cartCount = AuthGuard.isLoggedIn(_appPref)
+                    ? cartState.items.length
+                    : 0;
+                return LabTestBrowseHeaderWidget(
+                  padding: EdgeInsets.fromLTRB(12.w, 4.h, 16.w, 18.h),
+                  title: l10n.labTestScreenTitle,
+                  cartCount: cartCount,
+                  cartBadgeOverflowLabel: l10n.labTestCartBadgeOverflow,
+                  onCartTap: () async {
+                    await labTestOpenCart(context);
+                    if (!mounted) return;
+                    await context.read<LabTestCartCubit>().load();
+                  },
+                );
               },
             ),
             Expanded(
@@ -124,7 +137,8 @@ class _LabTestScreenState extends State<LabTestScreen> {
                       child: LabTestCatalogListBlockWidget(
                         loadFailedMessage: l10n.labTestCatalogLoadFailed,
                         emptyMessage: l10n.labTestNoRecordFound,
-                        selectCityFirstMessage: l10n.labTestPleaseSelectCityFirst,
+                        selectCityFirstMessage:
+                            l10n.labTestPleaseSelectCityFirst,
                         requirementLabel: l10n.labTestRequirementLabel,
                         sampleTypeLabel: l10n.labTestSampleTypeLabel,
                         feeFallbackText: l10n.labTestBrowseItemFeeFallback,
@@ -171,7 +185,8 @@ class _LabTestScreenState extends State<LabTestScreen> {
       },
       onViewCart: () async {
         await labTestOpenCart(context);
-        if (mounted) setState(() {});
+        if (!mounted) return;
+        await context.read<LabTestCartCubit>().load();
       },
     );
   }
@@ -223,7 +238,7 @@ class _LabTestScreenState extends State<LabTestScreen> {
     }
   }
 
-  void _onTestTap(BuildContext context, LabTestItemEntity item) {
+  Future<void> _onTestTap(BuildContext context, LabTestItemEntity item) async {
     if (!context.requireLogin()) return;
 
     final l10n = AppLocalizations.of(context)!;
@@ -246,7 +261,7 @@ class _LabTestScreenState extends State<LabTestScreen> {
       return;
     }
 
-    context.pushNamed(
+    await context.pushNamed(
       AppRoutes.labTestBooking,
       extra: LabTestBookingArgs.pending(
         testId: testId,
@@ -255,18 +270,7 @@ class _LabTestScreenState extends State<LabTestScreen> {
         testTitle: item.title,
       ),
     );
-  }
-
-  int _cartCount() {
-    if (!AuthGuard.isLoggedIn(_appPref)) return 0;
-    final raw = _appPref.getString(_cartPrefKey)?.trim();
-    if (raw == null || raw.isEmpty) return 0;
-    try {
-      final decoded = jsonDecode(raw);
-      if (decoded is List) return decoded.length;
-      return 0;
-    } catch (_) {
-      return 0;
-    }
+    if (!context.mounted) return;
+    await context.read<LabTestCartCubit>().load();
   }
 }

@@ -86,6 +86,29 @@ class LabTestBookingArgs {
   final List<LabTestLabOfferEntity> labOffers;
 }
 
+/// One cart test shown on checkout (Payment Details) before the totals card.
+class LabTestCheckoutLineArgs {
+  const LabTestCheckoutLineArgs({
+    required this.testTitle,
+    required this.labDisplayName,
+    required this.labLogoUrl,
+    required this.partnerLogoUrl,
+    required this.sampleType,
+    required this.discountedFee,
+    required this.originalFee,
+    required this.bookingMethodIsHomeSample,
+  });
+
+  final String testTitle;
+  final String labDisplayName;
+  final String labLogoUrl;
+  final String partnerLogoUrl;
+  final String sampleType;
+  final String discountedFee;
+  final String originalFee;
+  final bool bookingMethodIsHomeSample;
+}
+
 class LabTestCheckoutArgs {
   const LabTestCheckoutArgs({
     required this.city,
@@ -106,6 +129,7 @@ class LabTestCheckoutArgs {
     this.testIds = const <int>[],
     this.partnerId = '',
     this.labId = '',
+    this.lines = const <LabTestCheckoutLineArgs>[],
   });
 
   final String city;
@@ -115,9 +139,15 @@ class LabTestCheckoutArgs {
   final String partnerLogoUrl;
   final String sampleType;
   final String? requirementLabel;
+
+  /// Aggregated discounted total across [lines] (shown as Payment Details Total).
   final String discountedFee;
+
+  /// Aggregated original fee across [lines] (shown as Payment Details Fee).
   final String originalFee;
   final int discountPercent;
+
+  /// Aggregated discount amount across [lines].
   final String discountAmount;
   final String discountCode;
   final String totalAmount;
@@ -128,6 +158,9 @@ class LabTestCheckoutArgs {
   final List<int> testIds;
   final String partnerId;
   final String labId;
+
+  /// Every cart test to render above the payment breakdown.
+  final List<LabTestCheckoutLineArgs> lines;
 }
 
 class LabTestViewDetailsArgs {
