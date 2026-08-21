@@ -5,6 +5,7 @@ class PharmacyPaymentBreakdownEntity {
     required this.total,
     required this.subtotal,
     this.discountPercent,
+    this.freeDeliveryMessage,
   });
 
   final double deliveryCharges;
@@ -12,6 +13,7 @@ class PharmacyPaymentBreakdownEntity {
   final double total;
   final double subtotal;
   final double? discountPercent;
+  final String? freeDeliveryMessage;
 
   /// Keeps API delivery/discount and recomputes `total = subtotal - discount + delivery`.
   PharmacyPaymentBreakdownEntity withSubtotal(double subtotal) {
@@ -20,6 +22,7 @@ class PharmacyPaymentBreakdownEntity {
       deliveryCharges: deliveryCharges,
       discount: discount,
       discountPercent: discountPercent,
+      freeDeliveryMessage: freeDeliveryMessage,
       subtotal: nextSubtotal,
       total: (nextSubtotal - discount) + deliveryCharges,
     );

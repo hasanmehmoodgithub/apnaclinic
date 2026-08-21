@@ -3,6 +3,7 @@ import '../../domain/entities/pharmacy_add_to_cart_result_entity.dart';
 import '../../domain/entities/pharmacy_cart_address_entity.dart';
 import '../../domain/entities/pharmacy_cart_entity.dart';
 import '../../domain/entities/pharmacy_cart_item_entity.dart';
+import '../../domain/entities/pharmacy_cart_messages_entity.dart';
 import '../../domain/entities/pharmacy_checkout_result_entity.dart';
 import '../../domain/entities/pharmacy_medicine_entity.dart';
 import '../../domain/entities/pharmacy_payment_breakdown_entity.dart';
@@ -79,6 +80,7 @@ class PharmacyMedicineMapper {
       total: model.total,
       subtotal: model.subtotal,
       discountPercent: model.discountPercent,
+      freeDeliveryMessage: model.freeDeliveryMessage,
     );
   }
 
@@ -99,6 +101,19 @@ class PharmacyMedicineMapper {
           )
           .toList(growable: false),
       failedPaymentUnifiedOrderId: model.failedPaymentUnifiedOrderId,
+      messages: toCartMessagesEntity(model.messages),
+    );
+  }
+
+  static PharmacyCartMessagesEntity? toCartMessagesEntity(
+    PharmacyCartMessagesModel? model,
+  ) {
+    if (model == null) return null;
+    return PharmacyCartMessagesEntity(
+      disclaimer: model.disclaimer,
+      prescriptionNotice: model.prescriptionNotice,
+      deliveryNotice: model.deliveryNotice,
+      deliveryChargesNotice: model.deliveryChargesNotice,
     );
   }
 
@@ -112,6 +127,7 @@ class PharmacyMedicineMapper {
       hasProductList: model.hasProductList,
       paymentBreakdown: toPaymentBreakdownEntity(model.paymentBreakdown),
       failedPaymentUnifiedOrderId: model.failedPaymentUnifiedOrderId,
+      messages: toCartMessagesEntity(model.messages),
     );
   }
 

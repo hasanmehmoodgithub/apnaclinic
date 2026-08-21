@@ -263,6 +263,18 @@ class PharmacyMockApi {
             'delivery_charges': 250,
             'total': 840,
           },
+          'free_delivery_message':
+              'Get Free Delivery for orders above Rs. 2500',
+          'messages': {
+            'disclaimer':
+                'Disclaimer\nSold and fulfilled by our Licensed Pharmacy Partners. "MEDIQ PHARMACY". License No.: 05-352-0070-053618P',
+            'prescription_notice':
+                'Prescription is required for some items. Customer representative will contact you shortly.',
+            'delivery_notice':
+                'Orders will be delivered within 3 hours between 8:00 AM and 8:00 PM. Orders placed after 8:00 PM will be delivered by 12PM the following day.',
+            'delivery_charges_notice':
+                'Orders below Rs 2500 will include delivery charges of Rs 250.',
+          },
           'family_members': [
             {
               'id': 1,

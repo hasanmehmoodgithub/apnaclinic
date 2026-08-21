@@ -334,6 +334,13 @@ class PharmacyCheckoutCartItemRow extends StatelessWidget {
 }
 
 class PharmacyInfoCard extends StatelessWidget {
+  final String? title;
+  final String message;
+  final String? footer;
+  final Color bgColor;
+  final Color footerBgColor;
+  final FontWeight messageFontWeight;
+
   const PharmacyInfoCard({
     super.key,
     this.title,
@@ -341,13 +348,8 @@ class PharmacyInfoCard extends StatelessWidget {
     this.footer,
     this.bgColor = AppColors.clrWhite,
     this.footerBgColor = AppColors.clrFFE9C3,
+    this.messageFontWeight = FontWeight.w400,
   });
-
-  final String? title;
-  final String message;
-  final String? footer;
-  final Color bgColor;
-  final Color footerBgColor;
 
   @override
   Widget build(BuildContext context) {
@@ -375,11 +377,10 @@ class PharmacyInfoCard extends StatelessWidget {
           ],
           Text(
             message,
-
             style: theme.textTheme.bodyMedium?.copyWith(
               color: AppColors.clr060,
               fontSize: 16.sp / 1.6,
-              fontWeight: FontWeight.w700,
+              fontWeight: messageFontWeight,
               height: 1.3,
             ),
           ),

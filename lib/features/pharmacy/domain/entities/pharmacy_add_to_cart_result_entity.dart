@@ -1,4 +1,5 @@
 import 'pharmacy_cart_item_entity.dart';
+import 'pharmacy_cart_messages_entity.dart';
 import 'pharmacy_payment_breakdown_entity.dart';
 
 class PharmacyAddToCartResultEntity {
@@ -9,6 +10,7 @@ class PharmacyAddToCartResultEntity {
     required this.hasProductList,
     this.paymentBreakdown,
     this.failedPaymentUnifiedOrderId,
+    this.messages,
   });
 
   final String message;
@@ -21,4 +23,5 @@ class PharmacyAddToCartResultEntity {
 
   /// From `failed_payment.unified_order_id` when present.
   final int? failedPaymentUnifiedOrderId;
+  final PharmacyCartMessagesEntity? messages;
 }

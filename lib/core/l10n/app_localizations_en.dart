@@ -357,6 +357,10 @@ class AppLocalizationsEn extends AppLocalizations {
       'Sold and fulfilled by our Licensed Pharmacy Partner(s) \"MEDIQ PHARMACY\". License No. : 05-352-0070-053618P';
 
   @override
+  String get pharmacyCheckoutPrescriptionNotice =>
+      'Prescription is required for some items. Customer representative will contact you shortly.';
+
+  @override
   String get pharmacyCheckoutDeliveryInfoMessage =>
       'Orders will be delivered within 3 hours between 8:00 AM and 8:00 PM. Orders placed after 8:00 PM will be delivered by 12PM the following day.';
 

@@ -10,6 +10,7 @@ import '../../../../core/preference/app_pref.dart';
 import '../../../../core/utils/auth_guard.dart';
 import '../../domain/entities/pharmacy_cart_item_entity.dart';
 import '../../domain/entities/pharmacy_cart_address_entity.dart';
+import '../../domain/entities/pharmacy_cart_messages_entity.dart';
 import '../../domain/entities/pharmacy_checkout_result_entity.dart';
 import '../../domain/entities/pharmacy_medicine_entity.dart';
 import '../../domain/entities/pharmacy_payment_breakdown_entity.dart';
@@ -199,6 +200,7 @@ class PharmacyCubit extends Cubit<PharmacyState> {
             cartItems: _mergePrescriptionUrls(cart.items),
             cartAddresses: cart.addresses,
             paymentBreakdown: cart.paymentBreakdown,
+            cartMessages: cart.messages ?? state.cartMessages,
           ),
         );
       },
@@ -290,6 +292,7 @@ class PharmacyCubit extends Cubit<PharmacyState> {
           prescriptionUrl: prescriptionUrl.trim(),
           paymentBreakdown: addResult.paymentBreakdown,
           failedPaymentUnifiedOrderId: addResult.failedPaymentUnifiedOrderId,
+          messages: addResult.messages,
         );
         return null;
       },
@@ -305,6 +308,7 @@ class PharmacyCubit extends Cubit<PharmacyState> {
     String prescriptionUrl = '',
     PharmacyPaymentBreakdownEntity? paymentBreakdown,
     int? failedPaymentUnifiedOrderId,
+    PharmacyCartMessagesEntity? messages,
   }) {
     if (hasProductList) {
       _setFailedPaymentUnifiedOrderId(failedPaymentUnifiedOrderId);
@@ -333,6 +337,7 @@ class PharmacyCubit extends Cubit<PharmacyState> {
             items: nextItems,
             fromApi: paymentBreakdown,
           ),
+          cartMessages: _nextCartMessages(messages),
         ),
       );
       return;
@@ -754,6 +759,7 @@ class PharmacyCubit extends Cubit<PharmacyState> {
                 items: nextItems,
                 fromApi: updateResult.paymentBreakdown,
               ),
+              cartMessages: _nextCartMessages(updateResult.messages),
             ),
           );
           return null;
@@ -831,5 +837,11 @@ class PharmacyCubit extends Cubit<PharmacyState> {
       subtotal: subtotal,
       total: subtotal,
     );
+  }
+
+  PharmacyCartMessagesEntity? _nextCartMessages(
+    PharmacyCartMessagesEntity? fromApi,
+  ) {
+    return fromApi ?? state.cartMessages;
   }
 }

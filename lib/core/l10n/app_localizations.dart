@@ -770,6 +770,12 @@ abstract class AppLocalizations {
   /// **'Sold and fulfilled by our Licensed Pharmacy Partner(s) \"MEDIQ PHARMACY\". License No. : 05-352-0070-053618P'**
   String get pharmacyCheckoutDisclaimerMessage;
 
+  /// No description provided for @pharmacyCheckoutPrescriptionNotice.
+  ///
+  /// In en, this message translates to:
+  /// **'Prescription is required for some items. Customer representative will contact you shortly.'**
+  String get pharmacyCheckoutPrescriptionNotice;
+
   /// No description provided for @pharmacyCheckoutDeliveryInfoMessage.
   ///
   /// In en, this message translates to:

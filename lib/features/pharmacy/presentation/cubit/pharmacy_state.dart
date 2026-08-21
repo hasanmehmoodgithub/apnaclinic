@@ -4,6 +4,7 @@ import '../../../../core/enums/state_status.dart';
 import '../../domain/entities/pharmacy_cart_address_entity.dart';
 import '../../domain/entities/pharmacy_cart_item_entity.dart';
 import '../../domain/entities/pharmacy_medicine_entity.dart';
+import '../../domain/entities/pharmacy_cart_messages_entity.dart';
 import '../../domain/entities/pharmacy_payment_breakdown_entity.dart';
 
 part 'pharmacy_state.freezed.dart';
@@ -33,6 +34,7 @@ abstract class PharmacyState with _$PharmacyState {
     PharmacyPaymentBreakdownEntity? paymentBreakdown,
     @Default(PharmacyPaymentMethod.jazzCash)
     PharmacyPaymentMethod selectedPaymentMethod,
+    PharmacyCartMessagesEntity? cartMessages,
   }) = _PharmacyState;
 }
 
@@ -53,6 +55,12 @@ extension PharmacyStateX on PharmacyState {
 
   /// `subtotal - discount + delivery_charges` from the cart API fields.
   double get total => (subtotal - discount) + deliveryCharges;
+
+  String? get freeDeliveryMessage {
+    final value = paymentBreakdown?.freeDeliveryMessage?.trim();
+    if (value == null || value.isEmpty) return null;
+    return value;
+  }
 
   /// API `discount_percentage` when present; otherwise `discount / subtotal`.
   double? get discountPercent {

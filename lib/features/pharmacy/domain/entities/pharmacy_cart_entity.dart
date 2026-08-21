@@ -1,5 +1,6 @@
 import 'pharmacy_cart_address_entity.dart';
 import 'pharmacy_cart_item_entity.dart';
+import 'pharmacy_cart_messages_entity.dart';
 import 'pharmacy_payment_breakdown_entity.dart';
 
 class PharmacyCartEntity {
@@ -9,6 +10,7 @@ class PharmacyCartEntity {
     this.paymentBreakdown,
     this.addresses = const [],
     this.failedPaymentUnifiedOrderId,
+    this.messages,
   });
 
   final String? bookingId;
@@ -18,4 +20,5 @@ class PharmacyCartEntity {
 
   /// From `data.failed_payment.unified_order_id` when a prior card payment failed.
   final int? failedPaymentUnifiedOrderId;
+  final PharmacyCartMessagesEntity? messages;
 }

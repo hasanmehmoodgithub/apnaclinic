@@ -581,6 +581,7 @@ class PharmacyCartResponseModel {
     this.paymentBreakdown,
     this.addresses = const [],
     this.failedPaymentUnifiedOrderId,
+    this.messages,
   });
 
   final bool success;
@@ -591,6 +592,7 @@ class PharmacyCartResponseModel {
   final PharmacyPaymentBreakdownModel? paymentBreakdown;
   final List<PharmacyCartAddressModel> addresses;
   final int? failedPaymentUnifiedOrderId;
+  final PharmacyCartMessagesModel? messages;
 
   factory PharmacyCartResponseModel.fromJson(Map<String, dynamic> json) {
     final payload = _unwrapCartPayload(json);
@@ -624,6 +626,9 @@ class PharmacyCartResponseModel {
           _parseFailedPaymentUnifiedOrderId(json['data'] is Map
               ? Map<String, dynamic>.from(json['data'] as Map)
               : json),
+      messages: PharmacyCartMessagesModel.fromJson(
+        payload['messages'] ?? payload['Messages'],
+      ),
     );
   }
 
@@ -638,18 +643,32 @@ class PharmacyCartResponseModel {
     Map<String, dynamic> payload,
   ) {
     final nested = payload['payment_breakdown'] ?? payload['paymentBreakdown'];
+    PharmacyPaymentBreakdownModel? model;
     if (nested is Map) {
-      return PharmacyPaymentBreakdownModel.fromJson(nested);
-    }
-    if (payload.containsKey('subtotal') ||
+      model = PharmacyPaymentBreakdownModel.fromJson(nested);
+    } else if (payload.containsKey('subtotal') ||
         payload.containsKey('delivery_charges') ||
         payload.containsKey('deliveryCharges') ||
         payload.containsKey('discount') ||
         payload.containsKey('discount_amount') ||
         payload.containsKey('total')) {
-      return PharmacyPaymentBreakdownModel.fromJson(payload);
+      model = PharmacyPaymentBreakdownModel.fromJson(payload);
     }
-    return null;
+    if (model == null) return null;
+    final message = _parseFreeDeliveryMessage(payload) ??
+        (nested is Map
+            ? _parseFreeDeliveryMessage(Map<String, dynamic>.from(nested))
+            : null);
+    if (message == null) return model;
+    return model.copyWith(freeDeliveryMessage: message);
+  }
+
+  static String? _parseFreeDeliveryMessage(Map<String, dynamic> payload) {
+    final raw =
+        payload['free_delivery_message'] ?? payload['freeDeliveryMessage'];
+    if (raw == null) return null;
+    final text = raw.toString().trim();
+    return text.isEmpty ? null : text;
   }
 
   static int? _parseInt(Object? value) {
@@ -700,6 +719,12 @@ class PharmacyCartResponseModel {
           outer['failedPayment'] ??
           json['failed_payment'] ??
           json['failedPayment'];
+      nested['free_delivery_message'] ??=
+          outer['free_delivery_message'] ??
+          outer['freeDeliveryMessage'] ??
+          json['free_delivery_message'] ??
+          json['freeDeliveryMessage'];
+      nested['messages'] ??= outer['messages'] ?? json['messages'];
       if (nested.containsKey('products') ||
           nested.containsKey('items') ||
           nested.containsKey('booking') ||
@@ -747,6 +772,7 @@ class PharmacyPaymentBreakdownModel {
     required this.total,
     required this.subtotal,
     this.discountPercent,
+    this.freeDeliveryMessage,
   });
 
   final double deliveryCharges;
@@ -754,6 +780,25 @@ class PharmacyPaymentBreakdownModel {
   final double total;
   final double subtotal;
   final double? discountPercent;
+  final String? freeDeliveryMessage;
+
+  PharmacyPaymentBreakdownModel copyWith({
+    double? deliveryCharges,
+    double? discount,
+    double? total,
+    double? subtotal,
+    double? discountPercent,
+    String? freeDeliveryMessage,
+  }) {
+    return PharmacyPaymentBreakdownModel(
+      deliveryCharges: deliveryCharges ?? this.deliveryCharges,
+      discount: discount ?? this.discount,
+      total: total ?? this.total,
+      subtotal: subtotal ?? this.subtotal,
+      discountPercent: discountPercent ?? this.discountPercent,
+      freeDeliveryMessage: freeDeliveryMessage ?? this.freeDeliveryMessage,
+    );
+  }
 
   static PharmacyPaymentBreakdownModel? fromJson(dynamic json) {
     if (json is! Map) return null;
@@ -792,6 +837,9 @@ class PharmacyPaymentBreakdownModel {
             map['discountPercent'] ??
             map['discount_pct'],
       ),
+      freeDeliveryMessage: PharmacyCartResponseModel._parseFreeDeliveryMessage(
+        map,
+      ),
     );
   }
 
@@ -807,5 +855,49 @@ class PharmacyPaymentBreakdownModel {
     if (value is num) return value.toDouble();
     final raw = value.toString().replaceAll(RegExp(r'[^\d.-]'), '');
     return double.tryParse(raw);
+  }
+}
+
+class PharmacyCartMessagesModel {
+  const PharmacyCartMessagesModel({
+    this.disclaimer,
+    this.prescriptionNotice,
+    this.deliveryNotice,
+    this.deliveryChargesNotice,
+  });
+
+  final String? disclaimer;
+  final String? prescriptionNotice;
+  final String? deliveryNotice;
+  final String? deliveryChargesNotice;
+
+  static PharmacyCartMessagesModel? fromJson(dynamic json) {
+    if (json is! Map) return null;
+    final map = Map<String, dynamic>.from(json);
+    final model = PharmacyCartMessagesModel(
+      disclaimer: _text(map['disclaimer']),
+      prescriptionNotice: _text(
+        map['prescription_notice'] ?? map['prescriptionNotice'],
+      ),
+      deliveryNotice: _text(
+        map['delivery_notice'] ?? map['deliveryNotice'],
+      ),
+      deliveryChargesNotice: _text(
+        map['delivery_charges_notice'] ?? map['deliveryChargesNotice'],
+      ),
+    );
+    if (model.disclaimer == null &&
+        model.prescriptionNotice == null &&
+        model.deliveryNotice == null &&
+        model.deliveryChargesNotice == null) {
+      return null;
+    }
+    return model;
+  }
+
+  static String? _text(dynamic value) {
+    if (value == null) return null;
+    final text = value.toString().trim();
+    return text.isEmpty ? null : text;
   }
 }

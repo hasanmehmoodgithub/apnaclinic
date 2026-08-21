@@ -357,6 +357,10 @@ class AppLocalizationsUr extends AppLocalizations {
       'فروخت اور ترسیل ہمارے لائسنس یافتہ فارمیسی پارٹنر(ز) \"MEDIQ PHARMACY\" کی جانب سے۔ لائسنس نمبر: 05-352-0070-053618P';
 
   @override
+  String get pharmacyCheckoutPrescriptionNotice =>
+      'کچھ اشیاء کے لیے نسخہ درکار ہے۔ نمائندہ جلد آپ سے رابطہ کرے گا۔';
+
+  @override
   String get pharmacyCheckoutDeliveryInfoMessage =>
       '8:00 صبح سے 8:00 شام کے درمیان موصول ہونے والے آرڈرز 3 گھنٹوں میں پہنچا دیے جائیں گے۔ 8:00 شام کے بعد موصول آرڈرز اگلے دن 12 بجے تک پہنچیں گے۔';
 

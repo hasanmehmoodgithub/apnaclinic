@@ -16,6 +16,7 @@ import '../../../payment/presentation/payment_navigation.dart';
 import '../cubit/pharmacy_cubit.dart';
 import '../cubit/pharmacy_state.dart';
 import '../pharmacy_navigation.dart';
+import 'pharmacy_checkout_notices_widget.dart';
 import 'pharmacy_checkout_widgets.dart';
 import 'pharmacy_error_dialog.dart';
 import 'pharmacy_order_placed_dialog.dart';
@@ -129,6 +130,7 @@ class PharmacyCheckoutBodyWidget extends StatelessWidget {
           previous.selectedCity != current.selectedCity ||
           previous.checkoutCities != current.checkoutCities ||
           previous.paymentBreakdown != current.paymentBreakdown ||
+          previous.cartMessages != current.cartMessages ||
           previous.selectedPaymentMethod != current.selectedPaymentMethod,
       builder: (context, state) {
         final cities = state.checkoutCities.isNotEmpty
@@ -176,6 +178,17 @@ class PharmacyCheckoutBodyWidget extends StatelessWidget {
                   ),
                 ),
                 Divider(height: 26.h, color: AppColors.clrD6DCE2),
+                if (state.freeDeliveryMessage != null) ...[
+                  Text(
+                    state.freeDeliveryMessage!,
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: AppColors.clr1FAFA3,
+                      fontSize: 12.sp,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  SizedBox(height: 6.h),
+                ],
                 PharmacySummaryRow(
                   title: l10n.pharmacyCheckoutDeliveryChargesLabel,
                   value: state.deliveryCharges,
@@ -258,17 +271,7 @@ class PharmacyCheckoutBodyWidget extends StatelessWidget {
                       ),
                 ),
                 SizedBox(height: 16.h),
-                PharmacyInfoCard(
-                  bgColor: AppColors.clrE9F4FC,
-                  title: l10n.pharmacyCheckoutDisclaimerTitle,
-                  message: l10n.pharmacyCheckoutDisclaimerMessage,
-                ),
-                SizedBox(height: 12.h),
-                PharmacyInfoCard(
-                  bgColor: AppColors.clrFCF5E9,
-                  message: l10n.pharmacyCheckoutDeliveryInfoMessage,
-                  footer: l10n.pharmacyCheckoutDeliveryInfoFooter,
-                ),
+                PharmacyCheckoutNoticesWidget(messages: state.cartMessages),
               ],
             ),
             Positioned(
