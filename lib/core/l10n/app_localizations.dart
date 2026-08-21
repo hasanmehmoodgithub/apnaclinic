@@ -644,6 +644,12 @@ abstract class AppLocalizations {
   /// **'Unable to update cart right now. Please try again.'**
   String get pharmacyCartUpdateFailed;
 
+  /// No description provided for @pharmacyCartBadgeOverflow.
+  ///
+  /// In en, this message translates to:
+  /// **'99+'**
+  String get pharmacyCartBadgeOverflow;
+
   /// No description provided for @pharmacyRemoveFromCart.
   ///
   /// In en, this message translates to:
@@ -719,7 +725,7 @@ abstract class AppLocalizations {
   /// No description provided for @pharmacyCheckoutDiscountLabel.
   ///
   /// In en, this message translates to:
-  /// **'Discount (8%)'**
+  /// **'Discount'**
   String get pharmacyCheckoutDiscountLabel;
 
   /// No description provided for @pharmacyCheckoutTotalLabel.

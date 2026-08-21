@@ -47,14 +47,20 @@ extension PharmacyStateX on PharmacyState {
 
   double get subtotal => paymentBreakdown?.subtotal ?? computedSubtotal;
 
-  double get discount =>
-      paymentBreakdown?.discount ?? (computedSubtotal * 0.08);
+  double get discount => paymentBreakdown?.discount ?? 0;
 
-  double get deliveryCharges =>
-      paymentBreakdown?.deliveryCharges ?? (cartItems.isEmpty ? 0 : 250);
+  double get deliveryCharges => paymentBreakdown?.deliveryCharges ?? 0;
 
-  double get total =>
-      paymentBreakdown?.total ?? ((subtotal - discount) + deliveryCharges);
+  /// `subtotal - discount + delivery_charges` from the cart API fields.
+  double get total => (subtotal - discount) + deliveryCharges;
 
-  double? get discountPercent => paymentBreakdown?.discountPercent;
+  /// API `discount_percentage` when present; otherwise `discount / subtotal`.
+  double? get discountPercent {
+    final fromApi = paymentBreakdown?.discountPercent;
+    if (fromApi != null) return fromApi;
+    if (discount > 0 && subtotal > 0) {
+      return (discount / subtotal) * 100;
+    }
+    return null;
+  }
 }

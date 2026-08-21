@@ -14,12 +14,14 @@ class MenuProfileCard extends StatelessWidget {
     required this.phone,
     required this.onActionTap,
     this.imageUrl,
+    this.imageCacheKey,
   });
 
   final bool isLoggedIn;
   final String name;
   final String phone;
   final String? imageUrl;
+  final String? imageCacheKey;
   final VoidCallback onActionTap;
 
   @override
@@ -52,7 +54,9 @@ class MenuProfileCard extends StatelessWidget {
         height: 1.15,
       ),
       leading: UserProfileAvatar(
+        key: ValueKey(imageCacheKey ?? imageUrl ?? 'menu-avatar'),
         imageUrl: imageUrl,
+        cacheKey: imageCacheKey,
         size: 52,
       ),
       trailing: OutlinedButton(

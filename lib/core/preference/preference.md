@@ -34,8 +34,6 @@ static const String token = 'auth_token$prefVersion';
 
 **Feature city prefs:** `AppPrefKeys.labTestSelectedCity`, `AppPrefKeys.surgerySelectedCity` — last city chosen in Lab Test / Surgery lists.
 
-**Pharmacy pending card payment:** `AppPrefKeys.pharmacyPendingPaymentOrderId`, `AppPrefKeys.pharmacyPendingPaymentUnifiedOrderId` — saved after CARD checkout returns a payment URL; cleared on payment success or order abandon.
-
 **Adding New Keys:**
 ```dart
 // In app_pref_keys.dart

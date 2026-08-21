@@ -290,6 +290,9 @@ class AppLocalizationsEn extends AppLocalizations {
       'Unable to update cart right now. Please try again.';
 
   @override
+  String get pharmacyCartBadgeOverflow => '99+';
+
+  @override
   String get pharmacyRemoveFromCart => 'Remove from cart';
 
   @override
@@ -329,7 +332,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pharmacyCheckoutDeliveryChargesLabel => 'Delivery Charges';
 
   @override
-  String get pharmacyCheckoutDiscountLabel => 'Discount (8%)';
+  String get pharmacyCheckoutDiscountLabel => 'Discount';
 
   @override
   String get pharmacyCheckoutTotalLabel => 'Total';

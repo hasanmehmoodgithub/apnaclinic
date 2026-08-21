@@ -14,6 +14,7 @@ import '../../../../core/preference/app_pref.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/session/auth_session_refresh.dart';
 import '../../../../core/widgets/heart_loader_widget.dart';
+import '../../../../core/widgets/user_profile_avatar.dart';
 import '../../../notification/presentation/widgets/profile_setup_loading_shimmer.dart';
 import '../../domain/models/profile_setup_data.dart';
 import '../cubit/profile_setup_cubit.dart';
@@ -273,6 +274,11 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
     if (!mounted || !success) return;
     if (isUpdateMode) {
       await context.read<ProfileSetupCubit>().loadProfile();
+      if (!mounted) return;
+      await UserProfileAvatar.evictCachedUrl(
+        appPref.getUserLocalModel()?.imageUrl,
+      );
+      sl<AuthSessionRefresh>().notifyProfileUpdated();
       if (!mounted) return;
       if (context.canPop()) {
         context.pop(true);

@@ -32,6 +32,7 @@ class ApnaClinicAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.showLoginButton = false,
     this.filledLoginButton = false,
     this.profileImageUrl,
+    this.profileImageCacheKey,
     this.bottom,
   });
 
@@ -50,6 +51,7 @@ class ApnaClinicAppBar extends StatelessWidget implements PreferredSizeWidget {
   final bool showLoginButton;
   final bool filledLoginButton;
   final String? profileImageUrl;
+  final String? profileImageCacheKey;
   final PreferredSizeWidget? bottom;
 
 
@@ -229,7 +231,13 @@ class ApnaClinicAppBar extends StatelessWidget implements PreferredSizeWidget {
                             child: Padding(
                               padding: EdgeInsets.all(6.sp),
                               child: UserProfileAvatar(
+                                key: ValueKey(
+                                  profileImageCacheKey ??
+                                      profileImageUrl ??
+                                      'home-avatar',
+                                ),
                                 imageUrl: profileImageUrl,
+                                cacheKey: profileImageCacheKey,
                                 size: 40.r,
                               ),
                             ),

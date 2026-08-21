@@ -185,7 +185,7 @@ class AppUrls {
 
   /// Pharmacy active cart (POST).
   static String get pharmacyCart =>
-      '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/partner/pharmacy/cart/active';
+      '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/partner/pharmacy/cart/details';
 
   /// Pharmacy add-to-cart (POST).
   static String get pharmacyAddToCart =>

@@ -87,7 +87,6 @@ class PharmacyCheckoutBodyWidget extends StatelessWidget {
           return;
         }
 
-        await cubit.clearPendingCardPayment();
         if (!context.mounted) return;
         cubit.clearCart();
         await showPharmacyOrderPlacedDialog(
@@ -184,9 +183,7 @@ class PharmacyCheckoutBodyWidget extends StatelessWidget {
                   padding: EdgeInsets.symmetric(vertical: 2.h),
                 ),
                 PharmacySummaryRow(
-                  title: state.discountPercent != null
-                      ? '${l10n.labTestCheckoutDiscountLabel} (${state.discountPercent!.toStringAsFixed(0)}%)'
-                      : l10n.pharmacyCheckoutDiscountLabel,
+                  title: _discountTitle(l10n, state),
                   value: state.discount,
                   isBold: true,
                   padding: EdgeInsets.symmetric(vertical: 2.h),
@@ -293,5 +290,13 @@ class PharmacyCheckoutBodyWidget extends StatelessWidget {
         );
       },
     );
+  }
+
+  String _discountTitle(AppLocalizations l10n, PharmacyState state) {
+    final percent = state.discountPercent;
+    if (percent != null && percent > 0) {
+      return '${l10n.pharmacyCheckoutDiscountLabel} (${percent.toStringAsFixed(0)}%)';
+    }
+    return l10n.pharmacyCheckoutDiscountLabel;
   }
 }

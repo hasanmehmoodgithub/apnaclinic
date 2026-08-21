@@ -108,7 +108,6 @@ void initPharmacyInjector() {
           sl<UploadPharmacyPrescriptionUseCase>(),
       pharmacyCheckoutUseCase: sl<PharmacyCheckoutUseCase>(),
       abandonPharmacyOrderUseCase: sl<AbandonPharmacyOrderUseCase>(),
-      getPharmacyBookingsUseCase: sl<GetPharmacyBookingsUseCase>(),
       getPharmacyProfileAddressesUseCase:
           sl<GetPharmacyProfileAddressesUseCase>(),
       addPharmacyProfileAddressUseCase: sl<AddPharmacyProfileAddressUseCase>(),

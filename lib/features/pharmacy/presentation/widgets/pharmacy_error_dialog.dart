@@ -31,10 +31,12 @@ Future<void> showPharmacyErrorDialog(
       secondaryLabel:
           showAbandon ? l10n.pharmacyAbandonUnpaidOrderCta : null,
       onSecondary: showAbandon
-          ? () => _onAbandonUnpaidOrder(
+          ? () {
+              _onAbandonUnpaidOrder(
                 pageContext: context,
                 dialogContext: dialogContext,
-              )
+              );
+            }
           : null,
     ),
   );
@@ -45,15 +47,15 @@ Future<void> _onAbandonUnpaidOrder({
   required BuildContext dialogContext,
 }) async {
   final cubit = pageContext.read<PharmacyCubit>();
-  final navigator = Navigator.of(dialogContext, rootNavigator: true);
+  final rootNav = Navigator.of(dialogContext, rootNavigator: true);
+  if (rootNav.canPop()) rootNav.pop();
 
+  if (!pageContext.mounted) return;
   if (!HeartLoaderDialogController.isOpen(_kAbandonLoaderId)) {
-    showHeartLoaderDialog(dialogContext, id: _kAbandonLoaderId, size: 120);
+    showHeartLoaderDialog(pageContext, id: _kAbandonLoaderId, size: 120);
   }
   final result = await cubit.abandonPendingPaymentOrder();
   HeartLoaderDialogController.close(_kAbandonLoaderId);
-
-  if (navigator.canPop()) navigator.pop();
 
   await result.fold(
     (error) async {

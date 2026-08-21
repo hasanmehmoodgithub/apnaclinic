@@ -171,6 +171,7 @@ static const Color clrf4f4f4  = Color(0xFFF4F4F4);
   static const Color clrD5D5D5 = Color(0xFFD5D5D5);
   static const Color clr15A9A0 = Color(0xFF15A9A0);
   static const Color clrFBDEDE = Color(0xFFFBDEDE);
+  static const Color clrFFF8F8 = Color(0xFFFFF8F8);
   static const Color clrBA2025 = Color(0xFFBA2025);
   static const Color clrFFC233 = Color(0xFFFFC233);
   static const Color clrFFF4E5 = Color(0xFFFFF4E5);

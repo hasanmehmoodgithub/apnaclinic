@@ -18,11 +18,27 @@ import '../data_sources/pharmacy_remote_data_source.dart';
 import '../mappers/pharmacy_bookings_mapper.dart';
 import '../mappers/pharmacy_medicine_mapper.dart';
 import '../models/pharmacy_medicine_model.dart';
+import '../pharmacy_cart_api_failure.dart';
 
 class PharmacyRepositoryImpl implements PharmacyRepository {
   PharmacyRepositoryImpl({required this.remoteDataSource});
 
   final PharmacyRemoteDataSource remoteDataSource;
+  int? _failedPaymentUnifiedOrderId;
+
+  @override
+  int? consumeFailedPaymentUnifiedOrderId() {
+    final id = _failedPaymentUnifiedOrderId;
+    _failedPaymentUnifiedOrderId = null;
+    return id;
+  }
+
+  void _rememberFailedPayment(Object error) {
+    if (error is! PharmacyCartApiFailure) return;
+    final id = error.failedPaymentUnifiedOrderId ?? 0;
+    if (id == 0) return;
+    _failedPaymentUnifiedOrderId = id;
+  }
 
   @override
   Future<Either<ErrorMsg, PharmacyProductsPageEntity>> getPharmacyProducts({
@@ -66,6 +82,7 @@ class PharmacyRepositoryImpl implements PharmacyRepository {
       log('Mapped pharmacy cart count: ${entity.items.length}');
       return Right(entity);
     } catch (e) {
+      _rememberFailedPayment(e);
       return Left(e.toString());
     }
   }
@@ -85,6 +102,7 @@ class PharmacyRepositoryImpl implements PharmacyRepository {
       log('Mapped add-to-cart bookingId: ${entity.bookingId}');
       return Right(entity);
     } catch (e) {
+      _rememberFailedPayment(e);
       return Left(e.toString());
     }
   }
@@ -104,6 +122,7 @@ class PharmacyRepositoryImpl implements PharmacyRepository {
       log('Mapped update-cart bookingId: ${entity.bookingId}');
       return Right(entity);
     } catch (e) {
+      _rememberFailedPayment(e);
       return Left(e.toString());
     }
   }

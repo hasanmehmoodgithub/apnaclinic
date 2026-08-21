@@ -22,6 +22,10 @@ abstract class PharmacyRepository {
   });
 
   Future<Either<ErrorMsg, PharmacyCartEntity>> getPharmacyCart();
+
+  /// Last `failed_payment.unified_order_id` parsed from a cart API error body.
+  int? consumeFailedPaymentUnifiedOrderId();
+
   Future<Either<ErrorMsg, PharmacyAddToCartResultEntity>> addToCart({
     required String medicineId,
     required int quantity,

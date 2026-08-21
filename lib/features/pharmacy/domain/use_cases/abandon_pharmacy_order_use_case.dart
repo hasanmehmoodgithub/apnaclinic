@@ -4,16 +4,13 @@ import '../repositories/pharmacy_repository.dart';
 
 class AbandonPharmacyOrderParams {
   const AbandonPharmacyOrderParams({
-    required this.orderId,
-    required this.unifiedOrderId,
+    this.unifiedOrderId,
   });
 
-  final String orderId;
-  final int unifiedOrderId;
+  final int? unifiedOrderId;
 
   Map<String, dynamic> toJson() => <String, dynamic>{
-        'order_id': orderId,
-        'unified_order_id': unifiedOrderId,
+        'unified_order_id': unifiedOrderId ?? 0,
       };
 }
 

@@ -3,6 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
+import '../../../../core/l10n/app_localizations.dart';
 import '../../../../generated/assets.dart';
 
 class PharmacyCartIconWithCount extends StatelessWidget {
@@ -26,9 +27,11 @@ class PharmacyCartIconWithCount extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
     final containerSize = iconContainerSize ?? 32.r;
     final basketIconSize = iconSize ?? 16.r;
-    final badgeExtraSpace = 6.r;
+    final isOverflow = cartCount > 99;
+    final badgeExtraSpace = isOverflow ? 10.r : 6.r;
 
     return SizedBox(
       width: containerSize + badgeExtraSpace,
@@ -68,17 +71,22 @@ class PharmacyCartIconWithCount extends StatelessWidget {
               right: badgeRightOffset ?? 1.r,
               top: badgeTopOffset ?? 1.r,
               child: Container(
-                width: 16.r,
-                height: 16.r,
+                constraints: BoxConstraints(
+                  minWidth: 16.r,
+                  minHeight: 16.r,
+                ),
+                padding: EdgeInsets.symmetric(
+                  horizontal: isOverflow ? 3.w : 0,
+                ),
                 alignment: Alignment.center,
-                decoration: const BoxDecoration(
+                decoration: BoxDecoration(
                   color: AppColors.clrRed,
-                  shape: BoxShape.circle,
+                  borderRadius: BorderRadius.circular(8.r),
                 ),
                 child: Text(
-                  cartCount > 99 ? '99' : '$cartCount',
+                  isOverflow ? l10n.pharmacyCartBadgeOverflow : '$cartCount',
                   maxLines: 1,
-                  overflow: TextOverflow.clip,
+                  overflow: TextOverflow.visible,
                   textAlign: TextAlign.center,
                   style: theme.textTheme.labelSmall?.copyWith(
                     color: AppColors.clrWhite,

@@ -72,7 +72,9 @@ class ProfileSetupRepositoryImpl implements ProfileSetupRepository {
         email: entity.email,
         address: entity.address,
         dateOfBirth: entity.dateOfBirth?.toIso8601String() ?? '',
-        imageUrl: entity.imageUrl ?? '',
+        imageUrl: (entity.imageUrl != null && entity.imageUrl!.trim().isNotEmpty)
+            ? entity.imageUrl!.trim()
+            : existing.imageUrl,
         apiUserId: apiUserId.isNotEmpty ? apiUserId : existing.apiUserId,
         phone: resolvedPhone != null && resolvedPhone.isNotEmpty
             ? PhoneFormatUtils.toLocalDisplay(resolvedPhone)

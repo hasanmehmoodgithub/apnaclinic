@@ -7,17 +7,15 @@ import '../../../../core/constants/app_strings.dart';
 import '../../../../core/enums/state_status.dart';
 import '../../../../core/functional/functional_export.dart';
 import '../../../../core/preference/app_pref.dart';
-import '../../../../core/preference/app_pref_keys.dart';
 import '../../../../core/utils/auth_guard.dart';
-import '../../domain/entities/pharmacy_cart_entity.dart';
 import '../../domain/entities/pharmacy_cart_item_entity.dart';
 import '../../domain/entities/pharmacy_cart_address_entity.dart';
 import '../../domain/entities/pharmacy_checkout_result_entity.dart';
 import '../../domain/entities/pharmacy_medicine_entity.dart';
+import '../../domain/entities/pharmacy_payment_breakdown_entity.dart';
 import '../../domain/use_cases/abandon_pharmacy_order_use_case.dart';
 import '../../domain/use_cases/add_pharmacy_profile_address_use_case.dart';
 import '../../domain/use_cases/add_to_cart_use_case.dart';
-import '../../domain/use_cases/get_pharmacy_bookings_use_case.dart';
 import '../../domain/use_cases/get_pharmacy_cart_use_case.dart';
 import '../../domain/use_cases/get_pharmacy_medicines_use_case.dart';
 import '../../domain/use_cases/get_pharmacy_product_detail_use_case.dart';
@@ -37,7 +35,6 @@ class PharmacyCubit extends Cubit<PharmacyState> {
     required this.uploadPharmacyPrescriptionUseCase,
     required this.pharmacyCheckoutUseCase,
     required this.abandonPharmacyOrderUseCase,
-    required this.getPharmacyBookingsUseCase,
     required this.getPharmacyProfileAddressesUseCase,
     required this.addPharmacyProfileAddressUseCase,
     required this.citiesRepository,
@@ -54,15 +51,13 @@ class PharmacyCubit extends Cubit<PharmacyState> {
   final UploadPharmacyPrescriptionUseCase uploadPharmacyPrescriptionUseCase;
   final PharmacyCheckoutUseCase pharmacyCheckoutUseCase;
   final AbandonPharmacyOrderUseCase abandonPharmacyOrderUseCase;
-  final GetPharmacyBookingsUseCase getPharmacyBookingsUseCase;
   final GetPharmacyProfileAddressesUseCase getPharmacyProfileAddressesUseCase;
   final AddPharmacyProfileAddressUseCase addPharmacyProfileAddressUseCase;
   final CitiesRepository citiesRepository;
   final AppPref appPref;
 
-  /// In-session fallback when prefs were not written (e.g. older checkout).
-  String? _pendingPaymentOrderId;
-  int? _pendingPaymentUnifiedOrderId;
+  /// From last cart / qty-update `failed_payment.unified_order_id`.
+  int? _failedPaymentUnifiedOrderId;
 
   /// Backend locks cart while an unpaid card checkout is in flight.
   static bool isPaymentInProgressCartError(String message) {
@@ -73,30 +68,6 @@ class PharmacyCubit extends Cubit<PharmacyState> {
         ) ||
         (normalized.contains('resolve your payment') &&
             normalized.contains('modifying your cart'));
-  }
-
-  bool get hasPendingCardPaymentOrder {
-    final orderId = _resolvePendingOrderId();
-    return orderId.isNotEmpty || (_resolvePendingUnifiedOrderId() != 0);
-  }
-
-  String _resolvePendingOrderId() {
-    final fromPref =
-        (appPref.getString(AppPrefKeys.pharmacyPendingPaymentOrderId) ?? '')
-            .trim();
-    if (fromPref.isNotEmpty) return fromPref;
-    final fromMemory = (_pendingPaymentOrderId ?? '').trim();
-    if (fromMemory.isNotEmpty) return fromMemory;
-    return (state.cartBookingId ?? '').trim();
-  }
-
-  int _resolvePendingUnifiedOrderId() {
-    final fromPref =
-        appPref.getInt(AppPrefKeys.pharmacyPendingPaymentUnifiedOrderId);
-    if (fromPref != null && fromPref != 0) return fromPref;
-    final fromMemory = _pendingPaymentUnifiedOrderId;
-    if (fromMemory != null && fromMemory != 0) return fromMemory;
-    return 0;
   }
 
   Future<void> loadMedicines({bool refresh = false}) async {
@@ -217,8 +188,11 @@ class PharmacyCubit extends Cubit<PharmacyState> {
     if (isClosed) return;
 
     await result.fold(
-      (_) async {},
+      (_) async {
+        _captureFailedPaymentId();
+      },
       (cart) async {
+        _setFailedPaymentUnifiedOrderId(cart.failedPaymentUnifiedOrderId);
         emit(
           state.copyWith(
             cartBookingId: cart.bookingId,
@@ -227,35 +201,20 @@ class PharmacyCubit extends Cubit<PharmacyState> {
             paymentBreakdown: cart.paymentBreakdown,
           ),
         );
-        if (cart.isAwaitingPayment) {
-          await _syncPendingPaymentFromCart(cart);
-        }
       },
     );
   }
 
-  Future<void> _syncPendingPaymentFromCart(PharmacyCartEntity cart) async {
-    final orderId = (cart.orderId ?? cart.bookingId ?? '').trim();
-    final unified = cart.unifiedOrderId ?? 0;
-    if (orderId.isEmpty && unified == 0) return;
+  void _setFailedPaymentUnifiedOrderId(int? unifiedOrderId) {
+    final id = unifiedOrderId ?? 0;
+    if (id == 0) return;
+    _failedPaymentUnifiedOrderId = id;
+  }
 
-    _pendingPaymentOrderId =
-        orderId.isNotEmpty ? orderId : _pendingPaymentOrderId;
-    _pendingPaymentUnifiedOrderId =
-        unified != 0 ? unified : _pendingPaymentUnifiedOrderId;
-
-    if (orderId.isNotEmpty) {
-      await appPref.setString(
-        AppPrefKeys.pharmacyPendingPaymentOrderId,
-        orderId,
-      );
-    }
-    if (unified != 0) {
-      await appPref.setInt(
-        AppPrefKeys.pharmacyPendingPaymentUnifiedOrderId,
-        unified,
-      );
-    }
+  void _captureFailedPaymentId() {
+    final id = getPharmacyCartUseCase.consumeFailedPaymentUnifiedOrderId();
+    if (id == null || id == 0) return;
+    _setFailedPaymentUnifiedOrderId(id);
   }
 
   /// Uploads prescription file; returns URL on success, null on failure.
@@ -317,7 +276,10 @@ class PharmacyCubit extends Cubit<PharmacyState> {
     if (isClosed) return AppStrings.pharmacyLoadError;
 
     return result.fold(
-      (error) => error,
+      (error) {
+        _captureFailedPaymentId();
+        return error;
+      },
       (addResult) {
         _applyAddToCartResult(
           medicine: medicine,
@@ -326,6 +288,8 @@ class PharmacyCubit extends Cubit<PharmacyState> {
           items: addResult.items,
           hasProductList: addResult.hasProductList,
           prescriptionUrl: prescriptionUrl.trim(),
+          paymentBreakdown: addResult.paymentBreakdown,
+          failedPaymentUnifiedOrderId: addResult.failedPaymentUnifiedOrderId,
         );
         return null;
       },
@@ -339,7 +303,12 @@ class PharmacyCubit extends Cubit<PharmacyState> {
     required List<PharmacyCartItemEntity> items,
     required bool hasProductList,
     String prescriptionUrl = '',
+    PharmacyPaymentBreakdownEntity? paymentBreakdown,
+    int? failedPaymentUnifiedOrderId,
   }) {
+    if (hasProductList) {
+      _setFailedPaymentUnifiedOrderId(failedPaymentUnifiedOrderId);
+    }
     final nextBookingId =
         (bookingId != null && bookingId.trim().isNotEmpty)
         ? bookingId.trim()
@@ -360,7 +329,10 @@ class PharmacyCubit extends Cubit<PharmacyState> {
         state.copyWith(
           cartBookingId: nextBookingId,
           cartItems: nextItems,
-          paymentBreakdown: null,
+          paymentBreakdown: _nextPaymentBreakdown(
+            items: nextItems,
+            fromApi: paymentBreakdown,
+          ),
         ),
       );
       return;
@@ -389,7 +361,7 @@ class PharmacyCubit extends Cubit<PharmacyState> {
       state.copyWith(
         cartBookingId: nextBookingId,
         cartItems: cartItems,
-        paymentBreakdown: null,
+        paymentBreakdown: _nextPaymentBreakdown(items: cartItems),
       ),
     );
   }
@@ -473,6 +445,7 @@ class PharmacyCubit extends Cubit<PharmacyState> {
   }
 
   void clearCart() {
+    _failedPaymentUnifiedOrderId = null;
     emit(
       state.copyWith(
         cartBookingId: null,
@@ -483,97 +456,32 @@ class PharmacyCubit extends Cubit<PharmacyState> {
     );
   }
 
-  Future<void> rememberPendingCardPayment(
-    PharmacyCheckoutResultEntity checkout,
-  ) async {
-    if (!checkout.requiresCardPayment) return;
-    final orderId = checkout.abandonOrderId;
-    final unifiedId = checkout.unifiedOrderId ?? 0;
-    if (orderId.isEmpty && unifiedId == 0) return;
-
-    _pendingPaymentOrderId = orderId.isNotEmpty ? orderId : null;
-    _pendingPaymentUnifiedOrderId = unifiedId != 0 ? unifiedId : null;
-
-    if (orderId.isNotEmpty) {
-      await appPref.setString(
-        AppPrefKeys.pharmacyPendingPaymentOrderId,
-        orderId,
-      );
-    }
-    await appPref.setInt(
-      AppPrefKeys.pharmacyPendingPaymentUnifiedOrderId,
-      unifiedId,
-    );
-    log(
-      'rememberPendingCardPayment orderId=$orderId unifiedOrderId=$unifiedId',
-    );
-  }
-
-  Future<void> clearPendingCardPayment() async {
-    _pendingPaymentOrderId = null;
-    _pendingPaymentUnifiedOrderId = null;
-    await appPref.remove(AppPrefKeys.pharmacyPendingPaymentOrderId);
-    await appPref.remove(AppPrefKeys.pharmacyPendingPaymentUnifiedOrderId);
+  void clearPendingCardPayment() {
+    _failedPaymentUnifiedOrderId = null;
   }
 
   Future<Either<ErrorMsg, bool>> abandonPendingPaymentOrder() async {
-    var orderId = _resolvePendingOrderId();
-    var unifiedOrderId = _resolvePendingUnifiedOrderId();
-
-    if (orderId.isEmpty && unifiedOrderId == 0) {
-      final recovered = await _recoverPendingPaymentIdsFromBookings();
-      orderId = recovered.$1;
-      unifiedOrderId = recovered.$2;
+    var unifiedOrderId = _failedPaymentUnifiedOrderId;
+    if (unifiedOrderId == null || unifiedOrderId == 0) {
+      await loadCart();
+      _captureFailedPaymentId();
+      unifiedOrderId = _failedPaymentUnifiedOrderId;
+      if (unifiedOrderId == 0) unifiedOrderId = null;
     }
 
     log(
-      'abandonPendingPaymentOrder orderId=$orderId unifiedOrderId=$unifiedOrderId',
+      'POST pharmacyOrderAbandon unified_order_id=${unifiedOrderId ?? 0}',
     );
 
     final result = await abandonPharmacyOrderUseCase(
-      AbandonPharmacyOrderParams(
-        orderId: orderId,
-        unifiedOrderId: unifiedOrderId,
-      ),
+      AbandonPharmacyOrderParams(unifiedOrderId: unifiedOrderId),
     );
     if (isClosed) return result;
     if (result.isLeft) return result;
 
-    await clearPendingCardPayment();
+    clearPendingCardPayment();
     await loadCart();
     return const Right(true);
-  }
-
-  /// Last-resort: find an in-flight pharmacy booking to abandon.
-  Future<(String, int)> _recoverPendingPaymentIdsFromBookings() async {
-    final result = await getPharmacyBookingsUseCase(
-      const GetPharmacyBookingsParams(page: 1, limit: 20),
-    );
-    return result.fold(
-      (_) => ('', 0),
-      (page) {
-        for (final booking in page.items) {
-          final status = booking.status.trim().toUpperCase();
-          final isPending = status.contains('PAYMENT') ||
-              status.contains('PENDING') ||
-              status.contains('AWAITING');
-          if (!isPending) continue;
-
-          final orderId = booking.orderId.trim().isNotEmpty
-              ? booking.orderId.trim()
-              : booking.orderNo.trim();
-          final unified = int.tryParse(booking.orderId.trim()) ??
-              int.tryParse(booking.orderNo.trim()) ??
-              0;
-          if (orderId.isEmpty && unified == 0) continue;
-
-          _pendingPaymentOrderId = orderId.isNotEmpty ? orderId : null;
-          _pendingPaymentUnifiedOrderId = unified != 0 ? unified : null;
-          return (orderId, unified);
-        }
-        return ('', 0);
-      },
-    );
   }
 
   Future<Either<ErrorMsg, PharmacyCheckoutResultEntity>> checkoutOrder({
@@ -638,14 +546,6 @@ class PharmacyCubit extends Cubit<PharmacyState> {
       ),
     );
 
-    await checkoutResult.fold(
-      (_) async {},
-      (checkout) async {
-        if (checkout.requiresCardPayment) {
-          await rememberPendingCardPayment(checkout);
-        }
-      },
-    );
     return checkoutResult;
   }
 
@@ -827,6 +727,7 @@ class PharmacyCubit extends Cubit<PharmacyState> {
     return result.fold(
       (error) {
         log('updateCartQuantity failed: $error');
+        _captureFailedPaymentId();
         return error;
       },
       (updateResult) {
@@ -841,14 +742,27 @@ class PharmacyCubit extends Cubit<PharmacyState> {
         // must not wipe the local cart.
         if (updateResult.hasProductList &&
             (updateResult.items.isNotEmpty || quantity <= 0)) {
+          _setFailedPaymentUnifiedOrderId(
+            updateResult.failedPaymentUnifiedOrderId,
+          );
+          final nextItems = _mergePrescriptionUrls(updateResult.items);
           emit(
             state.copyWith(
               cartBookingId: nextBookingId,
-              cartItems: updateResult.items,
-              paymentBreakdown: null,
+              cartItems: nextItems,
+              paymentBreakdown: _nextPaymentBreakdown(
+                items: nextItems,
+                fromApi: updateResult.paymentBreakdown,
+              ),
             ),
           );
           return null;
+        }
+
+        if (updateResult.failedPaymentUnifiedOrderId != null) {
+          _setFailedPaymentUnifiedOrderId(
+            updateResult.failedPaymentUnifiedOrderId,
+          );
         }
 
         _applyLocalQuantityUpdate(
@@ -878,7 +792,7 @@ class PharmacyCubit extends Cubit<PharmacyState> {
         emit(
           state.copyWith(
             cartBookingId: nextBookingId,
-            paymentBreakdown: null,
+            paymentBreakdown: _nextPaymentBreakdown(items: state.cartItems),
           ),
         );
       }
@@ -895,8 +809,27 @@ class PharmacyCubit extends Cubit<PharmacyState> {
       state.copyWith(
         cartBookingId: nextBookingId,
         cartItems: items,
-        paymentBreakdown: null,
+        paymentBreakdown: _nextPaymentBreakdown(items: items),
       ),
+    );
+  }
+
+  /// Prefer cart API `delivery_charges` / `discount`; otherwise keep last API
+  /// values and recompute `total = subtotal - discount + delivery`.
+  PharmacyPaymentBreakdownEntity? _nextPaymentBreakdown({
+    required List<PharmacyCartItemEntity> items,
+    PharmacyPaymentBreakdownEntity? fromApi,
+  }) {
+    if (fromApi != null) return fromApi;
+    if (items.isEmpty) return null;
+    final subtotal = items.fold<double>(0, (sum, item) => sum + item.total);
+    final previous = state.paymentBreakdown;
+    if (previous != null) return previous.withSubtotal(subtotal);
+    return PharmacyPaymentBreakdownEntity(
+      deliveryCharges: 0,
+      discount: 0,
+      subtotal: subtotal,
+      total: subtotal,
     );
   }
 }

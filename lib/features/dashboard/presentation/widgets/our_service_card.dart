@@ -73,13 +73,13 @@ class OurServiceCardWidget extends StatelessWidget {
             Text(
               title,
               textAlign: TextAlign.center,
-              maxLines: 2,
+              maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: theme.textTheme.titleSmall?.copyWith(
-                fontWeight: FontWeight.w700,
+                fontWeight: FontWeight.w600,
                 color: AppColors.clr09,
                 fontSize: DashboardUiConfig.serviceCardTitleFontSize.sp,
-                height: 1.2,
+                height: 1,
               ),
             ),
           ],

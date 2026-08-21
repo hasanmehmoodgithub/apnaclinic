@@ -10,11 +10,20 @@ class UserProfileAvatar extends StatelessWidget {
     this.imageUrl,
     required this.size,
     this.fit = BoxFit.cover,
+    this.cacheKey,
   });
 
   final String? imageUrl;
   final double size;
   final BoxFit fit;
+  /// Busts [CachedNetworkImage] when the remote file is replaced at the same URL.
+  final String? cacheKey;
+
+  static Future<void> evictCachedUrl(String? imageUrl) async {
+    final url = imageUrl?.trim() ?? '';
+    if (url.isEmpty) return;
+    await CachedNetworkImage.evictFromCache(url);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,6 +44,9 @@ class UserProfileAvatar extends StatelessWidget {
           child: hasNetworkImage
               ? CachedNetworkImage(
                   imageUrl: url,
+                  cacheKey: cacheKey?.trim().isNotEmpty == true
+                      ? cacheKey!.trim()
+                      : url,
                   width: size,
                   height: size,
                   fit: fit,

@@ -17,6 +17,7 @@ Browse lab tests, booking/cart flow, payment details checkout, and order view de
   - Summary card (`LabTestCheckoutSummaryCardWidget`): bordered card with lab logo, test title, lab name, sample type label + pill / method pill, fee + strikethrough **only when original price differs from discounted**, partner logo.
   - Payment breakdown: section title, fee/discount rows, divider, gray total bar (not a nested shadow card).
   - Patient details: **before Edit** = read-only rows with **Edit**; **after Edit** = form with **Done**. Emergency contact always below (required; accepts 10-digit landline or 11-digit mobile).
+  - Required-fields / invalid-phone errors above the CTA use `LabTestCheckoutErrorBannerWidget` (light-pink background + info icon), not plain red text.
   - Bottom CTA has no separate white bar behind the button. Panel top radius `20`.
 - On open, `LabTestCubit.bootstrap()` reads `AppPrefKeys.labTestSelectedCity`, loads cities, then immediately calls the lab tests API when a saved city resolves to a `cityId`; first visit without a saved city auto-opens the city selection dialog (tests load after pick).
 - Booking detail load shows the shared heart loader (`showHeartLoaderDialog`); failure renders the shared `EmptyBookingWidget` with the API message and a retry CTA.

@@ -9,12 +9,13 @@ import '../constants/dashboard_ui_config.dart';
 import 'home_header_search_field.dart';
 
 class HomeHeaderSection extends StatelessWidget {
-  const   HomeHeaderSection({
+  const HomeHeaderSection({
     super.key,
     required this.userName,
     required this.isLoggedIn,
     required this.hasUnreadNotifications,
     this.profileImageUrl,
+    this.profileImageCacheKey,
     this.onMenuTap,
     this.onNotificationTap,
     this.onLoginTap,
@@ -27,6 +28,7 @@ class HomeHeaderSection extends StatelessWidget {
   final bool isLoggedIn;
   final bool hasUnreadNotifications;
   final String? profileImageUrl;
+  final String? profileImageCacheKey;
   final VoidCallback? onMenuTap;
   final VoidCallback? onNotificationTap;
   final VoidCallback? onLoginTap;
@@ -85,6 +87,7 @@ class HomeHeaderSection extends StatelessWidget {
                       onLoginTap: onLoginTap,
                       onProfileTap: onProfileTap,
                       profileImageUrl: profileImageUrl,
+                      profileImageCacheKey: profileImageCacheKey,
                     ),
                     Padding(
                       padding: EdgeInsets.symmetric(

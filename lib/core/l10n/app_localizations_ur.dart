@@ -290,6 +290,9 @@ class AppLocalizationsUr extends AppLocalizations {
       'اس وقت کارٹ اپ ڈیٹ نہیں ہو سکی۔ براہ کرم دوبارہ کوشش کریں۔';
 
   @override
+  String get pharmacyCartBadgeOverflow => '99+';
+
+  @override
   String get pharmacyRemoveFromCart => 'کارٹ سے ہٹائیں';
 
   @override
@@ -329,7 +332,7 @@ class AppLocalizationsUr extends AppLocalizations {
   String get pharmacyCheckoutDeliveryChargesLabel => 'ڈیلیوری چارجز';
 
   @override
-  String get pharmacyCheckoutDiscountLabel => 'رعایت (8%)';
+  String get pharmacyCheckoutDiscountLabel => 'رعایت';
 
   @override
   String get pharmacyCheckoutTotalLabel => 'کل';

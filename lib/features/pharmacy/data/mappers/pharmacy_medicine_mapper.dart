@@ -98,9 +98,7 @@ class PharmacyMedicineMapper {
             ),
           )
           .toList(growable: false),
-      status: model.status,
-      orderId: model.orderId,
-      unifiedOrderId: model.unifiedOrderId,
+      failedPaymentUnifiedOrderId: model.failedPaymentUnifiedOrderId,
     );
   }
 
@@ -112,6 +110,8 @@ class PharmacyMedicineMapper {
       bookingId: model.bookingId,
       items: toCartItemEntityList(model),
       hasProductList: model.hasProductList,
+      paymentBreakdown: toPaymentBreakdownEntity(model.paymentBreakdown),
+      failedPaymentUnifiedOrderId: model.failedPaymentUnifiedOrderId,
     );
   }
 

@@ -580,9 +580,7 @@ class PharmacyCartResponseModel {
     this.hasProductList = false,
     this.paymentBreakdown,
     this.addresses = const [],
-    this.status,
-    this.orderId,
-    this.unifiedOrderId,
+    this.failedPaymentUnifiedOrderId,
   });
 
   final bool success;
@@ -592,9 +590,7 @@ class PharmacyCartResponseModel {
   final bool hasProductList;
   final PharmacyPaymentBreakdownModel? paymentBreakdown;
   final List<PharmacyCartAddressModel> addresses;
-  final String? status;
-  final String? orderId;
-  final int? unifiedOrderId;
+  final int? failedPaymentUnifiedOrderId;
 
   factory PharmacyCartResponseModel.fromJson(Map<String, dynamic> json) {
     final payload = _unwrapCartPayload(json);
@@ -612,18 +608,6 @@ class PharmacyCartResponseModel {
         )
         .toList(growable: false);
 
-    final orderIdRaw = payload['order_id'] ?? payload['orderId'];
-    final orderIdAsInt = _parseInt(orderIdRaw);
-    final orderIdAsString = orderIdRaw is String
-        ? (orderIdRaw.trim().isEmpty ? null : orderIdRaw.trim())
-        : null;
-    final publicId = _stringOrNull(
-      payload['public_id'] ?? payload['publicId'],
-    );
-    final orderNo = _stringOrNull(
-      payload['order_no'] ?? payload['orderNo'],
-    );
-
     return PharmacyCartResponseModel(
       success: json['success'] == true ||
           (json['code'] is num && (json['code'] as num).toInt() == 200),
@@ -633,26 +617,39 @@ class PharmacyCartResponseModel {
       hasProductList: payload.containsKey('products') ||
           payload.containsKey('items') ||
           json.containsKey('cart'),
-      paymentBreakdown: PharmacyPaymentBreakdownModel.fromJson(
-        payload['payment_breakdown'] ?? payload['paymentBreakdown'],
-      ),
+      paymentBreakdown: _parsePaymentBreakdown(payload),
       addresses: _parseFamilyMemberAddresses(payload),
-      status: _stringOrNull(payload['status']),
-      orderId: orderIdAsString ??
-          publicId ??
-          orderNo ??
-          (orderIdAsInt != null ? '$orderIdAsInt' : null),
-      unifiedOrderId: _parseInt(
-            payload['unified_order_id'] ?? payload['unifiedOrderId'],
-          ) ??
-          orderIdAsInt,
+      failedPaymentUnifiedOrderId:
+          _parseFailedPaymentUnifiedOrderId(payload) ??
+          _parseFailedPaymentUnifiedOrderId(json['data'] is Map
+              ? Map<String, dynamic>.from(json['data'] as Map)
+              : json),
     );
   }
 
-  static String? _stringOrNull(Object? value) {
-    if (value == null) return null;
-    final text = value.toString().trim();
-    return text.isEmpty || text == 'null' ? null : text;
+  static int? _parseFailedPaymentUnifiedOrderId(Map<String, dynamic> payload) {
+    final raw = payload['failed_payment'] ?? payload['failedPayment'];
+    if (raw is! Map) return null;
+    final map = Map<String, dynamic>.from(raw);
+    return _parseInt(map['unified_order_id'] ?? map['unifiedOrderId']);
+  }
+
+  static PharmacyPaymentBreakdownModel? _parsePaymentBreakdown(
+    Map<String, dynamic> payload,
+  ) {
+    final nested = payload['payment_breakdown'] ?? payload['paymentBreakdown'];
+    if (nested is Map) {
+      return PharmacyPaymentBreakdownModel.fromJson(nested);
+    }
+    if (payload.containsKey('subtotal') ||
+        payload.containsKey('delivery_charges') ||
+        payload.containsKey('deliveryCharges') ||
+        payload.containsKey('discount') ||
+        payload.containsKey('discount_amount') ||
+        payload.containsKey('total')) {
+      return PharmacyPaymentBreakdownModel.fromJson(payload);
+    }
+    return null;
   }
 
   static int? _parseInt(Object? value) {
@@ -698,10 +695,17 @@ class PharmacyCartResponseModel {
     final inner = outer['data'];
     if (inner is Map) {
       final nested = Map<String, dynamic>.from(inner);
+      nested['failed_payment'] ??=
+          outer['failed_payment'] ??
+          outer['failedPayment'] ??
+          json['failed_payment'] ??
+          json['failedPayment'];
       if (nested.containsKey('products') ||
+          nested.containsKey('items') ||
           nested.containsKey('booking') ||
           nested.containsKey('booking_id') ||
           nested.containsKey('payment_breakdown') ||
+          nested.containsKey('failed_payment') ||
           nested.containsKey('family_members')) {
         return nested;
       }

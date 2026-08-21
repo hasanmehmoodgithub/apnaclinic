@@ -35,6 +35,7 @@ class MenuScreenBody extends StatelessWidget {
           name: profile.name,
           phone: profile.phone,
           imageUrl: profile.imageUrl,
+          imageCacheKey: profile.imageCacheKey,
           onActionTap: onProfileActionTap,
         ),
         SizedBox(height: 14.h),

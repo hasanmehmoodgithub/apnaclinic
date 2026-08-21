@@ -248,12 +248,19 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                 final profileImageUrl = _isLoggedIn
                     ? sl<AppPref>().getUserLocalModel()?.imageUrl
                     : null;
+                final profileRevision =
+                    sl<AuthSessionRefresh>().profileRevision;
+                final trimmedImageUrl = profileImageUrl?.trim() ?? '';
+                final profileImageCacheKey = trimmedImageUrl.isEmpty
+                    ? null
+                    : '$trimmedImageUrl#$profileRevision';
                 final _ = state.profileSyncNonce;
                 return HomeHeaderSection(
                   userName: greetingName,
                   isLoggedIn: _isLoggedIn,
                   hasUnreadNotifications: unreadCount > 0,
                   profileImageUrl: profileImageUrl,
+                  profileImageCacheKey: profileImageCacheKey,
                   onMenuTap: () => context.push(
                     AppRoutes.path(AppRoutes.dashboardMenu),
                   ),

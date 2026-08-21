@@ -19,4 +19,8 @@ class GetPharmacyCartUseCase
   ) async {
     return await repository.getPharmacyCart();
   }
+
+  int? consumeFailedPaymentUnifiedOrderId() {
+    return repository.consumeFailedPaymentUnifiedOrderId();
+  }
 }

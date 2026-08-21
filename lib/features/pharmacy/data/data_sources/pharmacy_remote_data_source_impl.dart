@@ -12,6 +12,7 @@ import '../mock/pharmacy_mock_api.dart';
 import '../models/pharmacy_booking_detail_model.dart';
 import '../models/pharmacy_booking_model.dart';
 import '../models/pharmacy_medicine_model.dart';
+import '../pharmacy_cart_api_failure.dart';
 import 'pharmacy_remote_data_source.dart';
 
 class PharmacyRemoteDataSourceImpl implements PharmacyRemoteDataSource {
@@ -29,6 +30,23 @@ class PharmacyRemoteDataSourceImpl implements PharmacyRemoteDataSource {
     if (code is! num) return false;
     final status = code.toInt();
     return status >= 200 && status < 300;
+  }
+
+  Never _throwCartFailure(Map<String, dynamic> response) {
+    final model = PharmacyCartResponseModel.fromJson(response);
+    final message =
+        (response['message'] ?? AppStrings.pharmacyLoadError).toString();
+    throw PharmacyCartApiFailure(
+      message: message,
+      failedPaymentUnifiedOrderId: model.failedPaymentUnifiedOrderId,
+    );
+  }
+
+  void _rethrowCartFailure(Object error) {
+    if (error is PharmacyCartApiFailure) throw error;
+    if (error is ApiException && error.data != null) {
+      _throwCartFailure(error.data!);
+    }
   }
 
   @override
@@ -130,10 +148,9 @@ class PharmacyRemoteDataSourceImpl implements PharmacyRemoteDataSource {
         return PharmacyCartResponseModel.fromJson(response);
       }
 
-      final message = (response['message'] ?? AppStrings.pharmacyLoadError)
-          .toString();
-      return Future.error(message);
+      _throwCartFailure(response);
     } catch (e) {
+      _rethrowCartFailure(e);
       final message = ErrorHandler.handleExceptions(
         e,
         endpoint: AppUrls.pharmacyCart,
@@ -174,10 +191,9 @@ class PharmacyRemoteDataSourceImpl implements PharmacyRemoteDataSource {
         return response;
       }
 
-      final message = (response['message'] ?? AppStrings.pharmacyLoadError)
-          .toString();
-      return Future.error(message);
+      _throwCartFailure(response);
     } catch (e) {
+      _rethrowCartFailure(e);
       final message = ErrorHandler.handleExceptions(
         e,
         endpoint: AppUrls.pharmacyAddToCart,
@@ -219,10 +235,9 @@ class PharmacyRemoteDataSourceImpl implements PharmacyRemoteDataSource {
         return response;
       }
 
-      final message = (response['message'] ?? AppStrings.pharmacyLoadError)
-          .toString();
-      return Future.error(message);
+      _throwCartFailure(response);
     } catch (e) {
+      _rethrowCartFailure(e);
       final message = ErrorHandler.handleExceptions(
         e,
         endpoint: AppUrls.pharmacyUpdateCartQuantity,

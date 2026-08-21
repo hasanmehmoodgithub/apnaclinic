@@ -243,13 +243,10 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
                         key: ValueKey('instant_doctor_$_tabSessionKey'),
                         child: const InstantDoctorScreen(showBackButton: false),
                       ),
-                      KeepAliveTabPage(
-                        key: ValueKey('bookings_$_tabSessionKey'),
-                        child: BookingsDashboardScreen(
-                          key: ValueKey('bookings_dash_$_bookingsDashboardKey'),
-                          showBackButton: false,
-                          initialTabIndex: _bookingsInitialTabIndex,
-                        ),
+                      BookingsDashboardScreen(
+                        key: ValueKey('bookings_dash_$_bookingsDashboardKey'),
+                        showBackButton: false,
+                        initialTabIndex: _bookingsInitialTabIndex,
                       ),
                       KeepAliveTabPage(
                         key: ValueKey('support_$_tabSessionKey'),

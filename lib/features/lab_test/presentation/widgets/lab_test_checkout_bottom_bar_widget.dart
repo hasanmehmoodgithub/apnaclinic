@@ -4,6 +4,7 @@ import '../../../../core/constants/app_colors.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/widgets/app_button_widget.dart';
+import 'lab_test_checkout_error_banner_widget.dart';
 
 class LabTestCheckoutBottomBarWidget extends StatelessWidget {
   const LabTestCheckoutBottomBarWidget({
@@ -29,15 +30,7 @@ class LabTestCheckoutBottomBarWidget extends StatelessWidget {
             if (errorMessage != null)
               Padding(
                 padding: EdgeInsets.only(bottom: 10.h),
-                child: Text(
-                  errorMessage!,
-                  textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: const Color(0xFFD72222),
-                        fontSize: 15.sp,
-                        fontWeight: FontWeight.w500,
-                      ),
-                ),
+                child: LabTestCheckoutErrorBannerWidget(message: errorMessage!),
               ),
             AppButtonWidget(
               title: AppLocalizations.of(context)!.labTestBookCta,

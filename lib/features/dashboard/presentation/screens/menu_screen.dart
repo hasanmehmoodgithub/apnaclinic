@@ -9,6 +9,7 @@ import '../../../../core/router/app_routes.dart';
 import '../../../../core/session/auth_session_refresh.dart';
 import '../../../../core/utils/auth_guard.dart';
 import '../../../../core/widgets/app_scaffold_gradient.dart';
+import '../../../../core/widgets/user_profile_avatar.dart';
 import '../../../profile_setup/presentation/profile_setup_launch_source.dart';
 import '../constants/main_navigation_tabs.dart';
 import '../helpers/menu_logout_handler.dart';
@@ -53,12 +54,20 @@ class _MenuScreenState extends State<MenuScreen> {
     });
   }
 
-  void _openEditProfile() {
+  Future<void> _openEditProfile() async {
     if (!context.requireLogin()) return;
-    context.push(
+    await context.push(
       AppRoutes.path(AppRoutes.profileSetup),
       extra: ProfileSetupLaunchSource.menu,
     );
+    if (!mounted) return;
+    await UserProfileAvatar.evictCachedUrl(
+      _appPref.getUserLocalModel()?.imageUrl,
+    );
+    if (!mounted) return;
+    setState(() {
+      _isLoggedIn = AuthGuard.isLoggedIn(_appPref);
+    });
   }
 
   void _openMyBookings() {
@@ -99,7 +108,11 @@ class _MenuScreenState extends State<MenuScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final profile = buildMenuProfileViewData(appPref: _appPref, l10n: l10n);
+    final profile = buildMenuProfileViewData(
+      appPref: _appPref,
+      l10n: l10n,
+      profileRevision: _sessionRefresh.profileRevision,
+    );
 
     return AppScaffoldGradient(
       colors: const [AppColors.clrD5FFFB, AppColors.clrE0E6FF],

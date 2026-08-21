@@ -2,7 +2,6 @@
 class Assets {
   Assets._();
 
-  static const String assetsImgSplash = 'assets/img/splash.webp';
   static const String consultationAssistantIcon = 'assets/img/consultation/assistant_icon.svg';
   static const String consultationBackArrow = 'assets/img/consultation/back_arrow.svg';
   static const String consultationCardPattern = 'assets/img/consultation/card_pattern.svg';
@@ -14,26 +13,20 @@ class Assets {
   static const String consultationCatSkin = 'assets/img/consultation/cat_skin.svg';
   static const String consultationCatStomach = 'assets/img/consultation/cat_stomach.svg';
   static const String consultationCatWomen = 'assets/img/consultation/cat_women.svg';
-  static const String consultationDocumentDownload =
-      'assets/img/consultation/document_download.png';
-  static const String consultationEInvoiceDownload =
-      'assets/img/consultation/e_invoice_download.png';
+  static const String consultationDocumentDownload = 'assets/img/consultation/document_download.png';
+  static const String consultationEInvoiceDownload = 'assets/img/consultation/e_invoice_download.png';
   static const String consultationFileIcon = 'assets/img/consultation/file_icon.png';
-  static const String consultationPdfIcon = 'assets/img/consultation/pdf_icon.png';
-  static const String consultationStarFilled =
-      'assets/img/consultation/star_filled.png';
-  static const String consultationStarUnfilled =
-      'assets/img/consultation/star_unfilled.png';
+  static const String consultationFilterIcon = 'assets/img/consultation/filter_icon.png';
   static const String consultationHeroDoctor = 'assets/img/consultation/hero_doctor.png';
   static const String consultationHeroVector = 'assets/img/consultation/hero_vector.svg';
-  static const String consultationSummaryDoctorCardVector =
-      'assets/img/consultation/summary_doctor_card_vector.png';
-  static const String consultationSummaryHeartEcg =
-      'assets/img/consultation/summary_heart_ecg.png';
-  static const String consultationSummaryMedicalBriefcase =
-      'assets/img/consultation/summary_medical_briefcase.svg';
   static const String consultationInfoIcon = 'assets/img/consultation/info_icon.svg';
+  static const String consultationPdfIcon = 'assets/img/consultation/pdf_icon.png';
   static const String consultationSearchIcon = 'assets/img/consultation/search_icon.svg';
+  static const String consultationStarFilled = 'assets/img/consultation/star_filled.png';
+  static const String consultationStarUnfilled = 'assets/img/consultation/star_unfilled.png';
+  static const String consultationSummaryDoctorCardVector = 'assets/img/consultation/summary_doctor_card_vector.png';
+  static const String consultationSummaryHeartEcg = 'assets/img/consultation/summary_heart_ecg.png';
+  static const String consultationSummaryMedicalBriefcase = 'assets/img/consultation/summary_medical_briefcase.svg';
   static const String consultationTimeDateAsset = 'assets/img/consultation/time_date_asset.svg';
   static const String consultationUpload = 'assets/img/consultation/upload.svg';
   static const String consultationVerified = 'assets/img/consultation/verified.svg';
@@ -53,8 +46,11 @@ class Assets {
   static const String fontsSatoshiVariable = 'assets/fonts/satoshi/Satoshi_Complete/Fonts/WEB/fonts/Satoshi-Variable.eot';
   static const String fontsSatoshiVariableItalic = 'assets/fonts/satoshi/Satoshi_Complete/Fonts/WEB/fonts/Satoshi-VariableItalic.eot';
   static const String gifsPlaceholder = 'assets/gifs/placeholder.txt';
-  static const String iconsBasket = 'assets/icons/basket.svg';
   static const String iconsAddToCart = 'assets/icons/add_to_cart.png';
+  static const String iconsApnaClinicLogoSource = 'assets/icons/apna_clinic_logo_source.png';
+  static const String iconsAppIcon = 'assets/icons/app_icon.png';
+  static const String iconsAppIconForeground = 'assets/icons/app_icon_foreground.png';
+  static const String iconsBasket = 'assets/icons/basket.svg';
   static const String iconsBooking = 'assets/icons/booking.svg';
   static const String iconsCalendar = 'assets/icons/calendar.svg';
   static const String iconsCash = 'assets/icons/cash.svg';
@@ -77,9 +73,8 @@ class Assets {
   static const String iconsTick = 'assets/icons/tick.svg';
   static const String iconsWarningTriangle = 'assets/icons/warning_triangle.svg';
   static const String imagesDashboardLoader = 'assets/images/dashboard_loader.json';
-  static const String imagesVoiceSearchRecord =
-      'assets/images/voice_search_record.json';
   static const String imagesPlaceholder = 'assets/images/placeholder.txt';
+  static const String imagesVoiceSearchRecord = 'assets/images/voice_search_record.json';
   static const String imgBanner = 'assets/img/banner.png';
   static const String imgBrandAlfahealth = 'assets/img/brand_alfahealth.png';
   static const String imgBrandApnaclinicHome = 'assets/img/brand_apnaclinic_home.png';
@@ -95,7 +90,7 @@ class Assets {
   static const String imgPharmacyBanner = 'assets/img/pharmacyBanner.webp';
   static const String imgPlaceHolderPerson = 'assets/img/placeHolderPerson.webp';
   static const String imgProfileAvatar = 'assets/img/profile_avatar.png';
-  static const String imgSplash = 'assets/img/splash.png';
+  static const String imgSplashBgHd = 'assets/img/splash_bg_hd.webp';
   static const String labTestAddressBook = 'assets/svg/lab_test/address_book.svg';
   static const String labTestBookingChughtaiLogo = 'assets/svg/lab_test/booking_chughtai_logo.svg';
   static const String labTestBookingConfirmationGreenCheck = 'assets/svg/lab_test/booking_confirmation_green_check.svg';
@@ -111,6 +106,7 @@ class Assets {
   static const String labTestChughtaiLabLogo = 'assets/svg/lab_test/chughtai_lab_logo.svg';
   static const String labTestCityChevron = 'assets/svg/lab_test/city_chevron.svg';
   static const String labTestDiscountIcon = 'assets/svg/lab_test/discount_icon.svg';
+  static const String labTestDownloadIcon = 'assets/img/lab_test/download_icon.png';
   static const String labTestExcelLabLogo = 'assets/svg/lab_test/excel_lab_logo.svg';
   static const String labTestHomeSample = 'assets/svg/lab_test/home_sample.svg';
   static const String labTestIDCLogo = 'assets/svg/lab_test/IDC_logo.svg';

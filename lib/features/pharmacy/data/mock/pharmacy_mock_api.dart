@@ -483,7 +483,6 @@ class PharmacyMockApi {
       'message': 'Order abandoned successfully',
       'code': 201,
       'data': {
-        'order_id': params.orderId,
         'unified_order_id': params.unifiedOrderId,
       },
     };

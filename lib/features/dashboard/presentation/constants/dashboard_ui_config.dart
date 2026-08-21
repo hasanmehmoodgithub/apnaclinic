@@ -13,7 +13,7 @@ abstract final class DashboardUiConfig {
   static const double serviceCardBottomPadding = 8;
   static const double serviceCardTitleHorizontalPadding = 8;
   static const double serviceCardIconTitleGap = 4;
-  static const double serviceCardTitleFontSize = 14;
+  static const double serviceCardTitleFontSize = 14.5;
 
   /// Approximate title block for shimmer placeholders (2 lines).
   static const double serviceCardTitleBlockHeight = 34;
