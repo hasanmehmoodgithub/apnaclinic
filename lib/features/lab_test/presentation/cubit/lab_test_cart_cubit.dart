@@ -6,15 +6,23 @@ import '../lab_test_cart_to_checkout_mapper.dart';
 import '../lab_test_route_args.dart';
 import 'lab_test_cart_state.dart';
 
-/// Cart list backed by [LabTestCartRepository] (same storage as booking flow).
+/// Shared cart list for all lab-test screens (listing / booking / cart).
+/// Registered as a lazy singleton so badge counts stay in sync app-wide.
 class LabTestCartCubit extends Cubit<LabTestCartState> {
   LabTestCartCubit(this._repository) : super(const LabTestCartState());
 
   final LabTestCartRepository _repository;
 
+  int get count => state.items.length;
+
   Future<void> load() async {
     final items = await _repository.readCart();
     emit(state.copyWith(items: items));
+  }
+
+  /// Updates in-memory state after another layer already wrote prefs.
+  void replaceItems(List<LabTestCartItem> items) {
+    emit(state.copyWith(items: List<LabTestCartItem>.from(items)));
   }
 
   Future<void> removeAt(int index) async {
@@ -22,6 +30,11 @@ class LabTestCartCubit extends Cubit<LabTestCartState> {
     final next = List<LabTestCartItem>.from(state.items)..removeAt(index);
     await _repository.writeCart(next);
     emit(state.copyWith(items: next));
+  }
+
+  Future<void> clear() async {
+    await _repository.writeCart(const <LabTestCartItem>[]);
+    emit(state.copyWith(items: const <LabTestCartItem>[]));
   }
 
   /// Cart maps to checkout (all test ids booked together); null when empty.

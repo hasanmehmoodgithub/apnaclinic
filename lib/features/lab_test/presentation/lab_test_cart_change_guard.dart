@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../core/di/dependency_injection.dart';
 import '../../../core/l10n/app_localizations.dart';
 import '../domain/repositories/lab_test_cart_repository.dart';
+import 'cubit/lab_test_cart_cubit.dart';
 import 'lab_test_navigation.dart';
 import 'widgets/lab_test_cart_change_warning_dialog_widget.dart';
 
@@ -49,6 +50,7 @@ Future<void> labTestGuardCartClearingChange(
   }
 
   await repository.writeCart(const []);
+  sl<LabTestCartCubit>().replaceItems(const []);
   await onCartCleared?.call();
   if (!context.mounted) return;
   await onProceed();

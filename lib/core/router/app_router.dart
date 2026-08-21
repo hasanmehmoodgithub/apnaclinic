@@ -383,8 +383,11 @@ class AppRouter {
       GoRoute(
         path: AppRoutes.path(AppRoutes.labTest),
         name: AppRoutes.labTest,
-        builder: (context, state) => BlocProvider<LabTestCubit>(
-          create: (_) => sl<LabTestCubit>(),
+        builder: (context, state) => MultiBlocProvider(
+          providers: [
+            BlocProvider<LabTestCubit>(create: (_) => sl<LabTestCubit>()),
+            BlocProvider<LabTestCartCubit>.value(value: sl<LabTestCartCubit>()),
+          ],
           child: const LabTestScreen(),
         ),
       ),
@@ -394,17 +397,30 @@ class AppRouter {
         builder: (context, state) {
           final extra = state.extra;
           if (extra is! LabTestBookingArgs) {
-            return BlocProvider<LabTestCubit>(
-              create: (_) => sl<LabTestCubit>(),
+            return MultiBlocProvider(
+              providers: [
+                BlocProvider<LabTestCubit>(create: (_) => sl<LabTestCubit>()),
+                BlocProvider<LabTestCartCubit>.value(
+                  value: sl<LabTestCartCubit>(),
+                ),
+              ],
               child: const LabTestScreen(),
             );
           }
-          return BlocProvider<LabTestBookingCubit>(
-            create: (_) => LabTestBookingCubit(
-              args: extra,
-              cartRepository: sl<LabTestCartRepository>(),
-              getLabTestDetailUseCase: sl(),
-            ),
+          return MultiBlocProvider(
+            providers: [
+              BlocProvider<LabTestBookingCubit>(
+                create: (_) => LabTestBookingCubit(
+                  args: extra,
+                  cartRepository: sl<LabTestCartRepository>(),
+                  sharedCartCubit: sl<LabTestCartCubit>(),
+                  getLabTestDetailUseCase: sl(),
+                ),
+              ),
+              BlocProvider<LabTestCartCubit>.value(
+                value: sl<LabTestCartCubit>(),
+              ),
+            ],
             child: const LabTestBookingScreen(),
           );
         },
@@ -415,8 +431,13 @@ class AppRouter {
         builder: (context, state) {
           final extra = state.extra;
           if (extra is! LabTestCheckoutArgs) {
-            return BlocProvider<LabTestCubit>(
-              create: (_) => sl<LabTestCubit>(),
+            return MultiBlocProvider(
+              providers: [
+                BlocProvider<LabTestCubit>(create: (_) => sl<LabTestCubit>()),
+                BlocProvider<LabTestCartCubit>.value(
+                  value: sl<LabTestCartCubit>(),
+                ),
+              ],
               child: const LabTestScreen(),
             );
           }
@@ -426,8 +447,8 @@ class AppRouter {
       GoRoute(
         path: AppRoutes.path(AppRoutes.labTestCart),
         name: AppRoutes.labTestCart,
-        builder: (context, state) => BlocProvider<LabTestCartCubit>(
-          create: (_) => sl<LabTestCartCubit>(),
+        builder: (context, state) => BlocProvider<LabTestCartCubit>.value(
+          value: sl<LabTestCartCubit>(),
           child: const LabTestCartScreen(),
         ),
       ),
@@ -437,8 +458,13 @@ class AppRouter {
         builder: (context, state) {
           final extra = state.extra;
           if (extra is! LabTestViewDetailsArgs) {
-            return BlocProvider<LabTestCubit>(
-              create: (_) => sl<LabTestCubit>(),
+            return MultiBlocProvider(
+              providers: [
+                BlocProvider<LabTestCubit>(create: (_) => sl<LabTestCubit>()),
+                BlocProvider<LabTestCartCubit>.value(
+                  value: sl<LabTestCartCubit>(),
+                ),
+              ],
               child: const LabTestScreen(),
             );
           }

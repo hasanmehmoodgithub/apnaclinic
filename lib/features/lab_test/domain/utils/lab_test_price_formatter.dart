@@ -3,6 +3,13 @@ class LabTestPriceFormatter {
 
   static String formatRs(int amount) => 'Rs. ${_formatAmount(amount)}/-';
 
+  /// Parses display strings like `Rs. 1,920/-` or raw `1920` into an int.
+  static int parseRsAmount(String? value) {
+    final digits = _digitsOnly((value ?? '').trim());
+    if (digits.isEmpty) return 0;
+    return int.tryParse(digits) ?? 0;
+  }
+
   static bool isSameFee(String? a, String? b) {
     final left = (a ?? '').trim();
     final right = (b ?? '').trim();

@@ -42,7 +42,7 @@ class ApnaBottomNavigationBar extends StatelessWidget {
                 child: _NavTab(
                   label: l10n.dashboardBottomHome,
                   filledAsset: Assets.svgNavHomeFilled,
-                  outlineAsset: Assets.svgNavHomeOutline,
+                  outlineAsset: Assets.imgNavHomeOutline,
                   selected: currentIndex == MainNavigationTabs.home,
                   onTap: () => onTap(MainNavigationTabs.home),
                 ),
@@ -51,7 +51,7 @@ class ApnaBottomNavigationBar extends StatelessWidget {
                 child: _NavTab(
                   label: l10n.dashboardBottomInstantDoctor,
                   filledAsset: Assets.svgNavInstantDoctorFilled,
-                  outlineAsset: Assets.svgNavInstantDoctorOutline,
+                  outlineAsset: Assets.imgNavInstantDoctorOutline,
                   selected: currentIndex == MainNavigationTabs.instantDoctor,
                   onTap: () => onTap(MainNavigationTabs.instantDoctor),
                 ),
@@ -60,7 +60,7 @@ class ApnaBottomNavigationBar extends StatelessWidget {
                 child: _NavTab(
                   label: l10n.dashboardBottomBookings,
                   filledAsset: Assets.svgNavBookingsFilled,
-                  outlineAsset: Assets.svgNavBookingsOutline,
+                  outlineAsset: Assets.imgNavBookingsOutline,
                   selected: currentIndex == MainNavigationTabs.bookings,
                   onTap: () => onTap(MainNavigationTabs.bookings),
                 ),
@@ -69,7 +69,7 @@ class ApnaBottomNavigationBar extends StatelessWidget {
                 child: _NavTab(
                   label: l10n.dashboardBottomSupport,
                   filledAsset: Assets.imgNavSupportFilled,
-                  outlineAsset: Assets.svgNavSupportOutline,
+                  outlineAsset: Assets.imgNavSupportOutline,
                   selected: currentIndex == MainNavigationTabs.support,
                   onTap: () => onTap(MainNavigationTabs.support),
                 ),

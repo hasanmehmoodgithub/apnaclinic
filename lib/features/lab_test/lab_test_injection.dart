@@ -69,7 +69,7 @@ void initLabTestInjector() {
     ),
   );
 
-  sl.registerFactory<LabTestCartCubit>(
+  sl.registerLazySingleton<LabTestCartCubit>(
     () => LabTestCartCubit(sl<LabTestCartRepository>()),
   );
 }

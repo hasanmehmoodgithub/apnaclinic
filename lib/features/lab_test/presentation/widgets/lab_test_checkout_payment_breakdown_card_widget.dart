@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
+import '../../domain/utils/lab_test_price_formatter.dart';
 import '../lab_test_route_args.dart';
 
 class LabTestCheckoutPaymentBreakdownCardWidget extends StatelessWidget {
@@ -17,6 +18,9 @@ class LabTestCheckoutPaymentBreakdownCardWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
+    final hasDiscount =
+        LabTestPriceFormatter.parseRsAmount(args.discountAmount) > 0 ||
+            args.discountPercent > 0;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -31,12 +35,14 @@ class LabTestCheckoutPaymentBreakdownCardWidget extends StatelessWidget {
         ),
         SizedBox(height: 10.h),
         _moneyRow(context, l10n.labTestCheckoutFeeLabel, args.originalFee),
-        SizedBox(height: 8.h),
-        _moneyRow(
-          context,
-          '${l10n.labTestCheckoutDiscountLabel} (${args.discountPercent}%)',
-          args.discountAmount,
-        ),
+        if (hasDiscount) ...[
+          SizedBox(height: 8.h),
+          _moneyRow(
+            context,
+            '${l10n.labTestCheckoutDiscountLabel} (${args.discountPercent}%)',
+            args.discountAmount,
+          ),
+        ],
         SizedBox(height: 10.h),
         Container(height: 0.5, color: AppColors.clrE7E7E7),
         SizedBox(height: 10.h),
@@ -58,7 +64,7 @@ class LabTestCheckoutPaymentBreakdownCardWidget extends StatelessWidget {
                 ),
               ),
               Text(
-                args.discountedFee,
+                args.totalAmount,
                 style: theme.textTheme.titleMedium?.copyWith(
                   color: AppColors.clr110844,
                   fontWeight: FontWeight.w700,

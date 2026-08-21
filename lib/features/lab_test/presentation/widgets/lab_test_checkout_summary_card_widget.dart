@@ -8,9 +8,9 @@ import '../lab_test_route_args.dart';
 import 'lab_test_figma_image.dart';
 
 class LabTestCheckoutSummaryCardWidget extends StatelessWidget {
-  const LabTestCheckoutSummaryCardWidget({super.key, required this.args});
+  const LabTestCheckoutSummaryCardWidget({super.key, required this.line});
 
-  final LabTestCheckoutArgs args;
+  final LabTestCheckoutLineArgs line;
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +36,7 @@ class LabTestCheckoutSummaryCardWidget extends StatelessWidget {
             ),
             alignment: Alignment.center,
             child: LabTestFigmaImage(
-              url: args.labLogoUrl,
+              url: line.labLogoUrl,
               width: 60.w,
               height: 60.w,
               fit: BoxFit.contain,
@@ -52,7 +52,7 @@ class LabTestCheckoutSummaryCardWidget extends StatelessWidget {
                   children: [
                     Expanded(
                       child: Text(
-                        args.testTitle,
+                        line.testTitle,
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         style: theme.textTheme.titleMedium?.copyWith(
@@ -63,10 +63,10 @@ class LabTestCheckoutSummaryCardWidget extends StatelessWidget {
                         ),
                       ),
                     ),
-                    if (args.partnerLogoUrl.trim().isNotEmpty) ...[
+                    if (line.partnerLogoUrl.trim().isNotEmpty) ...[
                       SizedBox(width: 6.w),
                       LabTestFigmaImage(
-                        url: args.partnerLogoUrl,
+                        url: line.partnerLogoUrl,
                         width: 28.w,
                         height: 28.w,
                         fit: BoxFit.contain,
@@ -76,7 +76,7 @@ class LabTestCheckoutSummaryCardWidget extends StatelessWidget {
                 ),
                 SizedBox(height: 2.h),
                 Text(
-                  args.labDisplayName,
+                  line.labDisplayName,
                   style: theme.textTheme.bodySmall?.copyWith(
                     color: AppColors.clr667B99,
                     fontSize: 12.sp,
@@ -94,11 +94,11 @@ class LabTestCheckoutSummaryCardWidget extends StatelessWidget {
                       ),
                     ),
                     SizedBox(width: 6.w),
-                    _pill(context, args.sampleType),
+                    _pill(context, line.sampleType),
                     const Spacer(),
                     _pill(
                       context,
-                      args.bookingMethodIsHomeSample
+                      line.bookingMethodIsHomeSample
                           ? l10n.labTestBookingMethodHomeSample
                           : l10n.labTestBookingMethodWalkInCompact,
                     ),
@@ -116,21 +116,21 @@ class LabTestCheckoutSummaryCardWidget extends StatelessWidget {
                     ),
                     SizedBox(width: 8.w),
                     Text(
-                      args.discountedFee,
+                      line.discountedFee,
                       style: theme.textTheme.titleSmall?.copyWith(
                         color: AppColors.clr061E40,
                         fontWeight: FontWeight.w700,
                         fontSize: 14.sp,
                       ),
                     ),
-                    if (args.originalFee.trim().isNotEmpty &&
+                    if (line.originalFee.trim().isNotEmpty &&
                         !LabTestPriceFormatter.isSameFee(
-                          args.originalFee,
-                          args.discountedFee,
+                          line.originalFee,
+                          line.discountedFee,
                         )) ...[
                       SizedBox(width: 8.w),
                       Text(
-                        args.originalFee,
+                        line.originalFee,
                         style: theme.textTheme.bodySmall?.copyWith(
                           color: AppColors.clr667B99,
                           fontSize: 12.sp,

@@ -6,21 +6,26 @@ import '../../domain/use_cases/get_lab_test_detail_use_case.dart';
 import '../../domain/utils/lab_test_item_booking_helper.dart';
 import '../lab_test_route_args.dart';
 import 'lab_test_booking_state.dart';
+import 'lab_test_cart_cubit.dart';
 
 class LabTestBookingCubit extends Cubit<LabTestBookingState> {
   LabTestBookingCubit({
     required LabTestBookingArgs args,
     required LabTestCartRepository cartRepository,
+    required LabTestCartCubit sharedCartCubit,
     required GetLabTestDetailUseCase getLabTestDetailUseCase,
   })  : _cartRepository = cartRepository,
+        _sharedCartCubit = sharedCartCubit,
         _getLabTestDetailUseCase = getLabTestDetailUseCase,
         super(LabTestBookingState(args: args));
 
   final LabTestCartRepository _cartRepository;
+  final LabTestCartCubit _sharedCartCubit;
   final GetLabTestDetailUseCase _getLabTestDetailUseCase;
 
   Future<void> hydrate() async {
     final items = await _cartRepository.readCart();
+    _sharedCartCubit.replaceItems(items);
     emit(state.copyWith(cartItems: items));
     _applyCartSelectionPreferences();
   }
@@ -64,6 +69,7 @@ class LabTestBookingCubit extends Cubit<LabTestBookingState> {
 
   Future<void> clearCart() async {
     await _cartRepository.writeCart(const <LabTestCartItem>[]);
+    _sharedCartCubit.replaceItems(const <LabTestCartItem>[]);
     emit(state.copyWith(cartItems: const <LabTestCartItem>[]));
   }
 
@@ -75,6 +81,7 @@ class LabTestBookingCubit extends Cubit<LabTestBookingState> {
     final line = _buildCartLine(vendor: vendor, partner: partner);
     final next = [...state.cartItems, line];
     await _cartRepository.writeCart(next);
+    _sharedCartCubit.replaceItems(next);
     emit(state.copyWith(cartItems: next));
   }
 
