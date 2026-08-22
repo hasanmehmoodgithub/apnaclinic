@@ -56,6 +56,7 @@ class _DoctorConsultationBookDoctorScreenState
   @override
   void initState() {
     super.initState();
+    _issueController.addListener(_onIssueChanged);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) _loadDoctorSlots();
     });
@@ -101,8 +102,22 @@ class _DoctorConsultationBookDoctorScreenState
 
   @override
   void dispose() {
+    _issueController.removeListener(_onIssueChanged);
     _issueController.dispose();
     super.dispose();
+  }
+
+  bool get _hasAvailableSlots =>
+      _availabilityDays.any((day) => day.slots.isNotEmpty);
+
+  void _onIssueChanged() {
+    if (!mounted || _validationErrorMessage == null) return;
+    _clearValidationError();
+  }
+
+  void _clearValidationError() {
+    if (_validationErrorMessage == null) return;
+    setState(() => _validationErrorMessage = null);
   }
 
   @override
@@ -178,9 +193,7 @@ class _DoctorConsultationBookDoctorScreenState
                         onSlotChanged: (value) {
                           setState(() {
                             _selectedSlot = value;
-                            if (_validationErrorMessage != null) {
-                              _validationErrorMessage = null;
-                            }
+                            _validationErrorMessage = null;
                           });
                         },
                         availabilityDays: _availabilityDays,
@@ -225,13 +238,13 @@ class _DoctorConsultationBookDoctorScreenState
                           width: double.infinity,
                           height: 58.h,
                           child: ElevatedButton(
-                            onPressed: _selectedSlot == null
-                                ? null
-                                : () => _onGetAppointmentPressed(
+                            onPressed: _hasAvailableSlots
+                                ? () => _onGetAppointmentPressed(
                                       context: context,
                                       l10n: l10n,
                                       doctor: doctor,
-                                    ),
+                                    )
+                                : null,
                             style: ElevatedButton.styleFrom(
                               elevation: 0,
                               backgroundColor: ConsultationUiConfig.ctaColor,
@@ -248,7 +261,7 @@ class _DoctorConsultationBookDoctorScreenState
                               l10n.consultationGetAppointmentCta,
                               style: textTheme.titleMedium?.copyWith(
                                 color: AppColors.clrWhite.withValues(
-                                  alpha: _selectedSlot == null ? 0.35 : 1,
+                                  alpha: _hasAvailableSlots ? 1 : 0.35,
                                 ),
                                 fontSize: 18.sp,
                                 fontWeight: FontWeight.w700,
@@ -277,6 +290,12 @@ class _DoctorConsultationBookDoctorScreenState
     if (_selectedSlot == null) {
       setState(() {
         _validationErrorMessage = l10n.consultationSelectSlotError;
+      });
+      return;
+    }
+    if (trimmedIssue.isEmpty) {
+      setState(() {
+        _validationErrorMessage = l10n.consultationRequiredFieldsError;
       });
       return;
     }
