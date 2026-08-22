@@ -1,5 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../core/analytics/analytics_event_keys.dart';
+import '../../../../core/analytics/analytics_service.dart';
 import '../../../../core/enums/state_status.dart';
 import '../../domain/entities/profile_setup_entity.dart';
 import '../../domain/models/profile_setup_data.dart';
@@ -11,12 +15,15 @@ class ProfileSetupCubit extends Cubit<ProfileSetupState> {
   ProfileSetupCubit({
     required GetProfileSetupContentUseCase getProfileSetupContentUseCase,
     required SaveProfileSetupUseCase saveProfileSetupUseCase,
+    required AnalyticsService analytics,
   }) : _getProfileSetupContentUseCase = getProfileSetupContentUseCase,
        _saveProfileSetupUseCase = saveProfileSetupUseCase,
+       _analytics = analytics,
        super(const ProfileSetupState());
 
   final GetProfileSetupContentUseCase _getProfileSetupContentUseCase;
   final SaveProfileSetupUseCase _saveProfileSetupUseCase;
+  final AnalyticsService _analytics;
 
   void resetState() {
     emit(const ProfileSetupState());
@@ -102,5 +109,17 @@ class ProfileSetupCubit extends Cubit<ProfileSetupState> {
         return true;
       },
     );
+  }
+
+  void logCreationScreen(String source) {
+    unawaited(
+      _analytics.logEvent(AnalyticsEventKeys.profileCreationScreen, {
+        AnalyticsParamKeys.source: source,
+      }),
+    );
+  }
+
+  void logProfileCreated() {
+    unawaited(_analytics.logEvent(AnalyticsEventKeys.profileCreated));
   }
 }

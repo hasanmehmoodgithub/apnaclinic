@@ -6,6 +6,7 @@ import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../cubit/surgery_cubit.dart';
 import '../cubit/surgery_state.dart';
+import '../surgery_analytics.dart';
 import '../../domain/entities/surgery_procedure_entity.dart';
 import '../screens/surgery_booking_screen.dart';
 import 'surgery_location_row_widget.dart';
@@ -72,6 +73,7 @@ class _SurgeryContentViewWidgetState extends State<SurgeryContentViewWidget> {
               SurgerySearchFieldWidget(
                 query: state.searchQuery,
                 onChanged: cubit.updateSearchQuery,
+                onTap: SurgeryAnalytics.logSearchClicked,
               ),
             ],
           ),
@@ -122,6 +124,7 @@ class _SurgeryContentViewWidgetState extends State<SurgeryContentViewWidget> {
     SurgeryProcedureEntity item,
     SurgeryState state,
   ) {
+    SurgeryAnalytics.logSelectItem(item.name);
     final surgeryCubit = context.read<SurgeryCubit>();
     Navigator.of(context).push(
       MaterialPageRoute<void>(

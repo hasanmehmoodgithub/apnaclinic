@@ -2,6 +2,7 @@ import 'package:apnaclinic/features/bookings/presentation/widgets/payment_method
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/analytics/analytics_event_keys.dart';
 import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
@@ -17,6 +18,7 @@ import '../../../surgery/domain/use_cases/book_surgery_use_case.dart';
 import '../../../surgery/domain/use_cases/get_surgery_lead_use_case.dart';
 import '../../data/mappers/surgery_booking_list_mapper.dart';
 import '../../data/models/surgery_details_item.dart';
+import '../bookings_analytics.dart';
 import '../widgets/alert_dialog_card.dart';
 import '../widgets/surgery_bokking_representative_note_widget.dart';
 import '../widgets/surgery_booking_appointment_details_widget.dart';
@@ -93,6 +95,7 @@ class _SurgeryDetailsScreenState extends State<SurgeryDetailsScreen> {
           _isLoadingDetail = false;
           _loadError = null;
         });
+        BookingsAnalytics.logBookingViewed(AnalyticsBookingTypeKeys.surgery);
       },
     );
   }

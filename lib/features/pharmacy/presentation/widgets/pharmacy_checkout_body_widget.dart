@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/cities/presentation/show_select_city_dialog.dart';
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/analytics/analytics_event_keys.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/utils/phone_format_utils.dart';
@@ -50,6 +51,8 @@ class PharmacyCheckoutBodyWidget extends StatelessWidget {
       jazzCashNumber = PhoneFormatUtils.toMsisdn(jazzCashNumber);
     }
 
+    cubit.logConfirmPayment();
+
     showHeartLoaderDialog(context, id: _checkoutLoaderId, size: 120);
     final result = await cubit.checkoutOrder(
       address: addressController.text,
@@ -89,6 +92,10 @@ class PharmacyCheckoutBodyWidget extends StatelessWidget {
         }
 
         if (!context.mounted) return;
+        cubit.logOrderConfirmed(
+          orderId: checkout.orderNo,
+          paymentStatus: AnalyticsPaymentStatusKeys.successful,
+        );
         cubit.clearCart();
         await showPharmacyOrderPlacedDialog(
           context,

@@ -46,13 +46,13 @@ class SubmitSurgeryBookingParams {
 }
 
 class SubmitSurgeryBookingUseCase
-    implements UseCaseVoid<SubmitSurgeryBookingParams> {
+    implements UseCase<String, SubmitSurgeryBookingParams> {
   SubmitSurgeryBookingUseCase({required this.repository});
 
   final SurgeryRepository repository;
 
   @override
-  Future<Either<ErrorMsg, void>> call(SubmitSurgeryBookingParams params) async {
-    return await repository.submitSurgeryBooking(params.toEntity());
+  Future<Either<ErrorMsg, String>> call(SubmitSurgeryBookingParams params) {
+    return repository.submitSurgeryBooking(params.toEntity());
   }
 }

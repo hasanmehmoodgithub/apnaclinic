@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/analytics/analytics_event_keys.dart';
 import '../../../../core/enums/state_status.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
@@ -11,6 +12,7 @@ import '../../../../core/utils/auth_guard.dart';
 import '../../domain/entities/pharmacy_medicine_entity.dart';
 import '../cubit/pharmacy_cubit.dart';
 import '../cubit/pharmacy_state.dart';
+import '../pharmacy_navigation.dart';
 import 'pharmacy_add_to_cart_sheet.dart';
 import 'pharmacy_main_medicines_grid_widget.dart';
 import 'pharmacy_main_search_field_widget.dart';
@@ -79,6 +81,8 @@ class _PharmacyMainMedicinesBodyWidgetState
                   PharmacyMainSearchFieldWidget(
                     searchQuery: state.searchQuery,
                     searchHint: l10n.pharmacyMainSearchHint,
+                    onSearchTapped: () =>
+                        context.read<PharmacyCubit>().logSearchClicked(),
                     onSearchSubmitted: (value) =>
                         context.read<PharmacyCubit>().submitSearch(value),
                     onSearchCleared: () =>
@@ -144,9 +148,10 @@ class _PharmacyMainMedicinesBodyWidgetState
     BuildContext context,
     PharmacyMedicineEntity medicine,
   ) {
+    context.read<PharmacyCubit>().logMedicineItemClicked(medicine);
     context.pushNamed(
       AppRoutes.pharmacy,
-      extra: {'selectedMedicine': medicine},
+      extra: {PharmacyRouteExtraKeys.selectedMedicine: medicine},
     );
   }
 
@@ -154,7 +159,11 @@ class _PharmacyMainMedicinesBodyWidgetState
     BuildContext context,
     PharmacyMedicineEntity medicine,
   ) async {
-    if (!context.requireLogin()) return;
+    if (!context.requireLogin(
+      loginSource: AnalyticsAuthSourceKeys.pharmacy,
+    )) {
+      return;
+    }
     await showPharmacyAddToCartSheet(
       context,
       medicine,

@@ -1,3 +1,4 @@
+import '../../core/analytics/analytics_service.dart';
 import '../../core/di/dependency_injection.dart';
 import '../../core/network/api_service.dart';
 import '../../core/preference/app_pref.dart';
@@ -43,6 +44,7 @@ void initProfileSetupInjector() {
     () => ProfileSetupCubit(
       getProfileSetupContentUseCase: sl<GetProfileSetupContentUseCase>(),
       saveProfileSetupUseCase: sl<SaveProfileSetupUseCase>(),
+      analytics: sl<AnalyticsService>(),
     ),
   );
 

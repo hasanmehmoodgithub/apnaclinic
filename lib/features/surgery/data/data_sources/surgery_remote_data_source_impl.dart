@@ -278,7 +278,7 @@ class SurgeryRemoteDataSourceImpl implements SurgeryRemoteDataSource {
   }
 
   @override
-  Future<void> submitSurgeryBooking(SurgeryBookingRequestEntity request) async {
+  Future<String> submitSurgeryBooking(SurgeryBookingRequestEntity request) async {
     try {
       final doctorId = _parseIntId(request.doctorId);
       final surgeryId = _parseIntId(request.surgeryId);
@@ -334,7 +334,7 @@ class SurgeryRemoteDataSourceImpl implements SurgeryRemoteDataSource {
       }
 
       if (_isSuccessResponse(response)) {
-        return;
+        return _bookingIdFromResponse(response);
       }
 
       final message = (response['message'] ?? AppStrings.surgeryLoadError)
@@ -393,5 +393,26 @@ class SurgeryRemoteDataSourceImpl implements SurgeryRemoteDataSource {
       );
       return Future.error(message);
     }
+  }
+
+  static String _bookingIdFromResponse(Map<String, dynamic> response) {
+    Map<String, dynamic> map = response;
+    final data = response['data'];
+    if (data is Map) {
+      final outer = Map<String, dynamic>.from(data);
+      final nested = outer['data'];
+      map = nested is Map ? Map<String, dynamic>.from(nested) : outer;
+    }
+    for (final key in [
+      'bookingId',
+      'booking_id',
+      'leadId',
+      'lead_id',
+      'id',
+    ]) {
+      final text = map[key]?.toString().trim() ?? '';
+      if (text.isNotEmpty) return text;
+    }
+    return '';
   }
 }

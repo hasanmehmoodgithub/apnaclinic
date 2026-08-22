@@ -11,11 +11,15 @@ import '../../../core/preference/app_pref.dart';
 import '../../../core/preference/app_pref_keys.dart';
 import '../../../core/router/app_routes.dart';
 import '../../../core/utils/auth_guard.dart';
+import '../../consultation/presentation/consultation_analytics.dart';
 import '../../consultation/presentation/doctor_consultation_book_doctor_args.dart';
 import '../../consultation/presentation/widgets/results_doctor_item.dart';
 import '../../lab_test/data/constants/lab_test_catalog_defaults.dart';
+import '../../lab_test/presentation/lab_test_analytics.dart';
 import '../../lab_test/presentation/lab_test_route_args.dart';
 import '../../pharmacy/domain/entities/pharmacy_medicine_entity.dart';
+import '../../pharmacy/presentation/pharmacy_navigation.dart';
+import '../../surgery/presentation/surgery_analytics.dart';
 import '../../surgery/presentation/surgery_patient_details_args.dart';
 import '../domain/entities/search_entity.dart';
 
@@ -56,7 +60,10 @@ void openSearchPharmacyDetail(
 
   context.pushNamed(
     AppRoutes.pharmacy,
-    extra: {'selectedMedicine': medicine},
+    extra: {
+      PharmacyRouteExtraKeys.selectedMedicine: medicine,
+      PharmacyRouteExtraKeys.source: AnalyticsPharmacySourceKeys.search,
+    },
   );
 }
 
@@ -65,7 +72,11 @@ void openSearchDoctorBooking(
   SearchResultEntity item,
 ) {
   _logSearchResultClicked(AnalyticsSearchResultTypeKeys.doctor);
-  if (!context.requireLogin()) return;
+  if (!context.requireLogin(
+    loginSource: AnalyticsAuthSourceKeys.consultancy,
+  )) {
+    return;
+  }
 
   final apiId = item.id.trim();
   final publicId = item.publicId?.trim() ?? '';
@@ -88,9 +99,13 @@ void openSearchDoctorBooking(
     partnerLogoUrl: item.providerLogo ?? '',
   );
 
+  ConsultationAnalytics.logProfileClicked(doctor);
   context.pushNamed(
     AppRoutes.consultationBookDoctor,
-    extra: DoctorConsultationBookDoctorArgs(doctor: doctor),
+    extra: DoctorConsultationBookDoctorArgs(
+      doctor: doctor,
+      moduleSource: AnalyticsConsultancySourceKeys.search,
+    ),
   );
 }
 
@@ -99,7 +114,9 @@ void openSearchLabBooking(
   SearchResultEntity item,
 ) {
   _logSearchResultClicked(AnalyticsSearchResultTypeKeys.lab);
-  if (!context.requireLogin()) return;
+  if (!context.requireLogin(loginSource: AnalyticsAuthSourceKeys.lab)) {
+    return;
+  }
 
   final l10n = AppLocalizations.of(context)!;
   final testId = int.tryParse(item.id.trim());
@@ -121,6 +138,11 @@ void openSearchLabBooking(
     return;
   }
 
+  LabTestAnalytics.logItemSelect(
+    testName: item.title,
+    labName: item.subtitle,
+    sampleType: item.sampleType ?? '',
+  );
   context.pushNamed(
     AppRoutes.labTestBooking,
     extra: LabTestBookingArgs.pending(
@@ -137,7 +159,9 @@ void openSearchSurgeryBooking(
   SearchResultEntity item,
 ) {
   _logSearchResultClicked(AnalyticsSearchResultTypeKeys.surgeryDoctor);
-  if (!context.requireLogin()) return;
+  if (!context.requireLogin(loginSource: AnalyticsAuthSourceKeys.surgery)) {
+    return;
+  }
 
   final surgeryId = item.id.trim();
   final doctorId = item.doctorId?.trim() ?? '';
@@ -148,6 +172,14 @@ void openSearchSurgeryBooking(
       (item.packageName ?? item.subtitle).trim().isNotEmpty
           ? (item.packageName ?? item.subtitle).trim()
           : item.title;
+
+  SurgeryAnalytics.logModule(AnalyticsSurgerySourceKeys.search);
+  SurgeryAnalytics.logSelectItem(procedureName);
+  SurgeryAnalytics.logDoctorSelect(
+    doctorId: doctorId,
+    doctorName: item.title,
+    surgeryName: procedureName,
+  );
 
   context.pushNamed(
     AppRoutes.surgeryPatientDetails,

@@ -6,7 +6,7 @@ Doctor consultation category browse, doctor results, booking, and checkout.
 
 ## Routes / entry
 
-- `AppRoutes.consultation` — category grid (`DoctorConsultationScreen`); tiles use surgery `Assets.iconsD1` / `Assets.iconsD2` background vectors on `ConsultationUiConfig.cardBackground`. **AI card** heading “Not sure which doctor to consult?” / subheading “Apna Clinic AI will help you find the right doctor” → **Start now!** requires login (`AuthGuard.requireLogin`); guests go to `AppRoutes.authLogin`. Logged-in users are asked for microphone permission, then open `AppRoutes.aiScreening` (blocked with snackbar if denied).
+- `AppRoutes.consultation` — category grid (`DoctorConsultationScreen`); tiles use surgery `Assets.iconsD1` / `Assets.iconsD2` background vectors on `ConsultationUiConfig.cardBackground`. Extra `source` (`home` / `banner`) for `consultancy_module`. **AI card** heading “Not sure which doctor to consult?” / subheading “Apna Clinic AI will help you find the right doctor” → **Start now!** requires login (`AuthGuard.requireLogin`); guests go to `AppRoutes.authLogin`. Logged-in users are asked for microphone permission, then open `AppRoutes.aiScreening` (blocked with snackbar if denied).
 - `AppRoutes.aiScreening` — in-app WebView of `ConsultationUiConfig.apnaDoctorAiUrl` / `AppUrls.apnaDoctorAi` (`https://medai.mediq.com.pk/hudav2/`); no intro UI. WebView media permission requests are granted after the OS mic prompt. Back (header or system) shows exit confirm dialog (`showAiScreeningExitDialog`); Exit pops, Cancel stays.
   - Analytics: `ai_chat_started` on open; `ai_chat_ended` with `call_duration` (e.g. `35s`) on confirmed Exit.
 - `AppRoutes.consultationDoctors` — doctor results; extra: `DoctorConsultationResultsArgs` (`selectedCategory`, `mainCategoryId`, preloaded `categoryOptions` from category grid — avoids duplicate categories API call). Book Now requires login (`AppPref.getLoginStatus()`); guests go to `AppRoutes.authLogin`.
@@ -52,6 +52,25 @@ Doctor consultation category browse, doctor results, booking, and checkout.
 - `DoctorConsultationCheckoutCubit` — uses prefetched `paymentOptions` from args when present (skips provider API); otherwise loads via `GetPaymentProvidersUseCase(module: consultation)`. Submits booking via `SubmitConsultationBookingUseCase` → `PaymentInitiationResult`. Summary confirm: if `data.paymentUrl` is present, opens `AppRoutes.cardPayment` (`AndroidInterface` WebView, `allowClose: true` → AppBar **X** cancels; system back is blocked) before the success dialog. If `status` is `PENDING_PAYMENT` and `paymentUrl` is null, skip the WebView and show shared `PaymentPendingDialogWidget` (app copy). JazzCash Continue opens `DoctorConsultationJazzCashAccountsSheetWidget` (Select Account only — no JazzCash info tile; reads phones from `ProfileSessionSync` / prefs, no GET on open; default pre-selected). **Add Account** opens shared `AddAccountScreen` (`AddAccountLaunchSource.consultationCheckout`); on save, sheet refreshes via `GetAccountsListUseCase` and selects the new number. Same sheet is reused by lab checkout and surgery booking pay.
 - `DoctorConsultationBookingsCubit` (bookings tab) — loads paginated bookings via `GetConsultationBookingsUseCase`.
 - Booking details — loads single booking via `GetConsultationBookingUseCase`; submits feedback via `SubmitConsultationFeedbackUseCase`.
+
+## Analytics
+
+Firebase via `ConsultationAnalytics` / `AnalyticsService`. Hub `source`: home services, promotional banner. Global search opens book-doctor and logs `consultancy_module` with `source=search`. Not logged: `source=ad` (no ad entry), `source=notification` (push opens booking details). `doctor_consultation_booked` omits `promo` code, `transaction_id`, `fb_content_type`, and `content_type` (Firebase only; other SDKs not wired). `promo_applied` is Yes when checkout discount > 0. Pending card payment without URL does not fire `doctor_consultation_booked`.
+
+| Event | When | Params |
+|---|---|---|
+| `consultancy_module` | Category hub opens, or book-doctor from global search | `source` (`home` / `search` / `banner`) |
+| `consultancy_search_clicked` | Category search field tap | — |
+| `doctor_category_clicked` | Category tile or listing category change | `category_name` |
+| `doctor_listing_screen` | Doctor listing opens / category changes | `category_name` |
+| `doctor_search_clicked` | Doctor search field or search icon | — |
+| `doctor_search_performed` | Non-empty doctor search | `keyword` |
+| `doctor_filter_applied` | Partner filter selected | `partner` |
+| `doctor_profile_clicked` | Doctor card / Book Now / search result | `doctor_id`, `doctor_name`, `category` |
+| `doctor_profile_screen` | Book-doctor screen opens | same doctor params |
+| `doctor_document_uploaded` | Attachment(s) accepted | — |
+| `doctor_consultation_confirm` | Get Appointment continues to checkout | doctor params, `timeslot` |
+| `doctor_consultation_booked` | Summary confirm succeeds or fails | `af_content_type`=`Consultancy`, `booking_id`, `user_name`, `msisdn`, doctor params, `consultation_timeslot`, `booking_timestamp`, `payment_method` (`JC`/`Card`), `payment_status`, `promo_applied` |
 
 ## DI
 

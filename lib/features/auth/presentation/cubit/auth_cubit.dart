@@ -4,6 +4,8 @@ import 'dart:developer' as developer;
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../core/analytics/analytics_event_keys.dart';
+import '../../../../core/analytics/analytics_service.dart';
 import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/enums/app_enums.dart';
 import '../../../../core/enums/state_status.dart';
@@ -28,11 +30,13 @@ class AuthCubit extends Cubit<AuthState> {
     required GetProfileSetupContentUseCase getProfileSetupContentUseCase,
     required AppPref appPref,
     required AuthSessionRefresh sessionRefresh,
+    required AnalyticsService analytics,
   }) : _requestOtpUseCase = requestOtpUseCase,
        _verifyOtpUseCase = verifyOtpUseCase,
        _getProfileSetupContentUseCase = getProfileSetupContentUseCase,
        _appPref = appPref,
        _sessionRefresh = sessionRefresh,
+       _analytics = analytics,
        super(const AuthState());
 
   final RequestOtpUseCase _requestOtpUseCase;
@@ -40,6 +44,7 @@ class AuthCubit extends Cubit<AuthState> {
   final GetProfileSetupContentUseCase _getProfileSetupContentUseCase;
   final AppPref _appPref;
   final AuthSessionRefresh _sessionRefresh;
+  final AnalyticsService _analytics;
   Timer? _timer;
 
   String formatPhoneInput(String input) {
@@ -130,6 +135,7 @@ class AuthCubit extends Cubit<AuthState> {
         emit(
           _otpRequestedSuccessState(expiresInSeconds: entity.expiresInSeconds),
         );
+        unawaited(_analytics.logEvent(AnalyticsEventKeys.otpSent));
         return true;
       },
     );
@@ -178,6 +184,7 @@ class AuthCubit extends Cubit<AuthState> {
             errorMessage: null,
           ),
         );
+        unawaited(_analytics.logEvent(AnalyticsEventKeys.otpVerified));
         return VerifyOtpOutcome(
           isSuccess: true,
           goToHome: entity.isOnboardingCompleted,
@@ -210,6 +217,14 @@ class AuthCubit extends Cubit<AuthState> {
         otpSecondsRemaining: 30,
         errorMessage: null,
       ),
+    );
+  }
+
+  void logAuthScreenViewed(String source) {
+    unawaited(
+      _analytics.logEvent(AnalyticsEventKeys.authenticationScreenViewed, {
+        AnalyticsParamKeys.source: source,
+      }),
     );
   }
 

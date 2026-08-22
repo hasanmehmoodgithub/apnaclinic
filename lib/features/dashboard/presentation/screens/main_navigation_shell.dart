@@ -14,6 +14,7 @@ import '../../../../core/utils/auth_guard.dart';
 import '../../../../core/session/auth_session_refresh.dart';
 import '../../domain/services/promotional_banner_session.dart';
 import '../../../bookings/presentation/screens/bookings_dashboard_screen.dart';
+import '../../../bookings/presentation/bookings_analytics.dart';
 import '../../../customer_support/presentation/cubit/customer_support_cubit.dart';
 import '../../../customer_support/presentation/screens/customer_support_screen.dart';
 import '../../../instant_doctor/presentation/cubit/instant_doctor_cubit.dart';
@@ -102,6 +103,10 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
           _sessionRefresh.consumePendingInstantDoctorSourceScreen() ??
           AnalyticsInstantDoctorSourceKeys.bottomTab;
       context.read<InstantDoctorCubit>().logModuleViewed(source);
+    }
+    if (tabIndex == _bookingsIndex &&
+        _navigationCubit.state.currentIndex != tabIndex) {
+      BookingsAnalytics.logMyBookingsTab();
     }
     _navigationCubit.setIndex(tabIndex);
     if (_pageController.hasClients) {
@@ -197,7 +202,11 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
             ? AnalyticsInstantDoctorSourceKeys.bottomTab
             : null,
       );
-      context.requireLogin();
+      context.requireLogin(
+        loginSource: index == _instantDoctorIndex
+            ? AnalyticsAuthSourceKeys.instantDoctor
+            : AnalyticsAuthSourceKeys.login,
+      );
       return;
     }
 
@@ -206,6 +215,10 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
       context.read<InstantDoctorCubit>().logModuleViewed(
         AnalyticsInstantDoctorSourceKeys.bottomTab,
       );
+    }
+    if (index == _bookingsIndex &&
+        _navigationCubit.state.currentIndex != index) {
+      BookingsAnalytics.logMyBookingsTab();
     }
 
     _navigationCubit.setIndex(index);
@@ -229,6 +242,9 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
       context.read<InstantDoctorCubit>().logModuleViewed(
         AnalyticsInstantDoctorSourceKeys.bottomTab,
       );
+    }
+    if (index == _bookingsIndex && previous != index) {
+      BookingsAnalytics.logMyBookingsTab();
     }
     _navigationCubit.setIndex(index);
     _applyStatusBar();

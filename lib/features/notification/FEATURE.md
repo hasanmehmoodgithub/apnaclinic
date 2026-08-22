@@ -39,6 +39,7 @@ In-app notification list and Firebase Cloud Messaging (FCM) push notifications.
   - `SURGERY` → `surgeryBookingDetails` (`leadId` = unified order id).
   - `LAB` → `labTestViewDetails` (`orderId` = unified order id, e.g. `62`).
   - `PHARMACY` → `pharmacyBookingDetails` with **`deepLink.entity.publicId`** (pharmacy order UUID). Falls back to unified order id if `publicId` is missing.
+- Analytics: tap and FCM may fire `prescription_available` / `pharmacy_status_changed` when `type` matches (see bookings `FEATURE.md`).
 
 ## State
 

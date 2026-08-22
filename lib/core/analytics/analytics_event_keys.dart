@@ -16,6 +16,61 @@ class AnalyticsEventKeys {
   static const fbMobileSubscribe = 'fb_mobile_subscribe';
   static const startConsultationClicked = 'start_consultation_clicked';
   static const instantDoctorModule = 'instant_doctor_module';
+
+  static const pharmacyModule = 'pharmacy_module';
+  static const pharmacySearchClicked = 'pharmacy_search_clicked';
+  static const pharmacySearchPerformed = 'pharmacy_search_performed';
+  static const medicineItemClicked = 'medicine_item_clicked';
+  static const pharmacyItemDescription = 'pharmacy_item_description';
+  static const pharmacyAddToCart = 'pharmacy_add_to_cart';
+  static const pharmacyCartViewed = 'pharmacy_cart_Viewed';
+  static const pharmacyCheckout = 'pharmacy_checkout';
+  static const pharmacyConfirmPayment = 'pharmacy_confirm_payment';
+  static const pharmacyOrderConfirmed = 'pharmacy_order_confirmed';
+
+  static const authenticationScreenViewed = 'authentication_screen_viewed';
+  static const otpSent = 'otp_sent';
+  static const otpVerified = 'otp_verified';
+  static const profileCreationScreen = 'profile_creation_screen';
+  static const profileCreated = 'profile_created';
+
+  static const consultancyModule = 'consultancy_module';
+  static const consultancySearchClicked = 'consultancy_search_clicked';
+  static const doctorCategoryClicked = 'doctor_category_clicked';
+  static const doctorListingScreen = 'doctor_listing_screen';
+  static const doctorSearchClicked = 'doctor_search_clicked';
+  static const doctorSearchPerformed = 'doctor_search_performed';
+  static const doctorFilterApplied = 'doctor_filter_applied';
+  static const doctorProfileClicked = 'doctor_profile_clicked';
+  static const doctorProfileScreen = 'doctor_profile_screen';
+  static const doctorDocumentUploaded = 'doctor_document_uploaded';
+  static const doctorConsultationConfirm = 'doctor_consultation_confirm';
+  static const doctorConsultationBooked = 'doctor_consultation_booked';
+
+  static const labModule = 'lab_module';
+  static const labCityChange = 'lab_city_change';
+  static const labSearchClicked = 'lab_search_clicked';
+  static const labSearchPerformed = 'lab_search_performed';
+  static const labItemSelect = 'lab_item_select';
+  static const labAddToCart = 'lab_add_to_cart';
+  static const labCartViewed = 'lab_cart_viewed';
+  static const labCheckout = 'lab_checkout';
+  static const labPatientDetailsEdit = 'lab_patient_details_edit';
+  static const labBookingConfirmed = 'lab_booking_confirmed';
+
+  static const surgeryModule = 'surgery_module';
+  static const surgeryCityChange = 'surgery_city_change';
+  static const surgerySearchClicked = 'surgery_search_clicked';
+  static const surgerySelectItem = 'surgery_select_item';
+  static const surgeryDoctorSelect = 'surgery_doctor_select';
+  static const surgeryCheckout = 'surgery_checkout';
+  static const surgeryBooked = 'surgery_booked';
+
+  static const myBookingsTab = 'my_bookings_tab';
+  static const bookingViewed = 'booking_viewed';
+  static const prescriptionAvailable = 'prescription_available';
+  static const prescriptionDownloaded = 'prescription_downloaded';
+  static const pharmacyStatusChanged = 'pharmacy_status_changed';
 }
 
 class AnalyticsParamKeys {
@@ -29,6 +84,44 @@ class AnalyticsParamKeys {
   static const partner = 'partner';
   static const msisdn = 'msisdn';
   static const sourceScreen = 'source_screen';
+  static const source = 'source';
+  static const resultItems = 'result_items';
+  static const productId = 'product_id';
+  static const productName = 'product_name';
+  static const prescriptionRequired = 'prescription_required';
+  static const afContentType = 'af_content_type';
+  static const numberOfProducts = 'number_of_products';
+  static const paymentMethod = 'payment_method';
+  static const orderId = 'order_id';
+  static const userName = 'user_name';
+  static const cartItems = 'cart_items';
+  static const subTotal = 'sub_total';
+  static const orderValue = 'order_value';
+  static const promoApplied = 'promo_applied';
+  static const timestamp = 'timestamp';
+  static const deliveryCharges = 'delivery_charges';
+  static const paymentStatus = 'payment_status';
+  static const categoryName = 'category_name';
+  static const category = 'category';
+  static const doctorId = 'doctor_id';
+  static const doctorName = 'doctor_name';
+  static const timeslot = 'timeslot';
+  static const bookingId = 'booking_id';
+  static const consultationTimeslot = 'consultation_timeslot';
+  static const bookingTimestamp = 'booking_timestamp';
+  static const selectedCity = 'selected_city';
+  static const testName = 'test_name';
+  static const labName = 'lab_name';
+  static const sampleType = 'sample_type';
+  static const partnerName = 'partner_name';
+  static const samplingMode = 'sampling_mode';
+  static const numberOfTests = 'number_of_tests';
+  static const promo = 'promo';
+  static const surgeryName = 'surgery_name';
+  static const amount = 'amount';
+  static const service = 'service';
+  static const status = 'status';
+  static const changedBy = 'changed_by';
 }
 
 class AnalyticsSearchMediumKeys {
@@ -54,4 +147,119 @@ class AnalyticsSearchResultTypeKeys {
   static const doctor = 'doctor';
   static const lab = 'lab';
   static const surgeryDoctor = 'surgery_doctor';
+}
+
+class AnalyticsPharmacySourceKeys {
+  AnalyticsPharmacySourceKeys._();
+
+  static const search = 'search';
+  static const home = 'home';
+  static const banner = 'banner';
+}
+
+class AnalyticsPharmacyPaymentMethodKeys {
+  AnalyticsPharmacyPaymentMethodKeys._();
+
+  static const cod = 'COD';
+  static const jazzCash = 'JC';
+  static const card = 'Card';
+}
+
+class AnalyticsYesNoKeys {
+  AnalyticsYesNoKeys._();
+
+  static const yes = 'Yes';
+  static const no = 'No';
+}
+
+class AnalyticsPaymentStatusKeys {
+  AnalyticsPaymentStatusKeys._();
+
+  static const successful = 'Successful';
+  static const failed = 'Failed';
+}
+
+class AnalyticsContentTypeKeys {
+  AnalyticsContentTypeKeys._();
+
+  static const pharmacy = 'Pharmacy';
+  static const pharmacyCart = 'Pharmacy Cart';
+  static const consultancy = 'Consultancy';
+  static const lab = 'Lab';
+  static const labCart = 'Lab Cart';
+  static const labCheckout = 'Lab Checkout';
+  static const surgery = 'Surgery';
+}
+
+class AnalyticsAuthSourceKeys {
+  AnalyticsAuthSourceKeys._();
+
+  static const login = 'login';
+  static const pharmacy = 'pharmacy';
+  static const instantDoctor = 'instant_doctor';
+  static const consultancy = 'consultancy';
+  static const lab = 'lab';
+  static const surgery = 'surgery';
+}
+
+class AnalyticsProfileCreationSourceKeys {
+  AnalyticsProfileCreationSourceKeys._();
+
+  static const authenticationScreen = 'authentication_screen';
+  static const profile = 'profile';
+}
+
+class AnalyticsConsultancySourceKeys {
+  AnalyticsConsultancySourceKeys._();
+
+  static const search = 'search';
+  static const home = 'home';
+  static const banner = 'banner';
+}
+
+class AnalyticsConsultationPaymentMethodKeys {
+  AnalyticsConsultationPaymentMethodKeys._();
+
+  static const jazzCash = 'JC';
+  static const card = 'Card';
+}
+
+class AnalyticsConsultationPaymentStatusKeys {
+  AnalyticsConsultationPaymentStatusKeys._();
+
+  static const successful = 'successful';
+  static const failed = 'failed';
+}
+
+class AnalyticsLabPaymentMethodKeys {
+  AnalyticsLabPaymentMethodKeys._();
+
+  static const jazzCash = 'JazzCash';
+  static const card = 'Card';
+  static const cod = 'COD';
+}
+
+class AnalyticsLabSamplingModeKeys {
+  AnalyticsLabSamplingModeKeys._();
+
+  static const homeSample = 'Home Sample';
+  static const walkIn = 'Walk In';
+}
+
+class AnalyticsSurgerySourceKeys {
+  AnalyticsSurgerySourceKeys._();
+
+  static const home = 'Home';
+  static const search = 'Search';
+  static const banner = 'Banner';
+}
+
+class AnalyticsBookingTypeKeys {
+  AnalyticsBookingTypeKeys._();
+
+  static const instantDoctor = 'instant_doctor';
+  static const consultancy = 'consultancy';
+  static const pharmacy = 'pharmacy';
+  static const lab = 'lab';
+  static const surgery = 'surgery';
 }

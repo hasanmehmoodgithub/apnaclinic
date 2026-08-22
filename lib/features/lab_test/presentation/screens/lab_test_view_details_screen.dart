@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/analytics/analytics_event_keys.dart';
 import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/widgets/app_scaffold_gradient.dart';
 import '../../../bookings/data/mappers/lab_test_booking_list_mapper.dart';
+import '../../../bookings/presentation/bookings_analytics.dart';
 import '../../../bookings/presentation/widgets/empty_booking_widget.dart';
 import '../../domain/use_cases/get_lab_order_detail_use_case.dart';
 import '../lab_test_route_args.dart';
@@ -60,6 +62,7 @@ class _LabTestViewDetailsScreenState extends State<LabTestViewDetailsScreen> {
           _errorMessage = null;
           _content = LabTestBookingListMapper.toViewDetailsContent(order, l10n);
         });
+        BookingsAnalytics.logBookingViewed(AnalyticsBookingTypeKeys.lab);
       },
     );
   }

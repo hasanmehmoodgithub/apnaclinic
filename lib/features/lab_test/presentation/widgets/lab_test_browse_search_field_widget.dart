@@ -14,6 +14,7 @@ class LabTestBrowseSearchFieldWidget extends StatelessWidget {
     required this.hintText,
     this.onChanged,
     this.onSearch,
+    this.onSearchTapped,
     this.onClear,
   });
 
@@ -25,6 +26,9 @@ class LabTestBrowseSearchFieldWidget extends StatelessWidget {
 
   /// Called when the search icon is tapped or the keyboard submits.
   final ValueChanged<String>? onSearch;
+
+  /// Called when the field or search icon is tapped.
+  final VoidCallback? onSearchTapped;
 
   /// Called after the field is cleared via the cross icon.
   final VoidCallback? onClear;
@@ -58,6 +62,7 @@ class LabTestBrowseSearchFieldWidget extends StatelessWidget {
             child: TextField(
               controller: controller,
               inputFormatters: NoEmojiTextInputFormatter.merge(null),
+              onTap: onSearchTapped,
               onChanged: onChanged,
               onSubmitted: (_) => _submit(),
               textInputAction: TextInputAction.search,
@@ -96,7 +101,12 @@ class LabTestBrowseSearchFieldWidget extends StatelessWidget {
                       ),
                     ),
                   GestureDetector(
-                    onTap: onSearch == null ? null : _submit,
+                    onTap: onSearch == null
+                        ? null
+                        : () {
+                            onSearchTapped?.call();
+                            _submit();
+                          },
                     behavior: HitTestBehavior.opaque,
                     child: Padding(
                       padding: EdgeInsets.all(6.w),

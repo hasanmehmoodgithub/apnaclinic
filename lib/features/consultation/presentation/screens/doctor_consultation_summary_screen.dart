@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/analytics/analytics_event_keys.dart';
 import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
@@ -11,6 +12,7 @@ import '../../../bookings/presentation/constants/bookings_tabs.dart';
 import '../../../dashboard/presentation/constants/main_navigation_tabs.dart';
 import '../../../payment/presentation/payment_navigation.dart';
 import '../../../payment/presentation/widgets/payment_pending_dialog_widget.dart';
+import '../consultation_analytics.dart';
 import '../cubit/doctor_consultation_checkout_cubit.dart';
 import '../cubit/doctor_consultation_checkout_state.dart';
 import '../doctor_consultation_summary_args.dart';
@@ -40,6 +42,15 @@ class DoctorConsultationSummaryScreen extends StatelessWidget {
     if (!context.mounted) return;
 
     if (initiation == null) {
+      ConsultationAnalytics.logConsultationBooked(
+        doctor: args.checkoutArgs.doctor,
+        slot: args.checkoutArgs.selectedSlot,
+        paymentMethodCode: args.paymentMethodCode,
+        paymentMethodName: args.paymentMethodName,
+        msisdn: args.msisdn,
+        paymentStatus: AnalyticsConsultationPaymentStatusKeys.failed,
+        discount: args.discount,
+      );
       final message = cubit.state.errorMessage;
       final displayMessage = switch (message) {
         'invalid_booking_context' => l10n.consultationBookingInvalidContextError,
@@ -67,9 +78,30 @@ class DoctorConsultationSummaryScreen extends StatelessWidget {
         );
     if (!context.mounted) return;
     if (!paymentResult.isSuccess) {
+      ConsultationAnalytics.logConsultationBooked(
+        doctor: args.checkoutArgs.doctor,
+        slot: args.checkoutArgs.selectedSlot,
+        paymentMethodCode: args.paymentMethodCode,
+        paymentMethodName: args.paymentMethodName,
+        msisdn: args.msisdn,
+        paymentStatus: AnalyticsConsultationPaymentStatusKeys.failed,
+        discount: args.discount,
+        initiation: initiation,
+      );
       showCardPaymentOutcomeSnackBar(context, paymentResult);
       return;
     }
+
+    ConsultationAnalytics.logConsultationBooked(
+      doctor: args.checkoutArgs.doctor,
+      slot: args.checkoutArgs.selectedSlot,
+      paymentMethodCode: args.paymentMethodCode,
+      paymentMethodName: args.paymentMethodName,
+      msisdn: args.msisdn,
+      paymentStatus: AnalyticsConsultationPaymentStatusKeys.successful,
+      discount: args.discount,
+      initiation: initiation,
+    );
 
     await _showBookedDialog(context);
   }

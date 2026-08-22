@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/analytics/analytics_event_keys.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
@@ -46,7 +47,9 @@ Future<void> showPharmacyAddToCartSheet(
   PharmacyMedicineEntity medicine, {
   required String loaderIdPrefix,
 }) async {
-  if (!context.requireLogin()) return;
+  if (!context.requireLogin(loginSource: AnalyticsAuthSourceKeys.pharmacy)) {
+    return;
+  }
 
   final pharmacyCubit = context.read<PharmacyCubit>();
   final hostContext = context;

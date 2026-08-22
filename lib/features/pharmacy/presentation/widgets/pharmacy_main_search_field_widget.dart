@@ -12,12 +12,14 @@ class PharmacyMainSearchFieldWidget extends StatefulWidget {
     required this.searchHint,
     required this.onSearchSubmitted,
     required this.onSearchCleared,
+    this.onSearchTapped,
   });
 
   final String searchQuery;
   final String searchHint;
   final ValueChanged<String> onSearchSubmitted;
   final VoidCallback onSearchCleared;
+  final VoidCallback? onSearchTapped;
 
   @override
   State<PharmacyMainSearchFieldWidget> createState() =>
@@ -77,6 +79,7 @@ class _PharmacyMainSearchFieldWidgetState
         focusNode: _focusNode,
         inputFormatters: NoEmojiTextInputFormatter.merge(null),
         textInputAction: TextInputAction.search,
+        onTap: widget.onSearchTapped,
         onFieldSubmitted: (_) => _submitSearch(),
         decoration: InputDecoration(
           hintText: widget.searchHint,
@@ -93,7 +96,10 @@ class _PharmacyMainSearchFieldWidgetState
               children: [
                 _SearchSuffixIcon(
                   icon: Icons.search,
-                  onPressed: _submitSearch,
+                  onPressed: () {
+                    widget.onSearchTapped?.call();
+                    _submitSearch();
+                  },
                 ),
                 if (hasActiveSearch)
                   _SearchSuffixIcon(

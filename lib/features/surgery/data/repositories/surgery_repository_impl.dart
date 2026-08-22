@@ -157,12 +157,12 @@ class SurgeryRepositoryImpl implements SurgeryRepository {
   }
 
   @override
-  Future<Either<ErrorMsg, void>> submitSurgeryBooking(
+  Future<Either<ErrorMsg, String>> submitSurgeryBooking(
     SurgeryBookingRequestEntity request,
   ) async {
     try {
-      await remoteDataSource.submitSurgeryBooking(request);
-      return const Right(null);
+      final bookingId = await remoteDataSource.submitSurgeryBooking(request);
+      return Right(bookingId);
     } catch (e) {
       log('submitSurgeryBooking repository error: $e');
       return Left(e.toString());

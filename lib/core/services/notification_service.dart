@@ -5,6 +5,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
+import '../../features/bookings/presentation/bookings_analytics.dart';
 import '../../firebase_options.dart';
 import '../firebase/firebase_bootstrap.dart';
 import '../flavor/flavor_config.dart';
@@ -161,6 +162,7 @@ class NotificationService {
     FirebaseMessaging.onMessageOpenedApp.listen((message) {
       final payload = NotificationPayload.fromRemoteMessage(message);
       _notificationController.add(payload);
+      BookingsAnalytics.logFromFcmData(payload.data);
       _navigateToRoute(payload.route, payload.data);
     });
   }
@@ -268,6 +270,7 @@ class NotificationService {
     FirebaseMessaging.onMessage.listen((message) async {
       final payload = NotificationPayload.fromRemoteMessage(message);
       _notificationController.add(payload);
+      BookingsAnalytics.logFromFcmData(payload.data);
       await _showLocalNotification(payload);
     });
   }
@@ -278,6 +281,7 @@ class NotificationService {
 
     final payload = NotificationPayload.fromRemoteMessage(initialMessage);
     _notificationController.add(payload);
+    BookingsAnalytics.logFromFcmData(payload.data);
     Future<void>.delayed(const Duration(milliseconds: 900), () {
       _navigateToRoute(payload.route, payload.data);
     });

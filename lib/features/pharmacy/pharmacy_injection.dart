@@ -1,3 +1,4 @@
+import '../../core/analytics/analytics_service.dart';
 import '../../core/cities/domain/repositories/cities_repository.dart';
 import '../../core/di/dependency_injection.dart';
 import '../../core/network/api_service.dart';
@@ -113,6 +114,7 @@ void initPharmacyInjector() {
       addPharmacyProfileAddressUseCase: sl<AddPharmacyProfileAddressUseCase>(),
       citiesRepository: sl<CitiesRepository>(),
       appPref: sl<AppPref>(),
+      analytics: sl<AnalyticsService>(),
     ),
   );
 }

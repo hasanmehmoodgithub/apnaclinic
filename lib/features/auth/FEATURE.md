@@ -27,6 +27,21 @@ that service. Cold/onboarding entry still ends on **home**.
 `AppPref.isOnboardingCompleted` is only for the intro carousel (not overwritten
 on login). `AppPref.isProfileCompleted` tracks whether profile setup is done.
 
+Guest login from a service passes `source` on `AppRoutes.authLogin` via
+`AuthGuard.requireLogin(loginSource:)` (`pharmacy` / `instant_doctor` /
+`consultancy` / `lab` / `surgery`). Explicit login CTAs (home, profile, menu)
+use `source=login`.
+
+## Analytics
+
+| Event | When | Params |
+|---|---|---|
+| `authentication_screen_viewed` | Login screen opens | `source` |
+| `otp_sent` | OTP request succeeds (including resend) | — |
+| `otp_verified` | OTP verify succeeds | — |
+
+## Data layer
+
 On login, `AuthSessionRefresh.notifyLoggedIn()` runs only when profile is
 already complete (avoids remounting `HomeScreen` under the login route, which
 would open the dashboard promo heart loader). After first-time profile save,

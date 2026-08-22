@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/analytics/analytics_event_keys.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/enums/app_enums.dart';
@@ -18,19 +19,26 @@ import '../widgets/login_phone_input_section.dart';
 import '../widgets/login_submit_button.dart';
 
 class LoginScreen extends StatelessWidget {
-  const LoginScreen({super.key});
+  const LoginScreen({
+    super.key,
+    this.source = AnalyticsAuthSourceKeys.login,
+  });
+
+  final String source;
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider<AuthCubit>(
       create: (_) => sl<AuthCubit>(),
-      child: const _LoginView(),
+      child: _LoginView(source: source),
     );
   }
 }
 
 class _LoginView extends StatefulWidget {
-  const _LoginView();
+  const _LoginView({required this.source});
+
+  final String source;
 
   @override
   State<_LoginView> createState() => _LoginViewState();
@@ -43,6 +51,15 @@ class _LoginViewState extends State<_LoginView> {
   final _formKey = GlobalKey<FormState>();
 
   String get _otpCode => _otpController.text;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      context.read<AuthCubit>().logAuthScreenViewed(widget.source);
+    });
+  }
 
   @override
   void dispose() {

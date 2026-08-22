@@ -38,8 +38,13 @@ Cart products: each `products[]` row may nest `product { …Partner product fiel
 
 ## Routes / entry
 
-- `AppRoutes.pharmacyMain` — pharmacy dashboard (medicines home).
+- `AppRoutes.pharmacyMain` — pharmacy dashboard (medicines home). Extra `source` (`home` / `banner`) for `pharmacy_module`.
+- `AppRoutes.pharmacy` — product description. Extra `selectedMedicine`; `source: search` when opened from global search.
 - `AppRoutes.pharmacyCart`, `AppRoutes.pharmacyCheckout`, `AppRoutes.pharmacyBookingDetails` (opens with `orderId`, not `orderNo`; `orderNo` is display-only).
+
+## Analytics
+
+Firebase events via `PharmacyCubit` / `AnalyticsService`. Hub `source`: home services, promotional banner. Global search opens product detail and logs `pharmacy_module` with `source=search`. Not logged: `source=ad` (no ad entry), `source=notification` (push opens booking details). Order confirmed omits `promo` code, JazzCash auth code, and `transaction_id` (not on checkout result). `promo_applied` is Yes when cart discount > 0. Booking details fire `booking_viewed` (`type=pharmacy`) via `BookingsAnalytics`; pharmacy status push/inbox may fire `pharmacy_status_changed`.
 
 ## Order placed flow
 

@@ -7,6 +7,7 @@ import '../../../../core/preference/app_pref_keys.dart';
 import '../../domain/entities/lab_test_item_entity.dart';
 import '../../domain/entities/lab_test_vendor_entity.dart';
 import '../../domain/use_cases/get_lab_test_catalog_use_case.dart';
+import '../lab_test_analytics.dart';
 import 'lab_test_state.dart';
 
 class LabTestCubit extends Cubit<LabTestState> {
@@ -23,6 +24,9 @@ class LabTestCubit extends Cubit<LabTestState> {
   final GetLabTestCatalogUseCase getLabTestCatalogUseCase;
   final AppPref appPref;
   final CitiesRepository citiesRepository;
+
+  /// Set by [submitSearch] so city/browse loads do not fire search analytics.
+  bool _pendingSearchPerformedLog = false;
 
   /// Loads cities, restores saved city from prefs, then calls lab tests API.
   Future<void> bootstrap() async {
@@ -84,7 +88,10 @@ class LabTestCubit extends Cubit<LabTestState> {
     String? search,
   }) async {
     final resolvedCity = _resolveCityName(cityName) ?? cityName.trim();
-    if (resolvedCity.isEmpty) return;
+    if (resolvedCity.isEmpty) {
+      _pendingSearchPerformedLog = false;
+      return;
+    }
 
     emit(
       state.copyWith(
@@ -110,14 +117,26 @@ class LabTestCubit extends Cubit<LabTestState> {
     );
     if (isClosed) return;
 
+    final shouldLogSearch = _pendingSearchPerformedLog;
+    _pendingSearchPerformedLog = false;
+    final keyword = (search ?? state.searchQuery).trim();
+
     result.fold(
-      (error) => emit(
-        state.copyWith(
-          catalogLoadingStateStatus: StateStatus.error,
-          errorMessage: error,
-          isLoadingMore: false,
-        ),
-      ),
+      (error) {
+        emit(
+          state.copyWith(
+            catalogLoadingStateStatus: StateStatus.error,
+            errorMessage: error,
+            isLoadingMore: false,
+          ),
+        );
+        if (shouldLogSearch) {
+          LabTestAnalytics.logSearchPerformed(
+            keyword: keyword,
+            resultItems: 0,
+          );
+        }
+      },
       (catalog) {
         final items = catalog.items;
         emit(
@@ -139,6 +158,12 @@ class LabTestCubit extends Cubit<LabTestState> {
             clearErrorMessage: true,
           ),
         );
+        if (shouldLogSearch) {
+          LabTestAnalytics.logSearchPerformed(
+            keyword: keyword,
+            resultItems: catalog.total,
+          );
+        }
       },
     );
   }
@@ -201,14 +226,21 @@ class LabTestCubit extends Cubit<LabTestState> {
   Future<void> submitSearch(String value) async {
     final query = value.trim();
     emit(state.copyWith(searchQuery: query));
+    if (query.isNotEmpty) {
+      _pendingSearchPerformedLog = true;
+    }
 
     final city = state.selectedCity;
     if (city == null || city.isEmpty) {
-      emit(
-        state.copyWith(
-          filteredItems: _filter(state.items, query),
-        ),
-      );
+      final filtered = _filter(state.items, query);
+      emit(state.copyWith(filteredItems: filtered));
+      if (_pendingSearchPerformedLog) {
+        _pendingSearchPerformedLog = false;
+        LabTestAnalytics.logSearchPerformed(
+          keyword: query,
+          resultItems: filtered.length,
+        );
+      }
       return;
     }
 
@@ -223,6 +255,7 @@ class LabTestCubit extends Cubit<LabTestState> {
 
     final resolvedCity = _resolveCityName(city) ?? city.trim();
     await appPref.setString(AppPrefKeys.labTestSelectedCity, resolvedCity);
+    LabTestAnalytics.logCityChange(resolvedCity);
 
     await loadCatalog(
       cityName: resolvedCity,

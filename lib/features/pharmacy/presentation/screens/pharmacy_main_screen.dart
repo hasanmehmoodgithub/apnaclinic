@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../core/analytics/analytics_event_keys.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
@@ -12,7 +13,12 @@ import '../widgets/pharmacy_main_top_header_widget.dart';
 
 /// Pharmacy hub: banner header, then medicines list / search in the white panel.
 class PharmacyMainScreen extends StatefulWidget {
-  const PharmacyMainScreen({super.key});
+  const PharmacyMainScreen({
+    super.key,
+    this.source = AnalyticsPharmacySourceKeys.home,
+  });
+
+  final String source;
 
   @override
   State<PharmacyMainScreen> createState() => _PharmacyMainScreenState();
@@ -25,7 +31,9 @@ class _PharmacyMainScreenState extends State<PharmacyMainScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
-      context.read<PharmacyCubit>().loadCart();
+      final cubit = context.read<PharmacyCubit>();
+      cubit.logPharmacyModule(widget.source);
+      cubit.loadCart();
     });
   }
 

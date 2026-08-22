@@ -9,6 +9,7 @@ import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/widgets/app_scaffold_gradient.dart';
 import '../cubit/surgery_patient_details_cubit.dart';
 import '../cubit/surgery_patient_details_state.dart';
+import '../surgery_analytics.dart';
 import '../widgets/surgery_booking_failed_dialog.dart';
 import '../widgets/surgery_booking_submitted_dialog.dart';
 import '../widgets/surgery_doctor_summary_widget.dart';
@@ -73,6 +74,7 @@ class _SurgeryPatientDetailsScreenState
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
+      SurgeryAnalytics.logCheckout();
       final cubit = context.read<SurgeryPatientDetailsCubit>();
       final name = cubit.prefillFullName();
       final phone = cubit.prefillPhone();
@@ -120,6 +122,17 @@ class _SurgeryPatientDetailsScreenState
         final cubit = context.read<SurgeryPatientDetailsCubit>();
 
         if (state.bookingSubmitted) {
+          SurgeryAnalytics.logBooked(
+            bookingId: state.bookingId,
+            userName: patientNameController.text.trim(),
+            msisdn: contactNumberController.text.trim(),
+            surgeryName: (state.selectedPackage?.name ?? widget.procedureName)
+                .trim(),
+            doctorName: widget.doctorName,
+            amount: SurgeryAnalytics.amountFromPrice(
+              state.selectedPackage?.price ?? widget.price,
+            ),
+          );
           cubit.clearTransientMessages();
           showSurgeryBookingSubmittedDialog(context);
           return;

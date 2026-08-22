@@ -43,6 +43,18 @@ Tabbed bookings hub (Instant Doctor, Pharmacy, Doctor Consultation, Lab Tests, S
 - `DoctorConsultationBookingDetailsContentWidget` — thin composer for details body; sections: header (doctor + date card), patient/issue fields, review or feedback form, documents (name + Download under icon), billing (fee breakdown only; **E-Invoice** is hidden until the API provides an invoice URL), join CTA. Rating badge uses shared `AppRoundedRatingWidget` (whole numbers without decimals).
 - `DoctorConsultationBookingFeedbackFormWidget` — rating + review + submit when `patientReview` is missing (hidden for cancelled); layout matches submitted review card (title, “Your Feedback” + date, stars + score chip, `#F7F7F7` text area).
 
+## Analytics
+
+Firebase via `BookingsAnalytics` / `AnalyticsService`. `my_bookings_tab` fires when the bottom Bookings tab is shown. `booking_viewed` fires after details load for consultancy / pharmacy / lab / surgery (`type`). Instant Doctor has no booking-details screen yet. `prescription_available` fires when consultation details include doctor prescriptions, and when a push/inbox `type` contains `PRESCRIPTION` (`service` `consultancy` / `instant_doctor`). `prescription_downloaded` fires on prescription file tap. `pharmacy_status_changed` fires from push/inbox when `serviceType` is `PHARMACY` and `type` contains `STATUS` / `DELIVER` / `DISPATCH` (`changed_by` only if the payload includes it). Meta/TikTok keys are not sent.
+
+| Event | When | Params |
+|---|---|---|
+| `my_bookings_tab` | Bookings bottom tab is shown | — |
+| `booking_viewed` | Booking details load | `type` (`consultancy` / `pharmacy` / `lab` / `surgery`) |
+| `prescription_available` | Consultation details have prescriptions, or prescription push | `booking_id`, `service` |
+| `prescription_downloaded` | User taps a consultation prescription | `booking_id`, `service`, `user_name`, `msisdn` |
+| `pharmacy_status_changed` | Pharmacy status push / inbox | `booking_id`, `status`, `changed_by` |
+
 ## Mocks
 
 - Consultation detail/list mocks live in consultation module (`ConsultationBookingsListMockApi`) when `MockConfig.enableConsultationMocks` is true.

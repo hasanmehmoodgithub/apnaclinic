@@ -43,7 +43,11 @@ void openBottomNavTab(
           ? sourceScreen
           : null,
     );
-    context.requireLogin();
+    context.requireLogin(
+      loginSource: index == MainNavigationTabs.instantDoctor
+          ? AnalyticsAuthSourceKeys.instantDoctor
+          : AnalyticsAuthSourceKeys.login,
+    );
     return;
   }
 

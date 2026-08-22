@@ -10,6 +10,7 @@ import '../../../../core/router/app_routes.dart';
 import '../../../../core/widgets/app_scaffold_gradient.dart';
 import '../cubit/lab_test_cart_cubit.dart';
 import '../cubit/lab_test_cart_state.dart';
+import '../lab_test_analytics.dart';
 import '../widgets/lab_test_cart_bottom_bar_widget.dart';
 import '../widgets/lab_test_cart_empty_widget.dart';
 import '../widgets/lab_test_cart_header_widget.dart';
@@ -28,6 +29,7 @@ class _LabTestCartScreenState extends State<LabTestCartScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
+      LabTestAnalytics.logCartViewed();
       context.read<LabTestCartCubit>().load();
     });
   }

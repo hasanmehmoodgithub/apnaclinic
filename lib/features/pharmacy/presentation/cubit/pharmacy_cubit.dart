@@ -1,7 +1,10 @@
+import 'dart:async';
 import 'dart:developer';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../core/analytics/analytics_event_keys.dart';
+import '../../../../core/analytics/analytics_service.dart';
 import '../../../../core/cities/domain/repositories/cities_repository.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/enums/state_status.dart';
@@ -40,7 +43,9 @@ class PharmacyCubit extends Cubit<PharmacyState> {
     required this.addPharmacyProfileAddressUseCase,
     required this.citiesRepository,
     required this.appPref,
-  }) : super(const PharmacyState()) {
+    required AnalyticsService analytics,
+  }) : _analytics = analytics,
+       super(const PharmacyState()) {
     loadMedicines();
   }
 
@@ -56,9 +61,13 @@ class PharmacyCubit extends Cubit<PharmacyState> {
   final AddPharmacyProfileAddressUseCase addPharmacyProfileAddressUseCase;
   final CitiesRepository citiesRepository;
   final AppPref appPref;
+  final AnalyticsService _analytics;
 
   /// From last cart / qty-update `failed_payment.unified_order_id`.
   int? _failedPaymentUnifiedOrderId;
+
+  /// Set by [submitSearch] so browse/refresh loads do not fire search analytics.
+  bool _pendingSearchPerformedLog = false;
 
   /// Backend locks cart while an unpaid card checkout is in flight.
   static bool isPaymentInProgressCartError(String message) {
@@ -91,25 +100,41 @@ class PharmacyCubit extends Cubit<PharmacyState> {
     );
     if (isClosed) return;
 
+    final shouldLogSearch = _pendingSearchPerformedLog;
+    _pendingSearchPerformedLog = false;
+
     result.fold(
-      (error) => emit(
-        state.copyWith(
-          medicinesLoadingStateStatus: StateStatus.error,
-          medicinesErrorMessage: error,
-        ),
-      ),
-      (page) => emit(
-        state.copyWith(
-          medicinesLoadingStateStatus: page.items.isEmpty
-              ? StateStatus.empty
-              : StateStatus.success,
-          medicines: page.items,
-          currentPage: page.currentPage,
-          lastPage: page.lastPage,
-          totalProducts: page.total,
-          medicinesErrorMessage: null,
-        ),
-      ),
+      (error) {
+        emit(
+          state.copyWith(
+            medicinesLoadingStateStatus: StateStatus.error,
+            medicinesErrorMessage: error,
+          ),
+        );
+        if (shouldLogSearch) {
+          _logSearchPerformed(keyword: displayName, resultItems: 0);
+        }
+      },
+      (page) {
+        emit(
+          state.copyWith(
+            medicinesLoadingStateStatus: page.items.isEmpty
+                ? StateStatus.empty
+                : StateStatus.success,
+            medicines: page.items,
+            currentPage: page.currentPage,
+            lastPage: page.lastPage,
+            totalProducts: page.total,
+            medicinesErrorMessage: null,
+          ),
+        );
+        if (shouldLogSearch) {
+          _logSearchPerformed(
+            keyword: displayName,
+            resultItems: page.total > 0 ? page.total : page.items.length,
+          );
+        }
+      },
     );
   }
 
@@ -138,14 +163,17 @@ class PharmacyCubit extends Cubit<PharmacyState> {
           productDetailErrorMessage: error,
         ),
       ),
-      (detail) => emit(
-        state.copyWith(
-          productDetailLoadingStateStatus: StateStatus.success,
-          selectedProduct: detail.product,
-          relatedProducts: detail.relatedItems,
-          productDetailErrorMessage: null,
-        ),
-      ),
+      (detail) {
+        emit(
+          state.copyWith(
+            productDetailLoadingStateStatus: StateStatus.success,
+            selectedProduct: detail.product,
+            relatedProducts: detail.relatedItems,
+            productDetailErrorMessage: null,
+          ),
+        );
+        _logItemDescription(detail.product);
+      },
     );
   }
 
@@ -266,6 +294,7 @@ class PharmacyCubit extends Cubit<PharmacyState> {
       if (prescriptionUrl.trim().isNotEmpty) {
         _setPrescriptionUrl(medicine.id, prescriptionUrl.trim());
       }
+      _logAddToCart(medicine);
       return null;
     }
 
@@ -294,6 +323,7 @@ class PharmacyCubit extends Cubit<PharmacyState> {
           failedPaymentUnifiedOrderId: addResult.failedPaymentUnifiedOrderId,
           messages: addResult.messages,
         );
+        _logAddToCart(medicine);
         return null;
       },
     );
@@ -422,6 +452,7 @@ class PharmacyCubit extends Cubit<PharmacyState> {
   void submitSearch(String query) {
     final trimmed = query.trim();
     if (trimmed == state.searchQuery) return;
+    _pendingSearchPerformedLog = trimmed.isNotEmpty;
     emit(state.copyWith(searchQuery: trimmed));
     loadMedicines();
   }
@@ -843,5 +874,151 @@ class PharmacyCubit extends Cubit<PharmacyState> {
     PharmacyCartMessagesEntity? fromApi,
   ) {
     return fromApi ?? state.cartMessages;
+  }
+
+  void logPharmacyModule(String source) {
+    unawaited(
+      _analytics.logEvent(AnalyticsEventKeys.pharmacyModule, {
+        AnalyticsParamKeys.source: source,
+      }),
+    );
+  }
+
+  void logSearchClicked() {
+    unawaited(
+      _analytics.logEvent(AnalyticsEventKeys.pharmacySearchClicked),
+    );
+  }
+
+  void logMedicineItemClicked(PharmacyMedicineEntity medicine) {
+    unawaited(
+      _analytics.logEvent(
+        AnalyticsEventKeys.medicineItemClicked,
+        _medicineParams(medicine),
+      ),
+    );
+  }
+
+  void logCartViewed() {
+    unawaited(
+      _analytics.logEvent(AnalyticsEventKeys.pharmacyCartViewed, {
+        AnalyticsParamKeys.afContentType: AnalyticsContentTypeKeys.pharmacyCart,
+      }),
+    );
+  }
+
+  void logCheckout() {
+    unawaited(
+      _analytics.logEvent(AnalyticsEventKeys.pharmacyCheckout, {
+        AnalyticsParamKeys.afContentType: AnalyticsContentTypeKeys.pharmacy,
+        AnalyticsParamKeys.numberOfProducts: state.cartItems.length,
+      }),
+    );
+  }
+
+  void logConfirmPayment() {
+    unawaited(
+      _analytics.logEvent(AnalyticsEventKeys.pharmacyConfirmPayment, {
+        AnalyticsParamKeys.paymentMethod: _analyticsPaymentMethod(
+          state.selectedPaymentMethod,
+        ),
+      }),
+    );
+  }
+
+  void logOrderConfirmed({
+    required String orderId,
+    required String paymentStatus,
+  }) {
+    final user = appPref.getUserLocalModel();
+    final userName =
+        '${user?.firstName.trim() ?? ''} ${user?.lastName.trim() ?? ''}'.trim();
+    final msisdn = _analyticsMsisdn(user?.phone ?? '');
+    final now = DateTime.now();
+    final timestamp =
+        '${now.month}/${now.day}/${now.year} ${now.hour}:${now.minute.toString().padLeft(2, '0')}';
+    final promoApplied =
+        state.discount > 0 ? AnalyticsYesNoKeys.yes : AnalyticsYesNoKeys.no;
+
+    unawaited(
+      _analytics.logEvent(AnalyticsEventKeys.pharmacyOrderConfirmed, {
+        AnalyticsParamKeys.afContentType: AnalyticsContentTypeKeys.pharmacy,
+        AnalyticsParamKeys.orderId: orderId,
+        if (userName.isNotEmpty) AnalyticsParamKeys.userName: userName,
+        if (msisdn.isNotEmpty) AnalyticsParamKeys.msisdn: msisdn,
+        AnalyticsParamKeys.cartItems: state.cartItems.length,
+        AnalyticsParamKeys.subTotal: state.subtotal,
+        AnalyticsParamKeys.orderValue: state.total,
+        AnalyticsParamKeys.promoApplied: promoApplied,
+        AnalyticsParamKeys.timestamp: timestamp,
+        AnalyticsParamKeys.deliveryCharges: state.deliveryCharges,
+        AnalyticsParamKeys.paymentMethod: _analyticsPaymentMethod(
+          state.selectedPaymentMethod,
+        ),
+        AnalyticsParamKeys.paymentStatus: paymentStatus,
+      }),
+    );
+  }
+
+  void _logSearchPerformed({
+    required String keyword,
+    required int resultItems,
+  }) {
+    unawaited(
+      _analytics.logEvent(AnalyticsEventKeys.pharmacySearchPerformed, {
+        AnalyticsParamKeys.keyword: keyword,
+        AnalyticsParamKeys.resultItems: resultItems,
+      }),
+    );
+  }
+
+  void _logItemDescription(PharmacyMedicineEntity medicine) {
+    unawaited(
+      _analytics.logEvent(
+        AnalyticsEventKeys.pharmacyItemDescription,
+        _medicineParams(medicine),
+      ),
+    );
+  }
+
+  void _logAddToCart(PharmacyMedicineEntity medicine) {
+    unawaited(
+      _analytics.logEvent(AnalyticsEventKeys.pharmacyAddToCart, {
+        AnalyticsParamKeys.afContentType: AnalyticsContentTypeKeys.pharmacy,
+        ..._medicineParams(medicine),
+      }),
+    );
+  }
+
+  Map<String, Object> _medicineParams(PharmacyMedicineEntity medicine) {
+    return {
+      AnalyticsParamKeys.productId: medicine.id,
+      AnalyticsParamKeys.productName: medicine.name,
+      AnalyticsParamKeys.prescriptionRequired: medicine.prescriptionRequired
+          ? AnalyticsYesNoKeys.yes
+          : AnalyticsYesNoKeys.no,
+    };
+  }
+
+  String _analyticsPaymentMethod(PharmacyPaymentMethod method) {
+    return switch (method) {
+      PharmacyPaymentMethod.jazzCash =>
+        AnalyticsPharmacyPaymentMethodKeys.jazzCash,
+      PharmacyPaymentMethod.debitCard =>
+        AnalyticsPharmacyPaymentMethodKeys.card,
+      PharmacyPaymentMethod.cashOnDelivery =>
+        AnalyticsPharmacyPaymentMethodKeys.cod,
+    };
+  }
+
+  String _analyticsMsisdn(String phone) {
+    final digits = phone.replaceAll(RegExp(r'\D'), '');
+    if (digits.startsWith('92') && digits.length >= 12) {
+      return digits.substring(2);
+    }
+    if (digits.startsWith('0') && digits.length >= 11) {
+      return digits.substring(1);
+    }
+    return digits;
   }
 }

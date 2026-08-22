@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/analytics/analytics_event_keys.dart';
 import '../../../../core/enums/state_status.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/router/app_routes.dart';
@@ -9,6 +10,7 @@ import '../../../../core/utils/auth_guard.dart';
 import '../../domain/entities/pharmacy_medicine_entity.dart';
 import '../cubit/pharmacy_cubit.dart';
 import '../cubit/pharmacy_state.dart';
+import '../pharmacy_navigation.dart';
 import 'pharmacy_add_to_cart_sheet.dart';
 import 'pharmacy_medicine_content_section.dart';
 import 'pharmacy_screen_state_view.dart';
@@ -101,7 +103,11 @@ class _PharmacyScreenMedicinesPanelWidgetState
     BuildContext context,
     PharmacyMedicineEntity medicine,
   ) async {
-    if (!context.requireLogin()) return;
+    if (!context.requireLogin(
+      loginSource: AnalyticsAuthSourceKeys.pharmacy,
+    )) {
+      return;
+    }
     await showPharmacyAddToCartSheet(
       context,
       medicine,
@@ -113,9 +119,10 @@ class _PharmacyScreenMedicinesPanelWidgetState
     BuildContext context,
     PharmacyMedicineEntity medicine,
   ) {
+    context.read<PharmacyCubit>().logMedicineItemClicked(medicine);
     context.pushReplacementNamed(
       AppRoutes.pharmacy,
-      extra: {'selectedMedicine': medicine},
+      extra: {PharmacyRouteExtraKeys.selectedMedicine: medicine},
     );
   }
 }

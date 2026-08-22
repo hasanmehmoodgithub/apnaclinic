@@ -214,10 +214,11 @@ class SurgeryPatientDetailsCubit extends Cubit<SurgeryPatientDetailsState> {
           errorMessage: error,
         ),
       ),
-      (_) => emit(
+      (bookingId) => emit(
         state.copyWith(
           submitStatus: StateStatus.success,
           bookingSubmitted: true,
+          bookingId: bookingId,
         ),
       ),
     );

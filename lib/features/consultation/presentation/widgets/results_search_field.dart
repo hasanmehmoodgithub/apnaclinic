@@ -12,6 +12,7 @@ class ResultsSearchField extends StatelessWidget {
     required this.onSearch,
     required this.onClear,
     this.showClear = false,
+    this.onTap,
   });
 
   final TextEditingController controller;
@@ -25,6 +26,8 @@ class ResultsSearchField extends StatelessWidget {
   /// Show clear (X) after search results are active.
   final bool showClear;
 
+  final VoidCallback? onTap;
+
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -33,6 +36,7 @@ class ResultsSearchField extends StatelessWidget {
         controller: controller,
         inputFormatters: NoEmojiTextInputFormatter.merge(null),
         textInputAction: TextInputAction.search,
+        onTap: onTap,
         onSubmitted: (_) => onSearch(),
         decoration: InputDecoration(
           hintText: 'Search for Doctor',

@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/analytics/analytics_event_keys.dart';
 import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/enums/state_status.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
@@ -27,6 +28,9 @@ import '../widgets/instant_doctor_home_banner.dart';
 import '../widgets/our_services_widget.dart';
 import '../widgets/promotional_banner_dialog.dart';
 import '../instant_doctor_tab_navigation.dart';
+import '../../../consultation/presentation/consultation_analytics.dart';
+import '../../../pharmacy/presentation/pharmacy_navigation.dart';
+import '../../../surgery/presentation/surgery_analytics.dart';
 import '../../../search/presentation/models/search_launch_args.dart';
 import '../../../notification/presentation/cubit/notification_cubit.dart';
 import '../../../notification/presentation/cubit/notification_state.dart';
@@ -267,8 +271,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                     if (!context.requireLogin()) return;
                     context.push(AppRoutes.path(AppRoutes.notifications));
                   },
-                  onLoginTap: () =>
-                      context.push(AppRoutes.path(AppRoutes.authLogin)),
+                  onLoginTap: () => AuthGuard.pushLogin(context),
                   onProfileTap: () {
                     if (!context.requireLogin()) return;
                     context.push(AppRoutes.path(AppRoutes.profile));
@@ -330,6 +333,20 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     );
     if (normalizedRoute.isEmpty) return;
 
-    context.push(AppRoutes.path(normalizedRoute));
+    Object? extra;
+    if (normalizedRoute == AppRoutes.pharmacyMain) {
+      extra = {
+        PharmacyRouteExtraKeys.source: AnalyticsPharmacySourceKeys.home,
+      };
+    } else if (normalizedRoute == AppRoutes.consultation) {
+      extra = {
+        ConsultationRouteExtraKeys.source: AnalyticsConsultancySourceKeys.home,
+      };
+    } else if (normalizedRoute == AppRoutes.surgery) {
+      extra = {
+        SurgeryRouteExtraKeys.source: AnalyticsSurgerySourceKeys.home,
+      };
+    }
+    context.push(AppRoutes.path(normalizedRoute), extra: extra);
   }
 }

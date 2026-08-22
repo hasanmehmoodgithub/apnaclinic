@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/analytics/analytics_event_keys.dart';
 import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/widgets/app_scaffold_gradient.dart';
 import '../../../bookings/presentation/widgets/bookings_list_shimmer_widget.dart';
+import '../../../bookings/presentation/bookings_analytics.dart';
 import '../../domain/entities/pharmacy_booking_detail_entity.dart';
 import '../../domain/use_cases/get_pharmacy_booking_detail_use_case.dart';
 import '../pharmacy_navigation.dart';
@@ -43,7 +45,10 @@ class _PharmacyBookingDetailsScreenState
     final result = await sl<GetPharmacyBookingDetailUseCase>()(
       GetPharmacyBookingDetailParams(orderId: orderId),
     );
-    return result.fold((_) => null, (detail) => detail);
+    return result.fold((_) => null, (detail) {
+      BookingsAnalytics.logBookingViewed(AnalyticsBookingTypeKeys.pharmacy);
+      return detail;
+    });
   }
 
   @override

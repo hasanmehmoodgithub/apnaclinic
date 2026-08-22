@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/analytics/analytics_event_keys.dart';
 import '../../../../core/cities/presentation/show_select_city_dialog.dart';
 import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/enums/state_status.dart';
@@ -20,6 +21,7 @@ import '../cubit/lab_test_cart_cubit.dart';
 import '../cubit/lab_test_cart_state.dart';
 import '../cubit/lab_test_cubit.dart';
 import '../cubit/lab_test_state.dart';
+import '../lab_test_analytics.dart';
 import '../lab_test_cart_change_guard.dart';
 import '../lab_test_navigation.dart';
 import '../lab_test_route_args.dart';
@@ -55,7 +57,9 @@ class _LabTestScreenState extends State<LabTestScreen> {
         : rawSavedCity;
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted || !AuthGuard.isLoggedIn(_appPref)) return;
+      if (!mounted) return;
+      LabTestAnalytics.logModule();
+      if (!AuthGuard.isLoggedIn(_appPref)) return;
       context.read<LabTestCartCubit>().load();
     });
   }
@@ -130,6 +134,7 @@ class _LabTestScreenState extends State<LabTestScreen> {
                     LabTestBrowseSearchFieldWidget(
                       controller: _searchController,
                       hintText: l10n.labTestSearchFieldHint,
+                      onSearchTapped: LabTestAnalytics.logSearchClicked,
                       onSearch: cubit.submitSearch,
                       onClear: () => cubit.submitSearch(''),
                     ),
@@ -239,7 +244,9 @@ class _LabTestScreenState extends State<LabTestScreen> {
   }
 
   Future<void> _onTestTap(BuildContext context, LabTestItemEntity item) async {
-    if (!context.requireLogin()) return;
+    if (!context.requireLogin(loginSource: AnalyticsAuthSourceKeys.lab)) {
+      return;
+    }
 
     final l10n = AppLocalizations.of(context)!;
     final cubit = context.read<LabTestCubit>();
@@ -260,6 +267,8 @@ class _LabTestScreenState extends State<LabTestScreen> {
       );
       return;
     }
+
+    LabTestAnalytics.logItemSelectFromCatalog(item);
 
     await context.pushNamed(
       AppRoutes.labTestBooking,

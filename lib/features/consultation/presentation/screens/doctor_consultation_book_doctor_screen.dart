@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart' as p;
+import '../../../../core/analytics/analytics_event_keys.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
@@ -19,6 +20,7 @@ import '../../domain/entities/consultation_doctor_slots_entity.dart';
 import '../../domain/entities/consultation_selected_slot_entity.dart';
 import '../../domain/use_cases/get_consultation_doctor_slots_use_case.dart';
 import '../../domain/use_cases/get_payment_providers_use_case.dart';
+import '../consultation_analytics.dart';
 import '../constants/consultation_booking_attachment_config.dart';
 import '../constants/consultation_ui_config.dart';
 import '../doctor_consultation_checkout_args.dart';
@@ -30,10 +32,12 @@ import '../widgets/results_doctor_item.dart';
 
 class DoctorConsultationBookDoctorScreen extends StatefulWidget {
   final ResultsDoctorItem doctor;
+  final String? moduleSource;
 
   const DoctorConsultationBookDoctorScreen({
     super.key,
     required this.doctor,
+    this.moduleSource,
   });
 
   @override
@@ -58,7 +62,12 @@ class _DoctorConsultationBookDoctorScreenState
     super.initState();
     _issueController.addListener(_onIssueChanged);
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) _loadDoctorSlots();
+      if (!mounted) return;
+      if (widget.moduleSource == AnalyticsConsultancySourceKeys.search) {
+        ConsultationAnalytics.logModule(widget.moduleSource!);
+      }
+      ConsultationAnalytics.logProfileScreen(widget.doctor);
+      _loadDoctorSlots();
     });
   }
 
@@ -343,6 +352,11 @@ class _DoctorConsultationBookDoctorScreenState
       return;
     }
 
+    ConsultationAnalytics.logConsultationConfirm(
+      doctor: doctor,
+      slot: _selectedSlot!,
+    );
+
     this.context.pushNamed(
       AppRoutes.consultationCheckout,
       extra: DoctorConsultationCheckoutArgs(
@@ -440,6 +454,7 @@ class _DoctorConsultationBookDoctorScreenState
     setState(() {
       _attachments.addAll(accepted);
     });
+    ConsultationAnalytics.logDocumentUploaded();
   }
 
   void _removeAttachment(int index) {

@@ -56,6 +56,23 @@ Browse lab tests, booking/cart flow, payment details checkout, and order view de
 
 - `lab_test_injection.dart` — `LabTestRemoteDataSource`, `LabTestRepository`, `GetLabTestCatalogUseCase`, `GetLabTestDetailUseCase`, `GetLabOrdersUseCase`, `GetLabOrderDetailUseCase`, `BookLabTestUseCase`, `LabTestCubit`, singleton `LabTestCartCubit` (shared badge/count across listing, booking, and cart).
 
+## Analytics
+
+Firebase via `LabTestAnalytics` / `AnalyticsService`. `lab_module` fires on the hub (`AppRoutes.labTest`). City restore on bootstrap does not fire `lab_city_change`; only a user pick in the city dialog does. Global search lab results fire `lab_item_select` (and `search_result_clicked`); they do not fire `lab_module` (no `source` on that event). Not logged: `fb_content_type` / `content_type` (Firebase only), `transaction_id`, `partner` on confirm (cart stores partner id, not display name), `address` (checkout has no street field). `promo` is sent only when `discountCode` is non-empty. Pending card payment without URL does not fire `lab_booking_confirmed`. Cash checkout sends `payment_method`=`COD` (spec samples list JazzCash / Card). Lab booking details fire `booking_viewed` (`type=lab`) via `BookingsAnalytics`.
+
+| Event | When | Params |
+|---|---|---|
+| `lab_module` | Lab hub opens | — |
+| `lab_city_change` | User picks a city | `selected_city` |
+| `lab_search_clicked` | Search field or search icon tap | — |
+| `lab_search_performed` | Non-empty catalog search | `keyword`, `result_items` |
+| `lab_item_select` | Catalog card or global search result | `test_name`, `lab_name`, `sample_type` |
+| `lab_add_to_cart` | Add to cart succeeds | `af_content_type`=`Lab`, `test_name`, `lab_name`, `partner_name`, `sample_type`, `sampling_mode` |
+| `lab_cart_viewed` | Cart screen opens | `af_content_type`=`Lab Cart` |
+| `lab_checkout` | Checkout screen opens | `af_content_type`=`Lab Checkout` |
+| `lab_patient_details_edit` | Patient details Edit tap | — |
+| `lab_booking_confirmed` | Book succeeds or fails | `af_content_type`=`Lab`, `booking_id`, `user_name`, `msisdn`, `number_of_tests`, `lab_name`, `timestamp`, `payment_method`, `payment_status`, `promo_applied`, `promo` |
+
 ## Mocks
 
 - When `MockConfig.enableLabTestMocks` is true, `LabTestMockApi` / `LabOrdersMockApi` return sample mobile API shapes (defaults to real API). Lab orders mock matches the nested `data.data[]` list (`Confirmed` / `Payment Pending`, no invoice).

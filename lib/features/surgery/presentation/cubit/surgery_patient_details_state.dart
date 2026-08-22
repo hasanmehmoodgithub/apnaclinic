@@ -24,6 +24,7 @@ class SurgeryPatientDetailsState {
     this.errorMessage,
     this.packagesLoadFailed = false,
     this.bookingSubmitted = false,
+    this.bookingId = '',
   });
 
   final String? selectedGender;
@@ -40,6 +41,7 @@ class SurgeryPatientDetailsState {
   final String? errorMessage;
   final bool packagesLoadFailed;
   final bool bookingSubmitted;
+  final String bookingId;
 
   bool get isLoadingPackages => packagesStatus == StateStatus.loading;
   bool get isSubmitting => submitStatus == StateStatus.loading;
@@ -63,6 +65,7 @@ class SurgeryPatientDetailsState {
     bool clearErrorMessage = false,
     bool? packagesLoadFailed,
     bool? bookingSubmitted,
+    String? bookingId,
   }) {
     return SurgeryPatientDetailsState(
       selectedGender:
@@ -85,6 +88,7 @@ class SurgeryPatientDetailsState {
           clearErrorMessage ? null : (errorMessage ?? this.errorMessage),
       packagesLoadFailed: packagesLoadFailed ?? this.packagesLoadFailed,
       bookingSubmitted: bookingSubmitted ?? this.bookingSubmitted,
+      bookingId: bookingId ?? this.bookingId,
     );
   }
 }

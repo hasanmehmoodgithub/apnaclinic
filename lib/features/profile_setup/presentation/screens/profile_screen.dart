@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/router/app_routes.dart';
+import '../../../../core/utils/auth_guard.dart';
 import '../../../account/domain/entities/account_item_entity.dart';
 import '../../../account/presentation/add_account_launch_source.dart';
 import '../cubit/profile_cubit.dart';
@@ -45,8 +46,7 @@ class ProfileScreen extends StatelessWidget {
                   viewData: viewData,
                   onEditTap: () => _openProfileSetup(context),
                   onAddAccountTap: () => _openAddAccount(context),
-                  onLoginTap: () =>
-                      context.push(AppRoutes.path(AppRoutes.authLogin)),
+                  onLoginTap: () => AuthGuard.pushLogin(context),
                   onDeleteAccountDetailTap: (index, item) =>
                       _deleteAccountDetail(context, item),
                 ),

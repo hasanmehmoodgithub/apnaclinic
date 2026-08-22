@@ -74,7 +74,7 @@ class _MenuScreenState extends State<MenuScreen> {
     // Remember Bookings tab before login so guest return lands there.
     _sessionRefresh.requestTabIndex(MainNavigationTabs.bookings);
     if (!AuthGuard.isLoggedIn()) {
-      context.push(AppRoutes.path(AppRoutes.authLogin)).then((_) {
+      AuthGuard.pushLogin(context).then((_) {
         if (!mounted) return;
         if (AuthGuard.isLoggedIn() && context.canPop()) {
           context.pop(); // close menu after successful login

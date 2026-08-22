@@ -18,6 +18,7 @@ import '../../features/consultation/presentation/screens/doctor_consultation_sum
 import '../../features/consultation/presentation/screens/doctor_consultation_results_screen.dart';
 import '../../features/consultation/presentation/doctor_consultation_results_args.dart';
 import '../../features/consultation/presentation/screens/doctor_consultation_screen.dart';
+import '../../features/consultation/presentation/consultation_analytics.dart';
 import '../../features/consultation/presentation/cubit/doctor_consultation_checkout_cubit.dart';
 import '../../features/consultation/presentation/doctor_consultation_book_doctor_args.dart';
 import '../../features/consultation/presentation/doctor_consultation_checkout_args.dart';
@@ -42,6 +43,7 @@ import '../../features/pharmacy/presentation/screens/pharmacy_cart_screen.dart';
 import '../../features/pharmacy/presentation/screens/pharmacy_checkout_screen.dart';
 import '../../features/pharmacy/presentation/screens/pharmacy_booking_details_screen.dart';
 import '../../features/pharmacy/presentation/screens/pharmacy_screen.dart';
+import '../../features/pharmacy/presentation/pharmacy_navigation.dart';
 import '../../features/search/presentation/cubit/search_cubit.dart';
 import '../../features/search/presentation/models/search_launch_args.dart';
 import '../../features/search/presentation/screens/search_screen.dart';
@@ -50,6 +52,7 @@ import '../../features/surgery/presentation/cubit/surgery_patient_details_cubit.
 import '../../features/surgery/presentation/screens/surgery_booking_entry_screen.dart';
 import '../../features/surgery/presentation/screens/surgery_patient_details_screen.dart';
 import '../../features/surgery/presentation/screens/surgery_screen.dart';
+import '../../features/surgery/presentation/surgery_analytics.dart';
 import '../../features/surgery/presentation/surgery_booking_args.dart';
 import '../../features/surgery/presentation/surgery_patient_details_args.dart';
 import '../../features/dashboard/presentation/screens/main_navigation_shell.dart';
@@ -60,6 +63,7 @@ import '../../features/onboarding/presentation/screens/onboarding_screen.dart';
 import '../../features/auth/presentation/screens/login_screen.dart';
 import '../di/dependency_injection.dart';
 import '../preference/app_pref.dart';
+import '../utils/auth_guard.dart';
 import '../utils/chucker_guard.dart';
 import '../../features/instant_doctor/presentation/instant_doctor_consultation_args.dart';
 import '../../features/instant_doctor/presentation/screens/instant_doctor_consultation_webview_screen.dart';
@@ -98,7 +102,9 @@ class AppRouter {
       GoRoute(
         path: AppRoutes.path(AppRoutes.authLogin),
         name: AppRoutes.authLogin,
-        builder: (context, state) => const LoginScreen(),
+        builder: (context, state) => LoginScreen(
+          source: authLoginSourceFromExtra(state.extra),
+        ),
       ),
       GoRoute(
         path: AppRoutes.path(AppRoutes.profileSetup),
@@ -169,7 +175,9 @@ class AppRouter {
         name: AppRoutes.consultation,
         builder: (context, state) => BlocProvider<ConsultationCubit>(
           create: (_) => sl<ConsultationCubit>(),
-          child: const DoctorConsultationScreen(),
+          child: DoctorConsultationScreen(
+            source: consultancyHubSourceFromExtra(state.extra),
+          ),
         ),
       ),
       GoRoute(
@@ -200,7 +208,10 @@ class AppRouter {
           if (extra is! DoctorConsultationBookDoctorArgs) {
             return const SizedBox.shrink();
           }
-          return DoctorConsultationBookDoctorScreen(doctor: extra.doctor);
+          return DoctorConsultationBookDoctorScreen(
+            doctor: extra.doctor,
+            moduleSource: extra.moduleSource,
+          );
         },
       ),
       GoRoute(
@@ -257,14 +268,20 @@ class AppRouter {
           final extra = state.extra;
           final data = extra is Map ? Map<String, dynamic>.from(extra) : null;
           final selectedMedicine =
-              data?['selectedMedicine'] as PharmacyMedicineEntity?;
-          return PharmacyScreen(initialFeaturedMedicine: selectedMedicine);
+              data?[PharmacyRouteExtraKeys.selectedMedicine]
+                  as PharmacyMedicineEntity?;
+          return PharmacyScreen(
+            initialFeaturedMedicine: selectedMedicine,
+            moduleSource: pharmacySourceFromExtra(extra),
+          );
         },
       ),
       GoRoute(
         path: AppRoutes.path(AppRoutes.pharmacyMain),
         name: AppRoutes.pharmacyMain,
-        builder: (context, state) => const PharmacyMainScreen(),
+        builder: (context, state) => PharmacyMainScreen(
+          source: pharmacyHubSourceFromExtra(state.extra),
+        ),
       ),
       GoRoute(
         path: AppRoutes.path(AppRoutes.pharmacyCart),
@@ -320,7 +337,9 @@ class AppRouter {
         name: AppRoutes.surgery,
         builder: (context, state) => BlocProvider<SurgeryCubit>(
           create: (_) => sl<SurgeryCubit>(),
-          child: const SurgeryScreen(),
+          child: SurgeryScreen(
+            source: surgeryHubSourceFromExtra(state.extra),
+          ),
         ),
       ),
       GoRoute(

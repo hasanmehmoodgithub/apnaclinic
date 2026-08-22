@@ -9,10 +9,12 @@ class SurgerySearchFieldWidget extends StatefulWidget {
     super.key,
     required this.query,
     required this.onChanged,
+    this.onTap,
   });
 
   final String query;
   final ValueChanged<String> onChanged;
+  final VoidCallback? onTap;
 
   @override
   State<SurgerySearchFieldWidget> createState() =>
@@ -57,6 +59,7 @@ class _SurgerySearchFieldWidgetState extends State<SurgerySearchFieldWidget> {
       child: TextField(
         controller: _controller,
         inputFormatters: NoEmojiTextInputFormatter.merge(null),
+        onTap: widget.onTap,
         onChanged: widget.onChanged,
         decoration: InputDecoration(
           border: InputBorder.none,

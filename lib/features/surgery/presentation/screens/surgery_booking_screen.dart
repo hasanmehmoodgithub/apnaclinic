@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/analytics/analytics_event_keys.dart';
 import '../../../../core/cities/domain/repositories/cities_repository.dart';
 import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/enums/state_status.dart';
@@ -13,6 +14,7 @@ import '../../domain/entities/surgery_doctor_entity.dart';
 import '../cubit/surgery_cubit.dart';
 import '../cubit/surgery_patient_details_cubit.dart';
 import '../cubit/surgery_state.dart';
+import '../surgery_analytics.dart';
 import '../widgets/surgery_booking_doctor_card_data.dart';
 import '../widgets/surgery_booking_doctor_card_widget.dart';
 import '../widgets/surgery_booking_filter_button_widget.dart';
@@ -175,6 +177,7 @@ class _SurgeryBookingScreenState extends State<SurgeryBookingScreen> {
                                     child: SurgeryBookingSearchFieldWidget(
                                       controller: _searchController,
                                       onChanged: (_) => setState(() {}),
+                                      onTap: SurgeryAnalytics.logSearchClicked,
                                     ),
                                   ),
                                   SizedBox(width: 8.w),
@@ -275,7 +278,9 @@ class _SurgeryBookingScreenState extends State<SurgeryBookingScreen> {
   }
 
   Future<void> _openPatientDetails(SurgeryBookingDoctorCardData card) async {
-    if (!context.requireLogin()) return;
+    if (!context.requireLogin(loginSource: AnalyticsAuthSourceKeys.surgery)) {
+      return;
+    }
 
     final state = context.read<SurgeryCubit>().state;
     final citiesRepository = sl<CitiesRepository>();
@@ -294,6 +299,13 @@ class _SurgeryBookingScreenState extends State<SurgeryBookingScreen> {
     }
 
     if (!mounted) return;
+    SurgeryAnalytics.logDoctorSelect(
+      doctorId: card.id,
+      doctorName: card.doctorName,
+      surgeryName: card.procedureName.isNotEmpty
+          ? card.procedureName
+          : widget.procedureName,
+    );
     Navigator.of(context).push(
       MaterialPageRoute<void>(
         builder: (_) => BlocProvider(

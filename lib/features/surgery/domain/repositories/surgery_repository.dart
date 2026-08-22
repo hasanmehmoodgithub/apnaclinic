@@ -35,7 +35,7 @@ abstract class SurgeryRepository {
     required int leadId,
   });
 
-  Future<Either<ErrorMsg, void>> submitSurgeryBooking(
+  Future<Either<ErrorMsg, String>> submitSurgeryBooking(
     SurgeryBookingRequestEntity request,
   );
   Future<Either<ErrorMsg, PaymentInitiationResult>> bookSurgery(

@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/widgets/heart_loader_widget.dart';
+import '../../../bookings/presentation/bookings_analytics.dart';
 import '../../domain/entities/notification_entity.dart';
 import '../cubit/notification_cubit.dart';
 import '../notification_navigation.dart';
@@ -84,6 +85,7 @@ class NotificationListWidget extends StatelessWidget {
     NotificationEntity item,
   ) async {
     final opened = openNotificationDeepLink(context, item);
+    BookingsAnalytics.logFromNotification(item);
     if (!opened && context.mounted) {
       await showNotificationUnavailableDialog(context, item);
     }

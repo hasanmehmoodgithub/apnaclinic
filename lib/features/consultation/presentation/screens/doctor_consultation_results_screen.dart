@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../components/shimmer/app_shimmer.dart';
+import '../../../../core/analytics/analytics_event_keys.dart';
 import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/router/app_routes.dart';
 
@@ -10,6 +11,7 @@ import '../../domain/entities/consultation_category_entity.dart';
 import '../../../../core/utils/auth_guard.dart';
 import '../../domain/use_cases/get_consultation_categories_use_case.dart';
 import '../../domain/use_cases/get_consultation_doctors_use_case.dart';
+import '../consultation_analytics.dart';
 import '../constants/consultation_ui_config.dart';
 import '../widgets/results_doctor_card.dart';
 import '../widgets/results_doctor_category_card.dart';
@@ -75,6 +77,10 @@ class _DoctorConsultationResultsScreenState
     }
     _scrollController.addListener(_onScroll);
     _loadDoctors(refresh: true);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      ConsultationAnalytics.logListingScreen(_selectedCategory);
+    });
   }
 
   void _onScroll() {
@@ -91,6 +97,7 @@ class _DoctorConsultationResultsScreenState
   }
 
   void _onSearchSubmitted() {
+    ConsultationAnalytics.logDoctorSearchClicked();
     final value = _searchController.text.trim();
     if (_query == value) {
       if (value.isEmpty) return;
@@ -99,6 +106,9 @@ class _DoctorConsultationResultsScreenState
     }
     setState(() => _query = value);
     _loadDoctors(refresh: true);
+    if (value.isNotEmpty) {
+      ConsultationAnalytics.logDoctorSearchPerformed(value);
+    }
   }
 
   void _onSearchCleared() {
@@ -139,11 +149,18 @@ class _DoctorConsultationResultsScreenState
       _selectedCategory = category.title;
       _mainCategoryId = category.id;
     });
+    ConsultationAnalytics.logCategoryClicked(category.title);
+    ConsultationAnalytics.logListingScreen(category.title);
     await _loadDoctors(refresh: true);
   }
 
   void _onBookNowTap(ResultsDoctorItem doctor) {
-    if (!context.requireLogin()) return;
+    if (!context.requireLogin(
+      loginSource: AnalyticsAuthSourceKeys.consultancy,
+    )) {
+      return;
+    }
+    ConsultationAnalytics.logProfileClicked(doctor);
     context.pushNamed(
       AppRoutes.consultationBookDoctor,
       extra: DoctorConsultationBookDoctorArgs(doctor: doctor),
@@ -172,6 +189,7 @@ class _DoctorConsultationResultsScreenState
     if (result is! ConsultationPartnerFilterOption) return;
     if (result.id == _selectedPartnerId) return;
     setState(() => _selectedPartnerId = result.id);
+    ConsultationAnalytics.logFilterApplied(result.name);
     await _loadDoctors(refresh: true);
   }
 
@@ -311,6 +329,7 @@ class _DoctorConsultationResultsScreenState
                                 showClear: _query.trim().isNotEmpty,
                                 onSearch: _onSearchSubmitted,
                                 onClear: _onSearchCleared,
+                                onTap: ConsultationAnalytics.logDoctorSearchClicked,
                               ),
                             ),
                             SizedBox(width: 8.w),

@@ -27,6 +27,7 @@ class _PharmacyCheckoutScreenState extends State<PharmacyCheckoutScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (!mounted) return;
       final cubit = context.read<PharmacyCubit>();
+      cubit.logCheckout();
       cubit.loadCart();
       await cubit.loadCheckoutCities();
       if (!mounted) return;

@@ -8,10 +8,12 @@ class SurgeryBookingSearchFieldWidget extends StatelessWidget {
     super.key,
     required this.controller,
     required this.onChanged,
+    this.onTap,
   });
 
   final TextEditingController controller;
   final ValueChanged<String> onChanged;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -25,6 +27,7 @@ class SurgeryBookingSearchFieldWidget extends StatelessWidget {
       child: TextField(
         controller: controller,
         inputFormatters: NoEmojiTextInputFormatter.merge(null),
+        onTap: onTap,
         onChanged: onChanged,
         decoration: InputDecoration(
           border: InputBorder.none,

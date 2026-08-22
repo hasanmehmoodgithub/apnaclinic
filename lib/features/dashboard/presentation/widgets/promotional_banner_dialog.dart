@@ -4,10 +4,14 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../../../core/analytics/analytics_event_keys.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/utils/app_url_launcher.dart';
 import '../../../../generated/assets.dart';
+import '../../../consultation/presentation/consultation_analytics.dart';
+import '../../../pharmacy/presentation/pharmacy_navigation.dart';
+import '../../../surgery/presentation/surgery_analytics.dart';
 import '../../domain/entities/promotional_banner_entity.dart';
 import '../constants/dashboard_ui_config.dart';
 import '../instant_doctor_tab_navigation.dart';
@@ -92,7 +96,21 @@ void _onBannerTap(
     openInstantDoctorTab(hostContext);
     return;
   }
-  hostContext.push(AppRoutes.path(normalizedRoute));
+  Object? extra;
+  if (normalizedRoute == AppRoutes.pharmacyMain) {
+    extra = {
+      PharmacyRouteExtraKeys.source: AnalyticsPharmacySourceKeys.banner,
+    };
+  } else if (normalizedRoute == AppRoutes.consultation) {
+    extra = {
+      ConsultationRouteExtraKeys.source: AnalyticsConsultancySourceKeys.banner,
+    };
+  } else if (normalizedRoute == AppRoutes.surgery) {
+    extra = {
+      SurgeryRouteExtraKeys.source: AnalyticsSurgerySourceKeys.banner,
+    };
+  }
+  hostContext.push(AppRoutes.path(normalizedRoute), extra: extra);
 }
 
 class _BannerImage extends StatelessWidget {

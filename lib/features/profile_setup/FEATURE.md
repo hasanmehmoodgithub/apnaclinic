@@ -10,6 +10,15 @@ Collect or edit user profile (name, gender, optional email, address, DOB, option
 - `AppRoutes.profileSetup` — entry from menu, login (`push` / `pushReplacement`), onboarding/splash (`go` with `ProfileSetupLaunchSource` extra). Back arrow only in **edit** mode (`isProfileCompleted`); first-time setup hides back and blocks system back.
 - After **first-time** profile save: `pop()` when possible (returns to the service screen that required login), otherwise `go` home. Edit/update mode still `pop(true)` when possible.
 
+## Analytics
+
+| Event | When | Params |
+|---|---|---|
+| `profile_creation_screen` | Setup opens from login or Profile/menu edit | `source` (`authentication_screen` / `profile`) |
+| `profile_created` | First-time profile save succeeds | — |
+
+Splash/onboarding entry does not send `profile_creation_screen` (source not in spec). Edit/update save does not send `profile_created`.
+
 ## Data & APIs
 
 - **GET** `AppUrls.userProfileById(userId)` — loads profile; response `data` may include `dob` and/or `dateOfBirth` (strings) and `image` (profile photo URL).

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/analytics/analytics_event_keys.dart';
 import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
@@ -19,12 +20,14 @@ import '../../../consultation/domain/use_cases/get_payment_providers_use_case.da
 import '../../../consultation/presentation/models/doctor_consultation_jazzcash_sheet_result.dart';
 import '../../../consultation/presentation/widgets/doctor_consultation_jazzcash_accounts_sheet_widget.dart';
 import '../../../dashboard/presentation/constants/main_navigation_tabs.dart';
+import '../../../payment/domain/entities/payment_initiation_result.dart';
 import '../../../payment/presentation/payment_navigation.dart';
 import '../../../payment/presentation/widgets/payment_pending_dialog_widget.dart';
 import '../../domain/entities/lab_test_cart_item.dart';
 import '../../domain/repositories/lab_test_cart_repository.dart';
 import '../../domain/use_cases/book_lab_test_use_case.dart';
 import '../cubit/lab_test_cart_cubit.dart';
+import '../lab_test_analytics.dart';
 import '../lab_test_route_args.dart';
 import '../widgets/lab_test_booking_confirmation_dialog_widget.dart';
 import '../widgets/lab_test_checkout_bottom_bar_widget.dart';
@@ -61,6 +64,10 @@ class _LabTestCheckoutScreenState extends State<LabTestCheckoutScreen> {
     super.initState();
     _prefillPatientDetailsFromSavedProfile();
     _emergencyController.addListener(_onEmergencyChanged);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      LabTestAnalytics.logCheckout();
+    });
   }
 
   @override
@@ -227,7 +234,14 @@ class _LabTestCheckoutScreenState extends State<LabTestCheckoutScreen> {
     setState(() => _isBooking = false);
 
     await result.fold(
-      (error) async => _showBookErrorDialog(error),
+      (error) async {
+        _logBookingConfirmed(
+          paymentMethod: paymentMethod,
+          msisdn: msisdn,
+          paymentStatus: AnalyticsPaymentStatusKeys.failed,
+        );
+        await _showBookErrorDialog(error);
+      },
       (initiation) async {
         if (initiation.isPendingWithoutPaymentUrl) {
           await _clearLabCart();
@@ -245,13 +259,41 @@ class _LabTestCheckoutScreenState extends State<LabTestCheckoutScreen> {
         );
         if (!mounted) return;
         if (!paymentResult.isSuccess) {
+          _logBookingConfirmed(
+            paymentMethod: paymentMethod,
+            msisdn: msisdn,
+            paymentStatus: AnalyticsPaymentStatusKeys.failed,
+            initiation: initiation,
+          );
           showCardPaymentOutcomeSnackBar(context, paymentResult);
           return;
         }
+        _logBookingConfirmed(
+          paymentMethod: paymentMethod,
+          msisdn: msisdn,
+          paymentStatus: AnalyticsPaymentStatusKeys.successful,
+          initiation: initiation,
+        );
         await _clearLabCart();
         if (!mounted) return;
         _showBookedDialog();
       },
+    );
+  }
+
+  void _logBookingConfirmed({
+    required String paymentMethod,
+    required String msisdn,
+    required String paymentStatus,
+    PaymentInitiationResult? initiation,
+  }) {
+    LabTestAnalytics.logBookingConfirmed(
+      args: widget.args,
+      paymentMethodCode: paymentMethod,
+      userName: _nameController.text.trim(),
+      msisdn: msisdn,
+      paymentStatus: paymentStatus,
+      initiation: initiation,
     );
   }
 
@@ -357,10 +399,15 @@ class _LabTestCheckoutScreenState extends State<LabTestCheckoutScreen> {
                           gender: _gender,
                           onGender: (g) => setState(() => _gender = g),
                           isEditingPatientDetails: _isEditingPatientDetails,
-                          onToggleEdit: () => setState(
-                            () => _isEditingPatientDetails =
-                                !_isEditingPatientDetails,
-                          ),
+                          onToggleEdit: () {
+                            if (!_isEditingPatientDetails) {
+                              LabTestAnalytics.logPatientDetailsEdit();
+                            }
+                            setState(
+                              () => _isEditingPatientDetails =
+                                  !_isEditingPatientDetails,
+                            );
+                          },
                         ),
                       ],
                     ),

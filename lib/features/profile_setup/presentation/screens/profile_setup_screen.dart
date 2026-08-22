@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import '../../../../core/analytics/analytics_event_keys.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/enums/state_status.dart';
@@ -12,6 +13,7 @@ import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/preference/app_pref.dart';
 import '../../../../core/router/app_routes.dart';
+import '../../../../core/utils/auth_guard.dart';
 import '../../../../core/session/auth_session_refresh.dart';
 import '../../../../core/widgets/heart_loader_widget.dart';
 import '../../../../core/widgets/user_profile_avatar.dart';
@@ -58,6 +60,18 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
       HeartLoaderDialogController.closeAll();
     });
     context.read<ProfileSetupCubit>().resetState();
+    final analyticsSource = switch (widget.launchSource) {
+      ProfileSetupLaunchSource.login =>
+        AnalyticsProfileCreationSourceKeys.authenticationScreen,
+      ProfileSetupLaunchSource.menu =>
+        AnalyticsProfileCreationSourceKeys.profile,
+      ProfileSetupLaunchSource.onboarding ||
+      ProfileSetupLaunchSource.splash ||
+      ProfileSetupLaunchSource.unknown => null,
+    };
+    if (analyticsSource != null) {
+      context.read<ProfileSetupCubit>().logCreationScreen(analyticsSource);
+    }
     final userLocal = appPref.getUserLocalModel();
     _firstNameController.text = userLocal?.firstName.trim() ?? '';
     _lastNameController.text = userLocal?.lastName.trim() ?? '';
@@ -81,12 +95,18 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
       case ProfileSetupLaunchSource.menu:
         context.go(AppRoutes.path(AppRoutes.home));
       case ProfileSetupLaunchSource.login:
-        context.go(AppRoutes.path(AppRoutes.authLogin));
+        context.go(
+          AppRoutes.path(AppRoutes.authLogin),
+          extra: {AuthLoginExtraKeys.source: AnalyticsAuthSourceKeys.login},
+        );
       case ProfileSetupLaunchSource.unknown:
         if (appPref.getLoginStatus()) {
           context.go(AppRoutes.path(AppRoutes.home));
         } else {
-          context.go(AppRoutes.path(AppRoutes.authLogin));
+          context.go(
+            AppRoutes.path(AppRoutes.authLogin),
+            extra: {AuthLoginExtraKeys.source: AnalyticsAuthSourceKeys.login},
+          );
         }
     }
   }
@@ -272,6 +292,9 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
       ),
     );
     if (!mounted || !success) return;
+    if (!isUpdateMode) {
+      context.read<ProfileSetupCubit>().logProfileCreated();
+    }
     if (isUpdateMode) {
       await context.read<ProfileSetupCubit>().loadProfile();
       if (!mounted) return;

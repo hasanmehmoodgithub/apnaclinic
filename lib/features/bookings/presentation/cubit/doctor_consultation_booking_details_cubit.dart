@@ -3,8 +3,10 @@ import 'package:intl/intl.dart';
 
 import '../../../consultation/domain/use_cases/get_consultation_booking_use_case.dart';
 import '../../../consultation/domain/use_cases/submit_consultation_feedback_use_case.dart';
+import '../../../../core/analytics/analytics_event_keys.dart';
 import '../../data/mappers/doctor_consultation_booking_mapper.dart';
 import '../../data/models/doctor_consultation_booking_details_model.dart';
+import '../bookings_analytics.dart';
 import 'doctor_consultation_booking_details_state.dart';
 
 class DoctorConsultationBookingDetailsCubit
@@ -57,13 +59,23 @@ class DoctorConsultationBookingDetailsCubit
         );
       },
       (entity) {
+        final data = DoctorConsultationBookingMapper.fromEntity(entity);
         emit(
           state.copyWith(
             isLoading: false,
-            data: DoctorConsultationBookingMapper.fromEntity(entity),
+            data: data,
             clearError: true,
           ),
         );
+        BookingsAnalytics.logBookingViewed(
+          AnalyticsBookingTypeKeys.consultancy,
+        );
+        if (data.doctorPrescriptions.isNotEmpty) {
+          BookingsAnalytics.logPrescriptionAvailable(
+            bookingId: data.bookingId,
+            service: AnalyticsBookingTypeKeys.consultancy,
+          );
+        }
       },
     );
   }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/analytics/analytics_event_keys.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/enums/state_status.dart';
@@ -10,11 +11,31 @@ import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/widgets/app_scaffold_gradient.dart';
 import '../cubit/surgery_cubit.dart';
 import '../cubit/surgery_state.dart';
+import '../surgery_analytics.dart';
 import '../widgets/surgery_content_view_widget.dart';
 import '../widgets/surgery_shimmer_view_widget.dart';
 
-class SurgeryScreen extends StatelessWidget {
-  const SurgeryScreen({super.key});
+class SurgeryScreen extends StatefulWidget {
+  const SurgeryScreen({
+    super.key,
+    this.source = AnalyticsSurgerySourceKeys.home,
+  });
+
+  final String source;
+
+  @override
+  State<SurgeryScreen> createState() => _SurgeryScreenState();
+}
+
+class _SurgeryScreenState extends State<SurgeryScreen> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      SurgeryAnalytics.logModule(widget.source);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {

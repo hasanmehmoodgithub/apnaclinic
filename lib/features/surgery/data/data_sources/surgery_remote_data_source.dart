@@ -29,7 +29,7 @@ abstract class SurgeryRemoteDataSource {
 
   Future<SurgeryLeadModel> getSurgeryLead({required int leadId});
 
-  Future<void> submitSurgeryBooking(SurgeryBookingRequestEntity request);
+  Future<String> submitSurgeryBooking(SurgeryBookingRequestEntity request);
   Future<PaymentInitiationResult> bookSurgery({
     required int leadId,
     required String paymentMethod,

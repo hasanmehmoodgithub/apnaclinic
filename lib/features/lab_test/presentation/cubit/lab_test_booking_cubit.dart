@@ -4,6 +4,7 @@ import '../../domain/entities/lab_test_cart_item.dart';
 import '../../domain/repositories/lab_test_cart_repository.dart';
 import '../../domain/use_cases/get_lab_test_detail_use_case.dart';
 import '../../domain/utils/lab_test_item_booking_helper.dart';
+import '../lab_test_analytics.dart';
 import '../lab_test_route_args.dart';
 import 'lab_test_booking_state.dart';
 import 'lab_test_cart_cubit.dart';
@@ -91,6 +92,13 @@ class LabTestBookingCubit extends Cubit<LabTestBookingState> {
     await _cartRepository.writeCart(next);
     _sharedCartCubit.replaceItems(next);
     emit(state.copyWith(cartItems: next));
+    LabTestAnalytics.logAddToCart(
+      testName: line.testTitle,
+      labName: line.labDisplayName,
+      partnerName: partner.name,
+      sampleType: line.sampleType,
+      bookingMethodIsHomeSample: line.bookingMethodIsHomeSample,
+    );
   }
 
   void setLabVisit(bool value) {

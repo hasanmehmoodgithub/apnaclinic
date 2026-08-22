@@ -75,6 +75,7 @@ class DoctorConsultationBookingDetailsContentWidget extends StatelessWidget {
                     SizedBox(height: 14.h),
                     DoctorConsultationBookingDetailsPrescriptionsWidget(
                       urls: data.doctorPrescriptions,
+                      bookingId: data.bookingId,
                     ),
                   ],
                   if (showSubmittedFeedback) ...[

@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../../../../components/shimmer/app_shimmer.dart';
 
+import '../../../../core/analytics/analytics_event_keys.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/router/app_routes.dart';
@@ -11,6 +12,7 @@ import '../../../../core/utils/auth_guard.dart';
 import '../../../../core/utils/no_emoji_text_input_formatter.dart';
 import '../../../../core/utils/microphone_permission_utils.dart';
 import '../../domain/entities/consultation_category_entity.dart';
+import '../consultation_analytics.dart';
 import '../constants/consultation_ui_config.dart';
 import '../cubit/consultation_cubit.dart';
 import '../cubit/consultation_state.dart';
@@ -19,7 +21,12 @@ import '../widgets/consultation_category_card.dart';
 import '../widgets/consultation_screen_header_widget.dart';
 
 class DoctorConsultationScreen extends StatefulWidget {
-  const DoctorConsultationScreen({super.key});
+  const DoctorConsultationScreen({
+    super.key,
+    this.source = AnalyticsConsultancySourceKeys.home,
+  });
+
+  final String source;
 
   @override
   State<DoctorConsultationScreen> createState() =>
@@ -28,6 +35,15 @@ class DoctorConsultationScreen extends StatefulWidget {
 
 class _DoctorConsultationScreenState extends State<DoctorConsultationScreen> {
   OverlayEntry? _tooltipEntry;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      ConsultationAnalytics.logModule(widget.source);
+    });
+  }
 
   @override
   void dispose() {
@@ -176,6 +192,7 @@ class _DoctorConsultationScreenState extends State<DoctorConsultationScreen> {
             ? AppShimmerCard(height: 44.565.h, borderRadius: 12.r)
             : _SearchField(
                 onChanged: context.read<ConsultationCubit>().onSearchChanged,
+                onTap: ConsultationAnalytics.logSearchClicked,
               ),
       ),
       SliverToBoxAdapter(child: SizedBox(height: 14.h)),
@@ -228,14 +245,17 @@ class _DoctorConsultationScreenState extends State<DoctorConsultationScreen> {
                 return ConsultationCategoryCard(
                   category: category,
                   index: index,
-                  onTap: () => context.pushNamed(
-                    AppRoutes.consultationDoctors,
-                    extra: DoctorConsultationResultsArgs(
-                      selectedCategory: category.title,
-                      mainCategoryId: category.id,
-                      categoryOptions: state.categories,
-                    ),
-                  ),
+                  onTap: () {
+                    ConsultationAnalytics.logCategoryClicked(category.title);
+                    context.pushNamed(
+                      AppRoutes.consultationDoctors,
+                      extra: DoctorConsultationResultsArgs(
+                        selectedCategory: category.title,
+                        mainCategoryId: category.id,
+                        categoryOptions: state.categories,
+                      ),
+                    );
+                  },
                   onInfoTap: (_) => ()
 
                       // _showProcedureInfo(tileContext, category),
@@ -595,7 +615,11 @@ class _AssistantCard extends StatelessWidget {
   }
 
   Future<void> _onStartNowTap(BuildContext context) async {
-    if (!context.requireLogin()) return;
+    if (!context.requireLogin(
+      loginSource: AnalyticsAuthSourceKeys.consultancy,
+    )) {
+      return;
+    }
 
     final granted = await ensureMicrophonePermission();
     if (!context.mounted) return;
@@ -616,8 +640,9 @@ class _AssistantCard extends StatelessWidget {
 
 class _SearchField extends StatelessWidget {
   final ValueChanged<String> onChanged;
+  final VoidCallback? onTap;
 
-  const _SearchField({required this.onChanged});
+  const _SearchField({required this.onChanged, this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -625,6 +650,7 @@ class _SearchField extends StatelessWidget {
       height: 44.565.h,
       child: TextField(
         onChanged: onChanged,
+        onTap: onTap,
         inputFormatters: NoEmojiTextInputFormatter.merge(null),
         decoration: InputDecoration(
           hintText: AppLocalizations.of(context)!.consultationSearchCategoryHint,

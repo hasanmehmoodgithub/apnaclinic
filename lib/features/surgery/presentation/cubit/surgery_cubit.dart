@@ -260,7 +260,7 @@ class SurgeryCubit extends Cubit<SurgeryState> {
         .toList();
   }
 
-  Future<Either<ErrorMsg, void>> submitSurgeryBooking({
+  Future<Either<ErrorMsg, String>> submitSurgeryBooking({
     required String doctorId,
     required String surgeryId,
     required String packageId,
