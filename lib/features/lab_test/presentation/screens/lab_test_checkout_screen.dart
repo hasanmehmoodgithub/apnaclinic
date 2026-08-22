@@ -245,7 +245,7 @@ class _LabTestCheckoutScreenState extends State<LabTestCheckoutScreen> {
         );
         if (!mounted) return;
         if (!paymentResult.isSuccess) {
-          showCardPaymentOutcomeSnackBar(context, paymentResult);
+          await showCardPaymentOutcomeDialog(context, paymentResult);
           return;
         }
         await _clearLabCart();

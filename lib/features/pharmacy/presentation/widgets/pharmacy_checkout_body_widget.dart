@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../core/cities/presentation/show_select_city_dialog.dart';
 import '../../../../core/constants/app_colors.dart';
@@ -13,6 +14,7 @@ import '../../../consultation/presentation/models/doctor_consultation_jazzcash_s
 import '../../../consultation/presentation/widgets/doctor_consultation_jazzcash_accounts_sheet_widget.dart';
 import '../../../payment/domain/entities/payment_initiation_result.dart';
 import '../../../payment/presentation/payment_navigation.dart';
+import '../../../payment/presentation/widgets/payment_pending_dialog_widget.dart';
 import '../cubit/pharmacy_cubit.dart';
 import '../cubit/pharmacy_state.dart';
 import '../pharmacy_navigation.dart';
@@ -72,19 +74,28 @@ class PharmacyCheckoutBodyWidget extends StatelessWidget {
         );
       },
       (checkout) async {
+        final initiation = PaymentInitiationResult(
+          paymentUrl: checkout.paymentUrl,
+          orderId: checkout.orderNo,
+          status: checkout.status,
+        );
+
+        if (initiation.isPendingWithoutPaymentUrl) {
+          cubit.clearCart();
+          if (!context.mounted) return;
+          await _showPaymentPendingDialog(context);
+          return;
+        }
+
         // Card WebView lives in the shared payment feature.
         final paymentResult = await settleCardPaymentIfNeeded(
           context,
-          PaymentInitiationResult(
-            paymentUrl: checkout.paymentUrl,
-            orderId: checkout.orderNo,
-            status: checkout.status,
-          ),
+          initiation,
           allowClose: true,
         );
         if (!context.mounted) return;
         if (!paymentResult.isSuccess) {
-          showCardPaymentOutcomeSnackBar(context, paymentResult);
+          await showCardPaymentOutcomeDialog(context, paymentResult);
           return;
         }
 
@@ -94,6 +105,27 @@ class PharmacyCheckoutBodyWidget extends StatelessWidget {
           context,
           orderNo: checkout.orderNo,
           onViewOrders: () {
+            if (!context.mounted) return;
+            pharmacyGoToOrderDetailsAfterPlace(context);
+          },
+        );
+      },
+    );
+  }
+
+  Future<void> _showPaymentPendingDialog(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      useRootNavigator: true,
+      builder: (dialogContext) {
+        return PaymentPendingDialogWidget(
+          title: l10n.pharmacyCheckoutPaymentPendingTitle,
+          message: l10n.pharmacyCheckoutPaymentPendingMessage,
+          ctaText: l10n.pharmacyOrderPlacedViewOrdersCta,
+          onViewBookings: () {
+            if (dialogContext.canPop()) dialogContext.pop();
             if (!context.mounted) return;
             pharmacyGoToOrderDetailsAfterPlace(context);
           },

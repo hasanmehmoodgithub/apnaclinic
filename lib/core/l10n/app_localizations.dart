@@ -800,6 +800,18 @@ abstract class AppLocalizations {
   /// **'Unable to place pharmacy order right now. Please try again.'**
   String get pharmacyCheckoutFailed;
 
+  /// No description provided for @pharmacyCheckoutPaymentPendingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment Pending'**
+  String get pharmacyCheckoutPaymentPendingTitle;
+
+  /// No description provided for @pharmacyCheckoutPaymentPendingMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Your pharmacy order is waiting for payment. We\'ll update it once payment completes — check Bookings for the latest status.'**
+  String get pharmacyCheckoutPaymentPendingMessage;
+
   /// No description provided for @pharmacyOrderPlacedTitle.
   ///
   /// In en, this message translates to:
@@ -2039,6 +2051,18 @@ abstract class AppLocalizations {
   /// **'View My Bookings'**
   String get surgeryBookingViewBookingsCta;
 
+  /// No description provided for @surgeryBookingPaymentPendingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment Pending'**
+  String get surgeryBookingPaymentPendingTitle;
+
+  /// No description provided for @surgeryBookingPaymentPendingMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Your surgery booking is waiting for payment. We\'ll update it once payment completes — check Bookings for the latest status.'**
+  String get surgeryBookingPaymentPendingMessage;
+
   /// No description provided for @surgeryBookingFailedTitle.
   ///
   /// In en, this message translates to:
@@ -2303,11 +2327,29 @@ abstract class AppLocalizations {
   /// **'Payment failed. Please try again.'**
   String get paymentWebViewFailed;
 
+  /// No description provided for @paymentWebViewFailedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment Failed'**
+  String get paymentWebViewFailedTitle;
+
   /// No description provided for @paymentWebViewCancelled.
   ///
   /// In en, this message translates to:
   /// **'Payment cancelled.'**
   String get paymentWebViewCancelled;
+
+  /// No description provided for @paymentWebViewCancelledTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment Cancelled'**
+  String get paymentWebViewCancelledTitle;
+
+  /// No description provided for @paymentWebViewCancelledMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Your payment was cancelled. You can try again when you are ready.'**
+  String get paymentWebViewCancelledMessage;
 
   /// No description provided for @labTestViewDetailsResultsTitle.
   ///

@@ -376,6 +376,13 @@ class AppLocalizationsUr extends AppLocalizations {
       'اس وقت فارمیسی آرڈر نہیں دیا جا سکا۔ براہ کرم دوبارہ کوشش کریں۔';
 
   @override
+  String get pharmacyCheckoutPaymentPendingTitle => 'ادائیگی زیر التوا';
+
+  @override
+  String get pharmacyCheckoutPaymentPendingMessage =>
+      'آپ کا فارمیسی آرڈر ادائیگی کا انتظار کر رہا ہے۔ ادائیگی مکمل ہونے پر ہم اسے اپ ڈیٹ کر دیں گے — تازہ ترین صورتحال بکنگز میں دیکھیں۔';
+
+  @override
   String get pharmacyOrderPlacedTitle => 'آرڈر کامیابی سے دے دیا گیا!';
 
   @override
@@ -1061,6 +1068,13 @@ class AppLocalizationsUr extends AppLocalizations {
   String get surgeryBookingViewBookingsCta => 'میری بکنگز دیکھیں';
 
   @override
+  String get surgeryBookingPaymentPendingTitle => 'ادائیگی زیر التوا';
+
+  @override
+  String get surgeryBookingPaymentPendingMessage =>
+      'آپ کی سرجری بکنگ ادائیگی کا انتظار کر رہی ہے۔ ادائیگی مکمل ہونے پر ہم اسے اپ ڈیٹ کر دیں گے — تازہ ترین صورتحال بکنگز میں دیکھیں۔';
+
+  @override
   String get surgeryBookingFailedTitle => 'بکنگ کی درخواست ناکام';
 
   @override
@@ -1198,7 +1212,17 @@ class AppLocalizationsUr extends AppLocalizations {
   String get paymentWebViewFailed => 'ادائیگی ناکام رہی۔ دوبارہ کوشش کریں۔';
 
   @override
+  String get paymentWebViewFailedTitle => 'ادائیگی ناکام رہی';
+
+  @override
   String get paymentWebViewCancelled => 'ادائیگی منسوخ کر دی گئی۔';
+
+  @override
+  String get paymentWebViewCancelledTitle => 'ادائیگی منسوخ ہو گئی';
+
+  @override
+  String get paymentWebViewCancelledMessage =>
+      'آپ کی ادائیگی منسوخ کر دی گئی ہے۔ جب آپ تیار ہوں تو دوبارہ کوشش کر سکتے ہیں۔';
 
   @override
   String get labTestViewDetailsResultsTitle => 'ٹیسٹ نتائج';

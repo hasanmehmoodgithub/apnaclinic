@@ -67,7 +67,7 @@ class DoctorConsultationSummaryScreen extends StatelessWidget {
         );
     if (!context.mounted) return;
     if (!paymentResult.isSuccess) {
-      showCardPaymentOutcomeSnackBar(context, paymentResult);
+      await showCardPaymentOutcomeDialog(context, paymentResult);
       return;
     }
 
