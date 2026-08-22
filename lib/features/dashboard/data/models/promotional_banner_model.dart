@@ -68,27 +68,60 @@ class PromotionalBannerModel {
     );
   }
 
-  /// CMS `route` is `{ type, index }` / `{ type, route }` or a legacy string.
+  /// CMS `route` is `"type/value"` split on `/`, e.g. `bottomsheet/1` or
+  /// `screen/instant-doctor`. Object `{ type, Index|route }` still works.
   static ({String type, String name, int? index}) _parseRoute(dynamic raw) {
     if (raw is Map) {
       final map = Map<String, dynamic>.from(raw);
       return (
-        type: _nonEmpty(map['type'] ?? map['routeType']),
+        type: _nonEmpty(_mapValue(map, const ['type', 'routeType'])),
         name: _nonEmpty(
-          map['route'] ??
-              map['routerName'] ??
-              map['routeName'] ??
-              map['name'] ??
-              map['path'] ??
-              map['screen'],
+          _mapValue(map, const [
+            'route',
+            'routerName',
+            'routeName',
+            'name',
+            'path',
+            'screen',
+          ]),
         ),
-        index: _parseIndex(map['index']),
+        index: _parseIndex(_mapValue(map, const ['index'])),
       );
     }
     if (raw is String) {
-      return (type: '', name: raw.trim(), index: null);
+      return _parseRouteString(raw);
     }
     return (type: '', name: '', index: null);
+  }
+
+  static ({String type, String name, int? index}) _parseRouteString(
+    String raw,
+  ) {
+    final text = raw.trim().replaceFirst(RegExp(r'^/+'), '');
+    if (text.isEmpty) return (type: '', name: '', index: null);
+    if (_isHttpUrl(text)) return (type: 'url', name: text, index: null);
+
+    final slash = text.indexOf('/');
+    if (slash <= 0) return (type: '', name: text, index: null);
+
+    final type = text.substring(0, slash).trim();
+    final value = text.substring(slash + 1).trim();
+    return (type: type, name: value, index: _parseIndex(value));
+  }
+
+  static dynamic _mapValue(Map<String, dynamic> map, List<String> keys) {
+    for (final key in keys) {
+      final direct = map[key];
+      if (direct != null) return direct;
+    }
+    final lowerKeys = {for (final key in keys) key.toLowerCase(): true};
+    for (final entry in map.entries) {
+      if (lowerKeys.containsKey(entry.key.toLowerCase()) &&
+          entry.value != null) {
+        return entry.value;
+      }
+    }
+    return null;
   }
 
   static ({String type, String name, int? index}) _resolveDestination({
@@ -118,7 +151,7 @@ class PromotionalBannerModel {
     final key = type.trim().toLowerCase().replaceAll(RegExp(r'[-_\s]'), '');
     return switch (key) {
       'bottomsheet' => 'bottomsheet',
-      'screen' || 'page' => 'screen',
+      'screen' || 'page' || 'sheet' => 'screen',
       'tab' => 'tab',
       'url' || 'external' || 'link' => 'url',
       _ => type.trim().toLowerCase(),

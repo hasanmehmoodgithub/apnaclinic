@@ -15,7 +15,7 @@ class PromotionalBannerMockApi {
           'title': 'Instant Doctors',
           'imagePath': 'assets/img/banner.png',
           'ctaUrl': null,
-          'route': {'type': 'bottomsheet', 'index': '1'},
+          'route': 'bottomsheet/1',
           'displayOrder': 0,
           'isActive': true,
           'startDate': null,

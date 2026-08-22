@@ -123,7 +123,7 @@ class _BannerImage extends StatelessWidget {
       fadeInDuration: Duration.zero,
       placeholderFadeInDuration: Duration.zero,
       placeholder: (_, _) => const PromotionalBannerShimmer(),
-      errorWidget: (_, _, _) => const _BannerFallbackAsset(),
+
     );
   }
 }

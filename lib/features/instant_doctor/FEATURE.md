@@ -6,7 +6,7 @@
 
 ## Routes / entry
 
-- Bottom nav tab: `dashboardBottomInstantDoctor` → `InstantDoctorScreen` (via main navigation shell). **Login required** — guests are sent to `AppRoutes.authLogin` (bottom nav, home banner, and promo banner `{ type: bottomsheet, index: "1" }` or `{ type: screen, route: "instant-doctor" }`).
+- Bottom nav tab: `dashboardBottomInstantDoctor` → `InstantDoctorScreen` (via main navigation shell). **Login required** — guests are sent to `AppRoutes.authLogin` (bottom nav, home banner, and promo banner `bottomsheet/1` or `screen/instant-doctor`).
 - `AppRoutes.instantDoctorConsultation` — `InstantDoctorConsultationWebViewScreen`; extra: `InstantDoctorConsultationArgs` (`url`, `title`). Opens after OS camera + mic permission; WebView grants getUserMedia immediately (deny of OS permission → snackbar).
 
 ## Data & APIs
