@@ -50,6 +50,13 @@ class LabTestBookingCubit extends Cubit<LabTestBookingState> {
           return;
         }
 
+        final labVisit = LabTestItemBookingHelper.resolveInitialLabVisit(
+          labOffers: detail.labOffers,
+          preferLabVisit: state.cartItems.isEmpty
+              ? null
+              : !state.cartItems.first.bookingMethodIsHomeSample,
+        );
+
         emit(
           state.copyWith(
             args: LabTestBookingArgs.fromDetail(
@@ -58,6 +65,7 @@ class LabTestBookingCubit extends Cubit<LabTestBookingState> {
               requirementLines: args.requirementLines,
             ),
             clearLoadError: true,
+            labVisit: labVisit,
             partnerTab: 0,
             selectedVendorIndex: 0,
           ),
@@ -86,6 +94,9 @@ class LabTestBookingCubit extends Cubit<LabTestBookingState> {
   }
 
   void setLabVisit(bool value) {
+    if (value && !state.walkInAvailable) return;
+    if (!value && !state.homeSamplingAvailable) return;
+
     emit(
       state.copyWith(
         labVisit: value,
@@ -107,7 +118,10 @@ class LabTestBookingCubit extends Cubit<LabTestBookingState> {
     if (state.cartItems.isEmpty || state.args.isPending) return;
 
     final first = state.cartItems.first;
-    final labVisit = !first.bookingMethodIsHomeSample;
+    final labVisit = LabTestItemBookingHelper.resolveInitialLabVisit(
+      labOffers: state.args.labOffers,
+      preferLabVisit: !first.bookingMethodIsHomeSample,
+    );
     emit(
       state.copyWith(
         labVisit: labVisit,

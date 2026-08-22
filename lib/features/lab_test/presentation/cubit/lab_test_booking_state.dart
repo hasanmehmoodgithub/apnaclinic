@@ -25,6 +25,17 @@ class LabTestBookingState extends Equatable {
 
   bool get isLoadingDetail => args.isPending && loadError == null;
 
+  bool get walkInAvailable => LabTestItemBookingHelper.hasOffersForBookingMethod(
+        labOffers: args.labOffers,
+        labVisit: true,
+      );
+
+  bool get homeSamplingAvailable =>
+      LabTestItemBookingHelper.hasOffersForBookingMethod(
+        labOffers: args.labOffers,
+        labVisit: false,
+      );
+
   List<LabTestBookingPartnerOption> get filteredPartners {
     final partnerIds = LabTestItemBookingHelper.partnerIdsForBookingMethod(
       labOffers: args.labOffers,
@@ -102,10 +113,16 @@ class LabTestBookingState extends Equatable {
   LabTestPricingEntity get currentPricing =>
       LabTestItemBookingHelper.pricingForOffer(selectedOffer);
 
+  bool get isWalkInUnavailable => labVisit && !walkInAvailable;
+
   bool get isHomeSamplingUnavailable =>
-      !labVisit && (filteredPartners.isEmpty || filteredVendors.isEmpty);
+      !labVisit &&
+      (!homeSamplingAvailable ||
+          filteredPartners.isEmpty ||
+          filteredVendors.isEmpty);
 
   bool get canAddSelectionToCart =>
+      !isWalkInUnavailable &&
       !isHomeSamplingUnavailable &&
       selectedVendor != null &&
       selectedPartner != null &&

@@ -43,4 +43,4 @@ Cart products: each `products[]` row may nest `product { …Partner product fiel
 
 ## Order placed flow
 
-After checkout confirm + order-placed dialog **View My Orders**: `pharmacyGoToOrderDetailsAfterPlace` → `home` shell with bottom **Bookings** tab and **Pharmacy** sub-tab selected (`AuthSessionRefresh.requestTabIndex` + `BookingsTabs.pharmacy`). Dialog copy uses `pharmacyOrderPlacedTitle` / `pharmacyOrderPlacedMessage(orderNo)` / `pharmacyOrderPlacedViewOrdersCta`. `pharmacyPopOrGoHome` on hub/details headers if the stack is empty.
+After checkout confirm + order-placed dialog **View My Orders**: `pharmacyGoToOrderDetailsAfterPlace` → `home` shell with bottom **Bookings** tab and **Pharmacy** sub-tab selected (`AuthSessionRefresh.requestTabIndex` + `BookingsTabs.pharmacy`). Success dialog is non-cancelable (`barrierDismissible: false` + `PopScope(canPop: false)`); only the CTA dismisses it. Dialog copy uses `pharmacyOrderPlacedTitle` / `pharmacyOrderPlacedMessage(orderNo)` / `pharmacyOrderPlacedViewOrdersCta`. `pharmacyPopOrGoHome` on hub/details headers if the stack is empty.

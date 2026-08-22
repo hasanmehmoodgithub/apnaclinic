@@ -26,7 +26,11 @@ class SurgeryBookingListMapper {
     final hasScheduledDate =
         lead.scheduledDate != null && lead.scheduledDate!.trim().isNotEmpty;
     final appointment = hasScheduledDate
-        ? _parseAppointment(lead.scheduledDate)
+        ? _parseScheduledAppointment(
+            scheduledDate: lead.scheduledDate!,
+            scheduledStartTime: lead.scheduledStartTime,
+            scheduledEndTime: lead.scheduledEndTime,
+          )
         : const _AppointmentParts(
             day: '',
             month: '',
@@ -174,8 +178,12 @@ class SurgeryBookingListMapper {
         : lead.leadCreatedDate;
   }
 
-  static _AppointmentParts _parseAppointment(String? raw) {
-    final parsed = _tryParseLeadDateTime(raw);
+  static _AppointmentParts _parseScheduledAppointment({
+    required String scheduledDate,
+    String? scheduledStartTime,
+    String? scheduledEndTime,
+  }) {
+    final parsed = _tryParseLeadDateTime(scheduledDate);
     if (parsed == null) {
       return const _AppointmentParts(
         day: '',
@@ -189,10 +197,15 @@ class SurgeryBookingListMapper {
     final day = DateFormat('d').format(parsed);
     final month = DateFormat('MMMM').format(parsed);
     final weekday = DateFormat('EEEE').format(parsed);
-    final time = DateFormat('hh:mm a').format(parsed);
     final dayOrdinal = _dayOrdinal(parsed.day);
-    final full = '$dayOrdinal ${DateFormat('MMMM').format(parsed)},'
-        '${parsed.year}';
+    final full =
+        '$dayOrdinal ${DateFormat('MMMM').format(parsed)}, ${parsed.year}';
+    final time = _formatScheduledTimeRange(
+      scheduledStartTime: scheduledStartTime,
+      scheduledEndTime: scheduledEndTime,
+      legacyDateTimeRaw: scheduledDate,
+      parsedDate: parsed,
+    );
 
     return _AppointmentParts(
       day: day,
@@ -201,6 +214,36 @@ class SurgeryBookingListMapper {
       time: time,
       full: full,
     );
+  }
+
+  static String _formatScheduledTimeRange({
+    required String? scheduledStartTime,
+    required String? scheduledEndTime,
+    required String legacyDateTimeRaw,
+    required DateTime parsedDate,
+  }) {
+    final start = scheduledStartTime?.trim() ?? '';
+    final end = scheduledEndTime?.trim() ?? '';
+    if (start.isNotEmpty && end.isNotEmpty) return '$start - $end';
+    if (start.isNotEmpty) return start;
+    if (end.isNotEmpty) return end;
+
+    // Legacy: time was embedded in scheduledDate; ignore bogus midnight.
+    if (_isMidnightScheduleArtifact(legacyDateTimeRaw, parsedDate)) {
+      return '';
+    }
+    return DateFormat('hh:mm a').format(parsedDate);
+  }
+
+  static bool _isMidnightScheduleArtifact(String raw, DateTime parsed) {
+    if (parsed.hour != 0 || parsed.minute != 0) return false;
+    final trimmed = raw.trim();
+    if (RegExp(r'^\d{4}-\d{2}-\d{2}$').hasMatch(trimmed)) return true;
+    if (RegExp(r'12:00\s*AM', caseSensitive: false).hasMatch(trimmed)) {
+      return true;
+    }
+    if (RegExp(r'\b00:00\b').hasMatch(trimmed)) return true;
+    return false;
   }
 
   static DateTime? _tryParseLeadDateTime(String? raw) {

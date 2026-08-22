@@ -35,7 +35,7 @@ Browse lab tests, booking/cart flow, payment details checkout, and order view de
 - **Lab test detail (booking):** `GET AppUrls.labTestDetail` → `/acs-aggregator/api/v1/mobile/lab/tests/{id}?cityId=...`
   - On test tap, app navigates to booking with `LabTestBookingArgs.pending`; `LabTestBookingCubit.loadDetailIfNeeded()` fetches detail on that screen (shimmer → content, same route).
   - Response: `data.partners[]` each with `labs[]` and `pricing.HOME_SAMPLING` / `pricing.WALK_IN` (`price`, `discountPct`, `finalPrice`).
-  - Booking screen filters partners/labs by booking method (`WALK_IN` / `HOME_SAMPLING`); when no lab supports home sampling, partner/lab grids are hidden, sample type shows **N/A**, and **Add to Cart** is disabled.
+  - Booking screen filters partners/labs by booking method (`WALK_IN` / `HOME_SAMPLING`). On detail load, auto-selects the first available method (Walk In when both exist; Home Sample when only `HOME_SAMPLING` offers). Method tiles are disabled when that order type has no pricing. When the selected method has no offers, partner/lab grids are hidden, sample type shows **N/A**, and **Add to Cart** is disabled.
 - **Book lab test:** `POST AppUrls.labBookTest` → `/acs-aggregator/api/v1/mobile/lab/book-test`
   - Triggered from **checkout** CTA after picking a payment method via `PaymentMethodSheet(module: lab, includeLocalCashOption: true)` → `GET payment-provider?module=lab` plus a local **Pay via Cash** row (`paymentMethod`: `COD`, not from the API). JazzCash prompts for an account msisdn; otherwise the patient phone is used.
   - While `POST lab/book-test` runs, shows the shared heart loader; on failure shows shared `AlertDialogCard` with the API message.

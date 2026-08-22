@@ -16,6 +16,7 @@ class ActionOptionCard extends StatelessWidget {
     this.subtitle,
     this.trailing,
     this.onTrailingTap,
+    this.showTrailing = true,
     this.titleStyle,
     this.subtitleStyle,
     this.contentPadding = const EdgeInsets.symmetric(horizontal: 15),
@@ -37,6 +38,9 @@ class ActionOptionCard extends StatelessWidget {
   final String? subtitle;
   final Widget? trailing;
   final VoidCallback? onTrailingTap;
+
+  /// When false, hides the trailing control (default arrow / custom trailing).
+  final bool showTrailing;
   final TextStyle? titleStyle;
   final TextStyle? subtitleStyle;
   final EdgeInsetsGeometry contentPadding;
@@ -66,8 +70,10 @@ class ActionOptionCard extends StatelessWidget {
             final curveWidth = cardWidth * curveWidthFactor;
             final resolvedCurveHeight = curveHeight.h;
             final curveLeft = cardWidth * curveLeftFactor;
-            final resolvedTrailingWidth = trailingOverlayWidth ?? 44.w;
-            final resolvedTrailingHeight = trailingOverlayHeight ?? 46.h;
+            final resolvedTrailingWidth =
+                showTrailing ? (trailingOverlayWidth ?? 44.w) : 0.0;
+            final resolvedTrailingHeight =
+                showTrailing ? (trailingOverlayHeight ?? 46.h) : 0.0;
 
             // Center the trailing control within the visible curved area.
             final visibleCurveStart = curveLeft.clamp(0.0, cardWidth);
@@ -116,31 +122,33 @@ class ActionOptionCard extends StatelessWidget {
                               Expanded(
                                 child: content ?? _buildDefaultContent(theme),
                               ),
-                              SizedBox(width: resolvedTrailingWidth),
+                              if (showTrailing)
+                                SizedBox(width: resolvedTrailingWidth),
                             ],
                           ),
                         ),
                       ),
-                      Positioned(
-                        left: trailingLeft,
-                        top: (cardHeight - resolvedTrailingHeight) / 2,
-                        child: SizedBox(
-                          width: resolvedTrailingWidth,
-                          height: resolvedTrailingHeight,
-                          child: trailing != null
-                              ? GestureDetector(
-                                  onTap: onTrailingTap,
-                                  behavior: HitTestBehavior.opaque,
-                                  child: Center(child: trailing!),
-                                )
-                              : Center(
-                                  child: SvgPicture.asset(
-                                    _arrowAsset,
-                                    fit: BoxFit.contain,
+                      if (showTrailing)
+                        Positioned(
+                          left: trailingLeft,
+                          top: (cardHeight - resolvedTrailingHeight) / 2,
+                          child: SizedBox(
+                            width: resolvedTrailingWidth,
+                            height: resolvedTrailingHeight,
+                            child: trailing != null
+                                ? GestureDetector(
+                                    onTap: onTrailingTap,
+                                    behavior: HitTestBehavior.opaque,
+                                    child: Center(child: trailing!),
+                                  )
+                                : Center(
+                                    child: SvgPicture.asset(
+                                      _arrowAsset,
+                                      fit: BoxFit.contain,
+                                    ),
                                   ),
-                                ),
+                          ),
                         ),
-                      ),
                     ],
                   ),
                 ),

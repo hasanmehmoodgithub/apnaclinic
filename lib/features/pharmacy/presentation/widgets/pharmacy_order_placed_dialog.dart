@@ -24,53 +24,57 @@ class PharmacyOrderPlacedDialog extends StatelessWidget {
     final theme = Theme.of(context);
     final displayOrderNo = orderNo.trim().isEmpty ? '—' : orderNo.trim();
 
-    return Dialog(
-      backgroundColor: AppColors.clrWhite,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.r)),
-      child: Padding(
-        padding: EdgeInsets.fromLTRB(22.w, 22.h, 22.w, 20.h),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            SizedBox(
-              width: 60.r,
-              height: 60.r,
-              child: SvgPicture.asset(Assets.iconsTick),
-            ),
-            SizedBox(height: 12.h),
-            Text(
-              l10n.pharmacyOrderPlacedTitle,
-              textAlign: TextAlign.center,
-              style: theme.textTheme.titleLarge?.copyWith(
-                color: AppColors.clr102A56,
-                fontWeight: FontWeight.w700,
-                fontSize: 20.sp,
+    // Back / system pop must not dismiss; only the CTA closes this dialog.
+    return PopScope(
+      canPop: false,
+      child: Dialog(
+        backgroundColor: AppColors.clrWhite,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.r)),
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(22.w, 22.h, 22.w, 20.h),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SizedBox(
+                width: 60.r,
+                height: 60.r,
+                child: SvgPicture.asset(Assets.iconsTick),
               ),
-            ),
-            SizedBox(height: 10.h),
-            Text(
-              l10n.pharmacyOrderPlacedMessage(displayOrderNo),
-              textAlign: TextAlign.center,
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: AppColors.clr6B7C96,
-                fontSize: 14.sp,
-                height: 1.4,
+              SizedBox(height: 12.h),
+              Text(
+                l10n.pharmacyOrderPlacedTitle,
+                textAlign: TextAlign.center,
+                style: theme.textTheme.titleLarge?.copyWith(
+                  color: AppColors.clr102A56,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 20.sp,
+                ),
               ),
-            ),
-            SizedBox(height: 22.h),
-            SizedBox(
-              width: double.infinity,
-              child: AppButton.primary(
-                text: l10n.pharmacyOrderPlacedViewOrdersCta,
-                onPressed: onViewOrders,
-                backgroundColor: AppColors.clr27B3A6,
-                foregroundColor: AppColors.clrWhite,
-                height: 52.h,
-                borderRadius: 14.r,
-                fontWeight: FontWeight.w700,
+              SizedBox(height: 10.h),
+              Text(
+                l10n.pharmacyOrderPlacedMessage(displayOrderNo),
+                textAlign: TextAlign.center,
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: AppColors.clr6B7C96,
+                  fontSize: 14.sp,
+                  height: 1.4,
+                ),
               ),
-            ),
-          ],
+              SizedBox(height: 22.h),
+              SizedBox(
+                width: double.infinity,
+                child: AppButton.primary(
+                  text: l10n.pharmacyOrderPlacedViewOrdersCta,
+                  onPressed: onViewOrders,
+                  backgroundColor: AppColors.clr27B3A6,
+                  foregroundColor: AppColors.clrWhite,
+                  height: 52.h,
+                  borderRadius: 14.r,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -85,6 +89,7 @@ Future<void> showPharmacyOrderPlacedDialog(
   return showDialog<void>(
     context: context,
     barrierDismissible: false,
+    useRootNavigator: true,
     barrierColor: AppColors.clrBlack.withValues(alpha: 0.38),
     builder: (dialogContext) => PharmacyOrderPlacedDialog(
       orderNo: orderNo,

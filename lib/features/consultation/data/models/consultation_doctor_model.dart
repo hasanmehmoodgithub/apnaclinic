@@ -43,7 +43,10 @@ class ConsultationDoctorModel {
   final String partnerDoctorId;
   final String tenantId;
 
-  factory ConsultationDoctorModel.fromJson(Map<String, dynamic> json) {
+  factory ConsultationDoctorModel.fromJson(
+    Map<String, dynamic> json, {
+    Map<String, ConsultationPartnerFilterOption>? partnersByTenantId,
+  }) {
     final partnerRaw = json['partner'];
     final partner =
         partnerRaw is Map ? Map<String, dynamic>.from(partnerRaw) : null;
@@ -55,11 +58,19 @@ class ConsultationDoctorModel {
     final apiPartnerName = _partnerLabel(partner);
     final apiPartnerLogo =
         (partner?['logoUrl'] ?? partner?['logo_url'] ?? '').toString().trim();
-    // Doctors API often returns only partner.tenantId — resolve name/logo by id.
+    final tenantSlugOnDoctor = (partner?['tenant'] ??
+            partner?['tenantSlug'] ??
+            partner?['slug'])
+        ?.toString();
+    final catalogPartner = partnersByTenantId?[tenantId];
+
+    // Doctors API often returns only partner.tenantId on each doctor; slug/name
+    // live in page-level data.partners[] — merge before falling back to "Partner N".
     final resolvedPartner = ConsultationPartnerFilterDefaults.fromApi(
       tenantId: tenantId,
-      name: apiPartnerName.isEmpty ? null : apiPartnerName,
-      logoUrl: apiPartnerLogo.isEmpty ? null : apiPartnerLogo,
+      name: apiPartnerName.isEmpty ? catalogPartner?.name : apiPartnerName,
+      tenantSlug: tenantSlugOnDoctor,
+      logoUrl: apiPartnerLogo.isEmpty ? catalogPartner?.logoUrl : apiPartnerLogo,
     );
 
     return ConsultationDoctorModel(
@@ -262,17 +273,26 @@ class ConsultationDoctorsResponseModel {
           : const [];
     }
 
+    final partners = _parsePartners(pageData);
+    final partnersByTenantId = {
+      for (final partner in partners) partner.id: partner,
+    };
+
     final doctors = rawDoctors
         .map(_asStringKeyedMap)
         .whereType<Map<String, dynamic>>()
-        .map(ConsultationDoctorModel.fromJson)
+        .map(
+          (doctorJson) => ConsultationDoctorModel.fromJson(
+            doctorJson,
+            partnersByTenantId: partnersByTenantId,
+          ),
+        )
         .where((doctor) => doctor.displayName.isNotEmpty)
         .toList(growable: false);
 
     final page = _readInt(pageData ?? json, 'page', fallback: 1);
     final limit = _readInt(pageData ?? json, 'limit', fallback: 20);
     final total = _readInt(pageData ?? json, 'total', fallback: doctors.length);
-    final partners = _parsePartners(pageData);
 
     return ConsultationDoctorsResponseModel(
       success: success,
