@@ -10,6 +10,7 @@ import '../../../../core/utils/app_url_launcher.dart';
 import '../../../../generated/assets.dart';
 import '../../domain/entities/promotional_banner_entity.dart';
 import '../constants/dashboard_ui_config.dart';
+import '../instant_doctor_tab_navigation.dart';
 import 'promotional_banner_shimmer_widget.dart';
 
 Future<void> showPromotionalBannerDialog(
@@ -66,21 +67,31 @@ void _onBannerTap(
   BuildContext hostContext,
   PromotionalBannerEntity banner,
 ) {
-  final target = banner.route.trim();
   dialogContext.pop();
+  if (!hostContext.mounted) return;
+
+  if (banner.routeType == 'bottomsheet' && banner.tabIndex != null) {
+    openBottomNavTab(hostContext, banner.tabIndex!);
+    return;
+  }
+
+  final target = banner.route.trim();
   if (target.isEmpty) return;
 
   final lower = target.toLowerCase();
-  if (lower.startsWith('http://') || lower.startsWith('https://')) {
-    AppUrlLauncher.open(
-      url: target,
-      lunchMode: LaunchMode.externalApplication,
-    );
+  if (banner.routeType == 'url' ||
+      lower.startsWith('http://') ||
+      lower.startsWith('https://')) {
+    AppUrlLauncher.open(url: target, lunchMode: LaunchMode.externalApplication);
     return;
   }
 
   final normalizedRoute = target.replaceFirst(RegExp(r'^/'), '');
   if (normalizedRoute.isEmpty) return;
+  if (normalizedRoute == AppRoutes.instantDoctor) {
+    openInstantDoctorTab(hostContext);
+    return;
+  }
   hostContext.push(AppRoutes.path(normalizedRoute));
 }
 

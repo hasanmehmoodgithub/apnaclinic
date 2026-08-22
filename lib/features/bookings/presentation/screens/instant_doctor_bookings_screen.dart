@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/analytics/analytics_event_keys.dart';
 import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
@@ -20,6 +21,7 @@ class InstantDoctorBookingsScreen extends StatelessWidget {
         buttonText: l10n.instantDoctorTitle,
         onTap: () => sl<AuthSessionRefresh>().requestTabIndex(
           MainNavigationTabs.instantDoctor,
+          instantDoctorSourceScreen: AnalyticsInstantDoctorSourceKeys.bottomTab,
         ),
       ),
     );

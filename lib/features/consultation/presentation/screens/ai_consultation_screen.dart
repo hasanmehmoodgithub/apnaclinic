@@ -1,8 +1,13 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
+import '../../../../core/analytics/analytics_event_keys.dart';
+import '../../../../core/analytics/analytics_service.dart';
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../constants/consultation_ui_config.dart';
@@ -19,15 +24,21 @@ class AiScreeningScreen extends StatefulWidget {
 
 class _AiScreeningScreenState extends State<AiScreeningScreen> {
   late final WebViewController _controller;
+  late final AnalyticsService _analytics;
+  late final DateTime _startedAt;
   var _isLoading = true;
   var _hasError = false;
   var _isExitDialogVisible = false;
+  var _hasLoggedEnd = false;
 
   static const _url = ConsultationUiConfig.apnaDoctorAiUrl;
 
   @override
   void initState() {
     super.initState();
+    _analytics = sl<AnalyticsService>();
+    _startedAt = DateTime.now();
+    unawaited(_analytics.logEvent(AnalyticsEventKeys.aiChatStarted));
     _controller = WebViewController(
       onPermissionRequest: (request) => request.grant(),
     )
@@ -57,12 +68,26 @@ class _AiScreeningScreenState extends State<AiScreeningScreen> {
       ..loadRequest(Uri.parse(_url));
   }
 
+  void _logChatEnded() {
+    if (_hasLoggedEnd) return;
+    _hasLoggedEnd = true;
+    final seconds = DateTime.now().difference(_startedAt).inSeconds;
+    unawaited(
+      _analytics.logEvent(
+        AnalyticsEventKeys.aiChatEnded,
+        {AnalyticsParamKeys.callDuration: '${seconds}s'},
+      ),
+    );
+  }
+
   Future<void> _onBackRequested() async {
     if (_isExitDialogVisible) return;
     _isExitDialogVisible = true;
     final shouldExit = await showAiScreeningExitDialog(context);
     _isExitDialogVisible = false;
-    if (shouldExit && mounted) context.pop();
+    if (!shouldExit || !mounted) return;
+    _logChatEnded();
+    context.pop();
   }
 
   @override

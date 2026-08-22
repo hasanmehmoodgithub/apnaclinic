@@ -1,8 +1,13 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/analytics/analytics_event_keys.dart';
+import '../../../../core/analytics/analytics_service.dart';
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/enums/state_status.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
@@ -38,6 +43,7 @@ class _SearchScreenState extends State<SearchScreen> {
   @override
   void initState() {
     super.initState();
+    unawaited(sl<AnalyticsService>().logEvent(AnalyticsEventKeys.searchScreen));
     final seed = widget.initialQuery?.trim() ?? '';
     if (seed.isNotEmpty) {
       _controller.text = seed;
@@ -201,9 +207,15 @@ class _SearchScreenState extends State<SearchScreen> {
     return SearchInitialContentWidget(
       recent: state.content.recentSearches,
       popular: state.content.popularSearches,
-      onRecentTap: (t) => context.read<SearchCubit>().submitSearch(t),
+      onRecentTap: (t) => context.read<SearchCubit>().submitSearch(
+        t,
+        AnalyticsSearchMediumKeys.recent,
+      ),
       onRemoveRecent: (t) => context.read<SearchCubit>().removeRecentSearch(t),
-      onPopularTap: (v) => context.read<SearchCubit>().submitSearch(v),
+      onPopularTap: (v) => context.read<SearchCubit>().submitSearch(
+        v,
+        AnalyticsSearchMediumKeys.popular,
+      ),
     );
   }
 }

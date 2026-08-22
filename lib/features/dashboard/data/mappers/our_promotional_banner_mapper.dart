@@ -10,7 +10,9 @@ class PromotionalBannerMapper {
           (banner) => PromotionalBannerEntity(
             showBanner: banner.showBanner,
             url: banner.url,
+            routeType: banner.routeType,
             route: banner.route,
+            tabIndex: banner.tabIndex,
           ),
         )
         .toList(growable: false);

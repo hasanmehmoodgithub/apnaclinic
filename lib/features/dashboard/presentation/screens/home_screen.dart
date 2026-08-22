@@ -26,8 +26,7 @@ import '../widgets/home_header_section.dart';
 import '../widgets/instant_doctor_home_banner.dart';
 import '../widgets/our_services_widget.dart';
 import '../widgets/promotional_banner_dialog.dart';
-import '../constants/main_navigation_tabs.dart';
-import '../cubit/main_navigation_cubit.dart';
+import '../instant_doctor_tab_navigation.dart';
 import '../../../search/presentation/models/search_launch_args.dart';
 import '../../../notification/presentation/cubit/notification_cubit.dart';
 import '../../../notification/presentation/cubit/notification_state.dart';
@@ -87,8 +86,9 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   bool _isHomeRouteActive(BuildContext context) {
     final route = ModalRoute.of(context);
     if (route?.isCurrent != true) return false;
-    final location =
-        GoRouter.of(context).routerDelegate.currentConfiguration.uri.path;
+    final location = GoRouter.of(
+      context,
+    ).routerDelegate.currentConfiguration.uri.path;
     return location == AppRoutes.path(AppRoutes.home);
   }
 
@@ -131,9 +131,9 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   }
 
   void _onDashboardStateChanged(
-      BuildContext context,
-      DashboardServicesState state,
-      ) {
+    BuildContext context,
+    DashboardServicesState state,
+  ) {
     if (state.promotionalBannerLoadingStateStatus == StateStatus.loading) {
       if (_isHomeRouteActive(context) &&
           !HeartLoaderDialogController.isOpen(_bannerLoaderId)) {
@@ -228,10 +228,10 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   }
 
   Widget _buildHomeBody(
-      BuildContext context,
-      DashboardServicesState state,
-      String greetingName,
-      ) {
+    BuildContext context,
+    DashboardServicesState state,
+    String greetingName,
+  ) {
     return Scaffold(
       backgroundColor: AppColors.clrf4f4f4,
       body: GestureDetector(
@@ -261,9 +261,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                   hasUnreadNotifications: unreadCount > 0,
                   profileImageUrl: profileImageUrl,
                   profileImageCacheKey: profileImageCacheKey,
-                  onMenuTap: () => context.push(
-                    AppRoutes.path(AppRoutes.dashboardMenu),
-                  ),
+                  onMenuTap: () =>
+                      context.push(AppRoutes.path(AppRoutes.dashboardMenu)),
                   onNotificationTap: () {
                     if (!context.requireLogin()) return;
                     context.push(AppRoutes.path(AppRoutes.notifications));
@@ -286,15 +285,14 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                   SliverPadding(padding: EdgeInsets.only(top: 8.h)),
                   OurServicesWidget(
                     state: state,
-                    onServiceTap: (service) =>
-                        _onServiceTap(context, service),
+                    onServiceTap: (service) => _onServiceTap(context, service),
                   ),
                   SliverPadding(
                     padding: EdgeInsets.fromLTRB(20.w, 20.h, 20.w, 0),
                     sliver: SliverToBoxAdapter(
                       child: Center(
                         child: InstantDoctorHomeBanner(
-                          onTap: () => _openInstantDoctorTab(context),
+                          onTap: () => openInstantDoctorTab(context),
                         ),
                       ),
                     ),
@@ -326,22 +324,12 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   }
 
   void _onServiceTap(BuildContext context, OurServiceEntity service) {
-    final normalizedRoute =
-    service.route.trim().replaceFirst(RegExp(r'^/'), '');
+    final normalizedRoute = service.route.trim().replaceFirst(
+      RegExp(r'^/'),
+      '',
+    );
     if (normalizedRoute.isEmpty) return;
 
     context.push(AppRoutes.path(normalizedRoute));
-  }
-
-  void _openInstantDoctorTab(BuildContext context) {
-    final sessionRefresh = sl<AuthSessionRefresh>();
-    if (!AuthGuard.isLoggedIn()) {
-      sessionRefresh.requestTabIndex(MainNavigationTabs.instantDoctor);
-      context.requireLogin();
-      return;
-    }
-    context.read<MainNavigationCubit>().setIndex(
-      MainNavigationTabs.instantDoctor,
-    );
   }
 }

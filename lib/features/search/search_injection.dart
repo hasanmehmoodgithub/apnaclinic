@@ -1,5 +1,6 @@
 import 'package:apnaclinic/features/search/presentation/screens/recent_search_store.dart';
 
+import '../../core/analytics/analytics_service.dart';
 import '../../core/di/dependency_injection.dart';
 import '../../core/network/api_service.dart';
 import '../../core/services/speech_to_text_service.dart';
@@ -41,6 +42,7 @@ void initSearchInjector() {
       getSearchContentUseCase: sl<GetSearchContentUseCase>(),
       recentSearchesStore: sl<RecentSearchesStore>(),
       speechToTextService: sl<SpeechToTextService>(),
+      analytics: sl<AnalyticsService>(),
     ),
   );
 }

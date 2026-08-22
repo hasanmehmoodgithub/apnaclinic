@@ -35,16 +35,20 @@ class AppRoutes {
   static const String addAccount = 'add-account';
   static const String accountDetails = 'account-details';
   static const String aiScreening = 'ai-screening';
+
+  /// Instant Doctor bottom-nav tab (not a GoRouter path). CMS may send
+  /// `/intantdoctor` (typo) or `/instantdoctor`.
+  static const String instantDoctor = 'instant-doctor';
   static const String instantDoctorConsultation = 'instant-doctor-consultation';
   static const String cardPayment = 'card-payment';
 
   static const String examples = 'examples';
 
-  static String labTestCheckout='labTestCheckout';
+  static String labTestCheckout = 'labTestCheckout';
 
-  static String labTestBooking='labTestBooking';
+  static String labTestBooking = 'labTestBooking';
 
-  static String labTest="labTest";
+  static String labTest = "labTest";
 
   static String labTestCart = 'labTestCart';
   static String labTestViewDetails = 'labTestViewDetails';

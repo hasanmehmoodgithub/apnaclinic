@@ -1,65 +1,172 @@
+import '../../../../core/router/app_routes.dart';
 import 'our_service_model.dart';
 
 class PromotionalBannerModel {
   const PromotionalBannerModel({
     required this.showBanner,
     required this.url,
+    required this.routeType,
     required this.route,
+    this.tabIndex,
   });
 
   final bool showBanner;
   final String url;
+
+  /// CMS `route.type`: `bottomsheet`, `screen`, `url`.
+  final String routeType;
+
+  /// Mapped in-app destination (`AppRoutes.*`) or an http(s) URL.
   final String route;
+
+  /// Bottom-nav tab when `routeType` is `bottomsheet` (`0`–`3`).
+  final int? tabIndex;
 
   factory PromotionalBannerModel.empty() {
     return const PromotionalBannerModel(
       showBanner: false,
       url: '',
+      routeType: '',
       route: '',
     );
   }
 
   factory PromotionalBannerModel.fromJson(Map<String, dynamic> json) {
-    final isActive =
-        _toBool(json['isActive'] ?? json['is_active'], defaultValue: true);
-    final imagePath = (json['imagePath'] ??
-            json['image_path'] ??
-            json['imageUrl'] ??
-            json['image_url'] ??
-            json['url'] ??
-            '')
-        .toString()
-        .trim();
-    final ctaRaw = (json['ctaUrl'] ??
-            json['cta_url'] ??
-            json['deepLink'] ??
-            json['route'] ??
-            '')
-        .toString()
-        .trim();
+    final isActive = _toBool(
+      json['isActive'] ?? json['is_active'],
+      defaultValue: true,
+    );
+    final imagePath = _nonEmpty(
+      json['imagePath'] ??
+          json['image_path'] ??
+          json['imageUrl'] ??
+          json['image_url'] ??
+          json['url'],
+    );
+    final parsedRoute = _parseRoute(json['route'] ?? json['deepLink']);
+    final ctaRaw = _nonEmpty(json['ctaUrl'] ?? json['cta_url']);
 
     final withinSchedule = _isWithinSchedule(
       startDate: json['startDate'] ?? json['start_date'],
       endDate: json['endDate'] ?? json['end_date'],
     );
 
-    final route = _mapCtaToRoute(ctaRaw);
+    final destination = _resolveDestination(
+      routeType: parsedRoute.type,
+      routeName: parsedRoute.name,
+      tabIndex: parsedRoute.index,
+      ctaRaw: ctaRaw,
+    );
     final showBanner = isActive && imagePath.isNotEmpty && withinSchedule;
 
     return PromotionalBannerModel(
       showBanner: showBanner,
       url: imagePath,
-      route: route,
+      routeType: destination.type,
+      route: destination.name,
+      tabIndex: destination.index,
     );
   }
 
-  static String _mapCtaToRoute(String cta) {
-    if (cta.isEmpty) return '';
-    final lower = cta.toLowerCase();
-    if (lower.startsWith('http://') || lower.startsWith('https://')) {
-      return cta;
+  /// CMS `route` is `{ type, index }` / `{ type, route }` or a legacy string.
+  static ({String type, String name, int? index}) _parseRoute(dynamic raw) {
+    if (raw is Map) {
+      final map = Map<String, dynamic>.from(raw);
+      return (
+        type: _nonEmpty(map['type'] ?? map['routeType']),
+        name: _nonEmpty(
+          map['route'] ??
+              map['routerName'] ??
+              map['routeName'] ??
+              map['name'] ??
+              map['path'] ??
+              map['screen'],
+        ),
+        index: _parseIndex(map['index']),
+      );
     }
-    return OurServiceModel.mapDeepLinkToRoute(cta);
+    if (raw is String) {
+      return (type: '', name: raw.trim(), index: null);
+    }
+    return (type: '', name: '', index: null);
+  }
+
+  static ({String type, String name, int? index}) _resolveDestination({
+    required String routeType,
+    required String routeName,
+    required int? tabIndex,
+    required String ctaRaw,
+  }) {
+    if (_isHttpUrl(ctaRaw)) {
+      return (type: 'url', name: ctaRaw, index: null);
+    }
+
+    final type = _normalizeType(routeType);
+    if (type == 'bottomsheet' && _isValidTabIndex(tabIndex)) {
+      return (type: type, name: '', index: tabIndex);
+    }
+    if (routeName.isNotEmpty) {
+      return (type: type, name: _mapRouterName(routeName), index: null);
+    }
+    if (ctaRaw.isNotEmpty) {
+      return (type: '', name: _mapRouterName(ctaRaw), index: null);
+    }
+    return (type: '', name: '', index: null);
+  }
+
+  static String _normalizeType(String type) {
+    final key = type.trim().toLowerCase().replaceAll(RegExp(r'[-_\s]'), '');
+    return switch (key) {
+      'bottomsheet' => 'bottomsheet',
+      'screen' || 'page' => 'screen',
+      'tab' => 'tab',
+      'url' || 'external' || 'link' => 'url',
+      _ => type.trim().toLowerCase(),
+    };
+  }
+
+  static String _mapRouterName(String raw) {
+    if (raw.isEmpty) return '';
+    if (_isHttpUrl(raw)) return raw;
+    final key = _normalizeKey(raw);
+    if (_isInstantDoctorRoute(key)) return AppRoutes.instantDoctor;
+    return OurServiceModel.mapDeepLinkToRoute(raw);
+  }
+
+  static String _normalizeKey(String raw) {
+    return raw
+        .trim()
+        .toLowerCase()
+        .replaceFirst(RegExp(r'^/'), '')
+        .replaceAll(RegExp(r'[-_\s]'), '');
+  }
+
+  static bool _isHttpUrl(String value) {
+    final lower = value.toLowerCase();
+    return lower.startsWith('http://') || lower.startsWith('https://');
+  }
+
+  static bool _isInstantDoctorRoute(String key) {
+    return switch (key) {
+      'intantdoctor' || 'instantdoctor' || 'filterbottomsheet' => true,
+      _ => false,
+    };
+  }
+
+  static int? _parseIndex(dynamic value) {
+    if (value == null) return null;
+    if (value is int) return value;
+    if (value is num) return value.toInt();
+    return int.tryParse(value.toString().trim());
+  }
+
+  static bool _isValidTabIndex(int? index) {
+    return index != null && index >= 0 && index <= 3;
+  }
+
+  static String _nonEmpty(dynamic value) {
+    if (value == null || value is Map || value is List) return '';
+    return value.toString().trim();
   }
 
   static bool _isWithinSchedule({
@@ -107,9 +214,7 @@ class PromotionalBannerResponseModel {
   final String message;
   final List<PromotionalBannerModel> banners;
 
-  factory PromotionalBannerResponseModel.fromJson(
-    Map<String, dynamic> json,
-  ) {
+  factory PromotionalBannerResponseModel.fromJson(Map<String, dynamic> json) {
     final dataRaw = json['data'] ?? json['banner'] ?? json['banners'];
     final List<Map<String, dynamic>> items;
     if (dataRaw is List) {
@@ -120,18 +225,20 @@ class PromotionalBannerResponseModel {
       items = const [];
     }
 
-    final sortedEntries = items
-        .map(
-          (item) => (
-            order: (item['displayOrder'] as num?)?.toInt() ??
-                (item['display_order'] as num?)?.toInt() ??
-                0,
-            banner: PromotionalBannerModel.fromJson(item),
-          ),
-        )
-        .where((entry) => entry.banner.showBanner)
-        .toList()
-      ..sort((a, b) => a.order.compareTo(b.order));
+    final sortedEntries =
+        items
+            .map(
+              (item) => (
+                order:
+                    (item['displayOrder'] as num?)?.toInt() ??
+                    (item['display_order'] as num?)?.toInt() ??
+                    0,
+                banner: PromotionalBannerModel.fromJson(item),
+              ),
+            )
+            .where((entry) => entry.banner.showBanner)
+            .toList()
+          ..sort((a, b) => a.order.compareTo(b.order));
 
     final code = json['code'];
     final success =

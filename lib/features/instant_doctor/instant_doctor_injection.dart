@@ -1,3 +1,4 @@
+import '../../core/analytics/analytics_service.dart';
 import '../../core/di/dependency_injection.dart';
 import '../../core/network/api_service.dart';
 import '../../core/preference/app_pref.dart';
@@ -45,6 +46,7 @@ void initInstantDoctorInjector() {
       sendOtpUseCase: sl<SendInstantDoctorOtpUseCase>(),
       verifyOtpUseCase: sl<VerifyInstantDoctorOtpUseCase>(),
       appPref: sl<AppPref>(),
+      analytics: sl<AnalyticsService>(),
     ),
   );
 }

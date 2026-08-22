@@ -46,13 +46,17 @@ class _PaymentWebViewScreenState extends State<PaymentWebViewScreen> {
     final paymentUrl = widget.args.paymentUrl.trim();
     log('PaymentWebView loading: $paymentUrl');
 
+    _jsDevLog(
+      'channel registered: ${PaymentWebViewScreen.bridgeChannelName}',
+    );
+
     _controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setBackgroundColor(AppColors.clrWhite)
       ..addJavaScriptChannel(
         PaymentWebViewScreen.bridgeChannelName,
         onMessageReceived: (message) {
-          log('PaymentWebView bridge: ${message.message}');
+          _jsDevLog('message received: ${message.message}');
           _handleBridgeMessage(message.message);
         },
       )
@@ -109,9 +113,15 @@ class _PaymentWebViewScreenState extends State<PaymentWebViewScreen> {
     return url.contains(PaymentWebViewScreen.successCallbackPath);
   }
 
+  void _jsDevLog(String message) {
+    if (!kDebugMode) return;
+    log(message, name: 'PaymentWebView.JS');
+  }
+
   Future<void> _tryAutoCompleteSuccessFromCallbackPage() async {
     if (_didComplete) return;
 
+    _jsDevLog('callback page loaded — injecting handleSuccess / postMessage');
     try {
       await _controller.runJavaScript('''
 (function() {
@@ -131,17 +141,26 @@ class _PaymentWebViewScreenState extends State<PaymentWebViewScreen> {
   } catch (e) {}
 })();
 ''');
-    } catch (_) {}
+    } catch (e) {
+      _jsDevLog('injected JS failed: $e');
+    }
 
     // Fallback if bridge never fires.
     await Future<void>.delayed(const Duration(milliseconds: 800));
     if (!mounted || _didComplete) return;
+    _jsDevLog('bridge did not fire — fallback success');
     _complete(PaymentWebViewResult.success(message: 'Payment successful'));
   }
 
   void _handleBridgeMessage(String raw) {
     final parsed = _parseBridgePayload(raw);
-    if (parsed == null) return;
+    if (parsed == null) {
+      _jsDevLog('payload ignored (unrecognized): $raw');
+      return;
+    }
+    _jsDevLog(
+      'payload parsed: status=${parsed.status.name} message=${parsed.message}',
+    );
     _complete(parsed);
   }
 

@@ -8,6 +8,7 @@ class AuthSessionRefresh extends ChangeNotifier {
   bool _reloadPromotionalBannerOnNextRefresh = false;
   int? _pendingTabIndex;
   int? _pendingBookingsSubTabIndex;
+  String? _pendingInstantDoctorSourceScreen;
 
   int get epoch => _epoch;
 
@@ -33,6 +34,7 @@ class AuthSessionRefresh extends ChangeNotifier {
     _reloadPromotionalBannerOnNextRefresh = false;
     _pendingTabIndex = null;
     _pendingBookingsSubTabIndex = null;
+    _pendingInstantDoctorSourceScreen = null;
     _epoch++;
     notifyListeners();
   }
@@ -64,11 +66,16 @@ class AuthSessionRefresh extends ChangeNotifier {
   ///
   /// Optional [bookingsSubTabIndex] selects Instant Doctor / Pharmacy /
   /// Doctor Consultation / Lab Tests / Surgery when opening the Bookings tab.
-  void requestTabIndex(int index, {int? bookingsSubTabIndex}) {
+  void requestTabIndex(
+    int index, {
+    int? bookingsSubTabIndex,
+    String? instantDoctorSourceScreen,
+  }) {
     _pendingTabIndex = index;
     if (bookingsSubTabIndex != null) {
       _pendingBookingsSubTabIndex = bookingsSubTabIndex;
     }
+    _pendingInstantDoctorSourceScreen = instantDoctorSourceScreen;
     notifyListeners();
   }
 
@@ -76,12 +83,19 @@ class AuthSessionRefresh extends ChangeNotifier {
   void clearPendingTabIndex() {
     _pendingTabIndex = null;
     _pendingBookingsSubTabIndex = null;
+    _pendingInstantDoctorSourceScreen = null;
   }
 
   /// Consumed by [MainNavigationShell]; returns tab index once per request.
   int? consumePendingTabIndex() {
     final value = _pendingTabIndex;
     _pendingTabIndex = null;
+    return value;
+  }
+
+  String? consumePendingInstantDoctorSourceScreen() {
+    final value = _pendingInstantDoctorSourceScreen;
+    _pendingInstantDoctorSourceScreen = null;
     return value;
   }
 

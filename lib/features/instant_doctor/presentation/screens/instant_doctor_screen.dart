@@ -146,6 +146,7 @@ class _InstantDoctorScreenState extends State<InstantDoctorScreen> {
       url: url,
       title: provider.providerName,
       providerId: provider.providerId,
+      provider: provider,
     );
   }
 
@@ -153,7 +154,11 @@ class _InstantDoctorScreenState extends State<InstantDoctorScreen> {
     required String url,
     required String title,
     int? providerId,
+    InstantDoctorProviderEntity? provider,
   }) async {
+    if (provider != null) {
+      _cubit.logStartConsultation(provider);
+    }
     if (providerId != null) {
       _cubit.setOpeningProvider(providerId);
     }
@@ -267,6 +272,7 @@ class _InstantDoctorScreenState extends State<InstantDoctorScreen> {
               url: url,
               title: provider.providerName,
               providerId: provider.providerId,
+              provider: provider,
             );
           },
         );

@@ -1,6 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/analytics/analytics_event_keys.dart';
+import '../../../core/analytics/analytics_service.dart';
 import '../../../core/di/dependency_injection.dart';
 import '../../../core/l10n/app_localizations.dart';
 import '../../../core/preference/app_pref.dart';
@@ -15,10 +19,20 @@ import '../../pharmacy/domain/entities/pharmacy_medicine_entity.dart';
 import '../../surgery/presentation/surgery_patient_details_args.dart';
 import '../domain/entities/search_entity.dart';
 
+void _logSearchResultClicked(String type) {
+  unawaited(
+    sl<AnalyticsService>().logEvent(
+      AnalyticsEventKeys.searchResultClicked,
+      {AnalyticsParamKeys.type: type},
+    ),
+  );
+}
+
 void openSearchPharmacyDetail(
   BuildContext context,
   SearchResultEntity item,
 ) {
+  _logSearchResultClicked(AnalyticsSearchResultTypeKeys.medicineName);
   final productId = item.id.trim();
   if (productId.isEmpty) return;
 
@@ -50,6 +64,7 @@ void openSearchDoctorBooking(
   BuildContext context,
   SearchResultEntity item,
 ) {
+  _logSearchResultClicked(AnalyticsSearchResultTypeKeys.doctor);
   if (!context.requireLogin()) return;
 
   final apiId = item.id.trim();
@@ -83,6 +98,7 @@ void openSearchLabBooking(
   BuildContext context,
   SearchResultEntity item,
 ) {
+  _logSearchResultClicked(AnalyticsSearchResultTypeKeys.lab);
   if (!context.requireLogin()) return;
 
   final l10n = AppLocalizations.of(context)!;
@@ -120,6 +136,7 @@ void openSearchSurgeryBooking(
   BuildContext context,
   SearchResultEntity item,
 ) {
+  _logSearchResultClicked(AnalyticsSearchResultTypeKeys.surgeryDoctor);
   if (!context.requireLogin()) return;
 
   final surgeryId = item.id.trim();

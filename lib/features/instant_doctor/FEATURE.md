@@ -6,7 +6,7 @@
 
 ## Routes / entry
 
-- Bottom nav tab: `dashboardBottomInstantDoctor` → `InstantDoctorScreen` (via main navigation shell). **Login required** — guests are sent to `AppRoutes.authLogin` (bottom nav and home banner).
+- Bottom nav tab: `dashboardBottomInstantDoctor` → `InstantDoctorScreen` (via main navigation shell). **Login required** — guests are sent to `AppRoutes.authLogin` (bottom nav, home banner, and promo banner `{ type: bottomsheet, index: "1" }` or `{ type: screen, route: "instant-doctor" }`).
 - `AppRoutes.instantDoctorConsultation` — `InstantDoctorConsultationWebViewScreen`; extra: `InstantDoctorConsultationArgs` (`url`, `title`). Opens after OS camera + mic permission; WebView grants getUserMedia immediately (deny of OS permission → snackbar).
 
 ## Data & APIs
@@ -24,6 +24,7 @@
 - `InstantDoctorCubit` — loads providers; `onProviderPrimaryTap` / `onCancelSubscriptionConfirmed` orchestrate subscribe/unsubscribe OTP; `verifyOtp` reloads content on success; `consultationUrl` returns provider `redirectUrl`.
 - `InstantDoctorScreen` — layout and UI reactions (OTP sheet is not swipe/tap-outside dismissible; close via X; dialogs, snackbars); opens consultation via `AppRoutes.instantDoctorConsultation` web view screen; reloads providers when web view closes and after a successful unsubscribe. Wrong OTP on **subscribe** keeps the OTP sheet open and shows the backend `message` under the pin field (does not open the generic failure dialog).
 - Start Consultation CTAs include a phone icon.
+- Analytics: `instant_doctor_module` (`source_screen` `banner` / `bottom_tab`) when entering the Instant Doctor tab; `instant_doc_subscribe_clicked` (`partner`) on Subscribe tap; `fb_mobile_subscribe` (`partner`, `msisdn`) on successful subscribe OTP; `start_consultation_clicked` (`partner`, `msisdn`) when consultation WebView opens.
 - `InstantDoctorConsultationWebViewScreen` — requests OS camera + microphone **before** loading `redirectUrl`, then **immediately** `grant()`s WebView getUserMedia (waiting in that callback lets Android/iOS auto-deny). Android uses hybrid composition + a Chrome-like user agent. iOS: `PERMISSION_CAMERA` + `PERMISSION_MICROPHONE` in the Podfile, inline playback, PlayAndRecord audio session (`apna_clinic/media_session`), and `audio` background mode.
 
 ## DI

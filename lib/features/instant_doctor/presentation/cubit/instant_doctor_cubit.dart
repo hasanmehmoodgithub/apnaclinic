@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../core/analytics/analytics_event_keys.dart';
+import '../../../../core/analytics/analytics_service.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/enums/state_status.dart';
 import '../../../../core/preference/app_pref.dart';
@@ -25,7 +27,9 @@ class InstantDoctorCubit extends Cubit<InstantDoctorState> {
     required this.sendOtpUseCase,
     required this.verifyOtpUseCase,
     required this.appPref,
-  }) : super(const InstantDoctorState()) {
+    required AnalyticsService analytics,
+  }) : _analytics = analytics,
+       super(const InstantDoctorState()) {
     loadContent();
   }
 
@@ -33,6 +37,7 @@ class InstantDoctorCubit extends Cubit<InstantDoctorState> {
   final SendInstantDoctorOtpUseCase sendOtpUseCase;
   final VerifyInstantDoctorOtpUseCase verifyOtpUseCase;
   final AppPref appPref;
+  final AnalyticsService _analytics;
   Timer? _otpTimer;
 
   @override
@@ -108,6 +113,10 @@ class InstantDoctorCubit extends Cubit<InstantDoctorState> {
           : InstantDoctorProviderTapOutcome.consultationFailed;
     }
 
+    _logEvent(
+      AnalyticsEventKeys.instantDocSubscribeClicked,
+      provider,
+    );
     final sent = await startSubscription(provider);
     return sent
         ? InstantDoctorProviderTapOutcome.otpFlowStarted
@@ -293,6 +302,13 @@ class InstantDoctorCubit extends Cubit<InstantDoctorState> {
           ),
         );
         await loadContent();
+        if (action == InstantDoctorOtpAction.subscribe) {
+          _logEvent(
+            AnalyticsEventKeys.fbMobileSubscribe,
+            provider,
+            includeMsisdn: true,
+          );
+        }
         final redirectUrl = verifyResult.redirectUrl.trim();
         return InstantDoctorOtpVerifyOutcome.success(
           action: action,
@@ -326,6 +342,44 @@ class InstantDoctorCubit extends Cubit<InstantDoctorState> {
     final redirectUrl = provider.product.redirectUrl.trim();
     if (redirectUrl.isEmpty) return null;
     return redirectUrl;
+  }
+
+  void logStartConsultation(InstantDoctorProviderEntity provider) {
+    _logEvent(
+      AnalyticsEventKeys.startConsultationClicked,
+      provider,
+      includeMsisdn: true,
+    );
+  }
+
+  void logModuleViewed(String sourceScreen) {
+    unawaited(
+      _analytics.logEvent(
+        AnalyticsEventKeys.instantDoctorModule,
+        {AnalyticsParamKeys.sourceScreen: sourceScreen},
+      ),
+    );
+  }
+
+  void _logEvent(
+    String name,
+    InstantDoctorProviderEntity provider, {
+    bool includeMsisdn = false,
+  }) {
+    unawaited(
+      _analytics.logEvent(name, {
+        AnalyticsParamKeys.partner: provider.providerName,
+        if (includeMsisdn) AnalyticsParamKeys.msisdn: _analyticsMsisdn(),
+      }),
+    );
+  }
+
+  String _analyticsMsisdn() {
+    final msisdn = _resolveMsisdn() ?? '';
+    if (msisdn.startsWith('92') && msisdn.length >= 12) {
+      return msisdn.substring(2);
+    }
+    return msisdn;
   }
 
   void setOpeningProvider(int providerId) {

@@ -1,5 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../core/analytics/analytics_event_keys.dart';
+import '../../../../core/analytics/analytics_service.dart';
 import '../../../../core/enums/state_status.dart';
 import '../../../../core/services/speech_to_text_service.dart';
 import '../../domain/entities/search_entity.dart';
@@ -12,8 +16,10 @@ class SearchCubit extends Cubit<SearchState> {
     required this.getSearchContentUseCase,
     required RecentSearchesStore recentSearchesStore,
     required SpeechToTextService speechToTextService,
+    required AnalyticsService analytics,
   })  : _recentSearchesStore = recentSearchesStore,
         _speechToTextService = speechToTextService,
+        _analytics = analytics,
         super(const SearchState()) {
     loadInitial();
   }
@@ -21,6 +27,7 @@ class SearchCubit extends Cubit<SearchState> {
   final GetSearchContentUseCase getSearchContentUseCase;
   final RecentSearchesStore _recentSearchesStore;
   final SpeechToTextService _speechToTextService;
+  final AnalyticsService _analytics;
 
   Future<void> loadInitial() async {
     await _loadContent(query: '', listening: false, submitted: false);
@@ -83,7 +90,7 @@ class SearchCubit extends Cubit<SearchState> {
     final query = state.query.trim();
     emit(state.copyWith(isListening: false));
     if (query.isEmpty) return;
-    await submitSearch(query);
+    await submitSearch(query, AnalyticsSearchMediumKeys.voice);
   }
 
   Future<void> stopListening() async {
@@ -94,13 +101,26 @@ class SearchCubit extends Cubit<SearchState> {
     await _completeVoiceSearch();
   }
 
-  Future<void> submitSearch([String? query]) async {
+  Future<void> submitSearch([
+    String? query,
+    String medium = AnalyticsSearchMediumKeys.type,
+  ]) async {
     if (state.isListening) {
       await _speechToTextService.stop();
     }
 
     final resolvedQuery = (query ?? state.query).trim();
     if (resolvedQuery.isEmpty) return;
+
+    unawaited(
+      _analytics.logEvent(
+        AnalyticsEventKeys.searchPerformed,
+        {
+          AnalyticsParamKeys.keyword: resolvedQuery,
+          AnalyticsParamKeys.medium: medium,
+        },
+      ),
+    );
 
     await _recentSearchesStore.add(resolvedQuery);
 

@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_system_ui.dart';
+import '../../../../core/analytics/analytics_event_keys.dart';
 import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/network/api_service.dart';
 import '../../../../core/preference/app_pref.dart';
@@ -96,6 +97,12 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
     }
     final tabIndex = _sessionRefresh.consumePendingTabIndex();
     if (tabIndex == null) return;
+    if (tabIndex == _instantDoctorIndex) {
+      final source =
+          _sessionRefresh.consumePendingInstantDoctorSourceScreen() ??
+          AnalyticsInstantDoctorSourceKeys.bottomTab;
+      context.read<InstantDoctorCubit>().logModuleViewed(source);
+    }
     _navigationCubit.setIndex(tabIndex);
     if (_pageController.hasClients) {
       _pageController.jumpToPage(tabIndex);
@@ -184,9 +191,21 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
   void _onNavTap(int index) {
     if ((index == _instantDoctorIndex || index == _bookingsIndex) &&
         !AuthGuard.isLoggedIn()) {
-      _sessionRefresh.requestTabIndex(index);
+      _sessionRefresh.requestTabIndex(
+        index,
+        instantDoctorSourceScreen: index == _instantDoctorIndex
+            ? AnalyticsInstantDoctorSourceKeys.bottomTab
+            : null,
+      );
       context.requireLogin();
       return;
+    }
+
+    if (index == _instantDoctorIndex &&
+        _navigationCubit.state.currentIndex != index) {
+      context.read<InstantDoctorCubit>().logModuleViewed(
+        AnalyticsInstantDoctorSourceKeys.bottomTab,
+      );
     }
 
     _navigationCubit.setIndex(index);
@@ -205,6 +224,12 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
   }
 
   void _onPageChanged(int index) {
+    final previous = _navigationCubit.state.currentIndex;
+    if (index == _instantDoctorIndex && previous != index) {
+      context.read<InstantDoctorCubit>().logModuleViewed(
+        AnalyticsInstantDoctorSourceKeys.bottomTab,
+      );
+    }
     _navigationCubit.setIndex(index);
     _applyStatusBar();
   }
