@@ -15,6 +15,7 @@ import 'core/network/app_http_overrides.dart';
 import 'core/services/appsflyer_service.dart';
 import 'core/services/notification_service.dart';
 import 'core/utils/chucker_guard.dart';
+import 'core/security/security_widget.dart';
 import 'features/app/presentation/screens/apna_clinic_app.dart';
 
 void main() {
@@ -42,7 +43,9 @@ void main() {
         await _initializeDependencyInjection();
 
         runApp(
-          wrapWithDevicePreview(child: const ApnaClinicApp()),
+          wrapWithDevicePreview(
+            child: const SecurityGate(child: ApnaClinicApp()),
+          ),
         );
 
         // FCM / AppsFlyer can hang or fail on some devices — never block first frame.
@@ -99,7 +102,7 @@ void main() {
           );
         } else {
           // In release mode, try to run app anyway (may work with fallbacks)
-          runApp(const ApnaClinicApp());
+          runApp(const SecurityGate(child: ApnaClinicApp()));
         }
       }
     },

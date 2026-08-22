@@ -516,6 +516,8 @@
   "labTestCheckoutPhoneInvalid": "Enter a valid mobile or landline number.",
   "labTestCheckoutBookedTitle": "Lab Test Booked!",
   "labTestCheckoutBookedMessage": "A lab representative will reach out to you soon to confirm your booking.\nYou can view your booking in Bookings Tab.",
+  "labTestCheckoutPaymentPendingTitle": "Payment Pending",
+  "labTestCheckoutPaymentPendingMessage": "Your lab booking is waiting for payment. We'll update it once payment completes — check Bookings for the latest status.",
   "labTestCheckoutViewBookingsCta": "View My Bookings",
   "commonClose": "Close",
   "labTestBookingMethodWalkInCompact": "Walk In",
@@ -563,6 +565,8 @@
   "consultationGetAppointmentCta": "Get Appointment",
   "consultationBookingConfirmedTitle": "Appointment Confirmed!",
   "consultationViewBookingsCta": "View Bookings",
+  "consultationBookingPaymentPendingTitle": "Payment Pending",
+  "consultationBookingPaymentPendingMessage": "Your appointment is waiting for payment. We'll update it once payment completes — check Bookings for the latest status.",
   "consultationBookingConfirmedMessage": "Your appointment has been booked with {doctorName}. You can join the consultation call from booking screen at the time of appointment",
   "@consultationBookingConfirmedMessage": {
     "placeholders": {

@@ -1260,6 +1260,13 @@ class AppLocalizationsUr extends AppLocalizations {
       'لیب کا نمائندہ جلد آپ سے رابطہ کرے گا تاکہ آپ کی بکنگ کی تصدیق کی جا سکے۔\nآپ اپنی بکنگ بکنگز ٹیب میں دیکھ سکتے ہیں۔';
 
   @override
+  String get labTestCheckoutPaymentPendingTitle => 'ادائیگی زیر التوا';
+
+  @override
+  String get labTestCheckoutPaymentPendingMessage =>
+      'آپ کی لیب بکنگ ادائیگی کا انتظار کر رہی ہے۔ ادائیگی مکمل ہونے پر ہم اسے اپ ڈیٹ کر دیں گے — تازہ ترین صورتحال بکنگز میں دیکھیں۔';
+
+  @override
   String get labTestCheckoutViewBookingsCta => 'میری بکنگز دیکھیں';
 
   @override
@@ -1405,6 +1412,13 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get consultationViewBookingsCta => 'بکنگز دیکھیں';
+
+  @override
+  String get consultationBookingPaymentPendingTitle => 'ادائیگی زیر التوا';
+
+  @override
+  String get consultationBookingPaymentPendingMessage =>
+      'آپ کی اپائنٹمنٹ ادائیگی کا انتظار کر رہی ہے۔ ادائیگی مکمل ہونے پر ہم اسے اپ ڈیٹ کر دیں گے — تازہ ترین صورتحال بکنگز میں دیکھیں۔';
 
   @override
   String consultationBookingConfirmedMessage(Object doctorName) {

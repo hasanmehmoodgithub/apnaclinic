@@ -410,6 +410,8 @@
   "labTestCheckoutPhoneInvalid": "براہ کرم درست موبائل یا لینڈ لائن نمبر درج کریں۔",
   "labTestCheckoutBookedTitle": "لیب ٹیسٹ بک ہو گیا!",
   "labTestCheckoutBookedMessage": "لیب کا نمائندہ جلد آپ سے رابطہ کرے گا تاکہ آپ کی بکنگ کی تصدیق کی جا سکے۔\nآپ اپنی بکنگ بکنگز ٹیب میں دیکھ سکتے ہیں۔",
+  "labTestCheckoutPaymentPendingTitle": "ادائیگی زیر التوا",
+  "labTestCheckoutPaymentPendingMessage": "آپ کی لیب بکنگ ادائیگی کا انتظار کر رہی ہے۔ ادائیگی مکمل ہونے پر ہم اسے اپ ڈیٹ کر دیں گے — تازہ ترین صورتحال بکنگز میں دیکھیں۔",
   "labTestCheckoutViewBookingsCta": "میری بکنگز دیکھیں",
   "commonClose": "بند کریں",
   "labTestBookingMethodWalkInCompact": "واک اِن",
@@ -457,6 +459,8 @@
   "consultationGetAppointmentCta": "اپائنٹمنٹ لیں",
   "consultationBookingConfirmedTitle": "اپائنٹمنٹ کنفرم ہو گئی!",
   "consultationViewBookingsCta": "بکنگز دیکھیں",
+  "consultationBookingPaymentPendingTitle": "ادائیگی زیر التوا",
+  "consultationBookingPaymentPendingMessage": "آپ کی اپائنٹمنٹ ادائیگی کا انتظار کر رہی ہے۔ ادائیگی مکمل ہونے پر ہم اسے اپ ڈیٹ کر دیں گے — تازہ ترین صورتحال بکنگز میں دیکھیں۔",
   "consultationBookingConfirmedMessage": "آپ کی اپائنٹمنٹ {doctorName} کے ساتھ بک ہو گئی ہے۔ آپ اپائنٹمنٹ کے وقت بکنگ اسکرین سے مشاورت کال میں شامل ہو سکتے ہیں۔",
   "@consultationBookingConfirmedMessage": {
     "placeholders": {

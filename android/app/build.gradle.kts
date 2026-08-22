@@ -1,3 +1,6 @@
+import java.security.KeyStore
+import java.security.MessageDigest
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -20,22 +23,32 @@ android {
         isCoreLibraryDesugaringEnabled = true
     }
 
+    buildFeatures {
+        buildConfig = true
+    }
+
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "com.apna.clinic.apnaclinic"
-        // You can update the following values to match your application needs.
-        // For more information, see: https://flutter.dev/to/review-gradle-config.
+        applicationId = "com.apna.clinic.android"
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+        buildConfigField("String", "EXPECTED_CERT_SHA256", "\"\"")
+        buildConfigField("String", "EXPECTED_CERT_EXTRA", "\"${extraExpectedCerts()}\"")
     }
 
     buildTypes {
+        debug {
+            val sha = signingCertSha256(signingConfigs.getByName("debug"))
+            buildConfigField("String", "EXPECTED_CERT_SHA256", "\"$sha\"")
+        }
         release {
             // TODO: Add your own signing config for the release build.
             // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.getByName("debug")
+            val releaseSigning = signingConfigs.getByName("debug")
+            signingConfig = releaseSigning
+            val sha = signingCertSha256(releaseSigning)
+            buildConfigField("String", "EXPECTED_CERT_SHA256", "\"$sha\"")
         }
     }
 }
@@ -52,4 +65,46 @@ dependencies {
 
 flutter {
     source = "../.."
+}
+
+/** SHA-256 of the public cert used to sign this variant. Not a private key. */
+fun signingCertSha256(config: com.android.build.api.dsl.ApkSigningConfig): String {
+    val storeFile = config.storeFile ?: return ""
+    val storePassword = config.storePassword ?: return ""
+    val keyAlias = config.keyAlias ?: return ""
+    if (!storeFile.exists()) return ""
+
+    val bytes = storeFile.readBytes()
+    val password = storePassword.toCharArray()
+
+    fun load(type: String): KeyStore {
+        val keyStore = KeyStore.getInstance(type)
+        keyStore.load(bytes.inputStream(), password)
+        return keyStore
+    }
+
+    val keyStore = try {
+        load("JKS")
+    } catch (_: Exception) {
+        load("PKCS12")
+    }
+    val cert = keyStore.getCertificate(keyAlias) ?: return ""
+    val digest = MessageDigest.getInstance("SHA-256").digest(cert.encoded)
+    return digest.joinToString("") { "%02x".format(it) }
+}
+
+/**
+ * Extra allow-listed cert SHA-256 hex values (Play App Signing, upload key).
+ * Set `CERT_SHA256_PLAY`, `CERT_SHA256_RELEASE`, and/or comma-separated `CERT_SHA256_EXTRA`.
+ */
+fun extraExpectedCerts(): String {
+    val values = mutableListOf<String>()
+    System.getenv("CERT_SHA256_PLAY")?.trim()?.takeIf { it.isNotEmpty() }?.let(values::add)
+    System.getenv("CERT_SHA256_RELEASE")?.trim()?.takeIf { it.isNotEmpty() }?.let(values::add)
+    System.getenv("CERT_SHA256_EXTRA")
+        ?.split(",")
+        ?.map { it.trim() }
+        ?.filter { it.isNotEmpty() }
+        ?.let(values::addAll)
+    return values.joinToString(",")
 }

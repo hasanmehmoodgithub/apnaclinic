@@ -386,7 +386,7 @@ class AppUrls {
 
   /// Apna Clinic on Google Play (Android). Used when CMS omits storeUrl.
   static const String apnaClinicPlayStoreAndroid =
-      'https://play.google.com/store/apps/details?id=com.apna.clinic.apnaclinic';
+      'https://play.google.com/store/apps/details?id=com.apna.clinic.android';
 
   /// Apna Clinic App Store listing (iOS). Override when the live App Store id is known.
   static const String apnaClinicAppStoreIos =

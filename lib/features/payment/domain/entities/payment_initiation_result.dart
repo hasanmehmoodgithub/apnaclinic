@@ -21,6 +21,14 @@ class PaymentInitiationResult {
     return url.isNotEmpty;
   }
 
+  bool get isPendingPayment {
+    return (status ?? '').trim().toUpperCase() == 'PENDING_PAYMENT';
+  }
+
+  /// Booking created, but no in-app gateway URL was returned.
+  bool get isPendingWithoutPaymentUrl =>
+      isPendingPayment && !requiresCardPayment;
+
   /// Parses booking/checkout API envelopes that include `data.paymentUrl`.
   factory PaymentInitiationResult.fromBookingResponse(
     Map<String, dynamic> response,

@@ -19,6 +19,8 @@ class MainActivity : FlutterActivity() {
                     result.success(DeviceSecurityChecker.isEmulator())
                 "checkDeveloperMode" ->
                     result.success(DeviceSecurityChecker.isDeveloperModeEnabled(this))
+                "checkAppIntegrity" ->
+                    result.success(DeviceSecurityChecker.isAppTampered(this))
                 else -> result.notImplemented()
             }
         }

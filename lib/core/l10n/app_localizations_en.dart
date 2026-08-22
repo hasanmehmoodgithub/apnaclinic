@@ -1260,6 +1260,13 @@ class AppLocalizationsEn extends AppLocalizations {
       'A lab representative will reach out to you soon to confirm your booking.\nYou can view your booking in Bookings Tab.';
 
   @override
+  String get labTestCheckoutPaymentPendingTitle => 'Payment Pending';
+
+  @override
+  String get labTestCheckoutPaymentPendingMessage =>
+      'Your lab booking is waiting for payment. We\'ll update it once payment completes — check Bookings for the latest status.';
+
+  @override
   String get labTestCheckoutViewBookingsCta => 'View My Bookings';
 
   @override
@@ -1405,6 +1412,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get consultationViewBookingsCta => 'View Bookings';
+
+  @override
+  String get consultationBookingPaymentPendingTitle => 'Payment Pending';
+
+  @override
+  String get consultationBookingPaymentPendingMessage =>
+      'Your appointment is waiting for payment. We\'ll update it once payment completes — check Bookings for the latest status.';
 
   @override
   String consultationBookingConfirmedMessage(Object doctorName) {

@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart';
 import '../flavor/flavor_config.dart';
 import '../flavor/app_flavor.dart';
+import 'app_integrity.dart';
 
 /// Comprehensive security service for device integrity checks
 class SecurityService {
@@ -16,19 +17,26 @@ class SecurityService {
   );
   static const MethodChannel _advancedChannel = MethodChannel('qwe_rty_123');
 
-  /// Perform all security checks and return true if device is compromised
+  /// Perform all security checks and return true if device is compromised.
+  /// Android APK integrity is always evaluated, even when [securityChecksEnabled]
+  /// is false.
   static Future<bool> isDeviceCompromised() async {
-    if (!securityChecksEnabled) {
-      if (kDebugMode) {
-        developer.log(
-          'Security checks disabled (temporary)',
-          name: 'SecurityService',
-        );
-      }
-      return false;
-    }
-
     try {
+      if (Platform.isAndroid) {
+        final integrity = await AppIntegrity.verify();
+        if (integrity.shouldBlock) return true;
+      }
+
+      if (!securityChecksEnabled) {
+        if (kDebugMode) {
+          developer.log(
+            'Device integrity checks disabled (temporary)',
+            name: 'SecurityService',
+          );
+        }
+        return false;
+      }
+
       if (Platform.isAndroid) {
         return await _checkAndroidSecurity();
       } else if (Platform.isIOS) {
@@ -43,9 +51,16 @@ class SecurityService {
 
   /// Get detailed security status message
   static Future<String?> getSecurityMessage() async {
-    if (!securityChecksEnabled) return null;
-
     try {
+      if (Platform.isAndroid) {
+        final integrity = await AppIntegrity.verify();
+        if (integrity.shouldBlock) {
+          return 'Application integrity compromised. You cannot access this application.';
+        }
+      }
+
+      if (!securityChecksEnabled) return null;
+
       if (Platform.isAndroid) {
         return await _getAndroidSecurityMessage();
       } else if (Platform.isIOS) {
@@ -377,20 +392,7 @@ class SecurityService {
 
   /// Advanced app tampering detection (Android only)
   static Future<bool> _checkAppTamperedAdvanced() async {
-    try {
-      if (Platform.isAndroid) {
-        final result = await _advancedChannel.invokeMethod<bool>('f1');
-        return result ?? false;
-      }
-      return false;
-    } catch (e) {
-      developer.log(
-        'Error in advanced app tampering check: $e',
-        name: 'SecurityService',
-        error: e,
-      );
-      return false;
-    }
+    return (await AppIntegrity.verify()).shouldBlock;
   }
 
   /// Check for Frida (iOS)

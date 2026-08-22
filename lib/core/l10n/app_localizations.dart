@@ -2417,6 +2417,18 @@ abstract class AppLocalizations {
   /// **'A lab representative will reach out to you soon to confirm your booking.\nYou can view your booking in Bookings Tab.'**
   String get labTestCheckoutBookedMessage;
 
+  /// No description provided for @labTestCheckoutPaymentPendingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment Pending'**
+  String get labTestCheckoutPaymentPendingTitle;
+
+  /// No description provided for @labTestCheckoutPaymentPendingMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Your lab booking is waiting for payment. We\'ll update it once payment completes — check Bookings for the latest status.'**
+  String get labTestCheckoutPaymentPendingMessage;
+
   /// No description provided for @labTestCheckoutViewBookingsCta.
   ///
   /// In en, this message translates to:
@@ -2698,6 +2710,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'View Bookings'**
   String get consultationViewBookingsCta;
+
+  /// No description provided for @consultationBookingPaymentPendingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment Pending'**
+  String get consultationBookingPaymentPendingTitle;
+
+  /// No description provided for @consultationBookingPaymentPendingMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Your appointment is waiting for payment. We\'ll update it once payment completes — check Bookings for the latest status.'**
+  String get consultationBookingPaymentPendingMessage;
 
   /// No description provided for @consultationBookingConfirmedMessage.
   ///

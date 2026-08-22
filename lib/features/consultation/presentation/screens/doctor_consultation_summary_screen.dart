@@ -10,6 +10,7 @@ import '../../../../core/session/auth_session_refresh.dart';
 import '../../../bookings/presentation/constants/bookings_tabs.dart';
 import '../../../dashboard/presentation/constants/main_navigation_tabs.dart';
 import '../../../payment/presentation/payment_navigation.dart';
+import '../../../payment/presentation/widgets/payment_pending_dialog_widget.dart';
 import '../cubit/doctor_consultation_checkout_cubit.dart';
 import '../cubit/doctor_consultation_checkout_state.dart';
 import '../doctor_consultation_summary_args.dart';
@@ -53,6 +54,11 @@ class DoctorConsultationSummaryScreen extends StatelessWidget {
       return;
     }
 
+    if (initiation.isPendingWithoutPaymentUrl) {
+      await _showPaymentPendingDialog(context, l10n);
+      return;
+    }
+
     final paymentResult =
         await settleCardPaymentIfNeeded(
           context,
@@ -65,21 +71,47 @@ class DoctorConsultationSummaryScreen extends StatelessWidget {
       return;
     }
 
-    await showDialog<void>(
+    await _showBookedDialog(context);
+  }
+
+  void _goToDoctorBookings(BuildContext hostContext, BuildContext dialogContext) {
+    if (dialogContext.canPop()) dialogContext.pop();
+    if (!hostContext.mounted) return;
+    sl<AuthSessionRefresh>().requestTabIndex(
+      MainNavigationTabs.bookings,
+      bookingsSubTabIndex: BookingsTabs.doctorConsultation,
+    );
+    hostContext.go(AppRoutes.path(AppRoutes.home));
+  }
+
+  Future<void> _showPaymentPendingDialog(
+    BuildContext context,
+    AppLocalizations l10n,
+  ) {
+    return showDialog<void>(
       context: context,
       barrierDismissible: false,
+      useRootNavigator: true,
+      builder: (dialogContext) {
+        return PaymentPendingDialogWidget(
+          title: l10n.consultationBookingPaymentPendingTitle,
+          message: l10n.consultationBookingPaymentPendingMessage,
+          ctaText: l10n.consultationViewBookingsCta,
+          onViewBookings: () => _goToDoctorBookings(context, dialogContext),
+        );
+      },
+    );
+  }
+
+  Future<void> _showBookedDialog(BuildContext context) {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      useRootNavigator: true,
       builder: (dialogContext) {
         return ConsultationBookingConfirmationDialogWidget(
           doctorName: args.checkoutArgs.doctorName,
-          onViewBookings: () {
-            Navigator.of(dialogContext).pop();
-            if (!context.mounted) return;
-            sl<AuthSessionRefresh>().requestTabIndex(
-              MainNavigationTabs.bookings,
-              bookingsSubTabIndex: BookingsTabs.doctorConsultation,
-            );
-            context.go(AppRoutes.path(AppRoutes.home));
-          },
+          onViewBookings: () => _goToDoctorBookings(context, dialogContext),
         );
       },
     );

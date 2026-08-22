@@ -1,7 +1,9 @@
 package com.apna.clinic.apnaclinic
 
 import android.content.Context
+import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
+import android.content.pm.Signature
 import android.os.Build
 import android.provider.Settings
 import java.io.BufferedReader
@@ -9,11 +11,14 @@ import java.io.File
 import java.io.InputStreamReader
 import java.net.InetSocketAddress
 import java.net.Socket
+import java.security.MessageDigest
 
 /**
  * Device integrity heuristics used by Flutter [SecurityService] MethodChannels.
  */
 object DeviceSecurityChecker {
+
+    private const val EXPECTED_PACKAGE = "com.apna.clinic.android"
 
     fun isRooted(context: Context): Boolean {
         return hasSuBinary() ||
@@ -107,10 +112,33 @@ object DeviceSecurityChecker {
         }
     }
 
+    /**
+     * True when the installed APK is not our package or not signed with an
+     * expected certificate (repackaged / cloned). Expected hashes come from
+     * Gradle [BuildConfig], not Dart.
+     */
     fun isAppTampered(context: Context): Boolean {
-        // Keep false for now: FLAG_DEBUGGABLE alone would flag normal debug
-        // installs, and BuildConfig is not enabled in this Gradle module.
-        return false
+        return try {
+            if (context.packageName != EXPECTED_PACKAGE) return true
+
+            if (!BuildConfig.DEBUG) {
+                val debuggable =
+                    context.applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE != 0
+                if (debuggable) return true
+            }
+
+            val actual = signingCertSha256s(context)
+            if (actual.isEmpty()) return true
+
+            val expected = expectedCertSha256s()
+            if (expected.isEmpty()) return !BuildConfig.DEBUG
+
+            actual.none { got ->
+                expected.any { exp -> MessageDigest.isEqual(got, exp) }
+            }
+        } catch (_: Exception) {
+            true
+        }
     }
 
     private fun hasSuBinary(): Boolean {
@@ -184,6 +212,54 @@ object DeviceSecurityChecker {
             }
         } catch (_: Exception) {
             false
+        }
+    }
+
+    private fun expectedCertSha256s(): List<ByteArray> {
+        val values = mutableListOf<String>()
+        BuildConfig.EXPECTED_CERT_SHA256.takeIf { it.isNotBlank() }?.let(values::add)
+        BuildConfig.EXPECTED_CERT_EXTRA
+            .split(",")
+            .map { it.trim() }
+            .filter { it.isNotEmpty() }
+            .let(values::addAll)
+        return values.mapNotNull { hexToBytesOrNull(it) }
+    }
+
+    private fun signingCertSha256s(context: Context): List<ByteArray> {
+        val packageName = context.packageName
+        val signatures: Array<Signature> =
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                val info = context.packageManager.getPackageInfo(
+                    packageName,
+                    PackageManager.GET_SIGNING_CERTIFICATES,
+                )
+                val signingInfo = info.signingInfo ?: return emptyList()
+                signingInfo.apkContentsSigners
+            } else {
+                @Suppress("DEPRECATION")
+                context.packageManager.getPackageInfo(
+                    packageName,
+                    PackageManager.GET_SIGNATURES,
+                ).signatures ?: emptyArray()
+            }
+
+        val digest = MessageDigest.getInstance("SHA-256")
+        return signatures.map { signature ->
+            digest.reset()
+            digest.digest(signature.toByteArray())
+        }
+    }
+
+    private fun hexToBytesOrNull(hex: String): ByteArray? {
+        val clean = hex.lowercase().replace(":", "").replace("\\s".toRegex(), "")
+        if (clean.isEmpty() || clean.length % 2 != 0) return null
+        return try {
+            ByteArray(clean.length / 2) { i ->
+                clean.substring(i * 2, i * 2 + 2).toInt(radix = 16).toByte()
+            }
+        } catch (_: Exception) {
+            null
         }
     }
 }

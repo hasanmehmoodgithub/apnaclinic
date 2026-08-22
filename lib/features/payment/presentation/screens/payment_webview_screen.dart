@@ -208,10 +208,6 @@ class _PaymentWebViewScreenState extends State<PaymentWebViewScreen> {
 
     return PopScope(
       canPop: false,
-      onPopInvokedWithResult: (didPop, _) {
-        if (didPop || !widget.args.allowClose || _didComplete) return;
-        _complete(PaymentWebViewResult.cancelled());
-      },
       child: Scaffold(
         backgroundColor: AppColors.clrWhite,
         appBar: AppBar(

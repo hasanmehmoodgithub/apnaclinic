@@ -8,7 +8,8 @@ class PaymentWebViewArgs {
   final String paymentUrl;
   final String? title;
 
-  /// When true, shows a close control and allows leaving without gateway result.
+  /// When true, shows an AppBar X; that is the only way to leave without a
+  /// gateway result. System back / swipe-back does not dismiss.
   final bool allowClose;
 }
 

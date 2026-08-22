@@ -20,6 +20,7 @@ import '../../../consultation/presentation/models/doctor_consultation_jazzcash_s
 import '../../../consultation/presentation/widgets/doctor_consultation_jazzcash_accounts_sheet_widget.dart';
 import '../../../dashboard/presentation/constants/main_navigation_tabs.dart';
 import '../../../payment/presentation/payment_navigation.dart';
+import '../../../payment/presentation/widgets/payment_pending_dialog_widget.dart';
 import '../../domain/entities/lab_test_cart_item.dart';
 import '../../domain/repositories/lab_test_cart_repository.dart';
 import '../../domain/use_cases/book_lab_test_use_case.dart';
@@ -228,8 +229,15 @@ class _LabTestCheckoutScreenState extends State<LabTestCheckoutScreen> {
     await result.fold(
       (error) async => _showBookErrorDialog(error),
       (initiation) async {
+        if (initiation.isPendingWithoutPaymentUrl) {
+          await _clearLabCart();
+          if (!mounted) return;
+          _showPaymentPendingDialog();
+          return;
+        }
+
         // Same shared card WebView path as pharmacy checkout.
-        // Lab allows closing the WebView with X / system back.
+        // Lab allows closing the WebView with the AppBar X only.
         final paymentResult = await settleCardPaymentIfNeeded(
           context,
           initiation,
@@ -240,10 +248,7 @@ class _LabTestCheckoutScreenState extends State<LabTestCheckoutScreen> {
           showCardPaymentOutcomeSnackBar(context, paymentResult);
           return;
         }
-        await sl<LabTestCartRepository>().writeCart(
-          const <LabTestCartItem>[],
-        );
-        sl<LabTestCartCubit>().replaceItems(const <LabTestCartItem>[]);
+        await _clearLabCart();
         if (!mounted) return;
         _showBookedDialog();
       },
@@ -269,6 +274,40 @@ class _LabTestCheckoutScreenState extends State<LabTestCheckoutScreen> {
     );
   }
 
+  Future<void> _clearLabCart() async {
+    await sl<LabTestCartRepository>().writeCart(
+      const <LabTestCartItem>[],
+    );
+    sl<LabTestCartCubit>().replaceItems(const <LabTestCartItem>[]);
+  }
+
+  void _goToLabBookingsFromDialog(BuildContext dialogContext) {
+    if (dialogContext.canPop()) dialogContext.pop();
+    if (!mounted) return;
+    sl<AuthSessionRefresh>().requestTabIndex(
+      MainNavigationTabs.bookings,
+      bookingsSubTabIndex: BookingsTabs.labTest,
+    );
+    context.go(AppRoutes.path(AppRoutes.home));
+  }
+
+  void _showPaymentPendingDialog() {
+    final l10n = AppLocalizations.of(context)!;
+    showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      useRootNavigator: true,
+      builder: (dialogContext) {
+        return PaymentPendingDialogWidget(
+          title: l10n.labTestCheckoutPaymentPendingTitle,
+          message: l10n.labTestCheckoutPaymentPendingMessage,
+          ctaText: l10n.labTestCheckoutViewBookingsCta,
+          onViewBookings: () => _goToLabBookingsFromDialog(dialogContext),
+        );
+      },
+    );
+  }
+
   void _showBookedDialog() {
     showDialog<void>(
       context: context,
@@ -276,15 +315,7 @@ class _LabTestCheckoutScreenState extends State<LabTestCheckoutScreen> {
       useRootNavigator: true,
       builder: (dialogContext) {
         return LabTestBookingConfirmationDialogWidget(
-          onViewBookings: () {
-            if (dialogContext.canPop()) dialogContext.pop();
-            if (!mounted) return;
-            sl<AuthSessionRefresh>().requestTabIndex(
-              MainNavigationTabs.bookings,
-              bookingsSubTabIndex: BookingsTabs.labTest,
-            );
-            context.go(AppRoutes.path(AppRoutes.home));
-          },
+          onViewBookings: () => _goToLabBookingsFromDialog(dialogContext),
         );
       },
     );
