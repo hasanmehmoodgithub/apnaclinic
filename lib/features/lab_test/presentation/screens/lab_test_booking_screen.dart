@@ -172,6 +172,7 @@ class _LabTestBookingScreenState extends State<LabTestBookingScreen> {
                                           title: l10n.labTestBookingMethodWalkIn,
                                           iconUrl: Assets.labTestWalkin,
                                           selected: state.labVisit,
+                                          enabled: state.walkInAvailable,
                                           onTap: state.labVisit
                                               ? () {}
                                               : () => _guardAndApply(
@@ -188,6 +189,7 @@ class _LabTestBookingScreenState extends State<LabTestBookingScreen> {
                                               .labTestBookingMethodHomeSample,
                                           iconUrl: Assets.labTestHomeSample,
                                           selected: !state.labVisit,
+                                          enabled: state.homeSamplingAvailable,
                                           onTap: !state.labVisit
                                               ? () {}
                                               : () => _guardAndApply(
@@ -202,14 +204,17 @@ class _LabTestBookingScreenState extends State<LabTestBookingScreen> {
                                   SizedBox(height: 16.h),
                                   LabTestBookingTestSummaryCardWidget(
                                     title: state.args.testTitle,
-                                    labName: state.isHomeSamplingUnavailable ||
+                                    labName: state.isWalkInUnavailable ||
+                                            state.isHomeSamplingUnavailable ||
                                             state.selectedVendor == null
                                         ? ''
                                         : (state.selectedVendor?.name ?? ''),
-                                    requirement: state.isHomeSamplingUnavailable
+                                    requirement: state.isWalkInUnavailable ||
+                                            state.isHomeSamplingUnavailable
                                         ? null
                                         : state.args.requirementLabel,
-                                    sampleType: state.isHomeSamplingUnavailable
+                                    sampleType: state.isWalkInUnavailable ||
+                                            state.isHomeSamplingUnavailable
                                         ? l10n.labTestSampleTypeNotAvailable
                                         : state.args.sampleType,
                                     discountedFee: pricing.discountedFee,
@@ -217,10 +222,12 @@ class _LabTestBookingScreenState extends State<LabTestBookingScreen> {
                                     requirementLabel:
                                         l10n.labTestRequirementLabel,
                                     sampleTypeLabel: l10n.labTestSampleTypeLabel,
-                                    showPricing: !state.isHomeSamplingUnavailable &&
+                                    showPricing: !state.isWalkInUnavailable &&
+                                        !state.isHomeSamplingUnavailable &&
                                         state.selectedVendor != null,
                                   ),
-                                  if (!state.isHomeSamplingUnavailable) ...[
+                                  if (!state.isWalkInUnavailable &&
+                                      !state.isHomeSamplingUnavailable) ...[
                                     SizedBox(height: 16.h),
                                     LabTestBookingPartnerTabsWidget(
                                       partners: partners,

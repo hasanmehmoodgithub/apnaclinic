@@ -19,6 +19,8 @@ class SurgeryLeadModel {
     required this.leadCreatedAt,
     required this.confirmedDate,
     required this.scheduledDate,
+    required this.scheduledStartTime,
+    required this.scheduledEndTime,
     required this.patientName,
     required this.age,
     required this.gender,
@@ -49,6 +51,8 @@ class SurgeryLeadModel {
   final String leadCreatedAt;
   final String? confirmedDate;
   final String? scheduledDate;
+  final String? scheduledStartTime;
+  final String? scheduledEndTime;
   final String patientName;
   final int age;
   final String gender;
@@ -127,8 +131,14 @@ class SurgeryLeadModel {
       confirmedDate: _nullableString(
         json['confirmedDate'] ?? json['confirmed_date'],
       ),
-      scheduledDate: _nullableString(
-        json['scheduledDate'] ?? json['scheduled_date'],
+      scheduledDate: _normalizeScheduledDate(
+        _nullableString(json['scheduledDate'] ?? json['scheduled_date']),
+      ),
+      scheduledStartTime: _nullableString(
+        json['scheduledStartTime'] ?? json['scheduled_start_time'],
+      ),
+      scheduledEndTime: _nullableString(
+        json['scheduledEndTime'] ?? json['scheduled_end_time'],
       ),
       patientName: _asString(patientMap['name']),
       age: _asInt(patientMap['age']),
@@ -185,6 +195,15 @@ class SurgeryLeadModel {
   static String? _nullableString(dynamic value) {
     final text = _asString(value);
     return text.isEmpty ? null : text;
+  }
+
+  /// API now sends date-only (`2025-10-14`); legacy values may include midnight time.
+  static String? _normalizeScheduledDate(String? raw) {
+    if (raw == null) return null;
+    final text = raw.trim();
+    if (text.isEmpty) return null;
+    final match = RegExp(r'^(\d{4}-\d{2}-\d{2})').firstMatch(text);
+    return match?.group(1) ?? text;
   }
 
   static int _asInt(dynamic value) {

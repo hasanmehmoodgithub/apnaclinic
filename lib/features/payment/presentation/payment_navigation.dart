@@ -8,7 +8,7 @@ import '../domain/entities/payment_webview_result.dart';
 import 'payment_webview_args.dart';
 
 /// Opens the card payment WebView and returns the gateway result.
-Future<PaymentWebViewResult?> openCardPaymentWebView(
+Future<PaymentWebViewResult?>    openCardPaymentWebView(
   BuildContext context, {
   required String paymentUrl,
   String? title,

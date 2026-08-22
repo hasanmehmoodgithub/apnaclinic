@@ -1,17 +1,21 @@
 import 'package:chucker_flutter/chucker_flutter.dart';
 import 'package:flutter/foundation.dart';
 
+/// Gates Chucker interceptor + floating bug button.
+///
+/// Enabled in debug always. In release/profile it is **on by default** so QA
+/// APKs get the inspector without extra flags. Opt out:
+/// `--dart-define=CHUCKER_ACTIVE=false`.
 class ChuckerGuard {
   static const bool _flagPrimary =
-      bool.fromEnvironment('CHUCKER_ACTIVE', defaultValue: false);
+      bool.fromEnvironment('CHUCKER_ACTIVE', defaultValue: true);
 
-  /// On in debug builds, or when [CHUCKER_ACTIVE] is set at compile time.
   static bool get isEnabled => kDebugMode || _flagPrimary;
 
-  /// When [CHUCKER_ACTIVE] is true at compile time, allows Chucker UI in release
-  /// (the package disables it otherwise). Call from [main] before [runApp].
+  /// Must run from [main] before [runApp]. Chucker ignores capture/UI in
+  /// release unless [ChuckerFlutter.showOnRelease] is true.
   static void configureIfEnabled() {
-    if (!_flagPrimary) return;
-    ChuckerFlutter.showOnRelease = false;
+    if (!isEnabled) return;
+    ChuckerFlutter.showOnRelease = true;
   }
 }

@@ -13,6 +13,38 @@ class LabTestItemBookingHelper {
   static String orderTypeFor({required bool labVisit}) =>
       labVisit ? orderTypeWalkIn : orderTypeHomeSampling;
 
+  static bool hasOffersForBookingMethod({
+    required List<LabTestLabOfferEntity> labOffers,
+    required bool labVisit,
+  }) {
+    final orderType = orderTypeFor(labVisit: labVisit);
+    return labOffers.any((offer) => offer.orderType == orderType);
+  }
+
+  /// Picks Walk In when available; otherwise Home Sample. Honors [preferLabVisit]
+  /// when that method has offers for this test.
+  static bool resolveInitialLabVisit({
+    required List<LabTestLabOfferEntity> labOffers,
+    bool? preferLabVisit,
+  }) {
+    final walkInAvailable = hasOffersForBookingMethod(
+      labOffers: labOffers,
+      labVisit: true,
+    );
+    final homeSamplingAvailable = hasOffersForBookingMethod(
+      labOffers: labOffers,
+      labVisit: false,
+    );
+
+    if (preferLabVisit != null) {
+      if (preferLabVisit && walkInAvailable) return true;
+      if (!preferLabVisit && homeSamplingAvailable) return false;
+    }
+    if (walkInAvailable) return true;
+    if (homeSamplingAvailable) return false;
+    return true;
+  }
+
   static LabTestPricingEntity pricingForItem(LabTestItemEntity item) {
     return pricingForOffer(_cheapestOffer(item.labOffers));
   }

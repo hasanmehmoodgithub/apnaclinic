@@ -125,7 +125,9 @@ class SurgeryLeadsMockApi {
       'leadCreatedTime': '11:27 AM',
       'leadCreatedAt': '2026-07-15 11:27 AM',
       'confirmedDate': '2026-07-15 07:13 AM',
-      'scheduledDate': '2026-07-20 12:00 AM',
+      'scheduledDate': '2026-07-20',
+      'scheduledStartTime': '8:00 PM',
+      'scheduledEndTime': '11:00 PM',
       'patient': {
         'name': 'Bilal Ahmad',
         'age': 26,

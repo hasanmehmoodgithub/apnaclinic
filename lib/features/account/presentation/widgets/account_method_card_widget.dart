@@ -27,6 +27,7 @@ class AccountMethodCardWidget extends StatelessWidget {
       subtitle: account.accountHolderName,
       onTap: () {},
       onTrailingTap: account.isDefault ? null : onDeleteTap,
+      showTrailing: false,
       height: 96.h,
       radius: 6.r,
       curveOverlayColor: AppColors.clrE9F4FC,

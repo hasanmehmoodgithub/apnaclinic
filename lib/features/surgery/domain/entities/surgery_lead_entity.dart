@@ -19,6 +19,8 @@ class SurgeryLeadEntity {
     required this.leadCreatedAt,
     required this.confirmedDate,
     required this.scheduledDate,
+    required this.scheduledStartTime,
+    required this.scheduledEndTime,
     required this.patientName,
     required this.age,
     required this.gender,
@@ -51,6 +53,8 @@ class SurgeryLeadEntity {
   final String leadCreatedAt;
   final String? confirmedDate;
   final String? scheduledDate;
+  final String? scheduledStartTime;
+  final String? scheduledEndTime;
   final String patientName;
   final int age;
   final String gender;

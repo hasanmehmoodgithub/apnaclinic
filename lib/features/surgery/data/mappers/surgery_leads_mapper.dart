@@ -25,6 +25,8 @@ class SurgeryLeadsMapper {
       leadCreatedAt: model.leadCreatedAt,
       confirmedDate: model.confirmedDate,
       scheduledDate: model.scheduledDate,
+      scheduledStartTime: model.scheduledStartTime,
+      scheduledEndTime: model.scheduledEndTime,
       patientName: model.patientName,
       age: model.age,
       gender: model.gender,
