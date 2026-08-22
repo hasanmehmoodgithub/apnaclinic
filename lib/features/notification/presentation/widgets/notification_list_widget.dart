@@ -1,7 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../core/analytics/analytics_event_keys.dart';
+import '../../../../core/analytics/analytics_service.dart';
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/widgets/heart_loader_widget.dart';
 import '../../domain/entities/notification_entity.dart';
@@ -54,6 +59,17 @@ class NotificationListWidget extends StatelessWidget {
     BuildContext context,
     NotificationEntity item,
   ) async {
+    final notificationId = item.id.trim();
+    unawaited(
+      sl<AnalyticsService>().logEvent(
+        AnalyticsEventKeys.notificationsClicked,
+        {
+          if (notificationId.isNotEmpty)
+            AnalyticsParamKeys.notificationId: notificationId,
+        },
+      ),
+    );
+
     if (item.isRead) {
       await _openDeepLinkOrShowMessage(context, item);
       return;

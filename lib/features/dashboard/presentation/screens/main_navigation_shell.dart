@@ -7,6 +7,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_system_ui.dart';
 import '../../../../core/analytics/analytics_event_keys.dart';
+import '../../../../core/analytics/analytics_service.dart';
 import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/network/api_service.dart';
 import '../../../../core/preference/app_pref.dart';
@@ -189,6 +190,16 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
   }
 
   void _onNavTap(int index) {
+    if (index == _bookingsIndex) {
+      unawaited(
+        sl<AnalyticsService>().logEvent(AnalyticsEventKeys.myBookingsClicked),
+      );
+    } else if (index == MainNavigationTabs.support) {
+      unawaited(
+        sl<AnalyticsService>().logEvent(AnalyticsEventKeys.supportClicked),
+      );
+    }
+
     if ((index == _instantDoctorIndex || index == _bookingsIndex) &&
         !AuthGuard.isLoggedIn()) {
       _sessionRefresh.requestTabIndex(
