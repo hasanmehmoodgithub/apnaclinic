@@ -12,6 +12,8 @@ import '../../features/surgery/surgery_injection.dart';
 import '../../features/instant_doctor/instant_doctor_injection.dart';
 import '../../features/auth/auth_injection.dart';
 import '../../features/profile_setup/profile_setup_injection.dart';
+import '../analytics/analytics_service.dart';
+import '../analytics/providers/firebase_analytics_provider.dart';
 import '../database/app_database.dart';
 import '../network/api_service.dart';
 import '../network/device_headers_provider.dart';
@@ -84,5 +86,10 @@ Future<void> _initCore() async {
     () => NotificationService(appPref: sl<AppPref>()),
   );
   sl.registerLazySingleton<AppsFlyerService>(() => AppsFlyerService());
+  sl.registerLazySingleton<AnalyticsService>(
+    () => AnalyticsServiceImpl([
+      FirebaseAnalyticsProvider(),
+    ]),
+  );
   initCitiesInjector();
 }

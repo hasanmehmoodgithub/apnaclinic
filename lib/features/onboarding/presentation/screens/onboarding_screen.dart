@@ -1,7 +1,11 @@
+import 'dart:async';
+
 import 'package:apnaclinic/generated/assets.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/analytics/analytics_event_keys.dart';
+import '../../../../core/analytics/analytics_service.dart';
 import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/preference/app_pref.dart';
@@ -26,12 +30,15 @@ class OnboardingScreen extends StatefulWidget {
 class _OnboardingScreenState extends State<OnboardingScreen> {
   final PageController _pageController = PageController();
   late final CompleteOnboardingUseCase _completeOnboardingUseCase;
+  late final AnalyticsService _analytics;
   int _currentIndex = 0;
 
   @override
   void initState() {
     super.initState();
     _completeOnboardingUseCase = CompleteOnboardingUseCase(sl<AppPref>());
+    _analytics = sl<AnalyticsService>();
+    _logStep(0);
   }
 
   @override
@@ -62,15 +69,14 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     OnboardingHeader(
                       scale: scale,
                       skipLabel: l10n.onboardingSkip,
-                      onSkip: _finishOnboarding,
+                      onSkip: _onSkip,
                     ),
                     Expanded(
                       child: OnboardingPageView(
                         controller: _pageController,
                         pages: pages,
                         scale: scale,
-                        onPageChanged: (value) =>
-                            setState(() => _currentIndex = value),
+                        onPageChanged: _onPageChanged,
                       ),
                     ),
                     OnboardingPagerIndicator(
@@ -133,6 +139,31 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       //   imageAsset: Assets.onboardingSurgeryBooking,
       // ),
     ];
+  }
+
+  void _logStep(int index) {
+    final step = index + 1;
+    unawaited(
+      _analytics.logEvent(
+        AnalyticsEventKeys.onboardingStep(step),
+        {AnalyticsParamKeys.stepNumber: step},
+      ),
+    );
+  }
+
+  void _onPageChanged(int index) {
+    setState(() => _currentIndex = index);
+    _logStep(index);
+  }
+
+  Future<void> _onSkip() async {
+    unawaited(
+      _analytics.logEvent(
+        AnalyticsEventKeys.onboardingSkipped,
+        {AnalyticsParamKeys.stepNumber: _currentIndex + 1},
+      ),
+    );
+    await _finishOnboarding();
   }
 
   Future<void> _finishOnboarding() async {
