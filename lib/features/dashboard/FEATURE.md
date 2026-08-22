@@ -4,6 +4,10 @@
 
 Home services grid, promotional banner, search entry, and shell navigation. Keeps **user profile** in sync with the auth user API when the user is logged in.
 
+## Analytics
+
+See `lib/core/analytics/ANALYTICS.md`. Home fires `home_screen` on open; service tiles (`pharmacy` / `consultation` / `lab` / `surgery` `_tile_clicked`); `search_clicked` (`source_screen` `home screen`); `notifications_screen_open`; `banner_clicked` (`content_url`); Instant Doctor entry via `instant_doctor_clicked`; menu/bottom-nav `my_bookings_clicked` / `support_clicked`.
+
 ## Profile sync on dashboard
 
 - **`DashboardCubit`** (created when `HomeScreen` loads) calls **`GetProfileSetupContentUseCase`** in **`syncUserProfileFromApi()`** after services load, unless **`ProfileSessionSync`** already synced this session and **`AppPref`** has cached profile fields. Promo banners are fetched via **`PromotionalBannerSession.ensureLoaded()`** from this cubit only (not app start / shell login).

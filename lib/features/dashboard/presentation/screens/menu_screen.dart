@@ -1,6 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/analytics/analytics_event_keys.dart';
+import '../../../../core/analytics/analytics_service.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/l10n/app_localizations.dart';
@@ -71,6 +75,9 @@ class _MenuScreenState extends State<MenuScreen> {
   }
 
   void _openMyBookings() {
+    unawaited(
+      sl<AnalyticsService>().logEvent(AnalyticsEventKeys.myBookingsClicked),
+    );
     // Remember Bookings tab before login so guest return lands there.
     _sessionRefresh.requestTabIndex(MainNavigationTabs.bookings);
     if (!AuthGuard.isLoggedIn()) {
@@ -91,6 +98,9 @@ class _MenuScreenState extends State<MenuScreen> {
         _openMyBookings();
         return;
       case MenuActionId.customerSupport:
+        unawaited(
+          sl<AnalyticsService>().logEvent(AnalyticsEventKeys.supportClicked),
+        );
         context.push(AppRoutes.path(AppRoutes.customerSupport));
         return;
       case MenuActionId.faq:

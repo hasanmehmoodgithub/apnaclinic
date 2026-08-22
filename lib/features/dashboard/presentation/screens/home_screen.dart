@@ -7,6 +7,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/analytics/analytics_event_keys.dart';
+import '../../../../core/analytics/analytics_event_keys.dart';
+import '../../../../core/analytics/analytics_service.dart';
 import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/enums/state_status.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
@@ -65,6 +67,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       _notificationCubit.loadNotifications();
     }
     _bindPushRefresh();
+    unawaited(sl<AnalyticsService>().logEvent(AnalyticsEventKeys.homeScreen));
   }
 
   void _bindPushRefresh() {
@@ -215,6 +218,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     // Belt-and-braces: close the keyboard before navigating, in case the
     // SearchHeader's own dismiss didn't fire (e.g. button-only path).
     _dismissKeyboard();
+    _logSearchClicked();
     context.push(
       AppRoutes.path(AppRoutes.search),
       extra: (query == null || query.trim().isEmpty)
@@ -225,9 +229,22 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
 
   void _openVoiceSearch(BuildContext context) {
     _dismissKeyboard();
+    _logSearchClicked();
     context.push(
       AppRoutes.path(AppRoutes.search),
       extra: const SearchLaunchArgs(startVoiceSearch: true),
+    );
+  }
+
+  void _logSearchClicked() {
+    unawaited(
+      sl<AnalyticsService>().logEvent(
+        AnalyticsEventKeys.searchClicked,
+        {
+          AnalyticsParamKeys.sourceScreen:
+              AnalyticsHomeSourceKeys.homeScreen,
+        },
+      ),
     );
   }
 
@@ -269,6 +286,11 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                       context.push(AppRoutes.path(AppRoutes.dashboardMenu)),
                   onNotificationTap: () {
                     if (!context.requireLogin()) return;
+                    unawaited(
+                      sl<AnalyticsService>().logEvent(
+                        AnalyticsEventKeys.notificationsScreenOpen,
+                      ),
+                    );
                     context.push(AppRoutes.path(AppRoutes.notifications));
                   },
                   onLoginTap: () => AuthGuard.pushLogin(context),
@@ -348,5 +370,27 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       };
     }
     context.push(AppRoutes.path(normalizedRoute), extra: extra);
+    final eventName = _serviceTileEventName(normalizedRoute);
+    if (eventName != null) {
+      unawaited(sl<AnalyticsService>().logEvent(eventName));
+    }
+
+    context.push(AppRoutes.path(normalizedRoute));
+  }
+
+  String? _serviceTileEventName(String route) {
+    if (route == AppRoutes.pharmacyMain || route == AppRoutes.pharmacy) {
+      return AnalyticsEventKeys.pharmacyTileClicked;
+    }
+    if (route == AppRoutes.consultation) {
+      return AnalyticsEventKeys.consultationTileClicked;
+    }
+    if (route == AppRoutes.labTest) {
+      return AnalyticsEventKeys.labTileClicked;
+    }
+    if (route == AppRoutes.surgery) {
+      return AnalyticsEventKeys.surgeryTileClicked;
+    }
+    return null;
   }
 }

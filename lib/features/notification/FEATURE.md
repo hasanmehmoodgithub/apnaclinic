@@ -44,6 +44,7 @@ In-app notification list and Firebase Cloud Messaging (FCM) push notifications.
 ## State
 
 - `NotificationCubit` — loads inbox only when `AuthGuard.isLoggedIn()`; guests skip the list API. `markAsRead` is also login-gated. List is ordered by `createdAt` (newest first), not unread-first. Home creates the shared cubit and loads after login; push-driven refresh is skipped while logged out.
+- Analytics: `notifications_screen_open` when opening inbox from home; `notifications_clicked` (`notification_id` = `publicId`) on list item tap.
 
 ## DI
 

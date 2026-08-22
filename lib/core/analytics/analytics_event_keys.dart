@@ -71,6 +71,19 @@ class AnalyticsEventKeys {
   static const prescriptionAvailable = 'prescription_available';
   static const prescriptionDownloaded = 'prescription_downloaded';
   static const pharmacyStatusChanged = 'pharmacy_status_changed';
+  static const instantDoctorClicked = 'instant_doctor_clicked';
+
+  static const homeScreen = 'home_screen';
+  static const pharmacyTileClicked = 'pharmacy_tile_clicked';
+  static const consultationTileClicked = 'consultation_tile_clicked';
+  static const labTileClicked = 'lab_tile_clicked';
+  static const surgeryTileClicked = 'surgery_tile_clicked';
+  static const searchClicked = 'search_clicked';
+  static const notificationsScreenOpen = 'notifications_screen_open';
+  static const notificationsClicked = 'notifications_clicked';
+  static const myBookingsClicked = 'my_bookings_clicked';
+  static const bannerClicked = 'banner_clicked';
+  static const supportClicked = 'support_clicked';
 }
 
 class AnalyticsParamKeys {
@@ -122,6 +135,8 @@ class AnalyticsParamKeys {
   static const service = 'service';
   static const status = 'status';
   static const changedBy = 'changed_by';
+  static const notificationId = 'notification_id';
+  static const contentUrl = 'content_url';
 }
 
 class AnalyticsSearchMediumKeys {
@@ -137,7 +152,17 @@ class AnalyticsInstantDoctorSourceKeys {
   AnalyticsInstantDoctorSourceKeys._();
 
   static const banner = 'banner';
+  static const popup = 'popup';
+  static const navigationTab = 'navigation_tab';
+
+  /// Legacy value for [AnalyticsEventKeys.instantDoctorModule].
   static const bottomTab = 'bottom_tab';
+}
+
+class AnalyticsHomeSourceKeys {
+  AnalyticsHomeSourceKeys._();
+
+  static const homeScreen = 'home screen';
 }
 
 class AnalyticsSearchResultTypeKeys {

@@ -353,10 +353,26 @@ class InstantDoctorCubit extends Cubit<InstantDoctorState> {
   }
 
   void logModuleViewed(String sourceScreen) {
+    final clickedSource =
+        sourceScreen == AnalyticsInstantDoctorSourceKeys.bottomTab
+            ? AnalyticsInstantDoctorSourceKeys.navigationTab
+            : sourceScreen;
+    unawaited(
+      _analytics.logEvent(
+        AnalyticsEventKeys.instantDoctorClicked,
+        {AnalyticsParamKeys.source: clickedSource},
+      ),
+    );
+    final legacySource =
+        sourceScreen == AnalyticsInstantDoctorSourceKeys.popup
+            ? AnalyticsInstantDoctorSourceKeys.banner
+            : sourceScreen == AnalyticsInstantDoctorSourceKeys.navigationTab
+                ? AnalyticsInstantDoctorSourceKeys.bottomTab
+                : sourceScreen;
     unawaited(
       _analytics.logEvent(
         AnalyticsEventKeys.instantDoctorModule,
-        {AnalyticsParamKeys.sourceScreen: sourceScreen},
+        {AnalyticsParamKeys.sourceScreen: legacySource},
       ),
     );
   }

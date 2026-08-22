@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -5,6 +7,9 @@ import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../core/analytics/analytics_event_keys.dart';
+import '../../../../core/analytics/analytics_event_keys.dart';
+import '../../../../core/analytics/analytics_service.dart';
+import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/utils/app_url_launcher.dart';
@@ -14,6 +19,7 @@ import '../../../pharmacy/presentation/pharmacy_navigation.dart';
 import '../../../surgery/presentation/surgery_analytics.dart';
 import '../../domain/entities/promotional_banner_entity.dart';
 import '../constants/dashboard_ui_config.dart';
+import '../constants/main_navigation_tabs.dart';
 import '../instant_doctor_tab_navigation.dart';
 import 'promotional_banner_shimmer_widget.dart';
 
@@ -71,11 +77,30 @@ void _onBannerTap(
   BuildContext hostContext,
   PromotionalBannerEntity banner,
 ) {
+  final contentUrl = banner.url.trim();
+  unawaited(
+    sl<AnalyticsService>().logEvent(
+      AnalyticsEventKeys.bannerClicked,
+      {
+        if (contentUrl.isNotEmpty)
+          AnalyticsParamKeys.contentUrl: contentUrl.length <= 100
+              ? contentUrl
+              : contentUrl.substring(0, 100),
+      },
+    ),
+  );
+
   dialogContext.pop();
   if (!hostContext.mounted) return;
 
   if (banner.routeType == 'bottomsheet' && banner.tabIndex != null) {
-    openBottomNavTab(hostContext, banner.tabIndex!);
+    openBottomNavTab(
+      hostContext,
+      banner.tabIndex!,
+      sourceScreen: banner.tabIndex == MainNavigationTabs.instantDoctor
+          ? AnalyticsInstantDoctorSourceKeys.popup
+          : AnalyticsInstantDoctorSourceKeys.banner,
+    );
     return;
   }
 
@@ -93,7 +118,10 @@ void _onBannerTap(
   final normalizedRoute = target.replaceFirst(RegExp(r'^/'), '');
   if (normalizedRoute.isEmpty) return;
   if (normalizedRoute == AppRoutes.instantDoctor) {
-    openInstantDoctorTab(hostContext);
+    openInstantDoctorTab(
+      hostContext,
+      sourceScreen: AnalyticsInstantDoctorSourceKeys.popup,
+    );
     return;
   }
   Object? extra;
