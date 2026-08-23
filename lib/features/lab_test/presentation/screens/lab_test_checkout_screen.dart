@@ -266,6 +266,7 @@ class _LabTestCheckoutScreenState extends State<LabTestCheckoutScreen> {
             initiation: initiation,
           );
           showCardPaymentOutcomeSnackBar(context, paymentResult);
+          await showCardPaymentOutcomeDialog(context, paymentResult);
           return;
         }
         _logBookingConfirmed(

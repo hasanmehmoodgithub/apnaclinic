@@ -376,6 +376,13 @@ class AppLocalizationsEn extends AppLocalizations {
       'Unable to place pharmacy order right now. Please try again.';
 
   @override
+  String get pharmacyCheckoutPaymentPendingTitle => 'Payment Pending';
+
+  @override
+  String get pharmacyCheckoutPaymentPendingMessage =>
+      'Your pharmacy order is waiting for payment. We\'ll update it once payment completes — check Bookings for the latest status.';
+
+  @override
   String get pharmacyOrderPlacedTitle => 'Order Successfully Placed!';
 
   @override
@@ -1060,6 +1067,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get surgeryBookingViewBookingsCta => 'View My Bookings';
 
   @override
+  String get surgeryBookingPaymentPendingTitle => 'Payment Pending';
+
+  @override
+  String get surgeryBookingPaymentPendingMessage =>
+      'Your surgery booking is waiting for payment. We\'ll update it once payment completes — check Bookings for the latest status.';
+
+  @override
   String get surgeryBookingFailedTitle => 'Booking Request Failed';
 
   @override
@@ -1197,7 +1211,17 @@ class AppLocalizationsEn extends AppLocalizations {
   String get paymentWebViewFailed => 'Payment failed. Please try again.';
 
   @override
+  String get paymentWebViewFailedTitle => 'Payment Failed';
+
+  @override
   String get paymentWebViewCancelled => 'Payment cancelled.';
+
+  @override
+  String get paymentWebViewCancelledTitle => 'Payment Cancelled';
+
+  @override
+  String get paymentWebViewCancelledMessage =>
+      'Your payment was cancelled. You can try again when you are ready.';
 
   @override
   String get labTestViewDetailsResultsTitle => 'Test Results';

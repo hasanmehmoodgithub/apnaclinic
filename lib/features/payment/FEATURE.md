@@ -7,11 +7,13 @@ After a booking API returns `data.paymentUrl`, open an in-app WebView for JazzCa
 ## Routes / entry
 
 - `AppRoutes.cardPayment` — `PaymentWebViewScreen` via `PaymentWebViewArgs(paymentUrl:, title?)`.
-- Helpers: `openCardPaymentWebView`, `settleCardPaymentIfNeeded`, `showCardPaymentOutcomeSnackBar` in `payment_navigation.dart`.
+- Helpers: `openCardPaymentWebView`, `settleCardPaymentIfNeeded`, `showCardPaymentOutcomeDialog` in `payment_navigation.dart`.
 
-## Success / fail detection
+## Success / fail / cancel detection
 
-Rox callback HTML (`…/api/subscription/v1/jazzcash/callback`) exposes:
+Rox uses the **same** callback path (`…/api/subscription/v1/jazzcash/callback`) for paid **and** failed/cancelled/dropped HTML. The app must not treat that URL as success.
+
+Success page (`handleSuccess()` / **Return to ROX App**):
 
 ```js
 window.AndroidInterface.postMessage(JSON.stringify({
@@ -22,20 +24,31 @@ window.AndroidInterface.postMessage(JSON.stringify({
 }));
 ```
 
-(Fired from **Return to ROX App** / `handleSuccess()`.)
+Fail / cancel / dropped page (`handleFailure()` / **Return to ROX App**):
 
-App registers JS channel **`AndroidInterface`**, parses JSON or plain `"success"`.
+```js
+window.AndroidInterface.postMessage(JSON.stringify({
+  status: "fail",
+  success: false,
+  message: "Transaction is dropped.",
+  statusCode: 400
+}));
+```
+
+App registers JS channel **`AndroidInterface`**. `PaymentWebViewResult.tryParseBridgeMessage` accepts JSON or plain tokens (`success`, `fail`, `cancel`, `dropped`, …). `success: false` and `statusCode >= 400` always win over a success guess.
 
 Also:
 
-- On pages whose URL contains `/api/subscription/v1/jazzcash/callback`, app auto-runs `handleSuccess()` and falls back to success after a short delay if the bridge does not fire.
+- On callback pages, inspect title / `.status-chip` / `failureBtn` / `handleSuccess` vs `handleFailure`, then auto-run the matching handler.
+- Fallback after a short delay **mirrors the detected outcome** (success, fail, or cancel). Unknown pages wait for the user to tap Return to ROX App — they are never auto-marked paid.
+- Callers (`settleCardPaymentIfNeeded`) only show the booking success dialog when `paymentResult.isSuccess`. Cancel and fail open `PaymentOutcomeDialogWidget` with the gateway `message` when present (e.g. “Transaction is dropped.”). App-local copy is used only if the gateway sent no message. Gateway “Transaction is dropped.” is treated as cancel.
 - Back/close is disabled by default (`allowClose: false`); the screen stays until the gateway reports success or failure.
-- Lab, pharmacy, and doctor consultation checkout open with `allowClose: true` so the user can dismiss via the AppBar **X** only (system back / swipe-back are blocked); that returns `cancelled`.
+- Lab, pharmacy, and doctor consultation checkout open with `allowClose: true` so the user can dismiss via the AppBar **X** only (system back / swipe-back are blocked). **X** still tries `handleFailure()` / the callback page so the dialog can show the gateway `message` (same as **Return to ROX App**). If the gateway has not posted a message yet, it returns `cancelled` with app copy.
 - **Android SSL:** `NavigationDelegate.onSslAuthError` calls `proceed()` so staging payment hosts (corp/self-signed certs) load in WebView the same way Dio trust-alls via `AppHttpOverrides`.
 
 ## Data
 
-`PaymentInitiationResult.fromBookingResponse(map)` reads `paymentUrl`, `orderId`, `publicId`, `status`, `inProgress` from booking envelopes. `isPendingWithoutPaymentUrl` is true when `status` is `PENDING_PAYMENT` and no payment URL was returned (lab checkout and consultation summary show `PaymentPendingDialogWidget` instead of the WebView).
+`PaymentInitiationResult.fromBookingResponse(map)` reads `paymentUrl`, `orderId`, `publicId`, `status`, `inProgress` from booking envelopes. `isPendingWithoutPaymentUrl` is true when `status` is `PENDING_PAYMENT` and no payment URL was returned. Lab, consultation, pharmacy, and surgery then show `PaymentPendingDialogWidget` instead of the WebView.
 
 Wired when `paymentUrl` is present:
 

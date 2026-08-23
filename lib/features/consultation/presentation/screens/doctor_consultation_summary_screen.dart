@@ -42,15 +42,6 @@ class DoctorConsultationSummaryScreen extends StatelessWidget {
     if (!context.mounted) return;
 
     if (initiation == null) {
-      ConsultationAnalytics.logConsultationBooked(
-        doctor: args.checkoutArgs.doctor,
-        slot: args.checkoutArgs.selectedSlot,
-        paymentMethodCode: args.paymentMethodCode,
-        paymentMethodName: args.paymentMethodName,
-        msisdn: args.msisdn,
-        paymentStatus: AnalyticsConsultationPaymentStatusKeys.failed,
-        discount: args.discount,
-      );
       final message = cubit.state.errorMessage;
       final displayMessage = switch (message) {
         'invalid_booking_context' => l10n.consultationBookingInvalidContextError,
@@ -89,6 +80,7 @@ class DoctorConsultationSummaryScreen extends StatelessWidget {
         initiation: initiation,
       );
       showCardPaymentOutcomeSnackBar(context, paymentResult);
+      await showCardPaymentOutcomeDialog(context, paymentResult);
       return;
     }
 

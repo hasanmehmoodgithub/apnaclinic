@@ -15,8 +15,8 @@ import '../payment_webview_args.dart';
 /// In-app card payment WebView.
 ///
 /// Rox callback posts via `window.AndroidInterface.postMessage(...)` from
-/// `handleSuccess()` / "Return to ROX App". Channel name must stay
-/// `AndroidInterface` to match the gateway HTML.
+/// `handleSuccess()` / `handleFailure()` / "Return to ROX App". Channel name
+/// must stay `AndroidInterface` to match the gateway HTML.
 class PaymentWebViewScreen extends StatefulWidget {
   const PaymentWebViewScreen({
     super.key,
@@ -27,7 +27,8 @@ class PaymentWebViewScreen extends StatefulWidget {
 
   static const String bridgeChannelName = 'AndroidInterface';
 
-  static const String successCallbackPath =
+  /// Same path is used for success **and** fail/cancel callback HTML.
+  static const String gatewayCallbackPath =
       '/api/subscription/v1/jazzcash/callback';
 
   @override
@@ -39,6 +40,7 @@ class _PaymentWebViewScreenState extends State<PaymentWebViewScreen> {
   var _isLoading = true;
   var _hasError = false;
   var _didComplete = false;
+  String? _lastGatewayMessage;
 
   @override
   void initState() {
@@ -80,8 +82,8 @@ class _PaymentWebViewScreenState extends State<PaymentWebViewScreen> {
             log('PaymentWebView finished: $url');
             if (!mounted) return;
             setState(() => _isLoading = false);
-            if (_isSuccessCallbackUrl(url)) {
-              await _tryAutoCompleteSuccessFromCallbackPage();
+            if (_isGatewayCallbackUrl(url)) {
+              await _tryCompleteFromCallbackPage();
             }
           },
           onWebResourceError: (error) {
@@ -109,8 +111,8 @@ class _PaymentWebViewScreenState extends State<PaymentWebViewScreen> {
       ..loadRequest(Uri.parse(paymentUrl));
   }
 
-  bool _isSuccessCallbackUrl(String url) {
-    return url.contains(PaymentWebViewScreen.successCallbackPath);
+  bool _isGatewayCallbackUrl(String url) {
+    return url.contains(PaymentWebViewScreen.gatewayCallbackPath);
   }
 
   void _jsDevLog(String message) {
@@ -118,25 +120,171 @@ class _PaymentWebViewScreenState extends State<PaymentWebViewScreen> {
     log(message, name: 'PaymentWebView.JS');
   }
 
-  Future<void> _tryAutoCompleteSuccessFromCallbackPage() async {
+  /// Rox uses the same callback URL for paid, failed, cancelled, and dropped.
+  /// Never assume success just because this page loaded.
+  Future<void> _tryCompleteFromCallbackPage() async {
     if (_didComplete) return;
 
-    _jsDevLog('callback page loaded — injecting handleSuccess / postMessage');
+    final detected = await _detectCallbackOutcome();
+    _jsDevLog(
+      'callback page outcome=${detected.status?.name ?? 'unknown'} '
+      'message=${detected.message}',
+    );
+
+    await _invokeGatewayCallbackHandler(detected.status);
+
+    final detectedMessage = detected.message?.trim();
+    if (detectedMessage != null && detectedMessage.isNotEmpty) {
+      _lastGatewayMessage ??= detectedMessage;
+    }
+
+    if (!mounted || _didComplete) return;
+
+    // Fallback only when the page itself is clearly success or fail/cancel.
+    // Unknown pages wait for the user to tap Return to ROX App.
+    if (detected.status == null) return;
+
+    await Future<void>.delayed(const Duration(milliseconds: 800));
+    if (!mounted || _didComplete) return;
+    _jsDevLog(
+      'bridge did not fire — fallback ${detected.status!.name}',
+    );
+    _complete(
+      PaymentWebViewResult(
+        status: detected.status!,
+        message: detected.message,
+      ),
+    );
+  }
+
+  Future<_CallbackPageOutcome> _detectCallbackOutcome() async {
+    try {
+      final raw = await _controller.runJavaScriptReturningResult('''
+(function() {
+  function pageText() {
+    var title = document.title || '';
+    var body = '';
+    try {
+      body = document.body
+        ? (document.body.innerText || document.body.textContent || '')
+        : '';
+    } catch (e) {}
+    var chip = '';
+    try {
+      var el = document.querySelector('.status-chip');
+      if (el) chip = el.textContent || '';
+    } catch (e) {}
+    return (title + ' ' + chip + ' ' + body).toLowerCase();
+  }
+  function firstText(selectors) {
+    for (var i = 0; i < selectors.length; i++) {
+      try {
+        var el = document.querySelector(selectors[i]);
+        if (el && el.textContent && el.textContent.trim()) {
+          return el.textContent.trim();
+        }
+      } catch (e) {}
+    }
+    return '';
+  }
+  var text = pageText();
+  var title = (document.title || '').toLowerCase();
+  var hasFailureBtn = !!document.getElementById('failureBtn');
+  var hasSuccessBtn = !!document.getElementById('successBtn');
+  var hasHandleFailure = typeof handleFailure === 'function';
+  var hasHandleSuccess = typeof handleSuccess === 'function';
+  var message = firstText(['.lead', 'h1', '.muted', 'p']);
+
+  var isCancel = /cancel|cancelled|canceled|aborted|transaction is dropped/.test(title + ' ' + text);
+  var isFail = hasFailureBtn
+    || /payment failed|payment could not|could not be completed|could not confirm|unsuccessful|declined/.test(text)
+    || title.indexOf('fail') !== -1
+    || (hasHandleFailure && !hasHandleSuccess);
+  var isSuccess = hasSuccessBtn
+    || /payment successful|payment success|transaction successful|paid successfully/.test(text)
+    || title.indexOf('success') !== -1
+    || (hasHandleSuccess && !hasHandleFailure);
+
+  var outcome = 'unknown';
+  if (isSuccess && !isFail && !isCancel) outcome = 'success';
+  else if (isCancel && !isSuccess) outcome = 'cancel';
+  else if (isFail && !isSuccess) outcome = 'fail';
+  else if (isFail || hasFailureBtn || hasHandleFailure) outcome = 'fail';
+  else if (isSuccess) outcome = 'success';
+
+  return JSON.stringify({ outcome: outcome, message: message });
+})();
+''');
+      final map = _decodeJsObject(raw);
+      if (map == null) return const _CallbackPageOutcome.unknown();
+      final outcome = (map['outcome'] ?? '').toString().trim().toLowerCase();
+      final message = (map['message'] ?? '').toString().trim();
+      return _CallbackPageOutcome(
+        status: switch (outcome) {
+          'success' => PaymentWebViewStatus.success,
+          'fail' || 'failed' || 'failure' => PaymentWebViewStatus.failed,
+          'cancel' || 'cancelled' || 'canceled' => PaymentWebViewStatus.cancelled,
+          _ => null,
+        },
+        message: message.isEmpty ? null : message,
+      );
+    } catch (e) {
+      _jsDevLog('callback detection failed: $e');
+      return const _CallbackPageOutcome.unknown();
+    }
+  }
+
+  Map<String, dynamic>? _decodeJsObject(Object raw) {
+    Object? current = raw;
+    for (var i = 0; i < 2; i++) {
+      if (current is String) {
+        final trimmed = current.trim();
+        if (trimmed.isEmpty || trimmed == 'null' || trimmed == 'undefined') {
+          return null;
+        }
+        try {
+          current = jsonDecode(trimmed);
+        } catch (_) {
+          return null;
+        }
+        continue;
+      }
+      break;
+    }
+    if (current is Map) {
+      return Map<String, dynamic>.from(current);
+    }
+    return null;
+  }
+
+  Future<void> _invokeGatewayCallbackHandler(
+    PaymentWebViewStatus? status,
+  ) async {
+    final outcome = switch (status) {
+      PaymentWebViewStatus.success => 'success',
+      PaymentWebViewStatus.failed => 'fail',
+      PaymentWebViewStatus.cancelled => 'cancel',
+      null => 'unknown',
+    };
     try {
       await _controller.runJavaScript('''
 (function() {
   try {
-    if (typeof handleSuccess === 'function') {
+    var outcome = "$outcome";
+    if (outcome === "success" && typeof handleSuccess === "function") {
       handleSuccess();
       return;
     }
-    if (window.AndroidInterface && typeof window.AndroidInterface.postMessage === 'function') {
-      window.AndroidInterface.postMessage(JSON.stringify({
-        status: "success",
-        success: true,
-        message: "Payment successful",
-        statusCode: 200
-      }));
+    if ((outcome === "fail" || outcome === "cancel") && typeof handleFailure === "function") {
+      handleFailure();
+      return;
+    }
+    if (typeof handleFailure === "function" && typeof handleSuccess !== "function") {
+      handleFailure();
+      return;
+    }
+    if (typeof handleSuccess === "function" && typeof handleFailure !== "function") {
+      handleSuccess();
     }
   } catch (e) {}
 })();
@@ -144,19 +292,17 @@ class _PaymentWebViewScreenState extends State<PaymentWebViewScreen> {
     } catch (e) {
       _jsDevLog('injected JS failed: $e');
     }
-
-    // Fallback if bridge never fires.
-    await Future<void>.delayed(const Duration(milliseconds: 800));
-    if (!mounted || _didComplete) return;
-    _jsDevLog('bridge did not fire — fallback success');
-    _complete(PaymentWebViewResult.success(message: 'Payment successful'));
   }
 
   void _handleBridgeMessage(String raw) {
-    final parsed = _parseBridgePayload(raw);
+    final parsed = PaymentWebViewResult.tryParseBridgeMessage(raw);
     if (parsed == null) {
       _jsDevLog('payload ignored (unrecognized): $raw');
       return;
+    }
+    final gatewayMessage = parsed.message?.trim();
+    if (gatewayMessage != null && gatewayMessage.isNotEmpty) {
+      _lastGatewayMessage = gatewayMessage;
     }
     _jsDevLog(
       'payload parsed: status=${parsed.status.name} message=${parsed.message}',
@@ -164,51 +310,38 @@ class _PaymentWebViewScreenState extends State<PaymentWebViewScreen> {
     _complete(parsed);
   }
 
-  PaymentWebViewResult? _parseBridgePayload(String raw) {
-    final text = raw.trim();
-    if (text.isEmpty) return null;
-
-    final lower = text.toLowerCase();
-    if (lower == 'success' || lower == 'true') {
-      return PaymentWebViewResult.success();
-    }
-    if (lower == 'fail' ||
-        lower == 'failed' ||
-        lower == 'failure' ||
-        lower == 'error') {
-      return PaymentWebViewResult.failed();
-    }
-    if (lower == 'cancel' || lower == 'cancelled' || lower == 'canceled') {
-      return PaymentWebViewResult.cancelled();
-    }
+  Future<void> _closeFromAppBar() async {
+    if (_didComplete) return;
 
     try {
-      final decoded = jsonDecode(text);
-      if (decoded is! Map) return null;
-      final map = Map<String, dynamic>.from(decoded);
-      final status = (map['status'] ?? '').toString().trim().toLowerCase();
-      final successFlag = map['success'] == true;
-      final message = map['message']?.toString();
-
-      if (successFlag || status == 'success') {
-        return PaymentWebViewResult.success(message: message);
-      }
-      if (status == 'cancelled' ||
-          status == 'canceled' ||
-          status == 'cancel') {
-        return PaymentWebViewResult.cancelled(message: message);
-      }
-      if (status == 'failed' ||
-          status == 'fail' ||
-          status == 'failure' ||
-          status == 'error' ||
-          map['success'] == false) {
-        return PaymentWebViewResult.failed(message: message);
-      }
-    } catch (_) {
-      return null;
+      await _controller.runJavaScript('''
+(function() {
+  try {
+    if (typeof handleFailure === "function") {
+      handleFailure();
     }
-    return null;
+  } catch (e) {}
+})();
+''');
+    } catch (e) {
+      _jsDevLog('close invoke failed: $e');
+    }
+
+    if (!mounted || _didComplete) return;
+
+    await Future<void>.delayed(const Duration(milliseconds: 400));
+    if (!mounted || _didComplete) return;
+
+    final detected = await _detectCallbackOutcome();
+    if (!mounted || _didComplete) return;
+    final detectedMessage = detected.message?.trim();
+    if (detectedMessage != null && detectedMessage.isNotEmpty) {
+      _lastGatewayMessage ??= detectedMessage;
+    }
+
+    _complete(
+      PaymentWebViewResult.cancelled(message: _lastGatewayMessage),
+    );
   }
 
   void _complete(PaymentWebViewResult result) {
@@ -235,10 +368,7 @@ class _PaymentWebViewScreenState extends State<PaymentWebViewScreen> {
           automaticallyImplyLeading: false,
           leading: widget.args.allowClose
               ? IconButton(
-                  onPressed: () {
-                    if (_didComplete) return;
-                    _complete(PaymentWebViewResult.cancelled());
-                  },
+                  onPressed: _closeFromAppBar,
                   icon: Icon(
                     Icons.close_rounded,
                     color: AppColors.clr060,
@@ -299,4 +429,13 @@ class _PaymentWebViewScreenState extends State<PaymentWebViewScreen> {
       ),
     );
   }
+}
+
+class _CallbackPageOutcome {
+  const _CallbackPageOutcome({this.status, this.message});
+
+  const _CallbackPageOutcome.unknown() : status = null, message = null;
+
+  final PaymentWebViewStatus? status;
+  final String? message;
 }

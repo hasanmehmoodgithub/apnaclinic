@@ -6,6 +6,7 @@ import '../../../core/router/app_routes.dart';
 import '../domain/entities/payment_initiation_result.dart';
 import '../domain/entities/payment_webview_result.dart';
 import 'payment_webview_args.dart';
+import 'widgets/payment_outcome_dialog_widget.dart';
 
 /// Opens the card payment WebView and returns the gateway result.
 Future<PaymentWebViewResult?>    openCardPaymentWebView(
@@ -52,27 +53,35 @@ Future<PaymentWebViewResult> settleCardPaymentIfNeeded(
   return result ?? PaymentWebViewResult.cancelled();
 }
 
-void showCardPaymentOutcomeSnackBar(
+Future<void> showCardPaymentOutcomeDialog(
   BuildContext context,
   PaymentWebViewResult result,
 ) {
-  if (result.isSuccess) return;
+  if (result.isSuccess) return Future.value();
 
   final l10n = AppLocalizations.of(context)!;
-  final message = switch (result.status) {
-    PaymentWebViewStatus.failed =>
-      (result.message?.trim().isNotEmpty == true)
-          ? result.message!.trim()
-          : l10n.paymentWebViewFailed,
-    PaymentWebViewStatus.cancelled =>
-      (result.message?.trim().isNotEmpty == true)
-          ? result.message!.trim()
-          : l10n.paymentWebViewCancelled,
-    PaymentWebViewStatus.success => null,
-  };
-  if (message == null) return;
+  final isCancelled = result.status == PaymentWebViewStatus.cancelled;
+  final title = isCancelled
+      ? l10n.paymentWebViewCancelledTitle
+      : l10n.paymentWebViewFailedTitle;
+  final gatewayMessage = result.message?.trim();
+  final message = (gatewayMessage != null && gatewayMessage.isNotEmpty)
+      ? gatewayMessage
+      : (isCancelled
+          ? l10n.paymentWebViewCancelledMessage
+          : l10n.paymentWebViewFailed);
 
-  ScaffoldMessenger.of(context)
-    ..hideCurrentSnackBar()
-    ..showSnackBar(SnackBar(content: Text(message)));
+  return showDialog<void>(
+    context: context,
+    barrierDismissible: false,
+    useRootNavigator: true,
+    builder: (_) {
+      return PaymentOutcomeDialogWidget(
+        title: title,
+        message: message,
+        ctaText: l10n.commonClose,
+        isCancelled: isCancelled,
+      );
+    },
+  );
 }
