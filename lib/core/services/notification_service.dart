@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:developer' as developer;
 
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -6,6 +7,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 import '../../features/bookings/presentation/bookings_analytics.dart';
+import '../../features/notification/presentation/notification_navigation.dart';
 import '../../firebase_options.dart';
 import '../firebase/firebase_bootstrap.dart';
 import '../flavor/flavor_config.dart';
@@ -30,15 +32,67 @@ class NotificationPayload {
 
   factory NotificationPayload.fromRemoteMessage(RemoteMessage message) {
     final data = Map<String, dynamic>.from(message.data);
-    final route = (data['route'] ?? data['deepLink'] ?? data['screen'])
-        ?.toString()
-        .trim();
     return NotificationPayload(
       title: message.notification?.title ?? data['title']?.toString(),
       body: message.notification?.body ?? data['body']?.toString(),
-      route: route?.isNotEmpty == true ? route : null,
+      route: _routeFromData(data),
       data: data,
     );
+  }
+
+  /// Encodes route + data so a foreground local-notification tap can still
+  /// open the correct screen (keeps nested `deepLink` JSON intact).
+  String toLocalPayload() {
+    return jsonEncode({
+      if (route != null && route!.isNotEmpty) 'route': route,
+      'data': _jsonSafe(data),
+    });
+  }
+
+  static dynamic _jsonSafe(dynamic value) {
+    if (value is Map) {
+      return value.map(
+        (key, nested) => MapEntry(key.toString(), _jsonSafe(nested)),
+      );
+    }
+    if (value is List) {
+      return value.map(_jsonSafe).toList();
+    }
+    return value;
+  }
+
+  static NotificationPayload? fromLocalPayload(String? raw) {
+    final text = raw?.trim() ?? '';
+    if (text.isEmpty) return null;
+
+    try {
+      final decoded = jsonDecode(text);
+      if (decoded is Map) {
+        final map = Map<String, dynamic>.from(decoded);
+        final nested = map['data'];
+        final data = nested is Map
+            ? Map<String, dynamic>.from(nested)
+            : map;
+        return NotificationPayload(
+          route: _routeFromData({...data, ...map}),
+          data: data,
+        );
+      }
+    } catch (_) {
+      if (!text.startsWith('{')) {
+        return NotificationPayload(route: text);
+      }
+    }
+    return null;
+  }
+
+  static String? _routeFromData(Map<String, dynamic> data) {
+    for (final key in const ['route', 'screen', 'deepLink', 'deep_link']) {
+      final value = data[key]?.toString().trim() ?? '';
+      if (value.isEmpty || value.startsWith('{')) continue;
+      return value;
+    }
+    return null;
   }
 }
 
@@ -59,6 +113,7 @@ class NotificationService {
   String? _fcmToken;
   bool _permissionsPrepared = false;
   bool _initialized = false;
+  bool _openedAppBound = false;
 
   bool get permissionsPrepared => _permissionsPrepared;
 
@@ -140,8 +195,9 @@ class NotificationService {
       await _requestFcmPermissions();
       await _getFCMToken();
       _setupForegroundHandler();
+      _bindOpenedAppHandler();
       FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
-      await _handleInitialMessage();
+      await _handleLaunchFromNotification();
       _firebaseMessaging?.onTokenRefresh.listen(_persistToken);
       await _subscribeDebugTopicIfNeeded();
       _initialized = true;
@@ -158,12 +214,16 @@ class NotificationService {
 
   void setupBackgroundMessageHandler() {
     if (!_initialized || _firebaseMessaging == null) return;
+    _bindOpenedAppHandler();
+  }
 
+  void _bindOpenedAppHandler() {
+    if (_openedAppBound) return;
+    _openedAppBound = true;
     FirebaseMessaging.onMessageOpenedApp.listen((message) {
-      final payload = NotificationPayload.fromRemoteMessage(message);
-      _notificationController.add(payload);
-      BookingsAnalytics.logFromFcmData(payload.data);
-      _navigateToRoute(payload.route, payload.data);
+      unawaited(
+        _openFromTap(NotificationPayload.fromRemoteMessage(message)),
+      );
     });
   }
 
@@ -180,9 +240,9 @@ class NotificationService {
     await _localNotifications.initialize(
       settings: initSettings,
       onDidReceiveNotificationResponse: (response) {
-        final route = response.payload?.trim();
-        if (route != null && route.isNotEmpty) {
-          _navigateToRoute(route, const {});
+        final payload = NotificationPayload.fromLocalPayload(response.payload);
+        if (payload != null) {
+          unawaited(_openFromTap(payload));
         }
       },
     );
@@ -275,16 +335,24 @@ class NotificationService {
     });
   }
 
-  Future<void> _handleInitialMessage() async {
+  Future<void> _handleLaunchFromNotification() async {
     final initialMessage = await _firebaseMessaging?.getInitialMessage();
-    if (initialMessage == null) return;
+    if (initialMessage != null) {
+      unawaited(
+        _openFromTap(NotificationPayload.fromRemoteMessage(initialMessage)),
+      );
+      return;
+    }
 
-    final payload = NotificationPayload.fromRemoteMessage(initialMessage);
-    _notificationController.add(payload);
-    BookingsAnalytics.logFromFcmData(payload.data);
-    Future<void>.delayed(const Duration(milliseconds: 900), () {
-      _navigateToRoute(payload.route, payload.data);
-    });
+    final launchDetails =
+        await _localNotifications.getNotificationAppLaunchDetails();
+    if (launchDetails?.didNotificationLaunchApp != true) return;
+    final payload = NotificationPayload.fromLocalPayload(
+      launchDetails!.notificationResponse?.payload,
+    );
+    if (payload != null) {
+      unawaited(_openFromTap(payload));
+    }
   }
 
   Future<void> _showLocalNotification(NotificationPayload payload) async {
@@ -309,31 +377,46 @@ class NotificationService {
       title: payload.title ?? 'Apna Clinic',
       body: payload.body ?? '',
       notificationDetails: notificationDetails,
-      payload: payload.route ?? '',
+      payload: payload.toLocalPayload(),
     );
   }
 
-  void _navigateToRoute(String? route, Map<String, dynamic> data) {
-    if (route == null || route.isEmpty) return;
-
-    var routePath = route.startsWith('/') ? route : AppRoutes.path(route);
-    if (data.isNotEmpty) {
-      routePath = Uri(
-        path: routePath,
-        queryParameters: data.map(
-          (key, value) => MapEntry(key, value.toString()),
-        ),
-      ).toString();
-    }
-
-    try {
-      AppRouter.router.go(routePath);
-    } catch (e) {
+  Future<void> _openFromTap(NotificationPayload payload) async {
+    _notificationController.add(payload);
+    BookingsAnalytics.logFromFcmData(payload.data);
+    await _waitUntilPastSplash();
+    final opened = openPushNotificationLink(
+      data: payload.data,
+      route: payload.route,
+    );
+    if (!opened) {
       developer.log(
-        'Notification navigation failed: $e',
+        'Notification tap had no screen to open '
+        'route=${payload.route} data=${payload.data}',
         name: 'NotificationService',
       );
     }
+  }
+
+  Future<void> _waitUntilPastSplash() async {
+    final deadline = DateTime.now().add(const Duration(seconds: 6));
+    while (DateTime.now().isBefore(deadline)) {
+      if (!_isSplashRoute(_currentRoutePath())) return;
+      await Future<void>.delayed(const Duration(milliseconds: 250));
+    }
+  }
+
+  String _currentRoutePath() {
+    try {
+      return AppRouter.router.state.uri.path;
+    } catch (_) {
+      return AppRouter.router.routerDelegate.currentConfiguration.uri.path;
+    }
+  }
+
+  bool _isSplashRoute(String path) {
+    final name = path.replaceFirst(RegExp(r'^/'), '');
+    return name.isEmpty || name == AppRoutes.splash;
   }
 
   Future<void> _subscribeDebugTopicIfNeeded() async {

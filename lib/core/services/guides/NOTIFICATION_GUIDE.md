@@ -128,17 +128,27 @@ NotificationService().notificationStream.listen((payload) {
 
 ### Navigate to Custom Route
 
-The service automatically navigates based on notification data. Notification payload should include:
+The service automatically navigates based on notification data. Prefer booking fields so details screens receive typed args:
 
 ```json
 {
   "notification": {
-    "title": "New Message",
-    "body": "You have a new message"
+    "title": "Booking confirmed",
+    "body": "Your consultation is confirmed"
   },
   "data": {
-    "route": "profile",
-    "userId": "123"
+    "serviceType": "CONSULTATION",
+    "unified_order_id": "12345"
+  }
+}
+```
+
+Or a hub / inbox path:
+
+```json
+{
+  "data": {
+    "route": "notifications"
   }
 }
 ```
@@ -247,19 +257,57 @@ if (initialMessage != null) {
 
 ### Notification Payload Format
 
+FCM `data` should include a `serviceType` and booking id so the app can open the matching details screen (same as the in-app inbox). All `data` values must be strings.
+
+**Booking details (preferred — nested `deepLink`):**
+
 ```json
 {
-  "notification": {
-    "title": "Notification Title",
-    "body": "Notification Body"
-  },
-  "data": {
-    "route": "profile",
-    "userId": "123",
-    "type": "message"
+  "type": "BOOKING_CONFIRMED",
+  "serviceType": "CONSULTATION",
+  "deepLink": {
+    "data": {
+      "unified_order_id": "84213"
+    }
   }
 }
 ```
+
+This opens consultation booking details for `84213`. Same pattern for `SURGERY` / `LAB` / `PHARMACY`.
+
+FCM `data` values must be strings, so `deepLink` may be sent as a JSON string:
+
+```json
+{
+  "type": "BOOKING_CONFIRMED",
+  "serviceType": "CONSULTATION",
+  "deepLink": "{\"data\":{\"unified_order_id\":\"84213\"}}"
+}
+```
+
+`serviceType` values: `CONSULTATION`, `SURGERY`, `LAB`, `PHARMACY`.
+
+Id is read from `deepLink.data.unified_order_id` (also accepts `booking_id` / `entity_id`). Pharmacy prefers `deepLink.entity.publicId`.
+
+**Hub / named screen fallback:**
+
+```json
+{
+  "data": {
+    "route": "notifications"
+  }
+}
+```
+
+`route` / `screen` / `deepLink` can be a route name (`home`, `notifications`, `consultation`, `pharmacyMain`, `labTest`, `surgery`) or a path (`/notifications`).
+
+### Tap behaviour
+
+| App state | What happens |
+|-----------|----------------|
+| Foreground | Banner is shown locally. Tap opens the screen from encoded `data`. |
+| Background | OS notification tap → `onMessageOpenedApp` → same routing. |
+| Terminated | Cold start → `getInitialMessage()` after splash → same routing. |
 
 ### Route Mapping
 

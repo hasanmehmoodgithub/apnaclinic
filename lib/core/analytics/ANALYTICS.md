@@ -1,5 +1,8 @@
 # Analytics
 
+Full UI + parameter report for product and engineering:
+[ANALYTICS_EVENTS.html](ANALYTICS_EVENTS.html) (open in a browser).
+
 Use `AnalyticsService.logEvent` for every event. Do not add feature-specific
 methods on the service. Firebase is the first backend; add more in DI later.
 

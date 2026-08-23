@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Apna Clinic — Analytics events (Firebase / GA4)</title>
+  <style>
+    :root {
+      --navy: #061e40;
+      --teal: #00897b;
+      --teal-dark: #00695c;
+      --bg: #f4f7f8;
+      --card: #fff;
+      --line: #e2e8ee;
+      --muted: #5b6b7c;
+      --warn: #b45309;
+      --warn-bg: #fff7ed;
+      --skip: #9f1239;
+      --skip-bg: #fff1f2;
+      --ok: #047857;
+      --ok-bg: #ecfdf5;
+      --code: #0f172a;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--navy);
+      line-height: 1.45;
+    }
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: var(--navy);
+      color: #fff;
+      padding: 18px 24px 16px;
+      box-shadow: 0 8px 24px rgba(6, 30, 64, 0.18);
+    }
+    header h1 { margin: 0 0 4px; font-size: 20px; font-weight: 700; }
+    header p { margin: 0; color: #c5d0dc; font-size: 13px; }
+    .bar {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+      margin-top: 14px;
+    }
+    input[type="search"] {
+      flex: 1;
+      min-width: 220px;
+      border: 0;
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-size: 14px;
+    }
+    .chip {
+      border: 0;
+      background: rgba(255,255,255,.12);
+      color: #fff;
+      border-radius: 999px;
+      padding: 7px 12px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+    .chip.active { background: var(--teal); }
+    main { max-width: 1180px; margin: 0 auto; padding: 20px 16px 64px; }
+    .note, .arch {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 16px 18px;
+      margin-bottom: 16px;
+    }
+    .arch h2, section h2 { margin: 0 0 10px; font-size: 17px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; }
+    .stat {
+      background: #f0f7f6;
+      border-radius: 12px;
+      padding: 12px;
+    }
+    .stat b { display: block; font-size: 22px; color: var(--teal-dark); }
+    .stat span { font-size: 12px; color: var(--muted); }
+    .event {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 14px 16px;
+      margin: 0 0 12px;
+    }
+    .event header-row, .event .top {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: flex-start;
+      flex-wrap: wrap;
+    }
+    .name {
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--teal-dark);
+    }
+    .mod {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+      background: #e6f4f2;
+      color: var(--teal-dark);
+      border-radius: 999px;
+      padding: 3px 8px;
+    }
+    .meta { font-size: 13px; color: var(--muted); margin: 8px 0; }
+    .meta strong { color: var(--navy); }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; margin: 8px 0; }
+    th, td { border: 1px solid var(--line); padding: 6px 8px; text-align: left; vertical-align: top; }
+    th { background: #f8fafb; }
+    code, .path {
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 12px;
+      background: #f1f5f9;
+      padding: 1px 5px;
+      border-radius: 4px;
+      color: var(--code);
+    }
+    .tag {
+      display: inline-block;
+      font-size: 11px;
+      border-radius: 6px;
+      padding: 2px 7px;
+      margin: 0 4px 4px 0;
+      font-weight: 600;
+    }
+    .tag.ok { background: var(--ok-bg); color: var(--ok); }
+    .tag.warn { background: var(--warn-bg); color: var(--warn); }
+    .tag.skip { background: var(--skip-bg); color: var(--skip); }
+    .tag.dest { background: #eef2ff; color: #3730a3; }
+    details { margin-top: 6px; font-size: 13px; }
+    .hidden { display: none; }
+    ul { margin: 6px 0 0 18px; padding: 0; }
+    footer { color: var(--muted); font-size: 12px; text-align: center; }
+  </style>
+</head>
+<body>
+<header>
+  <h1>Apna Clinic analytics events</h1>
+  <p>Firebase → GA4 Mobile Property only. Meta App Events and TikTok App Events are not sent. Generated from the Flutter app as of 22 Aug 2026.</p>
+  <div class="bar">
+    <input id="q" type="search" placeholder="Search event, screen, param, file…" />
+    <button class="chip active" data-mod="all">All</button>
+    <button class="chip" data-mod="Onboarding">Onboarding</button>
+    <button class="chip" data-mod="Home">Home</button>
+    <button class="chip" data-mod="Search">Search</button>
+    <button class="chip" data-mod="Auth">Auth / profile</button>
+    <button class="chip" data-mod="Instant Doctor">Instant Doctor</button>
+    <button class="chip" data-mod="Pharmacy">Pharmacy</button>
+    <button class="chip" data-mod="Consultation">Consultation</button>
+    <button class="chip" data-mod="Lab">Lab</button>
+    <button class="chip" data-mod="Surgery">Surgery</button>
+    <button class="chip" data-mod="My Bookings">My Bookings</button>
+    <button class="chip" data-mod="Support">Support</button>
+  </div>
+</header>
+<main>
+  <div class="arch">
+    <h2>How this works (dev)</h2>
+    <ul>
+      <li>Every event goes through <code>AnalyticsService.logEvent</code> → <code>FirebaseAnalyticsProvider</code> → Firebase Analytics / GA4.</li>
+      <li>Names live in <code>lib/core/analytics/analytics_event_keys.dart</code>. Feature helpers: <code>ConsultationAnalytics</code>, <code>LabTestAnalytics</code>, <code>SurgeryAnalytics</code>, <code>BookingsAnalytics</code>, plus cubit methods for pharmacy / Instant Doctor / auth.</li>
+      <li>Debug: each call also writes <code>developer.log</code> named <code>AnalyticsService</code> (Xcode / Logcat / Flutter console).</li>
+      <li>Events before Firebase init are dropped. AppsFlyer SDK is registered but <strong>not</strong> in the analytics fan-out.</li>
+      <li>Meta / TikTok keys (<code>fb_content_type</code>, <code>content_type</code>) are not sent. Some events send <code>af_content_type</code> on Firebase only.</li>
+      <li>MSISDN is digits-only, <code>92</code> / leading <code>0</code> stripped (e.g. <code>3012345678</code>).</li>
+    </ul>
+    <div class="grid" style="margin-top:14px">
+      <div class="stat"><b id="count">—</b><span>Firebase events in this report</span></div>
+      <div class="stat"><b>GA4</b><span>Only live destination</span></div>
+      <div class="stat"><b>No</b><span>Meta / TikTok SDKs</span></div>
+      <div class="stat"><b>PII</b><span>Only where spec requires name / MSISDN</span></div>
+    </div>
+  </div>
+
+  <div class="note">
+    <h2>PII parameters</h2>
+    <p class="meta">Sent only on these events (from local profile / checkout MSISDN): <code>user_name</code>, <code>msisdn</code>.</p>
+    <ul>
+      <li><code>fb_mobile_subscribe</code>, <code>start_consultation_clicked</code> — MSISDN</li>
+      <li><code>pharmacy_order_confirmed</code>, <code>doctor_consultation_booked</code>, <code>lab_booking_confirmed</code>, <code>surgery_booked</code>, <code>prescription_downloaded</code> — name + MSISDN</li>
+    </ul>
+  </div>
+
+  <section id="events"></section>
+
+  <section class="note">
+    <h2>Not implemented / not sent</h2>
+    <table>
+      <thead><tr><th>Item</th><th>Why</th></tr></thead>
+      <tbody>
+        <tr><td>Meta App Events SDK</td><td>No Meta event names are logged. Column in the tracking sheet is unused.</td></tr>
+        <tr><td>TikTok App Events SDK</td><td>No TikTok event names are logged.</td></tr>
+        <tr><td><code>source=ad</code> on pharmacy / consultancy / lab / surgery module</td><td>No ad-click entry in the app.</td></tr>
+        <tr><td><code>booking_viewed</code> type <code>instant_doctor</code></td><td>Instant Doctor bookings screen is empty; no details route.</td></tr>
+        <tr><td>Prescription download for Instant Doctor</td><td>No prescription UI. Instant Doctor <code>prescription_available</code> only if push/inbox <code>type</code> contains <code>PRESCRIPTION</code>.</td></tr>
+        <tr><td><code>pharmacy_status_changed</code> on details open or <code>BOOKING_CONFIRMED</code></td><td>Only FCM/inbox when type contains STATUS / DELIVER / DISPATCH. Inbox payload has no <code>status</code> / <code>changed_by</code> today.</td></tr>
+        <tr><td>Lab <code>transaction_id</code>, street <code>address</code>, partner display on confirm</td><td>Not available on checkout models.</td></tr>
+        <tr><td>Pharmacy confirm <code>promo</code> code, JazzCash auth code, <code>transaction_id</code></td><td>Not on checkout result.</td></tr>
+        <tr><td>Lab <code>lab_booking_confirmed</code> when card payment is pending with no URL</td><td>Confirm path does not fire.</td></tr>
+        <tr><td>Notifications push tap → module hub events</td><td>Push opens booking details, not pharmacy/lab/etc. hubs. No <code>source=notification</code> on module events.</td></tr>
+        <tr><td>Onboarding surgery / extra doctor pages</td><td>Those slides are commented out. Live steps are 1–4 only.</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <footer>Open this file in a browser. Source of truth for names: <code>analytics_event_keys.dart</code>. Narrative index: <code>ANALYTICS.md</code>.</footer>
+</main>
+<script>
+const events = [
+  /* Onboarding */
+  {
+    mod: "Onboarding", name: "onboarding_step_1 … onboarding_step_4",
+    trigger: "User sees each onboarding slide.",
+    ui: "Onboarding carousel (first launch).",
+    control: "Screen open → step 1. Swipe / Next → later steps.",
+    params: [["step_number", "1 / 2 / 3 / 4"]],
+    code: "lib/features/onboarding/presentation/screens/onboarding_screen.dart → _logStep",
+    notes: "Current slides: Instant Doctor, Book Consultation, Pharmacy, Laboratory. Surgery slide is commented out so step_5 is not sent."
+  },
+  {
+    mod: "Onboarding", name: "onboarding_skipped",
+    trigger: "User taps Skip.",
+    ui: "Onboarding header Skip.",
+    control: "Skip",
+    params: [["step_number", "Step that was visible when skipped (1–4)"]],
+    code: "onboarding_screen.dart → _onSkip"
+  },
+
+  /* Home */
+  {
+    mod: "Home", name: "home_screen",
+    trigger: "Home tab screen is created.",
+    ui: "Bottom nav Home / after login remount.",
+    control: "HomeScreen initState (not every return-to-home if widget is kept alive).",
+    params: [],
+    code: "lib/features/dashboard/presentation/screens/home_screen.dart"
+  },
+  {
+    mod: "Home", name: "search_clicked",
+    trigger: "User starts global search from Home.",
+    ui: "Home header white search pill, or mic.",
+    control: "Search field tap or voice mic.",
+    params: [["source_screen", "home screen"]],
+    code: "home_screen.dart → _logSearchClicked / _openVoiceSearch"
+  },
+  {
+    mod: "Home", name: "pharmacy_tile_clicked",
+    trigger: "User taps Pharmacy on Our Services.",
+    ui: "Home 2×2 services grid.",
+    control: "Pharmacy tile",
+    params: [],
+    code: "home_screen.dart → _onServiceTap"
+  },
+  {
+    mod: "Home", name: "consultation_tile_clicked",
+    trigger: "User taps Doctor Consultation on Our Services.",
+    ui: "Home services grid.",
+    control: "Consultation tile",
+    params: [],
+    code: "home_screen.dart → _onServiceTap"
+  },
+  {
+    mod: "Home", name: "lab_tile_clicked",
+    trigger: "User taps Lab Tests on Our Services.",
+    ui: "Home services grid.",
+    control: "Lab tile",
+    params: [],
+    code: "home_screen.dart → _onServiceTap"
+  },
+  {
+    mod: "Home", name: "surgery_tile_clicked",
+    trigger: "User taps Surgery on Our Services.",
+    ui: "Home services grid.",
+    control: "Surgery tile",
+    params: [],
+    code: "home_screen.dart → _onServiceTap"
+  },
+  {
+    mod: "Home", name: "notifications_screen_open",
+    trigger: "User opens the inbox from Home.",
+    ui: "Home header bell.",
+    control: "Notification icon (login required).",
+    params: [],
+    code: "home_screen.dart HomeHeaderSection.onNotificationTap"
+  },
+  {
+    mod: "Home", name: "notifications_clicked",
+    trigger: "User taps a notification row.",
+    ui: "Notifications inbox list.",
+    control: "Notification tile",
+    params: [["notification_id", "Inbox publicId, e.g. b1509cf9-…"]],
+    code: "lib/features/notification/presentation/widgets/notification_list_widget.dart",
+    notes: "Fires before mark-read / deep link. May also fire prescription_available or pharmacy_status_changed from the same tap."
+  },
+  {
+    mod: "Home", name: "banner_clicked",
+    trigger: "User taps a promotional banner.",
+    ui: "Home promo dialog (queued banners).",
+    control: "Banner image / CTA",
+    params: [["content_url", "Banner URL, truncated to 100 chars if longer"]],
+    code: "lib/features/dashboard/presentation/widgets/promotional_banner_dialog.dart → _onBannerTap",
+    notes: "Param omitted if URL is empty. Then routes to tab or screen."
+  },
+  {
+    mod: "My Bookings", name: "my_bookings_clicked",
+    trigger: "User chooses My Bookings from nav or menu.",
+    ui: "Bottom nav Bookings tab, or drawer Menu → My Bookings.",
+    control: "Bookings tab / My Bookings tile",
+    params: [],
+    code: "main_navigation_shell.dart _onNavTap; menu_screen.dart _openMyBookings",
+    notes: "Fires even if already on Bookings, and for guests (before login). Distinct from my_bookings_tab."
+  },
+  {
+    mod: "Support", name: "support_clicked",
+    trigger: "User opens Customer Support.",
+    ui: "Bottom nav Support tab, or Menu → Customer Support.",
+    control: "Support tab / Customer Support tile",
+    params: [],
+    code: "main_navigation_shell.dart; menu_screen.dart"
+  },
+
+  /* Search */
+  {
+    mod: "Search", name: "search_screen",
+    trigger: "Global search screen opens.",
+    ui: "Search route from Home pill / mic.",
+    control: "SearchScreen initState",
+    params: [],
+    code: "lib/features/search/presentation/screens/search_screen.dart"
+  },
+  {
+    mod: "Search", name: "search_performed",
+    trigger: "User submits a global search.",
+    ui: "Search screen.",
+    control: "Keyboard search / search icon / voice result / recent chip / popular chip.",
+    params: [["keyword", "panadol"], ["medium", "Type | Voice | Recent | Popular"]],
+    code: "search_cubit.dart submitSearch; search_screen.dart chips"
+  },
+  {
+    mod: "Search", name: "search_result_clicked",
+    trigger: "User taps a result row.",
+    ui: "Search results list.",
+    control: "Medicine / doctor / lab / surgery doctor row",
+    params: [["type", "medicine_name | doctor | lab | surgery_doctor"]],
+    code: "lib/features/search/presentation/search_navigation.dart",
+    notes: "Also fans out module events for that vertical (pharmacy_module source=search, consultancy_module, lab_item_select, surgery_module + select + doctor_select)."
+  },
+
+  /* Auth */
+  {
+    mod: "Auth", name: "authentication_screen_viewed",
+    trigger: "Login screen opens.",
+    ui: "Phone login.",
+    control: "Screen open",
+    params: [["source", "login | pharmacy | instant_doctor | consultancy | lab | surgery"]],
+    code: "login_screen.dart → AuthCubit.logAuthScreenViewed",
+    notes: "source is the gate that required login (home Login uses login; pharmacy add-to-cart uses pharmacy, etc.)."
+  },
+  {
+    mod: "Auth", name: "otp_sent",
+    trigger: "OTP request API succeeds.",
+    ui: "Login — Get OTP / Continue.",
+    control: "Submit phone",
+    params: [],
+    code: "lib/features/auth/presentation/cubit/auth_cubit.dart"
+  },
+  {
+    mod: "Auth", name: "otp_verified",
+    trigger: "OTP verify API succeeds.",
+    ui: "Login OTP pins.",
+    control: "Verify",
+    params: [],
+    code: "auth_cubit.dart"
+  },
+  {
+    mod: "Auth", name: "profile_creation_screen",
+    trigger: "Profile setup screen opens from login or Profile/menu.",
+    ui: "Create / edit profile form.",
+    control: "Screen open",
+    params: [["source", "authentication_screen | profile"]],
+    code: "profile_setup_screen.dart → logCreationScreen",
+    notes: "Not logged for unknown/onboarding/splash launch sources."
+  },
+  {
+    mod: "Auth", name: "profile_created",
+    trigger: "First-time profile save succeeds.",
+    ui: "Profile setup Save.",
+    control: "Save / Continue",
+    params: [],
+    code: "profile_setup_screen.dart after saveProfile",
+    notes: "Not sent when editing an already completed profile."
+  },
+
+  /* Instant Doctor */
+  {
+    mod: "Instant Doctor", name: "instant_doctor_clicked",
+    trigger: "User lands on Instant Doctor tab.",
+    ui: "Instant Doctor bottom tab, home Instant Doctor banner, or promo banner targeting that tab.",
+    control: "Tab / banner / popup",
+    params: [["source", "banner | popup | navigation_tab"]],
+    code: "InstantDoctorCubit.logModuleViewed",
+    notes: "Always sent together with instant_doctor_module. bottom_tab is mapped to navigation_tab here."
+  },
+  {
+    mod: "Instant Doctor", name: "instant_doctor_module",
+    trigger: "Same as instant_doctor_clicked (legacy name).",
+    ui: "Same entries.",
+    control: "Same",
+    params: [["source_screen", "banner | bottom_tab"]],
+    code: "InstantDoctorCubit.logModuleViewed",
+    notes: "popup is stored as banner on this legacy event. Keep both until GA4 dashboards migrate."
+  },
+  {
+    mod: "Instant Doctor", name: "instant_doc_subscribe_clicked",
+    trigger: "Unsubscribed user taps Subscribe on a partner card.",
+    ui: "Instant Doctor provider list card.",
+    control: "Subscribe CTA",
+    params: [["partner", "Partner display name, e.g. Sehat Kahani"]],
+    code: "InstantDoctorCubit.onProviderPrimaryTap"
+  },
+  {
+    mod: "Instant Doctor", name: "fb_mobile_subscribe",
+    trigger: "Subscribe OTP verifies successfully.",
+    ui: "OTP bottom sheet after Subscribe.",
+    control: "Verify OTP (subscribe action only, not unsubscribe)",
+    params: [["partner", "Sehat Kahani"], ["msisdn", "3012345678"]],
+    pii: true,
+    code: "InstantDoctorCubit.verifyOtp success"
+  },
+  {
+    mod: "Instant Doctor", name: "start_consultation_clicked",
+    trigger: "Consultation WebView is about to open.",
+    ui: "Subscribed partner card primary action (open consultation).",
+    control: "Start consultation / open partner",
+    params: [["partner", "Sehat Kahani"], ["msisdn", "3012345678"]],
+    pii: true,
+    code: "instant_doctor_screen.dart _openConsultation → logStartConsultation"
+  },
+
+  /* Pharmacy */
+  {
+    mod: "Pharmacy", name: "pharmacy_module",
+    trigger: "Pharmacy hub (or product detail from global search) opens.",
+    ui: "Pharmacy main / hub, or product screen from search.",
+    control: "Screen open",
+    params: [["source", "home | search | banner"]],
+    code: "PharmacyCubit.logPharmacyModule; pharmacy_main_screen.dart; pharmacy_screen.dart",
+    notes: "Home tile and promo banner pass source extra. Global search uses source=search. Not logged: ad, notification."
+  },
+  {
+    mod: "Pharmacy", name: "pharmacy_search_clicked",
+    trigger: "User taps the pharmacy search field or search icon.",
+    ui: "Pharmacy hub search.",
+    control: "Search field / icon",
+    params: [],
+    code: "pharmacy_main_medicines_body_widget.dart → logSearchClicked"
+  },
+  {
+    mod: "Pharmacy", name: "pharmacy_search_performed",
+    trigger: "Non-empty pharmacy search returns (including 0 hits).",
+    ui: "Pharmacy hub search submit.",
+    control: "Keyboard search / submit",
+    params: [["keyword", "panadol"], ["result_items", "12"]],
+    code: "PharmacyCubit._logSearchPerformed"
+  },
+  {
+    mod: "Pharmacy", name: "medicine_item_clicked",
+    trigger: "User taps a medicine card.",
+    ui: "Pharmacy hub grid, related medicines, or listing panel.",
+    control: "Medicine card",
+    params: [["product_id", "SKU / id"], ["product_name", "Panadol"], ["prescription_required", "Yes | No"]],
+    code: "PharmacyCubit.logMedicineItemClicked"
+  },
+  {
+    mod: "Pharmacy", name: "pharmacy_item_description",
+    trigger: "Product detail API succeeds.",
+    ui: "Pharmacy product detail.",
+    control: "Screen load (API success), not the tap itself",
+    params: [["product_id", "…"], ["product_name", "…"], ["prescription_required", "Yes | No"]],
+    code: "PharmacyCubit._logItemDescription"
+  },
+  {
+    mod: "Pharmacy", name: "pharmacy_add_to_cart",
+    trigger: "Add-to-cart API succeeds.",
+    ui: "Product detail / add-to-cart sheet.",
+    control: "Add to cart",
+    params: [["af_content_type", "Pharmacy"], ["product_id", "…"], ["product_name", "…"], ["prescription_required", "Yes | No"]],
+    code: "PharmacyCubit._logAddToCart",
+    notes: "Firebase only. No fb_content_type / content_type."
+  },
+  {
+    mod: "Pharmacy", name: "pharmacy_cart_Viewed",
+    trigger: "Cart screen opens.",
+    ui: "Pharmacy cart.",
+    control: "Screen open",
+    params: [["af_content_type", "Pharmacy Cart"]],
+    code: "pharmacy_cart_screen.dart → logCartViewed",
+    notes: "Capital V in the event name is intentional (tracking spec)."
+  },
+  {
+    mod: "Pharmacy", name: "pharmacy_checkout",
+    trigger: "Checkout screen opens.",
+    ui: "Pharmacy checkout.",
+    control: "Screen open",
+    params: [["af_content_type", "Pharmacy"], ["number_of_products", "Cart line count"]],
+    code: "pharmacy_checkout_screen.dart → logCheckout"
+  },
+  {
+    mod: "Pharmacy", name: "pharmacy_confirm_payment",
+    trigger: "User confirms checkout (after JazzCash MSISDN if needed).",
+    ui: "Checkout confirm / pay CTA.",
+    control: "Place order / Confirm payment",
+    params: [["payment_method", "COD | JC | Card"]],
+    code: "pharmacy_checkout_body_widget.dart → logConfirmPayment"
+  },
+  {
+    mod: "Pharmacy", name: "pharmacy_order_confirmed",
+    trigger: "Order is placed; if card WebView is required, after that WebView succeeds.",
+    ui: "Checkout success path.",
+    control: "After place-order API (+ card WebView if needed)",
+    params: [
+      ["af_content_type", "Pharmacy"],
+      ["order_id", "1234567"],
+      ["user_name", "Ubaid"],
+      ["msisdn", "3012345678"],
+      ["cart_items", "Line count"],
+      ["sub_total", "Number"],
+      ["order_value", "Number"],
+      ["promo_applied", "Yes if cart discount > 0, else No"],
+      ["timestamp", "M/D/YYYY H:mm"],
+      ["delivery_charges", "Number"],
+      ["payment_method", "COD | JC | Card"],
+      ["payment_status", "Successful | Failed"]
+    ],
+    pii: true,
+    code: "PharmacyCubit.logOrderConfirmed",
+    notes: "Omits promo code, JazzCash auth code, transaction_id."
+  },
+
+  /* Consultation */
+  {
+    mod: "Consultation", name: "ai_chat_started",
+    trigger: "AI screening WebView opens.",
+    ui: "Apna Doctor AI screening.",
+    control: "Screen open",
+    params: [],
+    code: "lib/features/consultation/presentation/screens/ai_consultation_screen.dart"
+  },
+  {
+    mod: "Consultation", name: "ai_chat_ended",
+    trigger: "User confirms Exit on the AI screening dialog.",
+    ui: "AI screening back → Exit dialog.",
+    control: "Confirm Exit (not dismiss / stay)",
+    params: [["call_duration", "e.g. 42s"]],
+    code: "ai_consultation_screen.dart → _logChatEnded"
+  },
+  {
+    mod: "Consultation", name: "consultancy_module",
+    trigger: "Category hub opens, or book-doctor from global search.",
+    ui: "Doctor consultation hub, or book-doctor when extra source is set.",
+    control: "Screen open",
+    params: [["source", "home | search | banner"]],
+    code: "ConsultationAnalytics.logModule",
+    notes: "Default source home if extra missing."
+  },
+  {
+    mod: "Consultation", name: "consultancy_search_clicked",
+    trigger: "User taps the category-hub search field.",
+    ui: "Consultation hub search.",
+    control: "Search field",
+    params: [],
+    code: "doctor_consultation_screen.dart onTap: logSearchClicked"
+  },
+  {
+    mod: "Consultation", name: "doctor_category_clicked",
+    trigger: "User taps a specialty tile, or changes category on listing.",
+    ui: "Hub category grid / listing category chips.",
+    control: "Category tile / chip",
+    params: [["category_name", "Cardiology"]],
+    code: "ConsultationAnalytics.logCategoryClicked"
+  },
+  {
+    mod: "Consultation", name: "doctor_listing_screen",
+    trigger: "Doctor listing opens or category on listing changes.",
+    ui: "Doctor results listing.",
+    control: "Screen open / category change",
+    params: [["category_name", "Cardiology"]],
+    code: "doctor_consultation_results_screen.dart"
+  },
+  {
+    mod: "Consultation", name: "doctor_search_clicked",
+    trigger: "User taps doctor search field or search icon.",
+    ui: "Doctor listing header search.",
+    control: "Search field / icon",
+    params: [],
+    code: "ConsultationAnalytics.logDoctorSearchClicked"
+  },
+  {
+    mod: "Consultation", name: "doctor_search_performed",
+    trigger: "Non-empty doctor search is submitted.",
+    ui: "Doctor listing search.",
+    control: "Submit query",
+    params: [["keyword", "ahmed"]],
+    code: "ConsultationAnalytics.logDoctorSearchPerformed"
+  },
+  {
+    mod: "Consultation", name: "doctor_filter_applied",
+    trigger: "User selects a partner filter.",
+    ui: "Doctor listing filter sheet.",
+    control: "Partner filter",
+    params: [["partner", "Partner name"]],
+    code: "ConsultationAnalytics.logFilterApplied"
+  },
+  {
+    mod: "Consultation", name: "doctor_profile_clicked",
+    trigger: "User taps a doctor card, Book Now, or a global-search doctor.",
+    ui: "Listing card / Book Now / search result.",
+    control: "Card or Book Now",
+    params: [["doctor_id", "API doctor id"], ["doctor_name", "Dr. Ali"], ["category", "Specialty"]],
+    code: "ConsultationAnalytics.logProfileClicked"
+  },
+  {
+    mod: "Consultation", name: "doctor_profile_screen",
+    trigger: "Book-doctor screen opens.",
+    ui: "Book doctor (slots, documents).",
+    control: "Screen open",
+    params: [["doctor_id", "…"], ["doctor_name", "…"], ["category", "…"]],
+    code: "doctor_consultation_book_doctor_screen.dart"
+  },
+  {
+    mod: "Consultation", name: "doctor_document_uploaded",
+    trigger: "Attachment(s) are accepted on book-doctor.",
+    ui: "Book doctor attachments.",
+    control: "File picked / accepted",
+    params: [],
+    code: "ConsultationAnalytics.logDocumentUploaded"
+  },
+  {
+    mod: "Consultation", name: "doctor_consultation_confirm",
+    trigger: "Get Appointment continues to checkout.",
+    ui: "Book doctor footer.",
+    control: "Get Appointment",
+    params: [["doctor_id", "…"], ["doctor_name", "…"], ["category", "…"], ["timeslot", "Formatted slot"]],
+    code: "ConsultationAnalytics.logConsultationConfirm"
+  },
+  {
+    mod: "Consultation", name: "doctor_consultation_booked",
+    trigger: "Summary confirm succeeds or fails (including card WebView outcome).",
+    ui: "Consultation summary / payment.",
+    control: "Confirm booking / pay",
+    params: [
+      ["af_content_type", "Consultancy"],
+      ["booking_id", "If initiation returns orderId"],
+      ["user_name", "From profile"],
+      ["msisdn", "Checkout MSISDN"],
+      ["doctor_id / doctor_name / category", "Doctor"],
+      ["consultation_timeslot", "Slot"],
+      ["booking_timestamp", "Formatted now"],
+      ["payment_method", "JC | Card"],
+      ["payment_status", "successful | failed"],
+      ["promo_applied", "Yes if discount > 0"]
+    ],
+    pii: true,
+    code: "doctor_consultation_summary_screen.dart → logConsultationBooked"
+  },
+
+  /* Lab */
+  {
+    mod: "Lab", name: "lab_module",
+    trigger: "Lab hub opens.",
+    ui: "Lab test catalog.",
+    control: "Screen open (AppRoutes.labTest)",
+    params: [],
+    code: "lab_test_screen.dart → LabTestAnalytics.logModule",
+    notes: "No source param. Global search does not fire lab_module."
+  },
+  {
+    mod: "Lab", name: "lab_city_change",
+    trigger: "User picks a city and continues in the city dialog.",
+    ui: "Lab city picker.",
+    control: "Select city → Continue",
+    params: [["selected_city", "Lahore"]],
+    code: "LabTestCubit after user pick",
+    notes: "Restoring a saved city on bootstrap does not fire this."
+  },
+  {
+    mod: "Lab", name: "lab_search_clicked",
+    trigger: "User taps lab search field or search icon.",
+    ui: "Lab hub search.",
+    control: "Search field / icon",
+    params: [],
+    code: "lab_test_screen.dart onSearchTapped"
+  },
+  {
+    mod: "Lab", name: "lab_search_performed",
+    trigger: "Non-empty lab catalog search returns.",
+    ui: "Lab hub search submit.",
+    control: "Submit query",
+    params: [["keyword", "cbc"], ["result_items", "Count"]],
+    code: "LabTestCubit → logSearchPerformed",
+    notes: "Empty query is not logged."
+  },
+  {
+    mod: "Lab", name: "lab_item_select",
+    trigger: "User taps a catalog card, or a global-search lab result.",
+    ui: "Lab catalog / search results.",
+    control: "Test card / search row",
+    params: [["test_name", "CBC"], ["lab_name", "Chughtai"], ["sample_type", "Blood"]],
+    code: "LabTestAnalytics.logItemSelect / logItemSelectFromCatalog"
+  },
+  {
+    mod: "Lab", name: "lab_add_to_cart",
+    trigger: "Add to cart succeeds on booking screen.",
+    ui: "Lab test booking (package / method).",
+    control: "Add to cart",
+    params: [
+      ["af_content_type", "Lab"],
+      ["test_name", "CBC"],
+      ["lab_name", "…"],
+      ["partner_name", "…"],
+      ["sample_type", "…"],
+      ["sampling_mode", "Home Sample | Walk In"]
+    ],
+    code: "lab_test_booking_cubit.dart"
+  },
+  {
+    mod: "Lab", name: "lab_cart_viewed",
+    trigger: "Lab cart screen opens.",
+    ui: "Lab cart.",
+    control: "Screen open",
+    params: [["af_content_type", "Lab Cart"]],
+    code: "lab_test_cart_screen.dart"
+  },
+  {
+    mod: "Lab", name: "lab_checkout",
+    trigger: "Lab checkout screen opens.",
+    ui: "Lab checkout.",
+    control: "Screen open",
+    params: [["af_content_type", "Lab Checkout"]],
+    code: "lab_test_checkout_screen.dart"
+  },
+  {
+    mod: "Lab", name: "lab_patient_details_edit",
+    trigger: "User taps Edit on patient details.",
+    ui: "Lab checkout patient card.",
+    control: "Edit",
+    params: [],
+    code: "lab_test_checkout_screen.dart"
+  },
+  {
+    mod: "Lab", name: "lab_booking_confirmed",
+    trigger: "Book API succeeds or fails; card WebView counted when required.",
+    ui: "Lab checkout confirm / pay.",
+    control: "Place booking",
+    params: [
+      ["af_content_type", "Lab"],
+      ["booking_id", "If initiation has orderId"],
+      ["user_name", "Profile"],
+      ["msisdn", "Checkout MSISDN"],
+      ["number_of_tests", "Count"],
+      ["lab_name", "Display name"],
+      ["timestamp", "Formatted now"],
+      ["payment_method", "JazzCash | Card | COD"],
+      ["payment_status", "Successful | Failed"],
+      ["promo_applied", "Yes/No"],
+      ["promo", "discountCode only if non-empty"]
+    ],
+    pii: true,
+    code: "LabTestAnalytics.logBookingConfirmed",
+    notes: "Pending card payment without URL does not fire. No transaction_id / street address."
+  },
+
+  /* Surgery */
+  {
+    mod: "Surgery", name: "surgery_module",
+    trigger: "Surgery hub opens, or patient details from global search.",
+    ui: "Surgery catalog / patient details from search.",
+    control: "Screen open",
+    params: [["source_screen", "Home | Search | Banner"]],
+    code: "SurgeryAnalytics.logModule; surgery_screen.dart; search_navigation.dart",
+    notes: "Capitalized values (unlike pharmacy/consultancy source)."
+  },
+  {
+    mod: "Surgery", name: "surgery_city_change",
+    trigger: "User taps the city dropdown (before picking).",
+    ui: "Surgery hub city control.",
+    control: "City dropdown tap",
+    params: [["selected_city", "Currently selected city at tap time"]],
+    code: "surgery_open_city_picker.dart",
+    notes: "Logs current city when opening the picker, not the newly chosen city."
+  },
+  {
+    mod: "Surgery", name: "surgery_search_clicked",
+    trigger: "User taps procedure search or doctor search field.",
+    ui: "Surgery hub search / doctor listing search.",
+    control: "Search field",
+    params: [],
+    code: "surgery_content_view_widget.dart; surgery_booking_screen.dart"
+  },
+  {
+    mod: "Surgery", name: "surgery_select_item",
+    trigger: "User taps a procedure tile or a global-search surgery result.",
+    ui: "Surgery hub grid / search.",
+    control: "Procedure tile / search row",
+    params: [["surgery_name", "Knee replacement"]],
+    code: "SurgeryAnalytics.logSelectItem"
+  },
+  {
+    mod: "Surgery", name: "surgery_doctor_select",
+    trigger: "User taps a doctor card / Book Now, or a search surgery doctor.",
+    ui: "Surgery doctor listing / search.",
+    control: "Doctor card / Book Now",
+    params: [["doctor_id", "…"], ["doctor_name", "…"], ["surgery_name", "…"]],
+    code: "SurgeryAnalytics.logDoctorSelect"
+  },
+  {
+    mod: "Surgery", name: "surgery_checkout",
+    trigger: "Patient details (lead) screen opens.",
+    ui: "Surgery patient details.",
+    control: "Screen open",
+    params: [["af_content_type", "Surgery"]],
+    code: "surgery_patient_details_screen.dart"
+  },
+  {
+    mod: "Surgery", name: "surgery_booked",
+    trigger: "Lead submit succeeds.",
+    ui: "Patient details submit.",
+    control: "Submit / Book",
+    params: [
+      ["af_content_type", "Surgery"],
+      ["booking_id", "Lead / booking id"],
+      ["user_name", "Profile"],
+      ["msisdn", "…"],
+      ["surgery_name", "…"],
+      ["doctor_name", "…"],
+      ["amount", "Integer from price digits"],
+      ["timestamp", "Formatted now"]
+    ],
+    pii: true,
+    code: "SurgeryAnalytics.logBooked"
+  },
+
+  /* My Bookings */
+  {
+    mod: "My Bookings", name: "my_bookings_tab",
+    trigger: "Bookings bottom tab is actually shown.",
+    ui: "Bottom Bookings tab (also menu My Bookings, post-checkout, login resume).",
+    control: "Tab becomes visible",
+    params: [],
+    code: "main_navigation_shell.dart → BookingsAnalytics.logMyBookingsTab",
+    notes: "Does not re-fire if already on Bookings. Guest tap only fires my_bookings_clicked until after login resume."
+  },
+  {
+    mod: "My Bookings", name: "booking_viewed",
+    trigger: "A booking details API load succeeds.",
+    ui: "Consultation / pharmacy / lab / surgery details screens.",
+    control: "View Details / open booking (after load)",
+    params: [["type", "consultancy | pharmacy | lab | surgery"]],
+    code: "consultation details cubit; pharmacy_booking_details_screen; lab_test_view_details_screen; surgery_booking_details_screen",
+    notes: "instant_doctor type is not sent (no details screen)."
+  },
+  {
+    mod: "My Bookings", name: "prescription_available",
+    trigger: "Consultation details include doctor prescriptions, or a push/inbox type contains PRESCRIPTION.",
+    ui: "Consultation booking details (Doctors feedback / prescriptions), or FCM / inbox.",
+    control: "Details load with prescriptions, or notification",
+    params: [["booking_id", "12345678"], ["service", "consultancy | instant_doctor"]],
+    code: "DoctorConsultationBookingDetailsCubit.load; BookingsAnalytics.logFromPush",
+    notes: "Not a live “just uploaded” webhook. Fires whenever details already have files. Instant Doctor only via push/inbox."
+  },
+  {
+    mod: "My Bookings", name: "prescription_downloaded",
+    trigger: "User taps a consultation prescription file.",
+    ui: "Consultation details prescriptions list.",
+    control: "Prescription row (opens external app)",
+    params: [["booking_id", "1234567"], ["service", "consultancy"], ["user_name", "Ubaid"], ["msisdn", "3012345678"]],
+    pii: true,
+    code: "doctor_consultation_booking_details_prescriptions_widget.dart"
+  },
+  {
+    mod: "My Bookings", name: "pharmacy_status_changed",
+    trigger: "Pharmacy status push or inbox item whose type contains STATUS, DELIVER, or DISPATCH.",
+    ui: "Not on details open. FCM foreground / tap / killed-state open, or inbox tap.",
+    control: "Push / inbox",
+    params: [["booking_id", "Pharmacy publicId preferred"], ["status", "e.g. In Delivery — only if payload has status"], ["changed_by", "e.g. MedIQ — only if payload has changed_by / changedBy / partner"]],
+    code: "notification_service.dart; notification_list_widget.dart → BookingsAnalytics",
+    notes: "BOOKING_CONFIRMED mocks will not fire this. Inbox currently has no status/changed_by fields."
+  }
+];
+
+const dest = '<span class="tag dest">Firebase → GA4</span><span class="tag skip">Meta not sent</span><span class="tag skip">TikTok not sent</span>';
+
+function render() {
+  const q = document.getElementById("q").value.trim().toLowerCase();
+  const mod = document.querySelector(".chip.active").dataset.mod;
+  const root = document.getElementById("events");
+  root.innerHTML = "";
+  let n = 0;
+  for (const e of events) {
+    const blob = [e.mod, e.name, e.trigger, e.ui, e.control, e.code, e.notes, ...(e.params||[]).flat()].join(" ").toLowerCase();
+    if (mod !== "all" && e.mod !== mod) continue;
+    if (q && !blob.includes(q)) continue;
+    n++;
+    const params = (e.params && e.params.length)
+      ? `<table><thead><tr><th>Parameter</th><th>Sample / values</th></tr></thead><tbody>${
+          e.params.map(([k,v]) => `<tr><td><code>${k}</code></td><td>${v}</td></tr>`).join("")
+        }</tbody></table>`
+      : `<p class="meta">No parameters.</p>`;
+    root.insertAdjacentHTML("beforeend", `
+      <article class="event">
+        <div class="top">
+          <div>
+            <div class="name">${e.name}</div>
+            <div class="meta"><span class="mod">${e.mod}</span></div>
+          </div>
+          <div>${dest}${e.pii ? '<span class="tag warn">PII</span>' : ""}</div>
+        </div>
+        <p class="meta"><strong>Trigger:</strong> ${e.trigger}</p>
+        <p class="meta"><strong>UI screen:</strong> ${e.ui}</p>
+        <p class="meta"><strong>Control:</strong> ${e.control}</p>
+        ${params}
+        <p class="meta"><strong>Code:</strong> <span class="path">${e.code}</span></p>
+        ${e.notes ? `<p class="meta"><strong>Notes:</strong> ${e.notes}</p>` : ""}
+      </article>`);
+  }
+  document.getElementById("count").textContent = events.length;
+  if (!n) root.innerHTML = "<p class='meta'>No events match.</p>";
+}
+
+document.getElementById("q").addEventListener("input", render);
+document.querySelectorAll(".chip").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".chip").forEach((b) => b.classList.remove("active"));
+    btn.classList.add("active");
+    render();
+  });
+});
+render();
+</script>
+</body>
+</html>

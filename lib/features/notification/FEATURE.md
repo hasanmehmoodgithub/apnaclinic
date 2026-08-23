@@ -13,8 +13,15 @@ In-app notification list and Firebase Cloud Messaging (FCM) push notifications.
 
 - OS notification permission: `NotificationService.ensurePermissionsOnStart()` on first app frame (works without Firebase).
 - FCM: `main.dart` via `FirebaseBootstrap` + `NotificationService.initializeFcm()` when Firebase is configured.
-- Foreground: FCM → local notification via `flutter_local_notifications`.
-- Background / terminated: `firebaseMessagingBackgroundHandler`; tap opens route from `data.route` / `data.deepLink`.
+- Foreground: FCM → local notification via `flutter_local_notifications`. Tap of that banner uses the full FCM `data` payload (JSON in the local notification), not route-only.
+- Background: `FirebaseMessaging.onMessageOpenedApp` opens the target screen.
+- Terminated: `getInitialMessage()` (and local `getNotificationAppLaunchDetails` as fallback). Navigation waits until splash has finished so it is not overwritten.
+- Tap routing (`openPushNotificationLink`) matches the inbox:
+  - `serviceType` + booking id → booking details (`CONSULTATION` / `SURGERY` / `LAB` / `PHARMACY`).
+  - Else `data.route` / `data.screen` / `data.deepLink` as a named path (`home`, `notifications`, `consultation`, `pharmacyMain`, `labTest`, `surgery`, …).
+  - Nested FCM payload is supported, e.g. `serviceType: CONSULTATION` + `deepLink.data.unified_order_id` → consultation booking `84213`. FCM `data` values are strings, so `deepLink` may arrive as a JSON string; both nested maps and JSON strings are parsed.
+  - `PHARMACY` uses **`deepLink.entity.publicId`** (same as the inbox), not the notification's top-level `publicId`. Falls back to `unified_order_id` if entity `publicId` is missing.
+  - Guest users are not sent to booking screens (login / onboarding continues).
 - FCM token stored in `AppPref` (`AppPrefKeys.fcmToken`); cleared on logout.
 - Login: `NotificationService.ensureFcmTokenForLogin()` runs before verify OTP (lazy Firebase/FCM init if startup missed).
 - Dev/staging/debug auto-subscribes to topic `TestNotification`.
