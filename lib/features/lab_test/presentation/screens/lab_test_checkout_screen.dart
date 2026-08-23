@@ -265,7 +265,6 @@ class _LabTestCheckoutScreenState extends State<LabTestCheckoutScreen> {
             paymentStatus: AnalyticsPaymentStatusKeys.failed,
             initiation: initiation,
           );
-          showCardPaymentOutcomeSnackBar(context, paymentResult);
           await showCardPaymentOutcomeDialog(context, paymentResult);
           return;
         }

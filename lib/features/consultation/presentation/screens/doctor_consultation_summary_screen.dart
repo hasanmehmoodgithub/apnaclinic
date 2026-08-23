@@ -79,7 +79,6 @@ class DoctorConsultationSummaryScreen extends StatelessWidget {
         discount: args.discount,
         initiation: initiation,
       );
-      showCardPaymentOutcomeSnackBar(context, paymentResult);
       await showCardPaymentOutcomeDialog(context, paymentResult);
       return;
     }
