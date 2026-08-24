@@ -613,6 +613,7 @@
     }
   },
   "consultationMaxFilesReached": "You can upload a maximum of 5 files per booking.",
+  "consultationUnsupportedFileType": "Unsupported file type. Only images and PDF documents are allowed.",
   "consultationPaymentMethodTitle": "Payment Method",
   "consultationVideoConsultationLabel": "Video Consultation",
   "consultationConsultationFeesLabel": "Consultation fee",

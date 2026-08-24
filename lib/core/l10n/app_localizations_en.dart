@@ -1552,6 +1552,10 @@ class AppLocalizationsEn extends AppLocalizations {
       'You can upload a maximum of 5 files per booking.';
 
   @override
+  String get consultationUnsupportedFileType =>
+      'Unsupported file type. Only images and PDF documents are allowed.';
+
+  @override
   String get consultationPaymentMethodTitle => 'Payment Method';
 
   @override
