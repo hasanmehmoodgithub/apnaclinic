@@ -34,6 +34,7 @@ class _MenuScreenState extends State<MenuScreen> {
   late final AppPref _appPref;
   late final AuthSessionRefresh _sessionRefresh;
   bool _isLoggedIn = false;
+  String _appVersion = '';
 
   @override
   void initState() {
@@ -42,6 +43,13 @@ class _MenuScreenState extends State<MenuScreen> {
     _sessionRefresh = sl<AuthSessionRefresh>();
     _isLoggedIn = AuthGuard.isLoggedIn(_appPref);
     _sessionRefresh.addListener(_onAuthSessionChanged);
+    unawaited(_loadAppVersion());
+  }
+
+  Future<void> _loadAppVersion() async {
+    final version = await loadMenuAppVersion();
+    if (!mounted || version.isEmpty) return;
+    setState(() => _appVersion = version);
   }
 
   @override
@@ -138,7 +146,10 @@ class _MenuScreenState extends State<MenuScreen> {
                   child: MenuScreenBody(
                     profile: profile,
                     actionItems: buildMenuActionItems(l10n),
-                    aboutItems: buildMenuAboutItems(l10n),
+                    aboutItems: buildMenuAboutItems(
+                      l10n,
+                      appVersion: _appVersion,
+                    ),
                     onProfileActionTap: _openEditProfile,
                     onActionTap: _onMenuActionTap,
                     onAboutTap: openMenuWebsite,

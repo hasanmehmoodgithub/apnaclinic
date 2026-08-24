@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../core/constants/app_colors.dart';
@@ -50,9 +51,25 @@ List<MenuActionItem> buildMenuActionItems(AppLocalizations l10n) {
   ];
 }
 
-List<MenuAboutItemData> buildMenuAboutItems(AppLocalizations l10n) {
+Future<String> loadMenuAppVersion() async {
+  final info = await PackageInfo.fromPlatform();
+  final version = info.version.trim();
+  if (version.isEmpty) return '';
+  final build = info.buildNumber.trim();
+  if (build.isEmpty) return version;
+  return '$version ($build)';
+}
+
+List<MenuAboutItemData> buildMenuAboutItems(
+  AppLocalizations l10n, {
+  String? appVersion,
+}) {
+  final version = appVersion?.trim();
   return [
-    MenuAboutItemData(l10n.dashboardMenuAppVersion, subtitle: '1.0'),
+    MenuAboutItemData(
+      l10n.dashboardMenuAppVersion,
+      subtitle: (version != null && version.isNotEmpty) ? version : null,
+    ),
     MenuAboutItemData(
       l10n.dashboardMenuTerms,
       onTap: () => AppUrlLauncher.open(
