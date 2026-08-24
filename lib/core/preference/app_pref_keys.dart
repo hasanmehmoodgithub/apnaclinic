@@ -42,4 +42,6 @@ class AppPrefKeys {
       _encryption.obfuscateKey('lab_test_selected_city$_prefVersion');
   static String get surgerySelectedCity =>
       _encryption.obfuscateKey('surgery_selected_city$_prefVersion');
+  static String get supportSettings =>
+      _encryption.obfuscateKey('support_settings$_prefVersion');
 }

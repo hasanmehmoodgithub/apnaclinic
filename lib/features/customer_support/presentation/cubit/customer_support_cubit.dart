@@ -8,18 +8,36 @@ import 'customer_support_state.dart';
 class CustomerSupportCubit extends Cubit<CustomerSupportState> {
   CustomerSupportCubit({required this.getContentUseCase})
     : super(const CustomerSupportState()) {
+    _hydrateFromCache();
     loadContent();
   }
 
   final GetCustomerSupportContentUseCase getContentUseCase;
 
-  Future<void> loadContent() async {
+  void _hydrateFromCache() {
+    final cached = getContentUseCase.cachedContent();
+    if (cached == null || cached.contacts.isEmpty) return;
     emit(
       state.copyWith(
-        loadingStateStatus: StateStatus.loading,
+        loadingStateStatus: StateStatus.success,
+        content: cached,
         errorMessage: null,
       ),
     );
+  }
+
+  Future<void> loadContent() async {
+    final hasCachedContent =
+        state.content != null &&
+        state.loadingStateStatus == StateStatus.success;
+    if (!hasCachedContent) {
+      emit(
+        state.copyWith(
+          loadingStateStatus: StateStatus.loading,
+          errorMessage: null,
+        ),
+      );
+    }
     final result = await getContentUseCase.call();
     result.fold(
       (error) => emit(

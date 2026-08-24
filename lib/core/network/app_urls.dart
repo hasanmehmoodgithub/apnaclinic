@@ -382,14 +382,6 @@ class AppUrls {
   // Legal / policy pages (full URLs)
   // ============================================
 
-  static const String termsAndConditions =
-      'https://apnaclinic.ecnstg.com/terms';
-
-  static const String privacyPolicy =
-      'https://apnaclinic.ecnstg.com/privacy-policy';
-
-  static const String faq = 'https://apnaclinic.ecnstg.com/faq';
-
   static const String website = 'https://apnaclinic.ecnstg.com/';
 
   /// FikrFree Android application id (Play Store / PackageManager).

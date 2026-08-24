@@ -1,3 +1,4 @@
+import 'support_settings_local_model.dart';
 import 'user_local_model.dart';
 
 abstract class AppPref {
@@ -46,6 +47,11 @@ abstract class AppPref {
   Future<bool> setUserLocalModel(UserLocalModel model);
   UserLocalModel? getUserLocalModel();
   Future<bool> clearUserLocalModel();
+
+  // ==================== Support settings (CMS) ====================
+
+  Future<bool> setSupportSettings(SupportSettingsLocalModel model);
+  SupportSettingsLocalModel? getSupportSettings();
 
   // ==================== Generic Methods ====================
 

@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../services/encryption_service.dart';
 import 'app_pref.dart';
 import 'app_pref_keys.dart';
+import 'support_settings_local_model.dart';
 import 'user_local_model.dart';
 
 /// A secure App Preferences implementation using AES EncryptionService.
@@ -167,6 +168,27 @@ class AppPrefImpl implements AppPref {
   @override
   Future<bool> clearUserLocalModel() async {
     return remove(AppPrefKeys.userLocal);
+  }
+
+  @override
+  Future<bool> setSupportSettings(SupportSettingsLocalModel model) async {
+    return _setEncrypted(
+      AppPrefKeys.supportSettings,
+      jsonEncode(model.toJson()),
+    );
+  }
+
+  @override
+  SupportSettingsLocalModel? getSupportSettings() {
+    final raw = _getDecrypted(AppPrefKeys.supportSettings, '');
+    if (raw.isEmpty) return null;
+    try {
+      final decoded = jsonDecode(raw);
+      if (decoded is! Map<String, dynamic>) return null;
+      return SupportSettingsLocalModel.fromJson(decoded);
+    } catch (_) {
+      return null;
+    }
   }
 
   // ==================== Generic ====================

@@ -10,11 +10,16 @@ class CustomerSupportMockApi {
       'message': 'Support settings retrieved',
       'code': 200,
       'data': {
+        'id': 1,
         'phone': '03001118828',
         'email': 'support@apnaclinic.com.pk',
         'description':
             'For further support please contact us 24/7 on 03001118828 or email at support@apnaclinic.com.pk',
         'buttonText': 'Call Now',
+        'faqsUrl': 'https://apnaclinic.ecnstg.com/faq',
+        'privacyPolicyUrl': 'https://apnaclinic.ecnstg.com/privacy-policy',
+        'termsAndConditionsUrl': 'https://apnaclinic.ecnstg.com/terms',
+        'updatedAt': DateTime.now().toUtc().toIso8601String(),
       },
       'timestamp': DateTime.now().toUtc().toIso8601String(),
     };

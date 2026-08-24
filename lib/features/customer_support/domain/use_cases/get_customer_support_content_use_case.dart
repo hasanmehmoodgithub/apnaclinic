@@ -9,6 +9,10 @@ class GetCustomerSupportContentUseCase
 
   final CustomerSupportRepository repository;
 
+  CustomerSupportEntity? cachedContent() {
+    return repository.getCachedCustomerSupportContent();
+  }
+
   @override
   Future<Either<ErrorMsg, CustomerSupportEntity>> call() async {
     return await repository.getCustomerSupportContent();

@@ -36,6 +36,8 @@ static const String token = 'auth_token$prefVersion';
 
 **FCM:** `AppPrefKeys.fcmToken` (current device token), `AppPrefKeys.fcmTokenSentToBackend` (last token successfully sent on OTP or `PUT …/notifications/device-token`). Both cleared on logout / 401 session wipe.
 
+**Support settings:** `AppPrefKeys.supportSettings` — full CMS `GET /api/v1/mobile/support` payload (`phone`, `email`, `description`, `buttonText`, `faqsUrl`, `privacyPolicyUrl`, `termsAndConditionsUrl`, …). Refreshed on every app open. Not cleared on logout.
+
 **Adding New Keys:**
 ```dart
 // In app_pref_keys.dart
