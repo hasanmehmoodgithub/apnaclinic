@@ -1,3 +1,4 @@
+import '../../../payment/domain/entities/payment_initiation_result.dart';
 import '../../domain/entities/pharmacy_add_address_result_entity.dart';
 import '../../domain/entities/pharmacy_add_to_cart_result_entity.dart';
 import '../../domain/entities/pharmacy_cart_address_entity.dart';
@@ -171,6 +172,8 @@ class PharmacyMedicineMapper {
       bookingId: bookingId,
       status: status,
       paymentUrl: paymentUrl,
+      blockingOrder: PaymentInitiationResult.fromBookingResponse(response)
+          .blockingOrder,
     );
   }
 

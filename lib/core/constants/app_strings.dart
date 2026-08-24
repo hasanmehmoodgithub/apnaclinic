@@ -39,6 +39,10 @@ class AppStrings {
       'Please enter a delivery address before confirming.';
   static const String pharmacyAbandonOrderError =
       'Unable to cancel the unpaid order right now. Please try again.';
+  static const String consultationAbandonOrderError =
+      'Unable to cancel the unpaid booking right now. Please try again.';
+  static const String labTestAbandonOrderError =
+      'Unable to cancel the unpaid booking right now. Please try again.';
   static const String pharmacyPrescriptionUploadError =
       'Unable to upload prescription right now. Please try again.';
   static const String surgeryLoadError =

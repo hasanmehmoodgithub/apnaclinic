@@ -1225,6 +1225,9 @@ class AppLocalizationsUr extends AppLocalizations {
       'آپ کی ادائیگی منسوخ کر دی گئی ہے۔ جب آپ تیار ہوں تو دوبارہ کوشش کر سکتے ہیں۔';
 
   @override
+  String get paymentPendingViewBookingsCta => 'میری بکنگز دیکھیں';
+
+  @override
   String get labTestViewDetailsResultsTitle => 'ٹیسٹ نتائج';
 
   @override
@@ -1237,6 +1240,13 @@ class AppLocalizationsUr extends AppLocalizations {
   @override
   String get labTestReportAvailableNote =>
       'آپ کی رپورٹ تیار ہے۔ آپ اسے ٹیسٹ نتائج سیکشن سے ڈاؤن لوڈ کر سکتے ہیں۔';
+
+  @override
+  String get labTestDownloadReport => 'رپورٹ ڈاؤن لوڈ کریں';
+
+  @override
+  String get labTestDownloadReportFailed =>
+      'رپورٹ ڈاؤن لوڈ نہیں ہو سکی۔ براہ کرم دوبارہ کوشش کریں۔';
 
   @override
   String get labTestInvoiceSectionTitle => 'انوائس';
@@ -1289,6 +1299,14 @@ class AppLocalizationsUr extends AppLocalizations {
   @override
   String get labTestCheckoutPaymentPendingMessage =>
       'آپ کی لیب بکنگ ادائیگی کا انتظار کر رہی ہے۔ ادائیگی مکمل ہونے پر ہم اسے اپ ڈیٹ کر دیں گے — تازہ ترین صورتحال بکنگز میں دیکھیں۔';
+
+  @override
+  String get labTestAbandonUnpaidOrderCta =>
+      'ادائیگی نہیں کی؟ غیر ادا شدہ بکنگ منسوخ کریں';
+
+  @override
+  String get labTestAbandonUnpaidOrderFailed =>
+      'اس وقت غیر ادا شدہ بکنگ منسوخ نہیں ہو سکی۔ براہ کرم دوبارہ کوشش کریں۔';
 
   @override
   String get labTestCheckoutViewBookingsCta => 'میری بکنگز دیکھیں';
@@ -1443,6 +1461,14 @@ class AppLocalizationsUr extends AppLocalizations {
   @override
   String get consultationBookingPaymentPendingMessage =>
       'آپ کی اپائنٹمنٹ ادائیگی کا انتظار کر رہی ہے۔ ادائیگی مکمل ہونے پر ہم اسے اپ ڈیٹ کر دیں گے — تازہ ترین صورتحال بکنگز میں دیکھیں۔';
+
+  @override
+  String get consultationAbandonUnpaidOrderCta =>
+      'ادائیگی نہیں کی؟ غیر ادا شدہ بکنگ منسوخ کریں';
+
+  @override
+  String get consultationAbandonUnpaidOrderFailed =>
+      'اس وقت غیر ادا شدہ بکنگ منسوخ نہیں ہو سکی۔ براہ کرم دوبارہ کوشش کریں۔';
 
   @override
   String consultationBookingConfirmedMessage(Object doctorName) {

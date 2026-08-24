@@ -1,3 +1,5 @@
+import '../../../payment/domain/entities/payment_initiation_result.dart';
+
 class PharmacyCheckoutResultEntity {
   const PharmacyCheckoutResultEntity({
     required this.orderNo,
@@ -6,6 +8,7 @@ class PharmacyCheckoutResultEntity {
     this.bookingId,
     this.status = 'confirmed',
     this.paymentUrl,
+    this.blockingOrder,
   });
 
   final String orderNo;
@@ -16,6 +19,7 @@ class PharmacyCheckoutResultEntity {
   final String? bookingId;
   final String status;
   final String? paymentUrl;
+  final PaymentBlockingOrder? blockingOrder;
 
   bool get requiresCardPayment {
     final url = paymentUrl?.trim() ?? '';

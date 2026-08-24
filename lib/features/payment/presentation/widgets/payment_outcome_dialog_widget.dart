@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 
 import '../../../../components/widgets/app_button.dart';
 import '../../../../core/constants/app_colors.dart';
@@ -12,12 +11,14 @@ class PaymentOutcomeDialogWidget extends StatelessWidget {
     required this.message,
     required this.ctaText,
     required this.isCancelled,
+    required this.onCta,
   });
 
   final String title;
   final String message;
   final String ctaText;
   final bool isCancelled;
+  final VoidCallback onCta;
 
   @override
   Widget build(BuildContext context) {
@@ -78,9 +79,7 @@ class PaymentOutcomeDialogWidget extends StatelessWidget {
                 width: double.infinity,
                 child: AppButton.primary(
                   text: ctaText,
-                  onPressed: () {
-                    if (context.canPop()) context.pop();
-                  },
+                  onPressed: onCta,
                   backgroundColor: AppColors.clr0FAA9A,
                   foregroundColor: AppColors.clrWhite,
                   height: 52.h,

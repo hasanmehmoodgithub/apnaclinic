@@ -1,10 +1,17 @@
 import 'dart:developer';
+import 'dart:io';
+
+import 'package:dio/dio.dart';
+import 'package:path/path.dart' as p;
+import 'package:path_provider/path_provider.dart';
 
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/network/api_service.dart';
 import '../../../../core/network/app_urls.dart';
+import '../../../../core/network/dio_app_network_config.dart';
 import '../../../../core/utils/error_handler.dart';
 import '../../../payment/domain/entities/payment_initiation_result.dart';
+import '../../domain/use_cases/abandon_lab_test_booking_use_case.dart';
 import '../mock/lab_orders_mock_api.dart';
 import '../mock/lab_test_mock_api.dart';
 import '../models/lab_order_model.dart';
@@ -219,6 +226,93 @@ class LabTestRemoteDataSourceImpl implements LabTestRemoteDataSource {
         endpoint: AppUrls.labBookTest,
       );
       return Future.error(message);
+    }
+  }
+
+  @override
+  Future<Map<String, dynamic>> abandonLabTestBooking(
+    AbandonLabTestBookingParams params,
+  ) async {
+    try {
+      final Map<String, dynamic> response;
+      if (LabTestMockApi.useMockResponses) {
+        response = await mockApi.abandonLabTestBookingSuccessResponse(params);
+      } else {
+        response = await apiService.post(
+          AppUrls.labBookTestAbandon,
+          data: params.toJson(),
+        );
+        log('abandonLabTestBooking response: $response');
+      }
+
+      if (_isSuccessResponse(response)) {
+        return response;
+      }
+
+      final message =
+          (response['message'] ?? AppStrings.labTestAbandonOrderError)
+              .toString();
+      return Future.error(message);
+    } catch (e) {
+      log('abandonLabTestBooking error: $e');
+      final message = ErrorHandler.handleExceptions(
+        e,
+        endpoint: AppUrls.labBookTestAbandon,
+      );
+      return Future.error(message);
+    }
+  }
+
+  @override
+  Future<String> downloadLabReport({
+    required String url,
+    required String fileName,
+  }) async {
+    final dio = Dio(
+      BaseOptions(
+        connectTimeout: const Duration(seconds: 60),
+        receiveTimeout: const Duration(seconds: 60),
+        sendTimeout: const Duration(seconds: 60),
+        followRedirects: true,
+        headers: const {
+          'Accept': 'application/pdf,application/octet-stream,*/*',
+          'User-Agent':
+              'Mozilla/5.0 (Linux; Android 13) AppleWebKit/537.36 '
+              '(KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36',
+        },
+      ),
+    );
+    configureDioForAppNetwork(dio);
+
+    try {
+      final docs = await getApplicationDocumentsDirectory();
+      final dir = Directory(p.join(docs.path, 'lab_reports'));
+      if (!await dir.exists()) {
+        await dir.create(recursive: true);
+      }
+      final savePath = p.join(dir.path, fileName);
+      await dio.download(url, savePath);
+
+      final file = File(savePath);
+      if (!await file.exists() || await file.length() == 0) {
+        return Future.error(AppStrings.ourServicesLoadError);
+      }
+      final header = await file.openRead(0, 5).first;
+      final isPdf = header.length >= 4 &&
+          header[0] == 0x25 &&
+          header[1] == 0x50 &&
+          header[2] == 0x44 &&
+          header[3] == 0x46;
+      if (!isPdf) {
+        await file.delete();
+        return Future.error(AppStrings.ourServicesLoadError);
+      }
+      return savePath;
+    } catch (e) {
+      final message = ErrorHandler.handleExceptions(e, endpoint: url);
+      return Future.error(message);
+    } finally {
+      dio.close();
     }
   }
 }

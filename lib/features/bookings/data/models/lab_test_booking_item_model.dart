@@ -33,6 +33,8 @@ enum LabTestBookingStatusKind {
       return LabTestBookingStatusKind.pending;
     }
     if (normalized.contains('confirm') ||
+        normalized.contains('ready') ||
+        normalized.contains('available') ||
         normalized == 'completed' ||
         normalized == 'paid') {
       return LabTestBookingStatusKind.confirmed;

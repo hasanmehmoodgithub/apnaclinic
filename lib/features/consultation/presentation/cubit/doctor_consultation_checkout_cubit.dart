@@ -1,11 +1,13 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../core/functional/functional_export.dart';
 import '../../../../core/preference/app_pref.dart';
 import '../../../../core/utils/auth_api_utils.dart';
 import '../../../../core/utils/jwt_utils.dart';
 import '../../../payment/domain/entities/payment_initiation_result.dart';
 import '../../data/models/doctor_consultation_checkout_model.dart';
 import '../../data/utils/consultation_booking_utils.dart';
+import '../../domain/use_cases/abandon_consultation_booking_use_case.dart';
 import '../../domain/use_cases/get_payment_providers_use_case.dart';
 import '../../domain/use_cases/submit_consultation_booking_use_case.dart';
 import '../doctor_consultation_checkout_args.dart';
@@ -16,14 +18,17 @@ class DoctorConsultationCheckoutCubit
   DoctorConsultationCheckoutCubit({
     required GetPaymentProvidersUseCase getPaymentProvidersUseCase,
     required SubmitConsultationBookingUseCase submitBookingUseCase,
+    required AbandonConsultationBookingUseCase abandonBookingUseCase,
     required AppPref appPref,
   })  : _getPaymentProvidersUseCase = getPaymentProvidersUseCase,
         _submitBookingUseCase = submitBookingUseCase,
+        _abandonBookingUseCase = abandonBookingUseCase,
         _appPref = appPref,
         super(const DoctorConsultationCheckoutState(isLoading: true));
 
   final GetPaymentProvidersUseCase _getPaymentProvidersUseCase;
   final SubmitConsultationBookingUseCase _submitBookingUseCase;
+  final AbandonConsultationBookingUseCase _abandonBookingUseCase;
   final AppPref _appPref;
 
   Future<void> load(DoctorConsultationCheckoutArgs args) async {
@@ -155,6 +160,18 @@ class DoctorConsultationCheckoutCubit
         emit(state.copyWith(isSubmitting: false, clearError: true));
         return initiation;
       },
+    );
+  }
+
+  Future<Either<ErrorMsg, bool>> abandonBooking({
+    required String publicId,
+  }) {
+    final orderId = publicId.trim();
+    if (orderId.isEmpty) {
+      return Future.value(const Left('Missing booking id.'));
+    }
+    return _abandonBookingUseCase(
+      AbandonConsultationBookingParams(orderId: orderId),
     );
   }
 

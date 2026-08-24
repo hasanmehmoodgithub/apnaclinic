@@ -20,10 +20,10 @@ import '../../../consultation/presentation/models/doctor_consultation_jazzcash_s
 import '../../../consultation/presentation/widgets/doctor_consultation_jazzcash_accounts_sheet_widget.dart';
 import '../../../dashboard/presentation/constants/main_navigation_tabs.dart';
 import '../../../payment/presentation/payment_navigation.dart';
-import '../../../payment/presentation/widgets/payment_pending_dialog_widget.dart';
 import '../../domain/entities/lab_test_cart_item.dart';
 import '../../domain/repositories/lab_test_cart_repository.dart';
 import '../../domain/use_cases/book_lab_test_use_case.dart';
+import '../../domain/use_cases/abandon_lab_test_booking_use_case.dart';
 import '../cubit/lab_test_cart_cubit.dart';
 import '../lab_test_route_args.dart';
 import '../widgets/lab_test_booking_confirmation_dialog_widget.dart';
@@ -229,10 +229,30 @@ class _LabTestCheckoutScreenState extends State<LabTestCheckoutScreen> {
     await result.fold(
       (error) async => _showBookErrorDialog(error),
       (initiation) async {
-        if (initiation.isPendingWithoutPaymentUrl) {
-          await _clearLabCart();
+        if (initiation.hasBlockingOrder) {
           if (!mounted) return;
-          _showPaymentPendingDialog();
+          final l10n = AppLocalizations.of(context)!;
+          final blocking = initiation.blockingOrder;
+          final apiMessage = blocking?.message?.trim() ?? '';
+          final abandonOrderId = initiation.abandonPublicId ?? '';
+          final canAbandon =
+              blocking?.canAbandon == true && abandonOrderId.isNotEmpty;
+          await showPaymentPendingDialog(
+            context,
+            title: l10n.labTestCheckoutPaymentPendingTitle,
+            message: apiMessage.isNotEmpty
+                ? apiMessage
+                : l10n.labTestCheckoutPaymentPendingMessage,
+            onViewBookings: _goToLabBookingsFromDialog,
+            secondaryLabel:
+                canAbandon ? l10n.labTestAbandonUnpaidOrderCta : null,
+            onSecondary: canAbandon
+                ? (dialogContext) => _abandonUnpaidBooking(
+                      dialogContext: dialogContext,
+                      publicId: abandonOrderId,
+                    )
+                : null,
+          );
           return;
         }
 
@@ -245,7 +265,11 @@ class _LabTestCheckoutScreenState extends State<LabTestCheckoutScreen> {
         );
         if (!mounted) return;
         if (!paymentResult.isSuccess) {
-          await showCardPaymentOutcomeDialog(context, paymentResult);
+          await showCardPaymentOutcomeDialog(
+            context,
+            paymentResult,
+            onViewBookings: _goToLabBookingsFromDialog,
+          );
           return;
         }
         await _clearLabCart();
@@ -291,20 +315,32 @@ class _LabTestCheckoutScreenState extends State<LabTestCheckoutScreen> {
     context.go(AppRoutes.path(AppRoutes.home));
   }
 
-  void _showPaymentPendingDialog() {
+  Future<void> _abandonUnpaidBooking({
+    required BuildContext dialogContext,
+    required String publicId,
+  }) async {
+    if (dialogContext.canPop()) dialogContext.pop();
+    if (!mounted) return;
+
+    const loaderId = 'lab_test_abandon_order_loader';
     final l10n = AppLocalizations.of(context)!;
-    showDialog<void>(
-      context: context,
-      barrierDismissible: false,
-      useRootNavigator: true,
-      builder: (dialogContext) {
-        return PaymentPendingDialogWidget(
-          title: l10n.labTestCheckoutPaymentPendingTitle,
-          message: l10n.labTestCheckoutPaymentPendingMessage,
-          ctaText: l10n.labTestCheckoutViewBookingsCta,
-          onViewBookings: () => _goToLabBookingsFromDialog(dialogContext),
-        );
+    showHeartLoaderDialog(context, id: loaderId, size: 120);
+    final result = await sl<AbandonLabTestBookingUseCase>()(
+      AbandonLabTestBookingParams(orderId: publicId),
+    );
+    HeartLoaderDialogController.close(loaderId);
+    if (!mounted) return;
+
+    await result.fold(
+      (error) async {
+        final message = error.trim().isNotEmpty
+            ? error.trim()
+            : l10n.labTestAbandonUnpaidOrderFailed;
+        ScaffoldMessenger.of(context)
+          ..hideCurrentSnackBar()
+          ..showSnackBar(SnackBar(content: Text(message)));
       },
+      (_) async {},
     );
   }
 

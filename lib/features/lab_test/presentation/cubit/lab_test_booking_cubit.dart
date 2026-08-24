@@ -83,6 +83,7 @@ class LabTestBookingCubit extends Cubit<LabTestBookingState> {
 
   Future<void> addCurrentSelectionToCart() async {
     if (!state.canAddSelectionToCart) return;
+    if (state.selectionConflictsWithCart) return;
     final vendor = state.selectedVendor;
     final partner = state.selectedPartner;
     if (vendor == null || partner == null) return;
