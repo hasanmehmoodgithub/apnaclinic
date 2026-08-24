@@ -374,8 +374,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     if (eventName != null) {
       unawaited(sl<AnalyticsService>().logEvent(eventName));
     }
-
-    context.push(AppRoutes.path(normalizedRoute));
   }
 
   String? _serviceTileEventName(String route) {

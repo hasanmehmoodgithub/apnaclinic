@@ -332,6 +332,7 @@ class PharmacyMockApi {
     final all = <Map<String, dynamic>>[
       {
         'orderNo': 19,
+        'unified_order_id': 19,
         'status': 'Confirmed',
         'imageUrl':
             'https://mediq-bucket.s3.amazonaws.com/products/webp-images/panadol-160mg-5ml-920.webp',
@@ -341,10 +342,12 @@ class PharmacyMockApi {
         'total': 398,
         'currency': 'PKR',
         'orderId': '66fb1287-c86d-48f1-8d72-878064118d99',
+        'publicId': '66fb1287-c86d-48f1-8d72-878064118d99',
         'createdAt': '2026-08-03 16:35',
       },
       {
         'orderNo': 18,
+        'unified_order_id': 18,
         'status': 'Failed',
         'imageUrl':
             'https://mediq-bucket.s3.amazonaws.com/products/webp-images/panadol-500mg-918.webp',
@@ -358,6 +361,7 @@ class PharmacyMockApi {
       },
       {
         'orderNo': 12,
+        'unified_order_id': 12,
         'status': 'Confirmed',
         'imageUrl':
             'https://mediq-bucket.s3.amazonaws.com/products/webp-images/panadol-160mg-5ml-920.webp',
@@ -371,6 +375,7 @@ class PharmacyMockApi {
       },
       {
         'orderNo': 1,
+        'unified_order_id': 1,
         'status': 'Cancelled',
         'imageUrl':
             'https://mediq-bucket.s3.amazonaws.com/products/webp-images/2sum-2gm-4.webp',
@@ -415,7 +420,9 @@ class PharmacyMockApi {
       'data': {
         'type': 'pharmacy',
         'orderId': id,
+        'publicId': id,
         'orderNo': 19,
+        'unified_order_id': 19,
         'status': 'PENDING',
         'statusTimeline': [
           {'label': 'Confirmed', 'completed': false},

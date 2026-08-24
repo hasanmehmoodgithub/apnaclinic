@@ -1,5 +1,6 @@
 import '../../core/di/dependency_injection.dart';
 import '../../core/network/api_service.dart';
+import '../../core/preference/app_pref.dart';
 import 'data/data_sources/customer_support_remote_data_source.dart';
 import 'data/data_sources/customer_support_remote_data_source_impl.dart';
 import 'data/mock/customer_support_mock_api.dart';
@@ -23,6 +24,7 @@ void initCustomerSupportInjector() {
   sl.registerLazySingleton<CustomerSupportRepository>(
     () => CustomerSupportRepositoryImpl(
       remoteDataSource: sl<CustomerSupportRemoteDataSource>(),
+      appPref: sl<AppPref>(),
     ),
   );
 

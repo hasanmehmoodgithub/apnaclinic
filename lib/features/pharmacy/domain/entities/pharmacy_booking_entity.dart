@@ -13,7 +13,7 @@ class PharmacyBookingEntity {
   });
 
   final String orderId;
-  /// Human-facing order number from API (`orderNo`).
+  /// Human-facing number from API (`unified_order_id`, then `orderNo`).
   final String orderNo;
   final String productName;
   final String imageUrl;
@@ -24,7 +24,7 @@ class PharmacyBookingEntity {
   final String status;
   final String createdAt;
 
-  String get displayOrderNo => orderNo.isNotEmpty ? orderNo : orderId;
+  String get displayOrderNo => orderNo;
 
   String get quantityPriceLabel =>
       '${quantity}x Rs ${unitPrice.toStringAsFixed(0)}/-';

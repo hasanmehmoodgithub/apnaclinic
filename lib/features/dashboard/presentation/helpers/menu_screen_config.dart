@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/network/app_urls.dart';
+import '../../../../core/preference/app_pref.dart';
 import '../../../../core/utils/app_url_launcher.dart';
 import '../widgets/menu_about_card.dart';
 
@@ -50,20 +53,37 @@ List<MenuActionItem> buildMenuActionItems(AppLocalizations l10n) {
   ];
 }
 
-List<MenuAboutItemData> buildMenuAboutItems(AppLocalizations l10n) {
+Future<String> loadMenuAppVersion() async {
+  final info = await PackageInfo.fromPlatform();
+  final version = info.version.trim();
+  if (version.isEmpty) return '';
+  final build = info.buildNumber.trim();
+  if (build.isEmpty) return version;
+  return '$version ($build)';
+}
+
+List<MenuAboutItemData> buildMenuAboutItems(
+  AppLocalizations l10n, {
+  String? appVersion,
+}) {
+  final version = appVersion?.trim();
+  final support = sl<AppPref>().getSupportSettings();
   return [
-    MenuAboutItemData(l10n.dashboardMenuAppVersion, subtitle: '1.0'),
+    MenuAboutItemData(
+      l10n.dashboardMenuAppVersion,
+      subtitle: (version != null && version.isNotEmpty) ? version : null,
+    ),
     MenuAboutItemData(
       l10n.dashboardMenuTerms,
       onTap: () => AppUrlLauncher.open(
-        url: AppUrls.termsAndConditions,
+        url: support?.termsAndConditionsUrl ?? '',
         lunchMode: LaunchMode.inAppWebView,
       ),
     ),
     MenuAboutItemData(
       l10n.dashboardMenuPrivacy,
       onTap: () => AppUrlLauncher.open(
-        url: AppUrls.privacyPolicy,
+        url: support?.privacyPolicyUrl ?? '',
         lunchMode: LaunchMode.inAppWebView,
       ),
     ),
@@ -71,10 +91,11 @@ List<MenuAboutItemData> buildMenuAboutItems(AppLocalizations l10n) {
 }
 
 Future<void> openMenuFaq() {
-  return launchUrl(
-    Uri.parse(AppUrls.faq),
-    mode: LaunchMode.externalApplication,
-  );
+  final url = sl<AppPref>().getSupportSettings()?.faqsUrl.trim() ?? '';
+  if (url.isEmpty) return Future.value();
+  final uri = Uri.tryParse(url);
+  if (uri == null || !uri.hasScheme) return Future.value();
+  return launchUrl(uri, mode: LaunchMode.externalApplication);
 }
 
 Future<void> openMenuWebsite() {

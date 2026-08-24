@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:intl/intl.dart';
 
 class NotificationItemModel {
@@ -69,9 +71,10 @@ class NotificationItemModel {
         deepData ?? const {},
         const ['unified_order_id', 'unifiedOrderId'],
       ),
-      entityPublicId: _readString(
-        entity ?? const {},
-        const ['publicId', 'public_id'],
+      entityPublicId: _resolveEntityPublicId(
+        entity: entity,
+        deepLink: deepLink,
+        deepData: deepData,
       ),
       deepLinkEndpoint: _readString(
         deepLink ?? const {},
@@ -126,6 +129,26 @@ class NotificationItemModel {
     );
   }
 
+  static String _resolveEntityPublicId({
+    required Map<String, dynamic>? entity,
+    required Map<String, dynamic>? deepLink,
+    required Map<String, dynamic>? deepData,
+  }) {
+    final fromEntity = _readString(
+      entity ?? const {},
+      const ['publicId', 'public_id'],
+      nested: deepData,
+      nestedKeys: const ['publicId', 'public_id'],
+    );
+    if (fromEntity.isNotEmpty) return fromEntity;
+
+    final endpoint = _readString(deepLink ?? const {}, const ['endpoint']);
+    final match = RegExp(
+      r'[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}',
+    ).firstMatch(endpoint);
+    return match?.group(0) ?? '';
+  }
+
   static (String time, String date) _formatCreatedAt(DateTime? createdAt) {
     if (createdAt == null) return ('', '');
     final local = createdAt.toLocal();
@@ -152,6 +175,21 @@ class NotificationItemModel {
   static Map<String, dynamic>? _asMap(dynamic value) {
     if (value is Map<String, dynamic>) return value;
     if (value is Map) return Map<String, dynamic>.from(value);
+    if (value is String) {
+      var text = value.trim();
+      if (text.length >= 2 && text.startsWith('"') && text.endsWith('"')) {
+        try {
+          final unquoted = jsonDecode(text);
+          if (unquoted is String) text = unquoted.trim();
+        } catch (_) {}
+      }
+      if (text.startsWith('{')) {
+        try {
+          final decoded = jsonDecode(text);
+          if (decoded is Map) return Map<String, dynamic>.from(decoded);
+        } catch (_) {}
+      }
+    }
     return null;
   }
 

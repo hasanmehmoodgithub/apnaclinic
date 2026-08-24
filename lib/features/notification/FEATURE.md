@@ -20,7 +20,8 @@ In-app notification list and Firebase Cloud Messaging (FCM) push notifications.
   - `serviceType` + booking id → booking details (`CONSULTATION` / `SURGERY` / `LAB` / `PHARMACY`).
   - Else `data.route` / `data.screen` / `data.deepLink` as a named path (`home`, `notifications`, `consultation`, `pharmacyMain`, `labTest`, `surgery`, …).
   - Nested FCM payload is supported, e.g. `serviceType: CONSULTATION` + `deepLink.data.unified_order_id` → consultation booking `84213`. FCM `data` values are strings, so `deepLink` may arrive as a JSON string; both nested maps and JSON strings are parsed.
-  - `PHARMACY` uses **`deepLink.entity.publicId`** (same as the inbox), not the notification's top-level `publicId`. Falls back to `unified_order_id` if entity `publicId` is missing.
+  - The FCM payload may also *be* the deep-link object (`data` + `entity` + `endpoint`) without a `deepLink` wrapper.
+  - **Pharmacy** (`service_type` / `serviceType: PHARMACY`, or `entity.kind: PHARMACY_ORDER`) opens details with **`entity.publicId`** (UUID). Falls back to the UUID in `endpoint` (`mobile/orders/{publicId}`). Does **not** use `unified_order_id`.
   - Guest users are not sent to booking screens (login / onboarding continues).
 - FCM token stored in `AppPref` (`AppPrefKeys.fcmToken`); last uploaded value in `AppPrefKeys.fcmTokenSentToBackend`. Both cleared on logout and on 401 JWT-refresh failure (`LocalLogoutService`).
 - Login: `NotificationService.ensureFcmTokenForLogin()` runs before verify OTP (lazy Firebase/FCM init if startup missed). OTP verify is the first backend bind; login still succeeds if FCM is empty.
@@ -41,12 +42,12 @@ In-app notification list and Firebase Cloud Messaging (FCM) push notifications.
   - Response: `{ success, message, data: { items[], page, limit, total, totalPages } }` (also accepts a top-level `items` list).
   - Item: `publicId`, `type`, `serviceType` (`CONSULTATION` / `LAB` / `SURGERY` / `PHARMACY`), `priority`, `title`, `body`, `deepLink` (`data.unified_order_id`, `data.entity_id` / `entity_kind` / `service_type`, `entity.id`/`kind`/`publicId`, `endpoint` — may be null), `isRead`, `readAt`, `createdAt`.
 - **PUT** `AppUrls.notificationMarkRead(publicId)` → `/acs-notification/api/v1/notifications/{publicId}/read` via `MarkNotificationReadUseCase` (body `{}`).
-- Tap flow: if unread → heart loader → mark read → navigate by `serviceType` + **`deepLink.data.unified_order_id`**; if already `isRead` → navigate only (no mark-read API). Falls back to `entity.id` / `entity_id` when `unified_order_id` is missing.
+- Tap flow: if unread → heart loader → mark read → navigate by `serviceType`; if already `isRead` → navigate only (no mark-read API).
   - When routing fails (missing booking id, unsupported `serviceType`, etc.) → `AlertDialogCard` shows the notification title/body (or fallback l10n).
   - `CONSULTATION` → `doctorConsultationBookingDetails` (`bookingId` = unified order id).
   - `SURGERY` → `surgeryBookingDetails` (`leadId` = unified order id).
   - `LAB` → `labTestViewDetails` (`orderId` = unified order id, e.g. `62`).
-  - `PHARMACY` → `pharmacyBookingDetails` with **`deepLink.entity.publicId`** (pharmacy order UUID). Falls back to unified order id if `publicId` is missing.
+  - `PHARMACY` → `pharmacyBookingDetails` with **`deepLink.entity.publicId`**. Falls back to the UUID in `endpoint` (`mobile/orders/{publicId}`). Does **not** use `unified_order_id`.
 - Analytics: tap and FCM may fire `prescription_available` / `pharmacy_status_changed` when `type` matches (see bookings `FEATURE.md`).
 
 ## State

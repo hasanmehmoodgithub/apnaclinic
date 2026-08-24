@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../core/constants/app_text_styles.dart';
+import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/l10n/app_localizations.dart';
-import '../../../../core/network/app_urls.dart';
+import '../../../../core/preference/app_pref.dart';
 import '../../../../core/utils/app_url_launcher.dart';
 
 class LoginLegalText extends StatefulWidget {
@@ -23,12 +24,12 @@ class _LoginLegalTextState extends State<LoginLegalText> {
     super.initState();
     _termsRecognizer = TapGestureRecognizer()
       ..onTap = () => AppUrlLauncher.open(
-        url: AppUrls.termsAndConditions,
+        url: sl<AppPref>().getSupportSettings()?.termsAndConditionsUrl ?? '',
         lunchMode: LaunchMode.inAppWebView,
       );
     _privacyRecognizer = TapGestureRecognizer()
       ..onTap = () => AppUrlLauncher.open(
-        url: AppUrls.privacyPolicy,
+        url: sl<AppPref>().getSupportSettings()?.privacyPolicyUrl ?? '',
         lunchMode: LaunchMode.inAppWebView,
       );
   }

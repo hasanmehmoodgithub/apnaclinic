@@ -24,13 +24,9 @@ class PharmacyBookingItemModel {
   final String createdAt;
 
   factory PharmacyBookingItemModel.fromJson(Map<String, dynamic> json) {
-    final orderId =
-        (json['orderId'] ?? json['order_id'] ?? '').toString().trim();
-    final orderNo =
-        (json['orderNo'] ?? json['order_no'] ?? '').toString().trim();
     return PharmacyBookingItemModel(
-      orderId: orderId,
-      orderNo: orderNo,
+      orderId: _fetchOrderId(json),
+      orderNo: _displayOrderNo(json),
       productName: (json['productName'] ??
               json['product_name'] ??
               json['title'] ??
@@ -58,6 +54,39 @@ class PharmacyBookingItemModel {
     if (value == null) return null;
     if (value is num) return value.toDouble();
     return double.tryParse(value.toString().trim());
+  }
+
+  static String _fetchOrderId(Map<String, dynamic> json) {
+    final publicId =
+        (json['publicId'] ?? json['public_id'] ?? '').toString().trim();
+    if (publicId.isNotEmpty) return publicId;
+    return (json['orderId'] ?? json['order_id'] ?? '').toString().trim();
+  }
+
+  static String _displayOrderNo(Map<String, dynamic> json) {
+    for (final key in const [
+      'unifiedOrderId',
+      'unified_order_id',
+      'orderNo',
+      'order_no',
+    ]) {
+      final raw = json[key];
+      if (raw == null) continue;
+      final value = raw.toString().trim();
+      if (value.isEmpty || value.toLowerCase() == 'null') continue;
+      if (_looksLikeUuid(value)) continue;
+      return value;
+    }
+    final orderId =
+        (json['orderId'] ?? json['order_id'] ?? '').toString().trim();
+    if (orderId.isNotEmpty && !_looksLikeUuid(orderId)) return orderId;
+    return '';
+  }
+
+  static bool _looksLikeUuid(String value) {
+    return RegExp(
+      r'^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$',
+    ).hasMatch(value);
   }
 }
 

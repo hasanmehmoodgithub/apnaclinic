@@ -172,12 +172,12 @@ class AppUrls {
   /// Notifications endpoint
   /// In-app notification inbox (notification service).
   static String notifications({int page = 1, int limit = 20}) =>
-      '$_normalizedApiBaseUrl/acs-notification/api/v1/notifications'
+      '$_normalizedApiBaseUrl/acs-auth/api/v1/notifications'
       '?page=$page&limit=$limit';
 
   /// Mark a notification as read by `publicId`.
   static String notificationMarkRead(String publicId) =>
-      '$_normalizedApiBaseUrl/acs-notification/api/v1/notifications/'
+      '$_normalizedApiBaseUrl/acs-auth/api/v1/notifications/'
       '${Uri.encodeComponent(publicId)}/read';
 
   /// Pharmacy partner products list (POST, paginated).
@@ -381,14 +381,6 @@ class AppUrls {
   // ============================================
   // Legal / policy pages (full URLs)
   // ============================================
-
-  static const String termsAndConditions =
-      'https://apnaclinic.ecnstg.com/terms';
-
-  static const String privacyPolicy =
-      'https://apnaclinic.ecnstg.com/privacy-policy';
-
-  static const String faq = 'https://apnaclinic.ecnstg.com/faq';
 
   static const String website = 'https://apnaclinic.ecnstg.com/';
 
