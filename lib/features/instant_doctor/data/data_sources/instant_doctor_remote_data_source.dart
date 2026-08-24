@@ -1,9 +1,15 @@
+import '../../domain/use_cases/get_instant_doctor_bookings_params.dart';
+import '../models/instant_doctor_booking_model.dart';
 import '../models/instant_doctor_model.dart';
 
 abstract class InstantDoctorRemoteDataSource {
   Future<InstantDoctorResponseModel> getInstantDoctorContent({
     required String msisdn,
   });
+
+  Future<InstantDoctorBookingsPageModel> getBookings(
+    GetInstantDoctorBookingsParams params,
+  );
 
   Future<void> sendSubscriptionOtp({
     required String msisdn,

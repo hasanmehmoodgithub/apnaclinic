@@ -12,6 +12,7 @@
 ## Data & APIs
 
 - `AppUrls.instantDoctorConsultation(msisdn)` — `GET /acs-aggregator/api/v1/mobile/doctor-consultation/instant?msisdn=...`
+- Instant Doctor bookings list: **GET** `AppUrls.instantDoctorBookings(page, limit)` → `/acs-aggregator/api/v1/mobile/bookings?type=teleconsultation&page=1&limit=20` via `GetInstantDoctorBookingsUseCase`. Response `data.data[]`: `orderId`, `status`, `createdAt`, `bookingAt`, `imageUrl`, `doctorName`, `specialty`, `fee`, `currency`, `partnerId`, `partnerName`, `partnerImageUrl`, `prescription` (newline-separated). Pagination: `page`, `limit`, `total`. Aggregator may omit `success`/`code`; `data` present is treated as success.
 - `AppUrls.instantDoctorSendOtp` — `POST …/doctor-consultation/instant/send-otp` — body: `msisdn`, `productId`, `uuid`, `action` (`subscribe` | `unsubscribe`)
 - `AppUrls.instantDoctorVerifyOtp` — `POST …/doctor-consultation/instant/verify-otp` — body: `msisdn`, `productId`, `otp`, `uuid`, `action` (`subscribe` | `unsubscribe`); success `data`: `resultCode`, `status`, `transactionId`, `description`, `redirectUrl`
 - Response `data[]`: `providerId`, `providerName`, `logoUrl`, `isSubscribed`, `product` (`productId`, `productCode`, `productType`, `productTitle`, `priceDisplay`, `benefits[]`, `redirectUrl`)
@@ -29,8 +30,8 @@
 
 ## DI
 
-- `instant_doctor_injection.dart` — data source, repository, use cases, cubit factory (`AppPref` + content/OTP use cases).
+- `instant_doctor_injection.dart` — data source, repository, use cases, cubit factory (`AppPref` + content/OTP use cases), `InstantDoctorBookingsCubit` factory.
 
 ## Mocks
 
-- `InstantDoctorMockApi` mirrors live multi-provider + OTP responses when mocks enabled (verify accepts OTP `1234`).
+- `InstantDoctorMockApi` mirrors live multi-provider + OTP responses when mocks enabled (verify accepts OTP `1234`). Bookings list mock returns one teleconsultation item matching the aggregator payload.

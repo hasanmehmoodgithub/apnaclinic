@@ -240,6 +240,10 @@ class AppUrls {
   static String pharmacyBookings({int page = 1, int limit = 20}) =>
       mobileBookings(type: 'pharmacy', page: page, limit: limit);
 
+  /// Instant Doctor (teleconsultation) bookings list.
+  static String instantDoctorBookings({int page = 1, int limit = 20}) =>
+      mobileBookings(type: 'teleconsultation', page: page, limit: limit);
+
   /// Single mobile booking detail by id (GET).
   /// Example: `…/mobile/bookings/{orderId}`
   static String mobileBookingDetail(String orderId) =>
@@ -376,13 +380,22 @@ class AppUrls {
 
   static const String website = 'https://apnaclinic.ecnstg.com/';
 
+  /// FikrFree Android application id (Play Store / PackageManager).
+  static const String fikrFreeAndroidPackage = 'com.fikrfree.android';
+
+  /// FikrFree iOS custom URL schemes. Tried in order when the app is installed.
+  static const List<String> fikrFreeIosUrlSchemes = [
+    'fikrfree://',
+    'com.fikrfree.ios://',
+  ];
+
   /// FikrFree on the App Store (iOS).
   static const String fikrFreeAppStoreIos =
-      'https://apps.apple.com/pk/app/fikrfree/id6739287582';
+      'https://apps.apple.com/us/app/fikrfree/id6739287582';
 
   /// FikrFree on Google Play (Android).
   static const String fikrFreePlayStoreAndroid =
-      'https://play.google.com/store/apps/details?id=com.fikrfree.android&hl=en';
+      'https://play.google.com/store/apps/details?id=com.fikrfree.android';
 
   /// Apna Clinic on Google Play (Android). Used when CMS omits storeUrl.
   static const String apnaClinicPlayStoreAndroid =

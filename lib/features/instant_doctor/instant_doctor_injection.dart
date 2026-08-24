@@ -7,10 +7,12 @@ import 'data/data_sources/instant_doctor_remote_data_source_impl.dart';
 import 'data/mock/instant_doctor_mock_api.dart';
 import 'data/repositories/instant_doctor_repository_impl.dart';
 import 'domain/repositories/instant_doctor_repository.dart';
+import 'domain/use_cases/get_instant_doctor_bookings_use_case.dart';
 import 'domain/use_cases/get_instant_doctor_content_use_case.dart';
 import 'domain/use_cases/send_instant_doctor_otp_use_case.dart';
 import 'domain/use_cases/verify_instant_doctor_otp_use_case.dart';
 import 'presentation/cubit/instant_doctor_cubit.dart';
+import '../bookings/presentation/cubit/instant_doctor_bookings_cubit.dart';
 
 void initInstantDoctorInjector() {
   sl.registerLazySingleton<InstantDoctorMockApi>(() => InstantDoctorMockApi());
@@ -32,12 +34,24 @@ void initInstantDoctorInjector() {
     () => GetInstantDoctorContentUseCase(repository: sl<InstantDoctorRepository>()),
   );
 
+  sl.registerLazySingleton<GetInstantDoctorBookingsUseCase>(
+    () => GetInstantDoctorBookingsUseCase(
+      repository: sl<InstantDoctorRepository>(),
+    ),
+  );
+
   sl.registerLazySingleton<SendInstantDoctorOtpUseCase>(
     () => SendInstantDoctorOtpUseCase(repository: sl<InstantDoctorRepository>()),
   );
 
   sl.registerLazySingleton<VerifyInstantDoctorOtpUseCase>(
     () => VerifyInstantDoctorOtpUseCase(repository: sl<InstantDoctorRepository>()),
+  );
+
+  sl.registerFactory<InstantDoctorBookingsCubit>(
+    () => InstantDoctorBookingsCubit(
+      getBookingsUseCase: sl<GetInstantDoctorBookingsUseCase>(),
+    ),
   );
 
   sl.registerFactory<InstantDoctorCubit>(

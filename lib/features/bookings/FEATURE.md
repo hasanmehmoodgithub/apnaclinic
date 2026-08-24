@@ -6,7 +6,7 @@ Tabbed bookings hub (Instant Doctor, Pharmacy, Doctor Consultation, Lab Tests, S
 
 ## Routes / entry
 
-- `BookingsDashboardScreen` — bottom nav tab; menu tile switches to this tab; inner tabs in order: Instant Doctor, Pharmacy, Doctor Consultation, Lab Tests, Surgery (`BookingsTabs`). `AppRoutes` booking detail routes per type. Instant Doctor has no bookings list API yet (`InstantDoctorBookingsScreen` empty state opens the Instant Doctor bottom tab).
+- `BookingsDashboardScreen` — bottom nav tab; menu tile switches to this tab; inner tabs in order: Instant Doctor, Pharmacy, Doctor Consultation, Lab Tests, Surgery (`BookingsTabs`). `AppRoutes` booking detail routes per type. Instant Doctor list: **GET** `AppUrls.instantDoctorBookings` (`type=teleconsultation`) via `GetInstantDoctorBookingsUseCase` / `InstantDoctorBookingsCubit` (page 1, limit 20; infinite scroll). Empty state opens the Instant Doctor bottom tab. Card tap / **View Details** opens a prescription bottom sheet (`prescription` newline-split text).
 - `AppRoutes.doctorConsultationBookingDetails` — consultation booking details; extra: `DoctorConsultationBookingDetailsArgs` (`bookingId`, optional preloaded `booking` from list).
 
 ## Data & APIs
@@ -30,11 +30,14 @@ Tabbed bookings hub (Instant Doctor, Pharmacy, Doctor Consultation, Lab Tests, S
   - List card (`LabTestBookingCardWidget`): microscope icon, **Order No.** + id, static subtitle “Lab Test Report”, date (`placedAt` / `createdAt`), footer **Status** | **Total Fee** | **View Details**. Right-side decoration uses `Assets.labTestCardVector`; no partner/lab logos on the list card.
   - Fee: `pricing.total` formatted `Rs. n,nnn/-`.
   - **View Details** opens `LabTestViewDetailsScreen` with `LabTestViewDetailsArgs(orderId)` then loads **GET** `AppUrls.labOrderById` (`/acs-aggregator/api/v1/mobile/lab-orders/{id}`) via `GetLabOrderDetailUseCase`. Response is mapped with `LabTestBookingListMapper.toViewDetailsContent` (patient, fees, logos, `partnerRef`/discount code, report note). **Sample Type** pill uses API `orderType`: `HOME_SAMPLING` → Home Sample, `WALK_IN` → Walk In (fallback N/A). Status pill uses the same Pending (amber) / Confirmed (teal) / failed (red) colors as the list. E-invoice is not shown.
+- Instant Doctor bookings list: **GET** `AppUrls.instantDoctorBookings(page, limit)` (`…/mobile/bookings?type=teleconsultation&…`) via `GetInstantDoctorBookingsUseCase` (instant_doctor module). Items: `orderId`, `status`, `createdAt`, `bookingAt`, `imageUrl`, `doctorName`, `specialty`, `fee`, `currency`, `partnerId`/`partnerName`/`partnerImageUrl`, `prescription`. Card shows doctor, specialty, date, partner logo, status, fee. Card tap / **View Details** opens `InstantDoctorBookingPrescriptionSheet` with `prescription` (newline-split, e.g. Panadol / Azomax / Acefyl syrup). Empty list **Instant Doctor** CTA opens the Instant Doctor bottom tab.
+
 - Pharmacy bookings list: **GET** `AppUrls.pharmacyBookings(page, limit)` (`…/mobile/bookings?type=pharmacy&…`) via `GetPharmacyBookingsUseCase` (pharmacy module). Items: `orderNo`, `orderId`, `productName`, `imageUrl`, `quantity`, `unitPrice`, `total`, `status`, `createdAt`. List card shows product image, qty×unit, total, status label; whole card (and **View Details**) → `AppRoutes.pharmacyBookingDetails` with **`orderId` only** for the detail GET (`AppUrls.pharmacyBookingDetail(orderId)`). `orderNo` is display-only (header fallback). After pharmacy checkout order-placed dialog, shell opens Bookings → Pharmacy tab (`BookingsTabs.pharmacy`).
 
 ## State
 
 - `DoctorConsultationBookingsCubit` — paginated consultation bookings list (page 1, limit 20; infinite scroll load-more). Initial load uses `BookingsListShimmerWidget`. Empty list shows `EmptyBookingWidget` with “No Booking Available”.
+- `InstantDoctorBookingsCubit` — paginated Instant Doctor bookings list (page 1, limit 20; infinite scroll). Initial load uses `BookingsListShimmerWidget`. Empty list shows `EmptyBookingWidget` with CTA to the Instant Doctor tab.
 - `DoctorConsultationBookingDetailsCubit` — always **GET** detail by `orderId` (`GetConsultationBookingUseCase`); optional list `booking` is preload while shimmering; maps via `DoctorConsultationBookingMapper`; submits feedback and updates local `patientReview` on success.
 
 ## UI
@@ -45,12 +48,12 @@ Tabbed bookings hub (Instant Doctor, Pharmacy, Doctor Consultation, Lab Tests, S
 
 ## Analytics
 
-Firebase via `BookingsAnalytics` / `AnalyticsService`. `my_bookings_tab` fires when the bottom Bookings tab is shown. `booking_viewed` fires after details load for consultancy / pharmacy / lab / surgery (`type`). Instant Doctor has no booking-details screen yet. `prescription_available` fires when consultation details include doctor prescriptions, and when a push/inbox `type` contains `PRESCRIPTION` (`service` `consultancy` / `instant_doctor`). `prescription_downloaded` fires on prescription file tap. `pharmacy_status_changed` fires from push/inbox when `serviceType` is `PHARMACY` and `type` contains `STATUS` / `DELIVER` / `DISPATCH` (`changed_by` only if the payload includes it). Meta/TikTok keys are not sent.
+Firebase via `BookingsAnalytics` / `AnalyticsService`. `my_bookings_tab` fires when the bottom Bookings tab is shown. `booking_viewed` fires after details load for consultancy / pharmacy / lab / surgery, and when the Instant Doctor prescription sheet opens (`type`). `prescription_available` fires when consultation details include doctor prescriptions, when Instant Doctor `prescription` text is shown in the sheet, and when a push/inbox `type` contains `PRESCRIPTION` (`service` `consultancy` / `instant_doctor`). `prescription_downloaded` fires on prescription file tap. `pharmacy_status_changed` fires from push/inbox when `serviceType` is `PHARMACY` and `type` contains `STATUS` / `DELIVER` / `DISPATCH` (`changed_by` only if the payload includes it). Meta/TikTok keys are not sent.
 
 | Event | When | Params |
 |---|---|---|
 | `my_bookings_tab` | Bookings bottom tab is shown | — |
-| `booking_viewed` | Booking details load | `type` (`consultancy` / `pharmacy` / `lab` / `surgery`) |
+| `booking_viewed` | Booking details load | `type` (`consultancy` / `pharmacy` / `lab` / `surgery` / `instant_doctor`) |
 | `prescription_available` | Consultation details have prescriptions, or prescription push | `booking_id`, `service` |
 | `prescription_downloaded` | User taps a consultation prescription | `booking_id`, `service`, `user_name`, `msisdn` |
 | `pharmacy_status_changed` | Pharmacy status push / inbox | `booking_id`, `status`, `changed_by` |

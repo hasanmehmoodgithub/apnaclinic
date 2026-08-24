@@ -4,7 +4,9 @@ import '../../../../core/constants/app_strings.dart';
 import '../../../../core/network/app_urls.dart';
 import '../../../../core/network/api_service.dart';
 import '../../../../core/utils/error_handler.dart';
+import '../../domain/use_cases/get_instant_doctor_bookings_params.dart';
 import '../mock/instant_doctor_mock_api.dart';
+import '../models/instant_doctor_booking_model.dart';
 import '../models/instant_doctor_model.dart';
 import 'instant_doctor_remote_data_source.dart';
 
@@ -52,6 +54,50 @@ class InstantDoctorRemoteDataSourceImpl implements InstantDoctorRemoteDataSource
       );
       return Future.error(message);
     }
+  }
+
+  @override
+  Future<InstantDoctorBookingsPageModel> getBookings(
+    GetInstantDoctorBookingsParams params,
+  ) async {
+    final endpoint = AppUrls.instantDoctorBookings(
+      page: params.page,
+      limit: params.limit,
+    );
+    try {
+      final Map<String, dynamic> response;
+      if (InstantDoctorMockApi.useMockResponses) {
+        response = await mockApi.getBookingsSuccessResponse(
+          page: params.page,
+          limit: params.limit,
+        );
+      } else {
+        response = await apiService.get(endpoint);
+        log('getInstantDoctorBookings response: $response');
+      }
+
+      if (_isBookingsSuccessResponse(response)) {
+        return InstantDoctorBookingsPageModel.fromJson(response);
+      }
+
+      final message =
+          (response['message'] ?? AppStrings.instantDoctorBookingsLoadError)
+              .toString();
+      return Future.error(message);
+    } catch (e) {
+      log('getInstantDoctorBookings error: $e');
+      final message = ErrorHandler.handleExceptions(
+        e,
+        endpoint: endpoint,
+      );
+      return Future.error(message);
+    }
+  }
+
+  static bool _isBookingsSuccessResponse(Map<String, dynamic> response) {
+    if (_isSuccessResponse(response)) return true;
+    final data = response['data'];
+    return data is Map || data is List;
   }
 
   @override

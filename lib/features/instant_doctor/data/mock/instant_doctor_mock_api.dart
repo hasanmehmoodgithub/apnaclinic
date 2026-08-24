@@ -54,6 +54,38 @@ class InstantDoctorMockApi {
     };
   }
 
+  Future<Map<String, dynamic>> getBookingsSuccessResponse({
+    int page = 1,
+    int limit = 20,
+  }) async {
+    await Future<void>.delayed(const Duration(milliseconds: 250));
+    return {
+      'message': 'Bookings retrieved',
+      'data': {
+        'data': [
+          {
+            'orderId': '9f1c0000-0000-4000-8000-000000000001',
+            'status': 'Confirmed',
+            'createdAt': '2026-08-18T06:43:00.000Z',
+            'bookingAt': '2026-08-18T06:43:00.000Z',
+            'imageUrl': '',
+            'doctorName': 'MedIQ Doctor',
+            'specialty': 'General Practitioner',
+            'fee': 0,
+            'currency': 'PKR',
+            'partnerId': 3,
+            'partnerName': 'MedIQ',
+            'partnerImageUrl': '',
+            'prescription': 'Panadol\nAzomax\nAcefyl syrup',
+          },
+        ],
+        'page': page,
+        'limit': limit,
+        'total': 1,
+      },
+    };
+  }
+
   Future<Map<String, dynamic>> sendOtpSuccessResponse({
     required String msisdn,
     required int productId,

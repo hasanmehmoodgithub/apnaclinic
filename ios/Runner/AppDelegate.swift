@@ -21,6 +21,31 @@ import UserNotifications
     let messenger = engineBridge.applicationRegistrar.messenger()
     registerSecurityChannels(messenger: messenger)
     registerMediaSessionChannel(messenger: messenger)
+    registerExternalAppChannel(messenger: messenger)
+  }
+
+  private func registerExternalAppChannel(messenger: FlutterBinaryMessenger) {
+    let channel = FlutterMethodChannel(
+      name: "apna_clinic/external_app",
+      binaryMessenger: messenger
+    )
+    channel.setMethodCallHandler { call, result in
+      guard call.method == "openInstalledApp" else {
+        result(FlutterMethodNotImplemented)
+        return
+      }
+      let schemes = (call.arguments as? [String: Any])?["iosUrlSchemes"] as? [String] ?? []
+      guard let url = schemes
+        .compactMap({ URL(string: $0) })
+        .first(where: { UIApplication.shared.canOpenURL($0) })
+      else {
+        result(false)
+        return
+      }
+      UIApplication.shared.open(url, options: [:]) { success in
+        result(success)
+      }
+    }
   }
 
   private func registerMediaSessionChannel(messenger: FlutterBinaryMessenger) {

@@ -3,13 +3,16 @@ import 'dart:developer';
 import '../../../../core/functional/functional_export.dart';
 import '../../../../core/network/app_urls.dart';
 import '../../../../core/utils/error_handler.dart';
+import '../../domain/entities/instant_doctor_booking_entity.dart';
 import '../../domain/entities/instant_doctor_entity.dart';
 import '../../domain/entities/instant_doctor_verify_otp_entity.dart';
 import '../../domain/repositories/instant_doctor_repository.dart';
+import '../../domain/use_cases/get_instant_doctor_bookings_params.dart';
 import '../../domain/use_cases/get_instant_doctor_content_params.dart';
 import '../../domain/use_cases/send_instant_doctor_otp_params.dart';
 import '../../domain/use_cases/verify_instant_doctor_otp_params.dart';
 import '../data_sources/instant_doctor_remote_data_source.dart';
+import '../mappers/instant_doctor_booking_mapper.dart';
 import '../mappers/instant_doctor_mapper.dart';
 
 class InstantDoctorRepositoryImpl implements InstantDoctorRepository {
@@ -32,6 +35,27 @@ class InstantDoctorRepositoryImpl implements InstantDoctorRepository {
         ErrorHandler.handleExceptions(
           e,
           endpoint: AppUrls.instantDoctorConsultation(params.msisdn),
+        ),
+      );
+    }
+  }
+
+  @override
+  Future<Either<ErrorMsg, InstantDoctorBookingsPageEntity>> getBookings(
+    GetInstantDoctorBookingsParams params,
+  ) async {
+    try {
+      final model = await remoteDataSource.getBookings(params);
+      return Right(InstantDoctorBookingMapper.toPageEntity(model));
+    } catch (e) {
+      log('getInstantDoctorBookings repository error: $e');
+      return Left(
+        ErrorHandler.handleExceptions(
+          e,
+          endpoint: AppUrls.instantDoctorBookings(
+            page: params.page,
+            limit: params.limit,
+          ),
         ),
       );
     }

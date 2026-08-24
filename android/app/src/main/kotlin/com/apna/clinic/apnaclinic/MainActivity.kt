@@ -41,10 +41,34 @@ class MainActivity : FlutterActivity() {
                 else -> result.notImplemented()
             }
         }
+
+        MethodChannel(
+            flutterEngine.dartExecutor.binaryMessenger,
+            EXTERNAL_APP_CHANNEL,
+        ).setMethodCallHandler { call, result ->
+            when (call.method) {
+                "openInstalledApp" -> {
+                    val packageName = call.argument<String>("androidPackage")
+                    if (packageName.isNullOrBlank()) {
+                        result.success(false)
+                        return@setMethodCallHandler
+                    }
+                    val launchIntent = packageManager.getLaunchIntentForPackage(packageName)
+                    if (launchIntent != null) {
+                        startActivity(launchIntent)
+                        result.success(true)
+                    } else {
+                        result.success(false)
+                    }
+                }
+                else -> result.notImplemented()
+            }
+        }
     }
 
     companion object {
         private const val SECURITY_CHANNEL = "security_channel"
         private const val ADVANCED_CHANNEL = "qwe_rty_123"
+        private const val EXTERNAL_APP_CHANNEL = "apna_clinic/external_app"
     }
 }

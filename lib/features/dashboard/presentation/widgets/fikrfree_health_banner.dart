@@ -1,32 +1,17 @@
-import 'dart:io' show Platform;
-
 import 'package:apnaclinic/core/constants/app_colors.dart';
 import 'package:apnaclinic/core/l10n/app_localizations.dart';
 import 'package:apnaclinic/generated/assets.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../core/extensions/screen_util_extensions.dart';
-import '../../../../core/network/app_urls.dart';
-import '../../../../core/utils/app_url_launcher.dart';
+import '../../../../core/utils/external_app_launcher.dart';
 
 /// Section title + mint card promoting FikrFree (insurance / health).
 class FikrfreeHealthBanner extends StatelessWidget {
   const FikrfreeHealthBanner({super.key, this.onTap});
 
-  /// Optional override. Defaults to opening the FikrFree store listing.
+  /// Optional override. Defaults to opening FikrFree (app if installed, else store).
   final VoidCallback? onTap;
-
-  static Future<void> openFikrFreeStore() {
-    final url = !kIsWeb && Platform.isIOS
-        ? AppUrls.fikrFreeAppStoreIos
-        : AppUrls.fikrFreePlayStoreAndroid;
-    return AppUrlLauncher.open(
-      url: url,
-      lunchMode: LaunchMode.externalApplication,
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +35,7 @@ class FikrfreeHealthBanner extends StatelessWidget {
           borderRadius: BorderRadius.circular(14.r),
           clipBehavior: Clip.antiAlias,
           child: InkWell(
-            onTap: onTap ?? openFikrFreeStore,
+            onTap: onTap ?? () => ExternalAppLauncher.openFikrFree(),
             child: Padding(
               padding: EdgeInsets.fromLTRB(14.w, 24.h, 12.w, 24.h),
               child: Row(
