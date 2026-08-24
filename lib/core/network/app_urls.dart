@@ -172,12 +172,12 @@ class AppUrls {
   /// Notifications endpoint
   /// In-app notification inbox (notification service).
   static String notifications({int page = 1, int limit = 20}) =>
-      '$_normalizedApiBaseUrl/acs-notification/api/v1/notifications'
+      '$_normalizedApiBaseUrl/acs-auth/api/v1/notifications'
       '?page=$page&limit=$limit';
 
   /// Mark a notification as read by `publicId`.
   static String notificationMarkRead(String publicId) =>
-      '$_normalizedApiBaseUrl/acs-notification/api/v1/notifications/'
+      '$_normalizedApiBaseUrl/acs-auth/api/v1/notifications/'
       '${Uri.encodeComponent(publicId)}/read';
 
   /// Pharmacy partner products list (POST, paginated).
