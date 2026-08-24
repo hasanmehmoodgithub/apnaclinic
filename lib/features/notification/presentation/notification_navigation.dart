@@ -20,7 +20,7 @@ typedef _PushNamed = void Function(String name, {Object? extra});
 ///
 /// Prefers `deepLink.data.unified_order_id`; falls back to `entity.id` /
 /// `entity_id` when the unified id is missing. Pharmacy uses
-/// `deepLink.entity.publicId`.
+/// `deepLink.entity.publicId` (same as a pharmacy push tap).
 ///
 /// Returns `true` when navigation was started; `false` when the notification
 /// cannot be routed (missing booking id, unsupported service type, etc.).
@@ -29,11 +29,9 @@ bool openNotificationDeepLink(
   NotificationEntity item,
 ) {
   return _openBookingScreen(
-    serviceType: item.serviceType,
+    serviceType: _inboxServiceType(item),
     bookingId: _bookingId(item),
-    pharmacyOrderId: item.entityPublicId.trim().isNotEmpty
-        ? item.entityPublicId.trim()
-        : _bookingId(item),
+    pharmacyOrderId: _inboxPharmacyOrderId(item),
     pushNamed: (name, {extra}) {
       context.pushNamed(name, extra: extra);
     },
@@ -43,6 +41,7 @@ bool openNotificationDeepLink(
 /// Opens the screen for an FCM / local-notification tap.
 ///
 /// Prefers the same booking-details flow as the inbox (`serviceType` + ids).
+/// Pharmacy push uses `publicId` (FCM / `deepLink.entity.publicId`).
 /// Falls back to `route` / `deepLink` / `screen` as a named GoRouter path.
 bool openPushNotificationLink({
   required Map<String, dynamic> data,
@@ -74,6 +73,19 @@ String _bookingId(NotificationEntity item) {
   final unified = item.unifiedOrderId.trim();
   if (unified.isNotEmpty) return unified;
   return item.entityId.trim();
+}
+
+String _inboxServiceType(NotificationEntity item) {
+  final service = item.serviceType.trim();
+  if (service.isNotEmpty) return service;
+  return _serviceTypeFromKind(item.entityKind);
+}
+
+/// Pharmacy inbox tap: `deepLink.entity.publicId`, then UUID in `endpoint`.
+String _inboxPharmacyOrderId(NotificationEntity item) {
+  final fromEntity = item.entityPublicId.trim();
+  if (fromEntity.isNotEmpty) return fromEntity;
+  return _uuidFromEndpoint(item.deepLinkEndpoint);
 }
 
 bool _openBookingScreen({
@@ -117,13 +129,14 @@ bool _openBookingScreen({
         );
         return true;
       case 'PHARMACY':
-        final orderId = pharmacyOrderId.isNotEmpty
-            ? pharmacyOrderId
-            : bookingId;
-        if (orderId.isEmpty) return false;
+        if (pharmacyOrderId.isEmpty) return false;
         pushNamed(
           AppRoutes.pharmacyBookingDetails,
-          extra: {'orderId': orderId},
+          extra: {
+            'orderId': pharmacyOrderId,
+            if (bookingId.isNotEmpty && bookingId != pharmacyOrderId)
+              'orderNo': bookingId,
+          },
         );
         return true;
       default:
@@ -209,13 +222,20 @@ _PushTarget _parsePushTarget(Map<String, dynamic> data, String? route) {
   var resolvedRoute = (route != null && route.trim().isNotEmpty)
       ? route.trim()
       : (parsedRoute.isEmpty ? null : parsedRoute);
-  if (resolvedRoute != null && resolvedRoute.startsWith('{')) {
+  if (resolvedRoute != null &&
+      (resolvedRoute.startsWith('{') ||
+          resolvedRoute.toLowerCase().startsWith('mobile/'))) {
     resolvedRoute = null;
   }
 
   var serviceType = _read(flat, const ['serviceType', 'service_type']);
   if (serviceType.isEmpty) {
     serviceType = _serviceTypeFromRoute(resolvedRoute);
+  }
+  if (serviceType.isEmpty) {
+    serviceType = _serviceTypeFromKind(
+      _read(flat, const ['entity_kind', 'entityKind', 'kind']),
+    );
   }
 
   final bookingId = _read(flat, const [
@@ -230,7 +250,7 @@ _PushTarget _parsePushTarget(Map<String, dynamic> data, String? route) {
     'leadId',
     'lead_id',
   ]);
-  final pharmacyOrderId = _readEntityPublicId(flat);
+  final pharmacyOrderId = _readPharmacyPushPublicId(flat);
 
   return _PushTarget(
     serviceType: serviceType,
@@ -251,19 +271,42 @@ String _serviceTypeFromRoute(String? route) {
   return '';
 }
 
+String _serviceTypeFromKind(String kind) {
+  switch (kind.trim().toUpperCase()) {
+    case 'PHARMACY_ORDER':
+    case 'PHARMACY':
+      return 'PHARMACY';
+    case 'LAB_ORDER':
+    case 'LAB':
+      return 'LAB';
+    case 'APPOINTMENT':
+    case 'CONSULTATION':
+    case 'CONSULTANCY':
+      return 'CONSULTATION';
+    case 'SURGERY_LEAD':
+    case 'SURGERY':
+      return 'SURGERY';
+    default:
+      return '';
+  }
+}
+
 Map<String, dynamic> _expandPushData(Map<String, dynamic> data) {
   final out = <String, dynamic>{};
   _absorb(out, data);
   _flattenDottedKeys(out);
 
+  // Payload may be wrapped (`deepLink`) or *be* the deep-link object
+  // (`data` + `entity` + `endpoint`).
   final deepLink = _asMap(out['deepLink'] ?? out['deep_link']);
-  if (deepLink == null) return out;
+  if (deepLink != null) {
+    _absorb(out, deepLink);
+  }
 
-  _absorb(out, deepLink);
-  final nested = _asMap(deepLink['data']);
+  final nested = _asMap(out['data']);
   if (nested != null) _absorb(out, nested);
 
-  final entity = _asMap(deepLink['entity']);
+  final entity = _asMap(out['entity']);
   if (entity != null) {
     final id = entity['id'];
     if (id != null && _read(out, const ['entity_id', 'entityId']).isEmpty) {
@@ -272,6 +315,11 @@ Map<String, dynamic> _expandPushData(Map<String, dynamic> data) {
     final publicId = entity['publicId'] ?? entity['public_id'];
     if (publicId != null && publicId.toString().trim().isNotEmpty) {
       out['entityPublicId'] = publicId;
+    }
+    final kind = entity['kind'] ?? entity['entity_kind'];
+    if (kind != null &&
+        _read(out, const ['entity_kind', 'entityKind']).isEmpty) {
+      out['entity_kind'] = kind;
     }
   }
   return out;
@@ -302,8 +350,32 @@ void _flattenDottedKeys(Map<String, dynamic> into) {
   }
 }
 
-/// Same source as the inbox: `deepLink.entity.publicId` only.
-/// Never uses the notification's own top-level `publicId`.
+/// Pharmacy tap: `entity.publicId`, then a UUID `publicId`, then UUID in
+/// `endpoint` (`mobile/orders/{publicId}`). Never `unified_order_id`.
+String _readPharmacyPushPublicId(Map<String, dynamic> flat) {
+  final fromEntity = _readEntityPublicId(flat);
+  if (fromEntity.isNotEmpty) return fromEntity;
+
+  final fromPublicId = _read(flat, const ['publicId', 'public_id']);
+  if (_looksLikeUuid(fromPublicId)) return fromPublicId;
+
+  return _uuidFromEndpoint(_read(flat, const ['endpoint']));
+}
+
+bool _looksLikeUuid(String value) {
+  return RegExp(
+    r'^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$',
+  ).hasMatch(value);
+}
+
+String _uuidFromEndpoint(String endpoint) {
+  final match = RegExp(
+    r'[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}',
+  ).firstMatch(endpoint);
+  return match?.group(0) ?? '';
+}
+
+/// Same source as the inbox: `deepLink.entity.publicId`.
 String _readEntityPublicId(Map<String, dynamic> flat) {
   final dedicated = _read(flat, const ['entityPublicId', 'entity_public_id']);
   if (dedicated.isNotEmpty) return dedicated;

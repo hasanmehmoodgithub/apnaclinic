@@ -113,12 +113,8 @@ class PharmacyBookingDetailModel {
 
     return PharmacyBookingDetailModel(
       type: (payload['type'] ?? 'pharmacy').toString().trim(),
-      orderId: (payload['orderId'] ?? payload['order_id'] ?? '')
-          .toString()
-          .trim(),
-      orderNo: (payload['orderNo'] ?? payload['order_no'] ?? '')
-          .toString()
-          .trim(),
+      orderId: _fetchOrderId(payload),
+      orderNo: _displayOrderNo(payload),
       status: (payload['status'] ?? '').toString().trim(),
       statusTimeline: (timelineRaw is List ? timelineRaw : const <dynamic>[])
           .whereType<Map>()
@@ -173,5 +169,40 @@ class PharmacyBookingDetailModel {
     final text = value.toString().trim();
     if (text.isEmpty || text.toLowerCase() == 'null') return null;
     return text;
+  }
+
+  /// GET path id: `publicId` (UUID) when present, else `orderId`.
+  static String _fetchOrderId(Map<String, dynamic> payload) {
+    final publicId =
+        (payload['publicId'] ?? payload['public_id'] ?? '').toString().trim();
+    if (publicId.isNotEmpty) return publicId;
+    return (payload['orderId'] ?? payload['order_id'] ?? '').toString().trim();
+  }
+
+  /// App-bar number: `unified_order_id` first, then `orderNo`. Never a UUID.
+  static String _displayOrderNo(Map<String, dynamic> payload) {
+    for (final key in const [
+      'unifiedOrderId',
+      'unified_order_id',
+      'orderNo',
+      'order_no',
+    ]) {
+      final raw = payload[key];
+      if (raw == null) continue;
+      final value = raw.toString().trim();
+      if (value.isEmpty || value.toLowerCase() == 'null') continue;
+      if (_looksLikeUuid(value)) continue;
+      return value;
+    }
+    final orderId =
+        (payload['orderId'] ?? payload['order_id'] ?? '').toString().trim();
+    if (orderId.isNotEmpty && !_looksLikeUuid(orderId)) return orderId;
+    return '';
+  }
+
+  static bool _looksLikeUuid(String value) {
+    return RegExp(
+      r'^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$',
+    ).hasMatch(value);
   }
 }

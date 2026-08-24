@@ -66,10 +66,7 @@ class PharmacyBookingDetailEntity {
   final String? invoiceUrl;
   final String? messageAlert;
 
-  String get displayOrderNo {
-    if (orderNo.isNotEmpty) return orderNo;
-    return orderId;
-  }
+  String get displayOrderNo => orderNo;
 
   String get deliveryChargeLabel => deliveryCharge.toStringAsFixed(0);
 

@@ -70,6 +70,7 @@ class NotificationMockApi {
               'data': {
                 'type': 'BOOKING_CONFIRMED',
                 'audience': 'USER',
+                'endpoint': 'mobile/orders/e136ce81-e984-4df7-97dc-e1e3ef450bb1',
                 'entity_id': '71',
                 'entity_kind': 'PHARMACY_ORDER',
                 'service_type': 'PHARMACY',
@@ -80,7 +81,7 @@ class NotificationMockApi {
                 'kind': 'PHARMACY_ORDER',
                 'publicId': 'e136ce81-e984-4df7-97dc-e1e3ef450bb1',
               },
-              'endpoint': null,
+              'endpoint': 'mobile/orders/e136ce81-e984-4df7-97dc-e1e3ef450bb1',
             },
             'isRead': true,
             'readAt': '2026-08-20T14:41:51.000Z',

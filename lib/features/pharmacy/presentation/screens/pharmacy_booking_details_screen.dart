@@ -51,6 +51,21 @@ class _PharmacyBookingDetailsScreenState
     });
   }
 
+  /// App-bar number (`unified_order_id`), never the public UUID used to fetch.
+  String _headerOrderNo(PharmacyBookingDetailEntity? detail) {
+    final fromDetail = detail?.orderNo.trim() ?? '';
+    if (fromDetail.isNotEmpty && !_looksLikeUuid(fromDetail)) return fromDetail;
+    final fallback = widget.fallbackOrderNo?.trim() ?? '';
+    if (fallback.isEmpty || _looksLikeUuid(fallback)) return '';
+    return fallback;
+  }
+
+  bool _looksLikeUuid(String value) {
+    return RegExp(
+      r'^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$',
+    ).hasMatch(value);
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
@@ -58,15 +73,15 @@ class _PharmacyBookingDetailsScreenState
       future: _detailFuture,
       builder: (context, snapshot) {
         final detail = snapshot.data;
-        final titleOrder = detail?.displayOrderNo ??
-            widget.fallbackOrderNo?.trim() ??
-            widget.orderId;
+        final titleOrder = _headerOrderNo(detail);
 
         return AppScaffoldGradient(
           child: Column(
             children: [
               PharmacyFlowHeaderWidget(
-                title: '${l10n.pharmacyBookingOrderPrefix} $titleOrder',
+                title: titleOrder.isEmpty
+                    ? l10n.pharmacyBookingOrderPrefix
+                    : '${l10n.pharmacyBookingOrderPrefix} $titleOrder',
                 trailingWidth: 40,
                 onBackTap: () => pharmacyPopOrGoHome(context),
               ),

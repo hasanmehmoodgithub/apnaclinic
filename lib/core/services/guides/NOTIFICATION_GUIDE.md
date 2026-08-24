@@ -273,7 +273,27 @@ FCM `data` should include a `serviceType` and booking id so the app can open the
 }
 ```
 
-This opens consultation booking details for `84213`. Same pattern for `SURGERY` / `LAB` / `PHARMACY`.
+This opens consultation booking details for `84213`. Same pattern for `SURGERY` / `LAB`. **Pharmacy** uses `entity.publicId`, not `unified_order_id`:
+
+```json
+{
+  "data": {
+    "type": "BOOKING_CONFIRMED",
+    "entity_id": "219888",
+    "entity_kind": "PHARMACY_ORDER",
+    "service_type": "PHARMACY",
+    "unified_order_id": "219888"
+  },
+  "entity": {
+    "id": 219888,
+    "kind": "PHARMACY_ORDER",
+    "publicId": "9ff000eb-4a49-461a-b9c1-7c6cb72d4460"
+  },
+  "endpoint": "mobile/orders/9ff000eb-4a49-461a-b9c1-7c6cb72d4460"
+}
+```
+
+Tap opens pharmacy order details for `9ff000eb-4a49-461a-b9c1-7c6cb72d4460`. The same object may be nested under `deepLink` or sent as the FCM `data` map (values as JSON strings).
 
 FCM `data` values must be strings, so `deepLink` may be sent as a JSON string:
 
@@ -287,7 +307,7 @@ FCM `data` values must be strings, so `deepLink` may be sent as a JSON string:
 
 `serviceType` values: `CONSULTATION`, `SURGERY`, `LAB`, `PHARMACY`.
 
-Id is read from `deepLink.data.unified_order_id` (also accepts `booking_id` / `entity_id`). Pharmacy prefers `deepLink.entity.publicId`.
+Id is read from `deepLink.data.unified_order_id` (also accepts `booking_id` / `entity_id`). **Pharmacy** uses `entity.publicId` (or the UUID in `endpoint`); never `unified_order_id`.
 
 **Hub / named screen fallback:**
 
