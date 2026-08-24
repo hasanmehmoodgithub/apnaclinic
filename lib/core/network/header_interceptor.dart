@@ -9,8 +9,8 @@ class HeaderInterceptor extends Interceptor {
   HeaderInterceptor({
     required DeviceHeadersProvider deviceHeadersProvider,
     required AppPref appPref,
-  })  : _deviceHeadersProvider = deviceHeadersProvider,
-        _appPref = appPref;
+  }) : _deviceHeadersProvider = deviceHeadersProvider,
+       _appPref = appPref;
 
   final DeviceHeadersProvider _deviceHeadersProvider;
   final AppPref _appPref;
@@ -25,6 +25,9 @@ class HeaderInterceptor extends Interceptor {
   Future<void> _addHeaders(RequestOptions options) async {
     final headers = await _deviceHeadersProvider.headers();
     options.headers.addAll(headers);
+
+    // HMAC v1 headers are added later by HmacSigningInterceptor (aggregator +
+    // user-auth only). Do not attach them here.
 
     final uri = options.uri.toString();
     if (!_isMobileBackendUri(uri)) {

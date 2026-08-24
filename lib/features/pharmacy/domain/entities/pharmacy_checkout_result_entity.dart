@@ -28,4 +28,11 @@ class PharmacyCheckoutResultEntity {
     if (id.isNotEmpty) return id;
     return orderNo.trim();
   }
+
+  /// Human-facing number for the success dialog. Prefers `unified_order_id`.
+  String get displayOrderNo {
+    final unified = unifiedOrderId;
+    if (unified != null && unified > 0) return '$unified';
+    return orderNo.trim();
+  }
 }

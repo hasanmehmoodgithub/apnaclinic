@@ -7,8 +7,8 @@ Thin **Dio** facade used across features for JSON REST calls. Lives in `lib/core
 | Area | Behavior |
 |------|----------|
 | **Base URL** | `ApiConfig.baseUrl` → `FlavorConfig.apiBaseUrl` (override via constructor `baseUrl`). |
-| **Headers** | Default `Content-Type` / `Accept`: `application/json`. For `FormData` posts, overrides to `multipart/form-data; boundary=...` (same value on header + `contentType`) so Dio does not conflict with BaseOptions JSON content-type and servers can parse multipart. Device/app metadata is added by `HeaderInterceptor` (see `DEVICE_HEADERS_CONTRACT.md`). CMS/aggregator calls include `x-api-key` (`AppUrls.mobileApiKey`) for guest access; `x-tenant-id` when logged in. Bearer token is synced from `AppPref` before each request. |
-| **Interceptors** | `HeaderInterceptor`, `AuthInterceptor` (401 → refresh + retry, see `REFRESH_TOKEN_LOGIC.md`), optional `ApiLoggerInterceptor`, optional `ChuckerDioInterceptor` (`ChuckerGuard`: on in debug; **on in release by default** via `CHUCKER_ACTIVE` default `true` + `ChuckerFlutter.showOnRelease = true`; opt out with `--dart-define=CHUCKER_ACTIVE=false`). |
+| **Headers** | Default `Content-Type` / `Accept`: `application/json`. For `FormData` posts, overrides to `multipart/form-data; boundary=...` (same value on header + `contentType`) so Dio does not conflict with BaseOptions JSON content-type and servers can parse multipart. Device/app metadata is added by `HeaderInterceptor` (see `DEVICE_HEADERS_CONTRACT.md`). CMS/aggregator calls include `x-api-key` (`AppUrls.mobileApiKey`) for guest access; `x-tenant-id` when logged in. Bearer token is synced from `AppPref` before each request. Aggregator and user-auth calls also get HMAC v1 headers (`x-key-id`, `x-timestamp`, `x-nonce`, `x-content-digest`, `x-signature`) — see `HMAC.md` / `HMAC.html`. |
+| **Interceptors** | `HeaderInterceptor`, `AuthInterceptor` (401 → refresh + retry, see `REFRESH_TOKEN_LOGIC.md`), `HmacSigningInterceptor` (aggregator + user-auth), optional `ApiLoggerInterceptor`, optional `ChuckerDioInterceptor` (`ChuckerGuard`: on in debug; **on in release by default** via `CHUCKER_ACTIVE` default `true` + `ChuckerFlutter.showOnRelease = true`; opt out with `--dart-define=CHUCKER_ACTIVE=false`). |
 | **Timeouts** | Connect / send / receive default 60s; per-call override via `timeout` on `get`/`post`/… |
 | **Response** | 2xx returns `Map<String, dynamic>` (empty map if body null). Non-2xx throws `ApiException` with parsed message via `ApiErrorMessageUtils`. |
 | **Dio errors** | Mapped to typed `ApiException` subclasses (`ApiUnauthorizedException`, `ApiNetworkException`, …). |
@@ -28,6 +28,7 @@ Thin **Dio** facade used across features for JSON REST calls. Lives in `lib/core
 ## Related files
 
 - `auth_interceptor.dart` — token refresh single-flight.
+- `hmac/` — HMAC v1 signing (`HMAC.md`, `HMAC.html`).
 - `device_headers_provider.dart` / `header_interceptor.dart` — app/device metadata headers.
 - `DEVICE_HEADERS_CONTRACT.md` — backend-facing contract for app/device headers.
 - `api_error_message_utils.dart` — nested `message` / validation arrays from APIs.

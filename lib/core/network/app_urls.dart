@@ -48,7 +48,7 @@ class AppUrls {
 
   /// Home services (CMS mobile API).
   static String get ourServices =>
-      '$_normalizedApiBaseUrl/acs-cmsbe/api/v1/mobile/services';
+      'https://jazzred-msa-stg.jazz.com.pk/acs-cmsbe/api/v1/mobile/services';
 
   /// Doctor consultation categories (aggregator mobile API).
   static String get doctorCategories =>
@@ -98,7 +98,7 @@ class AppUrls {
   static String doctorConsultationBookings({int page = 1, int limit = 20}) =>
       '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/doctor-consultation?page=$page&limit=$limit';
 
-  /// Single booked doctor consultation by appointment id (aggregator mobile API).
+  /// Single booked doctor consultation by `orderId` (aggregator mobile API).
   static String doctorConsultationBookingDetail(int appointmentId) =>
       '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/doctor-consultation/$appointmentId';
 
@@ -130,14 +130,8 @@ class AppUrls {
       '$_normalizedApiBaseUrl/acs-cmsbe/api/v1/mobile/support';
 
   /// Instant doctor consultation info (aggregator mobile API).
-  /// Guest browse omits `msisdn`; subscribed state is returned when present.
-  static String instantDoctorConsultation([String msisdn = '']) {
-    final base =
-        '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/doctor-consultation/instant';
-    final trimmed = msisdn.trim();
-    if (trimmed.isEmpty) return base;
-    return '$base?msisdn=${Uri.encodeComponent(trimmed)}';
-  }
+  static String instantDoctorConsultation(String msisdn) =>
+      '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/doctor-consultation/instant?msisdn=${Uri.encodeComponent(msisdn)}';
 
   /// Instant doctor subscription OTP — send.
   static String get instantDoctorSendOtp =>
@@ -191,7 +185,7 @@ class AppUrls {
 
   /// Pharmacy active cart (POST).
   static String get pharmacyCart =>
-      '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/partner/pharmacy/cart/active';
+      '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/partner/pharmacy/cart/details';
 
   /// Pharmacy add-to-cart (POST).
   static String get pharmacyAddToCart =>
@@ -209,7 +203,7 @@ class AppUrls {
   static String get pharmacyOrderCheckout =>
       '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/partner/pharmacy/order/checkout';
 
-  /// Abandon unpaid pharmacy order and release cart lock (POST).
+  /// Pharmacy order abandon (POST) — unlock cart after unpaid card checkout.
   static String get pharmacyOrderAbandon =>
       '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/partner/pharmacy/order/abandon';
 

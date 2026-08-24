@@ -29,6 +29,7 @@ enum AppFlavor {
     appsFlyerIosAppId: '',
   );
 
+
   final String name;
   final String apiBaseUrl;
   final String appName;

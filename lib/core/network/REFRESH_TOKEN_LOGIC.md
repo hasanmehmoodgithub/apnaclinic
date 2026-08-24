@@ -18,6 +18,7 @@ This document explains how automatic token refresh works in the networking layer
 - `lib/core/network/app_urls.dart`
 - `lib/core/preference/app_pref.dart`
 - `lib/core/preference/app_pref_impl.dart`
+- `lib/core/network/hmac/` — HMAC v1 on aggregator + user-auth (including this refresh Dio).
 
 ## Refresh Endpoint
 
@@ -112,6 +113,8 @@ Guest `401` responses (no refresh token) do not clear session or notify the shel
 
 ## Notes
 
-- `ApiService` registers `AuthInterceptor` before other interceptors.
-- A separate internal `Dio` instance is used for refresh call to avoid interceptor recursion.
+- `ApiService` registers `HeaderInterceptor`, then `AuthInterceptor`, then `HmacSigningInterceptor` (see `HMAC.md`).
+- A separate internal `Dio` instance is used for the refresh call to avoid interceptor recursion. That client still has `HmacSigningInterceptor` because refresh hits user-auth.
+- On 401 retry, stale HMAC headers are stripped so a new nonce/timestamp/signature are issued (nonce is single-use).
 - UI redirection to login should be handled at app/session layer when login status becomes false.
+- HMAC failures also return a generic 401 — do not assume every 401 is an expired JWT. Verify signing in backend **log** mode before **enforce**.

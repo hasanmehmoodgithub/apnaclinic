@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Apna Clinic — APK build commands</title>
+  <style>
+    :root {
+      --navy: #061e40;
+      --teal: #00897b;
+      --teal-dark: #00695c;
+      --bg: #f4f7f8;
+      --card: #fff;
+      --line: #e2e8ee;
+      --muted: #5b6b7c;
+      --ok: #047857;
+      --ok-bg: #ecfdf5;
+      --warn: #b45309;
+      --warn-bg: #fff7ed;
+      --skip: #9f1239;
+      --skip-bg: #fff1f2;
+      --code: #0f172a;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--navy);
+      line-height: 1.45;
+    }
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: var(--navy);
+      color: #fff;
+      padding: 18px 24px 16px;
+      box-shadow: 0 8px 24px rgba(6, 30, 64, 0.18);
+    }
+    header h1 { margin: 0 0 4px; font-size: 20px; font-weight: 700; }
+    header p { margin: 0; color: #c5d0dc; font-size: 13px; }
+    .filename {
+      margin-top: 10px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .filename b { color: var(--navy); }
+    .bar {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+      margin-top: 14px;
+    }
+    input[type="search"] {
+      flex: 1;
+      min-width: 220px;
+      border: 0;
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-size: 14px;
+    }
+    .chip {
+      border: 0;
+      background: rgba(255,255,255,.12);
+      color: #fff;
+      border-radius: 999px;
+      padding: 7px 12px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+    .chip.active { background: var(--teal); }
+    main { max-width: 1180px; margin: 0 auto; padding: 20px 16px 80px; }
+    .note, .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 16px 18px;
+      margin-bottom: 16px;
+    }
+    h2 { margin: 0 0 10px; font-size: 17px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; }
+    .stat {
+      background: #f0f7f6;
+      border-radius: 12px;
+      padding: 12px;
+    }
+    .stat b { display: block; font-size: 13px; }
+    .stat span { color: var(--muted); font-size: 12px; }
+    code, pre {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    }
+    code { font-size: 12.5px; background: #f1f5f9; padding: 1px 5px; border-radius: 4px; }
+    .cmd {
+      display: flex;
+      gap: 8px;
+      align-items: stretch;
+      margin-top: 8px;
+    }
+    .cmd pre {
+      flex: 1;
+      margin: 0;
+      background: var(--code);
+      color: #e2e8f0;
+      padding: 12px 14px;
+      border-radius: 10px;
+      overflow-x: auto;
+      font-size: 12.5px;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    .copy {
+      flex-shrink: 0;
+      min-width: 72px;
+      border: 0;
+      border-radius: 10px;
+      background: var(--teal);
+      color: #fff;
+      font-weight: 700;
+      font-size: 12px;
+      cursor: pointer;
+      padding: 0 12px;
+    }
+    .copy:hover { background: var(--teal-dark); }
+    .copy.done { background: var(--ok); }
+    .row {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 12px 14px;
+      margin-top: 10px;
+      background: #fff;
+    }
+    .row h3 { margin: 0 0 4px; font-size: 14px; }
+    .meta { color: var(--muted); font-size: 12px; margin: 0 0 6px; }
+    .tags { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 4px; }
+    .tag {
+      font-size: 11px;
+      border-radius: 999px;
+      padding: 3px 8px;
+      font-weight: 600;
+    }
+    .tag.stg { background: #e0f2fe; color: #075985; }
+    .tag.prd { background: #ede9fe; color: #5b21b6; }
+    .tag.dev { background: #f1f5f9; color: #334155; }
+    .tag.on { background: var(--ok-bg); color: var(--ok); }
+    .tag.off { background: var(--skip-bg); color: var(--skip); }
+    .tag.extra { background: var(--warn-bg); color: var(--warn); }
+    .builder label { display: block; font-size: 12px; font-weight: 700; margin: 10px 0 4px; }
+    .opts { display: flex; flex-wrap: wrap; gap: 8px; }
+    .opts label.opt {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: 500;
+      font-size: 13px;
+      background: #f8fafc;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 6px 12px;
+      cursor: pointer;
+      margin: 0;
+    }
+    .opts input { accent-color: var(--teal); }
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: var(--navy);
+      color: #fff;
+      padding: 10px 16px;
+      border-radius: 999px;
+      font-size: 13px;
+      opacity: 0;
+      pointer-events: none;
+      transition: .2s;
+      z-index: 50;
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    .hidden { display: none !important; }
+    ul { margin: 8px 0 0; padding-left: 18px; color: var(--muted); font-size: 13px; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>APK build commands</h1>
+    <p>Staging / production × Chucker on / off. Click Copy on any command. Output: <code style="background:rgba(255,255,255,.12);color:#fff">build/app/outputs/flutter-apk/</code></p>
+    <div class="bar">
+      <input id="q" type="search" placeholder="Search commands (staging, chucker, split, proxy…)" />
+      <button class="chip active" data-filter="all">All</button>
+      <button class="chip" data-filter="staging">Staging</button>
+      <button class="chip" data-filter="production">Production</button>
+      <button class="chip" data-filter="chucker-on">Chucker on</button>
+      <button class="chip" data-filter="chucker-off">Chucker off</button>
+      <button class="chip" data-filter="split">Split ABI</button>
+      <button class="chip" data-filter="proxy">Proxy</button>
+      <button class="chip" data-filter="jazz">JazzCash</button>
+      <button class="chip" data-filter="stamp">Date stamp</button>
+    </div>
+  </header>
+
+  <main>
+    <div class="note">
+      <h2>How Chucker is gated</h2>
+      <div class="grid">
+        <div class="stat"><b>Default in release</b><span><code>CHUCKER_ACTIVE=true</code> — inspector is on unless you opt out</span></div>
+        <div class="stat"><b>Turn off</b><span><code>--dart-define=CHUCKER_ACTIVE=false</code></span></div>
+        <div class="stat"><b>Debug builds</b><span>Chucker is always on in debug, even if the flag is false</span></div>
+        <div class="stat"><b>Store APK</b><span>Use production + <code>CHUCKER_ACTIVE=false</code></span></div>
+      </div>
+      <ul>
+        <li><code>flutter build apk</code> is a <strong>release</strong> APK. Flavor defaults to <strong>development</strong> if <code>APP_FLAVOR</code> is omitted.</li>
+        <li>Fat APK default: <code>app-release.apk</code>. With stamp on, it is renamed to <code>apnaclinic-staging-chucker-YYYYMMDD-HHMM.apk</code>.</li>
+        <li><code>--build-name</code> is Android versionName (Settings). <code>--build-number</code> is versionCode (integer, unique per minute). Store/Play builds should keep a normal <code>1.x.y</code> name.</li>
+      </ul>
+    </div>
+
+    <div class="card builder">
+      <h2>Build your command</h2>
+      <label>Flavor</label>
+      <div class="opts" id="flavor">
+        <label class="opt"><input type="radio" name="flavor" value="staging" checked /> Staging</label>
+        <label class="opt"><input type="radio" name="flavor" value="production" /> Production</label>
+        <label class="opt"><input type="radio" name="flavor" value="development" /> Development</label>
+      </div>
+      <label>Chucker</label>
+      <div class="opts" id="chucker">
+        <label class="opt"><input type="radio" name="chucker" value="true" checked /> On</label>
+        <label class="opt"><input type="radio" name="chucker" value="false" /> Off</label>
+      </div>
+      <label>Output</label>
+      <div class="opts">
+        <label class="opt"><input type="radio" name="out" value="apk" checked /> Fat APK</label>
+        <label class="opt"><input type="radio" name="out" value="split" /> Split per ABI</label>
+        <label class="opt"><input type="radio" name="out" value="aab" /> App Bundle</label>
+      </div>
+      <label>Mode</label>
+      <div class="opts">
+        <label class="opt"><input type="radio" name="mode" value="release" checked /> Release</label>
+        <label class="opt"><input type="radio" name="mode" value="debug" /> Debug</label>
+        <label class="opt"><input type="radio" name="mode" value="profile" /> Profile</label>
+      </div>
+      <label>Extras</label>
+      <div class="opts">
+        <label class="opt"><input type="checkbox" id="stamp" checked /> Date / time stamp (version + file name)</label>
+        <label class="opt"><input type="checkbox" id="proxy" /> HTTP proxy (mitm)</label>
+        <label class="opt"><input type="checkbox" id="jazz" /> JazzCash sandbox</label>
+      </div>
+      <p class="filename" id="builtName"></p>
+      <div class="cmd" style="margin-top:14px">
+        <pre id="built"></pre>
+        <button class="copy" type="button" data-from="built">Copy</button>
+      </div>
+    </div>
+
+    <section>
+      <h2>Core four (staging / production × Chucker)</h2>
+      <div id="core"></div>
+    </section>
+
+    <section>
+      <h2>All APK presets</h2>
+      <div id="list"></div>
+    </section>
+  </main>
+  <div class="toast" id="toast">Copied</div>
+
+  <script>
+    const PROXY = '192.168.100.77:8080,10.124.74.71:8080,192.168.13.1:8080,192.168.19.1:9000';
+    const PHONE = '03123456789';
+
+    function pad(n) { return String(n).padStart(2, '0'); }
+    function previewStamp(d) {
+      return d.getFullYear() + pad(d.getMonth() + 1) + pad(d.getDate()) + '-' +
+        pad(d.getHours()) + pad(d.getMinutes());
+    }
+    function slug(p) {
+      const bits = ['apnaclinic', p.flavor, p.chucker === 'true' ? 'chucker' : 'nochucker'];
+      if (p.jazz) bits.push('jazz');
+      if (p.proxy) bits.push('proxy');
+      if (p.mode && p.mode !== 'release') bits.push(p.mode);
+      return bits.join('-');
+    }
+    function apkOut(mode) {
+      if (mode === 'debug') return 'app-debug.apk';
+      if (mode === 'profile') return 'app-profile.apk';
+      return 'app-release.apk';
+    }
+    function flutterLine(p) {
+      const parts = ['flutter', p.aab ? 'build appbundle' : 'build apk'];
+      if (p.mode && p.mode !== 'release') parts.push('--' + p.mode);
+      if (p.split && !p.aab) parts.push('--split-per-abi');
+      if (p.stamp) {
+        parts.push('--build-name="1.0.0-$STAMP"');
+        parts.push('--build-number=$CODE');
+      }
+      parts.push('--dart-define=APP_FLAVOR=' + p.flavor);
+      parts.push('--dart-define=CHUCKER_ACTIVE=' + p.chucker);
+      if (p.jazz) {
+        parts.push('--dart-define=JAZZCASH_SANDBOX=true');
+        parts.push('--dart-define=ACCOUNT_TEST_PHONE=' + PHONE);
+      }
+      if (p.proxy) parts.push('--dart-define="HTTP_PROXIES=' + PROXY + '"');
+      return p.stamp ? parts.join(' \\\n  ') : parts.join(' ');
+    }
+    function renameBlock(p) {
+      const mode = p.mode || 'release';
+      const base = slug(p);
+      if (p.aab) {
+        const dir = 'build/app/outputs/bundle/' + mode;
+        return 'mv ' + dir + '/app-' + mode + '.aab \\\n  "' + dir + '/' + base + '-${STAMP}.aab"';
+      }
+      const dir = 'build/app/outputs/flutter-apk';
+      if (p.split) {
+        return [
+          'for abi in armeabi-v7a arm64-v8a x86_64; do',
+          '  mv "' + dir + '/app-${abi}-' + mode + '.apk" \\',
+          '    "' + dir + '/' + base + '-${abi}-${STAMP}.apk"',
+          'done',
+        ].join('\n');
+      }
+      return 'mv ' + dir + '/' + apkOut(mode) + ' \\\n  "' + dir + '/' + base + '-${STAMP}.apk"';
+    }
+    function cmd(p) {
+      if (!p.stamp) return flutterLine(p);
+      return [
+        'STAMP=$(date +%Y%m%d-%H%M)',
+        'CODE=$(date +%y%j%H%M)',
+        flutterLine(p),
+        renameBlock(p),
+      ].join('\n');
+    }
+    function outputHint(p) {
+      const sample = previewStamp(new Date());
+      const base = slug(p);
+      const mode = p.mode || 'release';
+      if (!p.stamp) {
+        if (p.aab) return 'build/app/outputs/bundle/' + mode + '/app-' + mode + '.aab';
+        if (p.split) return 'build/app/outputs/flutter-apk/app-{abi}-' + mode + '.apk';
+        return 'build/app/outputs/flutter-apk/' + apkOut(mode);
+      }
+      if (p.aab) return 'build/app/outputs/bundle/' + mode + '/' + base + '-' + sample + '.aab';
+      if (p.split) return 'build/app/outputs/flutter-apk/' + base + '-arm64-v8a-' + sample + '.apk (+ armeabi-v7a, x86_64)';
+      return 'build/app/outputs/flutter-apk/' + base + '-' + sample + '.apk';
+    }
+
+    const presets = [
+      { title: 'Staging + Chucker', flavor: 'staging', chucker: 'true', stamp: true, tags: ['staging', 'chucker-on', 'stamp'] },
+      { title: 'Staging without Chucker', flavor: 'staging', chucker: 'false', stamp: true, tags: ['staging', 'chucker-off', 'stamp'] },
+      { title: 'Production + Chucker', flavor: 'production', chucker: 'true', stamp: true, tags: ['production', 'chucker-on', 'stamp'] },
+      { title: 'Production without Chucker', flavor: 'production', chucker: 'false', stamp: true, tags: ['production', 'chucker-off', 'stamp'] },
+
+      { title: 'Staging + Chucker (split ABI)', flavor: 'staging', chucker: 'true', split: true, stamp: true, tags: ['staging', 'chucker-on', 'split', 'stamp'] },
+      { title: 'Staging without Chucker (split ABI)', flavor: 'staging', chucker: 'false', split: true, stamp: true, tags: ['staging', 'chucker-off', 'split', 'stamp'] },
+      { title: 'Production + Chucker (split ABI)', flavor: 'production', chucker: 'true', split: true, stamp: true, tags: ['production', 'chucker-on', 'split', 'stamp'] },
+      { title: 'Production without Chucker (split ABI)', flavor: 'production', chucker: 'false', split: true, stamp: true, tags: ['production', 'chucker-off', 'split', 'stamp'] },
+
+      { title: 'Staging + Chucker + proxy', flavor: 'staging', chucker: 'true', proxy: true, stamp: true, tags: ['staging', 'chucker-on', 'proxy', 'stamp'] },
+      { title: 'Staging without Chucker + proxy', flavor: 'staging', chucker: 'false', proxy: true, stamp: true, tags: ['staging', 'chucker-off', 'proxy', 'stamp'] },
+      { title: 'Production + Chucker + proxy', flavor: 'production', chucker: 'true', proxy: true, stamp: true, tags: ['production', 'chucker-on', 'proxy', 'stamp'] },
+      { title: 'Production without Chucker + proxy', flavor: 'production', chucker: 'false', proxy: true, stamp: true, tags: ['production', 'chucker-off', 'proxy', 'stamp'] },
+
+      { title: 'Staging + Chucker + JazzCash sandbox', flavor: 'staging', chucker: 'true', jazz: true, stamp: true, tags: ['staging', 'chucker-on', 'jazz', 'stamp'] },
+      { title: 'Staging without Chucker + JazzCash sandbox', flavor: 'staging', chucker: 'false', jazz: true, stamp: true, tags: ['staging', 'chucker-off', 'jazz', 'stamp'] },
+      { title: 'Staging + Chucker + JazzCash + proxy', flavor: 'staging', chucker: 'true', jazz: true, proxy: true, stamp: true, tags: ['staging', 'chucker-on', 'jazz', 'proxy', 'stamp'] },
+      { title: 'Staging without Chucker + JazzCash + proxy', flavor: 'staging', chucker: 'false', jazz: true, proxy: true, stamp: true, tags: ['staging', 'chucker-off', 'jazz', 'proxy', 'stamp'] },
+
+      { title: 'Staging + Chucker (debug APK)', flavor: 'staging', chucker: 'true', mode: 'debug', stamp: true, tags: ['staging', 'chucker-on', 'stamp'] },
+      { title: 'Production without Chucker (debug APK)', flavor: 'production', chucker: 'false', mode: 'debug', stamp: true, tags: ['production', 'chucker-off', 'stamp'] },
+
+      { title: 'Production without Chucker (AAB)', flavor: 'production', chucker: 'false', aab: true, stamp: true, tags: ['production', 'chucker-off', 'stamp'] },
+      { title: 'Staging + Chucker (AAB)', flavor: 'staging', chucker: 'true', aab: true, stamp: true, tags: ['staging', 'chucker-on', 'stamp'] },
+    ];
+
+    function tagClass(t) {
+      if (t === 'staging') return 'stg';
+      if (t === 'production') return 'prd';
+      if (t === 'chucker-on') return 'on';
+      if (t === 'chucker-off') return 'off';
+      return 'extra';
+    }
+    function tagLabel(t) {
+      return ({
+        'staging': 'Staging',
+        'production': 'Production',
+        'chucker-on': 'Chucker on',
+        'chucker-off': 'Chucker off',
+        'split': 'Split ABI',
+        'proxy': 'Proxy',
+        'jazz': 'JazzCash',
+        'stamp': 'Date stamp',
+      })[t] || t;
+    }
+    function hint(p) {
+      const bits = [];
+      bits.push(p.aab ? 'App Bundle' : (p.split ? 'Split APKs' : 'Fat APK'));
+      bits.push((p.mode || 'release') + ' mode');
+      if (p.chucker === 'true') bits.push('Chucker inspector on');
+      else bits.push('Chucker off');
+      if (p.stamp) bits.push('versionName + file stamped');
+      if (p.proxy) bits.push('HTTP_PROXIES set');
+      if (p.jazz) bits.push('JazzCash sandbox phone ' + PHONE);
+      return bits.join(' · ') + ' · ' + outputHint(p);
+    }
+
+    function rowHtml(p, i) {
+      const command = cmd(p);
+      const tags = (p.tags || []).map(t =>
+        '<span class="tag ' + tagClass(t) + '">' + tagLabel(t) + '</span>'
+      ).join('');
+      return (
+        '<article class="row" data-tags="' + (p.tags || []).join(' ') + '" data-text="' +
+        (p.title + ' ' + command).toLowerCase().replace(/"/g, '') + '">' +
+        '<h3>' + p.title + '</h3>' +
+        '<div class="tags">' + tags + '</div>' +
+        '<p class="meta">' + hint(p) + '</p>' +
+        '<div class="cmd"><pre id="c' + i + '">' + command + '</pre>' +
+        '<button class="copy" type="button" data-from="c' + i + '">Copy</button></div></article>'
+      );
+    }
+
+    document.getElementById('core').innerHTML = presets.slice(0, 4).map(rowHtml).join('');
+    document.getElementById('list').innerHTML = presets.map((p, i) => rowHtml(p, i + 10)).join('');
+
+    function builtOpts() {
+      return {
+        flavor: document.querySelector('input[name="flavor"]:checked').value,
+        chucker: document.querySelector('input[name="chucker"]:checked').value,
+        split: document.querySelector('input[name="out"]:checked').value === 'split',
+        aab: document.querySelector('input[name="out"]:checked').value === 'aab',
+        mode: document.querySelector('input[name="mode"]:checked').value,
+        proxy: document.getElementById('proxy').checked,
+        jazz: document.getElementById('jazz').checked,
+        stamp: document.getElementById('stamp').checked,
+      };
+    }
+    function refreshBuilt() {
+      const opts = builtOpts();
+      document.getElementById('built').textContent = cmd(opts);
+      document.getElementById('builtName').innerHTML = 'Output file: <b>' + outputHint(opts) + '</b>';
+    }
+    document.querySelectorAll('.builder input').forEach(el => el.addEventListener('change', refreshBuilt));
+    refreshBuilt();
+
+    const toast = document.getElementById('toast');
+    async function copyText(text, btn) {
+      try {
+        await navigator.clipboard.writeText(text);
+      } catch {
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        ta.remove();
+      }
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 1200);
+      if (btn) {
+        btn.classList.add('done');
+        btn.textContent = 'Copied';
+        setTimeout(() => { btn.classList.remove('done'); btn.textContent = 'Copy'; }, 1200);
+      }
+    }
+    document.body.addEventListener('click', (e) => {
+      const btn = e.target.closest('.copy');
+      if (!btn) return;
+      const el = document.getElementById(btn.dataset.from);
+      copyText(el.textContent.trim(), btn);
+    });
+
+    let filter = 'all';
+    const search = document.getElementById('q');
+    function applyFilter() {
+      const q = search.value.trim().toLowerCase();
+      document.querySelectorAll('#list .row, #core .row').forEach(row => {
+        const tags = row.dataset.tags.split(' ');
+        const okFilter = filter === 'all' || tags.includes(filter);
+        const okSearch = !q || row.dataset.text.includes(q);
+        row.classList.toggle('hidden', !(okFilter && okSearch));
+      });
+    }
+    document.querySelectorAll('.chip[data-filter]').forEach(chip => {
+      chip.addEventListener('click', () => {
+        document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+        filter = chip.dataset.filter;
+        applyFilter();
+      });
+    });
+    search.addEventListener('input', applyFilter);
+  </script>
+</body>
+</html>

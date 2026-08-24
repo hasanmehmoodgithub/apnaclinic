@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Apna Clinic — How HMAC works in this app</title>
+  <style>
+    :root {
+      --navy: #061e40;
+      --teal: #00897b;
+      --bg: #f4f7f8;
+      --card: #fff;
+      --line: #e2e8ee;
+      --muted: #5b6b7c;
+      --ok: #047857;
+      --ok-bg: #ecfdf5;
+      --warn: #b45309;
+      --warn-bg: #fff7ed;
+      --skip: #9f1239;
+      --skip-bg: #fff1f2;
+      --code: #0f172a;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--navy);
+      line-height: 1.45;
+    }
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: var(--navy);
+      color: #fff;
+      padding: 18px 24px 16px;
+      box-shadow: 0 8px 24px rgba(6, 30, 64, 0.18);
+    }
+    header h1 { margin: 0 0 4px; font-size: 20px; font-weight: 700; }
+    header p { margin: 0; color: #c5d0dc; font-size: 13px; }
+    nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    nav a {
+      color: #fff;
+      text-decoration: none;
+      background: rgba(255,255,255,.12);
+      border-radius: 999px;
+      padding: 5px 10px;
+      font-size: 12px;
+    }
+    nav a:hover { background: var(--teal); }
+    main { max-width: 960px; margin: 0 auto; padding: 20px 16px 80px; }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 16px 18px;
+      margin-bottom: 16px;
+    }
+    h2 { margin: 0 0 10px; font-size: 17px; }
+    h3 { margin: 16px 0 8px; font-size: 14px; }
+    p, li { font-size: 14px; }
+    .muted { color: var(--muted); }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th, td {
+      text-align: left;
+      padding: 8px 10px;
+      border-bottom: 1px solid var(--line);
+      vertical-align: top;
+    }
+    th { color: var(--muted); font-weight: 600; font-size: 12px; }
+    code, pre {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 12px;
+    }
+    code { background: #f1f5f9; padding: 1px 6px; border-radius: 6px; color: var(--code); }
+    pre {
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 14px 16px;
+      border-radius: 12px;
+      overflow: auto;
+      line-height: 1.5;
+    }
+    .pills { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0 0; }
+    .pill {
+      border-radius: 999px;
+      padding: 5px 10px;
+      font-size: 12px;
+      background: #f0f7f6;
+      color: var(--teal);
+    }
+    .ok { background: var(--ok-bg); color: var(--ok); }
+    .warn { background: var(--warn-bg); color: var(--warn); }
+    .skip { background: var(--skip-bg); color: var(--skip); }
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 8px;
+      margin-top: 10px;
+    }
+    .step {
+      background: #f8fafc;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 10px 12px;
+      font-size: 13px;
+    }
+    .step b { display: block; font-size: 11px; color: var(--muted); margin-bottom: 4px; }
+    .note {
+      background: var(--warn-bg);
+      border: 1px solid #fdba74;
+      border-radius: 12px;
+      padding: 12px 14px;
+      font-size: 13px;
+      color: #7c2d12;
+    }
+    .okbox {
+      background: var(--ok-bg);
+      border: 1px solid #6ee7b7;
+      border-radius: 12px;
+      padding: 12px 14px;
+      font-size: 13px;
+      color: #065f46;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>How HMAC works in this app</h1>
+    <p>Apna Clinic · v1 HMAC-SHA256 · Dio interceptor · aggregator + user-auth</p>
+    <nav>
+      <a href="#how">How it works</a>
+      <a href="#signed">What is signed</a>
+      <a href="#otp">OTP example</a>
+      <a href="#headers">Headers</a>
+      <a href="#secrets">Secrets</a>
+      <a href="#digest">Body digest</a>
+      <a href="#debug">Debug</a>
+      <a href="#401">401 reasons</a>
+      <a href="#files">Files</a>
+    </nav>
+  </header>
+  <main>
+    <section class="card" id="how">
+      <h2>How it works in this app</h2>
+      <p>
+        Screens and Cubits do <strong>not</strong> compute HMAC.
+        <code>AuthCubit.requestOtp</code> still calls <code>ApiService.post</code> as before.
+        A Dio interceptor stamps five headers onto every <code>acs-aggregator</code> and
+        <code>acs-auth</code> request before it leaves the device.
+      </p>
+      <div class="pills">
+        <span class="pill ok">No feature-level signing</span>
+        <span class="pill ok">JSON + GET + multipart</span>
+        <span class="pill ok">Refresh Dio signed</span>
+        <span class="pill warn">CMS / notifications skipped</span>
+        <span class="pill">Log name: HmacSigning</span>
+      </div>
+      <h3>Startup</h3>
+      <ol>
+        <li><code>HmacSecretStore.initialize()</code> in <code>dependency_injection.dart</code></li>
+        <li>Android/iOS secrets loaded (defaults baked in, like <code>MOBILE_API_KEY</code>) and copied to Keystore / Keychain</li>
+        <li>Same store injected into <code>ApiService</code> and <code>AuthInterceptor</code></li>
+      </ol>
+      <h3>Every API call</h3>
+      <div class="flow">
+        <div class="step"><b>1. Feature</b>ApiService get/post</div>
+        <div class="step"><b>2. HeaderInterceptor</b>Device, x-api-key, tenant</div>
+        <div class="step"><b>3. AuthInterceptor</b>Bearer JWT if logged in</div>
+        <div class="step"><b>4. HMAC interceptor</b>Five headers + freeze JSON</div>
+        <div class="step"><b>5. Logger / Chucker</b>You inspect the signed request</div>
+        <div class="step"><b>6. Server guard</b>Match signature, nonce, clock</div>
+      </div>
+    </section>
+
+    <section class="card" id="signed">
+      <h2>What is signed</h2>
+      <p class="muted"><code>hmacBackendFor(uri)</code> looks at the URL <strong>path</strong> only.</p>
+      <table>
+        <thead><tr><th>Path contains</th><th>Secret</th><th>Signed?</th></tr></thead>
+        <tbody>
+          <tr><td><code>acs-aggregator</code> (cities, lab, pharmacy, consultations, …)</td><td>Platform android/ios key</td><td>Yes — guest and logged-in</td></tr>
+          <tr><td><code>acs-auth</code> (OTP, verify, refresh, logout, profile phones, …)</td><td>Same platform key</td><td>Yes</td></tr>
+          <tr><td><code>acs-cmsbe</code>, notifications, dummyjson</td><td>—</td><td>No</td></tr>
+        </tbody>
+      </table>
+      <p class="muted" style="margin:12px 0 0">
+        HMAC does not replace login. Guest aggregator still sends <code>x-api-key</code>.
+        Logged-in calls still send <code>Authorization</code>. Wire path includes the gateway
+        prefix, e.g. <code>/acs-auth/api/v1/auth/otp/generate</code>.
+      </p>
+    </section>
+
+    <section class="card" id="otp">
+      <h2>Worked example — request OTP</h2>
+      <p>This is the call that returned <code>missing_headers</code> when the interceptor skipped signing.</p>
+      <pre>Login tap
+  → AuthCubit.requestOtp
+  → ApiService.post(AppUrls.requestOtp, { msisdn, channel: SMS })
+  → path contains acs-auth → userAuth
+  → x-key-id = ios (or android)
+  → digest = SHA-256 of jsonEncode(body)
+  → canonical string (six lines)
+  → x-signature = HMAC-SHA256(platform secret, canonical)</pre>
+      <h3>Healthy Chucker request</h3>
+      <pre>POST /acs-auth/api/v1/auth/otp/generate
+Content-Type: application/json
+x-api-key: apk_…
+x-key-id: ios
+x-timestamp: 1755878400000
+x-nonce: e6a1f8b2-9c3d-4a11-8e2f-6b7c9d0a1234
+x-content-digest: &lt;sha256 of {"msisdn":"…","channel":"SMS"}&gt;
+x-signature: &lt;hex hmac&gt;
+
+{"msisdn":"923015077202","channel":"SMS"}</pre>
+      <div class="okbox">
+        Console must show <code>Signed userAuth POST /acs-auth/api/v1/auth/otp/generate</code>
+        and Chucker must list all five <code>x-*</code> HMAC headers. If Chucker has only device
+        headers + <code>x-api-key</code>, the interceptor skipped — that is <code>missing_headers</code>.
+      </div>
+    </section>
+
+    <section class="card" id="headers">
+      <h2>The five headers</h2>
+      <table>
+        <thead><tr><th>Header</th><th>How this app sets it</th></tr></thead>
+        <tbody>
+          <tr><td><code>x-key-id</code></td><td><code>ios</code> if <code>Platform.isIOS</code>, else <code>android</code></td></tr>
+          <tr><td><code>x-timestamp</code></td><td>Unix milliseconds as a string</td></tr>
+          <tr><td><code>x-nonce</code></td><td>Fresh UUID v4 every HTTP attempt, including 401 retries</td></tr>
+          <tr><td><code>x-content-digest</code></td><td>Hex SHA-256 of the body (rules below)</td></tr>
+          <tr><td><code>x-signature</code></td><td>Hex HMAC-SHA256(secret, canonical string)</td></tr>
+        </tbody>
+      </table>
+      <h3>Canonical string</h3>
+      <p class="muted">Exactly six parts, newline-joined, no trailing newline. Order is fixed.</p>
+      <pre>v1
+POST
+/acs-auth/api/v1/auth/otp/generate
+1755878400000
+e6a1f8b2-9c3d-4a11-8e2f-6b7c9d0a1234
+&lt;content-digest&gt;</pre>
+    </section>
+
+    <section class="card" id="digest">
+      <h2>Body digest</h2>
+      <table>
+        <thead><tr><th>Request</th><th>What is hashed</th></tr></thead>
+        <tbody>
+          <tr><td>GET / no body</td><td>Empty bytes → <code>e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855</code></td></tr>
+          <tr><td>JSON Map/List</td><td><code>jsonEncode</code> once; that string is assigned back to <code>options.data</code> so Dio cannot re-serialize</td></tr>
+          <tr><td>Multipart</td><td>Sorted <code>name=value</code> lines, then hex SHA-256 of each file’s raw bytes (file stream is cloned). Boundary is ignored</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="card" id="secrets">
+      <h2>Secrets</h2>
+      <p>
+        Keys are <strong>per platform</strong>. Aggregator and user-auth share the same secret
+        for the running OS. Optional <code>HMAC_AGGREGATOR_SECRET</code> /
+        <code>HMAC_AUTH_SECRET</code> override only if backend later splits them.
+      </p>
+      <table>
+        <thead><tr><th>x-key-id</th><th>Dart define</th></tr></thead>
+        <tbody>
+          <tr><td><code>android</code></td><td><code>HMAC_ANDROID_SECRET</code> (baked-in default)</td></tr>
+          <tr><td><code>ios</code></td><td><code>HMAC_IOS_SECRET</code> (baked-in default)</td></tr>
+        </tbody>
+      </table>
+      <h3>Resolution order</h3>
+      <ol>
+        <li>Per-service override (if set)</li>
+        <li>In-memory value from <code>initialize()</code></li>
+        <li>Compile-time <code>fromEnvironment</code> / default</li>
+        <li>Hardcoded platform fallback (covers hot-reload empty memory)</li>
+      </ol>
+      <pre>flutter run --dart-define-from-file=hmac.keys.json</pre>
+      <div class="note">
+        GetIt keeps one store for the whole session. After changing secret code, use
+        <strong>hot restart</strong> (or stop/run), not only hot reload.
+        <code>hmac.keys.json</code> is gitignored. Debug logs never print the secret.
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Refresh and retries</h2>
+      <ul>
+        <li>Token refresh uses a <strong>second Dio</strong> with the same HMAC interceptor (user-auth must be signed in enforce).</li>
+        <li>JWT 401 retry <strong>strips</strong> old HMAC headers so a new nonce is minted (reuse → <code>nonce_replayed</code>).</li>
+        <li>Guest OTP 401 does not refresh (no refresh token). HMAC 401 on a logged-in call may try refresh; that will not fix a bad signature.</li>
+      </ul>
+    </section>
+
+    <section class="card" id="debug">
+      <h2>Debug logs</h2>
+      <p>Filter by <code>HmacSigning</code>. Debug only. Secret is never logged.</p>
+      <table>
+        <thead><tr><th>Log</th><th>Meaning</th></tr></thead>
+        <tbody>
+          <tr><td><code>Initialized keyId=ios … active=present(len=64)</code></td><td>Store ready</td></tr>
+          <tr><td><code>Signed userAuth POST /acs-auth/…/otp/generate</code> + canonical</td><td>Headers attached — healthy</td></tr>
+          <tr><td><code>Skip unsigned … secret missing</code></td><td>Did not sign → enforce returns <code>missing_headers</code></td></tr>
+          <tr><td><code>401 … hmacHeaders=missing</code></td><td>Five headers never left the device</td></tr>
+          <tr><td><code>401 … hmacHeaders=present</code></td><td>Sent; server rejected signature / nonce / clock / key</td></tr>
+        </tbody>
+      </table>
+      <p class="muted" style="margin:12px 0 0">
+        <code>EncryptionService Decrypted Text Length: 0</code> on login is empty prefs (no token). Ignore it for HMAC.
+      </p>
+    </section>
+
+    <section class="card" id="401">
+      <h2>401 reasons</h2>
+      <p>Backend <code>HMAC_MODE=enforce</code> returns a generic 401. The reason is in <code>error.message</code> for debug only — do not branch UI on it.</p>
+      <table>
+        <thead><tr><th>Server reason</th><th>In this app</th></tr></thead>
+        <tbody>
+          <tr><td><code>missing_headers</code></td><td>Skip log / Chucker has no HMAC headers. Hot-restart. Look for <code>Signed …</code></td></tr>
+          <tr><td><code>unknown_key_id</code></td><td><code>x-key-id</code> not <code>android</code>/<code>ios</code></td></tr>
+          <tr><td><code>timestamp_out_of_window</code></td><td>Clock ±5 minutes, or a paused debugger</td></tr>
+          <tr><td><code>bad_signature</code></td><td>Wrong secret, wrong wire path, or JSON not frozen</td></tr>
+          <tr><td><code>nonce_replayed</code></td><td>Same UUID on retry</td></tr>
+          <tr><td><code>content_digest_mismatch</code></td><td>Digest ≠ bytes actually sent</td></tr>
+          <tr><td><code>multipart_digest_mismatch</code></td><td>Field sort / file grouping</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="card">
+      <h2>Backend modes</h2>
+      <table>
+        <thead><tr><th>HMAC_MODE</th><th>Unsigned or bad signature</th></tr></thead>
+        <tbody>
+          <tr><td><code>off</code></td><td>Ignored</td></tr>
+          <tr><td><code>log</code></td><td>Request succeeds; server warning</td></tr>
+          <tr><td><code>enforce</code></td><td>401 — current user-auth environment</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="card" id="files">
+      <h2>Code</h2>
+      <table>
+        <thead><tr><th>File</th><th>Role</th></tr></thead>
+        <tbody>
+          <tr><td><code>hmac/hmac_signer.dart</code></td><td>SHA-256, HMAC, canonical string, path+query, multipart</td></tr>
+          <tr><td><code>hmac/hmac_secret_store.dart</code></td><td>Platform secrets, Keychain/Keystore, request-time fallback</td></tr>
+          <tr><td><code>hmac/hmac_signing_interceptor.dart</code></td><td>Dio onRequest + 401 debug</td></tr>
+          <tr><td><code>hmac/hmac_headers.dart</code></td><td>Header names + which URLs to sign</td></tr>
+          <tr><td><code>hmac/hmac_uuid.dart</code></td><td>UUID v4 per attempt</td></tr>
+          <tr><td><code>api_service.dart</code></td><td>HMAC after auth, before Chucker</td></tr>
+          <tr><td><code>auth_interceptor.dart</code></td><td>Refresh Dio signed; retries drop old nonce</td></tr>
+          <tr><td><code>dependency_injection.dart</code></td><td>Initialize store before ApiService</td></tr>
+          <tr><td><code>test/core/network/hmac_signer_test.dart</code></td><td>Unit tests</td></tr>
+        </tbody>
+      </table>
+      <p class="muted" style="margin:12px 0 0">Markdown twin: <a href="HMAC.md">HMAC.md</a></p>
+    </section>
+  </main>
+</body>
+</html>

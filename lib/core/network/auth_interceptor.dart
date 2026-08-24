@@ -7,6 +7,9 @@ import '../session/auth_session_refresh.dart';
 import 'app_urls.dart';
 import 'device_headers_provider.dart';
 import 'dio_app_network_config.dart';
+import 'hmac/hmac_headers.dart';
+import 'hmac/hmac_secret_store.dart';
+import 'hmac/hmac_signing_interceptor.dart';
 
 /// Handles automatic access token refresh on 401 responses.
 ///
@@ -18,15 +21,18 @@ class AuthInterceptor extends Interceptor {
     required AppPref appPref,
     required DeviceHeadersProvider deviceHeadersProvider,
     required AuthSessionRefresh sessionRefresh,
+    required HmacSecretStore hmacSecretStore,
   }) : _dio = dio,
        _appPref = appPref,
        _deviceHeadersProvider = deviceHeadersProvider,
-       _sessionRefresh = sessionRefresh;
+       _sessionRefresh = sessionRefresh,
+       _hmacSecretStore = hmacSecretStore;
 
   final Dio _dio;
   final AppPref _appPref;
   final DeviceHeadersProvider _deviceHeadersProvider;
   final AuthSessionRefresh _sessionRefresh;
+  final HmacSecretStore _hmacSecretStore;
   Completer<bool>? _refreshCompleter;
 
   static const _retryKey = 'auth_retry';
@@ -136,8 +142,11 @@ class AuthInterceptor extends Interceptor {
   }
 
   Map<String, dynamic> _retryHeaders(Map<String, dynamic> headers) {
-    return Map<String, dynamic>.from(headers)
-      ..removeWhere((key, _) => key.toLowerCase() == 'content-length');
+    return Map<String, dynamic>.from(headers)..removeWhere((key, _) {
+      final lower = key.toLowerCase();
+      // Drop stale HMAC headers so the interceptor issues a fresh nonce.
+      return lower == 'content-length' || HmacHeaderNames.all.contains(lower);
+    });
   }
 
   Future<bool> _refreshAccessTokenSingleFlight() async {
@@ -170,6 +179,11 @@ class AuthInterceptor extends Interceptor {
         ),
       );
       configureDioForAppNetwork(refreshDio);
+      // Refresh uses a separate Dio (no interceptor recursion). It still hits
+      // user-auth, so it must be HMAC-signed when enforce is on.
+      refreshDio.interceptors.add(
+        HmacSigningInterceptor(secretStore: _hmacSecretStore),
+      );
       final deviceHeaders = await _deviceHeadersProvider.headers();
 
       final response = await refreshDio.post<Map<String, dynamic>>(

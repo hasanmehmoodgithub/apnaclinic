@@ -22,6 +22,16 @@ This document defines the request headers automatically added by the app for API
 - `x-api-key` - Mobile client API key (`AppUrls.mobileApiKey`, override via `--dart-define=MOBILE_API_KEY=...`). Sent on CMS and aggregator hosts so guest users can call mobile endpoints (services, banners, doctor categories, etc.).
 - `x-tenant-id` - JWT `tenant_id` claim when the user is logged in (aggregator/CMS only).
 
+### HMAC v1 (aggregator + user-auth only)
+
+See `HMAC.md` / `HMAC.html`. Not sent on CMS or other hosts.
+
+- `x-key-id` - `android` or `ios`
+- `x-timestamp` - unix milliseconds
+- `x-nonce` - UUID v4, unique per HTTP attempt
+- `x-content-digest` - hex SHA-256 of the body
+- `x-signature` - hex HMAC-SHA256 of the canonical string
+
 ### Platform-specific (when available)
 
 - `x-device-id` - Device identifier from platform APIs
@@ -58,4 +68,5 @@ x-os-sdk: 34
 - Registered in DI: `lib/core/di/dependency_injection.dart`
 - Extra paths covered:
   - `lib/core/network/auth_interceptor.dart` (refresh-token request)
+  - `lib/core/network/hmac/hmac_signing_interceptor.dart` (HMAC v1)
   - `lib/core/services/encrypted_isolate_api_service.dart`

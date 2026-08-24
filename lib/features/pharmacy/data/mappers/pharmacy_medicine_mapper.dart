@@ -147,18 +147,19 @@ class PharmacyMedicineMapper {
     final orderIdAsString = orderIdRaw is String
         ? _stringOrNull(orderIdRaw)
         : null;
-    final orderNo = _stringOrNull(
-          payload['order_no'] ?? payload['orderNo'],
-        ) ??
-        orderIdAsString ??
-        publicId ??
-        (orderIdAsInt != null ? '$orderIdAsInt' : null) ??
-        bookingId ??
-        '';
     final unifiedOrderId = _intOrNull(
           payload['unified_order_id'] ?? payload['unifiedOrderId'],
         ) ??
         orderIdAsInt;
+    // Display number: order_no, then unified_order_id (not UUID order_id).
+    final orderNo = _stringOrNull(
+          payload['order_no'] ?? payload['orderNo'],
+        ) ??
+        (unifiedOrderId != null ? '$unifiedOrderId' : null) ??
+        orderIdAsString ??
+        publicId ??
+        bookingId ??
+        '';
     final status = _stringOrNull(payload['status']) ?? 'confirmed';
     final paymentUrl = _stringOrNull(
       payload['paymentUrl'] ?? payload['payment_url'],

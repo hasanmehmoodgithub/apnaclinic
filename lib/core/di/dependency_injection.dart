@@ -17,6 +17,7 @@ import '../analytics/providers/firebase_analytics_provider.dart';
 import '../database/app_database.dart';
 import '../network/api_service.dart';
 import '../network/device_headers_provider.dart';
+import '../network/hmac/hmac_secret_store.dart';
 import '../preference/app_pref.dart';
 import '../preference/app_pref_impl.dart';
 import '../services/appsflyer_service.dart';
@@ -61,6 +62,9 @@ Future<void> _initCore() async {
   sl.registerLazySingleton<DeviceHeadersProvider>(
     () => DeviceHeadersProvider(),
   );
+  final hmacSecretStore = HmacSecretStore();
+  await hmacSecretStore.initialize();
+  sl.registerLazySingleton<HmacSecretStore>(() => hmacSecretStore);
   sl.registerLazySingleton<ApiService>(
     () => ApiService(
       // baseUrl is automatically retrieved from FlavorConfig.apiBaseUrl
@@ -87,9 +91,7 @@ Future<void> _initCore() async {
   );
   sl.registerLazySingleton<AppsFlyerService>(() => AppsFlyerService());
   sl.registerLazySingleton<AnalyticsService>(
-    () => AnalyticsServiceImpl([
-      FirebaseAnalyticsProvider(),
-    ]),
+    () => AnalyticsServiceImpl([FirebaseAnalyticsProvider()]),
   );
   initCitiesInjector();
 }

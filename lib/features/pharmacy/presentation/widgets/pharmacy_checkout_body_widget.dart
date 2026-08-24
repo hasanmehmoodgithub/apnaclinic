@@ -104,13 +104,13 @@ class PharmacyCheckoutBodyWidget extends StatelessWidget {
 
         if (!context.mounted) return;
         cubit.logOrderConfirmed(
-          orderId: checkout.orderNo,
+          orderId: checkout.displayOrderNo,
           paymentStatus: AnalyticsPaymentStatusKeys.successful,
         );
         cubit.clearCart();
         await showPharmacyOrderPlacedDialog(
           context,
-          orderNo: checkout.orderNo,
+          orderNo: checkout.displayOrderNo,
           onViewOrders: () {
             if (!context.mounted) return;
             pharmacyGoToOrderDetailsAfterPlace(context);

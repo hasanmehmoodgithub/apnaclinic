@@ -13,15 +13,18 @@ import 'auth_interceptor.dart';
 import 'device_headers_provider.dart';
 import 'dio_app_network_config.dart';
 import 'header_interceptor.dart';
+import 'hmac/hmac_secret_store.dart';
+import 'hmac/hmac_signing_interceptor.dart';
 
 export 'api_exceptions.dart';
 
-/// Dio wrapper: JSON defaults, [AuthInterceptor], optional logging/Chucker.
-/// See `API_SERVICE.md` in this folder for behavior and extension points.
+/// Dio wrapper: JSON defaults, [AuthInterceptor], HMAC v1, optional logging/Chucker.
+/// See `API_SERVICE.md` and `HMAC.md` in this folder for behavior and extension points.
 class ApiService {
   ApiService({String? baseUrl, Duration? timeout, bool? enableLogging})
     : _appPref = sl<AppPref>(),
       _deviceHeadersProvider = sl<DeviceHeadersProvider>(),
+      _hmacSecretStore = sl<HmacSecretStore>(),
       _dio = Dio(
         BaseOptions(
           //baseUrl: baseUrl ?? ApiConfig.baseUrl,
@@ -47,7 +50,13 @@ class ApiService {
         appPref: _appPref,
         deviceHeadersProvider: _deviceHeadersProvider,
         sessionRefresh: sl<AuthSessionRefresh>(),
+        hmacSecretStore: _hmacSecretStore,
       ),
+    );
+    // HMAC last among mutating interceptors so path/body/auth are final, and
+    // so ApiLogger/Chucker see the five signing headers.
+    _dio.interceptors.add(
+      HmacSigningInterceptor(secretStore: _hmacSecretStore),
     );
     if (enableLogging ?? FlavorConfig.enableLogging) {
       _dio.interceptors.add(ApiLoggerInterceptor());
@@ -61,6 +70,7 @@ class ApiService {
   final Dio _dio;
   final AppPref _appPref;
   final DeviceHeadersProvider _deviceHeadersProvider;
+  final HmacSecretStore _hmacSecretStore;
 
   void _syncAuthHeader() {
     try {
@@ -172,7 +182,9 @@ class ApiService {
     try {
       _syncAuthHeader();
       final requestHeaders = Map<String, dynamic>.from(_dio.options.headers);
-      requestHeaders.removeWhere((key, _) => key.toLowerCase() == 'content-type');
+      requestHeaders.removeWhere(
+        (key, _) => key.toLowerCase() == 'content-type',
+      );
       if (headers != null) {
         requestHeaders.addAll(headers);
       }
@@ -205,9 +217,7 @@ class ApiService {
   }) async {
     try {
       _syncAuthHeader();
-      final requestHeaders = <String, dynamic>{
-        if (headers != null) ...headers,
-      };
+      final requestHeaders = <String, dynamic>{if (headers != null) ...headers};
 
       // BaseOptions default is application/json. For FormData we must override
       // with the same value on header + contentType, including boundary —

@@ -4,7 +4,6 @@ import '../../../../core/constants/app_colors.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../domain/entities/pharmacy_booking_detail_entity.dart';
-import 'pharmacy_booking_feedback_widget.dart';
 import 'pharmacy_booking_invoice_tile_widget.dart';
 import 'pharmacy_booking_medicine_card_widget.dart';
 import 'pharmacy_booking_order_status_widget.dart';
@@ -75,10 +74,6 @@ class PharmacyBookingDetailsBodyWidget extends StatelessWidget {
           steps: detail.statusTimeline,
         ),
         SizedBox(height: 16.h),
-        if (detail.isCompleted) ...[
-          const PharmacyBookingFeedbackWidget(),
-          SizedBox(height: 16.h),
-        ],
         if (detail.hasMessageAlert)
           Container(
             width: double.infinity,

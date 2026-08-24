@@ -29,6 +29,7 @@ class ApiLoggerInterceptor extends Interceptor {
         '├─────────────────────────────────────────────────────────────',
       );
       _logger.d('│ ${options.method} ${options.uri}');
+      // Includes HMAC v1 headers when the interceptor ran (x-key-id, nonce, …).
       _logger.d('│ Headers: ${options.headers}');
       if (options.queryParameters.isNotEmpty) {
         _logger.d('│ Query Parameters: ${options.queryParameters}');
