@@ -52,7 +52,8 @@ When `onError` receives `401`:
    - retry original request with new access token
 4. On failure:
    - propagate original error
-   - session is cleared and `AuthSessionRefresh.notifyLoggedOut()` runs so tabs/menu update immediately
+   - `LocalLogoutService.clearAll()` runs (same as menu logout): JWT session, FCM prefs, Firebase `deleteToken()` (background), `notifyLoggedOut()`
+   - no `POST /auth/logout` and no FCM device-token PUT (access and refresh are already unusable)
 
 ## Single-Flight Refresh (No Multiple Refresh Calls)
 
@@ -100,16 +101,17 @@ Persisted values:
 
 ## Session Clear Behavior
 
-If refresh token is missing or refresh call fails:
+If refresh token is missing or refresh call fails, `AuthInterceptor._clearSession` delegates to `LocalLogoutService.clearAll()` when registered:
 
-- clear access token
-- clear refresh token
-- clear access expiry
-- clear refresh expiry
+- clear access token, refresh token, and expiries
 - set login status to false
+- clear FCM token + last-uploaded FCM token
+- Firebase `deleteToken()` (not awaited on the interceptor path)
 - `notifyLoggedOut()` runs **once** when a session was active (`_clearSession` is idempotent)
 
 Guest `401` responses (no refresh token) do not clear session or notify the shell.
+
+JWT refresh success does **not** send `fcmToken`. Device-token updates use `PUT /acs-auth/api/v1/notifications/device-token` only when Firebase rotates the FCM token.
 
 ## Notes
 

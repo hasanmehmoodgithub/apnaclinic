@@ -10,6 +10,7 @@ import 'data/repositories/auth_repository_impl.dart';
 import 'domain/repositories/auth_repository.dart';
 import 'domain/use_cases/logout_use_case.dart';
 import 'domain/use_cases/request_otp_use_case.dart';
+import 'domain/use_cases/update_fcm_device_token_use_case.dart';
 import 'domain/use_cases/verify_otp_use_case.dart';
 import 'presentation/cubit/auth_cubit.dart';
 
@@ -47,6 +48,12 @@ void initAuthInjector() {
   if (!sl.isRegistered<LogoutUseCase>()) {
     sl.registerLazySingleton<LogoutUseCase>(
       () => LogoutUseCase(repository: sl<AuthRepository>()),
+    );
+  }
+
+  if (!sl.isRegistered<UpdateFcmDeviceTokenUseCase>()) {
+    sl.registerLazySingleton<UpdateFcmDeviceTokenUseCase>(
+      () => UpdateFcmDeviceTokenUseCase(repository: sl<AuthRepository>()),
     );
   }
 

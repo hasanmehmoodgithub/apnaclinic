@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import '../di/dependency_injection.dart';
 import '../network/api_service.dart';
 import '../preference/app_pref.dart';
@@ -39,12 +41,9 @@ class LocalLogoutService {
     await _appPref.setUserId('');
     await _appPref.clearUserLocalModel();
     await _appPref.remove(AppPrefKeys.fcmToken);
-
+    await _appPref.remove(AppPrefKeys.fcmTokenSentToBackend);
     if (sl.isRegistered<NotificationService>()) {
-      final pushService = sl<NotificationService>();
-      if (pushService.isInitialized) {
-        await pushService.deleteToken();
-      }
+      sl<NotificationService>().discardLocalToken();
     }
 
     if (sl.isRegistered<AppsFlyerService>()) {
@@ -54,5 +53,14 @@ class LocalLogoutService {
     if (notifyShell) {
       _sessionRefresh.notifyLoggedOut();
     }
+
+    unawaited(_deleteFcmToken());
+  }
+
+  Future<void> _deleteFcmToken() async {
+    if (!sl.isRegistered<NotificationService>()) return;
+    final pushService = sl<NotificationService>();
+    if (!pushService.isInitialized) return;
+    await pushService.deleteToken();
   }
 }

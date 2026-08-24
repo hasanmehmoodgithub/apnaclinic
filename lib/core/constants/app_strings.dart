@@ -56,4 +56,6 @@ class AppStrings {
       'Unable to verify OTP right now. Please try again.';
   static const String authLogoutError =
       'Unable to logout right now. Please try again.';
+  static const String authUpdateDeviceTokenError =
+      'Unable to update device token right now. Please try again.';
 }

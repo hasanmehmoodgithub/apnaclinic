@@ -22,17 +22,20 @@ class AuthInterceptor extends Interceptor {
     required DeviceHeadersProvider deviceHeadersProvider,
     required AuthSessionRefresh sessionRefresh,
     required HmacSecretStore hmacSecretStore,
+    Future<void> Function()? clearExpiredSession,
   }) : _dio = dio,
        _appPref = appPref,
        _deviceHeadersProvider = deviceHeadersProvider,
        _sessionRefresh = sessionRefresh,
-       _hmacSecretStore = hmacSecretStore;
+       _hmacSecretStore = hmacSecretStore,
+       _clearExpiredSession = clearExpiredSession;
 
   final Dio _dio;
   final AppPref _appPref;
   final DeviceHeadersProvider _deviceHeadersProvider;
   final AuthSessionRefresh _sessionRefresh;
   final HmacSecretStore _hmacSecretStore;
+  final Future<void> Function()? _clearExpiredSession;
   Completer<bool>? _refreshCompleter;
 
   static const _retryKey = 'auth_retry';
@@ -257,6 +260,12 @@ class AuthInterceptor extends Interceptor {
 
   Future<void> _clearSession() async {
     if (!_hasActiveSession()) {
+      return;
+    }
+
+    final clearer = _clearExpiredSession;
+    if (clearer != null) {
+      await clearer();
       return;
     }
 

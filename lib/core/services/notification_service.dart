@@ -6,9 +6,11 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
+import '../../features/auth/domain/use_cases/update_fcm_device_token_use_case.dart';
 import '../../features/bookings/presentation/bookings_analytics.dart';
 import '../../features/notification/presentation/notification_navigation.dart';
 import '../../firebase_options.dart';
+import '../di/dependency_injection.dart';
 import '../firebase/firebase_bootstrap.dart';
 import '../flavor/flavor_config.dart';
 import '../preference/app_pref.dart';
@@ -114,6 +116,7 @@ class NotificationService {
   bool _permissionsPrepared = false;
   bool _initialized = false;
   bool _openedAppBound = false;
+  bool _deviceTokenUploadInFlight = false;
 
   bool get permissionsPrepared => _permissionsPrepared;
 
@@ -198,10 +201,13 @@ class NotificationService {
       _bindOpenedAppHandler();
       FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
       await _handleLaunchFromNotification();
-      _firebaseMessaging?.onTokenRefresh.listen(_persistToken);
+      _firebaseMessaging?.onTokenRefresh.listen((token) {
+        unawaited(_handleTokenRefresh(token));
+      });
       await _subscribeDebugTopicIfNeeded();
       _initialized = true;
       developer.log('FCM initialized', name: 'NotificationService');
+      unawaited(syncDeviceTokenIfNeeded());
     } catch (e, stackTrace) {
       developer.log(
         'FCM init failed: $e',
@@ -319,11 +325,67 @@ class NotificationService {
     }
   }
 
+  Future<void> _handleTokenRefresh(String token) async {
+    await _persistToken(token);
+    await syncDeviceTokenIfNeeded(token: token);
+  }
+
   Future<void> _persistToken(String? token) async {
     if (token == null || token.isEmpty) return;
     _fcmToken = token;
     await _appPref.setString(AppPrefKeys.fcmToken, token);
     developer.log('FCM token updated', name: 'NotificationService');
+  }
+
+  /// Marks the token already sent on OTP verify so login does not also PUT.
+  Future<void> markDeviceTokenUploaded(String token) async {
+    final value = token.trim();
+    if (value.isEmpty) return;
+    _fcmToken = value;
+    await _appPref.setString(AppPrefKeys.fcmToken, value);
+    await _appPref.setString(AppPrefKeys.fcmTokenSentToBackend, value);
+  }
+
+  /// Uploads FCM only when logged in and the token differs from last upload.
+  Future<void> syncDeviceTokenIfNeeded({String? token}) async {
+    final value = (token ?? _fcmToken ?? _readStoredToken())?.trim();
+    if (value == null || value.isEmpty) return;
+    if (!_appPref.getLoginStatus()) return;
+
+    final lastSent =
+        _appPref.getString(AppPrefKeys.fcmTokenSentToBackend)?.trim();
+    if (value == lastSent) return;
+    if (_deviceTokenUploadInFlight) return;
+    if (!sl.isRegistered<UpdateFcmDeviceTokenUseCase>()) return;
+
+    _deviceTokenUploadInFlight = true;
+    try {
+      final result = await sl<UpdateFcmDeviceTokenUseCase>().call(
+        UpdateFcmDeviceTokenParams(fcmToken: value),
+      );
+      await result.fold(
+        (error) async {
+          developer.log(
+            'FCM device-token upload failed: $error',
+            name: 'NotificationService',
+          );
+        },
+        (_) async {
+          await _appPref.setString(AppPrefKeys.fcmTokenSentToBackend, value);
+          developer.log(
+            'FCM device-token uploaded (length=${value.length})',
+            name: 'NotificationService',
+          );
+        },
+      );
+    } catch (e) {
+      developer.log(
+        'FCM device-token upload error: $e',
+        name: 'NotificationService',
+      );
+    } finally {
+      _deviceTokenUploadInFlight = false;
+    }
   }
 
   void _setupForegroundHandler() {
@@ -456,12 +518,18 @@ class NotificationService {
     }
   }
 
+  /// Drops the in-memory token immediately (prefs/Firebase may follow).
+  void discardLocalToken() {
+    _fcmToken = null;
+  }
+
   Future<void> deleteToken() async {
+    discardLocalToken();
+    await _appPref.remove(AppPrefKeys.fcmToken);
+    await _appPref.remove(AppPrefKeys.fcmTokenSentToBackend);
     if (_firebaseMessaging == null) return;
     try {
       await _firebaseMessaging!.deleteToken();
-      _fcmToken = null;
-      await _appPref.remove(AppPrefKeys.fcmToken);
     } catch (e) {
       developer.log('FCM delete token failed: $e', name: 'NotificationService');
     }

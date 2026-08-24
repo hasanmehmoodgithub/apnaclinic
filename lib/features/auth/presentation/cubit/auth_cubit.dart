@@ -174,6 +174,7 @@ class AuthCubit extends Cubit<AuthState> {
       },
       (entity) async {
         await _saveUserSession(entity: entity);
+        await _markLoginFcmToken(fcmToken);
         if (isClosed) {
           return const VerifyOtpOutcome(isSuccess: false, goToHome: false);
         }
@@ -279,6 +280,17 @@ class AuthCubit extends Cubit<AuthState> {
 
     developer.log('No FCM token available for login', name: 'AuthCubit');
     return null;
+  }
+
+  Future<void> _markLoginFcmToken(String? fcmToken) async {
+    if (!sl.isRegistered<NotificationService>()) return;
+    final service = sl<NotificationService>();
+    final token = fcmToken?.trim();
+    if (token != null && token.isNotEmpty) {
+      await service.markDeviceTokenUploaded(token);
+      return;
+    }
+    unawaited(service.syncDeviceTokenIfNeeded());
   }
 
   Future<void> _saveUserSession({required AuthEntity entity}) async {

@@ -7,6 +7,7 @@ import '../preference/app_pref.dart';
 import '../utils/api_error_message_utils.dart';
 import '../utils/chucker_guard.dart';
 import '../session/auth_session_refresh.dart';
+import '../session/local_logout_service.dart';
 import 'api_exceptions.dart';
 import 'api_logger_interceptor.dart';
 import 'auth_interceptor.dart';
@@ -51,6 +52,11 @@ class ApiService {
         deviceHeadersProvider: _deviceHeadersProvider,
         sessionRefresh: sl<AuthSessionRefresh>(),
         hmacSecretStore: _hmacSecretStore,
+        clearExpiredSession: () async {
+          if (sl.isRegistered<LocalLogoutService>()) {
+            await sl<LocalLogoutService>().clearAll();
+          }
+        },
       ),
     );
     // HMAC last among mutating interceptors so path/body/auth are final, and

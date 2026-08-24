@@ -1,0 +1,1131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Apna Clinic — Manual test report</title>
+  <style>
+    :root {
+      --navy: #061e40;
+      --teal: #00897b;
+      --bg: #f4f7f8;
+      --card: #fff;
+      --line: #e2e8ee;
+      --muted: #5b6b7c;
+      --ok: #047857;
+      --ok-bg: #ecfdf5;
+      --warn: #b45309;
+      --warn-bg: #fff7ed;
+      --skip: #9f1239;
+      --skip-bg: #fff1f2;
+      --code: #0f172a;
+      --guest: #1d4ed8;
+      --guest-bg: #eff6ff;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--navy);
+      line-height: 1.45;
+    }
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: var(--navy);
+      color: #fff;
+      padding: 18px 24px 16px;
+      box-shadow: 0 8px 24px rgba(6, 30, 64, 0.18);
+    }
+    header h1 { margin: 0 0 4px; font-size: 20px; font-weight: 700; }
+    header p { margin: 0; color: #c5d0dc; font-size: 13px; }
+    .progress-wrap {
+      margin-top: 12px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .progress-bar {
+      flex: 1;
+      height: 8px;
+      background: rgba(255,255,255,.18);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+    .progress-bar > span {
+      display: block;
+      height: 100%;
+      width: 0;
+      background: #2dd4bf;
+      border-radius: 999px;
+      transition: width .2s ease;
+    }
+    #progressLabel { font-size: 12px; color: #c5d0dc; white-space: nowrap; }
+    nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    nav a {
+      color: #fff;
+      text-decoration: none;
+      background: rgba(255,255,255,.12);
+      border-radius: 999px;
+      padding: 5px 10px;
+      font-size: 12px;
+    }
+    nav a:hover { background: var(--teal); }
+    main { max-width: 980px; margin: 0 auto; padding: 20px 16px 80px; }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 16px 18px;
+      margin-bottom: 16px;
+    }
+    h2 { margin: 0 0 10px; font-size: 17px; }
+    h3 { margin: 16px 0 8px; font-size: 14px; }
+    p, li { font-size: 14px; }
+    .muted { color: var(--muted); }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th, td {
+      text-align: left;
+      padding: 8px 10px;
+      border-bottom: 1px solid var(--line);
+      vertical-align: top;
+    }
+    th { color: var(--muted); font-weight: 600; font-size: 12px; }
+    code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 12px;
+      background: #f1f5f9;
+      padding: 1px 6px;
+      border-radius: 6px;
+      color: var(--code);
+    }
+    .pills { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0 0; }
+    .pill {
+      border-radius: 999px;
+      padding: 5px 10px;
+      font-size: 12px;
+      background: #f0f7f6;
+      color: var(--teal);
+    }
+    .ok { background: var(--ok-bg); color: var(--ok); }
+    .warn { background: var(--warn-bg); color: var(--warn); }
+    .skip { background: var(--skip-bg); color: var(--skip); }
+    .guest { background: var(--guest-bg); color: var(--guest); }
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 8px;
+      margin-top: 10px;
+    }
+    .step {
+      background: #f8fafc;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 10px 12px;
+      font-size: 13px;
+    }
+    .step b { display: block; font-size: 11px; color: var(--muted); margin-bottom: 4px; }
+    .note {
+      background: var(--warn-bg);
+      border: 1px solid #fdba74;
+      border-radius: 12px;
+      padding: 12px 14px;
+      font-size: 13px;
+      color: #7c2d12;
+      margin-top: 10px;
+    }
+    .okbox {
+      background: var(--ok-bg);
+      border: 1px solid #6ee7b7;
+      border-radius: 12px;
+      padding: 12px 14px;
+      font-size: 13px;
+      color: #065f46;
+      margin-top: 10px;
+    }
+    .uc {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 12px 14px;
+      margin: 10px 0;
+      background: #fafbfc;
+    }
+    .uc header-row, .uc-head {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+    }
+    .uc label {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      cursor: pointer;
+      width: 100%;
+    }
+    .uc input[type=checkbox] {
+      margin-top: 3px;
+      width: 16px;
+      height: 16px;
+      accent-color: var(--teal);
+      flex-shrink: 0;
+    }
+    .uc h4 { margin: 0 0 6px; font-size: 14px; }
+    .uc ol { margin: 6px 0 0; padding-left: 18px; }
+    .uc .expect {
+      margin-top: 8px;
+      font-size: 13px;
+      color: var(--ok);
+    }
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 8px;
+    }
+    button.linkish {
+      border: 0;
+      background: #eef2f6;
+      color: var(--navy);
+      border-radius: 999px;
+      padding: 6px 12px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+    button.linkish:hover { background: #dbe7ee; }
+    .toc a { color: var(--teal); }
+    @media print {
+      header { position: static; box-shadow: none; }
+      nav, .toolbar, .progress-wrap { display: none; }
+      .uc { break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Apna Clinic — Manual test report</h1>
+    <p>All integrated features · easy use cases · check off as you go · Aug 2026</p>
+    <div class="progress-wrap">
+      <div class="progress-bar"><span id="progressFill"></span></div>
+      <span id="progressLabel">0 / 0</span>
+    </div>
+    <nav>
+      <a href="#how">How to use</a>
+      <a href="#map">Feature map</a>
+      <a href="#start">Start &amp; guest</a>
+      <a href="#auth">Login / OTP</a>
+      <a href="#profile">Profile</a>
+      <a href="#home">Home &amp; menu</a>
+      <a href="#search">Search</a>
+      <a href="#instant">Instant Doctor</a>
+      <a href="#consult">Consultation</a>
+      <a href="#pharmacy">Pharmacy</a>
+      <a href="#lab">Lab test</a>
+      <a href="#surgery">Surgery</a>
+      <a href="#bookings">Bookings</a>
+      <a href="#pay">Payment</a>
+      <a href="#notify">Notifications</a>
+      <a href="#support">Support</a>
+      <a href="#accounts">JazzCash accounts</a>
+      <a href="#missing">Is anything missing?</a>
+    </nav>
+  </header>
+  <main>
+    <section class="card" id="how">
+      <h2>How to use this report</h2>
+      <p>
+        Tick a use case when the <strong>expected result</strong> happens on a real device
+        (or simulator where noted). Progress is saved in this browser.
+      </p>
+      <div class="pills">
+        <span class="pill guest">Guest = not logged in</span>
+        <span class="pill ok">Logged in = OTP done + profile saved</span>
+        <span class="pill warn">Needs real device (camera / mic / push)</span>
+        <span class="pill skip">Known gap / not in app</span>
+      </div>
+      <div class="toolbar">
+        <button class="linkish" type="button" id="expandAll">Expand all notes</button>
+        <button class="linkish" type="button" id="resetChecks">Reset all ticks</button>
+      </div>
+      <h3>Before you start</h3>
+      <ol>
+        <li>Use a <strong>test MSISDN</strong> that can receive OTP.</li>
+        <li>Have a <strong>JazzCash test number</strong> and a card that can open the payment WebView.</li>
+        <li>Fresh install (or clear app data) for first-launch cases.</li>
+        <li>Push / Instant Doctor video: use a <strong>physical device</strong>.</li>
+        <li>Do guest cases first, then login, then full bookings.</li>
+      </ol>
+    </section>
+
+    <section class="card" id="map">
+      <h2>What is integrated (feature map)</h2>
+      <p class="muted">Bottom bar: Home · Instant Doctor · My Bookings · Support. Profile is the home avatar / menu, not a tab.</p>
+      <div class="flow">
+        <div class="step"><b>1. Start</b>Splash → onboarding (4 pages) → home</div>
+        <div class="step"><b>2. Auth</b>Phone OTP → profile setup if new</div>
+        <div class="step"><b>3. Home</b>4 services + Instant Doctor banner + search + FikrFree</div>
+        <div class="step"><b>4. Services</b>Consultation · Pharmacy · Lab · Surgery</div>
+        <div class="step"><b>5. Instant Doctor</b>Subscribe OTP → video WebView</div>
+        <div class="step"><b>6. Bookings</b>5 tabs: Instant · Pharmacy · Doctors · Lab · Surgery</div>
+        <div class="step"><b>7. Pay</b>JazzCash / Card WebView / Cash (lab + pharmacy)</div>
+        <div class="step"><b>8. More</b>Search, notifications, support, FAQ, profile phones</div>
+      </div>
+      <h3>Login required vs guest OK</h3>
+      <table>
+        <thead><tr><th>Guest can do</th><th>Needs login</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>Onboarding, home, browse services, search, support, FAQ, terms, FikrFree banner, lab/pharmacy/surgery browse, consultation categories</td>
+            <td>Instant Doctor tab, My Bookings tab, notifications inbox, cart / add-to-cart, book doctor, AI screening, lab/pharmacy/surgery checkout, profile edit, add JazzCash account, logout</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="card" id="start">
+      <h2>1. Splash, onboarding, guest home</h2>
+      <p class="muted">Cold start decides: incomplete profile → setup · first launch → onboarding · else home.</p>
+
+      <div class="uc">
+        <label>
+          <input type="checkbox" data-uc="s1" />
+          <div>
+            <h4>UC-01 · First install sees onboarding</h4>
+            <ol>
+              <li>Clear app data / fresh install.</li>
+              <li>Open the app. Wait ~2 seconds on splash.</li>
+            </ol>
+            <div class="expect">Expected: 4 intro pages — Instant Doctor, Book consultation, Pharmacy, Laboratory. Skip and Next both work. Last Next (or Skip) opens Home. Onboarding does not show again on next launch.</div>
+          </div>
+        </label>
+      </div>
+
+      <div class="uc">
+        <label>
+          <input type="checkbox" data-uc="s2" />
+          <div>
+            <h4>UC-02 · Guest home looks complete</h4>
+            <ol>
+              <li>Stay logged out.</li>
+              <li>Look at header: menu, logo, search pill, Login (not avatar name).</li>
+              <li>Scroll: 2×2 services (Consultation, Pharmacy, Lab, Surgery), Instant Doctor banner, FikrFree banner.</li>
+              <li>Tap bottom tabs: Home works; Instant Doctor and Bookings open login; Support opens help.</li>
+            </ol>
+            <div class="expect">Expected: no notification red dot for guests. Back on Home shows “close app?” dialog. Confirm closes the app.</div>
+          </div>
+        </label>
+      </div>
+
+      <div class="uc">
+        <label>
+          <input type="checkbox" data-uc="s3" />
+          <div>
+            <h4>UC-03 · Guest is sent to login, then returns to the same place</h4>
+            <ol>
+              <li>As guest, tap Instant Doctor tab (or Bookings, or Book Now on a doctor, or pharmacy cart).</li>
+              <li>Complete OTP + profile if asked.</li>
+            </ol>
+            <div class="expect">Expected: after login you land back on that service / tab, not always Home. Incomplete profile opens profile setup; after first save you return to the service.</div>
+          </div>
+        </label>
+      </div>
+    </section>
+
+    <section class="card" id="auth">
+      <h2>2. Login, OTP, logout</h2>
+      <div class="pills">
+        <span class="pill">Phone → OTP → session</span>
+        <span class="pill">Resend timer from API (seconds)</span>
+        <span class="pill">Terms / Privacy open in browser</span>
+      </div>
+
+      <div class="uc">
+        <label>
+          <input type="checkbox" data-uc="a1" />
+          <div>
+            <h4>UC-04 · Request OTP</h4>
+            <ol>
+              <li>Open Login from home header.</li>
+              <li>Enter a valid 11-digit mobile. Tap continue.</li>
+              <li>Tap Terms and Privacy on the footer.</li>
+            </ol>
+            <div class="expect">Expected: OTP screen appears, resend countdown starts. Invalid phone is blocked. Legal links open. Network failure shows a clear error, not a crash.</div>
+          </div>
+        </label>
+      </div>
+
+      <div class="uc">
+        <label>
+          <input type="checkbox" data-uc="a2" />
+          <div>
+            <h4>UC-05 · Wrong OTP, resend, then correct OTP</h4>
+            <ol>
+              <li>Enter a wrong code → see error, stay on OTP.</li>
+              <li>Wait for timer, resend, enter the new code.</li>
+            </ol>
+            <div class="expect">Expected: existing user with completed profile goes Home (or previous screen). New user goes to profile setup. Name is not stuck on “Guest User” after login.</div>
+          </div>
+        </label>
+      </div>
+
+      <div class="uc">
+        <label>
+          <input type="checkbox" data-uc="a3" />
+          <div>
+            <h4>UC-06 · Logout from menu</h4>
+            <ol>
+              <li>Open drawer menu → Logout → confirm.</li>
+              <li>Cancel once, then confirm.</li>
+            </ol>
+            <div class="expect">Expected: session cleared even if logout API fails (snackbar may show). Home shows Login. Instant Doctor / Bookings again require login.</div>
+          </div>
+        </label>
+      </div>
+    </section>
+
+    <section class="card" id="profile">
+      <h2>3. Profile setup and Profile screen</h2>
+      <p class="muted">First save: name, gender, optional email, address, DOB, optional photo. Email empty is OK; if filled it must contain <code>@</code>.</p>
+
+      <div class="uc">
+        <label>
+          <input type="checkbox" data-uc="p1" />
+          <div>
+            <h4>UC-07 · First-time profile (cannot skip)</h4>
+            <ol>
+              <li>Login as a user who has never saved a profile.</li>
+              <li>Try system back — it should not leave setup.</li>
+              <li>Save with empty name → blocked. Fill required fields. Optional photo: camera or gallery.</li>
+            </ol>
+            <div class="expect">Expected: after save you reach Home (or the service you came from). Greeting / menu show your name. Avatar appears if you uploaded a photo.</div>
+          </div>
+        </label>
+      </div>
+
+      <div class="uc">
+        <label>
+          <input type="checkbox" data-uc="p2" />
+          <div>
+            <h4>UC-08 · Edit profile from home avatar</h4>
+            <ol>
+              <li>Tap home avatar → Profile → Edit.</li>
+              <li>Change name / DOB / photo, save, go back.</li>
+            </ol>
+            <div class="expect">Expected: Profile, home greeting, and menu all show the new name and photo. Back arrow exists only in edit mode.</div>
+          </div>
+        </label>
+      </div>
+
+      <div class="uc">
+        <label>
+          <input type="checkbox" data-uc="p3" />
+          <div>
+            <h4>UC-09 · Guest profile screen</h4>
+            <ol>
+              <li>As guest, tap Login on home, or open Profile if reachable, and use Login CTA.</li>
+            </ol>
+            <div class="expect">Expected: guest sees a login prompt, not editable fields or JazzCash numbers.</div>
+          </div>
+        </label>
+      </div>
+    </section>
+
+    <section class="card" id="home">
+      <h2>4. Home, banners, menu, app update</h2>
+
+      <div class="uc">
+        <label>
+          <input type="checkbox" data-uc="h1" />
+          <div>
+            <h4>UC-10 · Service tiles</h4>
+            <ol>
+              <li>Tap Consultation, Pharmacy, Lab Test, Surgery one by one.</li>
+              <li>Tap Instant Doctor home banner.</li>
+            </ol>
+            <div class="expect">Expected: each opens its hub. Icons load (or a placeholder if CMS image fails). Discount badge text matches CMS. Guest Instant Doctor banner still requires login.</div>
+          </div>
+        </label>
+      </div>
+
+      <div class="uc">
+        <label>
+          <input type="checkbox" data-uc="h2" />
+          <div>
+            <h4>UC-11 · Promo banners (logged in)</h4>
+            <ol>
+              <li>Open Home while logged in (banners load here, not at splash).</li>
+              <li>If several banners: close the first → next should appear.</li>
+              <li>Tap a banner: in-app route, Instant Doctor tab, or external URL.</li>
+            </ol>
+            <div class="expect">Expected: image shimmer then photo. Broken image falls back to default banner. Empty CTA still can use <code>route</code>. Force app-update dialog (if shown) blocks banners until handled.</div>
+          </div>
+        </label>
+      </div>
+
+      <div class="uc">
+        <label>
+          <input type="checkbox" data-uc="h3" />
+          <div>
+            <h4>UC-12 · App update dialog</h4>
+            <ol>
+              <li>Open Home. If CMS says optional update → dismissible dialog.</li>
+              <li>If below min / force → cannot dismiss; store button works.</li>
+            </ol>
+            <div class="expect">Expected: no dialog when CMS inactive or no record. Store opens Play / App Store.</div>
+          </div>
+        </label>
+      </div>
+
+      <div class="uc">
+        <label>
+          <input type="checkbox" data-uc="h4" />
+          <div>
+            <h4>UC-13 · FikrFree banner</h4>
+            <ol>
+              <li>Tap FikrFree on Home.</li>
+            </ol>
+            <div class="expect">Expected: opens FikrFree if installed, otherwise App Store (iOS) or Play Store (Android).</div>
+          </div>
+        </label>
+      </div>
+
+      <div class="uc">
+        <label>
+          <input type="checkbox" data-uc="h5" />
+          <div>
+            <h4>UC-14 · Drawer menu</h4>
+            <ol>
+              <li>Open hamburger menu.</li>
+              <li>Tap My Bookings, Customer Support, FAQ, About (website), Terms, Privacy.</li>
+              <li>Confirm app version row is visible.</li>
+            </ol>
+            <div class="expect">Expected: Bookings needs login (then lands on Bookings tab). Support is in-app. FAQ and website open externally. Terms/Privacy open in in-app web view. Logout only when logged in.</div>
+          </div>
+        </label>
+      </div>
+
+      <div class="uc">
+        <label>
+          <input type="checkbox" data-uc="h6" />
+          <div>
+            <h4>UC-15 · Bottom nav behaviour</h4>
+            <ol>
+              <li>Switch tabs only by tapping the bar (no swipe).</li>
+              <li>On Instant Doctor / Bookings / Support, press system back.</li>
+            </ol>
+            <div class="expect">Expected: back returns to Home. Selected tab uses filled icon. Bar stays white above the system nav.</div>
+          </div>
+        </label>
+      </div>
+    </section>
+
+    <section class="card" id="search">
+      <h2>5. Global search (text + voice)</h2>
+      <p class="muted">Search runs on submit (icon, keyboard, chip, or voice) — not while typing. Popular chips load when the field is empty.</p>
+
+      <div class="uc">
+        <label>
+          <input type="checkbox" data-uc="q1" />
+          <div>
+            <h4>UC-16 · Text search across modules</h4>
+            <ol>
+              <li>From Home, tap the search pill.</li>
+              <li>Submit a known doctor / medicine / lab test / surgery name.</li>
+              <li>Tap a result in each section that appears.</li>
+              <li>Submit nonsense → empty state.</li>
+              <li>Use a recent or popular chip.</li>
+            </ol>
+            <div class="expect">Expected: sections are Doctor Consultation, Laboratory Tests, Surgery Booking, Pharmacy. Doctor/lab/surgery/pharmacy cards match their browse look. Taps go to book-doctor / lab booking / surgery patient details / pharmacy product (login when that flow needs it). Empty copy includes your query.</div>
+          </div>
+        </label>
+      </div>
+
+      <div class="uc">
+        <label>
+          <input type="checkbox" data-uc="q2" />
+          <div>
+            <h4>UC-17 · Voice search <span class="pill warn">device + mic</span></h4>
+            <ol>
+              <li>Tap mic on Home (opens search listening) or mic on the search screen.</li>
+              <li>Allow mic. Speak a term. Tap the Lottie to stop.</li>
+            </ol>
+            <div class="expect">Expected: listening animation, then search submits. Deny mic does not crash. No error snackbar for speech timeout.</div>
+          </div>
+        </label>
+      </div>
+    </section>
+
+    <section class="card" id="instant">
+      <h2>6. Instant Doctor</h2>
+      <div class="pills">
+        <span class="pill">Login required</span>
+        <span class="pill">Subscribe OTP · Unsubscribe OTP</span>
+        <span class="pill">Own video WebView (not card payment WebView)</span>
+      </div>
+
+      <div class="uc">
+        <label>
+          <input type="checkbox" data-uc="i1" />
+          <div>
+            <h4>UC-18 · Subscribe then start consultation</h4>
+            <ol>
+              <li>Open Instant Doctor tab while logged in.</li>
+              <li>On an unsubscribed plan, tap Subscribe. Complete OTP (wrong OTP stays on sheet with API message).</li>
+              <li>Tap Start Consultation. Allow camera + mic.</li>
+            </ol>
+            <div class="expect">Expected: after subscribe, plan shows as subscribed. Consultation WebView opens. Deny camera/mic → snackbar, no call. Close WebView → provider list reloads.</div>
+          </div>
+        </label>
+      </div>
+
+      <div class="uc">
+        <label>
+          <input type="checkbox" data-uc="i2" />
+          <div>
+            <h4>UC-19 · Cancel subscription</h4>
+            <ol>
+              <li>On a subscribed plan, cancel → confirm → unsubscribe OTP → verify.</li>
+            </ol>
+            <div class="expect">Expected: OTP sheet is not dismissible by swipe/outside (use X). Success snackbar. Plan returns to unsubscribed. List reloads.</div>
+          </div>
+        </label>
+      </div>
+    </section>
+
+    <section class="card" id="consult">
+      <h2>7. Doctor consultation</h2>
+      <p class="muted">Hub → category → doctor list (search/filter) → book (slot + issue + files) → checkout → summary → JazzCash or card.</p>
+
+      <div class="uc">
+        <label>
+          <input type="checkbox" data-uc="c1" />
+          <div>
+            <h4>UC-20 · Browse categories and doctors (guest OK until Book)</h4>
+            <ol>
+              <li>Open Consultation from Home.</li>
+              <li>Tap a category. Scroll the doctor list (pagination).</li>
+              <li>Search doctors; clear with X. Open Filter, pick a partner, see red dot; Clear filter.</li>
+              <li>As guest tap Book Now → login, then continue.</li>
+            </ol>
+            <div class="expect">Expected: doctors sorted by rating. Partner logos show. Empty rating/experience hidden. Filter reloads the list.</div>
+          </div>
+        </label>
+      </div>
+
+      <div class="uc">
+        <label>
+          <input type="checkbox" data-uc="c2" />
+          <div>
+            <h4>UC-21 · AI doctor screening <span class="pill warn">mic</span></h4>
+            <ol>
+              <li>On consultation hub tap the AI card → Start now (login if needed).</li>
+              <li>Allow mic. Use the WebView. Back → Exit confirm → Exit.</li>
+            </ol>
+            <div class="expect">Expected: denied mic → snackbar, no WebView. Cancel on exit stays in AI. Exit returns to consultation hub.</div>
+          </div>
+        </label>
+      </div>
+
+      <div class="uc">
+        <label>
+          <input type="checkbox" data-uc="c3" />
+          <div>
+            <h4>UC-22 · Book a slot with documents</h4>
+            <ol>
+              <li>Open a doctor. Pick a date with slots (empty days disabled). Pick a time.</li>
+              <li>Leave Issue empty → Get Appointment blocked. Type an issue.</li>
+              <li>Upload up to 5 files (gallery/file/camera). Try a file &gt; 1 MB and a 6th file.</li>
+            </ol>
+            <div class="expect">Expected: Get Appointment enabled only when slots exist. Oversize / extra files snackbar. Reviews: first review + See More sheet. Stats shimmer then real numbers.</div>
+          </div>
+        </label>
+      </div>
+
+      <div class="uc">
+        <label>
+          <input type="checkbox" data-uc="c4" />
+          <div>
+            <h4>UC-23 · Pay with JazzCash</h4>
+            <ol>
+              <li>Get Appointment → pick JazzCash → Select Account (default pre-selected) → Continue → Summary → Proceed.</li>
+              <li>From the sheet, Add Account, then select the new number.</li>
+            </ol>
+            <div class="expect">Expected: success dialog cannot be dismissed except View Bookings → Bookings → Doctor Consultation. Cancel on summary returns to checkout.</div>
+          </div>
+        </label>
+      </div>
+
+      <div class="uc">
+        <label>
+          <input type="checkbox" data-uc="c5" />
+          <div>
+            <h4>UC-24 · Pay with card (and pending / abandon)</h4>
+            <ol>
+              <li>Pay with Card. Complete, fail, and cancel (AppBar X) once each if possible.</li>
+              <li>If “payment already in progress” (blocking order): View My Bookings. If abandon is offered, cancel unpaid booking and Proceed again.</li>
+            </ol>
+            <div class="expect">Expected: success only after gateway success. Fail/cancel shows outcome dialog (gateway message if any), then Bookings. System back does not close the WebView. Abandon leaves you on summary to retry.</div>
+          </div>
+        </label>
+      </div>
+    </section>
+
+    <section class="card" id="pharmacy">
+      <h2>8. Pharmacy</h2>
+      <p class="muted">Browse is guest-OK. Cart, add-to-cart, and checkout need login. Rx products must upload a file (PNG/JPEG/WEBP/PDF, max 5 MB) before add.</p>
+
+      <div class="uc">
+        <label>
+          <input type="checkbox" data-uc="ph1" />
+          <div>
+            <h4>UC-25 · Browse, search, product, similar items</h4>
+            <ol>
+              <li>Open Pharmacy. Scroll (pagination). Search by name; clear reloads all.</li>
+              <li>Open a product. Check image, price, Rx badge if required, “More like”.</li>
+            </ol>
+            <div class="expect">Expected: missing images use medication placeholder. Cart badge hidden for guests. Badge shows 99+ if qty &gt; 99.</div>
+          </div>
+        </label>
+      </div>
+
+      <div class="uc">
+        <label>
+          <input type="checkbox" data-uc="ph2" />
+          <div>
+            <h4>UC-26 · Add to cart (Rx and non-Rx)</h4>
+            <ol>
+              <li>Add a non-Rx item (login if asked).</li>
+              <li>Add an Rx item: pick prescription, wait for upload, then add. Re-upload vs Keep current if already attached.</li>
+              <li>Increase qty of an existing line (no second duplicate if already in cart).</li>
+            </ol>
+            <div class="expect">Expected: heart loader on upload/add. API errors in a dialog. Photo thumbnail for image Rx, document icon for PDF.</div>
+          </div>
+        </label>
+      </div>
+
+      <div class="uc">
+        <label>
+          <input type="checkbox" data-uc="ph3" />
+          <div>
+            <h4>UC-27 · Cart quantity and delete</h4>
+            <ol>
+              <li>Open cart. Plus/minus (min qty 1). Delete via bin (qty 0).</li>
+            </ol>
+            <div class="expect">Expected: totals update from server cart. Cannot go below 1 with minus.</div>
+          </div>
+        </label>
+      </div>
+
+      <div class="uc">
+        <label>
+          <input type="checkbox" data-uc="ph4" />
+          <div>
+            <h4>UC-28 · Checkout — address + COD / JazzCash / Card</h4>
+            <ol>
+              <li>Open checkout. City + address (reuse saved address if line1+city match; otherwise it creates one).</li>
+              <li>Optional special instructions. Place with COD, then repeat with JazzCash and Card if possible.</li>
+            </ol>
+            <div class="expect">Expected: order-placed dialog shows <strong>unified order id</strong> (not UUID). Only CTA dismisses it. View My Orders → Bookings → Pharmacy. Cart cleared. Discount row hidden when 0. Free-delivery message if API sends it.</div>
+          </div>
+        </label>
+      </div>
+
+      <div class="uc">
+        <label>
+          <input type="checkbox" data-uc="ph5" />
+          <div>
+            <h4>UC-29 · Unpaid card lock / abandon</h4>
+            <ol>
+              <li>If add-to-cart or cart update says payment still processing: tap “Didn’t pay? Cancel and return to cart”.</li>
+            </ol>
+            <div class="expect">Expected: unpaid order is abandoned, cart usable again. Pending with no payment URL shows pending dialog then cart clear (per current app behaviour).</div>
+          </div>
+        </label>
+      </div>
+    </section>
+
+    <section class="card" id="lab">
+      <h2>9. Lab tests</h2>
+      <p class="muted">City is required. First visit opens city picker. Saved city is remembered. Changing city / method / partner / lab with items in cart warns you.</p>
+
+      <div class="uc">
+        <label>
+          <input type="checkbox" data-uc="l1" />
+          <div>
+            <h4>UC-30 · City, catalog, search, infinite scroll</h4>
+            <ol>
+              <li>Open Lab. Pick a city (or confirm saved city).</li>
+              <li>Scroll to load more. Search a test; empty query / no results → “No Record Found”.</li>
+            </ol>
+            <div class="expect">Expected: tests only after a city is chosen. Price pill hides strikethrough when original = discounted. Guest cart badge hidden; opening cart / tapping a test asks login.</div>
+          </div>
+        </label>
+      </div>
+
+      <div class="uc">
+        <label>
+          <input type="checkbox" data-uc="l2" />
+          <div>
+            <h4>UC-31 · Booking screen — Walk-in vs Home sample</h4>
+            <ol>
+              <li>Open a test. Switch Walk In / Home Sample.</li>
+              <li>Pick partner and lab. Add to cart.</li>
+              <li>Open another test from a different lab while cart has items.</li>
+            </ol>
+            <div class="expect">Expected: method tiles disabled when no price. First available method auto-selected. Cart-change warning: Continue clears cart; View Cart does not apply the change. Add to Cart disabled until partner can match.</div>
+          </div>
+        </label>
+      </div>
+
+      <div class="uc">
+        <label>
+          <input type="checkbox" data-uc="l3" />
+          <div>
+            <h4>UC-32 · Checkout patient + emergency + pay</h4>
+            <ol>
+              <li>Cart → Checkout. Edit patient (Done), fill emergency (10-digit landline or 11-digit mobile).</li>
+              <li>Pay via Cash, JazzCash, or Card.</li>
+            </ol>
+            <div class="expect">Expected: errors in pink banner, not plain red text. Success / pending dialogs only close via CTA. Card X cancels. Blocking order can abandon then retry. Cart cleared after successful book. View My Bookings → Lab tab.</div>
+          </div>
+        </label>
+      </div>
+    </section>
+
+    <section class="card" id="surgery">
+      <h2>10. Surgery</h2>
+      <p class="muted">This flow creates a <strong>lead</strong> first. Payment is later from Bookings → Surgery → Proceed Checkout (when <code>paymentAllowed</code>).</p>
+
+      <div class="uc">
+        <label>
+          <input type="checkbox" data-uc="su1" />
+          <div>
+            <h4>UC-33 · City, procedures, doctors, filters</h4>
+            <ol>
+              <li>Open Surgery. Pick city (remembered). Search procedures. Open one.</li>
+              <li>On doctor list, open filter: Hospital / Speciality → Apply. Search doctors.</li>
+              <li>Book Now (login if guest).</li>
+            </ol>
+            <div class="expect">Expected: tapping hospital or specialty returns to the filter main step. Doctor cards show hospital and starting price.</div>
+          </div>
+        </label>
+      </div>
+
+      <div class="uc">
+        <label>
+          <input type="checkbox" data-uc="su2" />
+          <div>
+            <h4>UC-34 · Patient details → confirm lead</h4>
+            <ol>
+              <li>Fill name, age &gt; 0, contact + emergency (10 or 11 digits). Pick package/type if shown.</li>
+              <li>Confirm Booking. Try invalid phones first.</li>
+            </ol>
+            <div class="expect">Expected: success dialog cannot be dismissed except View My Bookings → Surgery tab. Failure dialog shows API message. Global search “Book” can open this same patient screen.</div>
+          </div>
+        </label>
+      </div>
+    </section>
+
+    <section class="card" id="bookings">
+      <h2>11. My Bookings (all five tabs)</h2>
+      <p class="muted">Inner tabs in order: Instant Doctor · Pharmacy · Doctor Consultation · Lab Tests · Surgery. Empty states have a CTA into that service.</p>
+
+      <div class="uc">
+        <label>
+          <input type="checkbox" data-uc="b1" />
+          <div>
+            <h4>UC-35 · Instant Doctor bookings</h4>
+            <ol>
+              <li>Open Bookings → Instant Doctor. Scroll if many. Tap a card / View Details.</li>
+              <li>Empty list → Instant Doctor CTA.</li>
+            </ol>
+            <div class="expect">Expected: prescription bottom sheet (newline-split meds). Empty CTA opens Instant Doctor tab.</div>
+          </div>
+        </label>
+      </div>
+
+      <div class="uc">
+        <label>
+          <input type="checkbox" data-uc="b2" />
+          <div>
+            <h4>UC-36 · Pharmacy order details</h4>
+            <ol>
+              <li>Open a pharmacy order. Check timeline, items, fees, address, status.</li>
+            </ol>
+            <div class="expect">Expected: discount row hidden when 0. Feedback UI is <strong>hidden on purpose</strong>. Invoice only if API sends URL.</div>
+          </div>
+        </label>
+      </div>
+
+      <div class="uc">
+        <label>
+          <input type="checkbox" data-uc="b3" />
+          <div>
+            <h4>UC-37 · Doctor consultation details, join, feedback, prescriptions</h4>
+            <ol>
+              <li>Open a confirmed booking. Try Join Consultation before, during, and after the slot.</li>
+              <li>If prescriptions exist, tap download.</li>
+              <li>After slot end, submit star + review (if none yet).</li>
+            </ol>
+            <div class="expect">Expected: Join enabled only during slot window; otherwise faded + tooltip. Feedback form only after slot end. E-invoice hidden until API has a URL. Status: Confirmed / Pending / Failed. Whole card tap opens details.</div>
+          </div>
+        </label>
+      </div>
+
+      <div class="uc">
+        <label>
+          <input type="checkbox" data-uc="b4" />
+          <div>
+            <h4>UC-38 · Lab order + report PDF</h4>
+            <ol>
+              <li>Open View Details. Check sample type (Walk In / Home Sample), tests, fees.</li>
+              <li>When reports are READY, tap Download Report → PDF viewer.</li>
+            </ol>
+            <div class="expect">Expected: download to device then in-app PDF (not just a remote URL). Failure snackbar. E-invoice disabled. Empty list CTA opens lab catalog.</div>
+          </div>
+        </label>
+      </div>
+
+      <div class="uc">
+        <label>
+          <input type="checkbox" data-uc="b5" />
+          <div>
+            <h4>UC-39 · Surgery lead details + pay later</h4>
+            <ol>
+              <li>Open a pending lead. Confirm “Awaiting confirmation” if no schedule.</li>
+              <li>When Proceed Checkout is shown, pay JazzCash or Card.</li>
+            </ol>
+            <div class="expect">Expected: CTA only if <code>paymentAllowed</code>. Same payment sheet as other modules. Pending (no URL) → pending dialog. Success → confirmed dialog. Schedule shows date + PKT times when API has them.</div>
+          </div>
+        </label>
+      </div>
+    </section>
+
+    <section class="card" id="pay">
+      <h2>12. Shared card payment WebView</h2>
+      <p class="muted">Used by consultation, lab, pharmacy, surgery. <strong>Not</strong> Instant Doctor.</p>
+
+      <div class="uc">
+        <label>
+          <input type="checkbox" data-uc="pay1" />
+          <div>
+            <h4>UC-40 · Success, fail, cancel, X button</h4>
+            <ol>
+              <li>From any card checkout, complete payment → Return to ROX App.</li>
+              <li>Drop / fail a payment.</li>
+              <li>Tap AppBar X on lab / pharmacy / consultation (allowed). System back should stay on the page.</li>
+            </ol>
+            <div class="expect">Expected: success → booking success dialog. Fail/cancel → outcome dialog with gateway text when present (“Transaction is dropped.” = cancel). Unknown pages wait for the user; they are never auto-marked paid. Surgery WebView may keep close disabled until gateway answers.</div>
+          </div>
+        </label>
+      </div>
+    </section>
+
+    <section class="card" id="notify">
+      <h2>13. Notifications (inbox + push)</h2>
+      <div class="pills">
+        <span class="pill warn">Push: physical device</span>
+        <span class="pill">Guest: no inbox API, no booking deep links</span>
+      </div>
+
+      <div class="uc">
+        <label>
+          <input type="checkbox" data-uc="n1" />
+          <div>
+            <h4>UC-41 · Inbox list and mark read</h4>
+            <ol>
+              <li>Logged in: home bell shows red dot if unread.</li>
+              <li>Open inbox. Tap an unread item, then an already-read item.</li>
+            </ol>
+            <div class="expect">Expected: newest first. Unread → loader → mark read → open booking. Read → navigate only. Missing booking id → dialog with title/body. Dot clears when nothing is unread. Guest bell has no unread dot.</div>
+          </div>
+        </label>
+      </div>
+
+      <div class="uc">
+        <label>
+          <input type="checkbox" data-uc="n2" />
+          <div>
+            <h4>UC-42 · Push while foreground / background / killed</h4>
+            <ol>
+              <li>Send a test push for consultation, surgery, lab, pharmacy (pharmacy must use entity <code>publicId</code>).</li>
+              <li>Tap from banner, from background, and from a killed app.</li>
+            </ol>
+            <div class="expect">Expected: after splash, correct details screen opens. Guest is not dumped on a booking. Allow notification permission on first launch.</div>
+          </div>
+        </label>
+      </div>
+    </section>
+
+    <section class="card" id="support">
+      <h2>14. Customer support</h2>
+      <div class="uc">
+        <label>
+          <input type="checkbox" data-uc="cs1" />
+          <div>
+            <h4>UC-43 · Help card and call</h4>
+            <ol>
+              <li>Open Support tab or menu → Customer Support.</li>
+              <li>Open the dialog. Tap the call button. Note phone / email / button text from CMS.</li>
+            </ol>
+            <div class="expect">Expected: <code>tel:</code> dialer opens. Empty/error CMS still shows a usable screen, not a crash.</div>
+          </div>
+        </label>
+      </div>
+    </section>
+
+    <section class="card" id="accounts">
+      <h2>15. JazzCash linked phones</h2>
+      <p class="muted">Used on Profile and in JazzCash pickers (consultation, lab, surgery, pharmacy).</p>
+
+      <div class="uc">
+        <label>
+          <input type="checkbox" data-uc="ac1" />
+          <div>
+            <h4>UC-44 · Add, list, delete (not default)</h4>
+            <ol>
+              <li>Profile → Add Account → valid number → success dialog → Account Details (new number first).</li>
+              <li>Delete a non-default number (confirm dialog). Try deleting the default — should be blocked.</li>
+              <li>Use that number in a JazzCash payment sheet.</li>
+            </ol>
+            <div class="expect">Expected: UI shows <code>03…</code>. Add failure shows API message. After add/delete, Profile list matches. Sandbox extra row only if the app was built with JazzCash sandbox dart-defines.</div>
+          </div>
+        </label>
+      </div>
+    </section>
+
+    <section class="card" id="cross">
+      <h2>16. Cross-cutting (do these once)</h2>
+      <div class="uc">
+        <label>
+          <input type="checkbox" data-uc="x1" />
+          <div>
+            <h4>UC-45 · Session, token refresh, no crash on poor network</h4>
+            <ol>
+              <li>Use the app on/off airplane mode on listing screens.</li>
+              <li>Leave the app overnight (or expire access token) then open a bookings screen.</li>
+            </ol>
+            <div class="expect">Expected: empty/error widgets with retry, not a red screen. Expired session refreshes or logs out cleanly to guest.</div>
+          </div>
+        </label>
+      </div>
+      <div class="uc">
+        <label>
+          <input type="checkbox" data-uc="x2" />
+          <div>
+            <h4>UC-46 · Urdu / English device language</h4>
+            <ol>
+              <li>Switch the phone to Urdu, relaunch. Spot-check Home, Login, one checkout, Bookings empty state.</li>
+              <li>Switch back to English.</li>
+            </ol>
+            <div class="expect">Expected: strings come from l10n (not hardcoded English). There is <strong>no in-app language toggle</strong> — device locale only.</div>
+          </div>
+        </label>
+      </div>
+    </section>
+
+    <section class="card" id="missing">
+      <h2>Is anything missing?</h2>
+      <p>Compared with routes and feature docs, this is what <strong>is</strong> in the app vs what testers often look for and <strong>do not</strong> find.</p>
+
+      <h3>In the app — covered above</h3>
+      <table>
+        <thead><tr><th>Area</th><th>Routes / entry</th></tr></thead>
+        <tbody>
+          <tr><td>Splash / onboarding</td><td><code>splash</code>, <code>onboarding</code></td></tr>
+          <tr><td>Auth</td><td><code>auth-login</code>, <code>auth-otp</code></td></tr>
+          <tr><td>Profile</td><td><code>profile-setup</code>, <code>profile</code>, <code>add-account</code>, <code>account-details</code></td></tr>
+          <tr><td>Home / menu / support</td><td><code>home</code>, <code>dashboard-menu</code>, <code>customer-support</code></td></tr>
+          <tr><td>Search / notifications</td><td><code>search</code>, <code>notifications</code></td></tr>
+          <tr><td>Consultation + AI</td><td><code>consultation</code>, <code>consultation-doctors</code>, <code>consultation-book-doctor</code>, <code>consultation-checkout</code>, <code>consultation-summary</code>, <code>ai-screening</code>, booking details</td></tr>
+          <tr><td>Pharmacy</td><td><code>pharmacyMain</code>, <code>pharmacy</code>, cart, checkout, booking details</td></tr>
+          <tr><td>Lab</td><td><code>labTest</code>, booking, cart, checkout, view details, report viewer</td></tr>
+          <tr><td>Surgery</td><td><code>surgery</code>, <code>surgery-booking</code>, <code>surgery-patient-details</code>, booking details</td></tr>
+          <tr><td>Instant Doctor</td><td>bottom tab + <code>instant-doctor-consultation</code></td></tr>
+          <tr><td>Card pay</td><td><code>card-payment</code></td></tr>
+        </tbody>
+      </table>
+
+      <h3>Intentionally not in the product (do not log as bugs)</h3>
+      <table>
+        <thead><tr><th>Missing?</th><th>Why</th></tr></thead>
+        <tbody>
+          <tr><td>In-app language switcher</td><td>EN/UR follow the device. No settings toggle.</td></tr>
+          <tr><td>Pharmacy order feedback</td><td>UI hidden until API is ready.</td></tr>
+          <tr><td>Lab / consultation e-invoice</td><td>Lab invoice disabled; consultation invoice hidden until URL exists.</td></tr>
+          <tr><td>Instant Doctor in card WebView</td><td>Uses its own consultation WebView + subscribe OTP.</td></tr>
+          <tr><td>Cash on consultation / surgery checkout</td><td>Cash (COD) is lab (+ local row) and pharmacy. Consultation/surgery use payment-provider list (JazzCash / Card).</td></tr>
+          <tr><td>Horizontal swipe between bottom tabs</td><td>Tabs change only by tapping the bar.</td></tr>
+          <tr><td>Guest Instant Doctor / Bookings</td><td>Always login first; then resume that tab.</td></tr>
+          <tr><td>Onboarding “doctor consultation” extra page</td><td>Commented out. Live carousel is 4 pages.</td></tr>
+          <tr><td><code>examples</code> route</td><td>Dev leftover, not a user feature.</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Worth raising if you still cannot do it</h3>
+      <p class="muted">If a case below fails, it is a real gap (product or backend), not “not built on purpose”.</p>
+      <ul>
+        <li>Cannot complete a full paid booking in <strong>each</strong> of: Instant Doctor, Consultation, Pharmacy, Lab, Surgery lead + pay.</li>
+        <li>Search result for a module does not open the same screen as browsing that module.</li>
+        <li>After login from a guest action, you always land on Home instead of the service/tab you wanted.</li>
+        <li>Push tap for CONSULTATION / SURGERY / LAB / PHARMACY does not open the matching details.</li>
+        <li>Home services grid missing a tile that CMS returns (or showing a tile CMS turned off).</li>
+        <li>Urdu device still shows large hardcoded English on a user-facing screen.</li>
+        <li>Card success is recorded when the user only opened the callback page or pressed X.</li>
+      </ul>
+
+      <div class="note">
+        This HTML is a tester report, not a substitute for FEATURE.md in each
+        <code>lib/features/&lt;name&gt;/</code> folder. If you add a new screen, add a use case here
+        and update that feature’s FEATURE.md.
+      </div>
+      <div class="okbox">
+        Suggested pass bar: all Guest cases (UC-01–03, 09, 16 browse, 20 browse, 25 browse, 30 city, 43) plus one full paid path per module.
+      </div>
+    </section>
+  </main>
+  <script>
+    const KEY = "apnaClinicManualTestTicks";
+    const boxes = [...document.querySelectorAll("input[data-uc]")];
+    const fill = document.getElementById("progressFill");
+    const label = document.getElementById("progressLabel");
+
+    function load() {
+      try {
+        const saved = JSON.parse(localStorage.getItem(KEY) || "{}");
+        boxes.forEach((el) => { el.checked = !!saved[el.dataset.uc]; });
+      } catch (_) {}
+      render();
+    }
+    function save() {
+      const saved = {};
+      boxes.forEach((el) => { saved[el.dataset.uc] = el.checked; });
+      localStorage.setItem(KEY, JSON.stringify(saved));
+      render();
+    }
+    function render() {
+      const total = boxes.length;
+      const done = boxes.filter((el) => el.checked).length;
+      fill.style.width = total ? (done / total * 100) + "%" : "0%";
+      label.textContent = done + " / " + total + " use cases";
+    }
+    boxes.forEach((el) => el.addEventListener("change", save));
+    document.getElementById("resetChecks").onclick = () => {
+      if (!confirm("Clear all ticks on this report?")) return;
+      boxes.forEach((el) => { el.checked = false; });
+      save();
+    };
+    document.getElementById("expandAll").onclick = () => {
+      document.querySelectorAll(".uc").forEach((n) => { n.style.background = "#fff"; });
+    };
+    load();
+  </script>
+</body>
+</html>

@@ -4,6 +4,7 @@ import '../../domain/entities/auth_entity.dart';
 import '../../domain/repositories/auth_repository.dart';
 import '../../domain/use_cases/logout_use_case.dart';
 import '../../domain/use_cases/request_otp_use_case.dart';
+import '../../domain/use_cases/update_fcm_device_token_use_case.dart';
 import '../../domain/use_cases/verify_otp_use_case.dart';
 import '../data_sources/auth_remote_data_source.dart';
 
@@ -42,6 +43,22 @@ class AuthRepositoryImpl implements AuthRepository {
     }
     try {
       await _remoteDataSource.logout(params);
+      return const Right(null);
+    } catch (e) {
+      return Left(e.toString());
+    }
+  }
+
+  @override
+  Future<Either<ErrorMsg, void>> updateFcmDeviceToken(
+    UpdateFcmDeviceTokenParams params,
+  ) async {
+    final token = params.fcmToken.trim();
+    if (token.isEmpty) {
+      return const Right(null);
+    }
+    try {
+      await _remoteDataSource.updateFcmDeviceToken(params);
       return const Right(null);
     } catch (e) {
       return Left(e.toString());

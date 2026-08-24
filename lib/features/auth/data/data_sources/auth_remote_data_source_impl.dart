@@ -7,6 +7,7 @@ import '../../../../core/utils/auth_api_utils.dart';
 import '../../../../core/utils/error_handler.dart';
 import '../../domain/use_cases/logout_use_case.dart';
 import '../../domain/use_cases/request_otp_use_case.dart';
+import '../../domain/use_cases/update_fcm_device_token_use_case.dart';
 import '../../domain/use_cases/verify_otp_use_case.dart';
 import '../mock/auth_mock_api.dart';
 import '../models/auth_response_model.dart';
@@ -128,6 +129,38 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       final message = ErrorHandler.handleExceptions(
         e,
         endpoint: AppUrls.logout,
+      );
+      return Future.error(message);
+    }
+  }
+
+  @override
+  Future<void> updateFcmDeviceToken(UpdateFcmDeviceTokenParams params) async {
+    final token = params.fcmToken.trim();
+    if (token.isEmpty) {
+      return;
+    }
+    if (AuthMockApi.useMockResponses) {
+      await Future<void>.delayed(const Duration(milliseconds: 150));
+      return;
+    }
+    try {
+      final response = await apiService.put(
+        AppUrls.updateFcmDeviceToken,
+        data: <String, dynamic>{'fcmToken': token},
+      );
+      if (response['success'] == false) {
+        final message =
+            (response['message'] ?? AppStrings.authUpdateDeviceTokenError)
+                .toString();
+        return Future.error(message);
+      }
+      log('updateFcmDeviceToken response ok');
+    } catch (e) {
+      log('updateFcmDeviceToken error: $e');
+      final message = ErrorHandler.handleExceptions(
+        e,
+        endpoint: AppUrls.updateFcmDeviceToken,
       );
       return Future.error(message);
     }

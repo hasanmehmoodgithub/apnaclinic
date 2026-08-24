@@ -39,6 +39,10 @@ class AppUrls {
   static String get verifyOtp =>
       '$_normalizedApiBaseUrl/acs-auth/api/v1/auth/otp/verify';
 
+  /// Update FCM device token after login (token rotation only).
+  static String get updateFcmDeviceToken =>
+      '$_normalizedApiBaseUrl/acs-auth/api/v1/notifications/device-token';
+
   // ============================================
   // Products endpoints (full URLs - baseUrl from flavor)
   // ============================================
@@ -93,6 +97,10 @@ class AppUrls {
   /// Doctor consultation booking (aggregator mobile API).
   static String get doctorConsultationBooking =>
       '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/doctor-consultation/book-consultation';
+
+  /// Abandon an unpaid doctor consultation booking (aggregator mobile API).
+  static String get doctorConsultationBookingAbandon =>
+      '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/doctor-consultation/book-consultation/abandon';
 
   /// Paginated list of subscriber's booked doctor consultations (aggregator mobile API).
   static String doctorConsultationBookings({int page = 1, int limit = 20}) =>
@@ -357,6 +365,10 @@ class AppUrls {
   /// patient: { name, age, gender, phoneNumber }, tests: [ { testId } ] }`.
   static String get labBookTest =>
       '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/lab/book-test';
+
+  /// Abandon an unpaid lab booking (aggregator mobile API).
+  static String get labBookTestAbandon =>
+      '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/lab/book-test/abandon';
 
   // ============================================
   // 3rd Party Integration Support (Full URLs)

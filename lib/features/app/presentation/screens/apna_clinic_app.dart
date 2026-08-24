@@ -27,13 +27,15 @@ class ApnaClinicApp extends StatefulWidget {
   State<ApnaClinicApp> createState() => _ApnaClinicAppState();
 }
 
-class _ApnaClinicAppState extends State<ApnaClinicApp> {
+class _ApnaClinicAppState extends State<ApnaClinicApp>
+    with WidgetsBindingObserver {
   final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
   StreamSubscription<NotificationPayload>? _pushSubscription;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       unawaited(sl<NotificationService>().ensurePermissionsOnStart());
     });
@@ -42,8 +44,16 @@ class _ApnaClinicAppState extends State<ApnaClinicApp> {
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _pushSubscription?.cancel();
     super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state != AppLifecycleState.resumed) return;
+    if (!sl.isRegistered<NotificationService>()) return;
+    unawaited(sl<NotificationService>().syncDeviceTokenIfNeeded());
   }
 
   void _bindPushNotificationStream() {

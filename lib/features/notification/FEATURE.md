@@ -22,8 +22,9 @@ In-app notification list and Firebase Cloud Messaging (FCM) push notifications.
   - Nested FCM payload is supported, e.g. `serviceType: CONSULTATION` + `deepLink.data.unified_order_id` → consultation booking `84213`. FCM `data` values are strings, so `deepLink` may arrive as a JSON string; both nested maps and JSON strings are parsed.
   - `PHARMACY` uses **`deepLink.entity.publicId`** (same as the inbox), not the notification's top-level `publicId`. Falls back to `unified_order_id` if entity `publicId` is missing.
   - Guest users are not sent to booking screens (login / onboarding continues).
-- FCM token stored in `AppPref` (`AppPrefKeys.fcmToken`); cleared on logout.
-- Login: `NotificationService.ensureFcmTokenForLogin()` runs before verify OTP (lazy Firebase/FCM init if startup missed).
+- FCM token stored in `AppPref` (`AppPrefKeys.fcmToken`); last uploaded value in `AppPrefKeys.fcmTokenSentToBackend`. Both cleared on logout and on 401 JWT-refresh failure (`LocalLogoutService`).
+- Login: `NotificationService.ensureFcmTokenForLogin()` runs before verify OTP (lazy Firebase/FCM init if startup missed). OTP verify is the first backend bind; login still succeeds if FCM is empty.
+- Token rotation: Firebase `onTokenRefresh` (and a logged-in start/resume check) calls `PUT AppUrls.updateFcmDeviceToken` only when the user is logged in and the token differs from last upload. JWT `/auth/token/refresh` does not send FCM.
 - Dev/staging/debug auto-subscribes to topic `TestNotification`.
 
 ## Setup required (one-time)

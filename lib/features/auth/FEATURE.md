@@ -52,10 +52,12 @@ profile setup.
 ## Data layer
 
 - **Remote:** `data/data_sources/auth_remote_data_source_impl.dart`
-  - OTP verify: `AppUrls.verifyOtp` — body includes `msisdn`, `otp`, and `fcmToken` when the device token is available (`NotificationService` / `AppPref`).
+  - OTP verify: `AppUrls.verifyOtp` — body includes `msisdn`, `otp`, and `fcmToken` when the device token is available (`NotificationService` / `AppPref`). After a successful verify that included a token, `NotificationService.markDeviceTokenUploaded` records it so the same value is not PUT again.
+  - FCM rotation (logged in only, token changed): `PUT AppUrls.updateFcmDeviceToken` → `/acs-auth/api/v1/notifications/device-token` body `{ "fcmToken": "..." }` via `UpdateFcmDeviceTokenUseCase`. Triggered by Firebase `onTokenRefresh`, app start, or resume — never on JWT refresh or every API.
   - If login shows “unable to reach server”, check device network/VPN, iOS ATS (HTTP allowed for Jazz domains), and dev SSL config (`dio_app_network_config.dart`).
   - Request OTP `data.expiresIn` is in **seconds** (e.g. `300` → 5 min resend timer).
-  - Logout: `AppUrls.logout` (POST body `{ "refreshToken": "<stored refresh token>" }`). Local session is **always** cleared via `LocalLogoutService` even if the API fails; a snackbar may show the server error.
+  - Logout: `AppUrls.logout` (POST body `{ "refreshToken": "<stored refresh token>" }`). Local session is **always** cleared via `LocalLogoutService` even if the API fails; a snackbar may show the server error. FCM prefs + Firebase `deleteToken()` run on this path (delete is not awaited on the UI).
+  - Auto-logout (JWT refresh fail on 401): `AuthInterceptor` calls the same `LocalLogoutService.clearAll()` — no logout API and no device-token PUT (tokens are already dead).
   - After successful OTP when onboarding is complete, `AuthCubit` calls `GetProfileSetupContentUseCase` (`GET …/users/{id}`) and persists name/email/etc. into `UserLocalModel` before `notifyLoggedIn`, so menu/home do not briefly stick on “Guest User”.
 
 ## Shared core helpers
@@ -64,7 +66,7 @@ MSISDN normalization and user id extraction from auth JSON live in **`lib/core/u
 
 ## DI
 
-- `auth_injection.dart` — `AuthRemoteDataSource`, repository, OTP use cases, `LogoutUseCase`, `AuthCubit`.
+- `auth_injection.dart` — `AuthRemoteDataSource`, repository, OTP use cases, `LogoutUseCase`, `UpdateFcmDeviceTokenUseCase`, `AuthCubit`.
 
 ## Mocks
 
