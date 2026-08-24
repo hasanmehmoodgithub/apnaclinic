@@ -88,6 +88,8 @@ class LabTestViewDetailsResultCard extends StatelessWidget {
                     Expanded(
                       child: Text(
                         title,
+                        maxLines: 3,
+                        overflow: TextOverflow.ellipsis,
                         style: theme.textTheme.titleMedium?.copyWith(
                           fontSize: 16.sp,
                           color: const Color(0xFF202B3A),
@@ -131,7 +133,7 @@ class LabTestViewDetailsResultCard extends StatelessWidget {
                 Row(
                   children: [
                     Text(
-                      'Sample Type',
+                      l10n.labTestSampleTypeLabel,
                       style: theme.textTheme.bodySmall?.copyWith(
                         color: const Color(0xFF8A93A0),
                         fontSize: 11.sp,
@@ -140,7 +142,7 @@ class LabTestViewDetailsResultCard extends StatelessWidget {
                     SizedBox(width: 8.w),
                     _Tag(text: sampleType),
                     const Spacer(),
-                    const _Tag(text: 'Lab Test'),
+                    _Tag(text: l10n.labTestScreenTitle),
                   ],
                 ),
                 SizedBox(height: 8.h),
@@ -150,12 +152,11 @@ class LabTestViewDetailsResultCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Expanded(
-                      flex: 4,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Status:',
+                            '${l10n.bookingsStatusLabel}:',
                             style: theme.textTheme.bodySmall?.copyWith(
                               color: const Color(0xFF8A93A0),
                               fontSize: 11.sp,
@@ -192,74 +193,39 @@ class LabTestViewDetailsResultCard extends StatelessWidget {
                     ),
                     SizedBox(width: 8.w),
                     Expanded(
-                      flex: 3,
-                      child: Row(
+                      child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'Fee',
-                                  style: theme.textTheme.bodySmall?.copyWith(
-                                    color: const Color(0xFF8A93A0),
-                                    fontSize: 11.sp,
-                                  ),
-                                ),
-                                Text(
-                                  discountedFee,
-                                  style: theme.textTheme.titleSmall?.copyWith(
-                                    color: const Color(0xFF1A2533),
-                                    fontSize: 10.sp,
-                                    fontWeight: FontWeight.w600,
-                                    height: 1,
-                                  ),
-                                ),
-                                if (originalFee.trim().isNotEmpty &&
-                                    !LabTestPriceFormatter.isSameFee(
-                                      originalFee,
-                                      discountedFee,
-                                    ))
-                                  Text(
-                                    originalFee,
-                                    style: theme.textTheme.bodySmall?.copyWith(
-                                      color: const Color(0xFF9A9A9A),
-                                      fontSize: 9.sp,
-                                      decoration: TextDecoration.lineThrough,
-                                    ),
-                                  ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    // SizedBox(width: 8.w),
-                    Expanded(
-                      flex: 4,
-                      child: Align(
-                        alignment: Alignment.topRight,
-                        child: Container(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 5.w,
-                            vertical: 5.h,
-                          ),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFFFCFCFC),
-                            borderRadius: BorderRadius.circular(24.r),
-                            border: Border.all(color: const Color(0xFFE6E6E6)),
-                          ),
-                          child: Text(
-                            'Download Report',
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
+                          Text(
+                            l10n.labTestCheckoutFeeLabel,
                             style: theme.textTheme.bodySmall?.copyWith(
-                              color: const Color(0xFFB3B3B3),
-                              fontSize: 9.sp,
+                              color: const Color(0xFF8A93A0),
+                              fontSize: 11.sp,
                             ),
                           ),
-                        ),
+                          Text(
+                            discountedFee,
+                            style: theme.textTheme.titleSmall?.copyWith(
+                              color: const Color(0xFF1A2533),
+                              fontSize: 10.sp,
+                              fontWeight: FontWeight.w600,
+                              height: 1,
+                            ),
+                          ),
+                          if (originalFee.trim().isNotEmpty &&
+                              !LabTestPriceFormatter.isSameFee(
+                                originalFee,
+                                discountedFee,
+                              ))
+                            Text(
+                              originalFee,
+                              style: theme.textTheme.bodySmall?.copyWith(
+                                color: const Color(0xFF9A9A9A),
+                                fontSize: 9.sp,
+                                decoration: TextDecoration.lineThrough,
+                              ),
+                            ),
+                        ],
                       ),
                     ),
                   ],

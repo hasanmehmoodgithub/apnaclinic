@@ -1,4 +1,5 @@
 import '../../../../core/config/mock_config.dart';
+import '../../domain/use_cases/abandon_lab_test_booking_use_case.dart';
 
 class LabTestMockApi {
   static bool useMockResponses = MockConfig.enableLabTestMocks;
@@ -480,6 +481,21 @@ class LabTestMockApi {
       'code': 200,
       'data': {'orderNo': '155850', 'request': body},
       'timestamp': DateTime.now().toUtc().toIso8601String(),
+    };
+  }
+
+  Future<Map<String, dynamic>> abandonLabTestBookingSuccessResponse(
+    AbandonLabTestBookingParams params,
+  ) async {
+    await Future<void>.delayed(const Duration(milliseconds: 400));
+    return {
+      'success': true,
+      'message': 'Order abandoned successfully',
+      'code': 200,
+      'data': {
+        'order_id': params.orderId,
+        'unified_order_id': params.unifiedOrderId,
+      },
     };
   }
 }

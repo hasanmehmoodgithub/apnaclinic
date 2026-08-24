@@ -8,6 +8,7 @@ import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/session/auth_session_refresh.dart';
+import '../../../../core/widgets/heart_loader_widget.dart';
 import '../../../bookings/presentation/constants/bookings_tabs.dart';
 import '../../../dashboard/presentation/constants/main_navigation_tabs.dart';
 import '../../../payment/presentation/payment_navigation.dart';
@@ -56,8 +57,30 @@ class DoctorConsultationSummaryScreen extends StatelessWidget {
       return;
     }
 
-    if (initiation.isPendingWithoutPaymentUrl) {
-      await _showPaymentPendingDialog(context, l10n);
+    if (initiation.hasBlockingOrder) {
+      final blocking = initiation.blockingOrder;
+      final apiMessage = blocking?.message?.trim() ?? '';
+      final abandonOrderId = initiation.abandonPublicId ?? '';
+      final canAbandon =
+          blocking?.canAbandon == true && abandonOrderId.isNotEmpty;
+      await showPaymentPendingDialog(
+        context,
+        title: l10n.consultationBookingPaymentPendingTitle,
+        message: apiMessage.isNotEmpty
+            ? apiMessage
+            : l10n.consultationBookingPaymentPendingMessage,
+        onViewBookings: (dialogContext) =>
+            _goToDoctorBookings(context, dialogContext),
+        secondaryLabel:
+            canAbandon ? l10n.consultationAbandonUnpaidOrderCta : null,
+        onSecondary: canAbandon
+            ? (dialogContext) => _abandonUnpaidBooking(
+                  context,
+                  dialogContext: dialogContext,
+                  publicId: abandonOrderId,
+                )
+            : null,
+      );
       return;
     }
 
@@ -80,6 +103,12 @@ class DoctorConsultationSummaryScreen extends StatelessWidget {
         initiation: initiation,
       );
       await showCardPaymentOutcomeDialog(context, paymentResult);
+      await showCardPaymentOutcomeDialog(
+        context,
+        paymentResult,
+        onViewBookings: (dialogContext) =>
+            _goToDoctorBookings(context, dialogContext),
+      );
       return;
     }
 
@@ -107,22 +136,32 @@ class DoctorConsultationSummaryScreen extends StatelessWidget {
     hostContext.go(AppRoutes.path(AppRoutes.home));
   }
 
-  Future<void> _showPaymentPendingDialog(
-    BuildContext context,
-    AppLocalizations l10n,
-  ) {
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: false,
-      useRootNavigator: true,
-      builder: (dialogContext) {
-        return PaymentPendingDialogWidget(
-          title: l10n.consultationBookingPaymentPendingTitle,
-          message: l10n.consultationBookingPaymentPendingMessage,
-          ctaText: l10n.consultationViewBookingsCta,
-          onViewBookings: () => _goToDoctorBookings(context, dialogContext),
-        );
+  Future<void> _abandonUnpaidBooking(
+    BuildContext hostContext, {
+    required BuildContext dialogContext,
+    required String publicId,
+  }) async {
+    if (dialogContext.canPop()) dialogContext.pop();
+    if (!hostContext.mounted) return;
+
+    const loaderId = 'consultation_abandon_order_loader';
+    final cubit = hostContext.read<DoctorConsultationCheckoutCubit>();
+    final l10n = AppLocalizations.of(hostContext)!;
+    showHeartLoaderDialog(hostContext, id: loaderId, size: 120);
+    final result = await cubit.abandonBooking(publicId: publicId);
+    HeartLoaderDialogController.close(loaderId);
+    if (!hostContext.mounted) return;
+
+    await result.fold(
+      (error) async {
+        final message = error.trim().isNotEmpty
+            ? error.trim()
+            : l10n.consultationAbandonUnpaidOrderFailed;
+        ScaffoldMessenger.of(hostContext)
+          ..hideCurrentSnackBar()
+          ..showSnackBar(SnackBar(content: Text(message)));
       },
+      (_) async {},
     );
   }
 

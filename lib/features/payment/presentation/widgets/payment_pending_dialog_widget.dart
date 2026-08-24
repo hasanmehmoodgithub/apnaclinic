@@ -3,24 +3,28 @@ import 'package:flutter/material.dart';
 import '../../../../components/widgets/app_button.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
+import '../../../../core/l10n/app_localizations.dart';
 
 class PaymentPendingDialogWidget extends StatelessWidget {
   const PaymentPendingDialogWidget({
     super.key,
     required this.title,
     required this.message,
-    required this.ctaText,
     required this.onViewBookings,
+    this.secondaryLabel,
+    this.onSecondary,
   });
 
   final String title;
   final String message;
-  final String ctaText;
   final VoidCallback onViewBookings;
+  final String? secondaryLabel;
+  final VoidCallback? onSecondary;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
 
     return PopScope(
       canPop: false,
@@ -73,7 +77,7 @@ class PaymentPendingDialogWidget extends StatelessWidget {
               SizedBox(
                 width: double.infinity,
                 child: AppButton.primary(
-                  text: ctaText,
+                  text: l10n.paymentPendingViewBookingsCta,
                   onPressed: onViewBookings,
                   backgroundColor: AppColors.clr0FAA9A,
                   foregroundColor: AppColors.clrWhite,
@@ -82,6 +86,22 @@ class PaymentPendingDialogWidget extends StatelessWidget {
                   fontWeight: FontWeight.w700,
                 ),
               ),
+              if ((secondaryLabel?.trim().isNotEmpty ?? false) &&
+                  onSecondary != null) ...[
+                SizedBox(height: 12.h),
+                SizedBox(
+                  width: double.infinity,
+                  child: AppButton.secondary(
+                    text: secondaryLabel!.trim(),
+                    onPressed: onSecondary,
+                    backgroundColor: AppColors.clrWhite,
+                    foregroundColor: AppColors.clr0FAA9A,
+                    height: 52.h,
+                    borderRadius: 12.r,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ],
             ],
           ),
         ),

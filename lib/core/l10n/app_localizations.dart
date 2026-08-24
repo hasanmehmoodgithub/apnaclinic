@@ -2351,6 +2351,12 @@ abstract class AppLocalizations {
   /// **'Your payment was cancelled. You can try again when you are ready.'**
   String get paymentWebViewCancelledMessage;
 
+  /// No description provided for @paymentPendingViewBookingsCta.
+  ///
+  /// In en, this message translates to:
+  /// **'View My Bookings'**
+  String get paymentPendingViewBookingsCta;
+
   /// No description provided for @labTestViewDetailsResultsTitle.
   ///
   /// In en, this message translates to:
@@ -2374,6 +2380,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Your report is ready. You can download it from the test results section.'**
   String get labTestReportAvailableNote;
+
+  /// No description provided for @labTestDownloadReport.
+  ///
+  /// In en, this message translates to:
+  /// **'Download Report'**
+  String get labTestDownloadReport;
+
+  /// No description provided for @labTestDownloadReportFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to download the report. Please try again.'**
+  String get labTestDownloadReportFailed;
 
   /// No description provided for @labTestInvoiceSectionTitle.
   ///
@@ -2470,6 +2488,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Your lab booking is waiting for payment. We\'ll update it once payment completes — check Bookings for the latest status.'**
   String get labTestCheckoutPaymentPendingMessage;
+
+  /// No description provided for @labTestAbandonUnpaidOrderCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Didn\'t pay? Cancel unpaid booking'**
+  String get labTestAbandonUnpaidOrderCta;
+
+  /// No description provided for @labTestAbandonUnpaidOrderFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to cancel the unpaid booking right now. Please try again.'**
+  String get labTestAbandonUnpaidOrderFailed;
 
   /// No description provided for @labTestCheckoutViewBookingsCta.
   ///
@@ -2764,6 +2794,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Your appointment is waiting for payment. We\'ll update it once payment completes — check Bookings for the latest status.'**
   String get consultationBookingPaymentPendingMessage;
+
+  /// No description provided for @consultationAbandonUnpaidOrderCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Didn\'t pay? Cancel unpaid booking'**
+  String get consultationAbandonUnpaidOrderCta;
+
+  /// No description provided for @consultationAbandonUnpaidOrderFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to cancel the unpaid booking right now. Please try again.'**
+  String get consultationAbandonUnpaidOrderFailed;
 
   /// No description provided for @consultationBookingConfirmedMessage.
   ///

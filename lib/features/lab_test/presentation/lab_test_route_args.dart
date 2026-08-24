@@ -170,10 +170,29 @@ class LabTestViewDetailsArgs {
   final String orderId;
 }
 
+class LabTestReportViewerArgs {
+  const LabTestReportViewerArgs({required this.filePath});
+
+  final String filePath;
+}
+
+class LabTestViewDetailsTestLine {
+  const LabTestViewDetailsTestLine({
+    required this.name,
+    required this.fee,
+    required this.status,
+  });
+
+  final String name;
+  final String fee;
+  final String status;
+}
+
 /// Mapped UI model for the view-details screen (built from order detail API).
 class LabTestViewDetailsContent {
   const LabTestViewDetailsContent({
     required this.testTitle,
+    required this.tests,
     required this.labName,
     required this.labLogoUrl,
     required this.partnerLogoUrl,
@@ -187,9 +206,11 @@ class LabTestViewDetailsContent {
     required this.statusLabel,
     required this.note,
     this.invoiceUrl,
+    this.reportUrls = const [],
   });
 
   final String testTitle;
+  final List<LabTestViewDetailsTestLine> tests;
   final String labName;
   final String labLogoUrl;
   final String partnerLogoUrl;
@@ -205,4 +226,7 @@ class LabTestViewDetailsContent {
   final String statusLabel;
   final String note;
   final String? invoiceUrl;
+  final List<String> reportUrls;
+
+  bool get canDownloadReport => reportUrls.isNotEmpty;
 }

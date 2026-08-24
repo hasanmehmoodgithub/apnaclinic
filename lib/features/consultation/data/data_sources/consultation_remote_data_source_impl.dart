@@ -19,6 +19,7 @@ import '../models/consultation_category_model.dart';
 import '../models/consultation_doctor_model.dart';
 import '../models/consultation_doctor_slots_model.dart';
 import '../models/payment_provider_model.dart';
+import '../../domain/use_cases/abandon_consultation_booking_use_case.dart';
 import '../../domain/use_cases/submit_consultation_booking_use_case.dart';
 import '../../domain/use_cases/submit_consultation_feedback_use_case.dart';
 import 'consultation_remote_data_source.dart';
@@ -328,6 +329,40 @@ class ConsultationRemoteDataSourceImpl implements ConsultationRemoteDataSource {
       final message = ErrorHandler.handleExceptions(
         e,
         endpoint: AppUrls.doctorConsultationBooking,
+      );
+      return Future.error(message);
+    }
+  }
+
+  @override
+  Future<Map<String, dynamic>> abandonBooking(
+    AbandonConsultationBookingParams params,
+  ) async {
+    try {
+      final Map<String, dynamic> response;
+      if (ConsultationBookingMockApi.useMockResponses) {
+        response = await bookingMockApi.abandonBookingSuccessResponse(params);
+      } else {
+        response = await apiService.post(
+          AppUrls.doctorConsultationBookingAbandon,
+          data: params.toJson(),
+        );
+        log('abandonBooking response: $response');
+      }
+
+      if (_isSuccessResponse(response)) {
+        return response;
+      }
+
+      final message =
+          (response['message'] ?? AppStrings.consultationAbandonOrderError)
+              .toString();
+      return Future.error(message);
+    } catch (e) {
+      log('abandonBooking error: $e');
+      final message = ErrorHandler.handleExceptions(
+        e,
+        endpoint: AppUrls.doctorConsultationBookingAbandon,
       );
       return Future.error(message);
     }

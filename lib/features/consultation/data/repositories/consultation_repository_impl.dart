@@ -5,6 +5,7 @@ import '../../domain/entities/consultation_category_entity.dart';
 import '../../domain/entities/consultation_doctor_slots_entity.dart';
 import '../../domain/repositories/consultation_repository.dart';
 import '../../domain/entities/payment_provider_entity.dart';
+import '../../domain/use_cases/abandon_consultation_booking_use_case.dart';
 import '../../domain/use_cases/submit_consultation_booking_use_case.dart';
 import '../../domain/use_cases/submit_consultation_feedback_use_case.dart';
 import '../../domain/entities/consultation_doctors_page_entity.dart';
@@ -153,6 +154,30 @@ class ConsultationRepositoryImpl implements ConsultationRepository {
         return Left(e.trim());
       }
       return const Left('Unable to book consultation right now.');
+    }
+  }
+
+  @override
+  Future<Either<ErrorMsg, bool>> abandonBooking(
+    AbandonConsultationBookingParams params,
+  ) async {
+    try {
+      final orderId = params.orderId.trim();
+      if (orderId.isEmpty) {
+        return const Left('Missing booking id.');
+      }
+      await remoteDataSource.abandonBooking(
+        AbandonConsultationBookingParams(
+          orderId: orderId,
+          unifiedOrderId: params.unifiedOrderId,
+        ),
+      );
+      return const Right(true);
+    } catch (e) {
+      if (e is String && e.trim().isNotEmpty) {
+        return Left(e.trim());
+      }
+      return const Left('Unable to cancel the unpaid booking right now.');
     }
   }
 

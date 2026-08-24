@@ -17,7 +17,6 @@ import '../../../consultation/presentation/models/doctor_consultation_jazzcash_s
 import '../../../consultation/presentation/widgets/doctor_consultation_jazzcash_accounts_sheet_widget.dart';
 import '../../../dashboard/presentation/constants/main_navigation_tabs.dart';
 import '../../../payment/presentation/payment_navigation.dart';
-import '../../../payment/presentation/widgets/payment_pending_dialog_widget.dart';
 import '../../../surgery/domain/use_cases/book_surgery_use_case.dart';
 import '../../../surgery/domain/use_cases/get_surgery_lead_use_case.dart';
 import '../../data/mappers/surgery_booking_list_mapper.dart';
@@ -188,8 +187,22 @@ class _SurgeryDetailsScreenState extends State<SurgeryDetailsScreen> {
         await _showPaymentFailedDialog(message: error);
       },
       (initiation) async {
-        if (initiation.isPendingWithoutPaymentUrl) {
-          await _showPaymentPendingDialog();
+        if (initiation.hasBlockingOrder) {
+          final l10n = AppLocalizations.of(context)!;
+          await showPaymentPendingDialog(
+            context,
+            title: l10n.surgeryBookingPaymentPendingTitle,
+            message: l10n.surgeryBookingPaymentPendingMessage,
+            onViewBookings: (dialogContext) {
+              if (dialogContext.canPop()) dialogContext.pop();
+              if (!mounted) return;
+              sl<AuthSessionRefresh>().requestTabIndex(
+                MainNavigationTabs.bookings,
+                bookingsSubTabIndex: BookingsTabs.surgery,
+              );
+              context.go(AppRoutes.path(AppRoutes.home));
+            },
+          );
           return;
         }
 
@@ -197,7 +210,19 @@ class _SurgeryDetailsScreenState extends State<SurgeryDetailsScreen> {
             await settleCardPaymentIfNeeded(context, initiation);
         if (!mounted) return;
         if (!paymentResult.isSuccess) {
-          await showCardPaymentOutcomeDialog(context, paymentResult);
+          await showCardPaymentOutcomeDialog(
+            context,
+            paymentResult,
+            onViewBookings: (dialogContext) {
+              if (dialogContext.canPop()) dialogContext.pop();
+              if (!mounted) return;
+              sl<AuthSessionRefresh>().requestTabIndex(
+                MainNavigationTabs.bookings,
+                bookingsSubTabIndex: BookingsTabs.surgery,
+              );
+              context.go(AppRoutes.path(AppRoutes.home));
+            },
+          );
           return;
         }
         setState(() {
@@ -205,31 +230,6 @@ class _SurgeryDetailsScreenState extends State<SurgeryDetailsScreen> {
           _paymentAllowed = false;
         });
         await _showBookingConfirmedDialog();
-      },
-    );
-  }
-
-  Future<void> _showPaymentPendingDialog() {
-    final l10n = AppLocalizations.of(context)!;
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: false,
-      useRootNavigator: true,
-      builder: (dialogContext) {
-        return PaymentPendingDialogWidget(
-          title: l10n.surgeryBookingPaymentPendingTitle,
-          message: l10n.surgeryBookingPaymentPendingMessage,
-          ctaText: l10n.surgeryBookingViewBookingsCta,
-          onViewBookings: () {
-            if (dialogContext.canPop()) dialogContext.pop();
-            if (!mounted) return;
-            sl<AuthSessionRefresh>().requestTabIndex(
-              MainNavigationTabs.bookings,
-              bookingsSubTabIndex: BookingsTabs.surgery,
-            );
-            context.go(AppRoutes.path(AppRoutes.home));
-          },
-        );
       },
     );
   }

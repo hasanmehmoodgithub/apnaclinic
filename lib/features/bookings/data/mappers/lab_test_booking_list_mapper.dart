@@ -48,9 +48,28 @@ class LabTestBookingListMapper {
     AppLocalizations l10n,
   ) {
     final booking = fromOrder(order);
+    final tests = order.tests
+        .map(
+          (t) => LabTestViewDetailsTestLine(
+            name: t.name.trim(),
+            fee: _formatAmount(t.price, order.pricing.currency),
+            status: t.status,
+          ),
+        )
+        .where((t) => t.name.isNotEmpty)
+        .toList(growable: false);
     final invoice = booking.invoice?.trim();
     return LabTestViewDetailsContent(
       testTitle: booking.reportTitle,
+      tests: tests.isNotEmpty
+          ? tests
+          : [
+              LabTestViewDetailsTestLine(
+                name: booking.reportTitle,
+                fee: booking.discountedFee,
+                status: booking.statusLabel,
+              ),
+            ],
       labName: booking.labName,
       labLogoUrl: booking.labLogoUrl,
       partnerLogoUrl: booking.partnerLogoUrl,
@@ -62,8 +81,12 @@ class LabTestBookingListMapper {
       orderNo: booking.orderNo,
       bookingDate: booking.dateLabel,
       statusLabel: booking.statusLabel,
-      note: _reportNote(booking.reportStatus, l10n),
+      note: _reportNote(order.reportStatus, l10n),
       invoiceUrl: (invoice != null && invoice.isNotEmpty) ? invoice : null,
+      reportUrls: order.reports
+          .map((url) => url.trim())
+          .where((url) => url.isNotEmpty)
+          .toList(growable: false),
     );
   }
 
@@ -81,10 +104,13 @@ class LabTestBookingListMapper {
   }
 
   static String _reportNote(String reportStatus, AppLocalizations l10n) {
-    if (reportStatus.trim().toUpperCase() == 'AVAILABLE') {
-      return l10n.labTestReportAvailableNote;
+    switch (reportStatus.trim().toUpperCase()) {
+      case 'AVAILABLE':
+      case 'READY':
+        return l10n.labTestReportAvailableNote;
+      default:
+        return l10n.labTestReportPendingNote;
     }
-    return l10n.labTestReportPendingNote;
   }
 
   static String _formatAmount(int amount, String currency) {

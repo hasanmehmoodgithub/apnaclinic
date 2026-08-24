@@ -7,7 +7,7 @@ After a booking API returns `data.paymentUrl`, open an in-app WebView for JazzCa
 ## Routes / entry
 
 - `AppRoutes.cardPayment` — `PaymentWebViewScreen` via `PaymentWebViewArgs(paymentUrl:, title?)`.
-- Helpers: `openCardPaymentWebView`, `settleCardPaymentIfNeeded`, `showCardPaymentOutcomeDialog` in `payment_navigation.dart`.
+- Helpers: `openCardPaymentWebView`, `settleCardPaymentIfNeeded`, `showCardPaymentOutcomeDialog`, `showPaymentPendingDialog` in `payment_navigation.dart`.
 
 ## Success / fail / cancel detection
 
@@ -41,14 +41,14 @@ Also:
 
 - On callback pages, inspect title / `.status-chip` / `failureBtn` / `handleSuccess` vs `handleFailure`, then auto-run the matching handler.
 - Fallback after a short delay **mirrors the detected outcome** (success, fail, or cancel). Unknown pages wait for the user to tap Return to ROX App — they are never auto-marked paid.
-- Callers (`settleCardPaymentIfNeeded`) only show the booking success dialog when `paymentResult.isSuccess`. Cancel and fail open `PaymentOutcomeDialogWidget` with the gateway `message` when present (e.g. “Transaction is dropped.”). App-local copy is used only if the gateway sent no message. Gateway “Transaction is dropped.” is treated as cancel.
+- Callers (`settleCardPaymentIfNeeded`) only show the booking success dialog when `paymentResult.isSuccess`. Cancel and fail open `PaymentOutcomeDialogWidget` with the gateway `message` when present (e.g. “Transaction is dropped.”). Both use CTA **View My Bookings** (same as pending; back/outside tap blocked) and open the matching bookings tab. App-local copy is used only if the gateway sent no message. Gateway “Transaction is dropped.” is treated as cancel.
 - Back/close is disabled by default (`allowClose: false`); the screen stays until the gateway reports success or failure.
 - Lab, pharmacy, and doctor consultation checkout open with `allowClose: true` so the user can dismiss via the AppBar **X** only (system back / swipe-back are blocked). **X** still tries `handleFailure()` / the callback page so the dialog can show the gateway `message` (same as **Return to ROX App**). If the gateway has not posted a message yet, it returns `cancelled` with app copy.
 - **Android SSL:** `NavigationDelegate.onSslAuthError` calls `proceed()` so staging payment hosts (corp/self-signed certs) load in WebView the same way Dio trust-alls via `AppHttpOverrides`.
 
 ## Data
 
-`PaymentInitiationResult.fromBookingResponse(map)` reads `paymentUrl`, `orderId`, `publicId`, `status`, `inProgress` from booking envelopes. `isPendingWithoutPaymentUrl` is true when `status` is `PENDING_PAYMENT` and no payment URL was returned. Lab, consultation, pharmacy, and surgery then show `PaymentPendingDialogWidget` instead of the WebView.
+`PaymentInitiationResult.fromBookingResponse(map)` reads `paymentUrl`, `orderId`, `publicId`, `status`, `inProgress`, and `blockingOrder` / `blocking_order` from booking envelopes (`blockingOrder` also maps `message` and `canAbandon`). If `data.blockingOrder` is present, lab, consultation, pharmacy, and surgery show `PaymentPendingDialogWidget` via `showPaymentPendingDialog` and do **not** open the card WebView. If `blockingOrder` is absent, checkout continues (WebView when `paymentUrl` is present, otherwise the booking is treated as placeable). Primary CTA is always **View My Bookings**; back and outside tap are blocked. Consultation and lab may pass an optional secondary **abandon** CTA when `canAbandon` is true. Dialog copy prefers `blockingOrder.message` when present.
 
 Wired when `paymentUrl` is present:
 

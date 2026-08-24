@@ -140,6 +140,19 @@ class LabTestBookingState extends Equatable {
     );
   }
 
+  /// Cart already has a different lab, partner, or booking method.
+  /// Add to Cart must warn before mixing (including after returning from listing).
+  bool get selectionConflictsWithCart {
+    if (cartItems.isEmpty) return false;
+    final v = selectedVendor;
+    final p = selectedPartner;
+    if (v == null || p == null) return false;
+    final first = cartItems.first;
+    return first.labId != v.id ||
+        first.partnerId != p.id ||
+        first.bookingMethodIsHomeSample != !labVisit;
+  }
+
   LabTestBookingState copyWith({
     LabTestBookingArgs? args,
     bool? labVisit,

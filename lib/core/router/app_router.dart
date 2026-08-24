@@ -35,6 +35,7 @@ import '../../features/lab_test/presentation/screens/lab_test_cart_screen.dart';
 import '../../features/lab_test/presentation/screens/lab_test_checkout_screen.dart';
 import '../../features/lab_test/presentation/screens/lab_test_screen.dart';
 import '../../features/lab_test/presentation/screens/lab_test_view_details_screen.dart';
+import '../../features/lab_test/presentation/screens/lab_test_report_viewer_screen.dart';
 import '../../features/notification/presentation/cubit/notification_cubit.dart';
 import '../../features/notification/presentation/screens/notifcation_screen.dart';
 import '../../features/bookings/presentation/screens/surgery_booking_details_screen.dart';
@@ -488,6 +489,25 @@ class AppRouter {
             );
           }
           return LabTestViewDetailsScreen(args: extra);
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.path(AppRoutes.labTestReportViewer),
+        name: AppRoutes.labTestReportViewer,
+        builder: (context, state) {
+          final extra = state.extra;
+          if (extra is! LabTestReportViewerArgs) {
+            return MultiBlocProvider(
+              providers: [
+                BlocProvider<LabTestCubit>(create: (_) => sl<LabTestCubit>()),
+                BlocProvider<LabTestCartCubit>.value(
+                  value: sl<LabTestCartCubit>(),
+                ),
+              ],
+              child: const LabTestScreen(),
+            );
+          }
+          return LabTestReportViewerScreen(args: extra);
         },
       ),
       GoRoute(

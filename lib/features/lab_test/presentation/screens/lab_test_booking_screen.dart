@@ -355,6 +355,13 @@ class _LabTestBookingScreenState extends State<LabTestBookingScreen> {
       if (context.mounted) await cubit.hydrate();
       return;
     }
+    if (state.selectionConflictsWithCart) {
+      await _guardAndApply(
+        context,
+        (c) => c.addCurrentSelectionToCart(),
+      );
+      return;
+    }
     await cubit.addCurrentSelectionToCart();
   }
 }

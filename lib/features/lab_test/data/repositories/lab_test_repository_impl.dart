@@ -6,7 +6,9 @@ import '../../domain/entities/lab_order_entity.dart';
 import '../../domain/entities/lab_test_catalog_entity.dart';
 import '../../domain/entities/lab_test_detail_entity.dart';
 import '../../domain/repositories/lab_test_repository.dart';
+import '../../domain/use_cases/abandon_lab_test_booking_use_case.dart';
 import '../../domain/use_cases/book_lab_test_use_case.dart';
+import '../../domain/use_cases/download_lab_report_use_case.dart';
 import '../../domain/use_cases/get_lab_test_catalog_use_case.dart';
 import '../../domain/use_cases/get_lab_test_detail_use_case.dart';
 import '../constants/lab_test_catalog_defaults.dart';
@@ -128,6 +130,34 @@ class LabTestRepositoryImpl implements LabTestRepository {
   }
 
   @override
+  Future<Either<ErrorMsg, String>> downloadLabReport(
+    DownloadLabReportParams params,
+  ) async {
+    try {
+      final url = params.url.trim();
+      if (url.isEmpty) {
+        return const Left('Missing report url.');
+      }
+      final uri = Uri.tryParse(url);
+      if (uri == null ||
+          !(uri.isScheme('http') || uri.isScheme('https'))) {
+        return const Left('Invalid report url.');
+      }
+      final fileName = params.fileName.trim();
+      if (fileName.isEmpty) {
+        return const Left('Missing report file name.');
+      }
+      final path = await remoteDataSource.downloadLabReport(
+        url: url,
+        fileName: fileName,
+      );
+      return Right(path);
+    } catch (e) {
+      return Left(ErrorHandler.handleExceptions(e));
+    }
+  }
+
+  @override
   Future<Either<ErrorMsg, PaymentInitiationResult>> bookLabTest(
     BookLabTestParams params,
   ) async {
@@ -169,6 +199,27 @@ class LabTestRepositoryImpl implements LabTestRepository {
 
       final result = await remoteDataSource.bookLabTest(body);
       return Right(result);
+    } catch (e) {
+      return Left(ErrorHandler.handleExceptions(e));
+    }
+  }
+
+  @override
+  Future<Either<ErrorMsg, bool>> abandonLabTestBooking(
+    AbandonLabTestBookingParams params,
+  ) async {
+    try {
+      final orderId = params.orderId.trim();
+      if (orderId.isEmpty) {
+        return const Left('Missing booking id.');
+      }
+      await remoteDataSource.abandonLabTestBooking(
+        AbandonLabTestBookingParams(
+          orderId: orderId,
+          unifiedOrderId: params.unifiedOrderId,
+        ),
+      );
+      return const Right(true);
     } catch (e) {
       return Left(ErrorHandler.handleExceptions(e));
     }

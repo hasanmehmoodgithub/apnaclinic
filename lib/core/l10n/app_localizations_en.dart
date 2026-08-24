@@ -1224,6 +1224,9 @@ class AppLocalizationsEn extends AppLocalizations {
       'Your payment was cancelled. You can try again when you are ready.';
 
   @override
+  String get paymentPendingViewBookingsCta => 'View My Bookings';
+
+  @override
   String get labTestViewDetailsResultsTitle => 'Test Results';
 
   @override
@@ -1236,6 +1239,13 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get labTestReportAvailableNote =>
       'Your report is ready. You can download it from the test results section.';
+
+  @override
+  String get labTestDownloadReport => 'Download Report';
+
+  @override
+  String get labTestDownloadReportFailed =>
+      'Unable to download the report. Please try again.';
 
   @override
   String get labTestInvoiceSectionTitle => 'Invoice';
@@ -1289,6 +1299,14 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get labTestCheckoutPaymentPendingMessage =>
       'Your lab booking is waiting for payment. We\'ll update it once payment completes — check Bookings for the latest status.';
+
+  @override
+  String get labTestAbandonUnpaidOrderCta =>
+      'Didn\'t pay? Cancel unpaid booking';
+
+  @override
+  String get labTestAbandonUnpaidOrderFailed =>
+      'Unable to cancel the unpaid booking right now. Please try again.';
 
   @override
   String get labTestCheckoutViewBookingsCta => 'View My Bookings';
@@ -1443,6 +1461,14 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get consultationBookingPaymentPendingMessage =>
       'Your appointment is waiting for payment. We\'ll update it once payment completes — check Bookings for the latest status.';
+
+  @override
+  String get consultationAbandonUnpaidOrderCta =>
+      'Didn\'t pay? Cancel unpaid booking';
+
+  @override
+  String get consultationAbandonUnpaidOrderFailed =>
+      'Unable to cancel the unpaid booking right now. Please try again.';
 
   @override
   String consultationBookingConfirmedMessage(Object doctorName) {

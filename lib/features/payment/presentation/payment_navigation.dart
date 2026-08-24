@@ -7,6 +7,7 @@ import '../domain/entities/payment_initiation_result.dart';
 import '../domain/entities/payment_webview_result.dart';
 import 'payment_webview_args.dart';
 import 'widgets/payment_outcome_dialog_widget.dart';
+import 'widgets/payment_pending_dialog_widget.dart';
 
 /// Opens the card payment WebView and returns the gateway result.
 Future<PaymentWebViewResult?>    openCardPaymentWebView(
@@ -55,8 +56,9 @@ Future<PaymentWebViewResult> settleCardPaymentIfNeeded(
 
 Future<void> showCardPaymentOutcomeDialog(
   BuildContext context,
-  PaymentWebViewResult result,
-) {
+  PaymentWebViewResult result, {
+  void Function(BuildContext dialogContext)? onViewBookings,
+}) {
   if (result.isSuccess) return Future.value();
 
   final l10n = AppLocalizations.of(context)!;
@@ -70,17 +72,51 @@ Future<void> showCardPaymentOutcomeDialog(
       : (isCancelled
           ? l10n.paymentWebViewCancelledMessage
           : l10n.paymentWebViewFailed);
+  final ctaText = l10n.paymentPendingViewBookingsCta;
 
   return showDialog<void>(
     context: context,
     barrierDismissible: false,
     useRootNavigator: true,
-    builder: (_) {
+    builder: (dialogContext) {
       return PaymentOutcomeDialogWidget(
         title: title,
         message: message,
-        ctaText: l10n.commonClose,
+        ctaText: ctaText,
         isCancelled: isCancelled,
+        onCta: () {
+          if (onViewBookings != null) {
+            onViewBookings(dialogContext);
+            return;
+          }
+          if (dialogContext.canPop()) dialogContext.pop();
+        },
+      );
+    },
+  );
+}
+
+Future<void> showPaymentPendingDialog(
+  BuildContext context, {
+  required String title,
+  required String message,
+  required void Function(BuildContext dialogContext) onViewBookings,
+  String? secondaryLabel,
+  void Function(BuildContext dialogContext)? onSecondary,
+}) {
+  return showDialog<void>(
+    context: context,
+    barrierDismissible: false,
+    useRootNavigator: true,
+    builder: (dialogContext) {
+      return PaymentPendingDialogWidget(
+        title: title,
+        message: message,
+        onViewBookings: () => onViewBookings(dialogContext),
+        secondaryLabel: secondaryLabel,
+        onSecondary: onSecondary == null
+            ? null
+            : () => onSecondary(dialogContext),
       );
     },
   );

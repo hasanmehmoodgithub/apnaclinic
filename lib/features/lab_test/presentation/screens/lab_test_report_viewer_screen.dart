@@ -1,0 +1,66 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_pdfview/flutter_pdfview.dart';
+
+import '../../../../core/constants/app_colors.dart';
+import '../../../../core/l10n/app_localizations.dart';
+import '../../../../core/widgets/app_scaffold_gradient.dart';
+import '../lab_test_route_args.dart';
+import '../widgets/lab_test_view_details_header.dart';
+
+class LabTestReportViewerScreen extends StatefulWidget {
+  const LabTestReportViewerScreen({super.key, required this.args});
+
+  final LabTestReportViewerArgs args;
+
+  @override
+  State<LabTestReportViewerScreen> createState() =>
+      _LabTestReportViewerScreenState();
+}
+
+class _LabTestReportViewerScreenState extends State<LabTestReportViewerScreen> {
+  bool _hasError = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
+    return AppScaffoldGradient(
+      child: Column(
+        children: [
+          LabTestViewDetailsHeader(title: l10n.labTestBookingCardSubtitle),
+          Expanded(
+            child: _hasError
+                ? Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(20),
+                      child: Text(
+                        l10n.labTestDownloadReportFailed,
+                        textAlign: TextAlign.center,
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: AppColors.clr060,
+                        ),
+                      ),
+                    ),
+                  )
+                : ColoredBox(
+                    color: AppColors.clrWhite,
+                    child: PDFView(
+                      filePath: widget.args.filePath,
+                      enableSwipe: true,
+                      autoSpacing: true,
+                      pageFling: true,
+                      backgroundColor: AppColors.clrWhite,
+                      onError: (_) {
+                        if (mounted) setState(() => _hasError = true);
+                      },
+                      onPageError: (page, error) {
+                        if (mounted) setState(() => _hasError = true);
+                      },
+                    ),
+                  ),
+          ),
+        ],
+      ),
+    );
+  }
+}
