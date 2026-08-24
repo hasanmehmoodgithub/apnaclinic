@@ -40,71 +40,72 @@ class InstantDoctorBookingPrescriptionSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final textTheme = Theme.of(context).textTheme;
-    final maxHeight = MediaQuery.sizeOf(context).height * 0.6;
+    final sheetHeight = MediaQuery.sizeOf(context).height * 0.85;
     final lines = prescription
         .split(RegExp(r'[\r\n]+'))
         .map((line) => line.trim())
         .where((line) => line.isNotEmpty)
         .toList(growable: false);
 
-    return Container(
-      constraints: BoxConstraints(maxHeight: maxHeight),
-      decoration: BoxDecoration(
-        color: AppColors.clrWhite,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
-      ),
-      child: SafeArea(
-        top: false,
-        child: Padding(
-          padding: EdgeInsets.fromLTRB(20.w, 10.h, 20.w, 20.h),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Center(
-                child: Container(
-                  width: 40.w,
-                  height: 4.h,
-                  decoration: BoxDecoration(
-                    color: AppColors.clrD0D5DD,
-                    borderRadius: BorderRadius.circular(4.r),
+    return SizedBox(
+      height: sheetHeight,
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: AppColors.clrWhite,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
+        ),
+        child: SafeArea(
+          top: false,
+          child: Padding(
+            padding: EdgeInsets.fromLTRB(20.w, 10.h, 20.w, 20.h),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Center(
+                  child: Container(
+                    width: 40.w,
+                    height: 4.h,
+                    decoration: BoxDecoration(
+                      color: AppColors.clrD0D5DD,
+                      borderRadius: BorderRadius.circular(4.r),
+                    ),
                   ),
                 ),
-              ),
-              SizedBox(height: 16.h),
-              Text(
-                l10n.bookingsPrescriptionsTitle,
-                style: textTheme.titleMedium?.copyWith(
-                  color: AppColors.clr060,
-                  fontSize: 18.sp,
-                  fontWeight: FontWeight.w700,
+                SizedBox(height: 16.h),
+                Text(
+                  l10n.bookingsPrescriptionsTitle,
+                  style: textTheme.titleMedium?.copyWith(
+                    color: AppColors.clr060,
+                    fontSize: 18.sp,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
-              ),
-              SizedBox(height: 12.h),
-              ConstrainedBox(
-                constraints: BoxConstraints(
-                  maxHeight: MediaQuery.sizeOf(context).height * 0.4,
-                ),
-                child: SingleChildScrollView(
-                  child: Container(
-                    width: double.infinity,
-                    padding: EdgeInsets.all(12.w),
-                    decoration: BoxDecoration(
-                      color: AppColors.clrF7F7F7,
-                      borderRadius: BorderRadius.circular(8.r),
-                    ),
-                    child: Text(
-                      lines.join('\n'),
-                      style: textTheme.bodyMedium?.copyWith(
-                        color: AppColors.clr060,
-                        fontSize: 14.sp,
-                        height: 1.5,
+                SizedBox(height: 12.h),
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: Container(
+                      width: double.infinity,
+                      constraints: BoxConstraints(
+                        minHeight: sheetHeight * 0.7,
+                      ),
+                      padding: EdgeInsets.all(16.w),
+                      decoration: BoxDecoration(
+                        color: AppColors.clrF7F7F7,
+                        borderRadius: BorderRadius.circular(8.r),
+                      ),
+                      child: Text(
+                        lines.join('\n'),
+                        style: textTheme.bodyMedium?.copyWith(
+                          color: AppColors.clr060,
+                          fontSize: 14.sp,
+                          height: 1.5,
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
