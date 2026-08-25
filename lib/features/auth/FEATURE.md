@@ -7,7 +7,9 @@ After successful OTP, `AppsFlyerService.setCustomerUserId` is called when the SD
 
 Login footer legal links (`LoginLegalText`) open Terms and Privacy from
 `AppPref.getSupportSettings()` (`termsAndConditionsUrl` / `privacyPolicyUrl`,
-loaded from CMS support settings on app open) via `AppUrlLauncher`.
+loaded from CMS support settings on app open) via `AppUrlLauncher` with
+`LaunchMode.inAppBrowserView` (Safari / Chrome Custom Tabs — not the raw
+in-app WebView, which showed a black screen).
 
 After OTP verification, users with a completed profile (`userOnboarding: false` /
 `isOnboardingCompleted: true`) return to the previous screen via `pop()` when

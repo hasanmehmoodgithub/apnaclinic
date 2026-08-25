@@ -25,12 +25,12 @@ class _LoginLegalTextState extends State<LoginLegalText> {
     _termsRecognizer = TapGestureRecognizer()
       ..onTap = () => AppUrlLauncher.open(
         url: sl<AppPref>().getSupportSettings()?.termsAndConditionsUrl ?? '',
-        lunchMode: LaunchMode.inAppWebView,
+        lunchMode: LaunchMode.inAppBrowserView,
       );
     _privacyRecognizer = TapGestureRecognizer()
       ..onTap = () => AppUrlLauncher.open(
         url: sl<AppPref>().getSupportSettings()?.privacyPolicyUrl ?? '',
-        lunchMode: LaunchMode.inAppWebView,
+        lunchMode: LaunchMode.inAppBrowserView,
       );
   }
 

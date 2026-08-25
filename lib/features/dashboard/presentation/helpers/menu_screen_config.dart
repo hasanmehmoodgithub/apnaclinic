@@ -77,14 +77,14 @@ List<MenuAboutItemData> buildMenuAboutItems(
       l10n.dashboardMenuTerms,
       onTap: () => AppUrlLauncher.open(
         url: support?.termsAndConditionsUrl ?? '',
-        lunchMode: LaunchMode.inAppWebView,
+        lunchMode: LaunchMode.inAppBrowserView,
       ),
     ),
     MenuAboutItemData(
       l10n.dashboardMenuPrivacy,
       onTap: () => AppUrlLauncher.open(
         url: support?.privacyPolicyUrl ?? '',
-        lunchMode: LaunchMode.inAppWebView,
+        lunchMode: LaunchMode.inAppBrowserView,
       ),
     ),
   ];
