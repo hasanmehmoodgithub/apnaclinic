@@ -335,7 +335,6 @@ class _LabTestCheckoutScreenState extends State<LabTestCheckoutScreen> {
       useRootNavigator: true,
       builder: (_) => AlertDialogCard(
         kind: AlertKind.error,
-        title: l10n.labTestSomethingWentWrong,
         message: message,
       ),
     );
