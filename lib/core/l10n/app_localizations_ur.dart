@@ -1552,6 +1552,10 @@ class AppLocalizationsUr extends AppLocalizations {
       'ہر بکنگ میں زیادہ سے زیادہ 5 فائلیں اپلوڈ کی جا سکتی ہیں۔';
 
   @override
+  String get consultationUnsupportedFileType =>
+      'فائل کی قسم معاون نہیں ہے۔ صرف تصاویر اور PDF دستاویزات اجازت ہیں۔';
+
+  @override
   String get consultationPaymentMethodTitle => 'ادائیگی کا طریقہ';
 
   @override

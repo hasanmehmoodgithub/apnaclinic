@@ -420,6 +420,7 @@ class _DoctorConsultationBookDoctorScreenState
 
     final accepted = <ConsultationBookingAttachmentEntity>[];
     var hitFileCountLimit = false;
+    var hitUnsupportedType = false;
 
     for (final item in items) {
       if (accepted.length >= remainingSlots) {
@@ -430,6 +431,14 @@ class _DoctorConsultationBookDoctorScreenState
       final path = item.path.trim();
       final name = item.name.trim();
       if (path.isEmpty || name.isEmpty) continue;
+
+      if (!ConsultationBookingAttachmentConfig.isAllowedFile(
+        name: name,
+        path: path,
+      )) {
+        hitUnsupportedType = true;
+        continue;
+      }
 
       final file = File(path);
       if (!await file.exists()) continue;
@@ -445,11 +454,16 @@ class _DoctorConsultationBookDoctorScreenState
       accepted.add(item);
     }
 
-    if (accepted.isEmpty || !mounted) return;
+    if (!mounted) return;
 
+    if (hitUnsupportedType) {
+      _showSnackBar(l10n.consultationUnsupportedFileType);
+    }
     if (hitFileCountLimit) {
       _showSnackBar(l10n.consultationMaxFilesReached);
     }
+
+    if (accepted.isEmpty) return;
 
     setState(() {
       _attachments.addAll(accepted);
@@ -505,7 +519,12 @@ class _DoctorConsultationBookDoctorScreenState
 
   Future<void> _pickFromFile() async {
     try {
-      final result = await FilePicker.pickFiles(allowMultiple: true);
+      final result = await FilePicker.pickFiles(
+        allowMultiple: true,
+        type: FileType.custom,
+        allowedExtensions:
+            ConsultationBookingAttachmentConfig.allowedExtensions.toList(),
+      );
       if (result == null || result.files.isEmpty || !mounted) return;
       await _addAttachments(
         result.files

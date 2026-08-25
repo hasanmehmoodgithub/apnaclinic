@@ -2939,6 +2939,12 @@ abstract class AppLocalizations {
   /// **'You can upload a maximum of 5 files per booking.'**
   String get consultationMaxFilesReached;
 
+  /// No description provided for @consultationUnsupportedFileType.
+  ///
+  /// In en, this message translates to:
+  /// **'Unsupported file type. Only images and PDF documents are allowed.'**
+  String get consultationUnsupportedFileType;
+
   /// No description provided for @consultationPaymentMethodTitle.
   ///
   /// In en, this message translates to:
