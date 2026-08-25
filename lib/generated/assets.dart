@@ -85,12 +85,6 @@ class Assets {
   static const String imgHeroFamily = 'assets/img/hero_family.webp';
   static const String imgIcMenuDrawer = 'assets/img/ic_menu_drawer.png';
   static const String imgInstantDocBanner = 'assets/img/instantDocBanner.png';
-  static const String imgNavSupportFilled = 'assets/img/nav_support_filled.png';
-  static const String imgNavHomeOutline = 'assets/img/nav_home_outline.png';
-  static const String imgNavInstantDoctorOutline =
-      'assets/img/nav_instant_doctor_outline.png';
-  static const String imgNavBookingsOutline = 'assets/img/nav_bookings_outline.png';
-  static const String imgNavSupportOutline = 'assets/img/nav_support_outline.png';
   static const String imgPartner = 'assets/img/partner.png';
   static const String imgPharmacyBanner = 'assets/img/pharmacyBanner.webp';
   static const String imgPlaceHolderPerson = 'assets/img/placeHolderPerson.webp';
