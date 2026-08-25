@@ -66,6 +66,7 @@ class OurServiceCardWidget extends StatelessWidget {
               SizedBox(height: DashboardUiConfig.serviceCardIconTitleGap.h),
             Center(
               child: ServiceCardImage(
+
                 imageUrl: imageAsset,
               ),
             ),
@@ -78,10 +79,11 @@ class OurServiceCardWidget extends StatelessWidget {
               style: theme.textTheme.titleSmall?.copyWith(
                 fontWeight: FontWeight.w600,
                 color: AppColors.clr09,
-                fontSize: DashboardUiConfig.serviceCardTitleFontSize.sp,
+                fontSize: DashboardUiConfig.serviceCardTitleFontSize.h,
                 height: 1,
               ),
             ),
+            SizedBox(height: 2,),
           ],
         ),
       ),

@@ -13,7 +13,7 @@ abstract final class DashboardUiConfig {
   static const double serviceCardBottomPadding = 8;
   static const double serviceCardTitleHorizontalPadding = 8;
   static const double serviceCardIconTitleGap = 4;
-  static const double serviceCardTitleFontSize = 14.5;
+  static const double serviceCardTitleFontSize = 16;
 
   /// Approximate title block for shimmer placeholders (2 lines).
   static const double serviceCardTitleBlockHeight = 34;
@@ -28,7 +28,7 @@ abstract final class DashboardUiConfig {
 
   /// Home service image size (larger than the original 63×72 CMS frame).
   static const double serviceIconWidth = 90;
-  static const double serviceIconHeight = 103;
+  static const double serviceIconHeight = 95;
 
   static const double serviceDiscountBadgeTop = 8;
   static const double serviceDiscountBadgeRight = 8;
