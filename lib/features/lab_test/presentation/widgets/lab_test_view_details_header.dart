@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/constants/app_colors.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 
 class LabTestViewDetailsHeader extends StatelessWidget {
@@ -25,7 +26,7 @@ class LabTestViewDetailsHeader extends StatelessWidget {
                 height: 40,
                 child: Icon(
                   Icons.arrow_back_rounded,
-                  color: Color(0xFF061E40),
+                  color: AppColors.clr060,
                   size: 24,
                 ),
               ),
@@ -36,7 +37,7 @@ class LabTestViewDetailsHeader extends StatelessWidget {
               title,
               textAlign: TextAlign.center,
               style: theme.textTheme.titleLarge?.copyWith(
-                color: const Color(0xFF061E40),
+                color: AppColors.clr060,
                 fontWeight: FontWeight.w700,
                 fontSize: 20.sp,
               ),

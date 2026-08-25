@@ -2396,8 +2396,38 @@ abstract class AppLocalizations {
   /// No description provided for @bookingsInvoiceDownloadFailed.
   ///
   /// In en, this message translates to:
-  /// **'Unable to download the invoice. Please try again.'**
+  /// **'Unable to open the invoice. Please try again.'**
   String get bookingsInvoiceDownloadFailed;
+
+  /// No description provided for @pdfViewerShare.
+  ///
+  /// In en, this message translates to:
+  /// **'Share'**
+  String get pdfViewerShare;
+
+  /// No description provided for @pdfViewerDownload.
+  ///
+  /// In en, this message translates to:
+  /// **'Download'**
+  String get pdfViewerDownload;
+
+  /// No description provided for @pdfViewerShareFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to share the PDF. Please try again.'**
+  String get pdfViewerShareFailed;
+
+  /// No description provided for @pdfViewerDownloadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to save the PDF. Please try again.'**
+  String get pdfViewerDownloadFailed;
+
+  /// No description provided for @pdfViewerSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'PDF saved'**
+  String get pdfViewerSaved;
 
   /// No description provided for @labTestInvoiceSectionTitle.
   ///

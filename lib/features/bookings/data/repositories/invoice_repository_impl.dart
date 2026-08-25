@@ -40,8 +40,8 @@ class InvoiceRepositoryImpl implements InvoiceRepository {
         moduleType: params.moduleType,
         contentDisposition: result.contentDisposition,
       );
-      final docs = await getApplicationDocumentsDirectory();
-      final dir = Directory(p.join(docs.path, 'invoices'));
+      final tmp = await getTemporaryDirectory();
+      final dir = Directory(p.join(tmp.path, 'invoice_cache'));
       if (!await dir.exists()) {
         await dir.create(recursive: true);
       }

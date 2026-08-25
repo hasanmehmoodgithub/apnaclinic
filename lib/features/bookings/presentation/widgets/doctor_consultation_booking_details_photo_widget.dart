@@ -1,9 +1,10 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
-import '../../../../core/constants/app_colors.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
+import '../../../../generated/assets.dart';
 
+/// Doctor photo on consultation booking details; placeholder if URL is empty or load fails.
 class DoctorConsultationBookingDetailsPhotoWidget extends StatelessWidget {
   const DoctorConsultationBookingDetailsPhotoWidget({
     super.key,
@@ -14,45 +15,44 @@ class DoctorConsultationBookingDetailsPhotoWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final width = 188.w;
+    final height = 160.h;
+    final trimmed = imageUrl.trim();
+    final Widget image;
+    if (trimmed.isEmpty) {
+      image = _placeholder(width, height);
+    } else if (trimmed.startsWith('http://') ||
+        trimmed.startsWith('https://')) {
+      image = CachedNetworkImage(
+        imageUrl: trimmed,
+        width: width,
+        height: height,
+        fit: BoxFit.cover,
+        placeholder: (_, _) => _placeholder(width, height),
+        errorWidget: (_, _, _) => _placeholder(width, height),
+      );
+    } else {
+      image = Image.asset(
+        trimmed,
+        width: width,
+        height: height,
+        fit: BoxFit.cover,
+        errorBuilder: (_, _, _) => _placeholder(width, height),
+      );
+    }
+
     return ClipRRect(
       borderRadius: BorderRadius.circular(14.r),
-      child: SizedBox(
-        width: 188.w,
-        height: 160.h,
-        child: imageUrl.trim().isEmpty
-            ? ColoredBox(
-                color: AppColors.clrF7F7F7,
-                child: Icon(
-                  Icons.person_rounded,
-                  color: AppColors.clrBFC7CF,
-                  size: 56.r,
-                ),
-              )
-            : CachedNetworkImage(
-                imageUrl: imageUrl,
-                width: 188.w,
-                height: 160.h,
-                fit: BoxFit.cover,
-                placeholder: (_, _) => ColoredBox(
-                  color: AppColors.clrF7F7F7,
-                  child: Center(
-                    child: SizedBox(
-                      width: 22.r,
-                      height: 22.r,
-                      child: const CircularProgressIndicator(strokeWidth: 2),
-                    ),
-                  ),
-                ),
-                errorWidget: (_, _, _) => ColoredBox(
-                  color: AppColors.clrF7F7F7,
-                  child: Icon(
-                    Icons.person_rounded,
-                    color: AppColors.clrBFC7CF,
-                    size: 56.r,
-                  ),
-                ),
-              ),
-      ),
+      child: image,
+    );
+  }
+
+  Widget _placeholder(double width, double height) {
+    return Image.asset(
+      Assets.imgPlaceHolderPerson,
+      width: width,
+      height: height,
+      fit: BoxFit.contain,
     );
   }
 }
