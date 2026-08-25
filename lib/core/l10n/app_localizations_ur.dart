@@ -1799,4 +1799,19 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get labTestSampleTypeBlood => 'خون';
+
+  @override
+  String get securityGateAccessDenied => 'رسائی مسترد';
+
+  @override
+  String get securityGateFallbackMessage =>
+      'آپ کا آلہ سیکیورٹی کی ضروریات پورا نہیں کرتا۔';
+
+  @override
+  String securityGateWillCloseIn(int count) {
+    return 'یہ ایپ $count سیکنڈ میں بند ہو جائے گی';
+  }
+
+  @override
+  String get securityGateChecking => 'آلے کی سیکیورٹی چیک کی جا رہی ہے…';
 }

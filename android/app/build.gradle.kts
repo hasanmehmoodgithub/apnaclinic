@@ -29,7 +29,7 @@ android {
 
     defaultConfig {
         applicationId = "com.apna.clinic.android"
-        minSdk = flutter.minSdkVersion
+        minSdk = 28 // Android 9
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName

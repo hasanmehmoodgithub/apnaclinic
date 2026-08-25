@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Apna Clinic — APK build commands</title>
+      <title>Apna Clinic — Run &amp; build commands</title>
   <style>
     :root {
       --navy: #061e40;
@@ -184,11 +184,14 @@
 </head>
 <body>
   <header>
-    <h1>APK build commands</h1>
-    <p>Staging / production × Chucker on / off. Click Copy on any command. Output: <code style="background:rgba(255,255,255,.12);color:#fff">build/app/outputs/flutter-apk/</code></p>
+    <h1>Run &amp; build commands</h1>
+    <p>Run or build on Android / iOS. Staging / production × Chucker. Click Copy. Android APKs: <code style="background:rgba(255,255,255,.12);color:#fff">build/app/outputs/flutter-apk/</code></p>
     <div class="bar">
-      <input id="q" type="search" placeholder="Search commands (staging, chucker, split, proxy…)" />
+      <input id="q" type="search" placeholder="Search commands (run, ios, android, staging, chucker…)" />
       <button class="chip active" data-filter="all">All</button>
+      <button class="chip" data-filter="run">Run</button>
+      <button class="chip" data-filter="android">Android</button>
+      <button class="chip" data-filter="ios">iOS</button>
       <button class="chip" data-filter="staging">Staging</button>
       <button class="chip" data-filter="production">Production</button>
       <button class="chip" data-filter="chucker-on">Chucker on</button>
@@ -210,7 +213,9 @@
         <div class="stat"><b>Store APK</b><span>Use production + <code>CHUCKER_ACTIVE=false</code></span></div>
       </div>
       <ul>
-        <li><code>flutter build apk</code> is a <strong>release</strong> APK. Flavor defaults to <strong>development</strong> if <code>APP_FLAVOR</code> is omitted.</li>
+        <li><code>flutter run -d android</code> / <code>-d ios</code> uses a connected device or simulator. <code>flutter build apk</code> is a <strong>release</strong> APK. Flavor defaults to <strong>development</strong> if <code>APP_FLAVOR</code> is omitted.</li>
+        <li>SecurityGate is <strong>on by default</strong>. Skip with <code>--dart-define=SECURITY_CHECKS=false</code> (internal/QA only — do not ship store builds this way).</li>
+        <li>iOS: <code>flutter build ios</code> → <code>Runner.app</code>. <code>flutter build ipa</code> → <code>build/ios/ipa/</code> for TestFlight / App Store.</li>
         <li>Fat APK default: <code>app-release.apk</code>. With stamp on, it is renamed to <code>apnaclinic-staging-chucker-YYYYMMDD-HHMM.apk</code>.</li>
         <li><code>--build-name</code> is Android versionName (Settings). <code>--build-number</code> is versionCode (integer, unique per minute). Store/Play builds should keep a normal <code>1.x.y</code> name.</li>
       </ul>
@@ -218,6 +223,16 @@
 
     <div class="card builder">
       <h2>Build your command</h2>
+      <label>Action</label>
+      <div class="opts">
+        <label class="opt"><input type="radio" name="action" value="run" /> Run</label>
+        <label class="opt"><input type="radio" name="action" value="build" checked /> Build</label>
+      </div>
+      <label>Platform</label>
+      <div class="opts">
+        <label class="opt"><input type="radio" name="platform" value="android" checked /> Android</label>
+        <label class="opt"><input type="radio" name="platform" value="ios" /> iOS</label>
+      </div>
       <label>Flavor</label>
       <div class="opts" id="flavor">
         <label class="opt"><input type="radio" name="flavor" value="staging" checked /> Staging</label>
@@ -229,11 +244,17 @@
         <label class="opt"><input type="radio" name="chucker" value="true" checked /> On</label>
         <label class="opt"><input type="radio" name="chucker" value="false" /> Off</label>
       </div>
-      <label>Output</label>
-      <div class="opts">
-        <label class="opt"><input type="radio" name="out" value="apk" checked /> Fat APK</label>
-        <label class="opt"><input type="radio" name="out" value="split" /> Split per ABI</label>
-        <label class="opt"><input type="radio" name="out" value="aab" /> App Bundle</label>
+      <div id="grp-output">
+        <label>Output</label>
+        <div class="opts" id="output-android">
+          <label class="opt"><input type="radio" name="out-android" value="apk" checked /> Fat APK</label>
+          <label class="opt"><input type="radio" name="out-android" value="split" /> Split per ABI</label>
+          <label class="opt"><input type="radio" name="out-android" value="aab" /> App Bundle</label>
+        </div>
+        <div class="opts hidden" id="output-ios">
+          <label class="opt"><input type="radio" name="out-ios" value="ios" checked /> Runner.app (<code>build ios</code>)</label>
+          <label class="opt"><input type="radio" name="out-ios" value="ipa" /> IPA (<code>build ipa</code>)</label>
+        </div>
       </div>
       <label>Mode</label>
       <div class="opts">
@@ -243,9 +264,10 @@
       </div>
       <label>Extras</label>
       <div class="opts">
-        <label class="opt"><input type="checkbox" id="stamp" checked /> Date / time stamp (version + file name)</label>
+        <label class="opt" id="stamp-opt"><input type="checkbox" id="stamp" checked /> Date / time stamp (version + file name)</label>
         <label class="opt"><input type="checkbox" id="proxy" /> HTTP proxy (mitm)</label>
         <label class="opt"><input type="checkbox" id="jazz" /> JazzCash sandbox</label>
+        <label class="opt"><input type="checkbox" id="nosec" /> Skip security checks</label>
       </div>
       <p class="filename" id="builtName"></p>
       <div class="cmd" style="margin-top:14px">
@@ -253,6 +275,11 @@
         <button class="copy" type="button" data-from="built">Copy</button>
       </div>
     </div>
+
+    <section>
+      <h2>Run (Android / iOS)</h2>
+      <div id="runios"></div>
+    </section>
 
     <section>
       <h2>Core four (staging / production × Chucker)</h2>
@@ -275,10 +302,15 @@
       return d.getFullYear() + pad(d.getMonth() + 1) + pad(d.getDate()) + '-' +
         pad(d.getHours()) + pad(d.getMinutes());
     }
+    function isRun(p) { return p.action === 'run'; }
+    function isIos(p) { return p.platform === 'ios'; }
+    function usesStamp(p) { return !!p.stamp && !isRun(p); }
+
     function slug(p) {
       const bits = ['apnaclinic', p.flavor, p.chucker === 'true' ? 'chucker' : 'nochucker'];
       if (p.jazz) bits.push('jazz');
       if (p.proxy) bits.push('proxy');
+      if (p.nosec) bits.push('nosec');
       if (p.mode && p.mode !== 'release') bits.push(p.mode);
       return bits.join('-');
     }
@@ -287,22 +319,40 @@
       if (mode === 'profile') return 'app-profile.apk';
       return 'app-release.apk';
     }
-    function flutterLine(p) {
-      const parts = ['flutter', p.aab ? 'build appbundle' : 'build apk'];
-      if (p.mode && p.mode !== 'release') parts.push('--' + p.mode);
-      if (p.split && !p.aab) parts.push('--split-per-abi');
-      if (p.stamp) {
-        parts.push('--build-name="1.0.0-$STAMP"');
-        parts.push('--build-number=$CODE');
-      }
-      parts.push('--dart-define=APP_FLAVOR=' + p.flavor);
-      parts.push('--dart-define=CHUCKER_ACTIVE=' + p.chucker);
+    function dartDefines(p) {
+      const parts = [
+        '--dart-define=APP_FLAVOR=' + p.flavor,
+        '--dart-define=CHUCKER_ACTIVE=' + p.chucker,
+      ];
+      if (p.nosec) parts.push('--dart-define=SECURITY_CHECKS=false');
       if (p.jazz) {
         parts.push('--dart-define=JAZZCASH_SANDBOX=true');
         parts.push('--dart-define=ACCOUNT_TEST_PHONE=' + PHONE);
       }
       if (p.proxy) parts.push('--dart-define="HTTP_PROXIES=' + PROXY + '"');
-      return p.stamp ? parts.join(' \\\n  ') : parts.join(' ');
+      return parts;
+    }
+    function flutterLine(p) {
+      const parts = ['flutter'];
+      if (isRun(p)) {
+        parts.push('run');
+        if (p.mode === 'release') parts.push('--release');
+        else if (p.mode === 'profile') parts.push('--profile');
+        parts.push('-d ' + (isIos(p) ? 'ios' : 'android'));
+      } else if (isIos(p)) {
+        parts.push(p.outIos === 'ipa' ? 'build ipa' : 'build ios');
+        if (p.mode && p.mode !== 'release') parts.push('--' + p.mode);
+      } else {
+        parts.push(p.aab ? 'build appbundle' : 'build apk');
+        if (p.mode && p.mode !== 'release') parts.push('--' + p.mode);
+        if (p.split && !p.aab) parts.push('--split-per-abi');
+      }
+      if (usesStamp(p)) {
+        parts.push('--build-name="1.0.0-$STAMP"');
+        parts.push('--build-number=$CODE');
+      }
+      parts.push.apply(parts, dartDefines(p));
+      return usesStamp(p) ? parts.join(' \\\n  ') : parts.join(' ');
     }
     function renameBlock(p) {
       const mode = p.mode || 'release';
@@ -323,19 +373,28 @@
       return 'mv ' + dir + '/' + apkOut(mode) + ' \\\n  "' + dir + '/' + base + '-${STAMP}.apk"';
     }
     function cmd(p) {
-      if (!p.stamp) return flutterLine(p);
-      return [
+      if (!usesStamp(p)) return flutterLine(p);
+      const lines = [
         'STAMP=$(date +%Y%m%d-%H%M)',
         'CODE=$(date +%y%j%H%M)',
         flutterLine(p),
-        renameBlock(p),
-      ].join('\n');
+      ];
+      if (!isIos(p)) lines.push(renameBlock(p));
+      return lines.join('\n');
     }
     function outputHint(p) {
+      if (isRun(p)) {
+        return 'Installs on a connected ' + (isIos(p) ? 'iOS' : 'Android') +
+          ' device or simulator (<code>flutter devices</code>)';
+      }
       const sample = previewStamp(new Date());
       const base = slug(p);
       const mode = p.mode || 'release';
-      if (!p.stamp) {
+      if (isIos(p)) {
+        if (p.outIos === 'ipa') return 'build/ios/ipa/ (IPA)';
+        return 'build/ios/iphoneos/Runner.app';
+      }
+      if (!usesStamp(p)) {
         if (p.aab) return 'build/app/outputs/bundle/' + mode + '/app-' + mode + '.aab';
         if (p.split) return 'build/app/outputs/flutter-apk/app-{abi}-' + mode + '.apk';
         return 'build/app/outputs/flutter-apk/' + apkOut(mode);
@@ -344,6 +403,15 @@
       if (p.split) return 'build/app/outputs/flutter-apk/' + base + '-arm64-v8a-' + sample + '.apk (+ armeabi-v7a, x86_64)';
       return 'build/app/outputs/flutter-apk/' + base + '-' + sample + '.apk';
     }
+
+    const runPresets = [
+      { title: 'Run Android · staging', action: 'run', platform: 'android', flavor: 'staging', chucker: 'true', mode: 'debug', tags: ['run', 'android', 'staging', 'chucker-on'] },
+      { title: 'Run Android · staging, no security', action: 'run', platform: 'android', flavor: 'staging', chucker: 'true', mode: 'debug', nosec: true, tags: ['run', 'android', 'staging', 'chucker-on'] },
+      { title: 'Run iOS · staging', action: 'run', platform: 'ios', flavor: 'staging', chucker: 'true', mode: 'debug', tags: ['run', 'ios', 'staging', 'chucker-on'] },
+      { title: 'Run iOS · staging, no security', action: 'run', platform: 'ios', flavor: 'staging', chucker: 'true', mode: 'debug', nosec: true, tags: ['run', 'ios', 'staging', 'chucker-on'] },
+      { title: 'Build iOS Runner · staging', action: 'build', platform: 'ios', outIos: 'ios', flavor: 'staging', chucker: 'true', tags: ['ios', 'staging', 'chucker-on'] },
+      { title: 'Build IPA · production, no Chucker', action: 'build', platform: 'ios', outIos: 'ipa', flavor: 'production', chucker: 'false', tags: ['ios', 'production', 'chucker-off'] },
+    ];
 
     const presets = [
       { title: 'Staging + Chucker', flavor: 'staging', chucker: 'true', stamp: true, tags: ['staging', 'chucker-on', 'stamp'] },
@@ -378,10 +446,14 @@
       if (t === 'production') return 'prd';
       if (t === 'chucker-on') return 'on';
       if (t === 'chucker-off') return 'off';
+      if (t === 'run' || t === 'android' || t === 'ios') return 'dev';
       return 'extra';
     }
     function tagLabel(t) {
       return ({
+        'run': 'Run',
+        'android': 'Android',
+        'ios': 'iOS',
         'staging': 'Staging',
         'production': 'Production',
         'chucker-on': 'Chucker on',
@@ -394,51 +466,84 @@
     }
     function hint(p) {
       const bits = [];
-      bits.push(p.aab ? 'App Bundle' : (p.split ? 'Split APKs' : 'Fat APK'));
-      bits.push((p.mode || 'release') + ' mode');
+      if (isRun(p)) bits.push('flutter run');
+      else if (isIos(p)) bits.push(p.outIos === 'ipa' ? 'IPA' : 'iOS Runner.app');
+      else bits.push(p.aab ? 'App Bundle' : (p.split ? 'Split APKs' : 'Fat APK'));
+      bits.push((p.mode || (isRun(p) ? 'debug' : 'release')) + ' mode');
       if (p.chucker === 'true') bits.push('Chucker inspector on');
       else bits.push('Chucker off');
-      if (p.stamp) bits.push('versionName + file stamped');
+      if (usesStamp(p)) bits.push('versionName + file stamped');
       if (p.proxy) bits.push('HTTP_PROXIES set');
       if (p.jazz) bits.push('JazzCash sandbox phone ' + PHONE);
+      if (p.nosec) bits.push('SECURITY_CHECKS=false');
       return bits.join(' · ') + ' · ' + outputHint(p);
     }
 
     function rowHtml(p, i) {
       const command = cmd(p);
-      const tags = (p.tags || []).map(t =>
+      const tags = (p.tags || []).slice();
+      if (p.action === 'run' && tags.indexOf('run') < 0) tags.push('run');
+      const platform = p.platform === 'ios' ? 'ios' : 'android';
+      if (tags.indexOf(platform) < 0) tags.push(platform);
+      const tagHtml = tags.map(t =>
         '<span class="tag ' + tagClass(t) + '">' + tagLabel(t) + '</span>'
       ).join('');
       return (
-        '<article class="row" data-tags="' + (p.tags || []).join(' ') + '" data-text="' +
+        '<article class="row" data-tags="' + tags.join(' ') + '" data-text="' +
         (p.title + ' ' + command).toLowerCase().replace(/"/g, '') + '">' +
         '<h3>' + p.title + '</h3>' +
-        '<div class="tags">' + tags + '</div>' +
+        '<div class="tags">' + tagHtml + '</div>' +
         '<p class="meta">' + hint(p) + '</p>' +
         '<div class="cmd"><pre id="c' + i + '">' + command + '</pre>' +
         '<button class="copy" type="button" data-from="c' + i + '">Copy</button></div></article>'
       );
     }
 
-    document.getElementById('core').innerHTML = presets.slice(0, 4).map(rowHtml).join('');
-    document.getElementById('list').innerHTML = presets.map((p, i) => rowHtml(p, i + 10)).join('');
+    document.getElementById('runios').innerHTML = runPresets.map((p, i) => rowHtml(p, i)).join('');
+    document.getElementById('core').innerHTML = presets.slice(0, 4).map((p, i) => rowHtml(p, i + 20)).join('');
+    document.getElementById('list').innerHTML = presets.map((p, i) => rowHtml(p, i + 40)).join('');
 
     function builtOpts() {
+      const action = document.querySelector('input[name="action"]:checked').value;
+      const platform = document.querySelector('input[name="platform"]:checked').value;
+      const outAndroid = document.querySelector('input[name="out-android"]:checked').value;
+      const outIos = document.querySelector('input[name="out-ios"]:checked').value;
       return {
+        action: action,
+        platform: platform,
         flavor: document.querySelector('input[name="flavor"]:checked').value,
         chucker: document.querySelector('input[name="chucker"]:checked').value,
-        split: document.querySelector('input[name="out"]:checked').value === 'split',
-        aab: document.querySelector('input[name="out"]:checked').value === 'aab',
+        split: platform === 'android' && outAndroid === 'split',
+        aab: platform === 'android' && outAndroid === 'aab',
+        outIos: outIos,
         mode: document.querySelector('input[name="mode"]:checked').value,
         proxy: document.getElementById('proxy').checked,
         jazz: document.getElementById('jazz').checked,
-        stamp: document.getElementById('stamp').checked,
+        nosec: document.getElementById('nosec').checked,
+        stamp: action === 'build' && document.getElementById('stamp').checked,
       };
     }
+    let lastAction = 'build';
+    function syncBuilderUi() {
+      const action = document.querySelector('input[name="action"]:checked').value;
+      const platform = document.querySelector('input[name="platform"]:checked').value;
+      const isBuild = action === 'build';
+      if (action !== lastAction) {
+        const modeValue = action === 'run' ? 'debug' : 'release';
+        document.querySelector('input[name="mode"][value="' + modeValue + '"]').checked = true;
+        lastAction = action;
+      }
+      document.getElementById('grp-output').classList.toggle('hidden', !isBuild);
+      document.getElementById('output-android').classList.toggle('hidden', !isBuild || platform !== 'android');
+      document.getElementById('output-ios').classList.toggle('hidden', !isBuild || platform !== 'ios');
+      document.getElementById('stamp-opt').classList.toggle('hidden', !isBuild);
+    }
     function refreshBuilt() {
+      syncBuilderUi();
       const opts = builtOpts();
       document.getElementById('built').textContent = cmd(opts);
-      document.getElementById('builtName').innerHTML = 'Output file: <b>' + outputHint(opts) + '</b>';
+      const label = isRun(opts) ? 'Target' : 'Output file';
+      document.getElementById('builtName').innerHTML = label + ': <b>' + outputHint(opts) + '</b>';
     }
     document.querySelectorAll('.builder input').forEach(el => el.addEventListener('change', refreshBuilt));
     refreshBuilt();
@@ -474,7 +579,7 @@
     const search = document.getElementById('q');
     function applyFilter() {
       const q = search.value.trim().toLowerCase();
-      document.querySelectorAll('#list .row, #core .row').forEach(row => {
+      document.querySelectorAll('#list .row, #core .row, #runios .row').forEach(row => {
         const tags = row.dataset.tags.split(' ');
         const okFilter = filter === 'all' || tags.includes(filter);
         const okSearch = !q || row.dataset.text.includes(q);

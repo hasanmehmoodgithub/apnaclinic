@@ -702,5 +702,16 @@
       }
     }
   },
-  "labTestSampleTypeBlood": "Blood"
+  "labTestSampleTypeBlood": "Blood",
+  "securityGateAccessDenied": "Access denied",
+  "securityGateFallbackMessage": "Your device does not meet security requirements.",
+  "securityGateWillCloseIn": "This app will close in {count} seconds",
+  "@securityGateWillCloseIn": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "securityGateChecking": "Checking device security…"
 }

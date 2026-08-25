@@ -3394,6 +3394,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Blood'**
   String get labTestSampleTypeBlood;
+
+  /// No description provided for @securityGateAccessDenied.
+  ///
+  /// In en, this message translates to:
+  /// **'Access denied'**
+  String get securityGateAccessDenied;
+
+  /// No description provided for @securityGateFallbackMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Your device does not meet security requirements.'**
+  String get securityGateFallbackMessage;
+
+  /// No description provided for @securityGateWillCloseIn.
+  ///
+  /// In en, this message translates to:
+  /// **'This app will close in {count} seconds'**
+  String securityGateWillCloseIn(int count);
+
+  /// No description provided for @securityGateChecking.
+  ///
+  /// In en, this message translates to:
+  /// **'Checking device security…'**
+  String get securityGateChecking;
 }
 
 class _AppLocalizationsDelegate

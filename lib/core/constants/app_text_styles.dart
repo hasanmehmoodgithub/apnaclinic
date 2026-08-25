@@ -91,4 +91,35 @@ class AppTextStyles {
     fontWeight: FontWeight.w700,
     color: AppColors.clr09,
   );
+
+  static TextStyle securityAppName = TextStyle(
+    fontSize: 14.sp,
+    fontWeight: FontWeight.w600,
+    color: AppColors.clr060,
+  );
+
+  static TextStyle securityTitle = TextStyle(
+    fontSize: 22.sp,
+    fontWeight: FontWeight.w700,
+    color: AppColors.clr060,
+  );
+
+  static TextStyle securityBody = TextStyle(
+    fontSize: 14.sp,
+    fontWeight: FontWeight.w400,
+    height: 1.45,
+    color: AppColors.clr667B99,
+  );
+
+  static TextStyle securityCountdown = TextStyle(
+    fontSize: 28.sp,
+    fontWeight: FontWeight.w700,
+    color: AppColors.clr060,
+  );
+
+  static TextStyle securityCaption = TextStyle(
+    fontSize: 12.sp,
+    fontWeight: FontWeight.w500,
+    color: AppColors.clr6C7C92,
+  );
 }

@@ -28,9 +28,34 @@ flutter run \
 flutter run --dart-define=APP_FLAVOR=staging
 ```
 
-### Production
+### Android / iOS device
+
+`flutter devices` lists ids. `-d android` / `-d ios` picks that platform when one device is connected.
+
 ```bash
+# Android
+flutter run -d android --dart-define=APP_FLAVOR=development
+flutter run -d android --dart-define=APP_FLAVOR=development --dart-define=SECURITY_CHECKS=false
+
+# iOS
+flutter run -d ios --dart-define=APP_FLAVOR=development
+flutter run -d ios --dart-define=APP_FLAVOR=development --dart-define=SECURITY_CHECKS=false
+```
+
+### SecurityGate (root / jailbreak / emulator / APK tamper)
+
+`SECURITY_CHECKS` defaults to **true**. SecurityGate still wraps the app; the check is skipped when the flag is `false`. Full restart required (not hot reload).
+
+```bash
+# Run with checks (default — omit the define)
+flutter run --dart-define=APP_FLAVOR=development
+
+# Run without checks (emulator / local device)
+flutter run --dart-define=APP_FLAVOR=development --dart-define=SECURITY_CHECKS=false
+
+# Production flavor on an emulator: checks on (will block) vs off
 flutter run --dart-define=APP_FLAVOR=production
+flutter run --dart-define=APP_FLAVOR=production --dart-define=SECURITY_CHECKS=false
 ```
 
 ---
@@ -49,7 +74,7 @@ flutter build apk --dart-define=APP_FLAVOR=staging
 flutter build apk --dart-define=APP_FLAVOR=development
 ```
 
-Copy-ready matrix (staging / production × Chucker on / off, plus split, proxy, JazzCash): open [APK_BUILD.html](APK_BUILD.html) in a browser.
+Copy-ready matrix (run / build × Android / iOS, Chucker, security): open [APK_BUILD.html](APK_BUILD.html) in a browser.
 
 ### Chucker (release APKs)
 
@@ -67,6 +92,24 @@ flutter build apk --dart-define=APP_FLAVOR=production --dart-define=CHUCKER_ACTI
 
 # Production without Chucker (store / real users)
 flutter build apk --dart-define=APP_FLAVOR=production --dart-define=CHUCKER_ACTIVE=false
+```
+
+### SecurityGate on APKs
+
+Default is **on** (`SECURITY_CHECKS=true`). Pass `false` only for internal/QA builds that must run on emulators or unlocked devices. Do **not** ship store APKs with checks off.
+
+```bash
+# Staging APK with checks (default)
+flutter build apk --dart-define=APP_FLAVOR=staging
+
+# Staging APK without checks
+flutter build apk --dart-define=APP_FLAVOR=staging --dart-define=SECURITY_CHECKS=false
+
+# Production APK with checks (store)
+flutter build apk --dart-define=APP_FLAVOR=production --dart-define=CHUCKER_ACTIVE=false
+
+# Production APK without checks (internal only)
+flutter build apk --dart-define=APP_FLAVOR=production --dart-define=CHUCKER_ACTIVE=false --dart-define=SECURITY_CHECKS=false
 ```
 
 ### Date / time on version + APK file
@@ -127,11 +170,17 @@ flutter build appbundle --dart-define=APP_FLAVOR=staging
 
 ### iOS
 ```bash
-# Production
-flutter build ios --dart-define=APP_FLAVOR=production
+# Run
+flutter run -d ios --dart-define=APP_FLAVOR=staging
+flutter run -d ios --dart-define=APP_FLAVOR=staging --dart-define=SECURITY_CHECKS=false
 
-# Staging
+# Runner.app
+flutter build ios --dart-define=APP_FLAVOR=production
 flutter build ios --dart-define=APP_FLAVOR=staging
+
+# IPA (TestFlight / App Store)
+flutter build ipa --dart-define=APP_FLAVOR=production --dart-define=CHUCKER_ACTIVE=false
+flutter build ipa --dart-define=APP_FLAVOR=staging --dart-define=SECURITY_CHECKS=false
 ```
 
 ---
@@ -224,7 +273,8 @@ void main() async {
 ## 📝 Important Notes
 
 - **Default**: If `--dart-define=APP_FLAVOR` is not specified, it defaults to **development**
-- **Hot Restart**: Flavor changes require a full app restart (not hot restart)
+- **SecurityGate**: Defaults **on**. Skip with `--dart-define=SECURITY_CHECKS=false` (full restart; not for store APKs)
+- **Hot Restart**: Flavor / dart-define changes require a full app restart (not hot restart)
 - **Clean Build**: If flavor not changing, try: `flutter clean && flutter pub get`
 
 ---

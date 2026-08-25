@@ -7,9 +7,9 @@ Block the app on compromised devices (root / jailbreak, emulator / simulator, Fr
 ## Dart
 
 - `AppIntegrity.verify()` — public API for APK package + signing-cert check (no hashes in Dart)
-- `SecurityService.securityChecksEnabled = false` (root / Frida / emulator gate still off)
-- **APK tamper is always evaluated on Android** via `AppIntegrity`, even when the master switch is off
-- `SecurityGate` wraps the app in `main.dart` (blocks + countdown + exit on tamper)
+- `SecurityService.securityChecksEnabled` via `--dart-define=SECURITY_CHECKS` (default **true**; `false` skips root / jailbreak / Frida / emulator / APK tamper)
+- `SecurityGate` wraps the app in `main.dart` (blocks + countdown + exit when compromised). When the flag is off, the child is shown immediately.
+- Checking / blocked UI uses the Apna Clinic logo, `FlavorConfig.appName`, and app colors (teal / navy)
 - MethodChannels: `security_channel` (`checkAppIntegrity`), advanced `qwe_rty_123` / `f1`
 
 ## Native
@@ -26,7 +26,8 @@ Play / installed package is `com.apna.clinic.android`. Kotlin `namespace` remain
 
 ## Notes
 
-- Production flavor also enforces developer-mode (Android) and emulator/simulator blocks when `securityChecksEnabled` is true.
+- Production flavor also enforces developer-mode (Android) and emulator/simulator blocks when `SECURITY_CHECKS` is true.
 - Non-production / debug flavors still check root, jailbreak, Frida, Xposed, and tamper, but allow emulators/simulators for local testing.
+- Opt out for run/APK: `--dart-define=SECURITY_CHECKS=false` (see [COMMANDS.md](../flavor/guide/COMMANDS.md)). Do not use this on store builds.
 - Trust-all HTTP / mitm proxy (`AppHttpOverrides`) is separate from these device checks.
 - Client-side cert pinning is bypassable (patch native). Play Integrity verified on a backend is the stronger Play-store control.
