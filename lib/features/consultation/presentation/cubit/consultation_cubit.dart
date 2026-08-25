@@ -16,12 +16,14 @@ class ConsultationCubit extends Cubit<ConsultationState> {
     final result = await getCategoriesUseCase.call();
     result.fold(
       (error) => emit(state.copyWith(isLoading: false, errorMessage: error)),
-      (categories) => emit(
+      (page) => emit(
         state.copyWith(
-          categories: categories,
-          filteredCategories: categories,
+          categories: page.categories,
+          filteredCategories: page.categories,
+          aiScreening: page.aiScreening,
           isLoading: false,
           errorMessage: null,
+          clearAiScreening: page.aiScreening == null,
         ),
       ),
     );

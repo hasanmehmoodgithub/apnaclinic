@@ -70,7 +70,7 @@ class ConsultationRemoteDataSourceImpl implements ConsultationRemoteDataSource {
   }
 
   @override
-  Future<List<ConsultationCategoryModel>> getCategories() async {
+  Future<ConsultationCategoriesResponseModel> getCategories() async {
     try {
       final Map<String, dynamic> response;
       if (ConsultationCategoriesMockApi.useMockResponses) {
@@ -81,9 +81,7 @@ class ConsultationRemoteDataSourceImpl implements ConsultationRemoteDataSource {
       }
 
       if (_isSuccessResponse(response)) {
-        return ConsultationCategoriesResponseModel.fromJson(
-          response,
-        ).categories;
+        return ConsultationCategoriesResponseModel.fromJson(response);
       }
 
       final message = (response['message'] ?? AppStrings.genericErrorMessage)

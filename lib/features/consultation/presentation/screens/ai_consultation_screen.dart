@@ -16,7 +16,9 @@ import '../widgets/ai_screening_shimmer_widget.dart';
 import '../widgets/consultation_screen_header_widget.dart';
 
 class AiScreeningScreen extends StatefulWidget {
-  const AiScreeningScreen({super.key});
+  const AiScreeningScreen({super.key, this.url});
+
+  final String? url;
 
   @override
   State<AiScreeningScreen> createState() => _AiScreeningScreenState();
@@ -31,7 +33,11 @@ class _AiScreeningScreenState extends State<AiScreeningScreen> {
   var _isExitDialogVisible = false;
   var _hasLoggedEnd = false;
 
-  static const _url = ConsultationUiConfig.apnaDoctorAiUrl;
+  String get _url {
+    final extra = widget.url?.trim() ?? '';
+    if (extra.isNotEmpty) return extra;
+    return ConsultationUiConfig.apnaDoctorAiUrl;
+  }
 
   @override
   void initState() {

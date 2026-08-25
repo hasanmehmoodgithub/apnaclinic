@@ -452,6 +452,7 @@
   "consultationAiScreeningExitCta": "باہر نکلیں",
   "consultationAiScreeningExitCancel": "منسوخ",
   "consultationMicrophonePermissionDenied": "آن لائن کنسلٹیشن شروع کرنے کے لیے سیٹنگز میں مائیکروفون کی اجازت دیں۔",
+  "consultationCameraPermissionDenied": "آن لائن کنسلٹیشن شروع کرنے کے لیے سیٹنگز میں کیمرہ کی اجازت دیں۔",
   "consultationAiWelcomePrefix": "ہیلو، خوش آمدید ",
   "consultationAiWelcomeSuffix": " ، آئیے شروع کرتے ہیں",
   "consultationAiStartCta": "آئیے شروع کریں",

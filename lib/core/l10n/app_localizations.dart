@@ -2669,6 +2669,12 @@ abstract class AppLocalizations {
   /// **'Allow microphone access in Settings to start the online consultation.'**
   String get consultationMicrophonePermissionDenied;
 
+  /// No description provided for @consultationCameraPermissionDenied.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow camera access in Settings to start the online consultation.'**
+  String get consultationCameraPermissionDenied;
+
   /// No description provided for @consultationAiWelcomePrefix.
   ///
   /// In en, this message translates to:

@@ -10,12 +10,6 @@ class ConsultationLocalDataSourceImpl implements ConsultationLocalDataSource {
   @override
   Future<List<ConsultationCategoryModel>> getCategories() async {
     final response = await mockApi.getConsultationCategoriesSuccessResponse();
-    final rawCategories = response['categories'];
-    final categories =
-        (rawCategories is List ? rawCategories : const <dynamic>[])
-            .whereType<Map<String, dynamic>>()
-            .map(ConsultationCategoryModel.fromMap)
-            .toList(growable: false);
-    return categories;
+    return ConsultationCategoriesResponseModel.fromJson(response).categories;
   }
 }

@@ -1396,6 +1396,10 @@ class AppLocalizationsEn extends AppLocalizations {
       'Allow microphone access in Settings to start the online consultation.';
 
   @override
+  String get consultationCameraPermissionDenied =>
+      'Allow camera access in Settings to start the online consultation.';
+
+  @override
   String get consultationAiWelcomePrefix => 'Hello, welcome to ';
 
   @override

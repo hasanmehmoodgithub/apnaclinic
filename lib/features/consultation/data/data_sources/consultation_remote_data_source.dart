@@ -9,7 +9,7 @@ import '../models/consultation_doctor_slots_model.dart';
 import '../models/payment_provider_model.dart';
 
 abstract class ConsultationRemoteDataSource {
-  Future<List<ConsultationCategoryModel>> getCategories();
+  Future<ConsultationCategoriesResponseModel> getCategories();
   Future<ConsultationDoctorsResponseModel> getDoctors({
     required String mainCategoryId,
     String? partnerId,

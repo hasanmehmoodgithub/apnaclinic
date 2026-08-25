@@ -2,7 +2,7 @@ import '../../../../core/functional/functional_export.dart';
 import '../../../payment/domain/entities/payment_initiation_result.dart';
 import '../entities/consultation_doctors_page_entity.dart';
 import '../entities/consultation_booking_list_entity.dart';
-import '../entities/consultation_category_entity.dart';
+import '../entities/consultation_categories_page_entity.dart';
 import '../entities/consultation_doctor_slots_entity.dart';
 import '../entities/payment_provider_entity.dart';
 import '../use_cases/abandon_consultation_booking_use_case.dart';
@@ -10,7 +10,7 @@ import '../use_cases/submit_consultation_booking_use_case.dart';
 import '../use_cases/submit_consultation_feedback_use_case.dart';
 
 abstract class ConsultationRepository {
-  Future<Either<ErrorMsg, List<ConsultationCategoryEntity>>> getCategories();
+  Future<Either<ErrorMsg, ConsultationCategoriesPageEntity>> getCategories();
   Future<Either<ErrorMsg, ConsultationDoctorsPageEntity>> getDoctors({
     required String mainCategoryId,
     String? partnerId,

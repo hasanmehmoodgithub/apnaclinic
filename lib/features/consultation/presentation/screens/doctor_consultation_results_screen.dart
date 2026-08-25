@@ -123,7 +123,7 @@ class _DoctorConsultationResultsScreenState
     if (!mounted) return;
     result.fold(
       (_) {},
-      (categories) => setState(() => _categoryOptions = categories),
+      (page) => setState(() => _categoryOptions = page.categories),
     );
   }
 

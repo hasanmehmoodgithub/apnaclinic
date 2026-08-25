@@ -11,6 +11,8 @@ import '../../../../core/router/app_routes.dart';
 import '../../../../core/utils/auth_guard.dart';
 import '../../../../core/utils/no_emoji_text_input_formatter.dart';
 import '../../../../core/utils/microphone_permission_utils.dart';
+import '../../../../core/utils/webview_media_permission_utils.dart';
+import '../../domain/entities/ai_screening_entity.dart';
 import '../../domain/entities/consultation_category_entity.dart';
 import '../consultation_analytics.dart';
 import '../constants/consultation_ui_config.dart';
@@ -133,13 +135,20 @@ class _DoctorConsultationScreenState extends State<DoctorConsultationScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            state.isLoading
-                                ? AppShimmerCard(
-                                    height: 150.h,
-                                    borderRadius: 10.7.r,
-                                  )
-                                : _AssistantCard(textTheme: textTheme),
-                            SizedBox(height: 21.h),
+                            if (state.isLoading) ...[
+                              AppShimmerCard(
+                                height: 150.h,
+                                borderRadius: 10.7.r,
+                              ),
+                              SizedBox(height: 21.h),
+                            ] else if (state.aiScreening?.shouldShow ??
+                                false) ...[
+                              _AssistantCard(
+                                textTheme: textTheme,
+                                screening: state.aiScreening!,
+                              ),
+                              SizedBox(height: 21.h),
+                            ],
                             Expanded(
                               child: Padding(
                                 padding: EdgeInsets.only(bottom: 22.h),
@@ -534,8 +543,12 @@ class _BarrierWithHolePainter extends CustomPainter {
 
 class _AssistantCard extends StatelessWidget {
   final TextTheme textTheme;
+  final AiScreeningEntity screening;
 
-  const _AssistantCard({required this.textTheme});
+  const _AssistantCard({
+    required this.textTheme,
+    required this.screening,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -621,20 +634,40 @@ class _AssistantCard extends StatelessWidget {
       return;
     }
 
-    final granted = await ensureMicrophonePermission();
-    if (!context.mounted) return;
-
-    if (!granted) {
-      final l10n = AppLocalizations.of(context)!;
-      ScaffoldMessenger.of(context)
-        ..hideCurrentSnackBar()
-        ..showSnackBar(
-          SnackBar(content: Text(l10n.consultationMicrophonePermissionDenied)),
-        );
-      return;
+    if (screening.needsCamera) {
+      final cameraGranted = await ensureCameraPermission();
+      if (!context.mounted) return;
+      if (!cameraGranted) {
+        final l10n = AppLocalizations.of(context)!;
+        ScaffoldMessenger.of(context)
+          ..hideCurrentSnackBar()
+          ..showSnackBar(
+            SnackBar(content: Text(l10n.consultationCameraPermissionDenied)),
+          );
+        return;
+      }
     }
 
-    context.pushNamed(AppRoutes.aiScreening);
+    if (screening.needsMicrophone) {
+      final granted = await ensureMicrophonePermission();
+      if (!context.mounted) return;
+
+      if (!granted) {
+        final l10n = AppLocalizations.of(context)!;
+        ScaffoldMessenger.of(context)
+          ..hideCurrentSnackBar()
+          ..showSnackBar(
+            SnackBar(content: Text(l10n.consultationMicrophonePermissionDenied)),
+          );
+        return;
+      }
+    }
+
+    if (!context.mounted) return;
+    context.pushNamed(
+      AppRoutes.aiScreening,
+      extra: screening.link,
+    );
   }
 }
 

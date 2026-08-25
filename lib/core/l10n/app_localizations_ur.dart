@@ -1396,6 +1396,10 @@ class AppLocalizationsUr extends AppLocalizations {
       'آن لائن کنسلٹیشن شروع کرنے کے لیے سیٹنگز میں مائیکروفون کی اجازت دیں۔';
 
   @override
+  String get consultationCameraPermissionDenied =>
+      'آن لائن کنسلٹیشن شروع کرنے کے لیے سیٹنگز میں کیمرہ کی اجازت دیں۔';
+
+  @override
   String get consultationAiWelcomePrefix => 'ہیلو، خوش آمدید ';
 
   @override

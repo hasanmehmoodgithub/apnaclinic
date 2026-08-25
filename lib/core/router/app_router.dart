@@ -184,7 +184,11 @@ class AppRouter {
       GoRoute(
         path: AppRoutes.path(AppRoutes.aiScreening),
         name: AppRoutes.aiScreening,
-        builder: (context, state) => const AiScreeningScreen(),
+        builder: (context, state) {
+          final extra = state.extra;
+          final url = extra is String ? extra : null;
+          return AiScreeningScreen(url: url);
+        },
       ),
       GoRoute(
         path: AppRoutes.path(AppRoutes.consultationDoctors),

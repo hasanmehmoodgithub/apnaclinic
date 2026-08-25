@@ -10,7 +10,14 @@ class ConsultationCategoriesMockApi {
       'success': true,
       'message': 'Doctor categories retrieved',
       'code': 200,
-      'data': _mockCategories,
+      'data': {
+        'ai_screening': {
+          'link': 'https://medai.mediq.com.pk/hudav2/',
+          'show': true,
+          'permission': ['camera', 'microphone'],
+        },
+        'categories': _mockCategories,
+      },
     };
   }
 }
