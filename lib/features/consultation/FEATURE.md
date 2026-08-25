@@ -36,7 +36,7 @@ Doctor consultation category browse, doctor results, booking, and checkout.
   - `bookingId` resolves from `orderId` first (needed for detail GET), then `appointmentId`; `partnerRefNo` kept separately for feedback.
   - Maps to `ConsultationBookingListItemEntity` → bookings UI via `DoctorConsultationBookingMapper`. `success`: `PAID` → Confirmed, `PENDING_PAYMENT` → Pending, `FAILED` → Failed (list and details).
 - **GET** `AppUrls.doctorConsultationBookingDetail(id)` — `/api/v1/mobile/doctor-consultation/{orderId}` — single consultation in `data` (same item shape as list). Used by Bookings **View Details** via `GetConsultationBookingUseCase`.
-- **GET** `AppUrls.mobileInvoice(CONSULTATION, orderId)` — raw PDF invoice for that booking (same numeric unified `orderId` as the detail GET) via shared `DownloadInvoiceUseCase`.
+- **GET** `AppUrls.mobileInvoice(CONSULTATION, orderId)` — raw PDF invoice for that booking (same numeric unified `orderId` as the detail GET) via shared `DownloadInvoiceUseCase`. Opened in `LabTestReportViewerScreen` with Share / Download; not saved to Documents until the user downloads.
 - **POST** `AppUrls.doctorConsultationFeedback` — `/api/v1/mobile/doctor-consultation/feedback` JSON `{ refNo, rating, review }`.
   - Used from booking details when `patientReview` is null (not cancelled); `refNo` is `partnerRefNo` (fallback booking id).
 - **GET** `AppUrls.doctorConsultationSlots(doctorId, hospitalId?)` — `/api/v1/mobile/doctor-consultation/doctor/{doctorId}` (optional `?hospitalId=` when doctors list provides it).

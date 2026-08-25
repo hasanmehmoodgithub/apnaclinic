@@ -1249,7 +1249,24 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get bookingsInvoiceDownloadFailed =>
-      'Unable to download the invoice. Please try again.';
+      'Unable to open the invoice. Please try again.';
+
+  @override
+  String get pdfViewerShare => 'Share';
+
+  @override
+  String get pdfViewerDownload => 'Download';
+
+  @override
+  String get pdfViewerShareFailed =>
+      'Unable to share the PDF. Please try again.';
+
+  @override
+  String get pdfViewerDownloadFailed =>
+      'Unable to save the PDF. Please try again.';
+
+  @override
+  String get pdfViewerSaved => 'PDF saved';
 
   @override
   String get labTestInvoiceSectionTitle => 'Invoice';

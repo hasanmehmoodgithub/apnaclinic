@@ -1250,7 +1250,24 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get bookingsInvoiceDownloadFailed =>
-      'انوائس ڈاؤن لوڈ نہیں ہو سکی۔ براہ کرم دوبارہ کوشش کریں۔';
+      'انوائس نہیں کھل سکی۔ براہ کرم دوبارہ کوشش کریں۔';
+
+  @override
+  String get pdfViewerShare => 'شیئر';
+
+  @override
+  String get pdfViewerDownload => 'ڈاؤن لوڈ';
+
+  @override
+  String get pdfViewerShareFailed =>
+      'پی ڈی ایف شیئر نہیں ہو سکی۔ براہ کرم دوبارہ کوشش کریں۔';
+
+  @override
+  String get pdfViewerDownloadFailed =>
+      'پی ڈی ایف محفوظ نہیں ہو سکی۔ براہ کرم دوبارہ کوشش کریں۔';
+
+  @override
+  String get pdfViewerSaved => 'پی ڈی ایف محفوظ ہو گئی';
 
   @override
   String get labTestInvoiceSectionTitle => 'انوائس';
