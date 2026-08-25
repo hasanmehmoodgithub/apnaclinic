@@ -60,7 +60,6 @@ class _DoctorConsultationBookDoctorScreenState
   @override
   void initState() {
     super.initState();
-    _issueController.addListener(_onIssueChanged);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       if (widget.moduleSource == AnalyticsConsultancySourceKeys.search) {
@@ -111,23 +110,12 @@ class _DoctorConsultationBookDoctorScreenState
 
   @override
   void dispose() {
-    _issueController.removeListener(_onIssueChanged);
     _issueController.dispose();
     super.dispose();
   }
 
   bool get _hasAvailableSlots =>
       _availabilityDays.any((day) => day.slots.isNotEmpty);
-
-  void _onIssueChanged() {
-    if (!mounted || _validationErrorMessage == null) return;
-    _clearValidationError();
-  }
-
-  void _clearValidationError() {
-    if (_validationErrorMessage == null) return;
-    setState(() => _validationErrorMessage = null);
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -295,16 +283,9 @@ class _DoctorConsultationBookDoctorScreenState
     required AppLocalizations l10n,
     required ResultsDoctorItem doctor,
   }) async {
-    final trimmedIssue = _issueController.text.trim();
     if (_selectedSlot == null) {
       setState(() {
         _validationErrorMessage = l10n.consultationSelectSlotError;
-      });
-      return;
-    }
-    if (trimmedIssue.isEmpty) {
-      setState(() {
-        _validationErrorMessage = l10n.consultationRequiredFieldsError;
       });
       return;
     }
@@ -361,7 +342,7 @@ class _DoctorConsultationBookDoctorScreenState
       AppRoutes.consultationCheckout,
       extra: DoctorConsultationCheckoutArgs(
         doctor: doctor,
-        issueDescription: trimmedIssue,
+        issueDescription: _issueController.text.trim(),
         selectedSlot: _selectedSlot!,
         attachments: List<ConsultationBookingAttachmentEntity>.unmodifiable(
           _attachments,

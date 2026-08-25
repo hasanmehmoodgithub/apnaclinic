@@ -532,6 +532,7 @@ class _AgeInputBox extends StatelessWidget {
           keyboardType: TextInputType.number,
           inputFormatters: NoEmojiTextInputFormatter.merge([
             FilteringTextInputFormatter.digitsOnly,
+            LengthLimitingTextInputFormatter(3),
           ]),
           textAlign: TextAlign.left,
           style: theme.textTheme.bodyMedium?.copyWith(

@@ -42,7 +42,7 @@ class ApnaBottomNavigationBar extends StatelessWidget {
                 child: _NavTab(
                   label: l10n.dashboardBottomHome,
                   filledAsset: Assets.svgNavHomeFilled,
-                  outlineAsset: Assets.imgNavHomeOutline,
+                  outlineAsset: Assets.svgNavHomeOutline,
                   selected: currentIndex == MainNavigationTabs.home,
                   onTap: () => onTap(MainNavigationTabs.home),
                 ),
@@ -51,7 +51,7 @@ class ApnaBottomNavigationBar extends StatelessWidget {
                 child: _NavTab(
                   label: l10n.dashboardBottomInstantDoctor,
                   filledAsset: Assets.svgNavInstantDoctorFilled,
-                  outlineAsset: Assets.imgNavInstantDoctorOutline,
+                  outlineAsset: Assets.svgNavInstantDoctorOutline,
                   selected: currentIndex == MainNavigationTabs.instantDoctor,
                   onTap: () => onTap(MainNavigationTabs.instantDoctor),
                 ),
@@ -60,7 +60,7 @@ class ApnaBottomNavigationBar extends StatelessWidget {
                 child: _NavTab(
                   label: l10n.dashboardBottomBookings,
                   filledAsset: Assets.svgNavBookingsFilled,
-                  outlineAsset: Assets.imgNavBookingsOutline,
+                  outlineAsset: Assets.svgNavBookingsOutline,
                   selected: currentIndex == MainNavigationTabs.bookings,
                   onTap: () => onTap(MainNavigationTabs.bookings),
                 ),
@@ -68,8 +68,8 @@ class ApnaBottomNavigationBar extends StatelessWidget {
               Expanded(
                 child: _NavTab(
                   label: l10n.dashboardBottomSupport,
-                  filledAsset: Assets.imgNavSupportFilled,
-                  outlineAsset: Assets.imgNavSupportOutline,
+                  filledAsset: Assets.svgNavSupportFilled,
+                  outlineAsset: Assets.svgNavSupportOutline,
                   selected: currentIndex == MainNavigationTabs.support,
                   onTap: () => onTap(MainNavigationTabs.support),
                 ),
@@ -97,8 +97,6 @@ class _NavTab extends StatelessWidget {
   final bool selected;
   final VoidCallback onTap;
 
-  bool _isPng(String asset) => asset.toLowerCase().endsWith('.png');
-
   @override
   Widget build(BuildContext context) {
     final color = selected ? AppColors.clr09 : AppColors.clr6B7280;
@@ -113,23 +111,13 @@ class _NavTab extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              if (_isPng(asset))
-                Image.asset(
-                  asset,
-                  width: 24.r,
-                  height: 24.r,
-                  fit: BoxFit.contain,
-                  color: color,
-                  colorBlendMode: BlendMode.srcIn,
-                )
-              else
-                SvgPicture.asset(
-                  asset,
-                  width: 24.r,
-                  height: 24.r,
-                  fit: BoxFit.contain,
-                  colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
-                ),
+              SvgPicture.asset(
+                asset,
+                width: 24.r,
+                height: 24.r,
+                fit: BoxFit.contain,
+                colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
+              ),
               SizedBox(height: 4.h),
               Text(
                 label,
