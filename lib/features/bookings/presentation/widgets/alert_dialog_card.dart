@@ -16,7 +16,7 @@ class AlertDialogCard extends StatelessWidget {
 
   const AlertDialogCard({
     required this.kind,
-    required this.title,
+    this.title = '',
     required this.message,
     this.closeLabel = 'Close',
     this.secondaryLabel,
@@ -59,23 +59,29 @@ class AlertDialogCard extends StatelessWidget {
               ),
             ),
             SizedBox(height: 18.h),
-            Text(
-              title,
-              textAlign: TextAlign.center,
-              style: textTheme.titleLarge?.copyWith(
-                color: const Color(0xFF061E40),
-                fontSize: 20.sp,
-                fontWeight: FontWeight.w600,
+            if (title.trim().isNotEmpty) ...[
+              Text(
+                title,
+                textAlign: TextAlign.center,
+                style: textTheme.titleLarge?.copyWith(
+                  color: const Color(0xFF061E40),
+                  fontSize: 20.sp,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
-            ),
-            SizedBox(height: 10.h),
+              SizedBox(height: 10.h),
+            ],
             Text(
               message,
               textAlign: TextAlign.center,
               style: textTheme.bodyMedium?.copyWith(
-                color: const Color(0xFF667B99),
-                fontSize: 14.sp,
-                fontWeight: FontWeight.w400,
+                color: title.trim().isEmpty
+                    ? const Color(0xFF061E40)
+                    : const Color(0xFF667B99),
+                fontSize: title.trim().isEmpty ? 20.sp : 14.sp,
+                fontWeight: title.trim().isEmpty
+                    ? FontWeight.w500
+                    : FontWeight.w400,
                 height: 1.4,
               ),
             ),

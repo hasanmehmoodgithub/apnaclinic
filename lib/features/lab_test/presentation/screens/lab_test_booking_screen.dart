@@ -83,7 +83,6 @@ class _LabTestBookingScreenState extends State<LabTestBookingScreen> {
       useRootNavigator: true,
       builder: (_) => AlertDialogCard(
         kind: AlertKind.error,
-        title: l10n.labTestSomethingWentWrong,
         message: message,
       ),
     );

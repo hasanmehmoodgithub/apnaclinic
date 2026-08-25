@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../core/constants/app_colors.dart';
@@ -10,6 +9,7 @@ import 'doctor_consultation_booking_details_documents_widget.dart';
 import 'doctor_consultation_booking_details_field_widget.dart';
 import 'doctor_consultation_booking_details_header_widget.dart';
 import 'doctor_consultation_booking_details_join_button_widget.dart';
+import 'doctor_consultation_booking_details_photo_widget.dart';
 import 'doctor_consultation_booking_details_prescriptions_widget.dart';
 import 'doctor_consultation_booking_details_review_widget.dart';
 import 'doctor_consultation_booking_feedback_form_widget.dart';
@@ -37,14 +37,8 @@ class DoctorConsultationBookingDetailsContentWidget extends StatelessWidget {
     return Column(
       children: [
         Center(
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(14.r),
-            child: CachedNetworkImage(
-              imageUrl: data.doctorImageUrl,
-              width: 188.w,
-              height: 160.h,
-              fit: BoxFit.cover,
-            ),
+          child: DoctorConsultationBookingDetailsPhotoWidget(
+            imageUrl: data.doctorImageUrl,
           ),
         ),
         SizedBox(height: 10.h),

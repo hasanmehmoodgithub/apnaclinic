@@ -43,7 +43,7 @@ Tabbed bookings hub (Instant Doctor, Pharmacy, Doctor Consultation, Lab Tests, S
 ## UI
 
 - `DoctorConsultationBookingCardWidget` — consultation list card; whole card opens booking details on tap; **View Details** button uses the same navigation.
-- `DoctorConsultationBookingDetailsContentWidget` — thin composer for details body; sections: header (doctor + date card), patient/issue fields, review or feedback form, documents (name + Download under icon), billing (fee breakdown only; **E-Invoice** is hidden until the API provides an invoice URL), join CTA. Rating badge uses shared `AppRoundedRatingWidget` (whole numbers without decimals).
+- `DoctorConsultationBookingDetailsContentWidget` — thin composer for details body; hero photo uses `CachedNetworkImage` with `Assets.imgPlaceHolderPerson` when the URL is empty or the load fails; sections: header (doctor + date card), patient/issue fields, review or feedback form, documents (name + Download under icon), billing (fee breakdown only; **E-Invoice** is hidden until the API provides an invoice URL), join CTA. Rating badge uses shared `AppRoundedRatingWidget` (whole numbers without decimals).
 - `DoctorConsultationBookingFeedbackFormWidget` — rating + review + submit when `patientReview` is missing (hidden for cancelled); layout matches submitted review card (title, “Your Feedback” + date, stars + score chip, `#F7F7F7` text area).
 
 ## Analytics
