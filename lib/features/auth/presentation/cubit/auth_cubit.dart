@@ -309,31 +309,26 @@ class AuthCubit extends Cubit<AuthState> {
     await _appPref.setRefreshToken(entity.refreshToken ?? '');
     await _appPref.setAccessTokenExpiresIn(entity.accessTokenExpiresIn ?? 0);
     await _appPref.setRefreshTokenExpiresIn(entity.refreshTokenExpiresIn ?? 0);
-    if (entity.isOnboardingCompleted == true) {
-      await _appPref.setProfileCompleted(true);
-      await _appPref.setUserLocalModel(
-        UserLocalModel(
-          firstName: entity.firstName ?? '',
-          lastName: entity.lastName ?? '',
-          phone: state.phoneNumber,
-          gender: entity.gender ?? '',
-          email: entity.email ?? '',
-          address: entity.address ?? '',
-          dateOfBirth: entity.dateOfBirth ?? '',
-        ),
-      );
+    await _appPref.setProfileCompleted(entity.isOnboardingCompleted);
+    await _appPref.setUserLocalModel(
+      UserLocalModel(
+        firstName: entity.firstName ?? '',
+        lastName: entity.lastName ?? '',
+        phone: state.phoneNumber,
+        gender: entity.gender ?? '',
+        email: entity.email ?? '',
+        address: entity.address ?? '',
+        dateOfBirth: entity.dateOfBirth ?? '',
+      ),
+    );
+    if (entity.isOnboardingCompleted) {
       // OTP payload often omits name; load GET /users/{id} before UI remounts.
       await _hydrateProfileAfterLogin();
-    } else {
-      await _appPref.setProfileCompleted(false);
-      await _appPref.setUserLocalModel(
-        UserLocalModel(phone: state.phoneNumber),
-      );
     }
 
     // Only refresh the dashboard shell when profile is complete. Otherwise
     // HomeScreen remounts under the login route and opens the promo heart loader.
-    if (entity.isOnboardingCompleted == true) {
+    if (entity.isOnboardingCompleted) {
       _sessionRefresh.notifyLoggedIn();
     }
   }

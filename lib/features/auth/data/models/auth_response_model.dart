@@ -57,7 +57,9 @@ class AuthResponseModel {
 
   factory AuthResponseModel.fromJson(Map<String, dynamic> json) {
     final data = json['data'];
-    final dataMap = data is Map<String, dynamic> ? data : <String, dynamic>{};
+    final dataMap = data is Map
+        ? Map<String, dynamic>.from(data)
+        : <String, dynamic>{};
     final accessToken = dataMap['accessToken'];
     final refreshToken = dataMap['refreshToken'];
     final accessTokenMap = accessToken is Map<String, dynamic>
@@ -67,7 +69,9 @@ class AuthResponseModel {
         ? refreshToken
         : <String, dynamic>{};
     final user = dataMap['user'];
-    final userMap = user is Map<String, dynamic> ? user : <String, dynamic>{};
+    final userMap = user is Map
+        ? Map<String, dynamic>.from(user)
+        : <String, dynamic>{};
     return AuthResponseModel(
       success: json['success'] == true,
       message: (json['message'] ?? '').toString(),
@@ -109,13 +113,27 @@ class AuthResponseModel {
       userId:
           (dataMap['userId'] ?? json['userId'])?.toString() ??
           AuthApiUtils.extractUserIdFromAuthResponse(json),
-      firstName: (userMap['firstName'] ?? dataMap['firstName'])?.toString(),
-      lastName: (userMap['lastName'] ?? dataMap['lastName'])?.toString(),
-      gender: (userMap['gender'] ?? dataMap['gender'])?.toString(),
-      email: (userMap['email'] ?? dataMap['email'])?.toString(),
-      address: (userMap['address'] ?? dataMap['address'])?.toString(),
-      dateOfBirth: (userMap['dateOfBirth'] ?? dataMap['dateOfBirth'])
-          ?.toString(),
+      firstName: _userField(userMap['firstName'] ?? dataMap['firstName']),
+      lastName: _userField(userMap['lastName'] ?? dataMap['lastName']),
+      gender: _userField(userMap['gender'] ?? dataMap['gender']),
+      email: _userField(userMap['email'] ?? dataMap['email']),
+      address: _userField(userMap['address'] ?? dataMap['address']),
+      dateOfBirth: _userField(
+        userMap['dateOfBirth'] ??
+            userMap['dob'] ??
+            dataMap['dateOfBirth'] ??
+            dataMap['dob'],
+      ),
     );
+  }
+
+  /// Treats JSON null, blank, `"null"`, and `"[NULL]"` as absent.
+  static String? _userField(dynamic value) {
+    if (value == null) return null;
+    final text = value.toString().trim();
+    if (text.isEmpty) return null;
+    final lower = text.toLowerCase();
+    if (lower == 'null' || lower == '[null]') return null;
+    return text;
   }
 }

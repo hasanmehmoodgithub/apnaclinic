@@ -50,12 +50,12 @@ class AuthMockApi {
         'isOnboardingCompleted': isOnboardingCompleted,
         'userOnboarding': !isOnboardingCompleted,
         'user': <String, dynamic>{
-          'firstName': isOnboardingCompleted ? 'Hasan' : '',
-          'lastName': isOnboardingCompleted ? 'Ali' : '',
-          'gender': isOnboardingCompleted ? 'male' : '',
-          'email': isOnboardingCompleted ? 'hasan@example.com' : '',
-          'address': isOnboardingCompleted ? 'Lahore' : '',
-          'dateOfBirth': isOnboardingCompleted ? '1998-05-12' : '',
+          'firstName': isOnboardingCompleted ? 'Hasan' : null,
+          'lastName': isOnboardingCompleted ? 'Ali' : '[NULL]',
+          'gender': isOnboardingCompleted ? 'male' : 'Male',
+          'email': 'hasan@gmail.com',
+          'address': isOnboardingCompleted ? 'Lahore' : 'cmh Rawalpindi',
+          'dob': isOnboardingCompleted ? '12-05-1998 00:00:00' : '30-07-2006 00:00:00',
         },
       },
     };

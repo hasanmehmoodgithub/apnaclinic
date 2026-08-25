@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/analytics/analytics_event_keys.dart';
 import '../../../../core/analytics/analytics_service.dart';
 import '../../../../core/enums/state_status.dart';
+import '../../data/mappers/profile_setup_mapper.dart';
 import '../../domain/entities/profile_setup_entity.dart';
 import '../../domain/models/profile_setup_data.dart';
 import '../../domain/use_cases/get_profile_setup_content_use_case.dart';
@@ -27,6 +28,20 @@ class ProfileSetupCubit extends Cubit<ProfileSetupState> {
 
   void resetState() {
     emit(const ProfileSetupState());
+  }
+
+  /// Prefills gender/DOB from OTP `user` when profile setup is still pending.
+  void hydrateFromVerifyUser({
+    String? gender,
+    String? dateOfBirth,
+  }) {
+    emit(
+      state.copyWith(
+        selectedGender: _normalizeGender(gender ?? ''),
+        dateOfBirth: ProfileSetupMapper.tryParseDate(dateOfBirth ?? ''),
+        errorMessage: null,
+      ),
+    );
   }
 
   Future<void> loadProfile() async {

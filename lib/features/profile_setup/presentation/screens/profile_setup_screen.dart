@@ -79,8 +79,14 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
     _addressController.text = userLocal?.address.trim() ?? '';
     final cachedImageUrl = userLocal?.imageUrl.trim() ?? '';
     _remoteImageUrl = cachedImageUrl.isEmpty ? null : cachedImageUrl;
+    final cubit = context.read<ProfileSetupCubit>();
     if (appPref.getLoginStatus() && appPref.isProfileCompleted()) {
-      context.read<ProfileSetupCubit>().loadProfile();
+      cubit.loadProfile();
+    } else {
+      cubit.hydrateFromVerifyUser(
+        gender: userLocal?.gender,
+        dateOfBirth: userLocal?.dateOfBirth,
+      );
     }
   }
 

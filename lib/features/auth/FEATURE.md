@@ -61,7 +61,7 @@ profile setup.
   - Request OTP `data.expiresIn` is in **seconds** (e.g. `300` → 5 min resend timer).
   - Logout: `AppUrls.logout` (POST body `{ "refreshToken": "<stored refresh token>" }`). Local session is **always** cleared via `LocalLogoutService` even if the API fails; a snackbar may show the server error. FCM prefs + Firebase `deleteToken()` run on this path (delete is not awaited on the UI).
   - Auto-logout (JWT refresh fail on 401): `AuthInterceptor` calls the same `LocalLogoutService.clearAll()` — no logout API and no device-token PUT (tokens are already dead).
-  - After successful OTP when onboarding is complete, `AuthCubit` calls `GetProfileSetupContentUseCase` (`GET …/users/{id}`) and persists name/email/etc. into `UserLocalModel` before `notifyLoggedIn`, so menu/home do not briefly stick on “Guest User”.
+  - After successful OTP, `AuthCubit` persists `data.user` (`firstName`, `lastName`, `gender`, `email`, `address`, `dob` / `dateOfBirth`) into `UserLocalModel`. Null / `"[NULL]"` fields are stored empty. When `userOnboarding` is **false** (profile already complete), it also calls `GetProfileSetupContentUseCase` (`GET …/users/{id}`) before `notifyLoggedIn`. When `userOnboarding` is **true**, profile setup prefills from that local `user` payload (no GET).
 
 ## Shared core helpers
 
