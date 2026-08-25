@@ -406,6 +406,7 @@
   "labTestReportAvailableNote": "آپ کی رپورٹ تیار ہے۔ آپ اسے ٹیسٹ نتائج سیکشن سے ڈاؤن لوڈ کر سکتے ہیں۔",
   "labTestDownloadReport": "رپورٹ ڈاؤن لوڈ کریں",
   "labTestDownloadReportFailed": "رپورٹ ڈاؤن لوڈ نہیں ہو سکی۔ براہ کرم دوبارہ کوشش کریں۔",
+  "bookingsInvoiceDownloadFailed": "انوائس ڈاؤن لوڈ نہیں ہو سکی۔ براہ کرم دوبارہ کوشش کریں۔",
   "labTestInvoiceSectionTitle": "انوائس",
   "labTestInvoiceFileName": "E-Invoice.pdf",
   "labTestDiscountCodeCopied": "ڈسکاؤنٹ کوڈ کاپی ہو گیا",

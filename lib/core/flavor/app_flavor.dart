@@ -21,7 +21,7 @@ enum AppFlavor {
   ),
   production(
     name: 'Production',
-    apiBaseUrl: 'https://jazzred-msa-stg.jazz.com.pk',
+    apiBaseUrl: 'https://pharmacy.apnaclinic.com.pk',
     appName: 'Apna Clinic',
     enableLogging: false,
     enableDebugFeatures: false,

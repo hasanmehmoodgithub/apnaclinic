@@ -1249,6 +1249,10 @@ class AppLocalizationsUr extends AppLocalizations {
       'رپورٹ ڈاؤن لوڈ نہیں ہو سکی۔ براہ کرم دوبارہ کوشش کریں۔';
 
   @override
+  String get bookingsInvoiceDownloadFailed =>
+      'انوائس ڈاؤن لوڈ نہیں ہو سکی۔ براہ کرم دوبارہ کوشش کریں۔';
+
+  @override
   String get labTestInvoiceSectionTitle => 'انوائس';
 
   @override

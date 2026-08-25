@@ -2393,6 +2393,12 @@ abstract class AppLocalizations {
   /// **'Unable to download the report. Please try again.'**
   String get labTestDownloadReportFailed;
 
+  /// No description provided for @bookingsInvoiceDownloadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to download the invoice. Please try again.'**
+  String get bookingsInvoiceDownloadFailed;
+
   /// No description provided for @labTestInvoiceSectionTitle.
   ///
   /// In en, this message translates to:

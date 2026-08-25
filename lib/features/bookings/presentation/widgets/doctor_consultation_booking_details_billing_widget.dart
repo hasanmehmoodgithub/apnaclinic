@@ -4,14 +4,17 @@ import '../../../../core/constants/app_colors.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../data/models/doctor_consultation_booking_details_model.dart';
+import 'booking_invoice_tile_widget.dart';
 
 class DoctorConsultationBookingDetailsBillingWidget extends StatelessWidget {
   const DoctorConsultationBookingDetailsBillingWidget({
     super.key,
     required this.data,
+    this.onInvoiceDownload,
   });
 
   final DoctorConsultationBookingDetailsModel data;
+  final VoidCallback? onInvoiceDownload;
 
   @override
   Widget build(BuildContext context) {
@@ -28,8 +31,10 @@ class DoctorConsultationBookingDetailsBillingWidget extends StatelessWidget {
             fontWeight: FontWeight.w600,
           ),
         ),
-        // TODO: Restore E-Invoice download when the consultation API
-        // returns an invoice URL.
+        if (onInvoiceDownload != null) ...[
+          SizedBox(height: 8.h),
+          BookingInvoiceTileWidget(onDownload: onInvoiceDownload!),
+        ],
         SizedBox(height: 8.h),
         Container(
           decoration: BoxDecoration(
@@ -44,7 +49,9 @@ class DoctorConsultationBookingDetailsBillingWidget extends StatelessWidget {
                 value: 'Rs.${data.originalFee}',
               ),
               _BillRow(
-                label: l10n.bookingsDiscountLabel(_percentLabel(data.discountPercent)),
+                label: l10n.bookingsDiscountLabel(
+                  _percentLabel(data.discountPercent),
+                ),
                 value: 'Rs.${data.discountAmount}',
               ),
               Container(

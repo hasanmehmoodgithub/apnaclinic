@@ -1248,6 +1248,10 @@ class AppLocalizationsEn extends AppLocalizations {
       'Unable to download the report. Please try again.';
 
   @override
+  String get bookingsInvoiceDownloadFailed =>
+      'Unable to download the invoice. Please try again.';
+
+  @override
   String get labTestInvoiceSectionTitle => 'Invoice';
 
   @override

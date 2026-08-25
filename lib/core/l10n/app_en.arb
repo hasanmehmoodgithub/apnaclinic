@@ -512,6 +512,7 @@
   "labTestReportAvailableNote": "Your report is ready. You can download it from the test results section.",
   "labTestDownloadReport": "Download Report",
   "labTestDownloadReportFailed": "Unable to download the report. Please try again.",
+  "bookingsInvoiceDownloadFailed": "Unable to download the invoice. Please try again.",
   "labTestInvoiceSectionTitle": "Invoice",
   "labTestInvoiceFileName": "E-Invoice.pdf",
   "labTestDiscountCodeCopied": "Discount code copied",

@@ -61,7 +61,7 @@ class LabTestBookingCardWidget extends StatelessWidget {
                 Assets.labTestCardVector,
                 width: 250.w,
                 height: 250.h,
-                  fit: BoxFit.contain,
+                fit: BoxFit.contain,
               ),
             ),
           ),
@@ -183,7 +183,9 @@ class LabTestBookingCardWidget extends StatelessWidget {
                           context.push(
                             AppRoutes.path(AppRoutes.labTestViewDetails),
                             extra: LabTestViewDetailsArgs(
-                              orderId: booking.orderNo,
+                              orderId: booking.orderId.isNotEmpty
+                                  ? booking.orderId
+                                  : booking.publicId,
                             ),
                           );
                         },

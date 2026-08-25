@@ -16,14 +16,19 @@ class LabTestBookingListMapper {
       orderId: order.orderId,
       publicId: order.publicId,
       orderType: order.orderType,
-      reportTitle: order.tests.map((t) => t.name).where((n) => n.isNotEmpty).join(', '),
+      reportTitle: order.tests
+          .map((t) => t.name)
+          .where((n) => n.isNotEmpty)
+          .join(', '),
       statusLabel: order.status,
       reportStatus: order.reportStatus,
       paymentMethod: order.paymentMethod,
       totalFee: _formatAmount(pricing.total, pricing.currency),
       discountedFee: _formatAmount(pricing.total, pricing.currency),
       originalFee: _formatAmount(pricing.subtotal, pricing.currency),
-      dateLabel: _formatDate(order.placedAt.isNotEmpty ? order.placedAt : order.createdAt),
+      dateLabel: _formatDate(
+        order.placedAt.isNotEmpty ? order.placedAt : order.createdAt,
+      ),
       labName: order.labName,
       labLogoUrl: order.labLogoUrl,
       partnerName: order.partnerName,
@@ -34,7 +39,11 @@ class LabTestBookingListMapper {
       patientPhone: order.patientPhone,
       tests: order.tests
           .map(
-            (t) => LabTestBookingTestItem(name: t.name, price: t.price, status: t.status),
+            (t) => LabTestBookingTestItem(
+              name: t.name,
+              price: t.price,
+              status: t.status,
+            ),
           )
           .toList(growable: false),
       discountCode: order.discountCode,
@@ -78,6 +87,7 @@ class LabTestBookingListMapper {
       originalFee: booking.originalFee,
       discountCode: booking.discountCode,
       patientName: booking.patientName,
+      orderId: order.orderId,
       orderNo: booking.orderNo,
       bookingDate: booking.dateLabel,
       statusLabel: booking.statusLabel,
@@ -115,7 +125,9 @@ class LabTestBookingListMapper {
 
   static String _formatAmount(int amount, String currency) {
     final formatted = NumberFormat('#,##0').format(amount);
-    final prefix = currency.trim().toUpperCase() == 'PKR' ? 'Rs.' : currency.trim();
+    final prefix = currency.trim().toUpperCase() == 'PKR'
+        ? 'Rs.'
+        : currency.trim();
     return '$prefix $formatted/-';
   }
 
@@ -134,10 +146,7 @@ class LabTestBookingListMapper {
     final iso = DateTime.tryParse(text);
     if (iso != null) return iso;
 
-    const patterns = <String>[
-      'yyyy-MM-dd HH:mm',
-      'yyyy-MM-dd',
-    ];
+    const patterns = <String>['yyyy-MM-dd HH:mm', 'yyyy-MM-dd'];
     for (final pattern in patterns) {
       try {
         return DateFormat(pattern).parseLoose(text);

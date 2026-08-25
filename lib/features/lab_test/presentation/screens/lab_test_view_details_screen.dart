@@ -8,7 +8,10 @@ import '../../../../core/router/app_routes.dart';
 import '../../../../core/widgets/app_scaffold_gradient.dart';
 import '../../../../core/widgets/heart_loader_widget.dart';
 import '../../../bookings/data/mappers/lab_test_booking_list_mapper.dart';
+import '../../../bookings/domain/entities/invoice_module_type.dart';
 import '../../../bookings/presentation/bookings_analytics.dart';
+import '../../../bookings/presentation/invoice_download.dart';
+import '../../../bookings/presentation/widgets/booking_invoice_tile_widget.dart';
 import '../../../bookings/presentation/widgets/empty_booking_widget.dart';
 import '../../domain/use_cases/download_lab_report_use_case.dart';
 import '../../domain/use_cases/get_lab_order_detail_use_case.dart';
@@ -123,9 +126,7 @@ class _LabTestViewDetailsScreenState extends State<LabTestViewDetailsScreen> {
   void _showDownloadFailed(AppLocalizations l10n) {
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
-      ..showSnackBar(
-        SnackBar(content: Text(l10n.labTestDownloadReportFailed)),
-      );
+      ..showSnackBar(SnackBar(content: Text(l10n.labTestDownloadReportFailed)));
   }
 
   @override
@@ -179,24 +180,24 @@ class _LabTestViewDetailsScreenState extends State<LabTestViewDetailsScreen> {
                     ),
                   ),
                   const SizedBox(height: 10),
-                    ...List<Widget>.generate(a.tests.length, (index) {
-                      final test = a.tests[index];
-                      return Padding(
-                        padding: EdgeInsets.only(
-                          bottom: index == a.tests.length - 1 ? 0 : 10,
-                        ),
-                        child: LabTestViewDetailsResultCard(
-                          title: test.name,
-                          labName: a.labName,
-                          labLogoUrl: a.labLogoUrl,
-                          partnerLogoUrl: a.partnerLogoUrl,
-                          sampleType: a.sampleType,
-                          status: test.status,
-                          discountedFee: test.fee,
-                          originalFee: test.fee,
-                        ),
-                      );
-                    }),
+                  ...List<Widget>.generate(a.tests.length, (index) {
+                    final test = a.tests[index];
+                    return Padding(
+                      padding: EdgeInsets.only(
+                        bottom: index == a.tests.length - 1 ? 0 : 10,
+                      ),
+                      child: LabTestViewDetailsResultCard(
+                        title: test.name,
+                        labName: a.labName,
+                        labLogoUrl: a.labLogoUrl,
+                        partnerLogoUrl: a.partnerLogoUrl,
+                        sampleType: a.sampleType,
+                        status: test.status,
+                        discountedFee: test.fee,
+                        originalFee: test.fee,
+                      ),
+                    );
+                  }),
                   const SizedBox(height: 12),
                   LabTestViewDetailsDownloadReportChip(
                     onDownload: a.canDownloadReport
@@ -219,6 +220,14 @@ class _LabTestViewDetailsScreenState extends State<LabTestViewDetailsScreen> {
                     bookingDate: a.bookingDate,
                     totalFee: a.discountedFee,
                     discountCode: a.discountCode,
+                  ),
+                  const SizedBox(height: 16),
+                  BookingInvoiceTileWidget(
+                    onDownload: () => InvoiceDownload.downloadAndView(
+                      context,
+                      moduleType: InvoiceModuleType.lab,
+                      orderId: a.orderId,
+                    ),
                   ),
                   const SizedBox(height: 16),
                   LabTestViewDetailsNoteCard(note: a.note),

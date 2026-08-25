@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:chucker_flutter/chucker_flutter.dart';
 import 'package:dio/dio.dart';
 
@@ -18,6 +20,19 @@ import 'hmac/hmac_secret_store.dart';
 import 'hmac/hmac_signing_interceptor.dart';
 
 export 'api_exceptions.dart';
+
+/// Raw file body from [ApiService.download] (invoice PDFs, etc.).
+class ApiFileDownload {
+  const ApiFileDownload({
+    required this.bytes,
+    this.contentDisposition,
+    this.contentType,
+  });
+
+  final Uint8List bytes;
+  final String? contentDisposition;
+  final String? contentType;
+}
 
 /// Dio wrapper: JSON defaults, [AuthInterceptor], HMAC v1, optional logging/Chucker.
 /// See `API_SERVICE.md` and `HMAC.md` in this folder for behavior and extension points.
@@ -107,6 +122,41 @@ class ApiService {
       headers: headers,
       timeout: timeout,
     );
+  }
+
+  /// Authenticated GET that returns a raw file (e.g. PDF). Uses the same Dio
+  /// interceptors as JSON calls (JWT, HMAC, API key). Do not use [get] here.
+  Future<ApiFileDownload> download(
+    String endpoint, {
+    Map<String, String>? headers,
+    Duration? timeout,
+  }) async {
+    try {
+      _syncAuthHeader();
+      final requestHeaders = Map<String, dynamic>.from(_dio.options.headers);
+      requestHeaders.removeWhere(
+        (key, _) => key.toLowerCase() == 'content-type',
+      );
+      requestHeaders['Accept'] = 'application/pdf';
+      if (headers != null) {
+        requestHeaders.addAll(headers);
+      }
+
+      final response = await _dio.request<List<int>>(
+        endpoint,
+        options: Options(
+          method: 'GET',
+          headers: requestHeaders,
+          contentType: null,
+          responseType: ResponseType.bytes,
+          sendTimeout: timeout,
+          receiveTimeout: timeout,
+        ),
+      );
+      return _handleFileResponse(response);
+    } on DioException catch (e) {
+      throw _mapDioException(e);
+    }
   }
 
   Future<Map<String, dynamic>> post(
@@ -255,6 +305,28 @@ class ApiService {
     } on DioException catch (e) {
       throw _mapDioException(e);
     }
+  }
+
+  ApiFileDownload _handleFileResponse(Response<List<int>> response) {
+    final code = response.statusCode ?? 0;
+    if (code >= 200 && code < 300) {
+      final raw = response.data;
+      if (raw == null || raw.isEmpty) {
+        throw ApiException(
+          message: ApiErrorMessageUtils.parseOrDefault(null),
+          statusCode: code,
+        );
+      }
+      return ApiFileDownload(
+        bytes: raw is Uint8List ? raw : Uint8List.fromList(raw),
+        contentDisposition: response.headers.value('content-disposition'),
+        contentType: response.headers.value('content-type'),
+      );
+    }
+    throw ApiException(
+      message: ApiErrorMessageUtils.parseOrDefault(response.data),
+      statusCode: code,
+    );
   }
 
   Map<String, dynamic> _handleResponse(

@@ -33,11 +33,11 @@ class LabTestBookingArgs {
     required this.city,
     required this.requirementLines,
     this.testTitle = '',
-  })  : isPending = true,
-        sampleType = '',
-        requirementLabel = null,
-        partners = const [],
-        labOffers = const [];
+  }) : isPending = true,
+       sampleType = '',
+       requirementLabel = null,
+       partners = const [],
+       labOffers = const [];
 
   const LabTestBookingArgs({
     required this.city,
@@ -171,9 +171,10 @@ class LabTestViewDetailsArgs {
 }
 
 class LabTestReportViewerArgs {
-  const LabTestReportViewerArgs({required this.filePath});
+  const LabTestReportViewerArgs({required this.filePath, this.title});
 
   final String filePath;
+  final String? title;
 }
 
 class LabTestViewDetailsTestLine {
@@ -201,6 +202,7 @@ class LabTestViewDetailsContent {
     required this.originalFee,
     this.discountCode,
     required this.patientName,
+    required this.orderId,
     required this.orderNo,
     required this.bookingDate,
     required this.statusLabel,
@@ -221,6 +223,7 @@ class LabTestViewDetailsContent {
   /// API `discountCode` only; null/empty hides the discount strip.
   final String? discountCode;
   final String patientName;
+  final String orderId;
   final String orderNo;
   final String bookingDate;
   final String statusLabel;

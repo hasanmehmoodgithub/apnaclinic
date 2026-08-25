@@ -5,6 +5,8 @@ import '../../../../core/constants/app_colors.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../data/models/doctor_consultation_booking_details_model.dart';
+import '../../domain/entities/invoice_module_type.dart';
+import '../invoice_download.dart';
 import 'doctor_consultation_booking_details_billing_widget.dart';
 import 'doctor_consultation_booking_details_documents_widget.dart';
 import 'doctor_consultation_booking_details_field_widget.dart';
@@ -27,9 +29,10 @@ class DoctorConsultationBookingDetailsContentWidget extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
     final showJoinButton =
         data.status == DoctorConsultationBookingStatus.pending ||
-            data.status == DoctorConsultationBookingStatus.confirmed;
+        data.status == DoctorConsultationBookingStatus.confirmed;
     final showSubmittedFeedback = data.patientReview != null;
-    final showFeedbackForm = !showSubmittedFeedback &&
+    final showFeedbackForm =
+        !showSubmittedFeedback &&
         data.canShowFeedbackSection &&
         data.status != DoctorConsultationBookingStatus.cancel &&
         data.status != DoctorConsultationBookingStatus.failed;
@@ -95,7 +98,14 @@ class DoctorConsultationBookingDetailsContentWidget extends StatelessWidget {
                     ),
                   ],
                   SizedBox(height: 14.h),
-                  DoctorConsultationBookingDetailsBillingWidget(data: data),
+                  DoctorConsultationBookingDetailsBillingWidget(
+                    data: data,
+                    onInvoiceDownload: () => InvoiceDownload.downloadAndView(
+                      context,
+                      moduleType: InvoiceModuleType.consultation,
+                      orderId: data.bookingId,
+                    ),
+                  ),
                   SizedBox(height: 28.h),
                   if (showJoinButton)
                     DoctorConsultationBookingDetailsJoinButtonWidget(

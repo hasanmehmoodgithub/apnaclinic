@@ -3,8 +3,10 @@ import 'package:flutter/material.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
+import '../../../bookings/domain/entities/invoice_module_type.dart';
+import '../../../bookings/presentation/invoice_download.dart';
+import '../../../bookings/presentation/widgets/booking_invoice_tile_widget.dart';
 import '../../domain/entities/pharmacy_booking_detail_entity.dart';
-import 'pharmacy_booking_invoice_tile_widget.dart';
 import 'pharmacy_booking_medicine_card_widget.dart';
 import 'pharmacy_booking_order_status_widget.dart';
 import 'pharmacy_booking_price_summary_widget.dart';
@@ -20,10 +22,7 @@ enum PharmacyBookingTimelineStatus {
 }
 
 class PharmacyBookingDetailsBodyWidget extends StatelessWidget {
-  const PharmacyBookingDetailsBodyWidget({
-    super.key,
-    required this.detail,
-  });
+  const PharmacyBookingDetailsBodyWidget({super.key, required this.detail});
 
   final PharmacyBookingDetailEntity detail;
 
@@ -45,10 +44,14 @@ class PharmacyBookingDetailsBodyWidget extends StatelessWidget {
           discount: detail.hasDiscount ? detail.discountLabel : null,
           total: detail.totalLabel,
         ),
-        if (detail.hasInvoiceUrl) ...[
-          SizedBox(height: 22.h),
-          const PharmacyBookingInvoiceTileWidget(),
-        ],
+        SizedBox(height: 22.h),
+        BookingInvoiceTileWidget(
+          onDownload: () => InvoiceDownload.downloadAndView(
+            context,
+            moduleType: InvoiceModuleType.pharmacy,
+            orderId: detail.orderId,
+          ),
+        ),
         SizedBox(height: 18.h),
         _LabeledValueRow(
           title: l10n.pharmacyCheckoutAddressLabel,

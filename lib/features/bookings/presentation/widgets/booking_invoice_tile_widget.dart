@@ -1,21 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
-import '../../../../core/utils/app_url_launcher.dart';
 import '../../../../generated/assets.dart';
 
-/// Invoice PDF tile on lab test view-details (matches surgery e-invoice card).
-class LabTestViewDetailsInvoiceCard extends StatelessWidget {
-  const LabTestViewDetailsInvoiceCard({
+/// Shared E-Invoice download row used on all booking detail screens.
+class BookingInvoiceTileWidget extends StatelessWidget {
+  const BookingInvoiceTileWidget({
     super.key,
-    required this.invoiceUrl,
+    required this.onDownload,
     this.fileName,
   });
 
-  final String invoiceUrl;
+  final VoidCallback onDownload;
   final String? fileName;
 
   @override
@@ -27,17 +25,17 @@ class LabTestViewDetailsInvoiceCard extends StatelessWidget {
         : l10n.labTestInvoiceFileName;
 
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 14.h),
+      padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 8.h),
       decoration: BoxDecoration(
         color: AppColors.clrF7F7F7,
-        borderRadius: BorderRadius.circular(14.r),
+        borderRadius: BorderRadius.circular(10.r),
       ),
       child: Row(
         children: [
           Image.asset(
             Assets.consultationPdfIcon,
-            width: 28.w,
-            height: 32.h,
+            width: 22.w,
+            height: 26.h,
             fit: BoxFit.contain,
           ),
           SizedBox(width: 12.w),
@@ -45,22 +43,19 @@ class LabTestViewDetailsInvoiceCard extends StatelessWidget {
             child: Text(
               label,
               style: textTheme.bodyMedium?.copyWith(
-                color: const Color(0xFF061E40),
+                color: AppColors.clr061E40,
                 fontSize: 15.sp,
                 fontWeight: FontWeight.w500,
               ),
             ),
           ),
           GestureDetector(
-            onTap: () => AppUrlLauncher.open(
-              url: invoiceUrl,
-              lunchMode: LaunchMode.externalApplication,
-            ),
+            onTap: onDownload,
             behavior: HitTestBehavior.opaque,
             child: Image.asset(
               Assets.consultationEInvoiceDownload,
-              width: 22.w,
-              height: 22.h,
+              width: 20.w,
+              height: 20.h,
               fit: BoxFit.contain,
             ),
           ),

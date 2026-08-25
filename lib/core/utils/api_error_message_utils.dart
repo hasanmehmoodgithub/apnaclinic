@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 /// Parses API error bodies where `message` may be a [String], [List], or nested [Map].
 class ApiErrorMessageUtils {
   ApiErrorMessageUtils._();
@@ -5,6 +7,9 @@ class ApiErrorMessageUtils {
   /// Returns a user-facing message, or null if nothing usable was found.
   static String? tryParse(dynamic responseData) {
     if (responseData == null) return null;
+    if (responseData is List<int>) {
+      return tryParse(_decodeBytes(responseData));
+    }
     if (responseData is String) {
       final t = responseData.trim();
       if (t.isEmpty) return null;
@@ -69,6 +74,26 @@ class ApiErrorMessageUtils {
       if (err is String && err.trim().isNotEmpty) return err.trim();
     }
     return null;
+  }
+
+  static dynamic _decodeBytes(List<int> bytes) {
+    if (bytes.length >= 4 &&
+        bytes[0] == 0x25 &&
+        bytes[1] == 0x50 &&
+        bytes[2] == 0x44 &&
+        bytes[3] == 0x46) {
+      return null;
+    }
+    try {
+      final text = utf8.decode(bytes).trim();
+      if (text.isEmpty) return null;
+      if (text.startsWith('{') || text.startsWith('[')) {
+        return jsonDecode(text);
+      }
+      return text;
+    } catch (_) {
+      return null;
+    }
   }
 
   /// WAFs often return HTML "Request Rejected" pages; don't show raw HTML to users.

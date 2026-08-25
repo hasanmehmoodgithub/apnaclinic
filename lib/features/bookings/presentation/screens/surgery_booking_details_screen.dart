@@ -21,9 +21,12 @@ import '../../../surgery/domain/use_cases/book_surgery_use_case.dart';
 import '../../../surgery/domain/use_cases/get_surgery_lead_use_case.dart';
 import '../../data/mappers/surgery_booking_list_mapper.dart';
 import '../../data/models/surgery_details_item.dart';
+import '../../domain/entities/invoice_module_type.dart';
 import '../bookings_analytics.dart';
 import '../constants/bookings_tabs.dart';
+import '../invoice_download.dart';
 import '../widgets/alert_dialog_card.dart';
+import '../widgets/booking_invoice_tile_widget.dart';
 import '../widgets/surgery_bokking_representative_note_widget.dart';
 import '../widgets/surgery_booking_appointment_details_widget.dart';
 import '../widgets/surgery_booking_card_widget.dart';
@@ -116,14 +119,15 @@ class _SurgeryDetailsScreenState extends State<SurgeryDetailsScreen> {
       context: context,
       backgroundColor: Colors.transparent,
       isScrollControlled: true,
-      builder: (_) => const PaymentMethodSheet(
-        module: PaymentProviderModule.surgery,
-      ),
+      builder: (_) =>
+          const PaymentMethodSheet(module: PaymentProviderModule.surgery),
     );
 
     if (!mounted || selected == null) return;
 
-    final paymentMethod = ConsultationBookingUtils.paymentMethodApiValue(selected);
+    final paymentMethod = ConsultationBookingUtils.paymentMethodApiValue(
+      selected,
+    );
     final String? msisdn;
 
     if (ConsultationBookingUtils.isJazzCashPayment(paymentMethod)) {
@@ -143,11 +147,11 @@ class _SurgeryDetailsScreenState extends State<SurgeryDetailsScreen> {
   Future<String?> _resolveJazzCashMsisdn() async {
     final result =
         await showModalBottomSheet<DoctorConsultationJazzCashSheetResult>(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (_) => const DoctorConsultationJazzCashAccountsSheetWidget(),
-    );
+          context: context,
+          isScrollControlled: true,
+          backgroundColor: Colors.transparent,
+          builder: (_) => const DoctorConsultationJazzCashAccountsSheetWidget(),
+        );
     return result?.msisdn.trim();
   }
 
@@ -206,8 +210,10 @@ class _SurgeryDetailsScreenState extends State<SurgeryDetailsScreen> {
           return;
         }
 
-        final paymentResult =
-            await settleCardPaymentIfNeeded(context, initiation);
+        final paymentResult = await settleCardPaymentIfNeeded(
+          context,
+          initiation,
+        );
         if (!mounted) return;
         if (!paymentResult.isSuccess) {
           await showCardPaymentOutcomeDialog(
@@ -353,6 +359,14 @@ class _SurgeryDetailsScreenState extends State<SurgeryDetailsScreen> {
                       SurgeryBookingPatientDetailsCardWidget(item: _item),
                       SizedBox(height: 14.h),
                       SurgeryBookingPaymentDetailsCardWidget(item: _item),
+                      SizedBox(height: 14.h),
+                      BookingInvoiceTileWidget(
+                        onDownload: () => InvoiceDownload.downloadAndView(
+                          context,
+                          moduleType: InvoiceModuleType.surgery,
+                          orderId: _item.leadId,
+                        ),
+                      ),
                     ],
                   ),
                 if (_showCheckoutBar && !_isLoadingDetail && _loadError == null)

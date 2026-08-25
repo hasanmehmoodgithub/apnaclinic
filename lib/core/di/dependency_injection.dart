@@ -2,6 +2,7 @@ import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../features/consultation/consultation_injection.dart';
 import '../../features/account/account_injection.dart';
+import '../../features/bookings/bookings_injection.dart';
 import '../../features/customer_support/customer_support_injection.dart';
 import '../../features/dashboard/dashboard_injection.dart';
 import '../../features/lab_test/lab_test_injection.dart';
@@ -39,6 +40,7 @@ Future<void> initDependencyInjection() async {
   initAccountInjector();
   initProfileSetupInjector();
   initConsultationInjector();
+  initBookingsInjector();
   initInstantDoctorInjector();
   initCustomerSupportInjector();
   initDashboardInjector();

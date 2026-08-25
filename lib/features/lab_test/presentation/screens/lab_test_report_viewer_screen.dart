@@ -27,7 +27,11 @@ class _LabTestReportViewerScreenState extends State<LabTestReportViewerScreen> {
     return AppScaffoldGradient(
       child: Column(
         children: [
-          LabTestViewDetailsHeader(title: l10n.labTestBookingCardSubtitle),
+          LabTestViewDetailsHeader(
+            title: (widget.args.title?.trim().isNotEmpty ?? false)
+                ? widget.args.title!.trim()
+                : l10n.labTestBookingCardSubtitle,
+          ),
           Expanded(
             child: _hasError
                 ? Center(

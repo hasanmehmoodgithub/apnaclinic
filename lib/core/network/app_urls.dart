@@ -370,6 +370,17 @@ class AppUrls {
   static String get labBookTestAbandon =>
       '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/lab/book-test/abandon';
 
+  /// Booking invoice PDF (raw `application/pdf` body, not JSON).
+  /// [moduleType] is `CONSULTATION` | `LAB` | `SURGERY` | `PHARMACY`.
+  /// [orderId] is the same id as that vertical's detail GET.
+  static String mobileInvoice({
+    required String moduleType,
+    required String orderId,
+  }) =>
+      '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/invoice/'
+      '${Uri.encodeComponent(moduleType.trim())}/'
+      '${Uri.encodeComponent(orderId.trim())}';
+
   // ============================================
   // 3rd Party Integration Support (Full URLs)
   // ============================================
