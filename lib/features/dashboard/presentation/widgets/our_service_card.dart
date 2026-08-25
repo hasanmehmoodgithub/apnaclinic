@@ -71,16 +71,19 @@ class OurServiceCardWidget extends StatelessWidget {
               ),
             ),
             SizedBox(height: DashboardUiConfig.serviceCardIconTitleGap.h),
-            Text(
-              title,
-              textAlign: TextAlign.center,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: theme.textTheme.titleSmall?.copyWith(
-                fontWeight: FontWeight.w600,
-                color: AppColors.clr09,
-                fontSize: DashboardUiConfig.serviceCardTitleFontSize.h,
-                height: 1,
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                title,
+                textAlign: TextAlign.center,
+                maxLines: 1,
+                softWrap: false,
+                style: theme.textTheme.titleSmall?.copyWith(
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.clr09,
+                  fontSize: DashboardUiConfig.serviceCardTitleFontSize.h,
+                  height: 1,
+                ),
               ),
             ),
             SizedBox(height: 2,),
