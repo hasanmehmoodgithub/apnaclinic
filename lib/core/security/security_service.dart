@@ -8,8 +8,13 @@ import 'app_integrity.dart';
 
 /// Comprehensive security service for device integrity checks
 class SecurityService {
-  /// Master switch for device integrity checks (root, jailbreak, Frida, etc.).
-  static const bool securityChecksEnabled = false;
+  /// Master switch for device integrity (root, jailbreak, Frida, APK tamper).
+  ///
+  /// Default **on**. Opt out: `--dart-define=SECURITY_CHECKS=false`.
+  static const bool securityChecksEnabled = bool.fromEnvironment(
+    'SECURITY_CHECKS',
+    defaultValue: true,
+  );
 
   // Method channels
   static const MethodChannel _securityChannel = MethodChannel(
@@ -18,23 +23,21 @@ class SecurityService {
   static const MethodChannel _advancedChannel = MethodChannel('qwe_rty_123');
 
   /// Perform all security checks and return true if device is compromised.
-  /// Android APK integrity is always evaluated, even when [securityChecksEnabled]
-  /// is false.
   static Future<bool> isDeviceCompromised() async {
+    if (!securityChecksEnabled) {
+      if (kDebugMode) {
+        developer.log(
+          'Device integrity checks disabled (SECURITY_CHECKS=false)',
+          name: 'SecurityService',
+        );
+      }
+      return false;
+    }
+
     try {
       if (Platform.isAndroid) {
         final integrity = await AppIntegrity.verify();
         if (integrity.shouldBlock) return true;
-      }
-
-      if (!securityChecksEnabled) {
-        if (kDebugMode) {
-          developer.log(
-            'Device integrity checks disabled (temporary)',
-            name: 'SecurityService',
-          );
-        }
-        return false;
       }
 
       if (Platform.isAndroid) {
@@ -51,6 +54,8 @@ class SecurityService {
 
   /// Get detailed security status message
   static Future<String?> getSecurityMessage() async {
+    if (!securityChecksEnabled) return null;
+
     try {
       if (Platform.isAndroid) {
         final integrity = await AppIntegrity.verify();
@@ -58,8 +63,6 @@ class SecurityService {
           return 'Application integrity compromised. You cannot access this application.';
         }
       }
-
-      if (!securityChecksEnabled) return null;
 
       if (Platform.isAndroid) {
         return await _getAndroidSecurityMessage();

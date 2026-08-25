@@ -1797,4 +1797,19 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get labTestSampleTypeBlood => 'Blood';
+
+  @override
+  String get securityGateAccessDenied => 'Access denied';
+
+  @override
+  String get securityGateFallbackMessage =>
+      'Your device does not meet security requirements.';
+
+  @override
+  String securityGateWillCloseIn(int count) {
+    return 'This app will close in $count seconds';
+  }
+
+  @override
+  String get securityGateChecking => 'Checking device security…';
 }

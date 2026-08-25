@@ -2,8 +2,14 @@ import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+
+import '../constants/app_colors.dart';
+import '../constants/app_system_ui.dart';
 import '../extensions/screen_util_extensions.dart';
+import '../l10n/app_localizations.dart';
 import 'security_service.dart';
+import 'widgets/security_blocked_view.dart';
+import 'widgets/security_checking_view.dart';
 
 /// Widget that blocks app access if device is compromised
 class SecurityGate extends StatefulWidget {
@@ -23,7 +29,7 @@ class SecurityGate extends StatefulWidget {
 }
 
 class _SecurityGateState extends State<SecurityGate> {
-  bool _isChecking = true;
+  bool _isChecking = SecurityService.securityChecksEnabled;
   bool _isCompromised = false;
   String? _securityMessage;
   int _countdown = 5;
@@ -32,7 +38,9 @@ class _SecurityGateState extends State<SecurityGate> {
   @override
   void initState() {
     super.initState();
-    _performSecurityCheck();
+    if (SecurityService.securityChecksEnabled) {
+      _performSecurityCheck();
+    }
   }
 
   @override
@@ -52,7 +60,6 @@ class _SecurityGateState extends State<SecurityGate> {
         _isChecking = false;
       });
 
-      // Start countdown timer if device is compromised
       if (isCompromised) {
         _startCountdown();
       }
@@ -79,7 +86,6 @@ class _SecurityGateState extends State<SecurityGate> {
   }
 
   void _terminateApp() {
-    // Terminate the app
     if (Platform.isAndroid) {
       SystemNavigator.pop();
     } else if (Platform.isIOS) {
@@ -92,99 +98,47 @@ class _SecurityGateState extends State<SecurityGate> {
   @override
   Widget build(BuildContext context) {
     if (_isChecking) {
-      return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        home: Scaffold(body: Center(child: CircularProgressIndicator())),
-      );
+      return _standaloneApp(const SecurityCheckingView());
     }
 
     if (_isCompromised) {
-      return widget.blockedWidget ?? _defaultBlockedWidget();
+      return widget.blockedWidget ??
+          _standaloneApp(
+            SecurityBlockedView(
+              message: _securityMessage,
+              countdown: _countdown,
+              totalSeconds: widget.countdownSeconds,
+            ),
+          );
     }
 
     return widget.child;
   }
 
-  Widget _defaultBlockedWidget() {
+  Widget _standaloneApp(Widget home) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        backgroundColor: Colors.red.shade50,
-        body: Center(
-          child: Padding(
-            padding: EdgeInsets.all(24.r),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.security,
-                  size: 80.r,
-                  color: Colors.red,
-                ),
-                SizedBox(height: 32.h),
-                Text(
-                  'Access Denied',
-                  style: TextStyle(
-                    fontSize: 28.sp,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.red,
-                  ),
-                ),
-                SizedBox(height: 24.h),
-                Text(
-                  _securityMessage ??
-                      'Your device does not meet security requirements.',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 16.sp,
-                    color: Colors.black87,
-                  ),
-                ),
-                SizedBox(height: 40.h),
-                // Countdown timer
-                Container(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 24.w,
-                    vertical: 16.h,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.red.shade100,
-                    borderRadius: BorderRadius.circular(12.r),
-                    border: Border.all(color: Colors.red, width: 2.r),
-                  ),
-                  child: Column(
-                    children: [
-                      Text(
-                        'Application will close in:',
-                        style: TextStyle(
-                          fontSize: 14.sp,
-                          color: Colors.black87,
-                        ),
-                      ),
-                      SizedBox(height: 8.h),
-                      Text(
-                        '$_countdown',
-                        style: TextStyle(
-                          fontSize: 48.sp,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.red.shade700,
-                        ),
-                      ),
-                      Text(
-                        'seconds',
-                        style: TextStyle(
-                          fontSize: 14.sp,
-                          color: Colors.black87,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
+      theme: ThemeData(
+        useMaterial3: true,
+        fontFamily: 'Satoshi',
+        scaffoldBackgroundColor: AppColors.clrF5FBFA,
+        colorScheme: ColorScheme.fromSeed(seedColor: AppColors.clr0FAA9A),
+        appBarTheme: const AppBarTheme(
+          systemOverlayStyle: AppSystemUi.overlayStyle,
         ),
       ),
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
+      builder: (context, child) {
+        ScreenUtilX.init(
+          context,
+          designWidth: 410,
+          designHeight: 720,
+          useScaleByDefault: false,
+        );
+        return child ?? const SizedBox.shrink();
+      },
+      home: home,
     );
   }
 }

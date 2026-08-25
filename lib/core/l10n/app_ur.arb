@@ -596,5 +596,16 @@
       }
     }
   },
-  "labTestSampleTypeBlood": "خون"
+  "labTestSampleTypeBlood": "خون",
+  "securityGateAccessDenied": "رسائی مسترد",
+  "securityGateFallbackMessage": "آپ کا آلہ سیکیورٹی کی ضروریات پورا نہیں کرتا۔",
+  "securityGateWillCloseIn": "یہ ایپ {count} سیکنڈ میں بند ہو جائے گی",
+  "@securityGateWillCloseIn": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "securityGateChecking": "آلے کی سیکیورٹی چیک کی جا رہی ہے…"
 }

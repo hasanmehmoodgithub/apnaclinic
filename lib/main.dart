@@ -42,10 +42,7 @@ void main() {
         // Encryption can be enabled/configured through AppPref methods after initialization
         await _initializeDependencyInjection();
 
-        runApp(
-          wrapWithDevicePreview(
-            child: const SecurityGate(child: ApnaClinicApp()),
-          ),
+        runApp(const SecurityGate(child: ApnaClinicApp()),
         );
 
         // FCM / AppsFlyer can hang or fail on some devices — never block first frame.
@@ -63,8 +60,7 @@ void main() {
         // Show error screen in debug mode
         if (kDebugMode) {
           runApp(
-            wrapWithDevicePreview(
-
+            SecurityGate(
               child: MaterialApp(
                 home: Scaffold(
                   body: Center(
