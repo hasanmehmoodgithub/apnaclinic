@@ -24,42 +24,42 @@ class BookingInvoiceTileWidget extends StatelessWidget {
         ? fileName!.trim()
         : l10n.labTestInvoiceFileName;
 
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 8.h),
-      decoration: BoxDecoration(
-        color: AppColors.clrF7F7F7,
+    return Material(
+      color: AppColors.clrF7F7F7,
+      borderRadius: BorderRadius.circular(10.r),
+      child: InkWell(
+        onTap: onDownload,
         borderRadius: BorderRadius.circular(10.r),
-      ),
-      child: Row(
-        children: [
-          Image.asset(
-            Assets.consultationPdfIcon,
-            width: 22.w,
-            height: 26.h,
-            fit: BoxFit.contain,
-          ),
-          SizedBox(width: 12.w),
-          Expanded(
-            child: Text(
-              label,
-              style: textTheme.bodyMedium?.copyWith(
-                color: AppColors.clr061E40,
-                fontSize: 15.sp,
-                fontWeight: FontWeight.w500,
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 8.h),
+          child: Row(
+            children: [
+              Image.asset(
+                Assets.consultationPdfIcon,
+                width: 22.w,
+                height: 26.h,
+                fit: BoxFit.contain,
               ),
-            ),
+              SizedBox(width: 12.w),
+              Expanded(
+                child: Text(
+                  label,
+                  style: textTheme.bodyMedium?.copyWith(
+                    color: AppColors.clr061E40,
+                    fontSize: 15.sp,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+              Image.asset(
+                Assets.consultationEInvoiceDownload,
+                width: 20.w,
+                height: 20.h,
+                fit: BoxFit.contain,
+              ),
+            ],
           ),
-          GestureDetector(
-            onTap: onDownload,
-            behavior: HitTestBehavior.opaque,
-            child: Image.asset(
-              Assets.consultationEInvoiceDownload,
-              width: 20.w,
-              height: 20.h,
-              fit: BoxFit.contain,
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
