@@ -6,7 +6,7 @@ import '../constants/dashboard_ui_config.dart';
 import 'service_card_image.dart';
 import 'service_discount_badge.dart';
 
-/// Home grid service tile — height follows icon + title content.
+/// Home grid service tile — discount slot is always reserved so layout stays stable.
 class OurServiceCardWidget extends StatelessWidget {
   const OurServiceCardWidget({
     super.key,
@@ -51,22 +51,19 @@ class OurServiceCardWidget extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            if (showDiscount)
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Flexible(
-                    fit: FlexFit.loose,
-                    child: ServiceDiscountBadge(label: discountLabel),
-                  ),
-                ],
-              ),
-            if (showDiscount)
-              SizedBox(height: DashboardUiConfig.serviceCardIconTitleGap.h),
+            SizedBox(
+              height: DashboardUiConfig.serviceDiscountBadgeSlotHeight.h,
+              width: double.infinity,
+              child: showDiscount
+                  ? Align(
+                      alignment: Alignment.centerRight,
+                      child: ServiceDiscountBadge(label: discountLabel),
+                    )
+                  : null,
+            ),
+            SizedBox(height: DashboardUiConfig.serviceCardIconTitleGap.h),
             Center(
               child: ServiceCardImage(
-
                 imageUrl: imageAsset,
               ),
             ),
