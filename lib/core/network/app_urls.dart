@@ -12,7 +12,7 @@ class AppUrls {
   static const String mobileApiKey = String.fromEnvironment(
     'MOBILE_API_KEY',
     defaultValue:
-        'apk_426baebf7f6eeb2962d120583b66827f354da3f09c86ac27c4d673e5823dd772',
+        'apk_934ed1e09a11c361c786fb685fa21af3930e9805d9de44aaa078ea9db73da464',
   );
 
   static String get _normalizedApiBaseUrl => baseUrl.endsWith('/')
@@ -52,7 +52,7 @@ class AppUrls {
 
   /// Home services (CMS mobile API).
   static String get ourServices =>
-      'https://jazzred-msa-stg.jazz.com.pk/acs-cmsbe/api/v1/mobile/services';
+      '$_normalizedApiBaseUrl/acs-cmsbe/api/v1/mobile/services';
 
   /// Doctor consultation categories (aggregator mobile API).
   static String get doctorCategories =>
