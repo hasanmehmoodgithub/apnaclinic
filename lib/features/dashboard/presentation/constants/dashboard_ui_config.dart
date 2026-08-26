@@ -18,9 +18,11 @@ abstract final class DashboardUiConfig {
   /// Approximate title block for shimmer placeholders (2 lines).
   static const double serviceCardTitleBlockHeight = 34;
 
-  /// Minimum shimmer height while service cards load (icon + title + padding).
+  /// Minimum shimmer height while service cards load (badge slot + icon + title).
   static double get serviceCardShimmerHeight =>
       serviceCardTopPadding +
+      serviceDiscountBadgeSlotHeight +
+      serviceCardIconTitleGap +
       serviceIconHeight +
       serviceCardIconTitleGap +
       serviceCardTitleBlockHeight +
@@ -35,6 +37,10 @@ abstract final class DashboardUiConfig {
   static const double serviceDiscountBadgeHorizontalPadding = 8;
   static const double serviceDiscountBadgeVerticalPadding = 4;
   static const double serviceDiscountBadgeFontSize = 10;
+  /// One-line chip height (padding + text). Always reserved so image/title do not jump.
+  static const double serviceDiscountBadgeSlotHeight =
+      serviceDiscountBadgeVerticalPadding * 2 +
+      serviceDiscountBadgeFontSize * 1.2;
   /// Keeps long API discount copy inside the card (wraps when exceeded).
   static const double serviceDiscountBadgeMaxWidth = 160;
 
