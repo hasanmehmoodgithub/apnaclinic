@@ -124,7 +124,7 @@ tr:nth-child(even) {
 <p>Complete guide for Firebase Cloud Messaging (FCM) notifications with custom routing.</p>
 
 <div class="note">
-  <strong>📖 Overview:</strong> The Notification Service handles foreground, background, and terminated notifications with automatic custom routing to screens. Local notifications are automatically shown when app is in foreground. Automatically subscribes to <code>TestNotification</code> topic in debug/staging/development for easy testing.
+  <strong>📖 Overview:</strong> The Notification Service handles foreground, background, and terminated notifications with automatic custom routing to screens. Local notifications are automatically shown when app is in foreground. Automatically subscribes to <code>TestNotification</code> in debug mode (<code>kDebugMode</code>) for easy testing.
 </div>
 
 <h2>🚀 Setup</h2>
@@ -270,30 +270,25 @@ await notificationService.unsubscribeFromTopic('news');</code></pre>
 
 <div class="success">
   <p><strong>Automatic Testing Subscription:</strong></p>
-  <p>The service <strong>automatically subscribes</strong> to <code>TestNotification</code> topic when:</p>
-  <ul>
-    <li>App is running in <strong>debug mode</strong> (<code>kDebugMode</code>)</li>
-    <li>App flavor is <strong>development</strong></li>
-    <li>App flavor is <strong>staging</strong></li>
-  </ul>
+  <p>The service <strong>automatically subscribes</strong> to <code>TestNotification</code> when the app is running in <strong>debug mode</strong> (<code>kDebugMode</code>).</p>
   <p>This allows you to easily test notifications by sending to the <code>TestNotification</code> topic from Firebase Console without manual subscription.</p>
 </div>
 
 <pre><code class="language-dart">// Automatically called during initialization
-if (kDebugMode || FlavorConfig.isDevelopment || FlavorConfig.isStaging) {
+if (kDebugMode) {
   await subscribeToTopic('TestNotification');
 }</code></pre>
 
 <h4>Testing Steps:</h4>
 <ol>
-  <li>Run app in debug/staging/development mode</li>
+  <li>Run a debug build (<code>flutter run</code>, not a release/profile APK)</li>
   <li>Go to Firebase Console → Cloud Messaging</li>
   <li>Send notification to topic: <code>TestNotification</code></li>
-  <li>All test devices will receive the notification</li>
+  <li>Debug devices will receive the notification</li>
 </ol>
 
 <div class="warning">
-  <p><strong>Note:</strong> Production builds do NOT auto-subscribe to test topics.</p>
+  <p><strong>Note:</strong> Profile and release builds do NOT auto-subscribe to test topics.</p>
 </div>
 
 <h2>🎯 Notification States</h2>

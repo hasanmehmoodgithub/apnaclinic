@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../core/constants/app_colors.dart';
@@ -53,8 +52,6 @@ class InstantDoctorBookingCardWidget extends StatelessWidget {
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _DoctorPhoto(imageUrl: item.photoUrl),
-                    SizedBox(width: 10.w),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -245,45 +242,6 @@ class InstantDoctorBookingCardWidget extends StatelessWidget {
             ),
           ),
         ),
-      ),
-    );
-  }
-}
-
-class _DoctorPhoto extends StatelessWidget {
-  const _DoctorPhoto({required this.imageUrl});
-
-  final String imageUrl;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 72.w,
-      height: 96.h,
-      decoration: BoxDecoration(
-        color: AppColors.clrF4F4F4,
-        borderRadius: BorderRadius.circular(10.r),
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(10.r),
-        child: imageUrl.trim().isEmpty
-            ? const Icon(
-                Icons.person_rounded,
-                color: AppColors.clrBFC7CF,
-                size: 40,
-              )
-            : CachedNetworkImage(
-                imageUrl: imageUrl,
-                fit: BoxFit.cover,
-                placeholder: (_, _) => const Center(
-                  child: CircularProgressIndicator(strokeWidth: 2),
-                ),
-                errorWidget: (_, _, _) => const Icon(
-                  Icons.person_rounded,
-                  color: AppColors.clrBFC7CF,
-                  size: 40,
-                ),
-              ),
       ),
     );
   }

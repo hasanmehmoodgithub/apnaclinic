@@ -14,7 +14,7 @@ The Notification Service handles:
 - ✅ **Custom routing** - Navigate to specific screens based on notification data
 - ✅ **FCM token management** - Get and refresh tokens
 - ✅ **Topic subscription** - Subscribe/unsubscribe to topics
-- ✅ **Auto-test subscription** - Automatically subscribes to `TestNotification` in debug/staging/development
+- ✅ **Auto-test subscription** - Automatically subscribes to `TestNotification` in debug mode (`kDebugMode`)
 
 ---
 
@@ -181,28 +181,25 @@ await notificationService.unsubscribeFromTopic('news');
 
 **Automatic Testing Subscription:**
 
-The service **automatically subscribes** to `TestNotification` topic when:
-- App is running in **debug mode** (`kDebugMode`)
-- App flavor is **development**
-- App flavor is **staging**
+The service **automatically subscribes** to `TestNotification` when the app is running in **debug mode** (`kDebugMode`).
 
 This allows you to easily test notifications by sending to the `TestNotification` topic from Firebase Console without manual subscription.
 
 **Example:**
 ```dart
 // Automatically called during initialization
-if (kDebugMode || FlavorConfig.isDevelopment || FlavorConfig.isStaging) {
+if (kDebugMode) {
   await subscribeToTopic('TestNotification');
 }
 ```
 
 **Testing:**
-1. Run app in debug/staging/development mode
+1. Run a debug build (`flutter run`, not a release/profile APK)
 2. Go to Firebase Console → Cloud Messaging
 3. Send notification to topic: `TestNotification`
-4. All test devices will receive the notification
+4. Debug devices will receive the notification
 
-**Note:** Production builds do NOT auto-subscribe to test topics.
+**Note:** Profile and release builds do NOT auto-subscribe to test topics.
 
 ---
 

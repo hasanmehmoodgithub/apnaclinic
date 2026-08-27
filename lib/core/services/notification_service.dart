@@ -12,7 +12,6 @@ import '../../features/notification/presentation/notification_navigation.dart';
 import '../../firebase_options.dart';
 import '../di/dependency_injection.dart';
 import '../firebase/firebase_bootstrap.dart';
-import '../flavor/flavor_config.dart';
 import '../preference/app_pref.dart';
 import '../preference/app_pref_keys.dart';
 import '../router/app_router.dart';
@@ -482,11 +481,7 @@ class NotificationService {
   }
 
   Future<void> _subscribeDebugTopicIfNeeded() async {
-    if (!kDebugMode &&
-        !FlavorConfig.isDevelopment &&
-        !FlavorConfig.isStaging) {
-      return;
-    }
+    if (!kDebugMode) return;
     try {
       await subscribeToTopic('TestNotification').timeout(
         const Duration(seconds: 5),

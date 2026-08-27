@@ -26,11 +26,11 @@ In-app notification list and Firebase Cloud Messaging (FCM) push notifications.
 - FCM token stored in `AppPref` (`AppPrefKeys.fcmToken`); last uploaded value in `AppPrefKeys.fcmTokenSentToBackend`. Both cleared on logout and on 401 JWT-refresh failure (`LocalLogoutService`).
 - Login: `NotificationService.ensureFcmTokenForLogin()` runs before verify OTP (lazy Firebase/FCM init if startup missed). OTP verify is the first backend bind; login still succeeds if FCM is empty.
 - Token rotation: Firebase `onTokenRefresh` (and a logged-in start/resume check) calls `PUT AppUrls.updateFcmDeviceToken` only when the user is logged in and the token differs from last upload. JWT `/auth/token/refresh` does not send FCM.
-- Dev/staging/debug auto-subscribes to topic `TestNotification`.
+- Debug builds (`kDebugMode`) auto-subscribe to topic `TestNotification`.
 
 ## Setup required (one-time)
 
-`lib/firebase_options.dart` is populated from `google-services.json` / `GoogleService-Info.plist` (project `notificationtes-dc9f6`). Re-run `flutterfire configure` if you add platforms or rotate keys.
+`lib/firebase_options.dart` is populated from `google-services.json` / `GoogleService-Info.plist` (project `apna-clinic-mobile-app`). Re-run `flutterfire configure` if you add platforms or rotate keys. Native Firebase may already create `[DEFAULT]`; `FirebaseBootstrap` reuses it.
 
 1. Firebase project with Android + iOS apps (config files already in repo).
 2. iOS: enable **Push Notifications** capability in Xcode; use a **physical device** for reliable FCM tokens (simulator may return empty APNS/FCM).

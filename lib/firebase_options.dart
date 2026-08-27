@@ -1,5 +1,5 @@
 // File generated from android/app/google-services.json and
-// ios/Runner/GoogleService-Info.plist (project: notificationtes-dc9f6).
+// ios/Runner/GoogleService-Info.plist (project: apna-clinic-mobile-app).
 // ignore_for_file: type=lint
 
 import 'package:firebase_core/firebase_core.dart' show FirebaseOptions;
@@ -38,19 +38,19 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyB8L-lDz2pou5r97S-pTqp6t0dyYo7-JPo',
-    appId: '1:411885842320:android:88a2f0eb4cb41432c44d15',
-    messagingSenderId: '411885842320',
-    projectId: 'notificationtes-dc9f6',
-    storageBucket: 'notificationtes-dc9f6.firebasestorage.app',
+    apiKey: 'AIzaSyDp5B6a-Zp2erRYrQz4PZrCVSVVMwg_sZ4',
+    appId: '1:293590853827:android:bc2f2cc68e51c231c71a76',
+    messagingSenderId: '293590853827',
+    projectId: 'apna-clinic-mobile-app',
+    storageBucket: 'apna-clinic-mobile-app.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyCOKenPCOZpkscjMjeTSO0hJc3vtq_VKLc',
-    appId: '1:411885842320:ios:37b0a077d18d37ebc44d15',
-    messagingSenderId: '411885842320',
-    projectId: 'notificationtes-dc9f6',
-    storageBucket: 'notificationtes-dc9f6.firebasestorage.app',
+    apiKey: 'AIzaSyDbwSbx1FIPHkPG4kBZDhRMnkzNtoFqBGI',
+    appId: '1:293590853827:ios:71c9192518f0960ac71a76',
+    messagingSenderId: '293590853827',
+    projectId: 'apna-clinic-mobile-app',
+    storageBucket: 'apna-clinic-mobile-app.firebasestorage.app',
     iosBundleId: 'com.apna.clinic.ios',
   );
 }
