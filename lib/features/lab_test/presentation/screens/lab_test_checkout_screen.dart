@@ -57,6 +57,7 @@ class _LabTestCheckoutScreenState extends State<LabTestCheckoutScreen> {
   String _gender = 'male';
   bool _isEditingPatientDetails = false;
   bool _isBooking = false;
+  bool _showEmergencyError = false;
   String? _checkoutErrorMessage;
 
   @override
@@ -82,10 +83,17 @@ class _LabTestCheckoutScreenState extends State<LabTestCheckoutScreen> {
   }
 
   void _onEmergencyChanged() {
-    if (_checkoutErrorMessage != null &&
-        _emergencyController.text.trim().isNotEmpty) {
-      setState(() => _checkoutErrorMessage = null);
-    }
+    final emergency = _emergencyController.text.trim();
+    final shouldClearBanner =
+        _checkoutErrorMessage != null && emergency.isNotEmpty;
+    final shouldClearFieldError = _showEmergencyError &&
+        emergency.isNotEmpty &&
+        PhoneFormatUtils.isValidMobileOrLandline(emergency);
+    if (!shouldClearBanner && !shouldClearFieldError) return;
+    setState(() {
+      if (shouldClearBanner) _checkoutErrorMessage = null;
+      if (shouldClearFieldError) _showEmergencyError = false;
+    });
   }
 
   void _prefillPatientDetailsFromSavedProfile() {
@@ -143,21 +151,33 @@ class _LabTestCheckoutScreenState extends State<LabTestCheckoutScreen> {
         _nameController.text.trim().isEmpty ||
         _phoneController.text.trim().isEmpty ||
         _ageController.text.trim().isEmpty) {
-      setState(() => _checkoutErrorMessage = l10n.labTestCheckoutRequiredFieldsError);
+      setState(() {
+        _checkoutErrorMessage = l10n.labTestCheckoutRequiredFieldsError;
+        _showEmergencyError = _emergencyController.text.trim().isEmpty;
+      });
       return;
     }
     if (!PhoneFormatUtils.isValidMobileOrLandline(
       _emergencyController.text.trim(),
     )) {
-      setState(() => _checkoutErrorMessage = l10n.labTestCheckoutPhoneInvalid);
+      setState(() {
+        _checkoutErrorMessage = l10n.labTestCheckoutPhoneInvalid;
+        _showEmergencyError = true;
+      });
       return;
     }
     if (widget.args.testIds.isEmpty) {
-      setState(() => _checkoutErrorMessage = l10n.labTestCheckoutRequiredFieldsError);
+      setState(() {
+        _checkoutErrorMessage = l10n.labTestCheckoutRequiredFieldsError;
+        _showEmergencyError = false;
+      });
       return;
     }
-    if (_checkoutErrorMessage != null) {
-      setState(() => _checkoutErrorMessage = null);
+    if (_checkoutErrorMessage != null || _showEmergencyError) {
+      setState(() {
+        _checkoutErrorMessage = null;
+        _showEmergencyError = false;
+      });
     }
 
     final selected = await showModalBottomSheet<String>(
@@ -434,6 +454,7 @@ class _LabTestCheckoutScreenState extends State<LabTestCheckoutScreen> {
                           gender: _gender,
                           onGender: (g) => setState(() => _gender = g),
                           isEditingPatientDetails: _isEditingPatientDetails,
+                          showEmergencyError: _showEmergencyError,
                           onToggleEdit: () {
                             if (!_isEditingPatientDetails) {
                               LabTestAnalytics.logPatientDetailsEdit();

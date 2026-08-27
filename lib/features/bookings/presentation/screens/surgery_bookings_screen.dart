@@ -10,6 +10,7 @@ import '../../data/mappers/surgery_booking_list_mapper.dart';
 import '../../data/models/surgery_booking_list_item_model.dart';
 import '../../data/models/surgery_details_item.dart';
 import '../widgets/bookings_list_shimmer_widget.dart';
+import '../widgets/bookings_refresh_view.dart';
 import '../widgets/empty_booking_widget.dart';
 import '../widgets/surgery_booking_card_widget.dart';
 
@@ -21,15 +22,17 @@ class SurgeryBookingsScreen extends StatefulWidget {
 }
 
 class _SurgeryBookingsScreenState extends State<SurgeryBookingsScreen> {
-  late Future<List<SurgeryBookingListItemModel>> _bookingsFuture;
+  List<SurgeryBookingListItemModel> _items = const [];
+  Object? _error;
+  bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    _bookingsFuture = _loadBookings();
+    _load();
   }
 
-  Future<List<SurgeryBookingListItemModel>> _loadBookings() async {
+  Future<List<SurgeryBookingListItemModel>> _fetchBookings() async {
     final result = await sl<GetSurgeryLeadsUseCase>()(
       const GetSurgeryLeadsParams(page: 1, limit: 20),
     );
@@ -41,72 +44,96 @@ class _SurgeryBookingsScreenState extends State<SurgeryBookingsScreen> {
     );
   }
 
-  Future<void> _retry() async {
+  Future<void> _load({bool refresh = false}) async {
     setState(() {
-      _bookingsFuture = _loadBookings();
+      _isLoading = true;
+      if (!refresh) _error = null;
     });
+    try {
+      final items = await _fetchBookings();
+      if (!mounted) return;
+      setState(() {
+        _items = items;
+        _error = null;
+        _isLoading = false;
+      });
+    } catch (error) {
+      if (!mounted) return;
+      setState(() {
+        _error = error;
+        _isLoading = false;
+        if (!refresh) _items = const [];
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final textTheme = Theme.of(context).textTheme;
-    return FutureBuilder<List<SurgeryBookingListItemModel>>(
-      future: _bookingsFuture,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const BookingsListShimmerWidget();
-        }
 
-        if (snapshot.hasError) {
-          return Center(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  snapshot.error.toString().replaceFirst('Exception: ', ''),
-                  textAlign: TextAlign.center,
-                  style: textTheme.bodyMedium,
-                ),
-                SizedBox(height: 12.h),
-                TextButton(
-                  onPressed: _retry,
-                  child: Text(l10n.commonRetry),
-                ),
-              ],
+    if (_isLoading) {
+      return const BookingsListShimmerWidget();
+    }
+
+    if (_error != null && _items.isEmpty) {
+      return BookingsRefreshView(
+        onRefresh: () => _load(refresh: true),
+        expandChild: true,
+        child: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                _error.toString().replaceFirst('Exception: ', ''),
+                textAlign: TextAlign.center,
+                style: textTheme.bodyMedium,
+              ),
+              SizedBox(height: 12.h),
+              TextButton(
+                onPressed: () => _load(),
+                child: Text(l10n.commonRetry),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    if (_items.isEmpty) {
+      return BookingsRefreshView(
+        onRefresh: () => _load(refresh: true),
+        expandChild: true,
+        child: EmptyBookingWidget(
+          description: l10n.bookingsSurgeryEmptyDescription,
+          buttonText: l10n.surgeryBookingScreenTitle,
+          onTap: () => context.pushNamed(AppRoutes.surgery),
+        ),
+      );
+    }
+
+    return BookingsRefreshView(
+      onRefresh: () => _load(refresh: true),
+      child: ListView.separated(
+        physics: const AlwaysScrollableScrollPhysics(),
+        padding: EdgeInsets.fromLTRB(0, 20.h, 0, 8.h),
+        itemCount: _items.length,
+        separatorBuilder: (_, _) => SizedBox(height: 14.h),
+        itemBuilder: (context, index) {
+          final item = _items[index];
+          final details = item.toDetailsItem();
+          return GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTap: () => _openDetails(context, details, item.initialStatus),
+            child: SurgeryBookingCardWidget(
+              item: details,
+              statusLabel: details.status,
+              onViewDetails: () =>
+                  _openDetails(context, details, item.initialStatus),
             ),
           );
-        }
-
-        final items = snapshot.data ?? const <SurgeryBookingListItemModel>[];
-        if (items.isEmpty) {
-          return EmptyBookingWidget(
-            description: l10n.bookingsSurgeryEmptyDescription,
-            buttonText: l10n.surgeryBookingScreenTitle,
-            onTap: () => context.pushNamed(AppRoutes.surgery),
-          );
-        }
-
-        return ListView.separated(
-          padding: EdgeInsets.fromLTRB(0, 20.h, 0, 8.h),
-          itemCount: items.length,
-          separatorBuilder: (_, _) => SizedBox(height: 14.h),
-          itemBuilder: (context, index) {
-            final item = items[index];
-            final details = item.toDetailsItem();
-            return GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              onTap: () => _openDetails(context, details, item.initialStatus),
-              child: SurgeryBookingCardWidget(
-                item: details,
-                statusLabel: details.status,
-                onViewDetails: () =>
-                    _openDetails(context, details, item.initialStatus),
-              ),
-            );
-          },
-        );
-      },
+        },
+      ),
     );
   }
 

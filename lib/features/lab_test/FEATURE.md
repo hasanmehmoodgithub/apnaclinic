@@ -17,7 +17,7 @@ Browse lab tests, booking/cart flow, payment details checkout, and order view de
   - One summary card per cart line (`LabTestCheckoutSummaryCardWidget` / `LabTestCheckoutLineArgs`): lab logo, test title, lab name, sample type + Walk In/Home Sample pill, per-test fee + strikethrough when original differs, partner logo.
   - `labTestCartToCheckoutArgs` sums original fees, discounts, and discounted totals across all cart lines for the breakdown.
   - Payment breakdown: section title, aggregated Fee / Discount (%) / Total (discount row hidden when amount is 0), divider, gray total bar.
-  - Patient details: **before Edit** = read-only rows with **Edit**; **after Edit** = form with **Done**. Age accepts digits only, max 3. Emergency contact always below (required; accepts 10-digit landline or 11-digit mobile).
+  - Patient details: **before Edit** = read-only rows with **Edit**; **after Edit** = form with **Done**. Age accepts digits only, max 3. Emergency contact always below (required; accepts 10-digit landline or 11-digit mobile). Empty or invalid emergency number turns the input red (`clrFFF8F8` fill, `clrBA2025` border/text) together with the CTA error banner.
   - Required-fields / invalid-phone errors above the CTA use `LabTestCheckoutErrorBannerWidget` (light-pink background + info icon), not plain red text.
   - Bottom CTA has no separate white bar behind the button. Panel top radius `20`.
 - On open, `LabTestCubit.bootstrap()` reads `AppPrefKeys.labTestSelectedCity`, loads cities, then immediately calls the lab tests API when a saved city resolves to a `cityId`; first visit without a saved city auto-opens the city selection dialog (tests load after pick).

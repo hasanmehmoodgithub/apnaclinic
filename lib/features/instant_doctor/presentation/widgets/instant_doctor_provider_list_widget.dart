@@ -29,24 +29,30 @@ class InstantDoctorProviderListWidget extends StatelessWidget {
     return BlocSelector<InstantDoctorCubit, InstantDoctorState, StateStatus>(
       selector: (state) => state.loadingStateStatus,
       builder: (context, loadingStatus) {
-        if (loadingStatus == StateStatus.loading) {
+        if (loadingStatus == StateStatus.loading ||
+            loadingStatus == StateStatus.refreshing) {
           return const _InstantDoctorProviderListLoading();
         }
 
-        return BlocSelector<InstantDoctorCubit, InstantDoctorState,
-            List<InstantDoctorProviderEntity>>(
-          selector: (state) => state.providers,
-          builder: (context, providers) {
-            if (providers.isEmpty) {
-              return const _InstantDoctorProviderListEmpty();
-            }
+        return RefreshIndicator(
+          color: AppColors.clr0FAA9A,
+          onRefresh: () =>
+              context.read<InstantDoctorCubit>().loadContent(refresh: true),
+          child: BlocSelector<InstantDoctorCubit, InstantDoctorState,
+              List<InstantDoctorProviderEntity>>(
+            selector: (state) => state.providers,
+            builder: (context, providers) {
+              if (providers.isEmpty) {
+                return const _InstantDoctorProviderListEmpty();
+              }
 
-            return _InstantDoctorProviderListContent(
-              providers: providers,
-              onProviderPrimaryTap: onProviderPrimaryTap,
-              onCancelSubscription: onCancelSubscription,
-            );
-          },
+              return _InstantDoctorProviderListContent(
+                providers: providers,
+                onProviderPrimaryTap: onProviderPrimaryTap,
+                onCancelSubscription: onCancelSubscription,
+              );
+            },
+          ),
         );
       },
     );
@@ -86,6 +92,7 @@ class _InstantDoctorProviderListEmpty extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
 
     return ListView(
+      physics: const AlwaysScrollableScrollPhysics(),
       padding: EdgeInsets.fromLTRB(
         InstantDoctorProviderListWidget._listPadding.left.w,
         InstantDoctorProviderListWidget._listPadding.top.h,
@@ -123,6 +130,7 @@ class _InstantDoctorProviderListContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView.separated(
+      physics: const AlwaysScrollableScrollPhysics(),
       padding: EdgeInsets.fromLTRB(
         InstantDoctorProviderListWidget._listPadding.left.w,
         InstantDoctorProviderListWidget._listPadding.top.h,

@@ -13,14 +13,15 @@ class InstantDoctorBookingsCubit extends Cubit<InstantDoctorBookingsState> {
 
   static const int _pageLimit = 20;
 
-  Future<void> load() async {
+  Future<void> load({bool refresh = false}) async {
     emit(
       state.copyWith(
         isLoading: true,
+        isLoadingMore: false,
         clearError: true,
-        items: const [],
+        items: refresh ? state.items : const [],
         page: 1,
-        hasMore: false,
+        hasMore: refresh ? state.hasMore : false,
       ),
     );
     await _fetchPage(page: 1, append: false);
@@ -39,6 +40,7 @@ class InstantDoctorBookingsCubit extends Cubit<InstantDoctorBookingsState> {
     final result = await getBookingsUseCase.call(
       GetInstantDoctorBookingsParams(page: page, limit: _pageLimit),
     );
+    if (isClosed) return;
 
     result.fold(
       (error) => emit(

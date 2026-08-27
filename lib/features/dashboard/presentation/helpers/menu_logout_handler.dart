@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/preference/app_pref.dart';
-import '../../../auth/domain/use_cases/logout_use_case.dart';
 import '../../../../core/session/local_logout_service.dart';
+import '../../../../core/widgets/heart_loader_widget.dart';
+import '../../../auth/domain/use_cases/logout_use_case.dart';
 import '../widgets/menu_logout_dialog.dart';
 
 Future<String?> performMenuLogout() async {
@@ -29,7 +30,14 @@ Future<void> handleMenuLogoutTap(BuildContext context) async {
   final shouldLogout = await showMenuLogoutDialog(context);
   if (!shouldLogout || !context.mounted) return;
 
-  final logoutApiError = await performMenuLogout();
+  const loaderId = 'menu_logout_loader';
+  showHeartLoaderDialog(context, id: loaderId, size: 120);
+  String? logoutApiError;
+  try {
+    logoutApiError = await performMenuLogout();
+  } finally {
+    HeartLoaderDialogController.close(loaderId);
+  }
   if (!context.mounted) return;
 
   if (logoutApiError != null && logoutApiError.isNotEmpty) {

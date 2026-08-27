@@ -11,6 +11,7 @@ import '../../../../core/router/app_routes.dart';
 import '../../../pharmacy/domain/entities/pharmacy_booking_entity.dart';
 import '../../../pharmacy/domain/use_cases/get_pharmacy_bookings_use_case.dart';
 import '../widgets/bookings_list_shimmer_widget.dart';
+import '../widgets/bookings_refresh_view.dart';
 import '../widgets/empty_booking_widget.dart';
 
 class PharmacyBookingsScreen extends StatefulWidget {
@@ -21,15 +22,16 @@ class PharmacyBookingsScreen extends StatefulWidget {
 }
 
 class _PharmacyBookingsScreenState extends State<PharmacyBookingsScreen> {
-  late final Future<List<PharmacyBookingEntity>> _bookingsFuture;
+  List<PharmacyBookingEntity> _items = const [];
+  bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    _bookingsFuture = _loadBookings();
+    _load();
   }
 
-  Future<List<PharmacyBookingEntity>> _loadBookings() async {
+  Future<List<PharmacyBookingEntity>> _fetchBookings() async {
     final result = await sl<GetPharmacyBookingsUseCase>()(
       const GetPharmacyBookingsParams(page: 1, limit: 20),
     );
@@ -39,65 +41,68 @@ class _PharmacyBookingsScreenState extends State<PharmacyBookingsScreen> {
     );
   }
 
+  Future<void> _load() async {
+    setState(() => _isLoading = true);
+    final items = await _fetchBookings();
+    if (!mounted) return;
+    setState(() {
+      _items = items;
+      _isLoading = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final textTheme = Theme.of(context).textTheme;
-    return FutureBuilder<List<PharmacyBookingEntity>>(
-      future: _bookingsFuture,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return BookingsListShimmerWidget(
-            cardHeight: 118.h,
-            separatorHeight: 12.h,
-          );
-        }
 
-        if (snapshot.hasError) {
-          return Center(
-            child: Text(
-              l10n.pharmacyLoadError,
-              textAlign: TextAlign.center,
-              style: textTheme.bodyMedium?.copyWith(color: AppColors.clr667B99),
+    if (_isLoading) {
+      return BookingsListShimmerWidget(
+        cardHeight: 118.h,
+        separatorHeight: 12.h,
+      );
+    }
+
+    if (_items.isEmpty) {
+      return BookingsRefreshView(
+        onRefresh: _load,
+        expandChild: true,
+        child: Column(
+          children: [
+            EmptyBookingWidget(
+              description: l10n.pharmacyEmptyMedicines,
+              buttonText: l10n.pharmacyScreenTitle,
+              onTap: () => context.pushNamed(AppRoutes.pharmacyMain),
             ),
-          );
-        }
+          ],
+        ),
+      );
+    }
 
-        final items = snapshot.data ?? const <PharmacyBookingEntity>[];
-        if (items.isEmpty) {
-          return Column(
-            children: [
-              EmptyBookingWidget(
-                description: l10n.pharmacyEmptyMedicines,
-                buttonText: l10n.pharmacyScreenTitle,
-                onTap: () => context.pushNamed(AppRoutes.pharmacyMain),
-              ),
-            ],
-          );
-        }
-
-        return ListView.separated(
-          padding: EdgeInsets.fromLTRB(0, 20.h, 0, 10.h),
-          itemBuilder: (context, index) => _PharmacyBookingCard(
-            item: items[index],
-            textTheme: textTheme,
-            l10n: l10n,
-            onViewDetailsTap: () {
-              final orderId = items[index].orderId.trim();
-              if (orderId.isEmpty) return;
-              context.pushNamed(
-                AppRoutes.pharmacyBookingDetails,
-                extra: {
-                  'orderId': orderId,
-                  'orderNo': items[index].orderNo,
-                },
-              );
-            },
-          ),
-          separatorBuilder: (_, _) => SizedBox(height: 12.h),
-          itemCount: items.length,
-        );
-      },
+    return BookingsRefreshView(
+      onRefresh: _load,
+      child: ListView.separated(
+        physics: const AlwaysScrollableScrollPhysics(),
+        padding: EdgeInsets.fromLTRB(0, 20.h, 0, 10.h),
+        itemBuilder: (context, index) => _PharmacyBookingCard(
+          item: _items[index],
+          textTheme: textTheme,
+          l10n: l10n,
+          onViewDetailsTap: () {
+            final orderId = _items[index].orderId.trim();
+            if (orderId.isEmpty) return;
+            context.pushNamed(
+              AppRoutes.pharmacyBookingDetails,
+              extra: {
+                'orderId': orderId,
+                'orderNo': _items[index].orderNo,
+              },
+            );
+          },
+        ),
+        separatorBuilder: (_, _) => SizedBox(height: 12.h),
+        itemCount: _items.length,
+      ),
     );
   }
 }

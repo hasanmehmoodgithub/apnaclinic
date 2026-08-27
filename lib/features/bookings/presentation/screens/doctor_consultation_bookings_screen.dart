@@ -9,6 +9,7 @@ import '../../../../core/router/app_routes.dart';
 import '../cubit/doctor_consultation_bookings_cubit.dart';
 import '../cubit/doctor_consultation_bookings_state.dart';
 import '../widgets/bookings_list_shimmer_widget.dart';
+import '../widgets/bookings_refresh_view.dart';
 import '../widgets/doctor_consultation_booking_card_widget.dart';
 import '../widgets/empty_booking_widget.dart';
 
@@ -64,59 +65,75 @@ class _DoctorConsultationBookingsBodyState
     return BlocBuilder<DoctorConsultationBookingsCubit,
         DoctorConsultationBookingsState>(
       builder: (context, state) {
+        Future<void> onRefresh() => context
+            .read<DoctorConsultationBookingsCubit>()
+            .load(refresh: true);
+
         if (state.isLoading) {
           return const BookingsListShimmerWidget();
         }
 
         if (state.hasError && state.items.isEmpty) {
-          return Center(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(state.errorMessage ?? ''),
-                SizedBox(height: 12.h),
-                TextButton(
-                  onPressed: () =>
-                      context.read<DoctorConsultationBookingsCubit>().load(),
-                  child: Text(l10n.commonRetry),
-                ),
-              ],
+          return BookingsRefreshView(
+            onRefresh: onRefresh,
+            expandChild: true,
+            child: Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(state.errorMessage ?? ''),
+                  SizedBox(height: 12.h),
+                  TextButton(
+                    onPressed: () =>
+                        context.read<DoctorConsultationBookingsCubit>().load(),
+                    child: Text(l10n.commonRetry),
+                  ),
+                ],
+              ),
             ),
           );
         }
 
         if (state.items.isEmpty) {
-          return Padding(
-            padding: EdgeInsets.only(top: 20.h),
-            child: EmptyBookingWidget(
-              description: l10n.bookingsDoctorConsultationEmptyDescription,
-              buttonText: l10n.onboardingBookConsultationTitle,
-              onTap: () => context.pushNamed(AppRoutes.consultation),
+          return BookingsRefreshView(
+            onRefresh: onRefresh,
+            expandChild: true,
+            child: Padding(
+              padding: EdgeInsets.only(top: 20.h),
+              child: EmptyBookingWidget(
+                description: l10n.bookingsDoctorConsultationEmptyDescription,
+                buttonText: l10n.onboardingBookConsultationTitle,
+                onTap: () => context.pushNamed(AppRoutes.consultation),
+              ),
             ),
           );
         }
 
-        return ListView.separated(
-          controller: _scrollController,
-          padding: EdgeInsets.fromLTRB(0, 20.h, 0, 8.h),
-          itemBuilder: (context, index) {
-            if (index >= state.items.length) {
-              return const Center(
-                child: Padding(
-                  padding: EdgeInsets.symmetric(vertical: 12),
-                  child: CircularProgressIndicator(strokeWidth: 2),
-                ),
-              );
-            }
-            return DoctorConsultationBookingCardWidget(item: state.items[index]);
-          },
-          separatorBuilder: (_, index) {
-            if (index >= state.items.length - 1) {
-              return const SizedBox.shrink();
-            }
-            return SizedBox(height: 14.h);
-          },
-          itemCount: state.items.length + (state.isLoadingMore ? 1 : 0),
+        return BookingsRefreshView(
+          onRefresh: onRefresh,
+          child: ListView.separated(
+            controller: _scrollController,
+            physics: const AlwaysScrollableScrollPhysics(),
+            padding: EdgeInsets.fromLTRB(0, 20.h, 0, 8.h),
+            itemBuilder: (context, index) {
+              if (index >= state.items.length) {
+                return const Center(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(vertical: 12),
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  ),
+                );
+              }
+              return DoctorConsultationBookingCardWidget(item: state.items[index]);
+            },
+            separatorBuilder: (_, index) {
+              if (index >= state.items.length - 1) {
+                return const SizedBox.shrink();
+              }
+              return SizedBox(height: 14.h);
+            },
+            itemCount: state.items.length + (state.isLoadingMore ? 1 : 0),
+          ),
         );
       },
     );
