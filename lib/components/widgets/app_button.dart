@@ -130,24 +130,28 @@ class AppButton extends StatelessWidget {
               ),
             ),
           )
-        : Row(
-            mainAxisAlignment: iconAlignment ?? MainAxisAlignment.center,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              if (icon != null) ...[
-                Icon(icon, size: 20, color: effectiveForegroundColor),
-                SizedBox(width: AppSizes.paddingS),
-              ],
-              Text(
-                text,
-                style: TextStyle(
-                  fontSize: effectiveFontSize,
-                  fontWeight: effectiveFontWeight,
-                  letterSpacing: 0.5,
-                  color: effectiveForegroundColor,
+        : FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Row(
+              mainAxisAlignment: iconAlignment ?? MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (icon != null) ...[
+                  Icon(icon, size: 20, color: effectiveForegroundColor),
+                  SizedBox(width: AppSizes.paddingS),
+                ],
+                Text(
+                  text,
+                  maxLines: 1,
+                  style: TextStyle(
+                    fontSize: effectiveFontSize,
+                    fontWeight: effectiveFontWeight,
+                    letterSpacing: 0.5,
+                    color: effectiveForegroundColor,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           );
 
     if (isTextButton) {
