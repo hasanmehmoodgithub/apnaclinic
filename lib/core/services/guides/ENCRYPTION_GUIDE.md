@@ -232,40 +232,12 @@ dependencies:
 
 ### Native Integration
 
-The service uses `NativeSecurity.getSecretKey()` which requires native setup.
+The service uses `NativeSecurity.getSecretKey()` on MethodChannel `native/keys`.
 
-#### Android (Kotlin)
+- **Android:** `MainActivity` registers the channel; `NativeKeyProvider` wraps a one-time 32-byte secret with AndroidKeyStore AES-GCM.
+- **iOS:** `AppDelegate` registers the channel; `NativeKeyProvider` stores the same secret in Keychain.
 
-In your `MainActivity.kt` or native security handler:
-
-```kotlin
-// NativeSecurity.kt
-class NativeSecurity {
-    companion object {
-        @JvmStatic
-        fun getSecretKey(): String {
-            // Get key from Android Keystore or secure storage
-            // For production, use Android Keystore
-            return "YourSecureNativeKey123!"
-        }
-    }
-}
-```
-
-#### iOS (Swift)
-
-In your native security handler:
-
-```swift
-// NativeSecurity.swift
-class NativeSecurity {
-    static func getSecretKey() -> String {
-        // Get key from iOS Keychain or secure storage
-        // For production, use iOS Keychain
-        return "YourSecureNativeKey123!"
-    }
-}
-```
+If the channel is missing, `EncryptionService` falls back to a persisted Dart-generated key (less secure, and a later native key change will make existing encrypted prefs unreadable).
 
 ---
 

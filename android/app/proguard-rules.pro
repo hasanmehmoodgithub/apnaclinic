@@ -10,6 +10,7 @@
 # Native MethodChannel entry and BuildConfig cert hashes.
 -keep class com.apna.clinic.apnaclinic.MainActivity { *; }
 -keep class com.apna.clinic.apnaclinic.DeviceSecurityChecker { *; }
+-keep class com.apna.clinic.apnaclinic.NativeKeyProvider { *; }
 -keep class com.apna.clinic.apnaclinic.BuildConfig { *; }
 
 # Crash traces stay useful without exposing original file names.

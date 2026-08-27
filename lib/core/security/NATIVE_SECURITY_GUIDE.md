@@ -73,29 +73,27 @@ The `NativeSecurity` class provides a secure way to retrieve encryption keys fro
 ### Android
 
 **Files:**
-- `MainActivity.kt` - Method channel handler
-- `NativeKeyProvider.kt` - JNI bridge
-- `native-lib.cpp` - C++ implementation
-- `CMakeLists.txt` - Build configuration
+- `MainActivity.kt` — Method channel `native/keys`
+- `NativeKeyProvider.kt` — AndroidKeyStore wrap of a persisted secret
 
 **Flow:**
 1. Flutter calls `NativeSecurity.getSecretKey()`
-2. Method channel sends request to `MainActivity`
-3. `MainActivity` calls `NativeKeyProvider.getSecretKey()`
-4. JNI bridge calls C++ function
-5. C++ returns key to Flutter
+2. Method channel sends `getSecretKey` to `MainActivity`
+3. `NativeKeyProvider` unwraps (or generates once) a 32-byte Base64 secret
+4. The same string is returned on every launch
+
+AndroidKeyStore AES keys cannot export raw bytes. The secret is generated once, encrypted with a Keystore AES-GCM wrapping key, and stored in SharedPreferences.
 
 ### iOS
 
 **Files:**
-- `AppDelegate.swift` - Method channel handler
-- `NativeKeyProvider.swift` - Swift implementation
+- `AppDelegate.swift` — Method channel `native/keys` (registered in `didInitializeImplicitFlutterEngine`)
+- `NativeKeyProvider.swift` — Keychain generic password
 
 **Flow:**
 1. Flutter calls `NativeSecurity.getSecretKey()`
-2. Method channel sends request to `AppDelegate`
-3. `AppDelegate` calls `NativeKeyProvider.getSecretKey()`
-4. Swift returns key to Flutter
+2. Method channel sends `getSecretKey` to `AppDelegate`
+3. `NativeKeyProvider` reads (or generates once) a 32-byte Base64 secret from Keychain
 
 ---
 
@@ -133,82 +131,14 @@ final encrypted = encryptionService.encrypt('Sensitive data');
 
 ## ⚙️ Setup
 
-### Android Setup
+Native registration is already wired:
 
-1. **C++ File** (`android/app/src/main/cpp/native-lib.cpp`):
-```cpp
-#include <jni.h>
-#include <string>
+- **Android:** `MainActivity` registers `native/keys`; `NativeKeyProvider.kt` wraps a one-time secret with AndroidKeyStore AES-GCM.
+- **iOS:** `AppDelegate.didInitializeImplicitFlutterEngine` registers `native/keys`; `NativeKeyProvider.swift` stores the secret in Keychain.
 
-extern "C"
-JNIEXPORT jstring JNICALL
-Java_com_example_teknosys_1flutter_1base_1architecture_NativeKeyProvider_getSecretKey(
-    JNIEnv *env, jobject /* this */) {
-    // TODO: Replace with secure key generation
-    std::string key = "YourSecureKeyHere";
-    return env->NewStringUTF(key.c_str());
-}
-```
+A full native rebuild is required after changing Kotlin/Swift (`flutter run` / stop and relaunch). Hot reload will not register a new method channel.
 
-2. **Kotlin Bridge** (`NativeKeyProvider.kt`):
-```kotlin
-class NativeKeyProvider {
-    companion object {
-        init {
-            System.loadLibrary("native-lib")
-        }
-        @JvmStatic
-        external fun getSecretKey(): String
-    }
-}
-```
-
-3. **Method Channel** (`MainActivity.kt`):
-```kotlin
-MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "native/keys")
-    .setMethodCallHandler { call, result ->
-        if (call.method == "getSecretKey") {
-            try {
-                val key = NativeKeyProvider.getSecretKey()
-                result.success(key)
-            } catch (e: Exception) {
-                result.error("ERROR", e.message, null)
-            }
-        }
-    }
-```
-
-### iOS Setup
-
-1. **Swift Implementation** (`NativeKeyProvider.swift`):
-```swift
-import Foundation
-
-@objc class NativeKeyProvider: NSObject {
-    @objc static func getSecretKey() -> String {
-        // TODO: Replace with secure key generation
-        return "YourSecureKeyHere"
-    }
-}
-```
-
-2. **Method Channel** (`AppDelegate.swift`):
-```swift
-let controller = window?.rootViewController as! FlutterViewController
-let channel = FlutterMethodChannel(
-    name: "native/keys",
-    binaryMessenger: controller.binaryMessenger
-)
-
-channel.setMethodCallHandler { (call, result) in
-    if call.method == "getSecretKey" {
-        let key = NativeKeyProvider.getSecretKey()
-        result(key)
-    } else {
-        result(FlutterMethodNotImplemented)
-    }
-}
-```
+If the channel is missing, `EncryptionService` logs this warning and uses a persisted Dart fallback key. Switching from fallback to native later changes the combined encryption key, so existing encrypted prefs (login status, etc.) become unreadable until the user signs in again.
 
 ---
 

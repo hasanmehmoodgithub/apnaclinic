@@ -20,8 +20,44 @@ import UserNotifications
     GeneratedPluginRegistrant.register(with: engineBridge.pluginRegistry)
     let messenger = engineBridge.applicationRegistrar.messenger()
     registerSecurityChannels(messenger: messenger)
+    registerNativeKeysChannel(messenger: messenger)
     registerMediaSessionChannel(messenger: messenger)
     registerExternalAppChannel(messenger: messenger)
+  }
+
+  private func registerNativeKeysChannel(messenger: FlutterBinaryMessenger) {
+    let channel = FlutterMethodChannel(
+      name: "native/keys",
+      binaryMessenger: messenger
+    )
+    channel.setMethodCallHandler { call, result in
+      guard call.method == "getSecretKey" else {
+        result(FlutterMethodNotImplemented)
+        return
+      }
+      do {
+        let key = try NativeKeyProvider.getSecretKey()
+        guard !key.isEmpty else {
+          result(
+            FlutterError(
+              code: "EMPTY_KEY",
+              message: "Native key was empty",
+              details: nil
+            )
+          )
+          return
+        }
+        result(key)
+      } catch {
+        result(
+          FlutterError(
+            code: "ERROR",
+            message: error.localizedDescription,
+            details: nil
+          )
+        )
+      }
+    }
   }
 
   private func registerExternalAppChannel(messenger: FlutterBinaryMessenger) {

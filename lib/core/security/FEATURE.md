@@ -11,16 +11,19 @@ Block the app on compromised devices (root / jailbreak, emulator / simulator, Fr
 - `SecurityGate` wraps the app in `main.dart` (blocks + countdown + exit when compromised). When the flag is off, the child is shown immediately.
 - Checking / blocked UI uses the Apna Clinic logo, `FlavorConfig.appName`, and app colors (teal / navy)
 - MethodChannels: `security_channel` (`checkAppIntegrity`), advanced `qwe_rty_123` / `f1`
+- `NativeSecurity.getSecretKey()` uses MethodChannel `native/keys` / `getSecretKey` so `EncryptionService` can combine a native key with the FlutterSecureStorage secret. Missing native registration previously threw `MissingPluginException` and fell back to a persisted Dart-generated key.
 
 ## Native
 
-- **Android:** `MainActivity` + `DeviceSecurityChecker.kt`
+- **Android:** `MainActivity` + `DeviceSecurityChecker.kt` + `NativeKeyProvider.kt`
   - Expected package: `com.apna.clinic.android`
   - SHA-256 of installed signing cert vs Gradle `BuildConfig.EXPECTED_CERT_SHA256` (this variant’s keystore) plus optional `CERT_SHA256_PLAY` / `CERT_SHA256_RELEASE` / `CERT_SHA256_EXTRA`
   - Release uses `android/app/econceptions.jks` via gitignored `android/key.properties` (or `UPLOAD_STORE_PASSWORD` / `UPLOAD_KEY_PASSWORD` / `UPLOAD_KEY_ALIAS` / `UPLOAD_STORE_FILE`). Falls back to debug signing if the upload keystore is missing.
   - Release builds also reject `FLAG_DEBUGGABLE`
   - Release uses R8 minify + resource shrinking (`proguard-rules.pro`); DexGuard is not enabled
-- **iOS:** `AppDelegate` + `DeviceSecurityChecker.swift` (no APK signature check)
+  - `native/keys` wraps a one-time random 32-byte secret with an AndroidKeyStore AES-GCM key (keystore keys are not exportable)
+- **iOS:** `AppDelegate` + `DeviceSecurityChecker.swift` + `NativeKeyProvider.swift` (no APK signature check)
+  - `native/keys` stores the same 32-byte secret in Keychain (`AfterFirstUnlockThisDeviceOnly`)
 
 ## Android application ID
 

@@ -44,6 +44,27 @@ class MainActivity : FlutterActivity() {
 
         MethodChannel(
             flutterEngine.dartExecutor.binaryMessenger,
+            NATIVE_KEYS_CHANNEL,
+        ).setMethodCallHandler { call, result ->
+            when (call.method) {
+                "getSecretKey" -> {
+                    try {
+                        val key = NativeKeyProvider.getSecretKey(this)
+                        if (key.isBlank()) {
+                            result.error("EMPTY_KEY", "Native key was empty", null)
+                        } else {
+                            result.success(key)
+                        }
+                    } catch (e: Exception) {
+                        result.error("ERROR", e.message, null)
+                    }
+                }
+                else -> result.notImplemented()
+            }
+        }
+
+        MethodChannel(
+            flutterEngine.dartExecutor.binaryMessenger,
             EXTERNAL_APP_CHANNEL,
         ).setMethodCallHandler { call, result ->
             when (call.method) {
@@ -69,6 +90,7 @@ class MainActivity : FlutterActivity() {
     companion object {
         private const val SECURITY_CHANNEL = "security_channel"
         private const val ADVANCED_CHANNEL = "qwe_rty_123"
+        private const val NATIVE_KEYS_CHANNEL = "native/keys"
         private const val EXTERNAL_APP_CHANNEL = "apna_clinic/external_app"
     }
 }
