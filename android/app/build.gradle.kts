@@ -1,5 +1,7 @@
+import java.io.FileInputStream
 import java.security.KeyStore
 import java.security.MessageDigest
+import java.util.Properties
 
 plugins {
     id("com.android.application")
@@ -11,6 +13,27 @@ plugins {
 if (file("google-services.json").exists()) {
     apply(plugin = "com.google.gms.google-services")
 }
+
+val keystoreProperties = Properties()
+val keystorePropertiesFile = rootProject.file("key.properties")
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(FileInputStream(keystorePropertiesFile))
+}
+
+fun signingProp(key: String, env: String): String? {
+    return keystoreProperties.getProperty(key)?.trim()?.takeIf { it.isNotEmpty() }
+        ?: System.getenv(env)?.trim()?.takeIf { it.isNotEmpty() }
+}
+
+val uploadStorePassword = signingProp("storePassword", "UPLOAD_STORE_PASSWORD")
+val uploadKeyPassword = signingProp("keyPassword", "UPLOAD_KEY_PASSWORD")
+val uploadKeyAlias = signingProp("keyAlias", "UPLOAD_KEY_ALIAS")
+val uploadStoreFileName = signingProp("storeFile", "UPLOAD_STORE_FILE") ?: "econceptions.jks"
+val uploadStoreFile = file(uploadStoreFileName)
+val hasUploadSigning = !uploadStorePassword.isNullOrEmpty() &&
+    !uploadKeyPassword.isNullOrEmpty() &&
+    !uploadKeyAlias.isNullOrEmpty() &&
+    uploadStoreFile.exists()
 
 android {
     namespace = "com.apna.clinic.apnaclinic"
@@ -37,18 +60,39 @@ android {
         buildConfigField("String", "EXPECTED_CERT_EXTRA", "\"${extraExpectedCerts()}\"")
     }
 
+    signingConfigs {
+        if (hasUploadSigning) {
+            create("release") {
+                keyAlias = uploadKeyAlias!!
+                keyPassword = uploadKeyPassword!!
+                storePassword = uploadStorePassword!!
+                storeFile = uploadStoreFile
+            }
+        }
+    }
+
     buildTypes {
         debug {
             val sha = signingCertSha256(signingConfigs.getByName("debug"))
             buildConfigField("String", "EXPECTED_CERT_SHA256", "\"$sha\"")
         }
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            val releaseSigning = signingConfigs.getByName("debug")
+            val releaseSigning = if (hasUploadSigning) {
+                signingConfigs.getByName("release")
+            } else {
+                signingConfigs.getByName("debug")
+            }
             signingConfig = releaseSigning
             val sha = signingCertSha256(releaseSigning)
             buildConfigField("String", "EXPECTED_CERT_SHA256", "\"$sha\"")
+            // R8 enabled while DexGuard is temporarily disabled.
+            // When re-enabling DexGuard, set both back to false and restore the dexguard { } block.
+            isMinifyEnabled = true
+            isShrinkResources = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro",
+            )
         }
     }
 }

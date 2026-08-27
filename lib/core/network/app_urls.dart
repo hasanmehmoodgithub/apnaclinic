@@ -263,7 +263,7 @@ class AppUrls {
       mobileBookingDetail(orderId);
 
   /// Global mobile search (GET). Query: `text`, `limit`.
-  static String mobileSearch({required String text, int limit = 5}) {
+  static String mobileSearch({required String text, int limit = 10}) {
     final q = <String>[
       'text=${Uri.encodeComponent(text.trim())}',
       'limit=$limit',

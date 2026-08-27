@@ -17,7 +17,9 @@ Block the app on compromised devices (root / jailbreak, emulator / simulator, Fr
 - **Android:** `MainActivity` + `DeviceSecurityChecker.kt`
   - Expected package: `com.apna.clinic.android`
   - SHA-256 of installed signing cert vs Gradle `BuildConfig.EXPECTED_CERT_SHA256` (this variant’s keystore) plus optional `CERT_SHA256_PLAY` / `CERT_SHA256_RELEASE` / `CERT_SHA256_EXTRA`
+  - Release uses `android/app/econceptions.jks` via gitignored `android/key.properties` (or `UPLOAD_STORE_PASSWORD` / `UPLOAD_KEY_PASSWORD` / `UPLOAD_KEY_ALIAS` / `UPLOAD_STORE_FILE`). Falls back to debug signing if the upload keystore is missing.
   - Release builds also reject `FLAG_DEBUGGABLE`
+  - Release uses R8 minify + resource shrinking (`proguard-rules.pro`); DexGuard is not enabled
 - **iOS:** `AppDelegate` + `DeviceSecurityChecker.swift` (no APK signature check)
 
 ## Android application ID
