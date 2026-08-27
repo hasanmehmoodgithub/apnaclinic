@@ -22,6 +22,7 @@ class LabTestCheckoutPatientFormSectionWidget extends StatelessWidget {
     required this.onGender,
     required this.isEditingPatientDetails,
     required this.onToggleEdit,
+    this.showEmergencyError = false,
   });
 
   final ThemeData theme;
@@ -33,6 +34,7 @@ class LabTestCheckoutPatientFormSectionWidget extends StatelessWidget {
   final ValueChanged<String> onGender;
   final bool isEditingPatientDetails;
   final VoidCallback onToggleEdit;
+  final bool showEmergencyError;
 
   @override
   Widget build(BuildContext context) {
@@ -69,6 +71,7 @@ class LabTestCheckoutPatientFormSectionWidget extends StatelessWidget {
           theme: theme,
           l10n: l10n,
           controller: emergencyController,
+          hasError: showEmergencyError,
         ),
       ],
     );
@@ -305,11 +308,13 @@ class _EmergencyContactCard extends StatelessWidget {
     required this.theme,
     required this.l10n,
     required this.controller,
+    this.hasError = false,
   });
 
   final ThemeData theme;
   final AppLocalizations l10n;
   final TextEditingController controller;
+  final bool hasError;
 
   @override
   Widget build(BuildContext context) {
@@ -339,6 +344,7 @@ class _EmergencyContactCard extends StatelessWidget {
           controller: controller,
           hint: l10n.labTestEmergencyNumberHint,
           keyboardType: TextInputType.phone,
+          hasError: hasError,
           inputFormatters: [
             FilteringTextInputFormatter.digitsOnly,
             LengthLimitingTextInputFormatter(11),
@@ -460,6 +466,7 @@ class _InputBox extends StatelessWidget {
     this.keyboardType,
     this.inputFormatters,
     this.textAlign = TextAlign.start,
+    this.hasError = false,
   });
 
   final ThemeData theme;
@@ -468,14 +475,18 @@ class _InputBox extends StatelessWidget {
   final TextInputType? keyboardType;
   final List<TextInputFormatter>? inputFormatters;
   final TextAlign textAlign;
+  final bool hasError;
 
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 2.h),
       decoration: BoxDecoration(
-        color: AppColors.clrF2F2F2,
+        color: hasError ? AppColors.clrFFF8F8 : AppColors.clrF2F2F2,
         borderRadius: BorderRadius.circular(8.r),
+        border: hasError
+            ? Border.all(color: AppColors.clrBA2025, width: 1)
+            : null,
       ),
       child: TextField(
         controller: controller,
@@ -488,7 +499,7 @@ class _InputBox extends StatelessWidget {
         ),
         textAlign: textAlign,
         style: theme.textTheme.bodyMedium?.copyWith(
-          color: AppColors.clr061E40,
+          color: hasError ? AppColors.clrBA2025 : AppColors.clr061E40,
           fontSize: 14.sp,
           fontWeight: FontWeight.w500,
         ),
@@ -497,7 +508,7 @@ class _InputBox extends StatelessWidget {
           isDense: true,
           hintText: hint,
           hintStyle: theme.textTheme.bodyMedium?.copyWith(
-            color: AppColors.clr667B99,
+            color: hasError ? AppColors.clrBA2025 : AppColors.clr667B99,
             fontSize: 13.sp,
             fontWeight: FontWeight.w400,
           ),

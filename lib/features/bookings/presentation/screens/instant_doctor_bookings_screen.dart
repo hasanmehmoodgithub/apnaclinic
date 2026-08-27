@@ -10,6 +10,7 @@ import '../../../dashboard/presentation/constants/main_navigation_tabs.dart';
 import '../cubit/instant_doctor_bookings_cubit.dart';
 import '../cubit/instant_doctor_bookings_state.dart';
 import '../widgets/bookings_list_shimmer_widget.dart';
+import '../widgets/bookings_refresh_view.dart';
 import '../widgets/empty_booking_widget.dart';
 import '../widgets/instant_doctor_booking_card_widget.dart';
 
@@ -63,63 +64,78 @@ class _InstantDoctorBookingsBodyState extends State<_InstantDoctorBookingsBody> 
     final l10n = AppLocalizations.of(context)!;
     return BlocBuilder<InstantDoctorBookingsCubit, InstantDoctorBookingsState>(
       builder: (context, state) {
+        Future<void> onRefresh() =>
+            context.read<InstantDoctorBookingsCubit>().load(refresh: true);
+
         if (state.isLoading) {
           return const BookingsListShimmerWidget();
         }
 
         if (state.hasError && state.items.isEmpty) {
-          return Center(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(state.errorMessage ?? ''),
-                SizedBox(height: 12.h),
-                TextButton(
-                  onPressed: () =>
-                      context.read<InstantDoctorBookingsCubit>().load(),
-                  child: Text(l10n.commonRetry),
-                ),
-              ],
-            ),
-          );
-        }
-
-        if (state.items.isEmpty) {
-          return Padding(
-            padding: EdgeInsets.only(top: 20.h),
-            child: EmptyBookingWidget(
-              description: l10n.bookingsInstantDoctorEmptyDescription,
-              buttonText: l10n.instantDoctorTitle,
-              onTap: () => sl<AuthSessionRefresh>().requestTabIndex(
-                MainNavigationTabs.instantDoctor,
-                instantDoctorSourceScreen:
-                    AnalyticsInstantDoctorSourceKeys.bottomTab,
+          return BookingsRefreshView(
+            onRefresh: onRefresh,
+            expandChild: true,
+            child: Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(state.errorMessage ?? ''),
+                  SizedBox(height: 12.h),
+                  TextButton(
+                    onPressed: () =>
+                        context.read<InstantDoctorBookingsCubit>().load(),
+                    child: Text(l10n.commonRetry),
+                  ),
+                ],
               ),
             ),
           );
         }
 
-        return ListView.separated(
-          controller: _scrollController,
-          padding: EdgeInsets.fromLTRB(0, 20.h, 0, 8.h),
-          itemBuilder: (context, index) {
-            if (index >= state.items.length) {
-              return const Center(
-                child: Padding(
-                  padding: EdgeInsets.symmetric(vertical: 12),
-                  child: CircularProgressIndicator(strokeWidth: 2),
+        if (state.items.isEmpty) {
+          return BookingsRefreshView(
+            onRefresh: onRefresh,
+            expandChild: true,
+            child: Padding(
+              padding: EdgeInsets.only(top: 20.h),
+              child: EmptyBookingWidget(
+                description: l10n.bookingsInstantDoctorEmptyDescription,
+                buttonText: l10n.instantDoctorTitle,
+                onTap: () => sl<AuthSessionRefresh>().requestTabIndex(
+                  MainNavigationTabs.instantDoctor,
+                  instantDoctorSourceScreen:
+                      AnalyticsInstantDoctorSourceKeys.bottomTab,
                 ),
-              );
-            }
-            return InstantDoctorBookingCardWidget(item: state.items[index]);
-          },
-          separatorBuilder: (_, index) {
-            if (index >= state.items.length - 1) {
-              return const SizedBox.shrink();
-            }
-            return SizedBox(height: 14.h);
-          },
-          itemCount: state.items.length + (state.isLoadingMore ? 1 : 0),
+              ),
+            ),
+          );
+        }
+
+        return BookingsRefreshView(
+          onRefresh: onRefresh,
+          child: ListView.separated(
+            controller: _scrollController,
+            physics: const AlwaysScrollableScrollPhysics(),
+            padding: EdgeInsets.fromLTRB(0, 20.h, 0, 8.h),
+            itemBuilder: (context, index) {
+              if (index >= state.items.length) {
+                return const Center(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(vertical: 12),
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  ),
+                );
+              }
+              return InstantDoctorBookingCardWidget(item: state.items[index]);
+            },
+            separatorBuilder: (_, index) {
+              if (index >= state.items.length - 1) {
+                return const SizedBox.shrink();
+              }
+              return SizedBox(height: 14.h);
+            },
+            itemCount: state.items.length + (state.isLoadingMore ? 1 : 0),
+          ),
         );
       },
     );

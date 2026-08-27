@@ -8,6 +8,7 @@ import '../../../lab_test/domain/use_cases/get_lab_orders_use_case.dart';
 import '../../data/mappers/lab_test_booking_list_mapper.dart';
 import '../../data/models/lab_test_booking_item_model.dart';
 import '../widgets/bookings_list_shimmer_widget.dart';
+import '../widgets/bookings_refresh_view.dart';
 import '../widgets/empty_booking_widget.dart';
 import '../widgets/lab_test_booking_card_widget.dart';
 
@@ -19,15 +20,16 @@ class LabTestBookingsScreen extends StatefulWidget {
 }
 
 class _LabTestBookingsScreenState extends State<LabTestBookingsScreen> {
-  late final Future<List<LabTestBookingItemModel>> _bookingsFuture;
+  List<LabTestBookingItemModel> _bookings = const [];
+  bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    _bookingsFuture = _loadBookings();
+    _load();
   }
 
-  Future<List<LabTestBookingItemModel>> _loadBookings() async {
+  Future<List<LabTestBookingItemModel>> _fetchBookings() async {
     final result = await sl<GetLabOrdersUseCase>()(
       const GetLabOrdersParams(page: 1, limit: 20),
     );
@@ -40,43 +42,51 @@ class _LabTestBookingsScreenState extends State<LabTestBookingsScreen> {
     );
   }
 
+  Future<void> _load() async {
+    setState(() => _isLoading = true);
+    final bookings = await _fetchBookings();
+    if (!mounted) return;
+    setState(() {
+      _bookings = bookings;
+      _isLoading = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     return Padding(
       padding: EdgeInsets.fromLTRB(2.w, 18.h, 2.w, 8.h),
-      child: FutureBuilder<List<LabTestBookingItemModel>>(
-        future: _bookingsFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return BookingsListShimmerWidget(
+      child: _isLoading
+          ? BookingsListShimmerWidget(
               padding: EdgeInsets.zero,
               separatorHeight: 10.h,
-            );
-          }
-
-          final bookings = snapshot.data ?? const <LabTestBookingItemModel>[];
-          if (bookings.isEmpty) {
-            return Column(
-              children: [
-                EmptyBookingWidget(
-                  description: l10n.bookingsLabTestEmptyDescription,
-                  buttonText: l10n.labTestBookCta,
-                  onTap: () => context.pushNamed(AppRoutes.labTest),
+            )
+          : _bookings.isEmpty
+              ? BookingsRefreshView(
+                  onRefresh: _load,
+                  expandChild: true,
+                  child: Column(
+                    children: [
+                      EmptyBookingWidget(
+                        description: l10n.bookingsLabTestEmptyDescription,
+                        buttonText: l10n.labTestBookCta,
+                        onTap: () => context.pushNamed(AppRoutes.labTest),
+                      ),
+                    ],
+                  ),
+                )
+              : BookingsRefreshView(
+                  onRefresh: _load,
+                  child: ListView.separated(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    itemCount: _bookings.length,
+                    separatorBuilder: (_, _) => SizedBox(height: 10.h),
+                    itemBuilder: (context, index) => LabTestBookingCardWidget(
+                      booking: _bookings[index],
+                    ),
+                  ),
                 ),
-              ],
-            );
-          }
-
-          return ListView.separated(
-            itemCount: bookings.length,
-            separatorBuilder: (_, _) => SizedBox(height: 10.h),
-            itemBuilder: (context, index) => LabTestBookingCardWidget(
-              booking: bookings[index],
-            ),
-          );
-        },
-      ),
     );
   }
 }

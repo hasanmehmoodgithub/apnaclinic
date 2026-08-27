@@ -52,7 +52,7 @@ class InstantDoctorCubit extends Cubit<InstantDoctorState> {
     return msisdn.isEmpty ? null : msisdn;
   }
 
-  Future<void> loadContent() async {
+  Future<void> loadContent({bool refresh = false}) async {
     if (!AuthGuard.isLoggedIn(appPref)) {
       emit(
         state.copyWith(
@@ -66,7 +66,8 @@ class InstantDoctorCubit extends Cubit<InstantDoctorState> {
 
     emit(
       state.copyWith(
-        loadingStateStatus: StateStatus.loading,
+        loadingStateStatus:
+            refresh ? StateStatus.refreshing : StateStatus.loading,
         errorMessage: null,
       ),
     );
@@ -85,6 +86,7 @@ class InstantDoctorCubit extends Cubit<InstantDoctorState> {
     final result = await getContentUseCase(
       GetInstantDoctorContentParams(msisdn: msisdn),
     );
+    if (isClosed) return;
     result.fold(
       (error) => emit(
         state.copyWith(
@@ -301,7 +303,7 @@ class InstantDoctorCubit extends Cubit<InstantDoctorState> {
             otpErrorMessage: null,
           ),
         );
-        await loadContent();
+        await loadContent(refresh: true);
         if (action == InstantDoctorOtpAction.subscribe) {
           _logEvent(
             AnalyticsEventKeys.fbMobileSubscribe,

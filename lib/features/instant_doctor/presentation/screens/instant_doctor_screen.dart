@@ -175,7 +175,7 @@ class _InstantDoctorScreenState extends State<InstantDoctorScreen> {
     if (providerId != null) {
       _cubit.clearOpeningProvider();
     }
-    await _cubit.loadContent();
+    await _cubit.loadContent(refresh: true);
   }
 
   Future<void> _showOtpSheet(InstantDoctorProviderEntity provider) async {
@@ -237,7 +237,7 @@ class _InstantDoctorScreenState extends State<InstantDoctorScreen> {
 
     if (otpAction == InstantDoctorOtpAction.unsubscribe) {
       _showSnackBar(_l10n.instantDoctorCancelSubscriptionSuccess);
-      await _cubit.loadContent();
+      await _cubit.loadContent(refresh: true);
       return;
     }
 
