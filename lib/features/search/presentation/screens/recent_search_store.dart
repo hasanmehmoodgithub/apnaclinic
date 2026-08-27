@@ -9,12 +9,12 @@ import '../../domain/entities/search_entity.dart';
 ///
 /// Persists the latest searches to SharedPreferences so they survive
 /// app restarts. Newest entry is always at index 0; duplicates are
-/// deduped (case-insensitive) and the list is capped.
+/// deduped (case-insensitive) and the list is capped at 5.
 class RecentSearchesStore {
   RecentSearchesStore(this._prefs);
 
   static const String _key = 'search.recent_searches.v1';
-  static const int _maxEntries = 12;
+  static const int _maxEntries = 5;
 
   final SharedPreferences _prefs;
 
@@ -33,6 +33,7 @@ class RecentSearchesStore {
         ),
       )
           .where((e) => e.title.isNotEmpty)
+          .take(_maxEntries)
           .toList(growable: false);
     } catch (_) {
       return const [];

@@ -204,9 +204,11 @@ class SearchCubit extends Cubit<SearchState> {
       ),
       (content) {
         final localRecents = _recentSearchesStore.load();
+        final recentSearches = localRecents.isNotEmpty
+            ? localRecents
+            : content.recentSearches.take(5).toList(growable: false);
         final merged = SearchContentEntity(
-          recentSearches:
-              localRecents.isNotEmpty ? localRecents : content.recentSearches,
+          recentSearches: recentSearches,
           popularSearches: content.popularSearches,
           suggestions: content.suggestions,
           sections: content.sections,
