@@ -24,6 +24,10 @@ Block the app on compromised devices (root / jailbreak, emulator / simulator, Fr
 
 Play / installed package is `com.apna.clinic.android`. Kotlin `namespace` remains `com.apna.clinic.apnaclinic`. After changing the id, register that package in Firebase and replace `android/app/google-services.json`.
 
+## iOS bundle ID
+
+App Store / installed bundle is `com.apna.clinic.ios`. After changing the id, register that bundle in Apple Developer and Firebase, then replace `ios/Runner/GoogleService-Info.plist`.
+
 ## Notes
 
 - Production flavor also enforces developer-mode (Android) and emulator/simulator blocks when `SECURITY_CHECKS` is true.

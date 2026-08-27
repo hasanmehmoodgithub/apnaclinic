@@ -49,7 +49,10 @@ The router is configured in `lib/core/router/app_router.dart`:
 class AppRouter {
   static final GoRouter router = GoRouter(
     initialLocation: AppRoutes.path(AppRoutes.splash),
-    observers: [GoRouterObserver()], // Debug logging
+    observers: [
+      GoRouterObserver(), // Debug logging
+      AnalyticsRouteObserver(), // Screen views (Firebase only in production)
+    ],
     routes: [
       // Routes defined here
     ],

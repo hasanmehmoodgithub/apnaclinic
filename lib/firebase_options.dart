@@ -51,6 +51,6 @@ class DefaultFirebaseOptions {
     messagingSenderId: '411885842320',
     projectId: 'notificationtes-dc9f6',
     storageBucket: 'notificationtes-dc9f6.firebasestorage.app',
-    iosBundleId: 'com.apnaclinic.teknosys',
+    iosBundleId: 'com.apna.clinic.ios',
   );
 }

@@ -6,9 +6,15 @@ Full UI + parameter report for product and engineering:
 Use `AnalyticsService.logEvent` for every event. Do not add feature-specific
 methods on the service. Firebase is the first backend; add more in DI later.
 
+Firebase receives events **only when `FlavorConfig.isProduction`**.
+Development and staging still print `developer.log` (`event:` / `screen:`) so
+you can verify locally. `AnalyticsRouteObserver` (on `GoRouter`) calls
+`logScreenView` on push / pop / replace.
+
 ## Layout
 - `analytics_event_keys.dart` — event and parameter names
 - `analytics_service.dart` — `logEvent` / screen / user id, fans out to providers
+- `analytics_route_observer.dart` — screen views from navigation
 - `providers/firebase_analytics_provider.dart` — Firebase (no-op until `FirebaseBootstrap`)
 
 ## DI
@@ -31,7 +37,8 @@ unawaited(
 ```
 
 Add new names in `AnalyticsEventKeys` / `AnalyticsParamKeys`, then call `logEvent`.
-Each `logEvent` writes a `developer.log` (`AnalyticsService`) before fan-out.
+Each `logEvent` / `logScreenView` writes a `developer.log` (`AnalyticsService`)
+before fan-out. Fan-out to Firebase runs only on the production flavor.
 Events before Firebase init are dropped. Do not put PII in parameters except
 where a tracking spec requires it (`pharmacy_order_confirmed`,
 `lab_booking_confirmed`, `surgery_booked`, and `prescription_downloaded`

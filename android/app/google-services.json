@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "411885842320",
-    "project_id": "notificationtes-dc9f6",
-    "storage_bucket": "notificationtes-dc9f6.firebasestorage.app"
+    "project_number": "293590853827",
+    "project_id": "apna-clinic-mobile-app",
+    "storage_bucket": "apna-clinic-mobile-app.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:411885842320:android:88a2f0eb4cb41432c44d15",
+        "mobilesdk_app_id": "1:293590853827:android:bc2f2cc68e51c231c71a76",
         "android_client_info": {
           "package_name": "com.apna.clinic.android"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyB8L-lDz2pou5r97S-pTqp6t0dyYo7-JPo"
+          "current_key": "AIzaSyDp5B6a-Zp2erRYrQz4PZrCVSVVMwg_sZ4"
         }
       ],
       "services": {

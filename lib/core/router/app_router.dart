@@ -74,6 +74,7 @@ import '../../features/profile_setup/presentation/profile_setup_launch_source.da
 import '../../features/profile_setup/presentation/cubit/profile_cubit.dart';
 import '../../features/profile_setup/presentation/screens/profile_screen.dart';
 import '../../features/profile_setup/presentation/screens/profile_setup_screen.dart';
+import '../analytics/analytics_route_observer.dart';
 import 'app_routes.dart';
 import 'router_observer.dart';
 
@@ -82,8 +83,9 @@ class AppRouter {
     initialLocation: AppRoutes.path(AppRoutes.splash),
     observers: [
       GoRouterObserver(),
+      AnalyticsRouteObserver(),
       if (ChuckerGuard.isEnabled) ChuckerFlutter.navigatorObserver,
-    ], // Router debug logging
+    ],
 
     routes: [
       GoRoute(
