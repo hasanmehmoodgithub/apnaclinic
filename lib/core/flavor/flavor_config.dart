@@ -25,7 +25,7 @@ class FlavorConfig {
   static AppFlavor get currentFlavor {
     const flavorString = String.fromEnvironment(
       'APP_FLAVOR',
-      defaultValue: 'development',
+      defaultValue: 'Production',
     );
 
     return switch (flavorString.toLowerCase()) {

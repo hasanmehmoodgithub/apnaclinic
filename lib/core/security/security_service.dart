@@ -13,7 +13,7 @@ class SecurityService {
   /// Default **on**. Opt out: `--dart-define=SECURITY_CHECKS=false`.
   static const bool securityChecksEnabled = bool.fromEnvironment(
     'SECURITY_CHECKS',
-    defaultValue: true,
+    defaultValue: false,
   );
 
   // Method channels

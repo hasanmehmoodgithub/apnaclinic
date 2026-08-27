@@ -8,6 +8,9 @@ import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/utils/no_emoji_text_input_formatter.dart';
 import '../cubit/profile_setup_state.dart';
 
+const int _kProfileNameMaxLength = 50;
+const int _kProfileAddressMaxLength = 255;
+
 class ProfileSetupFormSection extends StatelessWidget {
   const ProfileSetupFormSection({
     super.key,
@@ -81,13 +84,16 @@ class ProfileSetupFormSection extends StatelessWidget {
                 _ProfileFieldLabel(text: l10n.profileFirstNameLabel),
                 TextFormField(
                   controller: firstNameController,
+                  maxLength: _kProfileNameMaxLength,
                   inputFormatters: NoEmojiTextInputFormatter.merge(
-                    const <TextInputFormatter>[],
+                    <TextInputFormatter>[
+                      LengthLimitingTextInputFormatter(_kProfileNameMaxLength),
+                    ],
                     allowBasicPunctuation: true,
                   ),
                   decoration: inputDecorationBuilder(
                     hintText: l10n.profileFirstNameHint,
-                  ),
+                  ).copyWith(counterText: ''),
                   validator: (value) {
                     if ((value ?? '').trim().isEmpty) {
                       return l10n.profileFirstNameRequired;
@@ -99,13 +105,16 @@ class ProfileSetupFormSection extends StatelessWidget {
                 _ProfileFieldLabel(text: l10n.profileLastNameLabel),
                 TextFormField(
                   controller: lastNameController,
+                  maxLength: _kProfileNameMaxLength,
                   inputFormatters: NoEmojiTextInputFormatter.merge(
-                    const <TextInputFormatter>[],
+                    <TextInputFormatter>[
+                      LengthLimitingTextInputFormatter(_kProfileNameMaxLength),
+                    ],
                     allowBasicPunctuation: true,
                   ),
                   decoration: inputDecorationBuilder(
                     hintText: l10n.profileLastNameHint,
-                  ),
+                  ).copyWith(counterText: ''),
                   validator: (value) {
                     if ((value ?? '').trim().isEmpty) {
                       return l10n.profileLastNameRequired;
@@ -160,13 +169,18 @@ class ProfileSetupFormSection extends StatelessWidget {
                 _ProfileFieldLabel(text: l10n.profileAddressLabel),
                 TextFormField(
                   controller: addressController,
+                  maxLength: _kProfileAddressMaxLength,
                   inputFormatters: NoEmojiTextInputFormatter.merge(
-                    const <TextInputFormatter>[],
-                    allowBasicPunctuation: true,
+                    <TextInputFormatter>[
+                      LengthLimitingTextInputFormatter(
+                        _kProfileAddressMaxLength,
+                      ),
+                    ],
+                    allowSpecialCharacters: true,
                   ),
                   decoration: inputDecorationBuilder(
                     hintText: l10n.profileAddressHint,
-                  ),
+                  ).copyWith(counterText: ''),
                   validator: (value) {
                     if ((value ?? '').trim().isEmpty) {
                       return l10n.profileAddressRequired;

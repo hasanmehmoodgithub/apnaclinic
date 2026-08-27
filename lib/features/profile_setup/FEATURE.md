@@ -33,6 +33,8 @@ Splash/onboarding entry does not send `profile_creation_screen` (source not in s
 - `ProfileSetupScreen` calls `loadProfile()` only when the profile is already completed, so edit/update mode hydrates from API. First-time setup (`userOnboarding: true`) prefills fields from OTP `data.user` stored in `AppPref` (`email`, `gender`, `address`, `dob`; blank/`[NULL]` names stay empty). `AppPref.isProfileCompleted` is set on **save** only (not on GET).
 - Dismisses any global heart loader overlay on open (home banner loader uses root navigator). Edit avatar shows API/local `imageUrl` via `UserProfileAvatar`; a newly picked file takes priority until save.
 - Tapping the avatar (full circle or camera badge) opens `ProfileImageSourceSheet` with **Use camera** and **Choose from gallery** (same flow for first-time onboarding and profile update).
+- Address accepts letters, numbers, and special characters (`# / & ( ) , . -` and similar); emoji are still blocked. Name fields keep the tighter punctuation allowlist.
+- Field max lengths (edit + onboarding): first name **50**, last name **50**, address **255** (`LengthLimitingTextInputFormatter` + `maxLength`; counter UI hidden).
 - Completed profiles show edit/update wording; pending onboarding shows setup/save wording.
 - On successful update, the PUT runs first, local `AppPref` profile is updated in the repository, GET reloads `imageUrl`, the avatar disk cache is evicted, and `AuthSessionRefresh.notifyProfileUpdated()` rebuilds menu/home avatars. `ProfileScreen` also refreshes after the edit route returns.
 

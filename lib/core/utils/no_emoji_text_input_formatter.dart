@@ -1,18 +1,22 @@
 import 'package:flutter/services.dart';
 
-/// Blocks emoji, special characters, and symbols from typed or pasted text.
+/// Blocks emoji from typed or pasted text.
 ///
 /// Keeps letters, digits, and whitespace by default.
 /// Set [allowEmailSymbols] for email fields (`@ . _ + -`).
 /// Set [allowBasicPunctuation] for free-text fields (`. , ' - ? !`).
+/// Set [allowSpecialCharacters] for address-style fields (punctuation/symbols,
+/// still no emoji).
 class NoEmojiTextInputFormatter extends TextInputFormatter {
   NoEmojiTextInputFormatter({
     this.allowEmailSymbols = false,
     this.allowBasicPunctuation = false,
+    this.allowSpecialCharacters = false,
   });
 
   final bool allowEmailSymbols;
   final bool allowBasicPunctuation;
+  final bool allowSpecialCharacters;
 
   static final RegExp _emojiPattern = RegExp(
     r'[\u{1F1E6}-\u{1F1FF}\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{FE0F}\u{200D}]',
@@ -32,11 +36,13 @@ class NoEmojiTextInputFormatter extends TextInputFormatter {
     List<TextInputFormatter>? formatters, {
     bool allowEmailSymbols = false,
     bool allowBasicPunctuation = false,
+    bool allowSpecialCharacters = false,
   }) {
     return <TextInputFormatter>[
       NoEmojiTextInputFormatter(
         allowEmailSymbols: allowEmailSymbols,
         allowBasicPunctuation: allowBasicPunctuation,
+        allowSpecialCharacters: allowSpecialCharacters,
       ),
       ...?formatters,
     ];
@@ -78,6 +84,7 @@ class NoEmojiTextInputFormatter extends TextInputFormatter {
 
   bool _isAllowed(String char) {
     if (_emojiPattern.hasMatch(char)) return false;
+    if (allowSpecialCharacters) return true;
     if (_letterOrDigitOrSpace.hasMatch(char)) return true;
     if (allowEmailSymbols && _emailExtras.contains(char)) return true;
     if (allowBasicPunctuation && _basicPunctuation.contains(char)) {
