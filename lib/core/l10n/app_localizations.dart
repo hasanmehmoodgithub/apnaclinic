@@ -716,6 +716,12 @@ abstract class AppLocalizations {
   /// **'Order Details'**
   String get pharmacyCheckoutOrderDetailsTitle;
 
+  /// No description provided for @pharmacyCheckoutSubtotalLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Subtotal'**
+  String get pharmacyCheckoutSubtotalLabel;
+
   /// No description provided for @pharmacyCheckoutDeliveryChargesLabel.
   ///
   /// In en, this message translates to:

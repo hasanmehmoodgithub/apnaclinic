@@ -182,6 +182,7 @@
   "pharmacyCheckoutSpecialInstructionsLabel": "Special Instructions",
   "pharmacyCheckoutSpecialInstructionsHint": "Write any special instructions here",
   "pharmacyCheckoutOrderDetailsTitle": "Order Details",
+  "pharmacyCheckoutSubtotalLabel": "Subtotal",
   "pharmacyCheckoutDeliveryChargesLabel": "Delivery Charges",
   "pharmacyCheckoutDiscountLabel": "Discount",
   "pharmacyCheckoutTotalLabel": "Total",

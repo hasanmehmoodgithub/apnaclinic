@@ -103,6 +103,7 @@
   "pharmacyCheckoutSpecialInstructionsLabel": "خصوصی ہدایات",
   "pharmacyCheckoutSpecialInstructionsHint": "یہاں کوئی خصوصی ہدایات لکھیں",
   "pharmacyCheckoutOrderDetailsTitle": "آرڈر کی تفصیل",
+  "pharmacyCheckoutSubtotalLabel": "ذیلی کل",
   "pharmacyCheckoutDeliveryChargesLabel": "ڈیلیوری چارجز",
   "pharmacyCheckoutDiscountLabel": "رعایت",
   "pharmacyCheckoutTotalLabel": "کل",

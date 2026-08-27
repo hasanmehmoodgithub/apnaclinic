@@ -33,6 +33,7 @@ class AppIntegrityResult {
 
   /// Whether the app should refuse to run.
   bool get shouldBlock {
+    if (!AppIntegrity.enforceBlock) return false;
     if (status == AppIntegrityStatus.tampered) return true;
     if (status == AppIntegrityStatus.unavailable) {
       return FlavorConfig.isProduction;
@@ -45,12 +46,22 @@ class AppIntegrityResult {
 class AppIntegrity {
   AppIntegrity._();
 
+  /// Temporarily off so sideloaded / debug APKs are not blocked.
+  /// Set to `true` to restore APK signature + package checks.
+  static const bool enforceBlock = false;
+
   static const MethodChannel _channel = MethodChannel('security_channel');
 
   /// Verifies the installed Android package and signing certificate.
   ///
   /// iOS returns [AppIntegrityStatus.unsupported] (not APK-signed).
   static Future<AppIntegrityResult> verify() async {
+    if (!enforceBlock) {
+      return AppIntegrityResult(
+        status: AppIntegrityStatus.valid,
+        platformSupported: Platform.isAndroid,
+      );
+    }
     if (!Platform.isAndroid) {
       return const AppIntegrityResult(
         status: AppIntegrityStatus.unsupported,

@@ -226,6 +226,12 @@ class PharmacyCheckoutBodyWidget extends StatelessWidget {
                   SizedBox(height: 6.h),
                 ],
                 PharmacySummaryRow(
+                  title: l10n.pharmacyCheckoutSubtotalLabel,
+                  value: state.subtotal,
+                  isBold: true,
+                  padding: EdgeInsets.symmetric(vertical: 2.h),
+                ),
+                PharmacySummaryRow(
                   title: l10n.pharmacyCheckoutDeliveryChargesLabel,
                   value: state.deliveryCharges,
                   isBold: true,

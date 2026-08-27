@@ -329,6 +329,9 @@ class AppLocalizationsUr extends AppLocalizations {
   String get pharmacyCheckoutOrderDetailsTitle => 'آرڈر کی تفصیل';
 
   @override
+  String get pharmacyCheckoutSubtotalLabel => 'ذیلی کل';
+
+  @override
   String get pharmacyCheckoutDeliveryChargesLabel => 'ڈیلیوری چارجز';
 
   @override

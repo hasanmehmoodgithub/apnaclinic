@@ -329,6 +329,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pharmacyCheckoutOrderDetailsTitle => 'Order Details';
 
   @override
+  String get pharmacyCheckoutSubtotalLabel => 'Subtotal';
+
+  @override
   String get pharmacyCheckoutDeliveryChargesLabel => 'Delivery Charges';
 
   @override
