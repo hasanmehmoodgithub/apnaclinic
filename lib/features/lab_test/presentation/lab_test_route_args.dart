@@ -232,4 +232,13 @@ class LabTestViewDetailsContent {
   final List<String> reportUrls;
 
   bool get canDownloadReport => reportUrls.isNotEmpty;
+
+  bool get isFailed {
+    final normalized = statusLabel
+        .trim()
+        .toLowerCase()
+        .replaceAll(RegExp(r'[^a-z0-9]+'), ' ')
+        .trim();
+    return normalized.contains('fail');
+  }
 }

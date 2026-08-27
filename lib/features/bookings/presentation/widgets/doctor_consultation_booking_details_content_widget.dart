@@ -94,11 +94,14 @@ class DoctorConsultationBookingDetailsContentWidget extends StatelessWidget {
                   SizedBox(height: 14.h),
                   DoctorConsultationBookingDetailsBillingWidget(
                     data: data,
-                    onInvoiceDownload: () => InvoiceDownload.downloadAndView(
-                      context,
-                      moduleType: InvoiceModuleType.consultation,
-                      orderId: data.bookingId,
-                    ),
+                    onInvoiceDownload:
+                        data.status == DoctorConsultationBookingStatus.failed
+                        ? null
+                        : () => InvoiceDownload.downloadAndView(
+                            context,
+                            moduleType: InvoiceModuleType.consultation,
+                            orderId: data.bookingId,
+                          ),
                   ),
                   SizedBox(height: 28.h),
                   if (showJoinButton)

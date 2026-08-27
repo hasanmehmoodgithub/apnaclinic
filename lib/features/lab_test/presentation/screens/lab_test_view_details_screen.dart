@@ -222,14 +222,16 @@ class _LabTestViewDetailsScreenState extends State<LabTestViewDetailsScreen> {
                     discountCode: a.discountCode,
                   ),
                   const SizedBox(height: 16),
-                  BookingInvoiceTileWidget(
-                    onDownload: () => InvoiceDownload.downloadAndView(
-                      context,
-                      moduleType: InvoiceModuleType.lab,
-                      orderId: a.orderId,
+                  if (!a.isFailed) ...[
+                    BookingInvoiceTileWidget(
+                      onDownload: () => InvoiceDownload.downloadAndView(
+                        context,
+                        moduleType: InvoiceModuleType.lab,
+                        orderId: a.orderId,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 16),
+                    const SizedBox(height: 16),
+                  ],
                   LabTestViewDetailsNoteCard(note: a.note),
                 ],
               ),

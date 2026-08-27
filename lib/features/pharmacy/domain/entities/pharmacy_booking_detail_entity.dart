@@ -86,6 +86,11 @@ class PharmacyBookingDetailEntity {
     return message.isNotEmpty;
   }
 
+  bool get isFailed {
+    final key = status.trim().toUpperCase().replaceAll(RegExp(r'[\s\-]+'), '_');
+    return key == 'FAILED' || key == 'PAYMENT_FAILED';
+  }
+
   bool get isCancelled {
     final key = status.trim().toUpperCase().replaceAll(RegExp(r'[\s\-]+'), '_');
     return key == 'CANCELLED' ||

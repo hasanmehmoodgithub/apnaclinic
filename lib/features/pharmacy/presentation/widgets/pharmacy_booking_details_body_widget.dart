@@ -45,14 +45,16 @@ class PharmacyBookingDetailsBodyWidget extends StatelessWidget {
           total: detail.totalLabel,
         ),
         SizedBox(height: 22.h),
-        BookingInvoiceTileWidget(
-          onDownload: () => InvoiceDownload.downloadAndView(
-            context,
-            moduleType: InvoiceModuleType.pharmacy,
-            orderId: detail.orderId,
+        if (!detail.isFailed) ...[
+          BookingInvoiceTileWidget(
+            onDownload: () => InvoiceDownload.downloadAndView(
+              context,
+              moduleType: InvoiceModuleType.pharmacy,
+              orderId: detail.orderId,
+            ),
           ),
-        ),
-        SizedBox(height: 18.h),
+          SizedBox(height: 18.h),
+        ],
         _LabeledValueRow(
           title: l10n.pharmacyCheckoutAddressLabel,
           value: detail.city.isEmpty ? '—' : detail.city,
