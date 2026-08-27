@@ -131,6 +131,7 @@ class LabTestViewDetailsResultCard extends StatelessWidget {
                 _Line(),
                 SizedBox(height: 8.h),
                 Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       l10n.labTestSampleTypeLabel,
@@ -140,9 +141,17 @@ class LabTestViewDetailsResultCard extends StatelessWidget {
                       ),
                     ),
                     SizedBox(width: 8.w),
-                    _Tag(text: sampleType),
-                    const Spacer(),
-                    _Tag(text: l10n.labTestScreenTitle),
+                    Expanded(
+                      child: Wrap(
+                        spacing: 6.w,
+                        runSpacing: 4.h,
+                        alignment: WrapAlignment.end,
+                        children: [
+                          _Tag(text: sampleType),
+                          _Tag(text: l10n.labTestScreenTitle),
+                        ],
+                      ),
+                    ),
                   ],
                 ),
                 SizedBox(height: 8.h),
@@ -255,6 +264,8 @@ class _Tag extends StatelessWidget {
       ),
       child: Text(
         text,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
         style: Theme.of(context).textTheme.bodySmall?.copyWith(
           color: const Color(0xFF9AA1AA),
           fontSize: 10.sp,
