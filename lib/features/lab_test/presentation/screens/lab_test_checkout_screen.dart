@@ -285,7 +285,6 @@ class _LabTestCheckoutScreenState extends State<LabTestCheckoutScreen> {
             paymentStatus: AnalyticsPaymentStatusKeys.failed,
             initiation: initiation,
           );
-          await showCardPaymentOutcomeDialog(context, paymentResult);
           await showCardPaymentOutcomeDialog(
             context,
             paymentResult,
