@@ -28,7 +28,7 @@ Global search for doctors, pharmacy, lab tests, surgery, and more. Supports text
 
 - `SearchCubit` — query, suggestions, results, `isListening` for voice input.
 - Analytics: `search_screen` on open; `search_performed` (`keyword`, `medium` Type/Voice/Recent/Popular) on submit; `search_result_clicked` (`type` medicine_name/doctor/lab/surgery_doctor) on result tap.
-- `RecentSearchesStore` — local recent terms (`SharedPreferences`).
+- `RecentSearchesStore` — local recent terms (`SharedPreferences`), newest first, max **5**.
 
 ## Voice search
 
