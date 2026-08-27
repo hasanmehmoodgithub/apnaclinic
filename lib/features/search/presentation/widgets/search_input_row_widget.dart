@@ -45,7 +45,10 @@ class SearchInputRowWidget extends StatelessWidget {
           Expanded(
             child: TextField(
               controller: controller,
-              inputFormatters: NoEmojiTextInputFormatter.merge(null),
+              inputFormatters: NoEmojiTextInputFormatter.merge(
+                null,
+                allowSpecialCharacters: true,
+              ),
               onChanged: onChanged,
               onSubmitted: onSubmit,
               textInputAction: TextInputAction.search,
