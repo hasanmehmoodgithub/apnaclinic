@@ -5,6 +5,7 @@ class DoctorConsultationSummaryArgs {
     required this.checkoutArgs,
     required this.paymentMethodCode,
     required this.paymentMethodName,
+    this.paymentMethodIconUrl = '',
     required this.accountNumber,
     required this.msisdn,
     required this.consultationFee,
@@ -15,6 +16,9 @@ class DoctorConsultationSummaryArgs {
   final DoctorConsultationCheckoutArgs checkoutArgs;
   final String paymentMethodCode;
   final String paymentMethodName;
+
+  /// Payment-provider `iconUrl` from checkout (JazzCash / Card).
+  final String paymentMethodIconUrl;
   final String accountNumber;
   final String msisdn;
   final int consultationFee;

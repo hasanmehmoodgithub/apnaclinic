@@ -263,6 +263,8 @@ class DoctorConsultationSummaryScreen extends StatelessWidget {
                               qualification: doctor.qualification,
                               dateLabel: dateLabel,
                               timeLabel: timeLabel,
+                              partnerLogoUrl: doctor.partnerLogoUrl,
+                              partnerTenantId: doctor.tenantId,
                             ),
                             SizedBox(height: 10.h),
                             DoctorConsultationSummaryPartnerCardWidget(
@@ -274,6 +276,7 @@ class DoctorConsultationSummaryScreen extends StatelessWidget {
                             DoctorConsultationSummaryPaymentCardWidget(
                               paymentMethodCode: args.paymentMethodCode,
                               paymentMethodName: args.paymentMethodName,
+                              paymentMethodIconUrl: args.paymentMethodIconUrl,
                               accountNumber: args.accountNumber,
                             ),
                             SizedBox(height: 10.h),

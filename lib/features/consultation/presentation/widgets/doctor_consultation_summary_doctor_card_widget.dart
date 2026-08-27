@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../generated/assets.dart';
+import '../constants/consultation_partner_filter_defaults.dart';
+import 'consultation_partner_logo_widget.dart';
 import 'doctor_consultation_summary_card_shell_widget.dart';
 
 class DoctorConsultationSummaryDoctorCardWidget extends StatelessWidget {
@@ -14,6 +15,8 @@ class DoctorConsultationSummaryDoctorCardWidget extends StatelessWidget {
     required this.qualification,
     required this.dateLabel,
     required this.timeLabel,
+    required this.partnerLogoUrl,
+    this.partnerTenantId = '',
   });
 
   final String doctorName;
@@ -22,11 +25,20 @@ class DoctorConsultationSummaryDoctorCardWidget extends StatelessWidget {
   final String qualification;
   final String dateLabel;
   final String timeLabel;
+  final String partnerLogoUrl;
+
+  /// `partner.tenantId` — fallback logo when API omits `logoUrl`.
+  final String partnerTenantId;
 
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     final experienceLine = _experienceLine();
+    final known =
+        ConsultationPartnerFilterDefaults.knownById(partnerTenantId);
+    final logo = partnerLogoUrl.trim().isNotEmpty
+        ? partnerLogoUrl.trim()
+        : (known?.resolvedLogo ?? '');
 
     return DoctorConsultationSummaryCardShell(
       padding: EdgeInsets.zero,
@@ -122,15 +134,12 @@ class DoctorConsultationSummaryDoctorCardWidget extends StatelessWidget {
             ),
             Positioned(
               right: 10.w,
-              top: 10.h,
-              child: SizedBox(
-                width: 100.w,
-                height: 90.h,
-                child: SvgPicture.asset(
-                  Assets.svgBrandApnaClinic,
-                  fit: BoxFit.contain,
-                  alignment: Alignment.centerRight,
-                ),
+              top: 14.h,
+              child: ConsultationPartnerLogoWidget(
+                logoUrl: logo,
+                width: 88.w,
+                height: 40.h,
+                compact: true,
               ),
             ),
           ],

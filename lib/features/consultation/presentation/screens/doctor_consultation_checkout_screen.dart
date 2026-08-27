@@ -90,12 +90,13 @@ class _DoctorConsultationCheckoutScreenState
     final msisdn = result.msisdn.trim();
     if (msisdn.isEmpty) return;
 
+    final selectedOption = _selectedPaymentOption(
+      context.read<DoctorConsultationCheckoutCubit>().state,
+    );
     await _pushSummary(
       paymentMethodCode: paymentMethodCode,
-      paymentMethodName: _selectedPaymentOption(
-            context.read<DoctorConsultationCheckoutCubit>().state,
-          )?.name ??
-          l10n.accountMethodJazzCash,
+      paymentMethodName: selectedOption?.name ?? l10n.accountMethodJazzCash,
+      paymentMethodIconUrl: selectedOption?.iconUrl ?? '',
       accountNumber: PhoneFormatUtils.toLocalDisplay(msisdn),
       msisdn: msisdn,
     );
@@ -111,6 +112,7 @@ class _DoctorConsultationCheckoutScreenState
     await _pushSummary(
       paymentMethodCode: paymentMethodCode,
       paymentMethodName: selectedOption?.name ?? l10n.pharmacyPaymentDebitCard,
+      paymentMethodIconUrl: selectedOption?.iconUrl ?? '',
       accountNumber: l10n.consultationDiscountNotAvailable,
       msisdn: phone,
     );
@@ -119,6 +121,7 @@ class _DoctorConsultationCheckoutScreenState
   Future<void> _pushSummary({
     required String paymentMethodCode,
     required String paymentMethodName,
+    required String paymentMethodIconUrl,
     required String accountNumber,
     required String msisdn,
   }) async {
@@ -132,6 +135,7 @@ class _DoctorConsultationCheckoutScreenState
         checkoutArgs: widget.args,
         paymentMethodCode: paymentMethodCode,
         paymentMethodName: paymentMethodName,
+        paymentMethodIconUrl: paymentMethodIconUrl,
         accountNumber: accountNumber,
         msisdn: msisdn,
         consultationFee: checkoutData.consultationFee,

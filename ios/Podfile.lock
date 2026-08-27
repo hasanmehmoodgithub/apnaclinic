@@ -1,12 +1,4 @@
 PODS:
-  - appsflyer_sdk (6.18.1):
-    - appsflyer_sdk/Core (= 6.18.1)
-  - appsflyer_sdk/Core (6.18.1):
-    - AppsFlyerFramework (= 6.18.1)
-    - Flutter
-  - AppsFlyerFramework (6.18.1):
-    - AppsFlyerFramework/Main (= 6.18.1)
-  - AppsFlyerFramework/Main (6.18.1)
   - connectivity_plus (0.0.1):
     - Flutter
   - CwlCatchException (2.2.1):
@@ -202,7 +194,6 @@ PODS:
     - FlutterMacOS
 
 DEPENDENCIES:
-  - appsflyer_sdk (from `.symlinks/plugins/appsflyer_sdk/ios`)
   - connectivity_plus (from `.symlinks/plugins/connectivity_plus/ios`)
   - device_info_plus (from `.symlinks/plugins/device_info_plus/ios`)
   - file_picker (from `.symlinks/plugins/file_picker/ios`)
@@ -225,7 +216,6 @@ DEPENDENCIES:
 
 SPEC REPOS:
   trunk:
-    - AppsFlyerFramework
     - CwlCatchException
     - CwlCatchExceptionSupport
     - DKImagePickerController
@@ -246,8 +236,6 @@ SPEC REPOS:
     - SwiftyGif
 
 EXTERNAL SOURCES:
-  appsflyer_sdk:
-    :path: ".symlinks/plugins/appsflyer_sdk/ios"
   connectivity_plus:
     :path: ".symlinks/plugins/connectivity_plus/ios"
   device_info_plus:
@@ -288,8 +276,6 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/webview_flutter_wkwebview/darwin"
 
 SPEC CHECKSUMS:
-  appsflyer_sdk: f0bd7be69dca64aef6d569aa6bd3ef8cd8228236
-  AppsFlyerFramework: 319c8357ea52a559c27a7b474f0b50833e76e3eb
   connectivity_plus: cb623214f4e1f6ef8fe7403d580fdad517d2f7dd
   CwlCatchException: 7acc161b299a6de7f0a46a6ed741eae2c8b4d75a
   CwlCatchExceptionSupport: 54ccab8d8c78907b57f99717fb19d4cc3bce02dc

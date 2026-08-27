@@ -44,6 +44,7 @@ class ConsultationPartnerFilterDefaults {
     ConsultationPartnerFilterOption(
       id: '5',
       name: 'Apna Clinic',
+      logoAsset: Assets.svgBrandApnaClinic,
     ),
   ];
 

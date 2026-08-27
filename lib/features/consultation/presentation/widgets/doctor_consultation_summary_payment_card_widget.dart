@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -12,11 +13,13 @@ class DoctorConsultationSummaryPaymentCardWidget extends StatelessWidget {
     super.key,
     required this.paymentMethodCode,
     required this.paymentMethodName,
+    this.paymentMethodIconUrl = '',
     required this.accountNumber,
   });
 
   final String paymentMethodCode;
   final String paymentMethodName;
+  final String paymentMethodIconUrl;
   final String accountNumber;
 
   @override
@@ -42,9 +45,9 @@ class DoctorConsultationSummaryPaymentCardWidget extends StatelessWidget {
                   SizedBox(
                     width: 30.w,
                     height: 30.w,
-                    child: SvgPicture.asset(
-                      iconAsset,
-                      fit: BoxFit.contain,
+                    child: _PaymentMethodIcon(
+                      iconUrl: paymentMethodIconUrl,
+                      fallbackAsset: iconAsset,
                     ),
                   ),
                   SizedBox(width: 8.w),
@@ -116,5 +119,31 @@ class DoctorConsultationSummaryPaymentCardWidget extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+class _PaymentMethodIcon extends StatelessWidget {
+  const _PaymentMethodIcon({
+    required this.iconUrl,
+    required this.fallbackAsset,
+  });
+
+  final String iconUrl;
+  final String fallbackAsset;
+
+  @override
+  Widget build(BuildContext context) {
+    final url = iconUrl.trim();
+    if (url.startsWith('http')) {
+      return CachedNetworkImage(
+        imageUrl: url,
+        fit: BoxFit.contain,
+        placeholder: (_, _) =>
+            SvgPicture.asset(fallbackAsset, fit: BoxFit.contain),
+        errorWidget: (_, _, _) =>
+            SvgPicture.asset(fallbackAsset, fit: BoxFit.contain),
+      );
+    }
+    return SvgPicture.asset(fallbackAsset, fit: BoxFit.contain);
   }
 }
