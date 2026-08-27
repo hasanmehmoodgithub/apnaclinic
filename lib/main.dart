@@ -12,7 +12,6 @@ import 'core/debug/device_preview_support.dart';
 import 'core/di/dependency_injection.dart';
 import 'core/firebase/firebase_bootstrap.dart';
 import 'core/network/app_http_overrides.dart';
-import 'core/services/appsflyer_service.dart';
 import 'core/services/notification_service.dart';
 import 'core/utils/chucker_guard.dart';
 import 'core/security/security_widget.dart';
@@ -45,9 +44,8 @@ void main() {
         runApp(const SecurityGate(child: ApnaClinicApp()),
         );
 
-        // FCM / AppsFlyer can hang or fail on some devices — never block first frame.
+        // FCM can hang or fail on some devices — never block first frame.
         unawaited(_initializePushNotifications());
-        unawaited(_initializeAppsFlyer());
       } catch (e, stackTrace) {
         // Guard: Handle initialization errors gracefully
         developer.log(
@@ -155,19 +153,6 @@ Future<void> _initializePushNotifications() async {
   } catch (e, stackTrace) {
     developer.log(
       'FCM init failed: $e',
-      name: 'main',
-      error: e,
-      stackTrace: stackTrace,
-    );
-  }
-}
-
-Future<void> _initializeAppsFlyer() async {
-  try {
-    await sl<AppsFlyerService>().initialize();
-  } catch (e, stackTrace) {
-    developer.log(
-      'AppsFlyer init failed: $e',
       name: 'main',
       error: e,
       stackTrace: stackTrace,

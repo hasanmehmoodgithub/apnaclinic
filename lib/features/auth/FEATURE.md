@@ -3,7 +3,6 @@
 ## Purpose
 
 Phone OTP request/verify, session persistence via `AppPref`, logout API.
-After successful OTP, `AppsFlyerService.setCustomerUserId` is called when the SDK is configured (see `lib/core/services/APPSFLYER.md`).
 
 Login footer legal links (`LoginLegalText`) open Terms and Privacy from
 `AppPref.getSupportSettings()` (`termsAndConditionsUrl` / `privacyPolicyUrl`,

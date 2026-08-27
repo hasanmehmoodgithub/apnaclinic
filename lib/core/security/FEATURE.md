@@ -8,8 +8,9 @@ Block the app on compromised devices (root / jailbreak, emulator / simulator, Fr
 
 - `AppIntegrity.verify()` — public API for APK package + signing-cert check (no hashes in Dart)
 - `SecurityService.securityChecksEnabled` via `--dart-define=SECURITY_CHECKS` (default **true**; `false` skips root / jailbreak / Frida / emulator / APK tamper)
-- `SecurityGate` wraps the app in `main.dart` (blocks + countdown + exit when compromised). When the flag is off, the child is shown immediately.
-- Checking / blocked UI uses the Apna Clinic logo, `FlavorConfig.appName`, and app colors (teal / navy)
+- `SecurityGate` wraps the app in `main.dart`. While the check runs, splash is shown (no separate checking screen). Compromised devices get the blocked UI + countdown + exit. When the flag is off, the child is shown immediately.
+- `SecurityService.ensureChecked()` is a single-flight check shared by the gate and splash so splash does not navigate until the result is known.
+- Blocked UI uses the Apna Clinic logo and app colors (teal / navy)
 - MethodChannels: `security_channel` (`checkAppIntegrity`), advanced `qwe_rty_123` / `f1`
 - `NativeSecurity.getSecretKey()` uses MethodChannel `native/keys` / `getSecretKey` so `EncryptionService` can combine a native key with the FlutterSecureStorage secret. Missing native registration previously threw `MissingPluginException` and fell back to a persisted Dart-generated key.
 

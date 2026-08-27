@@ -9,7 +9,6 @@ import '../extensions/screen_util_extensions.dart';
 import '../l10n/app_localizations.dart';
 import 'security_service.dart';
 import 'widgets/security_blocked_view.dart';
-import 'widgets/security_checking_view.dart';
 
 /// Widget that blocks app access if device is compromised
 class SecurityGate extends StatefulWidget {
@@ -29,7 +28,6 @@ class SecurityGate extends StatefulWidget {
 }
 
 class _SecurityGateState extends State<SecurityGate> {
-  bool _isChecking = SecurityService.securityChecksEnabled;
   bool _isCompromised = false;
   String? _securityMessage;
   int _countdown = 5;
@@ -50,20 +48,14 @@ class _SecurityGateState extends State<SecurityGate> {
   }
 
   Future<void> _performSecurityCheck() async {
-    final isCompromised = await SecurityService.isDeviceCompromised();
-    final message = await SecurityService.getSecurityMessage();
+    final result = await SecurityService.ensureChecked();
+    if (!mounted || !result.isCompromised) return;
 
-    if (mounted) {
-      setState(() {
-        _isCompromised = isCompromised;
-        _securityMessage = message;
-        _isChecking = false;
-      });
-
-      if (isCompromised) {
-        _startCountdown();
-      }
-    }
+    setState(() {
+      _isCompromised = true;
+      _securityMessage = result.message;
+    });
+    _startCountdown();
   }
 
   void _startCountdown() {
@@ -97,10 +89,6 @@ class _SecurityGateState extends State<SecurityGate> {
 
   @override
   Widget build(BuildContext context) {
-    if (_isChecking) {
-      return _standaloneApp(const SecurityCheckingView());
-    }
-
     if (_isCompromised) {
       return widget.blockedWidget ??
           _standaloneApp(

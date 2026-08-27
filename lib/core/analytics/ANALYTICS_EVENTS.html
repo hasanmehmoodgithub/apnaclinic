@@ -169,7 +169,7 @@
       <li>Every event goes through <code>AnalyticsService.logEvent</code> → <code>FirebaseAnalyticsProvider</code> → Firebase Analytics / GA4.</li>
       <li>Names live in <code>lib/core/analytics/analytics_event_keys.dart</code>. Feature helpers: <code>ConsultationAnalytics</code>, <code>LabTestAnalytics</code>, <code>SurgeryAnalytics</code>, <code>BookingsAnalytics</code>, plus cubit methods for pharmacy / Instant Doctor / auth.</li>
       <li>Debug: each call also writes <code>developer.log</code> named <code>AnalyticsService</code> (Xcode / Logcat / Flutter console).</li>
-      <li>Events before Firebase init are dropped. AppsFlyer SDK is registered but <strong>not</strong> in the analytics fan-out.</li>
+      <li>Events before Firebase init are dropped.</li>
       <li>Meta / TikTok keys (<code>fb_content_type</code>, <code>content_type</code>) are not sent. Some events send <code>af_content_type</code> on Firebase only.</li>
       <li>MSISDN is digits-only, <code>92</code> / leading <code>0</code> stripped (e.g. <code>3012345678</code>).</li>
     </ul>

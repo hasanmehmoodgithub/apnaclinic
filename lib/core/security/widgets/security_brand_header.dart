@@ -6,7 +6,7 @@ import '../../constants/app_text_styles.dart';
 import '../../extensions/screen_util_extensions.dart';
 import '../../flavor/flavor_config.dart';
 
-/// Brand lockup used on SecurityGate checking and blocked screens.
+/// Brand lockup used on the SecurityGate blocked screen.
 class SecurityBrandHeader extends StatelessWidget {
   const SecurityBrandHeader({super.key});
 

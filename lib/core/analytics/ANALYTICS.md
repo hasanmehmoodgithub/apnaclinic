@@ -5,6 +5,7 @@ Full UI + parameter report for product and engineering:
 
 Use `AnalyticsService.logEvent` for every event. Do not add feature-specific
 methods on the service. Firebase is the first backend; add more in DI later.
+AppsFlyer is not in the app; restore with [APPSFLYER.md](../services/APPSFLYER.md).
 
 Firebase receives events **only when `FlavorConfig.isProduction`**.
 Development and staging still print `developer.log` (`event:` / `screen:`) so

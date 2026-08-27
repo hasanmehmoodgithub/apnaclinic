@@ -21,7 +21,6 @@ import '../network/device_headers_provider.dart';
 import '../network/hmac/hmac_secret_store.dart';
 import '../preference/app_pref.dart';
 import '../preference/app_pref_impl.dart';
-import '../services/appsflyer_service.dart';
 import '../services/encryption_service.dart';
 import '../services/connectivity_service.dart';
 import '../services/notification_service.dart';
@@ -91,7 +90,6 @@ Future<void> _initCore() async {
   sl.registerLazySingleton<NotificationService>(
     () => NotificationService(appPref: sl<AppPref>()),
   );
-  sl.registerLazySingleton<AppsFlyerService>(() => AppsFlyerService());
   sl.registerLazySingleton<AnalyticsService>(
     () => AnalyticsServiceImpl([FirebaseAnalyticsProvider()]),
   );

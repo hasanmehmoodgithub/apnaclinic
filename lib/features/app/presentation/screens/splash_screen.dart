@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/preference/app_pref.dart';
 import '../../../../core/router/app_routes.dart';
+import '../../../../core/security/security_service.dart';
 import '../../../customer_support/domain/use_cases/get_customer_support_content_use_case.dart';
 import '../../../profile_setup/presentation/profile_setup_launch_source.dart';
 import '../../domain/use_cases/get_initial_route_use_case.dart';
@@ -27,14 +28,17 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   Future<void> _navigateToNext() async {
+    final security = SecurityService.ensureChecked();
     await Future.wait<void>([
       Future<void>.delayed(const Duration(seconds: 2)),
       sl<GetCustomerSupportContentUseCase>()
           .call()
           .then((_) {})
           .timeout(const Duration(seconds: 5), onTimeout: () {}),
+      security.then((_) {}),
     ]);
     if (!mounted) return;
+    if ((await security).isCompromised) return;
     final nextRoute = _getInitialRouteUseCase();
     if (nextRoute == AppRoutes.profileSetup) {
       context.go(

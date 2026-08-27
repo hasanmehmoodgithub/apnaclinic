@@ -6,6 +6,16 @@ import '../flavor/flavor_config.dart';
 import '../flavor/app_flavor.dart';
 import 'app_integrity.dart';
 
+class SecurityCheckResult {
+  const SecurityCheckResult({
+    required this.isCompromised,
+    this.message,
+  });
+
+  final bool isCompromised;
+  final String? message;
+}
+
 /// Comprehensive security service for device integrity checks
 class SecurityService {
   /// Master switch for device integrity (root, jailbreak, Frida, APK tamper).
@@ -13,7 +23,7 @@ class SecurityService {
   /// Default **on**. Opt out: `--dart-define=SECURITY_CHECKS=false`.
   static const bool securityChecksEnabled = bool.fromEnvironment(
     'SECURITY_CHECKS',
-    defaultValue: false,
+    defaultValue: true,
   );
 
   // Method channels
@@ -21,6 +31,25 @@ class SecurityService {
     'security_channel',
   );
   static const MethodChannel _advancedChannel = MethodChannel('qwe_rty_123');
+
+  static Future<SecurityCheckResult>? _checkFuture;
+
+  /// Single-flight integrity check shared by [SecurityGate] and splash.
+  static Future<SecurityCheckResult> ensureChecked() {
+    if (!securityChecksEnabled) {
+      return Future.value(const SecurityCheckResult(isCompromised: false));
+    }
+    return _checkFuture ??= _runCheck();
+  }
+
+  static Future<SecurityCheckResult> _runCheck() async {
+    final isCompromised = await isDeviceCompromised();
+    final message = isCompromised ? await getSecurityMessage() : null;
+    return SecurityCheckResult(
+      isCompromised: isCompromised,
+      message: message,
+    );
+  }
 
   /// Perform all security checks and return true if device is compromised.
   static Future<bool> isDeviceCompromised() async {
