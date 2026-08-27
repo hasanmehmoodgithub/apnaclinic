@@ -49,8 +49,8 @@ class LabTestFigmaImage extends StatelessWidget {
     }
 
     if (normalized.startsWith('http')) {
-      final lower = normalized.toLowerCase();
-      if (lower.endsWith('.svg')) {
+      final path = Uri.tryParse(normalized)?.path.toLowerCase() ?? '';
+      if (path.endsWith('.svg')) {
         final networkSvg = SvgPicture.network(
           normalized,
           width: width,
