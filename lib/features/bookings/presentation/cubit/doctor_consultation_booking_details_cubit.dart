@@ -31,15 +31,10 @@ class DoctorConsultationBookingDetailsCubit
   final GetConsultationBookingUseCase _getBookingUseCase;
   final SubmitConsultationFeedbackUseCase _submitFeedbackUseCase;
   final String _bookingId;
-  bool _inFlight = false;
 
   Future<void> load({bool refresh = false}) async {
-    if (_inFlight) return;
-    _inFlight = true;
-
     final appointmentId = int.tryParse(_bookingId.trim());
     if (appointmentId == null || appointmentId <= 0) {
-      _inFlight = false;
       emit(
         state.copyWith(
           isLoading: false,
@@ -49,66 +44,49 @@ class DoctorConsultationBookingDetailsCubit
       return;
     }
 
-    // Pull-to-refresh keeps the current booking on screen. Do not key off
-    // state.isLoading here — the cubit starts with isLoading: true.
+    final keepExisting = refresh && state.data != null;
     emit(
       state.copyWith(
-        isLoading: !refresh || state.data == null,
+        isLoading: !keepExisting,
         clearError: true,
       ),
     );
+    final result = await _getBookingUseCase(
+      GetConsultationBookingParams(appointmentId: appointmentId),
+    );
 
-    try {
-      final result = await _getBookingUseCase(
-        GetConsultationBookingParams(appointmentId: appointmentId),
-      );
-      if (isClosed) return;
-
-      result.fold(
-        (error) {
-          emit(
-            state.copyWith(
-              isLoading: false,
-              errorMessage: state.data == null
-                  ? (error.isNotEmpty ? error : 'load_error')
-                  : null,
-              clearError: state.data != null,
-            ),
+    result.fold(
+      (error) {
+        emit(
+          state.copyWith(
+            isLoading: false,
+            errorMessage: keepExisting
+                ? null
+                : (error.isNotEmpty ? error : 'load_error'),
+          ),
+        );
+      },
+      (entity) {
+        final data = DoctorConsultationBookingMapper.fromEntity(entity);
+        emit(
+          state.copyWith(
+            isLoading: false,
+            data: data,
+            clearError: true,
+          ),
+        );
+        if (refresh) return;
+        BookingsAnalytics.logBookingViewed(
+          AnalyticsBookingTypeKeys.consultancy,
+        );
+        if (data.doctorPrescriptions.isNotEmpty) {
+          BookingsAnalytics.logPrescriptionAvailable(
+            bookingId: data.bookingId,
+            service: AnalyticsBookingTypeKeys.consultancy,
           );
-        },
-        (entity) {
-          final data = DoctorConsultationBookingMapper.fromEntity(entity);
-          emit(
-            state.copyWith(
-              isLoading: false,
-              data: data,
-              clearError: true,
-            ),
-          );
-          if (refresh) return;
-          BookingsAnalytics.logBookingViewed(
-            AnalyticsBookingTypeKeys.consultancy,
-          );
-          if (data.doctorPrescriptions.isNotEmpty) {
-            BookingsAnalytics.logPrescriptionAvailable(
-              bookingId: data.bookingId,
-              service: AnalyticsBookingTypeKeys.consultancy,
-            );
-          }
-        },
-      );
-    } catch (_) {
-      if (isClosed) return;
-      emit(
-        state.copyWith(
-          isLoading: false,
-          errorMessage: state.data == null ? 'load_error' : null,
-          clearError: state.data != null,
-        ),
-      );
-    } finally {
-      _inFlight = false;
-    }
+        }
+      },
+    );
   }
 
   Future<bool> submitFeedback({

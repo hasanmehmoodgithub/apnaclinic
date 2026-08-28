@@ -1310,6 +1310,30 @@ abstract class AppLocalizations {
   /// **'Get 24/7 access to qualified doctors for general medical support and much more.'**
   String get instantDoctorPoint2;
 
+  /// No description provided for @instantDoctorConsultationExitTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Exit consultation?'**
+  String get instantDoctorConsultationExitTitle;
+
+  /// No description provided for @instantDoctorConsultationExitMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to exit from this video Consultation?'**
+  String get instantDoctorConsultationExitMessage;
+
+  /// No description provided for @instantDoctorConsultationExitCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Exit'**
+  String get instantDoctorConsultationExitCta;
+
+  /// No description provided for @instantDoctorConsultationExitCancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get instantDoctorConsultationExitCancel;
+
   /// No description provided for @customerSupportTitle.
   ///
   /// In en, this message translates to:

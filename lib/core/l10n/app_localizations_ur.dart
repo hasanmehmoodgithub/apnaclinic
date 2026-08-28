@@ -666,6 +666,19 @@ class AppLocalizationsUr extends AppLocalizations {
       'عمومی طبی رہنمائی اور مزید کے لیے 24/7 مستند ڈاکٹروں تک رسائی حاصل کریں۔';
 
   @override
+  String get instantDoctorConsultationExitTitle => 'مشاورت سے باہر نکلیں؟';
+
+  @override
+  String get instantDoctorConsultationExitMessage =>
+      'کیا آپ واقعی اس ویڈیو مشاورت سے باہر نکلنا چاہتے ہیں؟';
+
+  @override
+  String get instantDoctorConsultationExitCta => 'باہر نکلیں';
+
+  @override
+  String get instantDoctorConsultationExitCancel => 'منسوخ';
+
+  @override
   String get customerSupportTitle => 'کسٹمر سپورٹ';
 
   @override

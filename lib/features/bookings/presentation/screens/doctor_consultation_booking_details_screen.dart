@@ -93,23 +93,23 @@ class _DoctorConsultationBookingDetailsScreenState
                           onRefresh: onRefresh,
                           expandChild: true,
                           child: Padding(
-                            padding: const EdgeInsets.fromLTRB(20, 150, 20, 20),
+                            padding:
+                                const EdgeInsets.fromLTRB(20, 150, 20, 20),
                             child: EmptyBookingWidget(
                               description: message,
                               buttonText: l10n.commonRetry,
                               backgroundColor: Colors.transparent,
                               onTap: () => context
-                                  .read<DoctorConsultationBookingDetailsCubit>()
+                                  .read<
+                                      DoctorConsultationBookingDetailsCubit>()
                                   .load(),
                             ),
                           ),
                         );
                       }
-                      return BookingsRefreshView(
+                      return DoctorConsultationBookingDetailsContentWidget(
+                        data: state.data!,
                         onRefresh: onRefresh,
-                        child: DoctorConsultationBookingDetailsContentWidget(
-                          data: state.data!,
-                        ),
                       );
                     },
                   ),
