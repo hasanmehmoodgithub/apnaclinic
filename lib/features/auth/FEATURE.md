@@ -47,8 +47,11 @@ use `source=login`.
 On login, `AuthSessionRefresh.notifyLoggedIn()` runs **after** `isLoading` is
 cleared, and only when profile is already complete (avoids remounting
 `HomeScreen` under the login route, which would open the dashboard promo heart
-loader). After first-time profile save, profile setup calls `notifyLoggedIn()`
-then navigates home.
+loader). Post-OTP `GET …/users/{id}` still runs before that notify so prefs have
+the name, but it does **not** call `notifyProfileUpdated()` — that used to jump
+the shell to a pending Bookings tab while Verify was still spinning. Session
+save errors always clear the Verify spinner. After first-time profile save,
+profile setup calls `notifyLoggedIn()` then navigates home.
 Splash and `/home` redirect logged-in users without a completed profile to
 profile setup.
 
@@ -61,7 +64,7 @@ profile setup.
   - Request OTP `data.expiresIn` is in **seconds** (e.g. `300` → 5 min resend timer).
   - Logout: `AppUrls.logout` (POST body `{ "refreshToken": "<stored refresh token>" }`). Local session is **always** cleared via `LocalLogoutService` even if the API fails; a snackbar may show the server error. FCM prefs + Firebase `deleteToken()` run on this path (delete is not awaited on the UI).
   - Auto-logout (JWT refresh fail on 401): `AuthInterceptor` calls the same `LocalLogoutService.clearAll()` — no logout API and no device-token PUT (tokens are already dead).
-  - After successful OTP, `AuthCubit` persists `data.user` (`id`, `firstName`, `lastName`, `gender`, `email`, `address`, `dob` / `dateOfBirth`, `image`) into `UserLocalModel`. User id is taken from `user.id` (then JWT `sub`). Null / `"[NULL]"` fields are stored empty. When `userOnboarding` is **false** (profile already complete), it also calls `GetProfileSetupContentUseCase` (`GET …/users/{id}`) before `notifyLoggedIn`. When `userOnboarding` is **true**, profile setup prefills from that local `user` payload (no GET), including the avatar URL.
+  - After successful OTP, `AuthCubit` persists `data.user` (`id`, `firstName`, `lastName`, `gender`, `email`, `address`, `dob` / `dateOfBirth`, `image`) into `UserLocalModel`. User id is taken from `user.id` (then JWT `sub`). Null / `"[NULL]"` fields are stored empty. When `userOnboarding` is **false** (profile already complete), it also calls `GetProfileSetupContentUseCase` (`GET …/users/{id}`) before `notifyLoggedIn` (prefs only — no `notifyProfileUpdated`). When `userOnboarding` is **true**, profile setup prefills from that local `user` payload (no GET), including the avatar URL.
 
 ## Shared core helpers
 

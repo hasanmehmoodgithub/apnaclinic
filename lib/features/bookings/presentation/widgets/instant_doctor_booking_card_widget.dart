@@ -203,38 +203,40 @@ class InstantDoctorBookingCardWidget extends StatelessWidget {
                           ],
                         ),
                       ),
-                      Container(
-                        width: 0.5,
-                        margin: EdgeInsets.symmetric(horizontal: 10.w),
-                        color: AppColors.clr9BA6A7,
-                      ),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              l10n.bookingsFeeLabel,
-                              style: textTheme.bodySmall?.copyWith(
-                                color: AppColors.clr667B99,
-                                fontSize: 11.sp,
-                                fontWeight: FontWeight.w400,
-                              ),
-                            ),
-                            SizedBox(height: 4.h),
-                            Text(
-                              item.feeLabel,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: textTheme.bodySmall?.copyWith(
-                                color: AppColors.clrBlack,
-                                fontSize: 12.sp,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ],
+                      if (!item.isFree) ...[
+                        Container(
+                          width: 0.5,
+                          margin: EdgeInsets.symmetric(horizontal: 10.w),
+                          color: AppColors.clr9BA6A7,
                         ),
-                      ),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                l10n.bookingsFeeLabel,
+                                style: textTheme.bodySmall?.copyWith(
+                                  color: AppColors.clr667B99,
+                                  fontSize: 11.sp,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                              ),
+                              SizedBox(height: 4.h),
+                              Text(
+                                item.feeLabel,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: textTheme.bodySmall?.copyWith(
+                                  color: AppColors.clrBlack,
+                                  fontSize: 12.sp,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ],
                   ),
                 ),

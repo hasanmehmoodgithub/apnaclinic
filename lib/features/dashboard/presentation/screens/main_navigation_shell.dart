@@ -55,6 +55,7 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
   late final MainNavigationCubit _navigationCubit;
   late final AuthSessionRefresh _sessionRefresh;
   int _appliedSessionEpoch = -1;
+  int _appliedTabRequestRevision = 0;
   int _tabSessionKey = 0;
   int _bookingsInitialTabIndex = 0;
   int _bookingsDashboardKey = 0;
@@ -116,13 +117,22 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
   }
 
   void _syncTabsWithSessionIfNeeded() {
-    if (_sessionRefresh.epoch == _appliedSessionEpoch) {
-      // Tab-only requests (e.g. menu My Bookings while already logged in).
-      _applyPendingTabIfNeeded();
+    if (_sessionRefresh.epoch != _appliedSessionEpoch) {
+      _appliedSessionEpoch = _sessionRefresh.epoch;
+      unawaited(_refreshAllTabs());
       return;
     }
-    _appliedSessionEpoch = _sessionRefresh.epoch;
-    unawaited(_refreshAllTabs());
+    // Profile-name updates must not consume a pending Instant Doctor /
+    // Bookings tab while OTP Verify is still showing its spinner.
+    _applyPendingTabIfRequested();
+  }
+
+  void _applyPendingTabIfRequested() {
+    if (_sessionRefresh.tabRequestRevision == _appliedTabRequestRevision) {
+      return;
+    }
+    _appliedTabRequestRevision = _sessionRefresh.tabRequestRevision;
+    _applyPendingTabIfNeeded();
   }
 
   void _goToHomeTab() {

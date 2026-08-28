@@ -27,17 +27,39 @@ class BookingsTabVisibilityListener extends StatefulWidget {
 class _BookingsTabVisibilityListenerState
     extends State<BookingsTabVisibilityListener> {
   TabController? _tabs;
+  MainNavigationCubit? _nav;
+  bool _isActive = false;
+  bool _notifyScheduled = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _isActive = true;
+  }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+    _nav = context.read<MainNavigationCubit>();
     final tabs = DefaultTabController.maybeOf(context);
     if (tabs != _tabs) {
       _tabs?.removeListener(_onTab);
       _tabs = tabs;
       _tabs?.addListener(_onTab);
     }
-    _notifyIfVisible();
+    _scheduleNotify();
+  }
+
+  @override
+  void activate() {
+    super.activate();
+    _isActive = true;
+  }
+
+  @override
+  void deactivate() {
+    _isActive = false;
+    super.deactivate();
   }
 
   @override
@@ -48,13 +70,23 @@ class _BookingsTabVisibilityListenerState
 
   void _onTab() {
     if (_tabs?.indexIsChanging ?? false) return;
-    _notifyIfVisible();
+    _scheduleNotify();
+  }
+
+  void _scheduleNotify() {
+    if (_notifyScheduled) return;
+    _notifyScheduled = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _notifyScheduled = false;
+      _notifyIfVisible();
+    });
   }
 
   void _notifyIfVisible() {
-    if (!mounted) return;
+    if (!mounted || !_isActive) return;
     if (_tabs != null && _tabs!.index != widget.tabIndex) return;
-    final nav = context.read<MainNavigationCubit>();
+    final nav = _nav;
+    if (nav == null) return;
     if (nav.state.currentIndex != MainNavigationTabs.bookings) return;
     widget.onVisible();
   }
@@ -64,7 +96,7 @@ class _BookingsTabVisibilityListenerState
     return BlocListener<MainNavigationCubit, MainNavigationState>(
       listenWhen: (previous, current) =>
           previous.currentIndex != current.currentIndex,
-      listener: (_, __) => _notifyIfVisible(),
+      listener: (_, __) => _scheduleNotify(),
       child: widget.child,
     );
   }

@@ -33,6 +33,8 @@ class InstantDoctorBookingEntity {
   final String listDate;
   final String feeLabel;
 
+  bool get isFree => fee <= 0;
+
   String get displayDoctorName =>
       doctorName.trim().isNotEmpty ? doctorName.trim() : partnerName.trim();
 

@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 class AuthSessionRefresh extends ChangeNotifier {
   int _epoch = 0;
   int _profileRevision = 0;
+  int _tabRequestRevision = 0;
   bool _selectHomeOnNextRefresh = false;
   bool _reloadPromotionalBannerOnNextRefresh = false;
   int? _pendingTabIndex;
@@ -11,6 +12,10 @@ class AuthSessionRefresh extends ChangeNotifier {
   String? _pendingInstantDoctorSourceScreen;
 
   int get epoch => _epoch;
+
+  /// Increments only on [requestTabIndex]. The shell uses this so
+  /// [notifyProfileUpdated] does not consume a pending tab during OTP.
+  int get tabRequestRevision => _tabRequestRevision;
 
   /// Increments when local profile prefs change (name, image, etc.).
   /// Listeners like menu can rebuild without remounting shell tabs.
@@ -76,6 +81,7 @@ class AuthSessionRefresh extends ChangeNotifier {
       _pendingBookingsSubTabIndex = bookingsSubTabIndex;
     }
     _pendingInstantDoctorSourceScreen = instantDoctorSourceScreen;
+    _tabRequestRevision++;
     notifyListeners();
   }
 

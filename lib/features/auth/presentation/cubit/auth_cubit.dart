@@ -148,51 +148,65 @@ class AuthCubit extends Cubit<AuthState> {
       ),
     );
 
-    final fcmToken = _cachedFcmToken();
-    final result = await _verifyOtpUseCase(
-      VerifyOtpParams(
-        phoneNumber: state.phoneNumber,
-        otp: otp,
-        fcmToken: fcmToken,
-      ),
-    );
-    if (isClosed) {
-      return const VerifyOtpOutcome(isSuccess: false, goToHome: false);
-    }
-    return result.fold(
-      (error) {
+    const failed = VerifyOtpOutcome(isSuccess: false, goToHome: false);
+    try {
+      final fcmToken = _cachedFcmToken();
+      final result = await _verifyOtpUseCase(
+        VerifyOtpParams(
+          phoneNumber: state.phoneNumber,
+          otp: otp,
+          fcmToken: fcmToken,
+        ),
+      );
+      if (isClosed) return failed;
+      if (result.isLeft) {
         emit(
           state.copyWith(
             isLoading: false,
             verifyOtpLoadingStateStatus: StateStatus.error,
-            errorMessage: error,
+            errorMessage: result.left,
           ),
         );
-        return const VerifyOtpOutcome(isSuccess: false, goToHome: false);
-      },
-      (entity) async {
-        await _saveUserSession(entity: entity);
-        if (isClosed) {
-          return const VerifyOtpOutcome(isSuccess: false, goToHome: false);
-        }
+        return failed;
+      }
+
+      final entity = result.right;
+      await _saveUserSession(entity: entity);
+      if (isClosed) return failed;
+      emit(
+        state.copyWith(
+          isLoading: false,
+          verifyOtpLoadingStateStatus: StateStatus.success,
+          errorMessage: null,
+        ),
+      );
+      unawaited(_analytics.logEvent(AnalyticsEventKeys.otpVerified));
+      if (entity.isOnboardingCompleted) {
+        _sessionRefresh.notifyLoggedIn();
+      }
+      unawaited(_syncFcmAfterLogin(fcmToken));
+      return VerifyOtpOutcome(
+        isSuccess: true,
+        goToHome: entity.isOnboardingCompleted,
+      );
+    } catch (error, stackTrace) {
+      developer.log(
+        'OTP verify failed: $error',
+        name: 'AuthCubit',
+        error: error,
+        stackTrace: stackTrace,
+      );
+      if (!isClosed) {
         emit(
           state.copyWith(
             isLoading: false,
-            verifyOtpLoadingStateStatus: StateStatus.success,
-            errorMessage: null,
+            verifyOtpLoadingStateStatus: StateStatus.error,
+            errorMessage: error.toString(),
           ),
         );
-        unawaited(_analytics.logEvent(AnalyticsEventKeys.otpVerified));
-        if (entity.isOnboardingCompleted) {
-          _sessionRefresh.notifyLoggedIn();
-        }
-        unawaited(_syncFcmAfterLogin(fcmToken));
-        return VerifyOtpOutcome(
-          isSuccess: true,
-          goToHome: entity.isOnboardingCompleted,
-        );
-      },
-    );
+      }
+      return failed;
+    }
   }
 
   void clearError() {
@@ -304,17 +318,12 @@ class AuthCubit extends Cubit<AuthState> {
 
   Future<void> _hydrateProfileAfterLogin() async {
     final result = await _getProfileSetupContentUseCase.call();
-    result.fold(
-      (error) {
-        developer.log(
-          'Post-OTP profile hydrate failed: $error',
-          name: 'AuthCubit',
-        );
-      },
-      (_) {
-        _sessionRefresh.notifyProfileUpdated();
-      },
-    );
+    if (result.isLeft) {
+      developer.log(
+        'Post-OTP profile hydrate failed: ${result.left}',
+        name: 'AuthCubit',
+      );
+    }
   }
 
   void _startOtpTimer({int? expiresInSeconds}) {
