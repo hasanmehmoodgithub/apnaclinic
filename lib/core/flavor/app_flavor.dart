@@ -16,7 +16,7 @@ enum AppFlavor {
   ),
   production(
     name: 'Production',
-    apiBaseUrl: 'https://pharmacy.apnaclinic.com.pk',
+    apiBaseUrl: 'https://app.apnaclinic.com.pk',
     appName: 'Apna Clinic',
     enableLogging: false,
     enableDebugFeatures: false,

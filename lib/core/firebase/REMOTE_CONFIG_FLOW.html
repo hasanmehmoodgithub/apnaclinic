@@ -9,15 +9,21 @@
       --ink: #12211c;
       --muted: #4a5c56;
       --line: #d7e3de;
-      --paper: #f6f8f6;
+      --paper: #f4f6f4;
       --card: #ffffff;
       --teal: #0f6e5b;
       --teal-soft: #e5f4ef;
       --amber: #9a6b12;
-      --amber-soft: #f8efd8;
-      --red: #9b2c2c;
-      --red-soft: #fde8e8;
       --ok: #1f7a4d;
+      --editor: #161b22;
+      --editor-bar: #21262d;
+      --editor-tab: #0d1117;
+      --token-kw: #ff7b72;
+      --token-type: #79c0ff;
+      --token-str: #a5d6ff;
+      --token-cmt: #8b949e;
+      --token-fn: #d2a8ff;
+      --token-num: #79c0ff;
     }
     * { box-sizing: border-box; }
     html, body { margin: 0; padding: 0; }
@@ -30,7 +36,7 @@
     header {
       background: var(--ink);
       color: #edf7f3;
-      padding: 28px 24px 32px;
+      padding: 28px 24px 36px;
     }
     header .kicker {
       letter-spacing: 0.12em;
@@ -40,17 +46,15 @@
       margin-bottom: 8px;
     }
     header h1 { margin: 0 0 8px; font-size: 26px; font-weight: 650; }
-    header p { margin: 0; max-width: 760px; color: #c5d9d2; }
-    main { max-width: 980px; margin: 0 auto; padding: 24px 20px 64px; }
+    header p { margin: 0; max-width: 780px; color: #c5d9d2; }
+    main { max-width: 1180px; margin: 0 auto; padding: 24px 20px 64px; }
     nav {
       display: flex;
       flex-wrap: wrap;
       gap: 8px;
-      margin: -36px 20px 28px;
-      max-width: 980px;
-      margin-left: auto;
-      margin-right: auto;
-      position: relative;
+      margin: -28px auto 22px;
+      max-width: 1180px;
+      padding: 0 20px;
     }
     nav a {
       background: var(--card);
@@ -65,31 +69,24 @@
       background: var(--card);
       border: 1px solid var(--line);
       border-radius: 14px;
-      padding: 22px 22px 18px;
+      padding: 22px;
       margin-bottom: 18px;
     }
-    h2 { margin: 0 0 12px; font-size: 18px; }
-    h3 { margin: 18px 0 8px; font-size: 15px; }
+    h2 { margin: 0 0 10px; font-size: 18px; }
+    h3 { margin: 16px 0 8px; font-size: 15px; }
     p { margin: 0 0 10px; color: var(--muted); }
     code, .mono {
-      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
       font-size: 12.5px;
     }
-    .note {
-      background: var(--teal-soft);
-      border-left: 4px solid var(--teal);
+    .note, .warn {
       padding: 10px 12px;
       border-radius: 0 8px 8px 0;
+      font-size: 14px;
       color: var(--ink);
-      font-size: 14px;
     }
-    .warn {
-      background: var(--amber-soft);
-      border-left: 4px solid var(--amber);
-      padding: 10px 12px;
-      border-radius: 0 8px 8px 0;
-      font-size: 14px;
-    }
+    .note { background: var(--teal-soft); border-left: 4px solid var(--teal); }
+    .warn { background: #f8efd8; border-left: 4px solid var(--amber); }
     table { width: 100%; border-collapse: collapse; font-size: 14px; }
     th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
     th { color: var(--muted); font-weight: 600; font-size: 12px; text-transform: uppercase; }
@@ -107,37 +104,7 @@
     }
     .chip-prod { background: var(--teal-soft); color: var(--teal); }
     .chip-skip { background: #eee; color: #555; }
-    .chip-fail { background: var(--red-soft); color: var(--red); }
-    .flow {
-      display: flex;
-      flex-direction: column;
-      gap: 0;
-      margin: 12px 0;
-    }
-    .step {
-      display: grid;
-      grid-template-columns: 36px 1fr;
-      gap: 12px;
-      align-items: start;
-    }
-    .n {
-      width: 28px; height: 28px;
-      border-radius: 50%;
-      background: var(--teal);
-      color: white;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 13px; font-weight: 700;
-      margin-top: 2px;
-    }
-    .n.alt { background: var(--amber); }
-    .n.fail { background: var(--red); }
-    .n.ok { background: var(--ok); }
-    .vline {
-      width: 2px;
-      background: var(--line);
-      height: 14px;
-      margin: 0 0 0 13px;
-    }
+    .chip-plan { background: #fff4d6; color: var(--amber); }
     .box {
       border: 1px solid var(--line);
       border-radius: 10px;
@@ -146,17 +113,144 @@
     }
     .box strong { display: block; margin-bottom: 2px; }
     .box span { color: var(--muted); font-size: 13px; }
-    .arrow {
-      text-align: center;
-      color: var(--teal);
-      font-weight: 700;
-      padding: 4px 0;
+    .workspace {
+      display: grid;
+      gap: 14px;
+      min-height: 560px;
     }
-    footer {
-      color: var(--muted);
-      font-size: 13px;
-      padding: 8px 4px 0;
+    @media (min-width: 980px) {
+      .workspace { grid-template-columns: 320px 1fr; }
     }
+    .flow-list { display: flex; flex-direction: column; gap: 8px; }
+    .flow-btn {
+      display: grid;
+      grid-template-columns: 28px 1fr;
+      gap: 10px;
+      align-items: start;
+      text-align: left;
+      border: 1px solid var(--line);
+      background: #fbfcfb;
+      border-radius: 10px;
+      padding: 10px 10px 10px 8px;
+      cursor: pointer;
+      font: inherit;
+      color: inherit;
+      width: 100%;
+    }
+    .flow-btn:hover { border-color: #9cc9bc; }
+    .flow-btn.active {
+      border-color: var(--teal);
+      background: var(--teal-soft);
+      box-shadow: 0 0 0 1px var(--teal) inset;
+    }
+    .n {
+      width: 26px; height: 26px;
+      border-radius: 50%;
+      background: var(--teal);
+      color: white;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 700;
+      margin-top: 1px;
+    }
+    .n.alt { background: var(--amber); }
+    .flow-btn small { display: block; color: var(--muted); font-size: 12px; font-weight: 400; }
+    .flow-btn b { display: block; font-size: 13px; }
+    .file-screen {
+      background: var(--editor);
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid #30363d;
+      min-height: 520px;
+      display: flex;
+      flex-direction: column;
+    }
+    .titlebar {
+      background: var(--editor-bar);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px 0;
+      min-height: 40px;
+    }
+    .dots { display: flex; gap: 6px; margin-right: 8px; }
+    .dots i {
+      width: 10px; height: 10px; border-radius: 50%; display: block;
+    }
+    .dots .r { background: #ff5f57; }
+    .dots .y { background: #febc2e; }
+    .dots .g { background: #28c840; }
+    .tab {
+      background: var(--editor-tab);
+      color: #e6edf3;
+      font-size: 12px;
+      padding: 8px 14px 9px;
+      border-radius: 8px 8px 0 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .tab .dot-dart {
+      width: 8px; height: 8px; border-radius: 2px;
+      background: #00d2b8;
+    }
+    .pathbar {
+      background: var(--editor-tab);
+      color: #8b949e;
+      font-size: 11px;
+      padding: 6px 14px 8px;
+      border-bottom: 1px solid #30363d;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    }
+    .badge {
+      margin-left: auto;
+      font-size: 11px;
+      color: #3fb950;
+      background: #132d1a;
+      border: 1px solid #238636;
+      border-radius: 999px;
+      padding: 2px 8px;
+    }
+    .badge.planned {
+      color: #d29922;
+      background: #2d2108;
+      border-color: #9e6a03;
+    }
+    .code-wrap {
+      display: grid;
+      grid-template-columns: 44px 1fr;
+      overflow: auto;
+      flex: 1;
+      max-height: 640px;
+    }
+    .gutter {
+      color: #6e7681;
+      text-align: right;
+      padding: 14px 8px 14px 10px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 12px;
+      line-height: 1.55;
+      user-select: none;
+      background: #0d1117;
+      border-right: 1px solid #21262d;
+      white-space: pre;
+    }
+    pre.code {
+      margin: 0;
+      padding: 14px 16px 18px 12px;
+      color: #e6edf3;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 12.2px;
+      line-height: 1.55;
+      white-space: pre;
+    }
+    .kw { color: var(--token-kw); }
+    .ty { color: var(--token-type); }
+    .st { color: var(--token-str); }
+    .cm { color: var(--token-cmt); font-style: italic; }
+    .fn { color: var(--token-fn); }
+    .an { color: #ffa657; }
+    footer { color: var(--muted); font-size: 13px; padding: 8px 4px 0; }
+    .legend { font-size: 12px; color: var(--muted); margin-bottom: 10px; }
   </style>
 </head>
 <body>
@@ -164,25 +258,47 @@
     <div class="kicker">Apna Clinic · Firebase</div>
     <h1>Production API base URL from Remote Config</h1>
     <p>
-      Remote Config is used <strong>only in the production flavor</strong>.
-      Dev and staging keep the compiled staging host. If fetch fails, the app
-      keeps serving traffic from last-good or the hard-coded production URL.
+      Click a step in the flow. The file screen on the right shows the Dart that
+      runs there. Remote Config is <strong>production only</strong>. Dev and staging
+      never read <code>api_base_url</code>.
     </p>
   </header>
 
   <nav>
+    <a href="#workspace">Flow + code</a>
     <a href="#scope">Scope</a>
-    <a href="#startup">Startup</a>
     <a href="#resolve">URL resolution</a>
-    <a href="#rc">How Remote Config works</a>
     <a href="#fail">Fail defaults</a>
     <a href="#quota">Free quota</a>
   </nav>
 
   <main>
+    <section id="workspace">
+      <h2>Flow + file screen</h2>
+      <p class="legend">
+        <span class="chip chip-plan">planned</span> new / changed Dart &nbsp;
+        <span class="chip chip-prod">existing</span> already in the repo
+      </p>
+      <div class="workspace">
+        <div class="flow-list" id="flow-list"></div>
+        <div class="file-screen">
+          <div class="titlebar">
+            <span class="dots"><i class="r"></i><i class="y"></i><i class="g"></i></span>
+            <span class="tab"><i class="dot-dart"></i><span id="tab-name">main.dart</span></span>
+            <span class="badge planned" id="file-badge">planned</span>
+          </div>
+          <div class="pathbar" id="file-path">lib/main.dart</div>
+          <div class="code-wrap">
+            <div class="gutter" id="gutter"></div>
+            <pre class="code" id="code"></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <section id="scope">
-      <h2>1. Flavor gate</h2>
-      <p>Gate with <code>FlavorConfig.isProduction</code>. Firebase can still start for FCM/Analytics on every flavor; the <code>api_base_url</code> key is ignored outside production.</p>
+      <h2>Flavor gate</h2>
+      <p>Gate with <code>FlavorConfig.isProduction</code>. FCM/Analytics can still start on every flavor; the Remote Config key is ignored outside production.</p>
       <div class="grid grid-3">
         <div class="box">
           <span class="chip chip-skip">Development</span>
@@ -202,122 +318,358 @@
       </div>
     </section>
 
-    <section id="startup">
-      <h2>2. Startup flow</h2>
-      <p>Do not block the first frame on a network fetch. Production activates the <em>cached</em> template (disk, no billable fetch), then fetches in the background.</p>
-
-      <h3>Production</h3>
-      <div class="flow">
-        <div class="step"><div class="n">1</div><div class="box"><strong>FlavorConfig.initialize()</strong><span>APP_FLAVOR → Production. Default compiled host is pharmacy.apnaclinic.com.pk</span></div></div>
-        <div class="vline"></div>
-        <div class="step"><div class="n">2</div><div class="box"><strong>FirebaseBootstrap.initialize()</strong><span>Needed before Remote Config. If this returns false, skip RC and use flavor URL.</span></div></div>
-        <div class="vline"></div>
-        <div class="step"><div class="n">3</div><div class="box"><strong>Remote Config setDefaults + activate()</strong><span>In-app default = production URL. activate() applies last cached template with no network.</span></div></div>
-        <div class="vline"></div>
-        <div class="step"><div class="n">4</div><div class="box"><strong>Resolve URL (allowlist)</strong><span>persisted last-good → activated RC value → flavor default. Invalid hosts are rejected.</span></div></div>
-        <div class="vline"></div>
-        <div class="step"><div class="n">5</div><div class="box"><strong>init DI → runApp()</strong><span>AppUrls / FlavorConfig.apiBaseUrl already point at the resolved host. First API calls can proceed.</span></div></div>
-        <div class="vline"></div>
-        <div class="step"><div class="n alt">6</div><div class="box"><strong>unawaited fetchAndActivate()</strong><span>12-hour minimum interval. Updates cache for next cold start (safer for HMAC than swapping host mid-session).</span></div></div>
-      </div>
-
-      <h3>Development / staging</h3>
-      <div class="flow">
-        <div class="step"><div class="n">1</div><div class="box"><strong>FlavorConfig.initialize()</strong><span>Use compiled staging host. Never read api_base_url.</span></div></div>
-        <div class="vline"></div>
-        <div class="step"><div class="n">2</div><div class="box"><strong>init DI → runApp()</strong><span>Same as today.</span></div></div>
-        <div class="vline"></div>
-        <div class="step"><div class="n">3</div><div class="box"><strong>Firebase after first frame (FCM)</strong><span>No Remote Config work for the API host.</span></div></div>
-      </div>
-    </section>
-
     <section id="resolve">
-      <h2>3. URL resolution (production only)</h2>
-      <p>Every API path in <code>AppUrls</code> is a full URL built from <code>FlavorConfig.apiBaseUrl</code>. Changing that getter is enough; Dio does not set its own baseUrl.</p>
-      <div class="flow">
-        <div class="step"><div class="n ok">A</div><div class="box"><strong>Persisted last-good URL</strong><span>Last value that passed HTTPS + host allowlist. Survives offline and fetch errors.</span></div></div>
-        <div class="arrow">if missing or rejected ↓</div>
-        <div class="step"><div class="n">B</div><div class="box"><strong>Activated Remote Config <code>api_base_url</code></strong><span>From cache after activate(), or from a completed fetchAndActivate().</span></div></div>
-        <div class="arrow">if missing or rejected ↓</div>
-        <div class="step"><div class="n ok">C</div><div class="box"><strong>Hard fail-default</strong><span class="mono">https://pharmacy.apnaclinic.com.pk</span></div></div>
-      </div>
-      <p class="note">Allowlist example: <code>pharmacy.apnaclinic.com.pk</code> plus any extra production hosts you may switch to. Reject http:// and unknown hosts.</p>
-    </section>
-
-    <section id="rc">
-      <h2>4. How Firebase Remote Config works</h2>
-      <p>Remote Config is a key/value template in the Firebase console. The SDK keeps a copy on the device. Reading a value is local. Only <code>fetch</code> / <code>fetchAndActivate</code> talks to Google and counts against quota.</p>
-      <div class="grid grid-2">
-        <div class="box">
-          <strong>1. Defaults</strong>
-          <span>Compiled into the app. Always available on first install and when Firebase is down.</span>
-        </div>
-        <div class="box">
-          <strong>2. Fetch</strong>
-          <span>Downloads the template if the minimum interval has elapsed (12 hours in production).</span>
-        </div>
-        <div class="box">
-          <strong>3. Cache</strong>
-          <span>Stored on disk. Next cold start can activate() this without a network call.</span>
-        </div>
-        <div class="box">
-          <strong>4. Activate + getString</strong>
-          <span>Makes fetched keys live. getString('api_base_url') is not billed.</span>
-        </div>
-      </div>
-      <h3>Console</h3>
-      <table>
-        <thead><tr><th>Key</th><th>Type</th><th>Console default</th></tr></thead>
-        <tbody>
-          <tr>
-            <td><code>api_base_url</code></td>
-            <td>String</td>
-            <td><code>https://pharmacy.apnaclinic.com.pk</code></td>
-          </tr>
-        </tbody>
-      </table>
-      <p style="margin-top:12px">Optional Firebase condition: production package / bundle only (<code>com.apna.clinic.android</code> / <code>com.apna.clinic.ios</code>) so a debug build on the same project cannot pick up the override.</p>
+      <h2>URL resolution (production only)</h2>
+      <p><code>AppUrls</code> already reads <code>FlavorConfig.apiBaseUrl</code>. Dio does not set its own baseUrl — every call is a full URL.</p>
+      <p class="note">Order: last-good prefs → activated <code>api_base_url</code> → <code>https://pharmacy.apnaclinic.com.pk</code>. Reject http and hosts outside the allowlist.</p>
     </section>
 
     <section id="fail">
-      <h2>5. Fail defaults — what happens when RC fails</h2>
-      <p>The app must still call the API. Fetch failure is expected (offline, timeout, Spark throttle, bad console value).</p>
+      <h2>Fail defaults</h2>
       <table>
         <thead><tr><th>Event</th><th>What the app uses</th></tr></thead>
         <tbody>
-          <tr><td>Firebase init fails</td><td>Flavor production URL. Skip Remote Config entirely.</td></tr>
-          <tr><td>Fetch timeout / no network</td><td>Last-good if present, else flavor URL. Background fetch can retry later.</td></tr>
-          <tr><td>Empty / non-HTTPS / unknown host</td><td>Reject. Fall back to last-good, then flavor URL.</td></tr>
-          <tr><td>Spark throttle after grace period</td><td>SDK cannot download a new template. Cached / default values keep working.</td></tr>
-          <tr><td>Host would change mid-session</td><td>Prefer apply on <strong>next cold start</strong> so HMAC signing stays on one host.</td></tr>
+          <tr><td>Firebase init fails</td><td>Flavor production URL. Skip Remote Config.</td></tr>
+          <tr><td>Fetch timeout / offline</td><td>Last-good if present, else flavor URL.</td></tr>
+          <tr><td>Empty / non-HTTPS / unknown host</td><td>Reject. Last-good, then flavor URL.</td></tr>
+          <tr><td>Spark throttle</td><td>No new template. Cached / default keep working.</td></tr>
+          <tr><td>Host would change mid-session</td><td>Persist for <strong>next cold start</strong> (HMAC stays on one host).</td></tr>
         </tbody>
       </table>
-      <p class="warn" style="margin-top:12px">A wrong console URL can break login for every production user. Use the allowlist and roll out 10% → 50% → 100%.</p>
+      <p class="warn" style="margin-top:12px">Roll out a console URL change 10% → 50% → 100%. A bad host can break login for every production user.</p>
     </section>
 
     <section id="quota">
-      <h2>6. Free quota (not “users”)</h2>
-      <p>Remote Config is billed per <strong>fetch request per day</strong>, not monthly active users. Spark (no-cost) includes <strong>100,000 fetches/day</strong>.</p>
+      <h2>Free quota (not “users”)</h2>
+      <p>Spark includes <strong>100,000 fetch requests/day</strong>. Reading cached values is free. Production interval: <strong>12 hours</strong>.</p>
       <table>
-        <thead><tr><th>If each device fetches…</th><th>Approx. DAU inside free cap</th></tr></thead>
+        <thead><tr><th>Fetches per device / day</th><th>Approx. DAU inside free cap</th></tr></thead>
         <tbody>
-          <tr><td>Once per day</td><td>~100,000 daily active devices</td></tr>
-          <tr><td>Twice per day (12h interval, two opens)</td><td>~50,000 daily active devices</td></tr>
+          <tr><td>1</td><td>~100,000</td></tr>
+          <tr><td>2 (open twice, 12h interval)</td><td>~50,000</td></tr>
         </tbody>
       </table>
-      <ul>
-        <li>Reading cached values does <strong>not</strong> count.</li>
-        <li>Production minimum fetch interval: <strong>12 hours</strong> (24–48h is fine for a stable host).</li>
-        <li>Do not fetch on every screen.</li>
-        <li>Spark overage: 30-day grace, then extra fetches are throttled; users keep last-good / in-app default.</li>
-        <li>Blaze: first 100k/day still free, then pay per extra fetch (no throttle).</li>
-      </ul>
     </section>
 
     <footer>
-      Planned flow for Apna Clinic. Parameter lives in Firebase project <code>apna-clinic-mobile-app</code>.
-      See also <code>FIREBASE.md</code> in this folder.
+      Planned flow for project <code>apna-clinic-mobile-app</code>. Console key: <code>api_base_url</code>.
+      See <code>FIREBASE.md</code> in this folder.
     </footer>
   </main>
+
+  <script>
+    const KW = new Set([
+      'import','as','show','hide','class','extends','with','implements','static',
+      'final','const','var','late','return','if','else','await','async','try',
+      'catch','finally','throw','for','in','is','new','this','super','void',
+      'true','false','null','typedef','enum','get','set','factory','assert',
+      'switch','case','default','break','continue','required','covariant',
+    ]);
+
+    function highlightDart(src) {
+      const escaped = src.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+      const tokens = [];
+      const re = /(\/\/[^\n]*|\/\*[\s\S]*?\*\/)|('(?:\\.|[^'\\])*'|"(?:\\.|[^"\\])*")|\b([A-Za-z_][A-Za-z0-9_]*)\b/g;
+      let last = 0;
+      let m;
+      while ((m = re.exec(escaped))) {
+        tokens.push(escaped.slice(last, m.index));
+        if (m[1]) tokens.push('<span class="cm">' + m[1] + '</span>');
+        else if (m[2]) tokens.push('<span class="st">' + m[2] + '</span>');
+        else if (KW.has(m[3])) tokens.push('<span class="kw">' + m[3] + '</span>');
+        else if (/^[A-Z]/.test(m[3])) tokens.push('<span class="ty">' + m[3] + '</span>');
+        else tokens.push(m[3]);
+        last = m.index + m[0].length;
+      }
+      tokens.push(escaped.slice(last));
+      return tokens.join('');
+    }
+
+    const steps = [
+      {
+        id: 'flavor',
+        n: '1',
+        title: 'FlavorConfig.initialize()',
+        hint: 'Read APP_FLAVOR. Production default host is pharmacy.apnaclinic.com.pk',
+        badge: 'existing + planned',
+        planned: true,
+        path: 'lib/core/flavor/flavor_config.dart',
+        file: 'flavor_config.dart',
+        code: `class FlavorConfig {
+  FlavorConfig._();
+
+  /// Compile-time flavor. Default in this repo is Production.
+  static AppFlavor get currentFlavor {
+    const flavorString = String.fromEnvironment(
+      'APP_FLAVOR',
+      defaultValue: 'Production',
+    );
+    return switch (flavorString.toLowerCase()) {
+      'production' => AppFlavor.production,
+      'staging' => AppFlavor.staging,
+      _ => AppFlavor.development,
+    };
+  }
+
+  /// Last-good / activated Remote Config URL. Production only.
+  static String? remoteOverride;
+
+  static bool get isProduction =>
+      currentFlavor == AppFlavor.production;
+
+  /// Dev/staging: compiled URL only.
+  /// Production: remote override, then flavor default.
+  static String get apiBaseUrl {
+    const envBaseUrl = String.fromEnvironment(
+      'API_BASE_URL',
+      defaultValue: '',
+    );
+    if (envBaseUrl.isNotEmpty) return envBaseUrl;
+    if (isProduction) {
+      final remote = remoteOverride;
+      if (remote != null && remote.isNotEmpty) return remote;
+    }
+    return currentFlavor.apiBaseUrl;
+  }
+
+  static void initialize() {
+    if (enableLogging) {
+      log('API Base URL: \$apiBaseUrl');
+    }
+  }
+}`,
+      },
+      {
+        id: 'bootstrap',
+        n: '2',
+        title: 'FirebaseBootstrap.initialize()',
+        hint: 'If this returns false, skip Remote Config and keep the flavor URL.',
+        badge: 'existing',
+        planned: false,
+        path: 'lib/core/firebase/firebase_bootstrap.dart',
+        file: 'firebase_bootstrap.dart',
+        code: `class FirebaseBootstrap {
+  FirebaseBootstrap._();
+
+  static bool _initialized = false;
+
+  static Future<bool> initialize() {
+    if (_initialized) return Future.value(true);
+    return _inFlight ??= _initialize();
+  }
+
+  static Future<bool> _initialize() async {
+    try {
+      if (!DefaultFirebaseOptions.isConfigured) {
+        return false; // skip RC, use flavor URL
+      }
+      if (Firebase.apps.isEmpty) {
+        await Firebase.initializeApp(
+          options: DefaultFirebaseOptions.currentPlatform,
+        );
+      }
+      _initialized = true;
+      return true;
+    } catch (_) {
+      return false;
+    }
+  }
+}`,
+      },
+      {
+        id: 'activate',
+        n: '3',
+        title: 'setDefaults + activate()',
+        hint: 'Disk cache only — not billed. In-app default is the production host.',
+        badge: 'planned',
+        planned: true,
+        path: 'lib/core/firebase/remote_config_service.dart',
+        file: 'remote_config_service.dart',
+        code: `class RemoteConfigService {
+  RemoteConfigService._();
+
+  static const key = 'api_base_url';
+  static const prefsKey = 'rc_last_good_api_base_url';
+  static const allowlist = {'pharmacy.apnaclinic.com.pk'};
+
+  static Future<void> activateCached() async {
+    if (!FlavorConfig.isProduction) return;
+
+    final ready = await FirebaseBootstrap.initialize();
+    if (!ready) return;
+
+    final rc = FirebaseRemoteConfig.instance;
+    await rc.setConfigSettings(RemoteConfigSettings(
+      fetchTimeout: const Duration(seconds: 8),
+      minimumFetchInterval: const Duration(hours: 12),
+    ));
+    await rc.setDefaults({
+      key: AppFlavor.production.apiBaseUrl,
+    });
+
+    // Local cache. No network. Not billed.
+    await rc.activate();
+    _apply(rc.getString(key));
+  }
+}`,
+      },
+      {
+        id: 'resolve',
+        n: '4',
+        title: 'Resolve URL (allowlist)',
+        hint: 'last-good → Remote Config → https://pharmacy.apnaclinic.com.pk',
+        badge: 'planned',
+        planned: true,
+        path: 'lib/core/firebase/remote_config_service.dart',
+        file: 'remote_config_service.dart',
+        code: `static String? _validated(String? raw) {
+  final value = raw?.trim() ?? '';
+  if (value.isEmpty) return null;
+  final uri = Uri.tryParse(value);
+  if (uri == null || uri.scheme != 'https' || uri.host.isEmpty) {
+    return null;
+  }
+  if (!allowlist.contains(uri.host)) return null;
+  return value.endsWith('/')
+      ? value.substring(0, value.length - 1)
+      : value;
+}
+
+static void _apply(String candidate) {
+  final url = _validated(_readPrefs())
+      ?? _validated(candidate)
+      ?? AppFlavor.production.apiBaseUrl;
+  FlavorConfig.remoteOverride = url;
+}
+
+static void _persistIfValid(String candidate) {
+  final url = _validated(candidate);
+  if (url == null) return;
+  // Write prefs for the next cold start. Do not swap host now.
+}`,
+      },
+      {
+        id: 'di',
+        n: '5',
+        title: 'init DI → runApp()',
+        hint: 'AppUrls already uses FlavorConfig.apiBaseUrl. First API calls can go.',
+        badge: 'existing',
+        planned: false,
+        path: 'lib/core/network/app_urls.dart',
+        file: 'app_urls.dart',
+        code: `class AppUrls {
+  AppUrls._();
+
+  /// Follows FlavorConfig. Production may already have
+  /// FlavorConfig.remoteOverride set from Remote Config.
+  static String get baseUrl => FlavorConfig.apiBaseUrl;
+
+  static String get _normalizedApiBaseUrl => baseUrl.endsWith('/')
+      ? baseUrl.substring(0, baseUrl.length - 1)
+      : baseUrl;
+
+  static String get requestOtp =>
+      '\$_normalizedApiBaseUrl/acs-auth/api/v1/auth/otp/generate';
+
+  static String get verifyOtp =>
+      '\$_normalizedApiBaseUrl/acs-auth/api/v1/auth/otp/verify';
+}`,
+      },
+      {
+        id: 'main',
+        n: '6',
+        nClass: 'alt',
+        title: 'main() wiring',
+        hint: 'Activate cache before DI. Fetch in the background after first frame.',
+        badge: 'planned',
+        planned: true,
+        path: 'lib/main.dart',
+        file: 'main.dart',
+        code: `void main() {
+  runZonedGuarded(() async {
+    WidgetsFlutterBinding.ensureInitialized();
+    FlavorConfig.initialize();
+
+    if (FlavorConfig.isProduction) {
+      await FirebaseBootstrap.initialize();
+      await RemoteConfigService.activateCached();
+    }
+
+    await initDependencyInjection();
+    runApp(const SecurityGate(child: ApnaClinicApp()));
+
+    // Never block first frame on a network fetch.
+    if (FlavorConfig.isProduction) {
+      unawaited(RemoteConfigService.fetchInBackground());
+    }
+    unawaited(_initializePushNotifications());
+  }, (error, stackTrace) {
+    developer.log('Unhandled error in zone: \$error', name: 'main');
+  });
+}`,
+      },
+      {
+        id: 'fetch',
+        n: '7',
+        nClass: 'alt',
+        title: 'unawaited fetchAndActivate()',
+        hint: '12h interval. Persist for next launch. Counts against the 100k/day free cap.',
+        badge: 'planned',
+        planned: true,
+        path: 'lib/core/firebase/remote_config_service.dart',
+        file: 'remote_config_service.dart',
+        code: `static Future<void> fetchInBackground() async {
+  if (!FlavorConfig.isProduction) return;
+  try {
+    final rc = FirebaseRemoteConfig.instance;
+    await rc.fetchAndActivate(); // billed fetch
+    _persistIfValid(rc.getString(key));
+  } catch (e, stackTrace) {
+    developer.log(
+      'Remote Config fetch skipped: \$e',
+      name: 'RemoteConfigService',
+      error: e,
+      stackTrace: stackTrace,
+    );
+    // Keep last-good / in-app default. App stays up.
+  }
+}`,
+      },
+    ];
+
+    const list = document.getElementById('flow-list');
+    const codeEl = document.getElementById('code');
+    const gutter = document.getElementById('gutter');
+    const pathEl = document.getElementById('file-path');
+    const tabEl = document.getElementById('tab-name');
+    const badgeEl = document.getElementById('file-badge');
+
+    function show(index) {
+      const step = steps[index];
+      [...list.children].forEach((btn, i) => {
+        btn.classList.toggle('active', i === index);
+      });
+      tabEl.textContent = step.file;
+      pathEl.textContent = step.path;
+      badgeEl.textContent = step.badge;
+      badgeEl.classList.toggle('planned', step.planned);
+      const lines = step.code.replace(/^\n/, '').split('\n');
+      gutter.textContent = lines.map((_, i) => String(i + 1)).join('\n');
+      codeEl.innerHTML = highlightDart(step.code.replace(/^\n/, ''));
+    }
+
+    steps.forEach((step, index) => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'flow-btn';
+      btn.innerHTML =
+        '<span class="n ' + (step.nClass || '') + '">' + step.n + '</span>' +
+        '<span><b>' + step.title + '</b><small>' + step.hint + '</small></span>';
+      btn.addEventListener('click', () => show(index));
+      list.appendChild(btn);
+    });
+
+    show(0);
+  </script>
 </body>
 </html>
