@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Apna Clinic — Production API base URL via Firebase Remote Config</title>
+  <style>
+    :root {
+      --ink: #12211c;
+      --muted: #4a5c56;
+      --line: #d7e3de;
+      --paper: #f6f8f6;
+      --card: #ffffff;
+      --teal: #0f6e5b;
+      --teal-soft: #e5f4ef;
+      --amber: #9a6b12;
+      --amber-soft: #f8efd8;
+      --red: #9b2c2c;
+      --red-soft: #fde8e8;
+      --ok: #1f7a4d;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      font-family: "Segoe UI", system-ui, sans-serif;
+      background: var(--paper);
+      color: var(--ink);
+      line-height: 1.5;
+    }
+    header {
+      background: var(--ink);
+      color: #edf7f3;
+      padding: 28px 24px 32px;
+    }
+    header .kicker {
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      font-size: 11px;
+      color: #8fbfb0;
+      margin-bottom: 8px;
+    }
+    header h1 { margin: 0 0 8px; font-size: 26px; font-weight: 650; }
+    header p { margin: 0; max-width: 760px; color: #c5d9d2; }
+    main { max-width: 980px; margin: 0 auto; padding: 24px 20px 64px; }
+    nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: -36px 20px 28px;
+      max-width: 980px;
+      margin-left: auto;
+      margin-right: auto;
+      position: relative;
+    }
+    nav a {
+      background: var(--card);
+      border: 1px solid var(--line);
+      color: var(--ink);
+      text-decoration: none;
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: 13px;
+    }
+    section {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 22px 22px 18px;
+      margin-bottom: 18px;
+    }
+    h2 { margin: 0 0 12px; font-size: 18px; }
+    h3 { margin: 18px 0 8px; font-size: 15px; }
+    p { margin: 0 0 10px; color: var(--muted); }
+    code, .mono {
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 12.5px;
+    }
+    .note {
+      background: var(--teal-soft);
+      border-left: 4px solid var(--teal);
+      padding: 10px 12px;
+      border-radius: 0 8px 8px 0;
+      color: var(--ink);
+      font-size: 14px;
+    }
+    .warn {
+      background: var(--amber-soft);
+      border-left: 4px solid var(--amber);
+      padding: 10px 12px;
+      border-radius: 0 8px 8px 0;
+      font-size: 14px;
+    }
+    table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+    th { color: var(--muted); font-weight: 600; font-size: 12px; text-transform: uppercase; }
+    .grid { display: grid; gap: 12px; }
+    @media (min-width: 720px) {
+      .grid-3 { grid-template-columns: repeat(3, 1fr); }
+      .grid-2 { grid-template-columns: 1fr 1fr; }
+    }
+    .chip {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .chip-prod { background: var(--teal-soft); color: var(--teal); }
+    .chip-skip { background: #eee; color: #555; }
+    .chip-fail { background: var(--red-soft); color: var(--red); }
+    .flow {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      margin: 12px 0;
+    }
+    .step {
+      display: grid;
+      grid-template-columns: 36px 1fr;
+      gap: 12px;
+      align-items: start;
+    }
+    .n {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      background: var(--teal);
+      color: white;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: 700;
+      margin-top: 2px;
+    }
+    .n.alt { background: var(--amber); }
+    .n.fail { background: var(--red); }
+    .n.ok { background: var(--ok); }
+    .vline {
+      width: 2px;
+      background: var(--line);
+      height: 14px;
+      margin: 0 0 0 13px;
+    }
+    .box {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 10px 12px;
+      background: #fbfcfb;
+    }
+    .box strong { display: block; margin-bottom: 2px; }
+    .box span { color: var(--muted); font-size: 13px; }
+    .arrow {
+      text-align: center;
+      color: var(--teal);
+      font-weight: 700;
+      padding: 4px 0;
+    }
+    footer {
+      color: var(--muted);
+      font-size: 13px;
+      padding: 8px 4px 0;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="kicker">Apna Clinic · Firebase</div>
+    <h1>Production API base URL from Remote Config</h1>
+    <p>
+      Remote Config is used <strong>only in the production flavor</strong>.
+      Dev and staging keep the compiled staging host. If fetch fails, the app
+      keeps serving traffic from last-good or the hard-coded production URL.
+    </p>
+  </header>
+
+  <nav>
+    <a href="#scope">Scope</a>
+    <a href="#startup">Startup</a>
+    <a href="#resolve">URL resolution</a>
+    <a href="#rc">How Remote Config works</a>
+    <a href="#fail">Fail defaults</a>
+    <a href="#quota">Free quota</a>
+  </nav>
+
+  <main>
+    <section id="scope">
+      <h2>1. Flavor gate</h2>
+      <p>Gate with <code>FlavorConfig.isProduction</code>. Firebase can still start for FCM/Analytics on every flavor; the <code>api_base_url</code> key is ignored outside production.</p>
+      <div class="grid grid-3">
+        <div class="box">
+          <span class="chip chip-skip">Development</span>
+          <strong>Compiled URL only</strong>
+          <span class="mono">https://jazzred-msa-stg.jazz.com.pk</span>
+        </div>
+        <div class="box">
+          <span class="chip chip-skip">Staging</span>
+          <strong>Compiled URL only</strong>
+          <span class="mono">https://jazzred-msa-stg.jazz.com.pk</span>
+        </div>
+        <div class="box">
+          <span class="chip chip-prod">Production</span>
+          <strong>Remote Config + fail defaults</strong>
+          <span class="mono">https://pharmacy.apnaclinic.com.pk</span>
+        </div>
+      </div>
+    </section>
+
+    <section id="startup">
+      <h2>2. Startup flow</h2>
+      <p>Do not block the first frame on a network fetch. Production activates the <em>cached</em> template (disk, no billable fetch), then fetches in the background.</p>
+
+      <h3>Production</h3>
+      <div class="flow">
+        <div class="step"><div class="n">1</div><div class="box"><strong>FlavorConfig.initialize()</strong><span>APP_FLAVOR → Production. Default compiled host is pharmacy.apnaclinic.com.pk</span></div></div>
+        <div class="vline"></div>
+        <div class="step"><div class="n">2</div><div class="box"><strong>FirebaseBootstrap.initialize()</strong><span>Needed before Remote Config. If this returns false, skip RC and use flavor URL.</span></div></div>
+        <div class="vline"></div>
+        <div class="step"><div class="n">3</div><div class="box"><strong>Remote Config setDefaults + activate()</strong><span>In-app default = production URL. activate() applies last cached template with no network.</span></div></div>
+        <div class="vline"></div>
+        <div class="step"><div class="n">4</div><div class="box"><strong>Resolve URL (allowlist)</strong><span>persisted last-good → activated RC value → flavor default. Invalid hosts are rejected.</span></div></div>
+        <div class="vline"></div>
+        <div class="step"><div class="n">5</div><div class="box"><strong>init DI → runApp()</strong><span>AppUrls / FlavorConfig.apiBaseUrl already point at the resolved host. First API calls can proceed.</span></div></div>
+        <div class="vline"></div>
+        <div class="step"><div class="n alt">6</div><div class="box"><strong>unawaited fetchAndActivate()</strong><span>12-hour minimum interval. Updates cache for next cold start (safer for HMAC than swapping host mid-session).</span></div></div>
+      </div>
+
+      <h3>Development / staging</h3>
+      <div class="flow">
+        <div class="step"><div class="n">1</div><div class="box"><strong>FlavorConfig.initialize()</strong><span>Use compiled staging host. Never read api_base_url.</span></div></div>
+        <div class="vline"></div>
+        <div class="step"><div class="n">2</div><div class="box"><strong>init DI → runApp()</strong><span>Same as today.</span></div></div>
+        <div class="vline"></div>
+        <div class="step"><div class="n">3</div><div class="box"><strong>Firebase after first frame (FCM)</strong><span>No Remote Config work for the API host.</span></div></div>
+      </div>
+    </section>
+
+    <section id="resolve">
+      <h2>3. URL resolution (production only)</h2>
+      <p>Every API path in <code>AppUrls</code> is a full URL built from <code>FlavorConfig.apiBaseUrl</code>. Changing that getter is enough; Dio does not set its own baseUrl.</p>
+      <div class="flow">
+        <div class="step"><div class="n ok">A</div><div class="box"><strong>Persisted last-good URL</strong><span>Last value that passed HTTPS + host allowlist. Survives offline and fetch errors.</span></div></div>
+        <div class="arrow">if missing or rejected ↓</div>
+        <div class="step"><div class="n">B</div><div class="box"><strong>Activated Remote Config <code>api_base_url</code></strong><span>From cache after activate(), or from a completed fetchAndActivate().</span></div></div>
+        <div class="arrow">if missing or rejected ↓</div>
+        <div class="step"><div class="n ok">C</div><div class="box"><strong>Hard fail-default</strong><span class="mono">https://pharmacy.apnaclinic.com.pk</span></div></div>
+      </div>
+      <p class="note">Allowlist example: <code>pharmacy.apnaclinic.com.pk</code> plus any extra production hosts you may switch to. Reject http:// and unknown hosts.</p>
+    </section>
+
+    <section id="rc">
+      <h2>4. How Firebase Remote Config works</h2>
+      <p>Remote Config is a key/value template in the Firebase console. The SDK keeps a copy on the device. Reading a value is local. Only <code>fetch</code> / <code>fetchAndActivate</code> talks to Google and counts against quota.</p>
+      <div class="grid grid-2">
+        <div class="box">
+          <strong>1. Defaults</strong>
+          <span>Compiled into the app. Always available on first install and when Firebase is down.</span>
+        </div>
+        <div class="box">
+          <strong>2. Fetch</strong>
+          <span>Downloads the template if the minimum interval has elapsed (12 hours in production).</span>
+        </div>
+        <div class="box">
+          <strong>3. Cache</strong>
+          <span>Stored on disk. Next cold start can activate() this without a network call.</span>
+        </div>
+        <div class="box">
+          <strong>4. Activate + getString</strong>
+          <span>Makes fetched keys live. getString('api_base_url') is not billed.</span>
+        </div>
+      </div>
+      <h3>Console</h3>
+      <table>
+        <thead><tr><th>Key</th><th>Type</th><th>Console default</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><code>api_base_url</code></td>
+            <td>String</td>
+            <td><code>https://pharmacy.apnaclinic.com.pk</code></td>
+          </tr>
+        </tbody>
+      </table>
+      <p style="margin-top:12px">Optional Firebase condition: production package / bundle only (<code>com.apna.clinic.android</code> / <code>com.apna.clinic.ios</code>) so a debug build on the same project cannot pick up the override.</p>
+    </section>
+
+    <section id="fail">
+      <h2>5. Fail defaults — what happens when RC fails</h2>
+      <p>The app must still call the API. Fetch failure is expected (offline, timeout, Spark throttle, bad console value).</p>
+      <table>
+        <thead><tr><th>Event</th><th>What the app uses</th></tr></thead>
+        <tbody>
+          <tr><td>Firebase init fails</td><td>Flavor production URL. Skip Remote Config entirely.</td></tr>
+          <tr><td>Fetch timeout / no network</td><td>Last-good if present, else flavor URL. Background fetch can retry later.</td></tr>
+          <tr><td>Empty / non-HTTPS / unknown host</td><td>Reject. Fall back to last-good, then flavor URL.</td></tr>
+          <tr><td>Spark throttle after grace period</td><td>SDK cannot download a new template. Cached / default values keep working.</td></tr>
+          <tr><td>Host would change mid-session</td><td>Prefer apply on <strong>next cold start</strong> so HMAC signing stays on one host.</td></tr>
+        </tbody>
+      </table>
+      <p class="warn" style="margin-top:12px">A wrong console URL can break login for every production user. Use the allowlist and roll out 10% → 50% → 100%.</p>
+    </section>
+
+    <section id="quota">
+      <h2>6. Free quota (not “users”)</h2>
+      <p>Remote Config is billed per <strong>fetch request per day</strong>, not monthly active users. Spark (no-cost) includes <strong>100,000 fetches/day</strong>.</p>
+      <table>
+        <thead><tr><th>If each device fetches…</th><th>Approx. DAU inside free cap</th></tr></thead>
+        <tbody>
+          <tr><td>Once per day</td><td>~100,000 daily active devices</td></tr>
+          <tr><td>Twice per day (12h interval, two opens)</td><td>~50,000 daily active devices</td></tr>
+        </tbody>
+      </table>
+      <ul>
+        <li>Reading cached values does <strong>not</strong> count.</li>
+        <li>Production minimum fetch interval: <strong>12 hours</strong> (24–48h is fine for a stable host).</li>
+        <li>Do not fetch on every screen.</li>
+        <li>Spark overage: 30-day grace, then extra fetches are throttled; users keep last-good / in-app default.</li>
+        <li>Blaze: first 100k/day still free, then pay per extra fetch (no throttle).</li>
+      </ul>
+    </section>
+
+    <footer>
+      Planned flow for Apna Clinic. Parameter lives in Firebase project <code>apna-clinic-mobile-app</code>.
+      See also <code>FIREBASE.md</code> in this folder.
+    </footer>
+  </main>
+</body>
+</html>

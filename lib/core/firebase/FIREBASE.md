@@ -15,3 +15,7 @@ Initialize Firebase once per isolate so FCM and Analytics can use `[DEFAULT]`.
 - Dart: `lib/firebase_options.dart` (project `apna-clinic-mobile-app`)
 
 Re-run `flutterfire configure` if you add platforms or rotate keys, then replace the platform config files and regenerate `firebase_options.dart`.
+
+## Production API base URL (planned)
+
+Remote Config should override the API host **only in the production flavor**. Open [REMOTE_CONFIG_FLOW.html](REMOTE_CONFIG_FLOW.html) in a browser for the flow, fail-defaults, and free-quota notes.
