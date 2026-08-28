@@ -54,6 +54,8 @@ class SearchMapper {
               cityId: result.cityId,
               packageId: result.packageId,
               packageName: result.packageName,
+              experience: result.experience,
+              qualification: result.qualification,
             ),
           )
               .toList(),

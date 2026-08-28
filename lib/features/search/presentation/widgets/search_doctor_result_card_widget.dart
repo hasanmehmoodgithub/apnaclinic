@@ -28,11 +28,11 @@ class SearchDoctorResultCardWidget extends StatelessWidget {
     final hasStrike = oldFee.isNotEmpty && oldFee != fee;
     final partnerLogo = item.providerLogo?.trim() ?? '';
     final specialty = item.subtitle.trim();
-    final detailLines = (item.description ?? '')
-        .split('\n')
-        .map((e) => e.trim())
-        .where((e) => e.isNotEmpty)
-        .toList(growable: false);
+    final detailLines = <String>[
+      if ((item.experience ?? '').trim().isNotEmpty) item.experience!.trim(),
+      if ((item.qualification ?? '').trim().isNotEmpty)
+        item.qualification!.trim(),
+    ];
     final ratingValue = double.tryParse(
           (item.rating ?? '').split('/').first.trim(),
         ) ??

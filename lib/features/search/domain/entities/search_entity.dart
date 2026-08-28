@@ -53,6 +53,8 @@ class SearchResultEntity {
     this.cityId,
     this.packageId,
     this.packageName,
+    this.experience,
+    this.qualification,
   });
 
   final String id;
@@ -86,6 +88,12 @@ class SearchResultEntity {
 
   /// Surgery offer — package / procedure display name.
   final String? packageName;
+
+  /// Years of experience label for doctor / surgery cards and booking screens.
+  final String? experience;
+
+  /// Education / qualifications for doctor / surgery cards and booking screens.
+  final String? qualification;
 
   /// Appointment/availability date shown as a pill on doctor cards
   /// (e.g. "10/09/24").

@@ -22,7 +22,8 @@ Global search for doctors, pharmacy, lab tests, surgery, and more. Supports text
 
 - **GET** `AppUrls.mobileSearchPopular` → `/acs-aggregator/api/v1/mobile/search/popular`. Called on initial / cleared state to populate popular chips (`data[]` string list).
 - **GET** `AppUrls.mobileSearch(text:, limit:)` → `/acs-aggregator/api/v1/mobile/search?text=&limit=` (default `limit=5`). Called **only on submit** (search icon / keyboard submit / recent·popular·suggestion tap / voice final). Typing does not hit the network.
-- Response `data`: `doctorConsultation[]` (fee applies `discountPercent`), `labTests[]` (first `labs[]` entry only), `surgeryBooking[]` (doctor/package offers with `surgeryId` / `doctorId` / `cityId` / prices / hospital / partner), `pharmacy[]` (Partner product fields). Mapped into search sections.
+- Response `data`: `doctorConsultation[]` (fee applies `discountPercent`; `yearsOfExperience` / `education` / `bio` mapped separately), `labTests[]` (first `labs[]` entry only), `surgeryBooking[]` (doctor/package offers with `surgeryId` / `doctorId` / `cityId` / prices / hospital / partner; experience and education mapped separately), `pharmacy[]` (Partner product fields). Mapped into search sections.
+- Doctor Book Now → `ResultsDoctorItem` with `experience`, `qualification`, and `description` (bio). Surgery Book Now → `SurgeryPatientDetailsArgs` with `experience` and `qualifications`. Search cards show experience/education only (not bio).
 
 ## State
 
