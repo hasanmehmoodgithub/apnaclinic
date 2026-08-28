@@ -1674,6 +1674,11 @@ class AppLocalizationsUr extends AppLocalizations {
   String get bookingsDashboardTitle => 'میری بکنگز';
 
   @override
+  String bookingsDetailsOrderTitle(String orderId) {
+    return 'آرڈر نمبر $orderId';
+  }
+
+  @override
   String get bookingsSurgeryDetailsTitle => 'تفصیلات';
 
   @override

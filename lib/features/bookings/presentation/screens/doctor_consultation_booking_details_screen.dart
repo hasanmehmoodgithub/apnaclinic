@@ -35,6 +35,10 @@ class _DoctorConsultationBookingDetailsScreenState
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final orderId = context
+        .read<DoctorConsultationBookingDetailsCubit>()
+        .bookingId
+        .trim();
     return BlocListener<DoctorConsultationBookingDetailsCubit,
         DoctorConsultationBookingDetailsState>(
       listenWhen: (prev, next) =>
@@ -72,7 +76,11 @@ class _DoctorConsultationBookingDetailsScreenState
           child: SafeArea(
             child: Column(
               children: [
-                const SurgeryBookingDetailsHeaderWidget(),
+                SurgeryBookingDetailsHeaderWidget(
+                  title: orderId.isEmpty
+                      ? l10n.bookingsDashboardTitle
+                      : l10n.bookingsDetailsOrderTitle(orderId),
+                ),
                 Expanded(
                   child: BlocBuilder<DoctorConsultationBookingDetailsCubit,
                       DoctorConsultationBookingDetailsState>(

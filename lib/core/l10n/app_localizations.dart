@@ -3161,6 +3161,12 @@ abstract class AppLocalizations {
   /// **'My Bookings'**
   String get bookingsDashboardTitle;
 
+  /// No description provided for @bookingsDetailsOrderTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Order no {orderId}'**
+  String bookingsDetailsOrderTitle(String orderId);
+
   /// No description provided for @bookingsSurgeryDetailsTitle.
   ///
   /// In en, this message translates to:

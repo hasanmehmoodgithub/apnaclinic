@@ -16,22 +16,11 @@ import '../widgets/bookings_tab_visibility_listener.dart';
 import '../widgets/empty_booking_widget.dart';
 import '../widgets/instant_doctor_booking_card_widget.dart';
 
-class InstantDoctorBookingsScreen extends StatefulWidget {
+class InstantDoctorBookingsScreen extends StatelessWidget {
   const InstantDoctorBookingsScreen({super.key});
 
   @override
-  State<InstantDoctorBookingsScreen> createState() =>
-      _InstantDoctorBookingsScreenState();
-}
-
-class _InstantDoctorBookingsScreenState extends State<InstantDoctorBookingsScreen>
-    with AutomaticKeepAliveClientMixin {
-  @override
-  bool get wantKeepAlive => true;
-
-  @override
   Widget build(BuildContext context) {
-    super.build(context);
     return BlocProvider(
       create: (_) => sl<InstantDoctorBookingsCubit>(),
       child: const _InstantDoctorBookingsBody(),
@@ -47,7 +36,8 @@ class _InstantDoctorBookingsBody extends StatefulWidget {
       _InstantDoctorBookingsBodyState();
 }
 
-class _InstantDoctorBookingsBodyState extends State<_InstantDoctorBookingsBody> {
+class _InstantDoctorBookingsBodyState
+    extends State<_InstantDoctorBookingsBody> {
   late final ScrollController _scrollController;
 
   @override
@@ -66,7 +56,7 @@ class _InstantDoctorBookingsBodyState extends State<_InstantDoctorBookingsBody> 
 
   void _tryLoad() {
     if (!mounted) return;
-    context.read<InstantDoctorBookingsCubit>().load();
+    context.read<InstantDoctorBookingsCubit>().load(refresh: true);
   }
 
   void _onScroll() {
@@ -80,83 +70,86 @@ class _InstantDoctorBookingsBodyState extends State<_InstantDoctorBookingsBody> 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    Widget child = BlocBuilder<InstantDoctorBookingsCubit, InstantDoctorBookingsState>(
-      builder: (context, state) {
-        Future<void> onRefresh() =>
-            context.read<InstantDoctorBookingsCubit>().load(refresh: true);
+    Widget child =
+        BlocBuilder<InstantDoctorBookingsCubit, InstantDoctorBookingsState>(
+          builder: (context, state) {
+            Future<void> onRefresh() =>
+                context.read<InstantDoctorBookingsCubit>().load(refresh: true);
 
-        if (state.isLoading || (!state.hasLoaded && !state.hasError)) {
-          return const BookingsListShimmerWidget();
-        }
+            if (state.isLoading || (!state.hasLoaded && !state.hasError)) {
+              return const BookingsListShimmerWidget();
+            }
 
-        if (state.hasError && state.items.isEmpty) {
-          return BookingsRefreshView(
-            onRefresh: onRefresh,
-            expandChild: true,
-            child: Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(state.errorMessage ?? ''),
-                  SizedBox(height: 12.h),
-                  TextButton(
-                    onPressed: () =>
-                        context.read<InstantDoctorBookingsCubit>().load(),
-                    child: Text(l10n.commonRetry),
+            if (state.hasError && state.items.isEmpty) {
+              return BookingsRefreshView(
+                onRefresh: onRefresh,
+                expandChild: true,
+                child: Center(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(state.errorMessage ?? ''),
+                      SizedBox(height: 12.h),
+                      TextButton(
+                        onPressed: () =>
+                            context.read<InstantDoctorBookingsCubit>().load(),
+                        child: Text(l10n.commonRetry),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-            ),
-          );
-        }
-
-        if (state.items.isEmpty) {
-          return BookingsRefreshView(
-            onRefresh: onRefresh,
-            expandChild: true,
-            child: Padding(
-              padding: EdgeInsets.only(top: 20.h),
-              child: EmptyBookingWidget(
-                description: l10n.bookingsInstantDoctorEmptyDescription,
-                buttonText: l10n.instantDoctorTitle,
-                onTap: () => sl<AuthSessionRefresh>().requestTabIndex(
-                  MainNavigationTabs.instantDoctor,
-                  instantDoctorSourceScreen:
-                      AnalyticsInstantDoctorSourceKeys.bottomTab,
                 ),
-              ),
-            ),
-          );
-        }
+              );
+            }
 
-        return BookingsRefreshView(
-          onRefresh: onRefresh,
-          child: ListView.separated(
-            controller: _scrollController,
-            physics: const AlwaysScrollableScrollPhysics(),
-            padding: EdgeInsets.fromLTRB(0, 20.h, 0, 8.h),
-            itemBuilder: (context, index) {
-              if (index >= state.items.length) {
-                return const Center(
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(vertical: 12),
-                    child: CircularProgressIndicator(strokeWidth: 2),
+            if (state.items.isEmpty) {
+              return BookingsRefreshView(
+                onRefresh: onRefresh,
+                expandChild: true,
+                child: Padding(
+                  padding: EdgeInsets.only(top: 20.h),
+                  child: EmptyBookingWidget(
+                    description: l10n.bookingsInstantDoctorEmptyDescription,
+                    buttonText: l10n.instantDoctorTitle,
+                    onTap: () => sl<AuthSessionRefresh>().requestTabIndex(
+                      MainNavigationTabs.instantDoctor,
+                      instantDoctorSourceScreen:
+                          AnalyticsInstantDoctorSourceKeys.bottomTab,
+                    ),
                   ),
-                );
-              }
-              return InstantDoctorBookingCardWidget(item: state.items[index]);
-            },
-            separatorBuilder: (_, index) {
-              if (index >= state.items.length - 1) {
-                return const SizedBox.shrink();
-              }
-              return SizedBox(height: 14.h);
-            },
-            itemCount: state.items.length + (state.isLoadingMore ? 1 : 0),
-          ),
+                ),
+              );
+            }
+
+            return BookingsRefreshView(
+              onRefresh: onRefresh,
+              child: ListView.separated(
+                controller: _scrollController,
+                physics: const AlwaysScrollableScrollPhysics(),
+                padding: EdgeInsets.fromLTRB(0, 20.h, 0, 8.h),
+                itemBuilder: (context, index) {
+                  if (index >= state.items.length) {
+                    return const Center(
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(vertical: 12),
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      ),
+                    );
+                  }
+                  return InstantDoctorBookingCardWidget(
+                    item: state.items[index],
+                  );
+                },
+                separatorBuilder: (_, index) {
+                  if (index >= state.items.length - 1) {
+                    return const SizedBox.shrink();
+                  }
+                  return SizedBox(height: 14.h);
+                },
+                itemCount: state.items.length + (state.isLoadingMore ? 1 : 0),
+              ),
+            );
+          },
         );
-      },
-    );
 
     return BookingsTabVisibilityListener(
       tabIndex: BookingsTabs.instantDoctor,

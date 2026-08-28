@@ -32,6 +32,8 @@ class DoctorConsultationBookingDetailsCubit
   final SubmitConsultationFeedbackUseCase _submitFeedbackUseCase;
   final String _bookingId;
 
+  String get bookingId => _bookingId;
+
   Future<void> load({bool refresh = false}) async {
     final appointmentId = int.tryParse(_bookingId.trim());
     if (appointmentId == null || appointmentId <= 0) {

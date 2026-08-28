@@ -8,6 +8,9 @@ import 'package:go_router/go_router.dart';
 
 import '../../domain/entities/instant_doctor_provider_entity.dart';
 import '../../domain/enums/instant_doctor_otp_action.dart';
+import '../../../dashboard/presentation/constants/main_navigation_tabs.dart';
+import '../../../dashboard/presentation/cubit/main_navigation_cubit.dart';
+import '../../../dashboard/presentation/cubit/main_navigation_state.dart';
 import '../cubit/instant_doctor_cubit.dart';
 import '../instant_doctor_consultation_args.dart';
 import '../models/instant_doctor_flow_outcome.dart';
@@ -19,7 +22,11 @@ import '../widgets/instant_doctor_subscription_success_dialog.dart';
 import '../widgets/instant_doctor_top_header_widget.dart';
 
 class InstantDoctorScreen extends StatefulWidget {
-  const InstantDoctorScreen({super.key, this.showBackButton = true, this.onBack});
+  const InstantDoctorScreen({
+    super.key,
+    this.showBackButton = true,
+    this.onBack,
+  });
 
   final bool showBackButton;
   final VoidCallback? onBack;
@@ -34,47 +41,67 @@ class _InstantDoctorScreenState extends State<InstantDoctorScreen> {
   static const double _panelTopRadius = 35;
 
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      final nav = context.read<MainNavigationCubit>();
+      if (nav.state.currentIndex == MainNavigationTabs.instantDoctor) {
+        context.read<InstantDoctorCubit>().loadContent(refresh: true);
+      }
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final bannerHeight = MediaQuery.sizeOf(context).height * _topBannerFraction;
     final panelTop = bannerHeight - _cardOverlap.h;
 
-    return InstantDoctorScreenErrorListener(
-      child: ColoredBox(
-        color: AppColors.clrF4F6F8,
-        child: Stack(
-          clipBehavior: Clip.none,
-          children: [
-            Positioned(
-              top: 0,
-              left: 0,
-              right: 0,
-              height: bannerHeight,
-              child: InstantDoctorTopHeaderWidget(
-                title: l10n.instantDoctorTitle,
-                showBackButton: widget.showBackButton,
-                onBack: widget.onBack,
-              ),
-            ),
-            Positioned(
-              top: panelTop,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              child: ClipRRect(
-                borderRadius: BorderRadius.vertical(
-                  top: Radius.circular(_panelTopRadius.r),
+    return BlocListener<MainNavigationCubit, MainNavigationState>(
+      listenWhen: (previous, current) =>
+          previous.currentIndex != current.currentIndex &&
+          current.currentIndex == MainNavigationTabs.instantDoctor,
+      listener: (context, _) {
+        context.read<InstantDoctorCubit>().loadContent(refresh: true);
+      },
+      child: InstantDoctorScreenErrorListener(
+        child: ColoredBox(
+          color: AppColors.clrF4F6F8,
+          child: Stack(
+            clipBehavior: Clip.none,
+            children: [
+              Positioned(
+                top: 0,
+                left: 0,
+                right: 0,
+                height: bannerHeight,
+                child: InstantDoctorTopHeaderWidget(
+                  title: l10n.instantDoctorTitle,
+                  showBackButton: widget.showBackButton,
+                  onBack: widget.onBack,
                 ),
-                child: ColoredBox(
-                  color: AppColors.clrWhite,
-                  child: InstantDoctorProviderListWidget(
-                    onProviderPrimaryTap: _onProviderPrimaryTap,
-                    onCancelSubscription: _onCancelSubscription,
+              ),
+              Positioned(
+                top: panelTop,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.vertical(
+                    top: Radius.circular(_panelTopRadius.r),
+                  ),
+                  child: ColoredBox(
+                    color: AppColors.clrWhite,
+                    child: InstantDoctorProviderListWidget(
+                      onProviderPrimaryTap: _onProviderPrimaryTap,
+                      onCancelSubscription: _onCancelSubscription,
+                    ),
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -165,10 +192,7 @@ class _InstantDoctorScreenState extends State<InstantDoctorScreen> {
 
     await context.pushNamed(
       AppRoutes.instantDoctorConsultation,
-      extra: InstantDoctorConsultationArgs(
-        url: url,
-        title: title,
-      ),
+      extra: InstantDoctorConsultationArgs(url: url, title: title),
     );
     if (!mounted) return;
 
@@ -258,8 +282,7 @@ class _InstantDoctorScreenState extends State<InstantDoctorScreen> {
             dialogContext.pop();
             if (!mounted) return;
 
-            final url =
-                outcome.redirectUrl ?? _cubit.consultationUrl(provider);
+            final url = outcome.redirectUrl ?? _cubit.consultationUrl(provider);
             if (url == null) {
               _showSnackBar(
                 _l10n.instantDoctorOpenAppError,
@@ -291,8 +314,8 @@ class _InstantDoctorScreenState extends State<InstantDoctorScreen> {
     String message, {
     SnackBarBehavior behavior = SnackBarBehavior.fixed,
   }) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message), behavior: behavior),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(message), behavior: behavior));
   }
 }

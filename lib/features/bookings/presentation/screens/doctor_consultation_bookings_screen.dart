@@ -15,23 +15,11 @@ import '../widgets/bookings_tab_visibility_listener.dart';
 import '../widgets/doctor_consultation_booking_card_widget.dart';
 import '../widgets/empty_booking_widget.dart';
 
-class DoctorConsultationBookingsScreen extends StatefulWidget {
+class DoctorConsultationBookingsScreen extends StatelessWidget {
   const DoctorConsultationBookingsScreen({super.key});
 
   @override
-  State<DoctorConsultationBookingsScreen> createState() =>
-      _DoctorConsultationBookingsScreenState();
-}
-
-class _DoctorConsultationBookingsScreenState
-    extends State<DoctorConsultationBookingsScreen>
-    with AutomaticKeepAliveClientMixin {
-  @override
-  bool get wantKeepAlive => true;
-
-  @override
   Widget build(BuildContext context) {
-    super.build(context);
     return BlocProvider(
       create: (_) => sl<DoctorConsultationBookingsCubit>(),
       child: const _DoctorConsultationBookingsBody(),
@@ -67,7 +55,7 @@ class _DoctorConsultationBookingsBodyState
 
   void _tryLoad() {
     if (!mounted) return;
-    context.read<DoctorConsultationBookingsCubit>().load();
+    context.read<DoctorConsultationBookingsCubit>().load(refresh: true);
   }
 
   void _onScroll() {
@@ -84,83 +72,88 @@ class _DoctorConsultationBookingsBodyState
     return BookingsTabVisibilityListener(
       tabIndex: BookingsTabs.doctorConsultation,
       onVisible: _tryLoad,
-      child: BlocBuilder<DoctorConsultationBookingsCubit,
-          DoctorConsultationBookingsState>(
-        builder: (context, state) {
-          Future<void> onRefresh() => context
-              .read<DoctorConsultationBookingsCubit>()
-              .load(refresh: true);
+      child:
+          BlocBuilder<
+            DoctorConsultationBookingsCubit,
+            DoctorConsultationBookingsState
+          >(
+            builder: (context, state) {
+              Future<void> onRefresh() => context
+                  .read<DoctorConsultationBookingsCubit>()
+                  .load(refresh: true);
 
-          if (state.isLoading || (!state.hasLoaded && !state.hasError)) {
-            return const BookingsListShimmerWidget();
-          }
+              if (state.isLoading || (!state.hasLoaded && !state.hasError)) {
+                return const BookingsListShimmerWidget();
+              }
 
-          if (state.hasError && state.items.isEmpty) {
-            return BookingsRefreshView(
-              onRefresh: onRefresh,
-              expandChild: true,
-              child: Center(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(state.errorMessage ?? ''),
-                    SizedBox(height: 12.h),
-                    TextButton(
-                      onPressed: () =>
-                          context.read<DoctorConsultationBookingsCubit>().load(),
-                      child: Text(l10n.commonRetry),
+              if (state.hasError && state.items.isEmpty) {
+                return BookingsRefreshView(
+                  onRefresh: onRefresh,
+                  expandChild: true,
+                  child: Center(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(state.errorMessage ?? ''),
+                        SizedBox(height: 12.h),
+                        TextButton(
+                          onPressed: () => context
+                              .read<DoctorConsultationBookingsCubit>()
+                              .load(),
+                          child: Text(l10n.commonRetry),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-              ),
-            );
-          }
-
-          if (state.items.isEmpty) {
-            return BookingsRefreshView(
-              onRefresh: onRefresh,
-              expandChild: true,
-              child: Padding(
-                padding: EdgeInsets.only(top: 20.h),
-                child: EmptyBookingWidget(
-                  description: l10n.bookingsDoctorConsultationEmptyDescription,
-                  buttonText: l10n.onboardingBookConsultationTitle,
-                  onTap: () => context.pushNamed(AppRoutes.consultation),
-                ),
-              ),
-            );
-          }
-
-          return BookingsRefreshView(
-            onRefresh: onRefresh,
-            child: ListView.separated(
-              controller: _scrollController,
-              physics: const AlwaysScrollableScrollPhysics(),
-              padding: EdgeInsets.fromLTRB(0, 20.h, 0, 8.h),
-              itemBuilder: (context, index) {
-                if (index >= state.items.length) {
-                  return const Center(
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(vertical: 12),
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    ),
-                  );
-                }
-                return DoctorConsultationBookingCardWidget(
-                  item: state.items[index],
+                  ),
                 );
-              },
-              separatorBuilder: (_, index) {
-                if (index >= state.items.length - 1) {
-                  return const SizedBox.shrink();
-                }
-                return SizedBox(height: 14.h);
-              },
-              itemCount: state.items.length + (state.isLoadingMore ? 1 : 0),
-            ),
-          );
-        },
-      ),
+              }
+
+              if (state.items.isEmpty) {
+                return BookingsRefreshView(
+                  onRefresh: onRefresh,
+                  expandChild: true,
+                  child: Padding(
+                    padding: EdgeInsets.only(top: 20.h),
+                    child: EmptyBookingWidget(
+                      description:
+                          l10n.bookingsDoctorConsultationEmptyDescription,
+                      buttonText: l10n.onboardingBookConsultationTitle,
+                      onTap: () => context.pushNamed(AppRoutes.consultation),
+                    ),
+                  ),
+                );
+              }
+
+              return BookingsRefreshView(
+                onRefresh: onRefresh,
+                child: ListView.separated(
+                  controller: _scrollController,
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  padding: EdgeInsets.fromLTRB(0, 20.h, 0, 8.h),
+                  itemBuilder: (context, index) {
+                    if (index >= state.items.length) {
+                      return const Center(
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(vertical: 12),
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        ),
+                      );
+                    }
+                    return DoctorConsultationBookingCardWidget(
+                      item: state.items[index],
+                    );
+                  },
+                  separatorBuilder: (_, index) {
+                    if (index >= state.items.length - 1) {
+                      return const SizedBox.shrink();
+                    }
+                    return SizedBox(height: 14.h);
+                  },
+                  itemCount: state.items.length + (state.isLoadingMore ? 1 : 0),
+                ),
+              );
+            },
+          ),
     );
   }
 }

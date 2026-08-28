@@ -14,7 +14,7 @@ class InstantDoctorBookingsCubit extends Cubit<InstantDoctorBookingsState> {
   static const int _pageLimit = 20;
 
   Future<void> load({bool refresh = false}) async {
-    if (!refresh && state.isLoading) return;
+    if (state.isLoading) return;
     if (!refresh && state.hasLoaded && !state.hasError) return;
     emit(
       state.copyWith(

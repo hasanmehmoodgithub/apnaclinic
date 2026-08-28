@@ -5,8 +5,10 @@ import '../../../dashboard/presentation/constants/main_navigation_tabs.dart';
 import '../../../dashboard/presentation/cubit/main_navigation_cubit.dart';
 import '../../../dashboard/presentation/cubit/main_navigation_state.dart';
 
-/// Calls [onVisible] only when My Bookings is the bottom-nav tab and this
-/// inner tab is selected. Prevents adjacent TabBarView pages from fetching.
+/// Calls [onVisible] when this inner tab becomes selected while My Bookings
+/// is the bottom-nav tab. Adjacent TabBarView pages do not fetch. Switching
+/// away and back (inner tab or Bookings bottom nav) notifies again so lists
+/// can refresh.
 class BookingsTabVisibilityListener extends StatefulWidget {
   const BookingsTabVisibilityListener({
     super.key,
@@ -29,6 +31,7 @@ class _BookingsTabVisibilityListenerState
   TabController? _tabs;
   MainNavigationCubit? _nav;
   bool _isActive = false;
+  bool _wasVisible = false;
   bool _notifyScheduled = false;
 
   @override
@@ -54,11 +57,13 @@ class _BookingsTabVisibilityListenerState
   void activate() {
     super.activate();
     _isActive = true;
+    _scheduleNotify();
   }
 
   @override
   void deactivate() {
     _isActive = false;
+    _wasVisible = false;
     super.deactivate();
   }
 
@@ -82,12 +87,21 @@ class _BookingsTabVisibilityListenerState
     });
   }
 
-  void _notifyIfVisible() {
-    if (!mounted || !_isActive) return;
-    if (_tabs != null && _tabs!.index != widget.tabIndex) return;
+  bool get _isVisible {
+    if (!mounted || !_isActive) return false;
+    if (_tabs != null && _tabs!.index != widget.tabIndex) return false;
     final nav = _nav;
-    if (nav == null) return;
-    if (nav.state.currentIndex != MainNavigationTabs.bookings) return;
+    if (nav == null) return false;
+    return nav.state.currentIndex == MainNavigationTabs.bookings;
+  }
+
+  void _notifyIfVisible() {
+    if (!_isVisible) {
+      _wasVisible = false;
+      return;
+    }
+    if (_wasVisible) return;
+    _wasVisible = true;
     widget.onVisible();
   }
 

@@ -544,6 +544,7 @@
   "consultationTimeLabel": "وقت",
   "commonContinue": "جاری رکھیں",
   "bookingsDashboardTitle": "میری بکنگز",
+  "bookingsDetailsOrderTitle": "آرڈر نمبر {orderId}",
   "bookingsSurgeryDetailsTitle": "تفصیلات",
   "bookingsTabInstantDoctor": "انسٹنٹ ڈاکٹر",
   "bookingsTabPharmacy": "فارمیسی",

@@ -57,6 +57,7 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
   int _appliedSessionEpoch = -1;
   int _appliedTabRequestRevision = 0;
   int _tabSessionKey = 0;
+  int _instantDoctorTabKey = 0;
   int _bookingsInitialTabIndex = 0;
   int _bookingsDashboardKey = 0;
   bool _isCloseDialogVisible = false;
@@ -111,6 +112,7 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
         _navigationCubit.state.currentIndex != tabIndex) {
       BookingsAnalytics.logMyBookingsTab();
     }
+    _refreshTabOnSelect(tabIndex);
     _navigationCubit.setIndex(tabIndex);
     _jumpToTab(tabIndex);
     _applyStatusBar();
@@ -243,8 +245,19 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
       BookingsAnalytics.logMyBookingsTab();
     }
 
+    _refreshTabOnSelect(index);
     _navigationCubit.setIndex(index);
     _applyStatusBar();
+  }
+
+  void _refreshTabOnSelect(int index) {
+    final previous = _navigationCubit.state.currentIndex;
+    if (index == previous) return;
+    if (index == _instantDoctorIndex) {
+      setState(() => _instantDoctorTabKey++);
+    } else if (index == _bookingsIndex) {
+      setState(() => _bookingsDashboardKey++);
+    }
   }
 
   void _jumpToTab(int index) {
@@ -276,6 +289,7 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
     if (index == _bookingsIndex && previous != index) {
       BookingsAnalytics.logMyBookingsTab();
     }
+    _refreshTabOnSelect(index);
     _navigationCubit.setIndex(index);
     _applyStatusBar();
   }
@@ -307,36 +321,35 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
                     key: ValueKey('home_$_tabSessionKey'),
                     child: const HomeScreen(),
                   ),
-                  KeepAliveTabPage(
-                    key: ValueKey('instant_doctor_$_tabSessionKey'),
-                    child: const InstantDoctorScreen(showBackButton: false),
-                  ),
-                  KeepAliveTabPage(
-                    key: ValueKey('bookings_dash_$_bookingsDashboardKey'),
-                    child: BookingsDashboardScreen(
-                      showBackButton: false,
-                      initialTabIndex: _bookingsInitialTabIndex,
+                  InstantDoctorScreen(
+                    key: ValueKey(
+                      'instant_doctor_${_tabSessionKey}_$_instantDoctorTabKey',
                     ),
+                    showBackButton: false,
+                  ),
+                  BookingsDashboardScreen(
+                    key: ValueKey('bookings_dash_$_bookingsDashboardKey'),
+                    showBackButton: false,
+                    initialTabIndex: _bookingsInitialTabIndex,
                   ),
                   KeepAliveTabPage(
                     key: ValueKey('support_$_tabSessionKey'),
-                    child: const CustomerSupportScreen(
-                      showBackButton: false,
-                    ),
+                    child: const CustomerSupportScreen(showBackButton: false),
                   ),
                 ],
               ),
-              bottomNavigationBar: BlocBuilder<MainNavigationCubit, MainNavigationState>(
-                bloc: _navigationCubit,
-                buildWhen: (previous, current) =>
-                    previous.currentIndex != current.currentIndex,
-                builder: (context, state) {
-                  return ApnaBottomNavigationBar(
-                    currentIndex: state.currentIndex,
-                    onTap: _onNavTap,
-                  );
-                },
-              ),
+              bottomNavigationBar:
+                  BlocBuilder<MainNavigationCubit, MainNavigationState>(
+                    bloc: _navigationCubit,
+                    buildWhen: (previous, current) =>
+                        previous.currentIndex != current.currentIndex,
+                    builder: (context, state) {
+                      return ApnaBottomNavigationBar(
+                        currentIndex: state.currentIndex,
+                        onTap: _onNavTap,
+                      );
+                    },
+                  ),
             ),
           ),
         ),

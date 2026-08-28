@@ -23,19 +23,15 @@ class SurgeryBookingsScreen extends StatefulWidget {
   State<SurgeryBookingsScreen> createState() => _SurgeryBookingsScreenState();
 }
 
-class _SurgeryBookingsScreenState extends State<SurgeryBookingsScreen>
-    with AutomaticKeepAliveClientMixin {
+class _SurgeryBookingsScreenState extends State<SurgeryBookingsScreen> {
   List<SurgeryBookingListItemModel> _items = const [];
   Object? _error;
   bool _isLoading = false;
   bool _hasLoaded = false;
 
-  @override
-  bool get wantKeepAlive => true;
-
   void _tryLoad() {
-    if (!mounted || _hasLoaded || _isLoading) return;
-    _load();
+    if (!mounted || _isLoading) return;
+    _load(refresh: true);
   }
 
   Future<List<SurgeryBookingListItemModel>> _fetchBookings() async {
@@ -77,7 +73,6 @@ class _SurgeryBookingsScreenState extends State<SurgeryBookingsScreen>
 
   @override
   Widget build(BuildContext context) {
-    super.build(context);
     final l10n = AppLocalizations.of(context)!;
     final textTheme = Theme.of(context).textTheme;
 

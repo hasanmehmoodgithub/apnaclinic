@@ -21,17 +21,13 @@ class LabTestBookingsScreen extends StatefulWidget {
   State<LabTestBookingsScreen> createState() => _LabTestBookingsScreenState();
 }
 
-class _LabTestBookingsScreenState extends State<LabTestBookingsScreen>
-    with AutomaticKeepAliveClientMixin {
+class _LabTestBookingsScreenState extends State<LabTestBookingsScreen> {
   List<LabTestBookingItemModel> _bookings = const [];
   bool _isLoading = false;
   bool _hasLoaded = false;
 
-  @override
-  bool get wantKeepAlive => true;
-
   void _tryLoad() {
-    if (!mounted || _hasLoaded || _isLoading) return;
+    if (!mounted || _isLoading) return;
     _load();
   }
 
@@ -61,7 +57,6 @@ class _LabTestBookingsScreenState extends State<LabTestBookingsScreen>
 
   @override
   Widget build(BuildContext context) {
-    super.build(context);
     final l10n = AppLocalizations.of(context)!;
     return BookingsTabVisibilityListener(
       tabIndex: BookingsTabs.labTest,
@@ -74,30 +69,29 @@ class _LabTestBookingsScreenState extends State<LabTestBookingsScreen>
                 separatorHeight: 10.h,
               )
             : _bookings.isEmpty
-                ? BookingsRefreshView(
-                    onRefresh: _load,
-                    expandChild: true,
-                    child: Column(
-                      children: [
-                        EmptyBookingWidget(
-                          description: l10n.bookingsLabTestEmptyDescription,
-                          buttonText: l10n.labTestBookCta,
-                          onTap: () => context.pushNamed(AppRoutes.labTest),
-                        ),
-                      ],
+            ? BookingsRefreshView(
+                onRefresh: _load,
+                expandChild: true,
+                child: Column(
+                  children: [
+                    EmptyBookingWidget(
+                      description: l10n.bookingsLabTestEmptyDescription,
+                      buttonText: l10n.labTestBookCta,
+                      onTap: () => context.pushNamed(AppRoutes.labTest),
                     ),
-                  )
-                : BookingsRefreshView(
-                    onRefresh: _load,
-                    child: ListView.separated(
-                      physics: const AlwaysScrollableScrollPhysics(),
-                      itemCount: _bookings.length,
-                      separatorBuilder: (_, _) => SizedBox(height: 10.h),
-                      itemBuilder: (context, index) => LabTestBookingCardWidget(
-                        booking: _bookings[index],
-                      ),
-                    ),
-                  ),
+                  ],
+                ),
+              )
+            : BookingsRefreshView(
+                onRefresh: _load,
+                child: ListView.separated(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  itemCount: _bookings.length,
+                  separatorBuilder: (_, _) => SizedBox(height: 10.h),
+                  itemBuilder: (context, index) =>
+                      LabTestBookingCardWidget(booking: _bookings[index]),
+                ),
+              ),
       ),
     );
   }

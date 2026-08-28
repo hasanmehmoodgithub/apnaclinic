@@ -23,17 +23,13 @@ class PharmacyBookingsScreen extends StatefulWidget {
   State<PharmacyBookingsScreen> createState() => _PharmacyBookingsScreenState();
 }
 
-class _PharmacyBookingsScreenState extends State<PharmacyBookingsScreen>
-    with AutomaticKeepAliveClientMixin {
+class _PharmacyBookingsScreenState extends State<PharmacyBookingsScreen> {
   List<PharmacyBookingEntity> _items = const [];
   bool _isLoading = false;
   bool _hasLoaded = false;
 
-  @override
-  bool get wantKeepAlive => true;
-
   void _tryLoad() {
-    if (!mounted || _hasLoaded || _isLoading) return;
+    if (!mounted || _isLoading) return;
     _load();
   }
 
@@ -60,7 +56,6 @@ class _PharmacyBookingsScreenState extends State<PharmacyBookingsScreen>
 
   @override
   Widget build(BuildContext context) {
-    super.build(context);
     final l10n = AppLocalizations.of(context)!;
     final textTheme = Theme.of(context).textTheme;
 
@@ -99,10 +94,7 @@ class _PharmacyBookingsScreenState extends State<PharmacyBookingsScreen>
               if (orderId.isEmpty) return;
               context.pushNamed(
                 AppRoutes.pharmacyBookingDetails,
-                extra: {
-                  'orderId': orderId,
-                  'orderNo': _items[index].orderNo,
-                },
+                extra: {'orderId': orderId, 'orderNo': _items[index].orderNo},
               );
             },
           ),
@@ -207,7 +199,9 @@ class _PharmacyBookingCard extends StatelessWidget {
                           children: [
                             TextSpan(
                               text: '${l10n.bookingsTotalLabel}  ',
-                              style: const TextStyle(color: AppColors.clr5D758F),
+                              style: const TextStyle(
+                                color: AppColors.clr5D758F,
+                              ),
                             ),
                             TextSpan(
                               text: item.totalLabel,

@@ -650,6 +650,14 @@
   "consultationTimeLabel": "Time",
   "commonContinue": "Continue",
   "bookingsDashboardTitle": "My Bookings",
+  "bookingsDetailsOrderTitle": "Order no {orderId}",
+  "@bookingsDetailsOrderTitle": {
+    "placeholders": {
+      "orderId": {
+        "type": "String"
+      }
+    }
+  },
   "bookingsSurgeryDetailsTitle": "Details",
   "bookingsTabInstantDoctor": "Instant Doctor",
   "bookingsTabPharmacy": "Pharmacy",
