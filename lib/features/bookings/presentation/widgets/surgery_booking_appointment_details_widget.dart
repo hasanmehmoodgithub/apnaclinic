@@ -35,7 +35,6 @@ class SurgeryBookingAppointmentDetailsCardWidget extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Expanded(
-            flex: 5,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
@@ -125,91 +124,86 @@ class SurgeryBookingAppointmentDetailsCardWidget extends StatelessWidget {
               color: const Color(0xFFB6D2D5),
             ),
             SizedBox(width: 8.w),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Row(
-                  children: [
-                    Icon(
-                      Icons.access_time,
-                      size: 12.r,
-                      color: const Color(0xFF061E40),
-                    ),
-                    SizedBox(width: 3.w),
-                    Text(
-                      'Time',
-                      style: textTheme.bodySmall?.copyWith(
-                        color: const Color(0xFF061E40),
-                        fontSize: 11.sp,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 2.h),
-                Text(
-                  item.appointmentTime,
-                  style: textTheme.bodySmall?.copyWith(
-                    color: const Color(0xFF061E40),
-                    fontSize: 12.sp,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ],
+            Expanded(
+              child: _TimeArea(
+                textTheme: textTheme,
+                timeValue: item.appointmentTime,
+              ),
             ),
           ] else ...[
+            SizedBox(width: 8.w),
             Container(
               width: 0.8,
               height: 30.h,
               color: const Color(0xFFB6D2D5),
             ),
             SizedBox(width: 8.w),
-            Flexible(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.access_time,
-                        size: 12.r,
-                        color: const Color(0xFF061E40),
-                      ),
-                      SizedBox(width: 3.w),
-                      Text(
-                        'Time',
-                        style: textTheme.bodySmall?.copyWith(
-                          color: const Color(0xFF061E40),
-                          fontSize: 11.sp,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 2.h),
-                  Text(
-                    'Applied On',
-                    style: textTheme.bodySmall?.copyWith(
-                      color: const Color(0xFF061E40),
-                      fontSize: 12.sp,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  if (_appliedOnDateTime.isNotEmpty) ...[
-                    SizedBox(height: 1.h),
-                    Text(
-                      _appliedOnDateTime,
-                      style: textTheme.bodySmall?.copyWith(
-                        color: const Color(0xFF061E40),
-                        fontSize: 11.sp,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ],
-                ],
+            Expanded(
+              child: _TimeArea(
+                textTheme: textTheme,
+                label: 'Applied On',
+                timeValue: _appliedOnDateTime,
               ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class _TimeArea extends StatelessWidget {
+  const _TimeArea({
+    required this.textTheme,
+    this.label,
+    required this.timeValue,
+  });
+
+  final TextTheme textTheme;
+  final String? label;
+  final String timeValue;
+
+  @override
+  Widget build(BuildContext context) {
+    final captionStyle = textTheme.bodySmall?.copyWith(
+      color: const Color(0xFF061E40),
+      fontSize: 11.sp,
+      fontWeight: FontWeight.w500,
+    );
+    final valueStyle = textTheme.bodySmall?.copyWith(
+      color: const Color(0xFF061E40),
+      fontSize: 12.sp,
+      fontWeight: FontWeight.w500,
+    );
+
+    return Align(
+      alignment: Alignment.centerRight,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Wrap(
+            alignment: WrapAlignment.end,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            spacing: 3.w,
+            runSpacing: 2.h,
+            children: [
+              Icon(
+                Icons.access_time,
+                size: 12.r,
+                color: const Color(0xFF061E40),
+              ),
+              Text('Time', style: captionStyle),
+              if (label != null && label!.isNotEmpty)
+                Text(label!, style: valueStyle),
+            ],
+          ),
+          if (timeValue.isNotEmpty) ...[
+            SizedBox(height: 2.h),
+            Text(
+              timeValue,
+              style: valueStyle,
+              textAlign: TextAlign.right,
             ),
           ],
         ],
