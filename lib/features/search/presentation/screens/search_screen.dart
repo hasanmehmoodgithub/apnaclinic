@@ -12,6 +12,7 @@ import '../../../../core/enums/state_status.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/widgets/app_scaffold_gradient.dart';
+import '../constants/search_ui_config.dart';
 import '../cubit/search_cubit.dart';
 import '../cubit/search_state.dart';
 import '../widgets/search_empty_results_widget.dart';
@@ -44,7 +45,7 @@ class _SearchScreenState extends State<SearchScreen> {
   void initState() {
     super.initState();
     unawaited(sl<AnalyticsService>().logEvent(AnalyticsEventKeys.searchScreen));
-    final seed = widget.initialQuery?.trim() ?? '';
+    final seed = SearchUiConfig.clampQuery(widget.initialQuery?.trim() ?? '');
     if (seed.isNotEmpty) {
       _controller.text = seed;
       WidgetsBinding.instance.addPostFrameCallback((_) {

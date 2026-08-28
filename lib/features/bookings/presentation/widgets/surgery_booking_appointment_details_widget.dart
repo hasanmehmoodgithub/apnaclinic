@@ -14,6 +14,13 @@ class SurgeryBookingAppointmentDetailsCardWidget extends StatelessWidget {
   bool get _hasScheduledDate =>
       item.appointmentDay.isNotEmpty || item.appointmentDateFull.isNotEmpty;
 
+  String get _appliedOnDateTime {
+    final value = item.appointmentTime.trim();
+    if (value.isEmpty) return '';
+    if (value.toLowerCase() == 'applied on') return '';
+    return value;
+  }
+
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
@@ -158,20 +165,42 @@ class SurgeryBookingAppointmentDetailsCardWidget extends StatelessWidget {
               color: const Color(0xFFB6D2D5),
             ),
             SizedBox(width: 8.w),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Row(
-                  children: [
-                    Icon(
-                      Icons.access_time,
-                      size: 12.r,
+            Flexible(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.access_time,
+                        size: 12.r,
+                        color: const Color(0xFF061E40),
+                      ),
+                      SizedBox(width: 3.w),
+                      Text(
+                        'Time',
+                        style: textTheme.bodySmall?.copyWith(
+                          color: const Color(0xFF061E40),
+                          fontSize: 11.sp,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 2.h),
+                  Text(
+                    'Applied On',
+                    style: textTheme.bodySmall?.copyWith(
                       color: const Color(0xFF061E40),
+                      fontSize: 12.sp,
+                      fontWeight: FontWeight.w500,
                     ),
-                    SizedBox(width: 3.w),
+                  ),
+                  if (_appliedOnDateTime.isNotEmpty) ...[
+                    SizedBox(height: 1.h),
                     Text(
-                      'Time',
+                      _appliedOnDateTime,
                       style: textTheme.bodySmall?.copyWith(
                         color: const Color(0xFF061E40),
                         fontSize: 11.sp,
@@ -179,19 +208,8 @@ class SurgeryBookingAppointmentDetailsCardWidget extends StatelessWidget {
                       ),
                     ),
                   ],
-                ),
-                SizedBox(height: 2.h),
-                Text(
-                  item.appointmentTime.isNotEmpty
-                      ? item.appointmentTime
-                      : 'Applied On',
-                  style: textTheme.bodySmall?.copyWith(
-                    color: const Color(0xFF061E40),
-                    fontSize: 12.sp,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
           ],
         ],
