@@ -25,7 +25,11 @@ class SearchSurgeryResultCardWidget extends StatelessWidget {
     final oldFee = item.oldFee?.trim() ?? '';
     final hasStrike = oldFee.isNotEmpty && oldFee != fee;
     final specialty = item.subtitle.trim();
-    final credentials = (item.description ?? '').trim();
+    final credentials = [
+      if ((item.experience ?? '').trim().isNotEmpty) item.experience!.trim(),
+      if ((item.qualification ?? '').trim().isNotEmpty)
+        item.qualification!.trim(),
+    ].join(' | ');
     final hospital = (item.hospital ?? '').trim();
     final surgeryType = (item.packageName ?? '').trim();
     final partnerLogo = item.providerLogo?.trim() ?? '';

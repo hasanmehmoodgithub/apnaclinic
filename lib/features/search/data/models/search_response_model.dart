@@ -77,6 +77,8 @@ class SearchResultModel {
     this.cityId,
     this.packageId,
     this.packageName,
+    this.experience,
+    this.qualification,
   });
 
   final String id;
@@ -102,20 +104,17 @@ class SearchResultModel {
   final String? cityId;
   final String? packageId;
   final String? packageName;
+  final String? experience;
+  final String? qualification;
 
   factory SearchResultModel.fromDoctorJson(Map<String, dynamic> json) {
-    final experience = json['yearsOfExperience'] ?? json['years_of_experience'];
-    final education = (json['education'] ??
-            json['qualifications'] ??
-            json['qualification'] ??
-            '')
-        .toString()
-        .trim();
     final specialty =
         (json['specialtyName'] ?? json['specialty'] ?? '').toString().trim();
-    final experienceText = experience == null
-        ? ''
-        : '${experience.toString().trim()} years Experience';
+    final education = _educationFromJson(json);
+    final experienceText = _formatYearsExperience(
+      json['yearsOfExperience'] ?? json['years_of_experience'],
+      consultationStyle: true,
+    );
     final hospital = (json['hospitalName'] ??
             json['hospital_name'] ??
             json['hospital'] ??
@@ -135,6 +134,7 @@ class SearchResultModel {
     final publicId =
         (json['publicId'] ?? json['public_id'] ?? '').toString().trim();
     final apiId = (json['id'] ?? '').toString().trim();
+    final bio = (json['bio'] ?? json['description'] ?? '').toString().trim();
 
     final ratingRaw = json['ratingScore'] ?? json['rating'] ?? json['ratings'];
     final ratingText = _formatRating(ratingRaw);
@@ -152,13 +152,9 @@ class SearchResultModel {
       title: (json['displayName'] ?? json['display_name'] ?? json['name'] ?? '')
           .toString(),
       subtitle: specialty,
-      description: () {
-        final parts = <String>[
-          if (experienceText.isNotEmpty) experienceText,
-          if (education.isNotEmpty) education,
-        ];
-        return parts.isEmpty ? null : parts.join('\n');
-      }(),
+      experience: experienceText,
+      qualification: education.isEmpty ? null : education,
+      description: bio.isEmpty ? null : bio,
       hospital: hospital.isEmpty ? null : hospital,
       imageUrl: (json['profileImageUrl'] ??
               json['profile_image_url'] ??
@@ -245,13 +241,13 @@ class SearchResultModel {
           (json['packageName'] ?? json['package_name'] ?? surgeryName)
               .toString()
               .trim();
-      final experience = json['yearsOfExperience'] ?? json['years_of_experience'];
-      final education = (json['education'] ?? '').toString().trim();
-      final experiencePart = experience == null
-          ? ''
-          : '${experience.toString().trim()} years';
+      final education = _educationFromJson(json);
+      final experienceText = _formatYearsExperience(
+        json['yearsOfExperience'] ?? json['years_of_experience'],
+        consultationStyle: false,
+      );
       final credentials = [
-        if (experiencePart.isNotEmpty) experiencePart,
+        if (experienceText != null && experienceText.isNotEmpty) experienceText,
         if (education.isNotEmpty) education,
       ].join(' | ');
       final discounted = json['discountedPrice'] ?? json['discounted_price'];
@@ -273,6 +269,8 @@ class SearchResultModel {
         packageName: packageName.isEmpty ? null : packageName,
         title: doctorName.isNotEmpty ? doctorName : surgeryName,
         subtitle: specialty.isNotEmpty ? specialty : surgeryName,
+        experience: experienceText,
+        qualification: education.isEmpty ? null : education,
         description: credentials.isEmpty ? null : credentials,
         imageUrl: (json['profileImageUrl'] ??
                 json['profile_image_url'] ??
@@ -397,6 +395,39 @@ class SearchResultModel {
       providerLogo: json['providerLogo']?.toString(),
       labLogo: json['labLogo']?.toString(),
     );
+  }
+
+  static String _educationFromJson(Map<String, dynamic> json) {
+    final education = (json['education'] ?? json['qualification'] ?? '')
+        .toString()
+        .trim();
+    if (education.isNotEmpty) return education;
+    final qualifications = json['qualifications'];
+    if (qualifications is List) {
+      return qualifications
+          .map((e) => e.toString().trim())
+          .where((e) => e.isNotEmpty)
+          .join(', ');
+    }
+    return '';
+  }
+
+  static String? _formatYearsExperience(
+    Object? value, {
+    required bool consultationStyle,
+  }) {
+    if (value == null) return null;
+    final parsed = value is num
+        ? value.toInt()
+        : int.tryParse(value.toString().trim());
+    if (parsed == null || parsed <= 0) {
+      final raw = value.toString().trim();
+      return raw.isEmpty ? null : raw;
+    }
+    if (consultationStyle) {
+      return '$parsed ${parsed == 1 ? 'Year' : 'Years'} Experience';
+    }
+    return parsed == 1 ? '1 year' : '$parsed years';
   }
 
   static (String? fee, String? oldFee) _resolveConsultationFees({
