@@ -240,11 +240,9 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
     if (!_pageController.hasClients) return;
     final current = _pageController.page?.round();
     if (current == index) return;
-    _pageController.animateToPage(
-      index,
-      duration: const Duration(milliseconds: 320),
-      curve: Curves.easeOutCubic,
-    );
+    // Bottom nav is not swipeable. Jump so intermediate pages (e.g. Bookings)
+    // are not built and their list APIs are not fired.
+    _pageController.jumpToPage(index);
   }
 
   void _onPageChanged(int index) {
@@ -295,10 +293,12 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
                         key: ValueKey('instant_doctor_$_tabSessionKey'),
                         child: const InstantDoctorScreen(showBackButton: false),
                       ),
-                      BookingsDashboardScreen(
+                      KeepAliveTabPage(
                         key: ValueKey('bookings_dash_$_bookingsDashboardKey'),
-                        showBackButton: false,
-                        initialTabIndex: _bookingsInitialTabIndex,
+                        child: BookingsDashboardScreen(
+                          showBackButton: false,
+                          initialTabIndex: _bookingsInitialTabIndex,
+                        ),
                       ),
                       KeepAliveTabPage(
                         key: ValueKey('support_$_tabSessionKey'),
