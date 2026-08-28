@@ -1,5 +1,3 @@
-import 'package:flutter/foundation.dart';
-
 import '../../../../core/config/mock_config.dart';
 
 class AuthMockApi {
@@ -35,27 +33,32 @@ class AuthMockApi {
     final isOnboardingCompleted = !phoneNumber.endsWith('0');
     return <String, dynamic>{
       'success': true,
-      'message': 'Login successful.',
+      'message': 'OTP verified and tokens issued successfully.',
       'data': <String, dynamic>{
         'tokenType': 'Bearer',
         'accessToken': <String, dynamic>{
           'token': 'mock-token',
-          'expiresIn': 900000,
+          'expiresIn': 3600,
         },
         'refreshToken': <String, dynamic>{
           'token': 'mock-refresh-token',
-          'expiresIn': 604800000,
+          'expiresIn': 604800,
         },
-        'userId': phoneNumber,
-        'isOnboardingCompleted': isOnboardingCompleted,
         'userOnboarding': !isOnboardingCompleted,
         'user': <String, dynamic>{
-          'firstName': isOnboardingCompleted ? 'Hasan' : null,
-          'lastName': isOnboardingCompleted ? 'Ali' : '[NULL]',
-          'gender': isOnboardingCompleted ? 'male' : 'Male',
-          'email': 'hasan@gmail.com',
-          'address': isOnboardingCompleted ? 'Lahore' : 'cmh Rawalpindi',
-          'dob': isOnboardingCompleted ? '12-05-1998 00:00:00' : '30-07-2006 00:00:00',
+          'id': 60623,
+          'publicId': '20368c66-d8f6-4a37-b1cd-17d2d029ac6a',
+          'phones': <dynamic>[],
+          'email': 'hasanmehmood.email@gmail.com',
+          'firstName': 'Hasan',
+          'lastName': isOnboardingCompleted ? 'Ali' : null,
+          'dob': isOnboardingCompleted
+              ? '12-05-1998 00:00:00'
+              : '21-05-1994 00:00:00',
+          'gender': 'Male',
+          'address': isOnboardingCompleted ? 'Lahore' : 'lahore',
+          'image':
+              'https://pharmacy.apnaclinic.com.pk/acs-media/apna-clinic/users/profile_images/01a047f9-045e-740e-9f7c-06f4b9ec2377.jpg',
         },
       },
     };

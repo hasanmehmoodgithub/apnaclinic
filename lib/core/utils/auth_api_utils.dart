@@ -19,15 +19,22 @@ class AuthApiUtils {
   /// Resolves user id from auth API JSON: explicit fields first, then JWT claims.
   static String? extractUserIdFromAuthResponse(Map<String, dynamic> response) {
     final data = response['data'];
-    final dataMap = data is Map<String, dynamic> ? data : <String, dynamic>{};
-    final directUserId = dataMap['userId'] ?? response['userId'];
+    final dataMap = data is Map
+        ? Map<String, dynamic>.from(data)
+        : <String, dynamic>{};
+    final user = dataMap['user'];
+    final userMap = user is Map
+        ? Map<String, dynamic>.from(user)
+        : <String, dynamic>{};
+    final directUserId =
+        dataMap['userId'] ?? response['userId'] ?? userMap['id'];
     if (directUserId != null) {
       return directUserId.toString();
     }
 
     final accessToken = dataMap['accessToken'];
-    final accessTokenMap = accessToken is Map<String, dynamic>
-        ? accessToken
+    final accessTokenMap = accessToken is Map
+        ? Map<String, dynamic>.from(accessToken)
         : <String, dynamic>{};
     final token = (dataMap['token'] ?? accessTokenMap['token'] ?? '')
         .toString();

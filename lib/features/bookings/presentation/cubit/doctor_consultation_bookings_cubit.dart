@@ -15,6 +15,8 @@ class DoctorConsultationBookingsCubit
   static const int _pageLimit = 20;
 
   Future<void> load({bool refresh = false}) async {
+    if (!refresh && state.isLoading) return;
+    if (!refresh && state.hasLoaded && !state.hasError) return;
     emit(
       state.copyWith(
         isLoading: true,
@@ -61,6 +63,7 @@ class DoctorConsultationBookingsCubit
           state.copyWith(
             isLoading: false,
             isLoadingMore: false,
+            hasLoaded: true,
             items: items,
             page: pageData.page,
             hasMore: pageData.hasMore,

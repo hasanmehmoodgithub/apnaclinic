@@ -9,8 +9,10 @@ import '../../../surgery/domain/use_cases/get_surgery_leads_use_case.dart';
 import '../../data/mappers/surgery_booking_list_mapper.dart';
 import '../../data/models/surgery_booking_list_item_model.dart';
 import '../../data/models/surgery_details_item.dart';
+import '../constants/bookings_tabs.dart';
 import '../widgets/bookings_list_shimmer_widget.dart';
 import '../widgets/bookings_refresh_view.dart';
+import '../widgets/bookings_tab_visibility_listener.dart';
 import '../widgets/empty_booking_widget.dart';
 import '../widgets/surgery_booking_card_widget.dart';
 
@@ -21,14 +23,18 @@ class SurgeryBookingsScreen extends StatefulWidget {
   State<SurgeryBookingsScreen> createState() => _SurgeryBookingsScreenState();
 }
 
-class _SurgeryBookingsScreenState extends State<SurgeryBookingsScreen> {
+class _SurgeryBookingsScreenState extends State<SurgeryBookingsScreen>
+    with AutomaticKeepAliveClientMixin {
   List<SurgeryBookingListItemModel> _items = const [];
   Object? _error;
-  bool _isLoading = true;
+  bool _isLoading = false;
+  bool _hasLoaded = false;
 
   @override
-  void initState() {
-    super.initState();
+  bool get wantKeepAlive => true;
+
+  void _tryLoad() {
+    if (!mounted || _hasLoaded || _isLoading) return;
     _load();
   }
 
@@ -56,12 +62,14 @@ class _SurgeryBookingsScreenState extends State<SurgeryBookingsScreen> {
         _items = items;
         _error = null;
         _isLoading = false;
+        _hasLoaded = true;
       });
     } catch (error) {
       if (!mounted) return;
       setState(() {
         _error = error;
         _isLoading = false;
+        _hasLoaded = true;
         if (!refresh) _items = const [];
       });
     }
@@ -69,15 +77,15 @@ class _SurgeryBookingsScreenState extends State<SurgeryBookingsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     final l10n = AppLocalizations.of(context)!;
     final textTheme = Theme.of(context).textTheme;
 
-    if (_isLoading) {
-      return const BookingsListShimmerWidget();
-    }
-
-    if (_error != null && _items.isEmpty) {
-      return BookingsRefreshView(
+    Widget body;
+    if (_isLoading || !_hasLoaded) {
+      body = const BookingsListShimmerWidget();
+    } else if (_error != null && _items.isEmpty) {
+      body = BookingsRefreshView(
         onRefresh: () => _load(refresh: true),
         expandChild: true,
         child: Center(
@@ -98,10 +106,8 @@ class _SurgeryBookingsScreenState extends State<SurgeryBookingsScreen> {
           ),
         ),
       );
-    }
-
-    if (_items.isEmpty) {
-      return BookingsRefreshView(
+    } else if (_items.isEmpty) {
+      body = BookingsRefreshView(
         onRefresh: () => _load(refresh: true),
         expandChild: true,
         child: EmptyBookingWidget(
@@ -110,30 +116,36 @@ class _SurgeryBookingsScreenState extends State<SurgeryBookingsScreen> {
           onTap: () => context.pushNamed(AppRoutes.surgery),
         ),
       );
+    } else {
+      body = BookingsRefreshView(
+        onRefresh: () => _load(refresh: true),
+        child: ListView.separated(
+          physics: const AlwaysScrollableScrollPhysics(),
+          padding: EdgeInsets.fromLTRB(0, 20.h, 0, 8.h),
+          itemCount: _items.length,
+          separatorBuilder: (_, _) => SizedBox(height: 14.h),
+          itemBuilder: (context, index) {
+            final item = _items[index];
+            final details = item.toDetailsItem();
+            return GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTap: () => _openDetails(context, details, item.initialStatus),
+              child: SurgeryBookingCardWidget(
+                item: details,
+                statusLabel: details.status,
+                onViewDetails: () =>
+                    _openDetails(context, details, item.initialStatus),
+              ),
+            );
+          },
+        ),
+      );
     }
 
-    return BookingsRefreshView(
-      onRefresh: () => _load(refresh: true),
-      child: ListView.separated(
-        physics: const AlwaysScrollableScrollPhysics(),
-        padding: EdgeInsets.fromLTRB(0, 20.h, 0, 8.h),
-        itemCount: _items.length,
-        separatorBuilder: (_, _) => SizedBox(height: 14.h),
-        itemBuilder: (context, index) {
-          final item = _items[index];
-          final details = item.toDetailsItem();
-          return GestureDetector(
-            behavior: HitTestBehavior.opaque,
-            onTap: () => _openDetails(context, details, item.initialStatus),
-            child: SurgeryBookingCardWidget(
-              item: details,
-              statusLabel: details.status,
-              onViewDetails: () =>
-                  _openDetails(context, details, item.initialStatus),
-            ),
-          );
-        },
-      ),
+    return BookingsTabVisibilityListener(
+      tabIndex: BookingsTabs.surgery,
+      onVisible: _tryLoad,
+      child: body,
     );
   }
 

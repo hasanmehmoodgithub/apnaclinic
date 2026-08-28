@@ -44,23 +44,24 @@ use `source=login`.
 
 ## Data layer
 
-On login, `AuthSessionRefresh.notifyLoggedIn()` runs only when profile is
-already complete (avoids remounting `HomeScreen` under the login route, which
-would open the dashboard promo heart loader). After first-time profile save,
-profile setup calls `notifyLoggedIn()` then navigates home.
+On login, `AuthSessionRefresh.notifyLoggedIn()` runs **after** `isLoading` is
+cleared, and only when profile is already complete (avoids remounting
+`HomeScreen` under the login route, which would open the dashboard promo heart
+loader). After first-time profile save, profile setup calls `notifyLoggedIn()`
+then navigates home.
 Splash and `/home` redirect logged-in users without a completed profile to
 profile setup.
 
 ## Data layer
 
 - **Remote:** `data/data_sources/auth_remote_data_source_impl.dart`
-  - OTP verify: `AppUrls.verifyOtp` — body includes `msisdn`, `otp`, and `fcmToken` when the device token is available (`NotificationService` / `AppPref`). After a successful verify that included a token, `NotificationService.markDeviceTokenUploaded` records it so the same value is not PUT again.
+  - OTP verify: `AppUrls.verifyOtp` — body includes `msisdn`, `otp`, and `fcmToken` when a token is **already cached** (`NotificationService.fcmToken` / `AppPref`). Verify does **not** wait on Firebase/FCM init. After success, FCM upload/sync runs in the background (`markDeviceTokenUploaded` / `syncDeviceTokenIfNeeded`).
   - FCM rotation (logged in only, token changed): `PUT AppUrls.updateFcmDeviceToken` → `/acs-auth/api/v1/notifications/device-token` body `{ "fcmToken": "..." }` via `UpdateFcmDeviceTokenUseCase`. Triggered by Firebase `onTokenRefresh`, app start, or resume — never on JWT refresh or every API.
   - If login shows “unable to reach server”, check device network/VPN, iOS ATS (HTTP allowed for Jazz domains), and dev SSL config (`dio_app_network_config.dart`).
   - Request OTP `data.expiresIn` is in **seconds** (e.g. `300` → 5 min resend timer).
   - Logout: `AppUrls.logout` (POST body `{ "refreshToken": "<stored refresh token>" }`). Local session is **always** cleared via `LocalLogoutService` even if the API fails; a snackbar may show the server error. FCM prefs + Firebase `deleteToken()` run on this path (delete is not awaited on the UI).
   - Auto-logout (JWT refresh fail on 401): `AuthInterceptor` calls the same `LocalLogoutService.clearAll()` — no logout API and no device-token PUT (tokens are already dead).
-  - After successful OTP, `AuthCubit` persists `data.user` (`firstName`, `lastName`, `gender`, `email`, `address`, `dob` / `dateOfBirth`) into `UserLocalModel`. Null / `"[NULL]"` fields are stored empty. When `userOnboarding` is **false** (profile already complete), it also calls `GetProfileSetupContentUseCase` (`GET …/users/{id}`) before `notifyLoggedIn`. When `userOnboarding` is **true**, profile setup prefills from that local `user` payload (no GET).
+  - After successful OTP, `AuthCubit` persists `data.user` (`id`, `firstName`, `lastName`, `gender`, `email`, `address`, `dob` / `dateOfBirth`, `image`) into `UserLocalModel`. User id is taken from `user.id` (then JWT `sub`). Null / `"[NULL]"` fields are stored empty. When `userOnboarding` is **false** (profile already complete), it also calls `GetProfileSetupContentUseCase` (`GET …/users/{id}`) before `notifyLoggedIn`. When `userOnboarding` is **true**, profile setup prefills from that local `user` payload (no GET), including the avatar URL.
 
 ## Shared core helpers
 

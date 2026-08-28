@@ -6,6 +6,7 @@ class DoctorConsultationBookingsState extends Equatable {
   const DoctorConsultationBookingsState({
     this.isLoading = false,
     this.isLoadingMore = false,
+    this.hasLoaded = false,
     this.items = const [],
     this.errorMessage,
     this.page = 1,
@@ -14,6 +15,7 @@ class DoctorConsultationBookingsState extends Equatable {
 
   final bool isLoading;
   final bool isLoadingMore;
+  final bool hasLoaded;
   final List<DoctorConsultationBookingDetailsModel> items;
   final String? errorMessage;
   final int page;
@@ -24,6 +26,7 @@ class DoctorConsultationBookingsState extends Equatable {
   DoctorConsultationBookingsState copyWith({
     bool? isLoading,
     bool? isLoadingMore,
+    bool? hasLoaded,
     List<DoctorConsultationBookingDetailsModel>? items,
     String? errorMessage,
     int? page,
@@ -33,6 +36,7 @@ class DoctorConsultationBookingsState extends Equatable {
     return DoctorConsultationBookingsState(
       isLoading: isLoading ?? this.isLoading,
       isLoadingMore: isLoadingMore ?? this.isLoadingMore,
+      hasLoaded: hasLoaded ?? this.hasLoaded,
       items: items ?? this.items,
       errorMessage: clearError ? null : (errorMessage ?? this.errorMessage),
       page: page ?? this.page,
@@ -44,6 +48,7 @@ class DoctorConsultationBookingsState extends Equatable {
   List<Object?> get props => [
         isLoading,
         isLoadingMore,
+        hasLoaded,
         items,
         errorMessage,
         page,

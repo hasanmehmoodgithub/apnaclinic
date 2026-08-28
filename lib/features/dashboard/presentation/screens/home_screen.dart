@@ -7,7 +7,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/analytics/analytics_event_keys.dart';
-import '../../../../core/analytics/analytics_event_keys.dart';
 import '../../../../core/analytics/analytics_service.dart';
 import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/enums/state_status.dart';
@@ -54,6 +53,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   late final NotificationCubit _notificationCubit;
   late final PromotionalBannerSession _bannerSession;
   StreamSubscription<NotificationPayload>? _pushSubscription;
+  late final AuthSessionRefresh _sessionRefresh;
 
   @override
   void initState() {
@@ -63,11 +63,17 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     _bannerSession = sl<PromotionalBannerSession>();
     _dashboardCubit = sl<DashboardCubit>();
     _notificationCubit = sl<NotificationCubit>();
+    _sessionRefresh = sl<AuthSessionRefresh>();
+    _sessionRefresh.addListener(_onAuthSessionChanged);
     if (AuthGuard.isLoggedIn()) {
       _notificationCubit.loadNotifications();
     }
     _bindPushRefresh();
     unawaited(sl<AnalyticsService>().logEvent(AnalyticsEventKeys.homeScreen));
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      unawaited(_maybePresentHomeDialogs());
+    });
   }
 
   void _bindPushRefresh() {
@@ -84,10 +90,17 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   @override
   void dispose() {
     _pushSubscription?.cancel();
+    _sessionRefresh.removeListener(_onAuthSessionChanged);
     HeartLoaderDialogController.close(_bannerLoaderId);
     WidgetsBinding.instance.removeObserver(this);
     _dashboardCubit.close();
     super.dispose();
+  }
+
+  void _onAuthSessionChanged() {
+    if (!mounted) return;
+    setState(() => _isLoggedIn = AuthGuard.isLoggedIn());
+    unawaited(_maybePresentHomeDialogs());
   }
 
   bool _isHomeRouteActive(BuildContext context) {
@@ -108,32 +121,17 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    final routerDelegate = GoRouter.of(context).routerDelegate;
-    return AnimatedBuilder(
-      animation: routerDelegate,
-      builder: (context, _) {
-        final l10n = AppLocalizations.of(context)!;
-        _isLoggedIn = AuthGuard.isLoggedIn();
-        final greetingName = _resolveGreetingName(l10n);
+    final l10n = AppLocalizations.of(context)!;
+    _isLoggedIn = AuthGuard.isLoggedIn();
+    final greetingName = _resolveGreetingName(l10n);
 
-        // Whenever the router rebuilds us (which includes returning from
-        // the search screen), defer a keyboard-dismiss to the next frame
-        // so any lingering soft keyboard is closed.
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          if (!mounted) return;
-          _dismissKeyboard();
-          unawaited(_maybePresentHomeDialogs());
-        });
-
-        return BlocProvider.value(
-          value: _dashboardCubit,
-          child: BlocConsumer<DashboardCubit, DashboardServicesState>(
-            listener: _onDashboardStateChanged,
-            builder: (context, state) =>
-                _buildHomeBody(context, state, greetingName),
-          ),
-        );
-      },
+    return BlocProvider.value(
+      value: _dashboardCubit,
+      child: BlocConsumer<DashboardCubit, DashboardServicesState>(
+        listener: _onDashboardStateChanged,
+        builder: (context, state) =>
+            _buildHomeBody(context, state, greetingName),
+      ),
     );
   }
 
@@ -214,26 +212,28 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     }
   }
 
-  void _openSearch(BuildContext context, {String? query}) {
-    // Belt-and-braces: close the keyboard before navigating, in case the
-    // SearchHeader's own dismiss didn't fire (e.g. button-only path).
+  Future<void> _openSearch(BuildContext context, {String? query}) async {
     _dismissKeyboard();
     _logSearchClicked();
-    context.push(
+    await context.push(
       AppRoutes.path(AppRoutes.search),
       extra: (query == null || query.trim().isEmpty)
           ? null
           : SearchLaunchArgs(initialQuery: query.trim()),
     );
+    if (!mounted) return;
+    _dismissKeyboard();
   }
 
-  void _openVoiceSearch(BuildContext context) {
+  Future<void> _openVoiceSearch(BuildContext context) async {
     _dismissKeyboard();
     _logSearchClicked();
-    context.push(
+    await context.push(
       AppRoutes.path(AppRoutes.search),
       extra: const SearchLaunchArgs(startVoiceSearch: true),
     );
+    if (!mounted) return;
+    _dismissKeyboard();
   }
 
   void _logSearchClicked() {
@@ -298,8 +298,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                     if (!context.requireLogin()) return;
                     context.push(AppRoutes.path(AppRoutes.profile));
                   },
-                  onSearchTap: () => _openSearch(context),
-                  onVoiceTap: () => _openVoiceSearch(context),
+                  onSearchTap: () => unawaited(_openSearch(context)),
+                  onVoiceTap: () => unawaited(_openVoiceSearch(context)),
                 );
               },
             ),

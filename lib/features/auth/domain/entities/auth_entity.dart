@@ -19,6 +19,7 @@ class AuthEntity extends Equatable {
     this.email,
     this.address,
     this.dateOfBirth,
+    this.imageUrl,
   });
 
   final bool success;
@@ -38,6 +39,7 @@ class AuthEntity extends Equatable {
   final String? email;
   final String? address;
   final String? dateOfBirth;
+  final String? imageUrl;
 
   @override
   List<Object?> get props => [
@@ -58,5 +60,6 @@ class AuthEntity extends Equatable {
     email,
     address,
     dateOfBirth,
+    imageUrl,
   ];
 }

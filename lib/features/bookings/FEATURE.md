@@ -6,7 +6,7 @@ Tabbed bookings hub (Instant Doctor, Pharmacy, Doctor Consultation, Lab Tests, S
 
 ## Routes / entry
 
-- `BookingsDashboardScreen` — bottom nav tab; menu tile switches to this tab; inner tabs in order: Instant Doctor, Pharmacy, Doctor Consultation, Lab Tests, Surgery (`BookingsTabs`). Each list supports pull-to-refresh (`BookingsRefreshView`; same `BookingsListShimmerWidget` as the first load). `AppRoutes` booking detail routes per type. Instant Doctor list: **GET** `AppUrls.instantDoctorBookings` (`type=teleconsultation`) via `GetInstantDoctorBookingsUseCase` / `InstantDoctorBookingsCubit` (page 1, limit 20; infinite scroll). Fetches only while the Bookings bottom-nav tab **and** the Instant Doctor inner tab are selected (not when switching other bottom-nav indices or inner tabs). Empty state opens the Instant Doctor bottom tab. Card tap / **View Details** opens a prescription bottom sheet (`prescription` newline-split text).
+- `BookingsDashboardScreen` — bottom nav tab; menu tile switches to this tab; inner tabs in order: Instant Doctor, Pharmacy, Doctor Consultation, Lab Tests, Surgery (`BookingsTabs`). Each list supports pull-to-refresh (`BookingsRefreshView`; same `BookingsListShimmerWidget` as the first load). Each list fetches **only while My Bookings is the selected bottom-nav tab and that inner tab is selected** (`BookingsTabVisibilityListener`); adjacent `TabBarView` pages do not call their APIs. `AppRoutes` booking detail routes per type. Instant Doctor list: **GET** `AppUrls.instantDoctorBookings` (`type=teleconsultation`) via `GetInstantDoctorBookingsUseCase` / `InstantDoctorBookingsCubit` (page 1, limit 20; infinite scroll). Empty state opens the Instant Doctor bottom tab. Card tap / **View Details** opens a prescription bottom sheet (`prescription` newline-split text).
 - `AppRoutes.doctorConsultationBookingDetails` — consultation booking details; extra: `DoctorConsultationBookingDetailsArgs` (`bookingId`, optional preloaded `booking` from list).
 
 ## Data & APIs
@@ -36,7 +36,7 @@ Tabbed bookings hub (Instant Doctor, Pharmacy, Doctor Consultation, Lab Tests, S
 
 ## State
 
-- `DoctorConsultationBookingsCubit` — paginated consultation bookings list (page 1, limit 20; infinite scroll load-more). `load(refresh: true)` reloads page 1 and shows `BookingsListShimmerWidget`. Empty list shows `EmptyBookingWidget` with “No Booking Available”.
+- `DoctorConsultationBookingsCubit` — paginated consultation bookings list (page 1, limit 20; infinite scroll load-more). `load()` no-ops if a successful page is already in memory; `load(refresh: true)` reloads page 1 and shows `BookingsListShimmerWidget`. Empty list shows `EmptyBookingWidget` with “No Booking Available”.
 - `InstantDoctorBookingsCubit` — paginated Instant Doctor bookings list (page 1, limit 20; infinite scroll). `load()` no-ops if a successful page is already in memory; `load(refresh: true)` reloads page 1 and shows `BookingsListShimmerWidget`. Empty list shows `EmptyBookingWidget` with CTA to the Instant Doctor tab.
 - `DoctorConsultationBookingDetailsCubit` — always **GET** detail by `orderId` (`GetConsultationBookingUseCase`); optional list `booking` is preload while shimmering; `load(refresh: true)` refetches without full-screen shimmer; maps via `DoctorConsultationBookingMapper`; submits feedback and updates local `patientReview` on success.
 
@@ -49,6 +49,7 @@ Tabbed bookings hub (Instant Doctor, Pharmacy, Doctor Consultation, Lab Tests, S
 ## UI
 
 - `BookingsRefreshView` — shared pull-to-refresh (`clr0FAA9A`) on all five booking lists, including empty and error states.
+- `BookingsTabVisibilityListener` — loads a bookings list only when My Bookings is the bottom-nav tab and that inner tab is selected.
 - `DoctorConsultationBookingCardWidget` — consultation list card; whole card opens booking details on tap; **View Details** button uses the same navigation.
 - `DoctorConsultationBookingDetailsContentWidget` — thin composer for details body; sections: header (doctor + date card), patient/issue fields, review or feedback form, documents (name + Download under icon), billing (fee breakdown + shared **E-Invoice** row `BookingInvoiceTileWidget`, hidden when status is Failed), join CTA. Rating badge uses shared `AppRoundedRatingWidget` (whole numbers without decimals).
 - `BookingInvoiceTileWidget` — same grey PDF + download-icon row on Consultation, Lab, Surgery, and Pharmacy booking details (`E-Invoice.pdf`). Hidden on Lab / Consultation / Pharmacy when status is Failed. Tap opens the in-app PDF viewer; Share / Download are on that screen.

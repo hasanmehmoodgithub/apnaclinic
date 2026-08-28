@@ -24,7 +24,7 @@ In-app notification list and Firebase Cloud Messaging (FCM) push notifications.
   - **Pharmacy** (`service_type` / `serviceType: PHARMACY`, or `entity.kind: PHARMACY_ORDER`) opens details with **`entity.publicId`** (UUID). Falls back to the UUID in `endpoint` (`mobile/orders/{publicId}`). Does **not** use `unified_order_id`.
   - Guest users are not sent to booking screens (login / onboarding continues).
 - FCM token stored in `AppPref` (`AppPrefKeys.fcmToken`); last uploaded value in `AppPrefKeys.fcmTokenSentToBackend`. Both cleared on logout and on 401 JWT-refresh failure (`LocalLogoutService`).
-- Login: `NotificationService.ensureFcmTokenForLogin()` runs before verify OTP (lazy Firebase/FCM init if startup missed). OTP verify is the first backend bind; login still succeeds if FCM is empty.
+- Login: OTP verify uses a **cached** FCM token (`NotificationService.fcmToken` / `AppPref`) and does not wait on `ensureFcmTokenForLogin()`. After success, token bind/sync runs in the background. Login still succeeds if FCM is empty.
 - Token rotation: Firebase `onTokenRefresh` (and a logged-in start/resume check) calls `PUT AppUrls.updateFcmDeviceToken` only when the user is logged in and the token differs from last upload. JWT `/auth/token/refresh` does not send FCM.
 - Debug builds (`kDebugMode`) auto-subscribe to topic `TestNotification`.
 

@@ -7,8 +7,10 @@ import '../../../../core/router/app_routes.dart';
 import '../../../lab_test/domain/use_cases/get_lab_orders_use_case.dart';
 import '../../data/mappers/lab_test_booking_list_mapper.dart';
 import '../../data/models/lab_test_booking_item_model.dart';
+import '../constants/bookings_tabs.dart';
 import '../widgets/bookings_list_shimmer_widget.dart';
 import '../widgets/bookings_refresh_view.dart';
+import '../widgets/bookings_tab_visibility_listener.dart';
 import '../widgets/empty_booking_widget.dart';
 import '../widgets/lab_test_booking_card_widget.dart';
 
@@ -19,13 +21,17 @@ class LabTestBookingsScreen extends StatefulWidget {
   State<LabTestBookingsScreen> createState() => _LabTestBookingsScreenState();
 }
 
-class _LabTestBookingsScreenState extends State<LabTestBookingsScreen> {
+class _LabTestBookingsScreenState extends State<LabTestBookingsScreen>
+    with AutomaticKeepAliveClientMixin {
   List<LabTestBookingItemModel> _bookings = const [];
-  bool _isLoading = true;
+  bool _isLoading = false;
+  bool _hasLoaded = false;
 
   @override
-  void initState() {
-    super.initState();
+  bool get wantKeepAlive => true;
+
+  void _tryLoad() {
+    if (!mounted || _hasLoaded || _isLoading) return;
     _load();
   }
 
@@ -49,44 +55,50 @@ class _LabTestBookingsScreenState extends State<LabTestBookingsScreen> {
     setState(() {
       _bookings = bookings;
       _isLoading = false;
+      _hasLoaded = true;
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     final l10n = AppLocalizations.of(context)!;
-    return Padding(
-      padding: EdgeInsets.fromLTRB(2.w, 18.h, 2.w, 8.h),
-      child: _isLoading
-          ? BookingsListShimmerWidget(
-              padding: EdgeInsets.zero,
-              separatorHeight: 10.h,
-            )
-          : _bookings.isEmpty
-              ? BookingsRefreshView(
-                  onRefresh: _load,
-                  expandChild: true,
-                  child: Column(
-                    children: [
-                      EmptyBookingWidget(
-                        description: l10n.bookingsLabTestEmptyDescription,
-                        buttonText: l10n.labTestBookCta,
-                        onTap: () => context.pushNamed(AppRoutes.labTest),
+    return BookingsTabVisibilityListener(
+      tabIndex: BookingsTabs.labTest,
+      onVisible: _tryLoad,
+      child: Padding(
+        padding: EdgeInsets.fromLTRB(2.w, 18.h, 2.w, 8.h),
+        child: _isLoading || !_hasLoaded
+            ? BookingsListShimmerWidget(
+                padding: EdgeInsets.zero,
+                separatorHeight: 10.h,
+              )
+            : _bookings.isEmpty
+                ? BookingsRefreshView(
+                    onRefresh: _load,
+                    expandChild: true,
+                    child: Column(
+                      children: [
+                        EmptyBookingWidget(
+                          description: l10n.bookingsLabTestEmptyDescription,
+                          buttonText: l10n.labTestBookCta,
+                          onTap: () => context.pushNamed(AppRoutes.labTest),
+                        ),
+                      ],
+                    ),
+                  )
+                : BookingsRefreshView(
+                    onRefresh: _load,
+                    child: ListView.separated(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      itemCount: _bookings.length,
+                      separatorBuilder: (_, _) => SizedBox(height: 10.h),
+                      itemBuilder: (context, index) => LabTestBookingCardWidget(
+                        booking: _bookings[index],
                       ),
-                    ],
-                  ),
-                )
-              : BookingsRefreshView(
-                  onRefresh: _load,
-                  child: ListView.separated(
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    itemCount: _bookings.length,
-                    separatorBuilder: (_, _) => SizedBox(height: 10.h),
-                    itemBuilder: (context, index) => LabTestBookingCardWidget(
-                      booking: _bookings[index],
                     ),
                   ),
-                ),
+      ),
     );
   }
 }

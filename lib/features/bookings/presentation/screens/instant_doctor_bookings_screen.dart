@@ -7,13 +7,12 @@ import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/session/auth_session_refresh.dart';
 import '../../../dashboard/presentation/constants/main_navigation_tabs.dart';
-import '../../../dashboard/presentation/cubit/main_navigation_cubit.dart';
-import '../../../dashboard/presentation/cubit/main_navigation_state.dart';
 import '../constants/bookings_tabs.dart';
 import '../cubit/instant_doctor_bookings_cubit.dart';
 import '../cubit/instant_doctor_bookings_state.dart';
 import '../widgets/bookings_list_shimmer_widget.dart';
 import '../widgets/bookings_refresh_view.dart';
+import '../widgets/bookings_tab_visibility_listener.dart';
 import '../widgets/empty_booking_widget.dart';
 import '../widgets/instant_doctor_booking_card_widget.dart';
 
@@ -50,7 +49,6 @@ class _InstantDoctorBookingsBody extends StatefulWidget {
 
 class _InstantDoctorBookingsBodyState extends State<_InstantDoctorBookingsBody> {
   late final ScrollController _scrollController;
-  TabController? _tabController;
 
   @override
   void initState() {
@@ -59,42 +57,15 @@ class _InstantDoctorBookingsBodyState extends State<_InstantDoctorBookingsBody> 
   }
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    final tabs = DefaultTabController.maybeOf(context);
-    if (tabs != _tabController) {
-      _tabController?.removeListener(_onTabChanged);
-      _tabController = tabs;
-      _tabController?.addListener(_onTabChanged);
-    }
-    _tryLoad();
-  }
-
-  @override
   void dispose() {
-    _tabController?.removeListener(_onTabChanged);
     _scrollController
       ..removeListener(_onScroll)
       ..dispose();
     super.dispose();
   }
 
-  void _onTabChanged() {
-    if (_tabController?.indexIsChanging ?? false) return;
-    _tryLoad();
-  }
-
-  bool _shouldLoadBookings() {
-    final tabs = _tabController;
-    if (tabs != null && tabs.index != BookingsTabs.instantDoctor) {
-      return false;
-    }
-    final nav = context.read<MainNavigationCubit>();
-    return nav.state.currentIndex == MainNavigationTabs.bookings;
-  }
-
   void _tryLoad() {
-    if (!mounted || !_shouldLoadBookings()) return;
+    if (!mounted) return;
     context.read<InstantDoctorBookingsCubit>().load();
   }
 
@@ -187,10 +158,9 @@ class _InstantDoctorBookingsBodyState extends State<_InstantDoctorBookingsBody> 
       },
     );
 
-    return BlocListener<MainNavigationCubit, MainNavigationState>(
-      listenWhen: (previous, current) =>
-          previous.currentIndex != current.currentIndex,
-      listener: (_, __) => _tryLoad(),
+    return BookingsTabVisibilityListener(
+      tabIndex: BookingsTabs.instantDoctor,
+      onVisible: _tryLoad,
       child: child,
     );
   }

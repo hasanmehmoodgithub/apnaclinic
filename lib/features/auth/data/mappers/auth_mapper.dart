@@ -21,6 +21,7 @@ class AuthMapper {
       email: model.email,
       address: model.address,
       dateOfBirth: model.dateOfBirth,
+      imageUrl: model.imageUrl,
     );
   }
 }

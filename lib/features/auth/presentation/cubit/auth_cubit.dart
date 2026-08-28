@@ -1,4 +1,3 @@
-
 import 'dart:async';
 import 'dart:developer' as developer;
 
@@ -149,7 +148,7 @@ class AuthCubit extends Cubit<AuthState> {
       ),
     );
 
-    final fcmToken = await _resolveFcmToken();
+    final fcmToken = _cachedFcmToken();
     final result = await _verifyOtpUseCase(
       VerifyOtpParams(
         phoneNumber: state.phoneNumber,
@@ -173,7 +172,6 @@ class AuthCubit extends Cubit<AuthState> {
       },
       (entity) async {
         await _saveUserSession(entity: entity);
-        await _markLoginFcmToken(fcmToken);
         if (isClosed) {
           return const VerifyOtpOutcome(isSuccess: false, goToHome: false);
         }
@@ -185,6 +183,10 @@ class AuthCubit extends Cubit<AuthState> {
           ),
         );
         unawaited(_analytics.logEvent(AnalyticsEventKeys.otpVerified));
+        if (entity.isOnboardingCompleted) {
+          _sessionRefresh.notifyLoggedIn();
+        }
+        unawaited(_syncFcmAfterLogin(fcmToken));
         return VerifyOtpOutcome(
           isSuccess: true,
           goToHome: entity.isOnboardingCompleted,
@@ -244,44 +246,17 @@ class AuthCubit extends Cubit<AuthState> {
     return expiresInSeconds;
   }
 
-  Future<String?> _resolveFcmToken() async {
-    developer.log('Resolving FCM token for login', name: 'AuthCubit');
-
+  String? _cachedFcmToken() {
     if (sl.isRegistered<NotificationService>()) {
-      final service = sl<NotificationService>();
-      developer.log(
-        'NotificationService registered '
-        '(initialized=${service.isInitialized}, '
-        'permissionsPrepared=${service.permissionsPrepared})',
-        name: 'AuthCubit',
-      );
-      final token = await service.ensureFcmTokenForLogin();
-      if (token != null && token.isNotEmpty) {
-        developer.log(
-          'Using FCM token for login (length=${token.length})  (token=${token})',
-          name: 'AuthCubit',
-        );
-        return token;
-      }
-      developer.log('FCM token still empty after ensure', name: 'AuthCubit');
-    } else {
-      developer.log('NotificationService not registered', name: 'AuthCubit');
+      final token = sl<NotificationService>().fcmToken?.trim();
+      if (token != null && token.isNotEmpty) return token;
     }
-
     final stored = _appPref.getString(AppPrefKeys.fcmToken)?.trim();
-    if (stored != null && stored.isNotEmpty) {
-      developer.log(
-        'Using stored FCM token from prefs (length=${stored.length})',
-        name: 'AuthCubit',
-      );
-      return stored;
-    }
-
-    developer.log('No FCM token available for login', name: 'AuthCubit');
+    if (stored != null && stored.isNotEmpty) return stored;
     return null;
   }
 
-  Future<void> _markLoginFcmToken(String? fcmToken) async {
+  Future<void> _syncFcmAfterLogin(String? fcmToken) async {
     if (!sl.isRegistered<NotificationService>()) return;
     final service = sl<NotificationService>();
     final token = fcmToken?.trim();
@@ -311,21 +286,19 @@ class AuthCubit extends Cubit<AuthState> {
         firstName: entity.firstName ?? '',
         lastName: entity.lastName ?? '',
         phone: state.phoneNumber,
+        apiUserId:
+            entity.userId ??
+            (tokenUserId != null ? tokenUserId.toString() : ''),
         gender: entity.gender ?? '',
         email: entity.email ?? '',
         address: entity.address ?? '',
         dateOfBirth: entity.dateOfBirth ?? '',
+        imageUrl: entity.imageUrl ?? '',
       ),
     );
     if (entity.isOnboardingCompleted) {
       // OTP payload often omits name; load GET /users/{id} before UI remounts.
       await _hydrateProfileAfterLogin();
-    }
-
-    // Only refresh the dashboard shell when profile is complete. Otherwise
-    // HomeScreen remounts under the login route and opens the promo heart loader.
-    if (entity.isOnboardingCompleted) {
-      _sessionRefresh.notifyLoggedIn();
     }
   }
 

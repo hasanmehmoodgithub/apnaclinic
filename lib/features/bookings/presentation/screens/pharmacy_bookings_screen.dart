@@ -10,8 +10,10 @@ import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../pharmacy/domain/entities/pharmacy_booking_entity.dart';
 import '../../../pharmacy/domain/use_cases/get_pharmacy_bookings_use_case.dart';
+import '../constants/bookings_tabs.dart';
 import '../widgets/bookings_list_shimmer_widget.dart';
 import '../widgets/bookings_refresh_view.dart';
+import '../widgets/bookings_tab_visibility_listener.dart';
 import '../widgets/empty_booking_widget.dart';
 
 class PharmacyBookingsScreen extends StatefulWidget {
@@ -21,13 +23,17 @@ class PharmacyBookingsScreen extends StatefulWidget {
   State<PharmacyBookingsScreen> createState() => _PharmacyBookingsScreenState();
 }
 
-class _PharmacyBookingsScreenState extends State<PharmacyBookingsScreen> {
+class _PharmacyBookingsScreenState extends State<PharmacyBookingsScreen>
+    with AutomaticKeepAliveClientMixin {
   List<PharmacyBookingEntity> _items = const [];
-  bool _isLoading = true;
+  bool _isLoading = false;
+  bool _hasLoaded = false;
 
   @override
-  void initState() {
-    super.initState();
+  bool get wantKeepAlive => true;
+
+  void _tryLoad() {
+    if (!mounted || _hasLoaded || _isLoading) return;
     _load();
   }
 
@@ -48,23 +54,24 @@ class _PharmacyBookingsScreenState extends State<PharmacyBookingsScreen> {
     setState(() {
       _items = items;
       _isLoading = false;
+      _hasLoaded = true;
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     final l10n = AppLocalizations.of(context)!;
     final textTheme = Theme.of(context).textTheme;
 
-    if (_isLoading) {
-      return BookingsListShimmerWidget(
+    Widget body;
+    if (_isLoading || !_hasLoaded) {
+      body = BookingsListShimmerWidget(
         cardHeight: 118.h,
         separatorHeight: 12.h,
       );
-    }
-
-    if (_items.isEmpty) {
-      return BookingsRefreshView(
+    } else if (_items.isEmpty) {
+      body = BookingsRefreshView(
         onRefresh: _load,
         expandChild: true,
         child: Column(
@@ -77,32 +84,38 @@ class _PharmacyBookingsScreenState extends State<PharmacyBookingsScreen> {
           ],
         ),
       );
+    } else {
+      body = BookingsRefreshView(
+        onRefresh: _load,
+        child: ListView.separated(
+          physics: const AlwaysScrollableScrollPhysics(),
+          padding: EdgeInsets.fromLTRB(0, 20.h, 0, 10.h),
+          itemBuilder: (context, index) => _PharmacyBookingCard(
+            item: _items[index],
+            textTheme: textTheme,
+            l10n: l10n,
+            onViewDetailsTap: () {
+              final orderId = _items[index].orderId.trim();
+              if (orderId.isEmpty) return;
+              context.pushNamed(
+                AppRoutes.pharmacyBookingDetails,
+                extra: {
+                  'orderId': orderId,
+                  'orderNo': _items[index].orderNo,
+                },
+              );
+            },
+          ),
+          separatorBuilder: (_, _) => SizedBox(height: 12.h),
+          itemCount: _items.length,
+        ),
+      );
     }
 
-    return BookingsRefreshView(
-      onRefresh: _load,
-      child: ListView.separated(
-        physics: const AlwaysScrollableScrollPhysics(),
-        padding: EdgeInsets.fromLTRB(0, 20.h, 0, 10.h),
-        itemBuilder: (context, index) => _PharmacyBookingCard(
-          item: _items[index],
-          textTheme: textTheme,
-          l10n: l10n,
-          onViewDetailsTap: () {
-            final orderId = _items[index].orderId.trim();
-            if (orderId.isEmpty) return;
-            context.pushNamed(
-              AppRoutes.pharmacyBookingDetails,
-              extra: {
-                'orderId': orderId,
-                'orderNo': _items[index].orderNo,
-              },
-            );
-          },
-        ),
-        separatorBuilder: (_, _) => SizedBox(height: 12.h),
-        itemCount: _items.length,
-      ),
+    return BookingsTabVisibilityListener(
+      tabIndex: BookingsTabs.pharmacy,
+      onVisible: _tryLoad,
+      child: body,
     );
   }
 }

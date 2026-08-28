@@ -19,6 +19,7 @@ class AuthResponseModel {
     this.email,
     this.address,
     this.dateOfBirth,
+    this.imageUrl,
   });
 
   final bool success;
@@ -38,6 +39,7 @@ class AuthResponseModel {
   final String? email;
   final String? address;
   final String? dateOfBirth;
+  final String? imageUrl;
 
   static int? _toInt(dynamic value) {
     if (value is int) return value;
@@ -62,11 +64,11 @@ class AuthResponseModel {
         : <String, dynamic>{};
     final accessToken = dataMap['accessToken'];
     final refreshToken = dataMap['refreshToken'];
-    final accessTokenMap = accessToken is Map<String, dynamic>
-        ? accessToken
+    final accessTokenMap = accessToken is Map
+        ? Map<String, dynamic>.from(accessToken)
         : <String, dynamic>{};
-    final refreshTokenMap = refreshToken is Map<String, dynamic>
-        ? refreshToken
+    final refreshTokenMap = refreshToken is Map
+        ? Map<String, dynamic>.from(refreshToken)
         : <String, dynamic>{};
     final user = dataMap['user'];
     final userMap = user is Map
@@ -111,7 +113,7 @@ class AuthResponseModel {
             json['refreshTokenExpiresIn'],
       ),
       userId:
-          (dataMap['userId'] ?? json['userId'])?.toString() ??
+          (dataMap['userId'] ?? json['userId'] ?? userMap['id'])?.toString() ??
           AuthApiUtils.extractUserIdFromAuthResponse(json),
       firstName: _userField(userMap['firstName'] ?? dataMap['firstName']),
       lastName: _userField(userMap['lastName'] ?? dataMap['lastName']),
@@ -123,6 +125,9 @@ class AuthResponseModel {
             userMap['dob'] ??
             dataMap['dateOfBirth'] ??
             dataMap['dob'],
+      ),
+      imageUrl: _userField(
+        userMap['image'] ?? userMap['imageUrl'] ?? dataMap['image'],
       ),
     );
   }
