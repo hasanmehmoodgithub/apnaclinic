@@ -666,6 +666,19 @@ class AppLocalizationsEn extends AppLocalizations {
       'Get 24/7 access to qualified doctors for general medical support and much more.';
 
   @override
+  String get instantDoctorConsultationExitTitle => 'Exit consultation?';
+
+  @override
+  String get instantDoctorConsultationExitMessage =>
+      'Are you sure you want to exit from this video Consultation?';
+
+  @override
+  String get instantDoctorConsultationExitCta => 'Exit';
+
+  @override
+  String get instantDoctorConsultationExitCancel => 'Cancel';
+
+  @override
   String get customerSupportTitle => 'Customer Support';
 
   @override

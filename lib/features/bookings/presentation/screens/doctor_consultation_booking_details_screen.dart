@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../cubit/doctor_consultation_booking_details_cubit.dart';
 import '../cubit/doctor_consultation_booking_details_state.dart';
+import '../widgets/bookings_refresh_view.dart';
 import '../widgets/doctor_consultation_booking_details_content_widget.dart';
 import '../widgets/doctor_consultation_booking_details_shimmer_widget.dart';
 import '../widgets/empty_booking_widget.dart';
@@ -76,6 +77,10 @@ class _DoctorConsultationBookingDetailsScreenState
                   child: BlocBuilder<DoctorConsultationBookingDetailsCubit,
                       DoctorConsultationBookingDetailsState>(
                     builder: (context, state) {
+                      Future<void> onRefresh() => context
+                          .read<DoctorConsultationBookingDetailsCubit>()
+                          .load(refresh: true);
+
                       if (state.isLoading) {
                         return const DoctorConsultationBookingDetailsShimmerWidget();
                       }
@@ -84,20 +89,27 @@ class _DoctorConsultationBookingDetailsScreenState
                             (state.errorMessage?.trim().isNotEmpty ?? false)
                             ? state.errorMessage!.trim()
                             : l10n.bookingsDetailsLoadError;
-                        return Padding(
-                          padding: const EdgeInsets.fromLTRB(20, 150, 20, 20),
-                          child: EmptyBookingWidget(
-                            description: message,
-                            buttonText: l10n.commonRetry,
-                            backgroundColor: Colors.transparent,
-                            onTap: () => context
-                                .read<DoctorConsultationBookingDetailsCubit>()
-                                .load(),
+                        return BookingsRefreshView(
+                          onRefresh: onRefresh,
+                          expandChild: true,
+                          child: Padding(
+                            padding:
+                                const EdgeInsets.fromLTRB(20, 150, 20, 20),
+                            child: EmptyBookingWidget(
+                              description: message,
+                              buttonText: l10n.commonRetry,
+                              backgroundColor: Colors.transparent,
+                              onTap: () => context
+                                  .read<
+                                      DoctorConsultationBookingDetailsCubit>()
+                                  .load(),
+                            ),
                           ),
                         );
                       }
                       return DoctorConsultationBookingDetailsContentWidget(
                         data: state.data!,
+                        onRefresh: onRefresh,
                       );
                     },
                   ),

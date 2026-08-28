@@ -9,9 +9,11 @@ class InstantDoctorConsultationAppBarWidget extends StatelessWidget
   const InstantDoctorConsultationAppBarWidget({
     super.key,
     required this.title,
+    this.onBackTap,
   });
 
   final String title;
+  final VoidCallback? onBackTap;
 
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
@@ -24,7 +26,7 @@ class InstantDoctorConsultationAppBarWidget extends StatelessWidget
       surfaceTintColor: Colors.transparent,
       elevation: 0,
       leading: IconButton(
-        onPressed: () => context.pop(),
+        onPressed: onBackTap ?? () => context.pop(),
         icon: const Icon(Icons.arrow_back_rounded, color: AppColors.clr060),
       ),
       title: Text(

@@ -32,7 +32,7 @@ class DoctorConsultationBookingDetailsCubit
   final SubmitConsultationFeedbackUseCase _submitFeedbackUseCase;
   final String _bookingId;
 
-  Future<void> load() async {
+  Future<void> load({bool refresh = false}) async {
     final appointmentId = int.tryParse(_bookingId.trim());
     if (appointmentId == null || appointmentId <= 0) {
       emit(
@@ -44,7 +44,13 @@ class DoctorConsultationBookingDetailsCubit
       return;
     }
 
-    emit(state.copyWith(isLoading: true, clearError: true));
+    final keepExisting = refresh && state.data != null;
+    emit(
+      state.copyWith(
+        isLoading: !keepExisting,
+        clearError: true,
+      ),
+    );
     final result = await _getBookingUseCase(
       GetConsultationBookingParams(appointmentId: appointmentId),
     );
@@ -54,7 +60,9 @@ class DoctorConsultationBookingDetailsCubit
         emit(
           state.copyWith(
             isLoading: false,
-            errorMessage: error.isNotEmpty ? error : 'load_error',
+            errorMessage: keepExisting
+                ? null
+                : (error.isNotEmpty ? error : 'load_error'),
           ),
         );
       },
@@ -67,6 +75,7 @@ class DoctorConsultationBookingDetailsCubit
             clearError: true,
           ),
         );
+        if (refresh) return;
         BookingsAnalytics.logBookingViewed(
           AnalyticsBookingTypeKeys.consultancy,
         );

@@ -49,3 +49,17 @@ hmac.keys.json
 
 # Node/Danger
 node_modules/
+/macos/Flutter/ephemeral/Flutter-Generated.xcconfig
+/macos/Flutter/ephemeral/flutter_export_environment.sh
+/macos/Pods/Local Podspecs/connectivity_plus.podspec.json
+/macos/Pods/Local Podspecs/file_selector_macos.podspec.json
+/macos/Pods/Local Podspecs/firebase_core.podspec.json
+/macos/Pods/Local Podspecs/firebase_messaging.podspec.json
+/macos/Pods/Local Podspecs/flutter_local_notifications.podspec.json
+/macos/Pods/Local Podspecs/flutter_secure_storage_macos.podspec.json
+/macos/Pods/Local Podspecs/FlutterMacOS.podspec.json
+/macos/Pods/Local Podspecs/path_provider_foundation.podspec.json
+/macos/Pods/Local Podspecs/shared_preferences_foundation.podspec.json
+/macos/Pods/Local Podspecs/sqflite_darwin.podspec.json
+/macos/Pods/Local Podspecs/sqlite3_flutter_libs.podspec.json
+/macos/Pods/Local Podspecs/url_launcher_macos.podspec.json
