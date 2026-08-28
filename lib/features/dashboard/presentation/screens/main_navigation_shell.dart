@@ -59,6 +59,7 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
   int _bookingsInitialTabIndex = 0;
   int _bookingsDashboardKey = 0;
   bool _isCloseDialogVisible = false;
+  bool _isSyncingPage = false;
 
   @override
   void initState() {
@@ -110,9 +111,7 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
       BookingsAnalytics.logMyBookingsTab();
     }
     _navigationCubit.setIndex(tabIndex);
-    if (_pageController.hasClients) {
-      _pageController.jumpToPage(tabIndex);
-    }
+    _jumpToTab(tabIndex);
     _applyStatusBar();
   }
 
@@ -128,9 +127,7 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
 
   void _goToHomeTab() {
     _navigationCubit.setIndex(_homeIndex);
-    if (_pageController.hasClients) {
-      _pageController.jumpToPage(_homeIndex);
-    }
+    _jumpToTab(_homeIndex);
     _applyStatusBar();
   }
 
@@ -184,9 +181,13 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
     if (!isLoggedIn || profileComplete) {
       setState(() => _tabSessionKey++);
     }
-    // Resume Instant Doctor / Bookings (or other) after guest login.
-    _applyPendingTabIfNeeded();
-    _applyStatusBar();
+    // Let the OTP screen finish emitting isLoading: false before we
+    // remount tabs / jump to Bookings.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      _applyPendingTabIfNeeded();
+      _applyStatusBar();
+    });
   }
 
   void _applyStatusBar() {
@@ -236,16 +237,26 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
     _applyStatusBar();
   }
 
-  void _syncPageToNavIndex(int index) {
+  void _jumpToTab(int index) {
     if (!_pageController.hasClients) return;
     final current = _pageController.page?.round();
     if (current == index) return;
-    // Bottom nav is not swipeable. Jump so intermediate pages (e.g. Bookings)
-    // are not built and their list APIs are not fired.
+    _isSyncingPage = true;
     _pageController.jumpToPage(index);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _isSyncingPage = false;
+    });
+  }
+
+  void _syncPageToNavIndex(int index) {
+    _jumpToTab(index);
   }
 
   void _onPageChanged(int index) {
+    if (_isSyncingPage) {
+      _navigationCubit.setIndex(index);
+      return;
+    }
     final previous = _navigationCubit.state.currentIndex;
     if (index == _instantDoctorIndex && previous != index) {
       context.read<InstantDoctorCubit>().logModuleViewed(
@@ -267,55 +278,57 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
         listenWhen: (previous, current) =>
             previous.currentIndex != current.currentIndex,
         listener: (context, state) => _syncPageToNavIndex(state.currentIndex),
-        child: BlocBuilder<MainNavigationCubit, MainNavigationState>(
-          bloc: _navigationCubit,
-          builder: (context, state) {
-            return AnnotatedRegion<SystemUiOverlayStyle>(
-              value: _shellSystemUi,
-              child: PopScope(
-                canPop: false,
-                onPopInvokedWithResult: (didPop, _) {
-                  if (didPop) return;
-                  _onBackRequested();
-                },
-                child: Scaffold(
-                  backgroundColor: Colors.white,
-                  body: PageView(
-                    controller: _pageController,
-                    onPageChanged: _onPageChanged,
-                    physics: const NeverScrollableScrollPhysics(),
-                    children: [
-                      KeepAliveTabPage(
-                        key: ValueKey('home_$_tabSessionKey'),
-                        child: const HomeScreen(),
-                      ),
-                      KeepAliveTabPage(
-                        key: ValueKey('instant_doctor_$_tabSessionKey'),
-                        child: const InstantDoctorScreen(showBackButton: false),
-                      ),
-                      KeepAliveTabPage(
-                        key: ValueKey('bookings_dash_$_bookingsDashboardKey'),
-                        child: BookingsDashboardScreen(
-                          showBackButton: false,
-                          initialTabIndex: _bookingsInitialTabIndex,
-                        ),
-                      ),
-                      KeepAliveTabPage(
-                        key: ValueKey('support_$_tabSessionKey'),
-                        child: const CustomerSupportScreen(
-                          showBackButton: false,
-                        ),
-                      ),
-                    ],
+        child: AnnotatedRegion<SystemUiOverlayStyle>(
+          value: _shellSystemUi,
+          child: PopScope(
+            canPop: false,
+            onPopInvokedWithResult: (didPop, _) {
+              if (didPop) return;
+              _onBackRequested();
+            },
+            child: Scaffold(
+              backgroundColor: Colors.white,
+              body: PageView(
+                controller: _pageController,
+                onPageChanged: _onPageChanged,
+                physics: const NeverScrollableScrollPhysics(),
+                children: [
+                  KeepAliveTabPage(
+                    key: ValueKey('home_$_tabSessionKey'),
+                    child: const HomeScreen(),
                   ),
-                  bottomNavigationBar: ApnaBottomNavigationBar(
+                  KeepAliveTabPage(
+                    key: ValueKey('instant_doctor_$_tabSessionKey'),
+                    child: const InstantDoctorScreen(showBackButton: false),
+                  ),
+                  KeepAliveTabPage(
+                    key: ValueKey('bookings_dash_$_bookingsDashboardKey'),
+                    child: BookingsDashboardScreen(
+                      showBackButton: false,
+                      initialTabIndex: _bookingsInitialTabIndex,
+                    ),
+                  ),
+                  KeepAliveTabPage(
+                    key: ValueKey('support_$_tabSessionKey'),
+                    child: const CustomerSupportScreen(
+                      showBackButton: false,
+                    ),
+                  ),
+                ],
+              ),
+              bottomNavigationBar: BlocBuilder<MainNavigationCubit, MainNavigationState>(
+                bloc: _navigationCubit,
+                buildWhen: (previous, current) =>
+                    previous.currentIndex != current.currentIndex,
+                builder: (context, state) {
+                  return ApnaBottomNavigationBar(
                     currentIndex: state.currentIndex,
                     onTap: _onNavTap,
-                  ),
-                ),
+                  );
+                },
               ),
-            );
-          },
+            ),
+          ),
         ),
       ),
     );

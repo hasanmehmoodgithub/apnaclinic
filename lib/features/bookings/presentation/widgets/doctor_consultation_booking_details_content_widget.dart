@@ -53,6 +53,7 @@ class DoctorConsultationBookingDetailsContentWidget extends StatelessWidget {
               borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
             ),
             child: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
               padding: EdgeInsets.fromLTRB(16.w, 14.h, 16.w, 18.h),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
