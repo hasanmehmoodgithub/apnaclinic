@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../../core/constants/app_colors.dart';
@@ -6,6 +7,7 @@ import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/utils/no_emoji_text_input_formatter.dart';
 import '../../../../generated/assets.dart';
+import '../constants/search_ui_config.dart';
 import 'search_voice_listening_lottie.dart';
 
 class SearchInputRowWidget extends StatelessWidget {
@@ -45,8 +47,13 @@ class SearchInputRowWidget extends StatelessWidget {
           Expanded(
             child: TextField(
               controller: controller,
+              maxLength: SearchUiConfig.queryMaxLength,
               inputFormatters: NoEmojiTextInputFormatter.merge(
-                null,
+                [
+                  LengthLimitingTextInputFormatter(
+                    SearchUiConfig.queryMaxLength,
+                  ),
+                ],
                 allowSpecialCharacters: true,
               ),
               onChanged: onChanged,
@@ -60,6 +67,7 @@ class SearchInputRowWidget extends StatelessWidget {
               ),
               decoration: InputDecoration(
                 isCollapsed: true,
+                counterText: '',
                 border: InputBorder.none,
                 hintText: isListening
                     ? l10n.searchListeningHint

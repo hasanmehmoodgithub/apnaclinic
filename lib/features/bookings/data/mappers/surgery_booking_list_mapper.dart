@@ -73,7 +73,11 @@ class SurgeryBookingListMapper {
           ? (appointment.time.isNotEmpty
               ? appointment.time
               : lead.leadCreatedTime)
-          : (isPending ? 'Applied On' : ''),
+          : _unscheduledAppointmentTime(
+              lead: lead,
+              bookingStatus: bookingStatus,
+              isPending: isPending,
+            ),
       appointmentSubtitle: hasScheduledDate
           ? 'Your appointment has been scheduled.'
           : 'Awaiting confirmation.',
@@ -161,6 +165,20 @@ class SurgeryBookingListMapper {
     if (normalized == 'f' || normalized == 'female') return 'Female';
     if (raw.isEmpty) return '';
     return _titleCaseStatus(raw);
+  }
+
+  static String _unscheduledAppointmentTime({
+    required SurgeryLeadEntity lead,
+    required SurgeryBookingStatus bookingStatus,
+    required bool isPending,
+  }) {
+    final notConfirmed = bookingStatus != SurgeryBookingStatus.confirmed &&
+        (lead.confirmedDate == null || lead.confirmedDate!.trim().isEmpty);
+    if (notConfirmed && !lead.paymentAllowed) {
+      final createdTime = lead.leadCreatedTime.trim();
+      if (createdTime.isNotEmpty) return createdTime;
+    }
+    return isPending ? 'Applied On' : '';
   }
 
   static String _formatCreatedDate(SurgeryLeadEntity lead) {

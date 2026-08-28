@@ -8,6 +8,7 @@ import '../../../../core/enums/state_status.dart';
 import '../../../../core/services/speech_to_text_service.dart';
 import '../../domain/entities/search_entity.dart';
 import '../../domain/use_cases/get_search_content_use_case.dart';
+import '../constants/search_ui_config.dart';
 import '../screens/recent_search_store.dart';
 import 'search_state.dart';
 
@@ -40,7 +41,7 @@ class SearchCubit extends Cubit<SearchState> {
     // Typing only updates the field — network search runs on submit/search tap.
     emit(
       state.copyWith(
-        query: query,
+        query: SearchUiConfig.clampQuery(query),
         isListening: false,
         isSubmitted: false,
         loadingStateStatus: StateStatus.success,
@@ -69,7 +70,7 @@ class SearchCubit extends Cubit<SearchState> {
       localeId: localeId,
       onResult: (text, _) {
         if (isClosed) return;
-        emit(state.copyWith(query: text));
+        emit(state.copyWith(query: SearchUiConfig.clampQuery(text)));
       },
       onSessionDone: () {
         if (isClosed) return;
@@ -109,7 +110,8 @@ class SearchCubit extends Cubit<SearchState> {
       await _speechToTextService.stop();
     }
 
-    final resolvedQuery = (query ?? state.query).trim();
+    final resolvedQuery =
+        SearchUiConfig.clampQuery((query ?? state.query).trim());
     if (resolvedQuery.isEmpty) return;
 
     unawaited(

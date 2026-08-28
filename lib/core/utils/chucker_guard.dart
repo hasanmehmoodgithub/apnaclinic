@@ -8,7 +8,7 @@ import 'package:flutter/foundation.dart';
 /// `--dart-define=CHUCKER_ACTIVE=false`.
 class ChuckerGuard {
   static const bool _flagPrimary =
-      bool.fromEnvironment('CHUCKER_ACTIVE', defaultValue: false);
+      bool.fromEnvironment('CHUCKER_ACTIVE', defaultValue: true);
 
   static bool get isEnabled => kDebugMode || _flagPrimary;
 

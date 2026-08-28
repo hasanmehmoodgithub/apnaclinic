@@ -109,6 +109,8 @@ class _SurgeryDetailsScreenState extends State<SurgeryDetailsScreen> {
 
   bool get _showCheckoutBar => _paymentAllowed;
 
+  bool get _showInvoice => _statusLabel.trim().toLowerCase() == 'paid';
+
   bool get _canProceedCheckout =>
       _paymentAllowed && !_isBooking && !_isLoadingDetail;
 
@@ -234,6 +236,7 @@ class _SurgeryDetailsScreenState extends State<SurgeryDetailsScreen> {
         setState(() {
           _statusLabel = 'Paid';
           _paymentAllowed = false;
+          _item = _item.copyWith(status: 'Paid', paymentAllowed: false);
         });
         await _showBookingConfirmedDialog();
       },
@@ -359,14 +362,16 @@ class _SurgeryDetailsScreenState extends State<SurgeryDetailsScreen> {
                       SurgeryBookingPatientDetailsCardWidget(item: _item),
                       SizedBox(height: 14.h),
                       SurgeryBookingPaymentDetailsCardWidget(item: _item),
-                      SizedBox(height: 14.h),
-                      BookingInvoiceTileWidget(
-                        onDownload: () => InvoiceDownload.downloadAndView(
-                          context,
-                          moduleType: InvoiceModuleType.surgery,
-                          orderId: _item.leadId,
+                      if (_showInvoice) ...[
+                        SizedBox(height: 14.h),
+                        BookingInvoiceTileWidget(
+                          onDownload: () => InvoiceDownload.downloadAndView(
+                            context,
+                            moduleType: InvoiceModuleType.surgery,
+                            orderId: _item.leadId,
+                          ),
                         ),
-                      ),
+                      ],
                     ],
                   ),
                 if (_showCheckoutBar && !_isLoadingDetail && _loadError == null)
