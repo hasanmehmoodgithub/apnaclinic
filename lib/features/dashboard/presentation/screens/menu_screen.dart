@@ -120,7 +120,7 @@ class _MenuScreenState extends State<MenuScreen> {
   Future<void> _onLogoutTap() async {
     await handleMenuLogoutTap(context);
     if (!mounted) return;
-    setState(() => _isLoggedIn = false);
+    setState(() => _isLoggedIn = AuthGuard.isLoggedIn(_appPref));
   }
 
   @override

@@ -48,6 +48,18 @@ class InstantDoctorProviderSummaryCard extends StatelessWidget {
                           height: 1.2,
                         ),
                       ),
+                      if (provider.product.productTitle.trim().isNotEmpty) ...[
+                        SizedBox(height: 4.h),
+                        Text(
+                          provider.product.productTitle.trim(),
+                          style: TextStyle(
+                            color: AppColors.clr061E40,
+                            fontSize: 13.sp,
+                            fontWeight: FontWeight.w500,
+                            height: 1.2,
+                          ),
+                        ),
+                      ],
                       if (provider.product.priceDisplay.isNotEmpty) ...[
                         SizedBox(height: 4.h),
                         Text(
