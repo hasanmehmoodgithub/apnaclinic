@@ -33,6 +33,7 @@ class _PharmacyMainScreenState extends State<PharmacyMainScreen> {
       if (!mounted) return;
       final cubit = context.read<PharmacyCubit>();
       cubit.logPharmacyModule(widget.source);
+      cubit.clearHubSearch();
       cubit.loadCart();
     });
   }

@@ -457,6 +457,14 @@ class PharmacyCubit extends Cubit<PharmacyState> {
     loadMedicines();
   }
 
+  /// Hub is opened from home again — drop leftover search from the last visit.
+  void clearHubSearch() {
+    if (state.searchQuery.isEmpty) return;
+    _pendingSearchPerformedLog = false;
+    emit(state.copyWith(searchQuery: ''));
+    loadMedicines();
+  }
+
   void selectCheckoutCity(String city) {
     emit(state.copyWith(selectedCity: city));
   }
