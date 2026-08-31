@@ -25,6 +25,7 @@ class PharmacySelectedCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Stack(
           children: [
@@ -123,6 +124,7 @@ class PharmacySelectedCard extends StatelessWidget {
         SizedBox(height: 8.h),
         Text(
           featured.description,
+          textAlign: TextAlign.start,
           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
             color: AppColors.clr4A4A4A,
             height: 1.2,

@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:webview_flutter/webview_flutter.dart';
@@ -12,6 +14,7 @@ import '../../../../core/constants/app_colors.dart';
 import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
+import '../../../../core/utils/microphone_permission_utils.dart';
 import '../../../../core/utils/webview_media_permission_utils.dart';
 import '../constants/consultation_ui_config.dart';
 import '../widgets/ai_screening_exit_dialog.dart';
@@ -27,8 +30,9 @@ class AiScreeningScreen extends StatefulWidget {
   State<AiScreeningScreen> createState() => _AiScreeningScreenState();
 }
 
-class _AiScreeningScreenState extends State<AiScreeningScreen> {
-  late final WebViewController _controller;
+class _AiScreeningScreenState extends State<AiScreeningScreen>
+    with WidgetsBindingObserver {
+  WebViewController? _controller;
   late final AnalyticsService _analytics;
   late final DateTime _startedAt;
   var _isLoading = true;
@@ -45,11 +49,24 @@ class _AiScreeningScreenState extends State<AiScreeningScreen> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _analytics = sl<AnalyticsService>();
     _startedAt = DateTime.now();
     unawaited(_analytics.logEvent(AnalyticsEventKeys.aiChatStarted));
-    _controller = _createController();
     unawaited(_prepareAndLoad());
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      unawaited(configureWebViewPlaybackSession());
+    }
   }
 
   WebViewController _createController() {
@@ -66,8 +83,12 @@ class _AiScreeningScreenState extends State<AiScreeningScreen> {
 
     final controller = WebViewController.fromPlatformCreationParams(
       params,
-      onPermissionRequest: grantWebViewMediaPermission,
-    )
+      onPermissionRequest: (request) {
+        grantWebViewMediaPermission(request);
+        unawaited(configureWebViewPlaybackSession());
+      },
+    );
+    controller
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setNavigationDelegate(
         NavigationDelegate(
@@ -81,6 +102,7 @@ class _AiScreeningScreenState extends State<AiScreeningScreen> {
           onPageFinished: (_) {
             if (!mounted) return;
             setState(() => _isLoading = false);
+            unawaited(_onPageReady(controller));
           },
           onWebResourceError: (_) {
             if (!mounted) return;
@@ -102,10 +124,59 @@ class _AiScreeningScreenState extends State<AiScreeningScreen> {
   }
 
   Future<void> _prepareAndLoad() async {
-    await configureWebViewMediaSession();
+    await ensureMicrophonePermission();
     if (!mounted) return;
-    await _controller.loadRequest(Uri.parse(_url));
+    await configureWebViewPlaybackSession();
+    if (!mounted) return;
+    final controller = _createController();
+    await _useSafariLikeUserAgent(controller);
+    if (!mounted) return;
+    setState(() => _controller = controller);
+    await controller.loadRequest(Uri.parse(_url));
   }
+
+  /// Voice-AI pages often disable WebRTC unless the UA looks like Safari.
+  Future<void> _useSafariLikeUserAgent(WebViewController controller) async {
+    if (defaultTargetPlatform != TargetPlatform.iOS) return;
+    final ua = await controller.getUserAgent();
+    if (ua == null || ua.isEmpty) return;
+    if (ua.contains('Safari/')) return;
+    await controller.setUserAgent('$ua Version/18.0 Safari/604.1');
+  }
+
+  Future<void> _onPageReady(WebViewController controller) async {
+    await configureWebViewPlaybackSession();
+    if (!mounted) return;
+    try {
+      await controller.runJavaScript(_kUnlockWebAudioJs);
+    } catch (_) {}
+  }
+
+  static const _kUnlockWebAudioJs = '''
+(function() {
+  function unlock() {
+    try {
+      var AC = window.AudioContext || window.webkitAudioContext;
+      if (AC) {
+        window.__apnaAudioCtx = window.__apnaAudioCtx || new AC();
+        if (window.__apnaAudioCtx.state === 'suspended') {
+          window.__apnaAudioCtx.resume();
+        }
+      }
+      document.querySelectorAll('audio, video').forEach(function(el) {
+        el.muted = false;
+        el.volume = 1;
+        el.playsInline = true;
+        el.setAttribute('playsinline', '');
+        el.setAttribute('webkit-playsinline', '');
+      });
+    } catch (e) {}
+  }
+  unlock();
+  document.addEventListener('touchstart', unlock, {passive: true});
+  document.addEventListener('click', unlock, true);
+})();
+''';
 
   void _logChatEnded() {
     if (_hasLoggedEnd) return;
@@ -151,7 +222,15 @@ class _AiScreeningScreenState extends State<AiScreeningScreen> {
               Expanded(
                 child: Stack(
                   children: [
-                    WebViewWidget(controller: _controller),
+                    if (_controller != null)
+                      WebViewWidget(
+                        controller: _controller!,
+                        gestureRecognizers: {
+                          Factory<OneSequenceGestureRecognizer>(
+                            EagerGestureRecognizer.new,
+                          ),
+                        },
+                      ),
                     if (_isLoading)
                       const Positioned.fill(
                         child: AiScreeningShimmerWidget(),
@@ -175,11 +254,13 @@ class _AiScreeningScreenState extends State<AiScreeningScreen> {
                               SizedBox(height: 16.h),
                               TextButton(
                                 onPressed: () {
+                                  final controller = _controller;
+                                  if (controller == null) return;
                                   setState(() {
                                     _isLoading = true;
                                     _hasError = false;
                                   });
-                                  _controller.loadRequest(Uri.parse(_url));
+                                  controller.loadRequest(Uri.parse(_url));
                                 },
                                 child: Text(l10n.commonRetry),
                               ),

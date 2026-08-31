@@ -9,6 +9,15 @@ import UserNotifications
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
+    // WKWebView inherits the process audio session at launch. Playback must
+    // be active or HTML5 / WebRTC output stays silent (especially on iOS).
+    do {
+      let session = AVAudioSession.sharedInstance()
+      try session.setCategory(.playback, mode: .default)
+      try session.setActive(true)
+    } catch {
+      // Continue launch even if the session is already owned.
+    }
     if #available(iOS 10.0, *) {
       UNUserNotificationCenter.current().delegate = self
     }
@@ -90,17 +99,36 @@ import UserNotifications
       binaryMessenger: messenger
     )
     channel.setMethodCallHandler { call, result in
-      guard call.method == "configureForWebRtc" else {
+      switch call.method {
+      case "configureForWebRtc":
+        self.configureAudioSession(
+          mode: .videoChat,
+          result: result
+        )
+      case "configureForWebAudio":
+        self.configureAudioSession(
+          mode: .voiceChat,
+          result: result
+        )
+      default:
         result(FlutterMethodNotImplemented)
-        return
       }
+    }
+  }
+
+  private func configureAudioSession(
+    mode: AVAudioSession.Mode,
+    result: @escaping FlutterResult
+  ) {
+    let apply = {
       do {
         let session = AVAudioSession.sharedInstance()
         try session.setCategory(
           .playAndRecord,
-          mode: .videoChat,
+          mode: mode,
           options: [.defaultToSpeaker, .allowBluetooth]
         )
+        try session.overrideOutputAudioPort(.speaker)
         try session.setActive(true)
         result(true)
       } catch {
@@ -112,6 +140,11 @@ import UserNotifications
           )
         )
       }
+    }
+    if Thread.isMainThread {
+      apply()
+    } else {
+      DispatchQueue.main.async(execute: apply)
     }
   }
 

@@ -31,9 +31,18 @@ Future<bool> ensureCameraAndMicrophonePermissions() async {
 
 /// iOS WKWebView getUserMedia needs PlayAndRecord + speaker for camera/mic.
 Future<void> configureWebViewMediaSession() async {
+  await _configureIosAudioSession('configureForWebRtc');
+}
+
+/// iOS WKWebView voice AI (mic + playback). PlayAndRecord + speaker + voiceChat.
+Future<void> configureWebViewPlaybackSession() async {
+  await _configureIosAudioSession('configureForWebAudio');
+}
+
+Future<void> _configureIosAudioSession(String method) async {
   if (defaultTargetPlatform != TargetPlatform.iOS) return;
   try {
-    await _mediaSessionChannel.invokeMethod<void>('configureForWebRtc');
+    await _mediaSessionChannel.invokeMethod<void>(method);
   } on MissingPluginException {
     return;
   } on PlatformException {
