@@ -8,7 +8,7 @@ import 'package:flutter/foundation.dart';
 /// `--dart-define=CHUCKER_ACTIVE=false`.
 class ChuckerGuard {
   static const bool _flagPrimary =
-      bool.fromEnvironment('CHUCKER_ACTIVE', defaultValue: true);
+      bool.fromEnvironment('CHUCKER_ACTIVE', defaultValue: false);
 
   static bool get isEnabled => kDebugMode || _flagPrimary;
 
@@ -16,6 +16,6 @@ class ChuckerGuard {
   /// release unless [ChuckerFlutter.showOnRelease] is true.
   static void configureIfEnabled() {
     if (!isEnabled) return;
-    ChuckerFlutter.showOnRelease = true;
+    ChuckerFlutter.showOnRelease = false;
   }
 }
