@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+import 'package:webview_flutter_android/webview_flutter_android.dart';
+import 'package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart';
 
 import '../../../../core/analytics/analytics_event_keys.dart';
 import '../../../../core/analytics/analytics_service.dart';
@@ -10,6 +12,7 @@ import '../../../../core/constants/app_colors.dart';
 import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
+import '../../../../core/utils/webview_media_permission_utils.dart';
 import '../constants/consultation_ui_config.dart';
 import '../widgets/ai_screening_exit_dialog.dart';
 import '../widgets/ai_screening_shimmer_widget.dart';
@@ -45,8 +48,25 @@ class _AiScreeningScreenState extends State<AiScreeningScreen> {
     _analytics = sl<AnalyticsService>();
     _startedAt = DateTime.now();
     unawaited(_analytics.logEvent(AnalyticsEventKeys.aiChatStarted));
-    _controller = WebViewController(
-      onPermissionRequest: (request) => request.grant(),
+    _controller = _createController();
+    unawaited(_prepareAndLoad());
+  }
+
+  WebViewController _createController() {
+    final PlatformWebViewControllerCreationParams params;
+    if (WebViewPlatform.instance is WebKitWebViewPlatform) {
+      params = WebKitWebViewControllerCreationParams(
+        allowsInlineMediaPlayback: true,
+        mediaTypesRequiringUserAction: const <PlaybackMediaTypes>{},
+        javaScriptCanOpenWindowsAutomatically: true,
+      );
+    } else {
+      params = AndroidWebViewControllerCreationParams();
+    }
+
+    final controller = WebViewController.fromPlatformCreationParams(
+      params,
+      onPermissionRequest: grantWebViewMediaPermission,
     )
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setNavigationDelegate(
@@ -70,8 +90,21 @@ class _AiScreeningScreenState extends State<AiScreeningScreen> {
             });
           },
         ),
-      )
-      ..loadRequest(Uri.parse(_url));
+      );
+
+    final platformController = controller.platform;
+    if (platformController is AndroidWebViewController) {
+      platformController.setMediaPlaybackRequiresUserGesture(false);
+      platformController.setMixedContentMode(MixedContentMode.alwaysAllow);
+    }
+
+    return controller;
+  }
+
+  Future<void> _prepareAndLoad() async {
+    await configureWebViewMediaSession();
+    if (!mounted) return;
+    await _controller.loadRequest(Uri.parse(_url));
   }
 
   void _logChatEnded() {
