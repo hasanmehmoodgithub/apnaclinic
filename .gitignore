@@ -63,3 +63,5 @@ node_modules/
 /macos/Pods/Local Podspecs/sqflite_darwin.podspec.json
 /macos/Pods/Local Podspecs/sqlite3_flutter_libs.podspec.json
 /macos/Pods/Local Podspecs/url_launcher_macos.podspec.json
+/macos/Flutter/GeneratedPluginRegistrant.swift
+/macos/Podfile
