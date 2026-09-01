@@ -149,6 +149,7 @@
   <div class="bar">
     <input id="q" type="search" placeholder="Search event, screen, param, file…" />
     <button class="chip active" data-mod="all">All</button>
+    <button class="chip" data-mod="App">App</button>
     <button class="chip" data-mod="Onboarding">Onboarding</button>
     <button class="chip" data-mod="Home">Home</button>
     <button class="chip" data-mod="Search">Search</button>
@@ -216,6 +217,17 @@
 </main>
 <script>
 const events = [
+  /* App */
+  {
+    mod: "App", name: "first_install",
+    trigger: "First app open on this device (AppPref.isFirstTime).",
+    ui: "App launch before first frame.",
+    control: "main.dart → FirstInstallAnalytics.logIfFirstTime (once per install).",
+    params: [["device", "Device model (e.g. Pixel 8 / iPhone15,2)"], ["platform", "android / ios"]],
+    code: "lib/core/analytics/first_install_analytics.dart",
+    notes: "AppPref.firstTime defaults true; set false after the event. Not cleared on logout. Uninstall / clear data fires again."
+  },
+
   /* Onboarding */
   {
     mod: "Onboarding", name: "onboarding_step_1 … onboarding_step_4",

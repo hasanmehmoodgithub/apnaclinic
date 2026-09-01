@@ -139,6 +139,14 @@ class AppPrefImpl implements AppPref {
       _instance.getBool(AppPrefKeys.onboardingCompleted) ?? false;
 
   @override
+  Future<bool> setFirstTime(bool firstTime, {bool? defaultValue}) async {
+    return _instance.setBool(AppPrefKeys.firstTime, firstTime);
+  }
+
+  @override
+  bool isFirstTime() => _instance.getBool(AppPrefKeys.firstTime) ?? true;
+
+  @override
   Future<bool> setProfileCompleted(bool completed, {bool? defaultValue}) async {
     return _instance.setBool(AppPrefKeys.profileCompleted, completed);
   }

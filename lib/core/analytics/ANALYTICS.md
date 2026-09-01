@@ -17,6 +17,17 @@ you can verify locally. `AnalyticsRouteObserver` (on `GoRouter`) calls
 - `analytics_service.dart` — `logEvent` / screen / user id, fans out to providers
 - `analytics_route_observer.dart` — screen views from navigation
 - `providers/firebase_analytics_provider.dart` — Firebase (no-op until `FirebaseBootstrap`)
+- `first_install_analytics.dart` — one-shot `first_install` on first device open
+
+## First install
+
+`FirstInstallAnalytics.logIfFirstTime()` runs from `main.dart` after DI.
+`AppPref.isFirstTime()` defaults to `true`; after the event it is set to
+`false` and is **not** cleared on logout.
+
+| Event | When | Params |
+|---|---|---|
+| `first_install` | First app open on this device | `device` (model), `platform` (`android` / `ios`) |
 
 ## DI
 ```dart

@@ -24,6 +24,8 @@ class AppPrefKeys {
       _encryption.obfuscateKey('app_locale$_prefVersion');
   static String get onboardingCompleted =>
       _encryption.obfuscateKey('onboarding_completed$_prefVersion');
+  static String get firstTime =>
+      _encryption.obfuscateKey('first_time$_prefVersion');
   static String get profileCompleted =>
       _encryption.obfuscateKey('profile_completed$_prefVersion');
   static String get userLocal =>

@@ -40,6 +40,11 @@ abstract class AppPref {
   Future<bool> setOnboardingCompleted(bool completed, {bool? defaultValue});
   bool isOnboardingCompleted(); // Default: false
 
+  /// Device-first-launch flag. Default `true` until first-install analytics runs.
+  /// Not cleared on logout.
+  Future<bool> setFirstTime(bool firstTime, {bool? defaultValue});
+  bool isFirstTime();
+
   // ==================== Profile ====================
 
   Future<bool> setProfileCompleted(bool completed, {bool? defaultValue});

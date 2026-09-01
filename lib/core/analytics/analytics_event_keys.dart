@@ -4,6 +4,7 @@ class AnalyticsEventKeys {
 
   static String onboardingStep(int step) => 'onboarding_step_$step';
   static const onboardingSkipped = 'onboarding_skipped';
+  static const firstInstall = 'first_install';
 
   static const aiChatStarted = 'ai_chat_started';
   static const aiChatEnded = 'ai_chat_ended';
@@ -90,6 +91,8 @@ class AnalyticsParamKeys {
   AnalyticsParamKeys._();
 
   static const stepNumber = 'step_number';
+  static const device = 'device';
+  static const platform = 'platform';
   static const callDuration = 'call_duration';
   static const keyword = 'keyword';
   static const medium = 'medium';

@@ -10,6 +10,7 @@ import 'package:flutter/rendering.dart';
 
 import 'core/debug/device_preview_support.dart';
 import 'core/di/dependency_injection.dart';
+import 'core/analytics/first_install_analytics.dart';
 import 'core/firebase/crashlytics_service.dart';
 import 'core/firebase/firebase_bootstrap.dart';
 import 'core/network/app_http_overrides.dart';
@@ -48,6 +49,7 @@ void main() {
         if (savedUserId.isNotEmpty) {
           unawaited(CrashlyticsService.setUserId(savedUserId));
         }
+        unawaited(FirstInstallAnalytics.logIfFirstTime());
 
         runApp(const SecurityGate(child: ApnaClinicApp()),
         );

@@ -38,6 +38,8 @@ static const String token = 'auth_token$prefVersion';
 
 **Support settings:** `AppPrefKeys.supportSettings` — full CMS `GET /api/v1/mobile/support` payload (`phone`, `email`, `description`, `buttonText`, `faqsUrl`, `privacyPolicyUrl`, `termsAndConditionsUrl`, …). Refreshed on every app open. Not cleared on logout.
 
+**First install:** `AppPrefKeys.firstTime` — `isFirstTime()` defaults to `true` until first-install analytics runs, then `setFirstTime(false)`. Not cleared on logout.
+
 **Adding New Keys:**
 ```dart
 // In app_pref_keys.dart
@@ -178,6 +180,13 @@ await appPref.setOnboardingCompleted(true);
 
 // Check onboarding status
 bool completed = appPref.isOnboardingCompleted(); // Returns false by default
+```
+
+### First install
+
+```dart
+bool firstTime = appPref.isFirstTime(); // true until first-install analytics
+await appPref.setFirstTime(false);
 ```
 
 ### Generic Storage Methods
