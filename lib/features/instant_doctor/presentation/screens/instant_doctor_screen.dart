@@ -2,6 +2,7 @@ import 'package:apnaclinic/core/constants/app_colors.dart';
 import 'package:apnaclinic/core/extensions/screen_util_extensions.dart';
 import 'package:apnaclinic/core/l10n/app_localizations.dart';
 import 'package:apnaclinic/core/router/app_routes.dart';
+import 'package:apnaclinic/core/widgets/heart_loader_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -39,6 +40,7 @@ class _InstantDoctorScreenState extends State<InstantDoctorScreen> {
   static const double _cardOverlap = 56;
   static const double _topBannerFraction = 0.32;
   static const double _panelTopRadius = 35;
+  static const String _subscribeLoaderId = 'instant_doctor_subscribe_loader';
 
   @override
   void initState() {
@@ -113,7 +115,19 @@ class _InstantDoctorScreenState extends State<InstantDoctorScreen> {
   Future<void> _onProviderPrimaryTap(
     InstantDoctorProviderEntity provider,
   ) async {
-    final outcome = await _cubit.onProviderPrimaryTap(provider);
+    final showLoader = !provider.isSubscribed;
+    if (showLoader) {
+      showHeartLoaderDialog(context, id: _subscribeLoaderId, size: 120);
+    }
+
+    late final InstantDoctorProviderTapOutcome outcome;
+    try {
+      outcome = await _cubit.onProviderPrimaryTap(provider);
+    } finally {
+      if (showLoader) {
+        HeartLoaderDialogController.close(_subscribeLoaderId);
+      }
+    }
     if (!mounted) return;
 
     switch (outcome) {
