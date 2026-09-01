@@ -29,6 +29,9 @@ that service. Cold/onboarding entry still ends on **home**.
 `AppPref.isOnboardingCompleted` is only for the intro carousel (not overwritten
 on login). `AppPref.isProfileCompleted` tracks whether profile setup is done.
 
+After login, Crashlytics `setUserIdentifier` uses the resolved user id; logout
+clears it.
+
 Guest login from a service passes `source` on `AppRoutes.authLogin` via
 `AuthGuard.requireLogin(loginSource:)` (`pharmacy` / `instant_doctor` /
 `consultancy` / `lab` / `surgery`). Explicit login CTAs (home, profile, menu)
@@ -62,6 +65,31 @@ profile setup.
   - FCM rotation (logged in only, token changed): `PUT AppUrls.updateFcmDeviceToken` → `/acs-auth/api/v1/notifications/device-token` body `{ "fcmToken": "..." }` via `UpdateFcmDeviceTokenUseCase`. Triggered by Firebase `onTokenRefresh`, app start, or resume — never on JWT refresh or every API.
   - If login shows “unable to reach server”, check device network/VPN, iOS ATS (HTTP allowed for Jazz domains), and dev SSL config (`dio_app_network_config.dart`).
   - Request OTP `data.expiresIn` is in **seconds** (e.g. `300` → 5 min resend timer).
+  - Android SMS auto-fill (SMS Retriever) needs this **SMS body** (max **140 bytes**). Login and Instant Doctor OTPs are **4 digits**.
+
+```
+<#> Apna Clinic OTP: {otp}
+{app_hash}
+```
+
+Example (release / upload key):
+
+```
+<#> Apna Clinic OTP: 1234
+opYn7WIAO2j
+```
+
+| Key | Value |
+|---|---|
+| `package_name` / `applicationId` | `com.apna.clinic.android` |
+| `{otp}` | 4-digit code |
+| `<#>` | required prefix (first line) |
+| `{app_hash}` | 11-char hash on **last line**, no trailing spaces |
+| Debug hash (local `flutter run`) | `CZmORSi1oPX` |
+| Release / upload-key hash (`econceptions.jks`) | `opYn7WIAO2j` |
+| Play App Signing hash | Generate from Play Console **App signing** cert (not the upload key). If Play App Signing is on, production SMS must use **that** hash, or include both hashes in separate templates. |
+
+Rules: start with `<#>`; include the 4-digit OTP; last line is exactly 11 characters; do not wrap the hash. iOS does not use `{app_hash}` (use a normal OTP SMS + `AutofillHints.oneTimeCode`).
   - Logout: `AppUrls.logout` (POST body `{ "refreshToken": "<stored refresh token>" }`). Local session is **always** cleared via `LocalLogoutService` even if the API fails; a snackbar may show the server error. FCM prefs + Firebase `deleteToken()` run on this path (delete is not awaited on the UI).
   - Auto-logout (JWT refresh fail on 401): `AuthInterceptor` calls the same `LocalLogoutService.clearAll()` — no logout API and no device-token PUT (tokens are already dead).
   - After successful OTP, `AuthCubit` persists `data.user` (`id`, `firstName`, `lastName`, `gender`, `email`, `address`, `dob` / `dateOfBirth`, `image`) into `UserLocalModel`. User id is taken from `user.id` (then JWT `sub`). Null / `"[NULL]"` fields are stored empty. When `userOnboarding` is **false** (profile already complete), it also calls `GetProfileSetupContentUseCase` (`GET …/users/{id}`) before `notifyLoggedIn` (prefs only — no `notifyProfileUpdated`). When `userOnboarding` is **true**, profile setup prefills from that local `user` payload (no GET), including the avatar URL.

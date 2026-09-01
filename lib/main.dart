@@ -10,8 +10,10 @@ import 'package:flutter/rendering.dart';
 
 import 'core/debug/device_preview_support.dart';
 import 'core/di/dependency_injection.dart';
+import 'core/firebase/crashlytics_service.dart';
 import 'core/firebase/firebase_bootstrap.dart';
 import 'core/network/app_http_overrides.dart';
+import 'core/preference/app_pref.dart';
 import 'core/services/notification_service.dart';
 import 'core/utils/chucker_guard.dart';
 import 'core/security/security_widget.dart';
@@ -36,10 +38,16 @@ void main() {
 
       try {
         // Flavor already initialized above (needed before DI / Dio network config).
+        await FirebaseBootstrap.initialize();
+        await CrashlyticsService.configure();
 
         // Initialize dependency injection (includes AppPref initialization)
         // Encryption can be enabled/configured through AppPref methods after initialization
         await _initializeDependencyInjection();
+        final savedUserId = sl<AppPref>().getUserId();
+        if (savedUserId.isNotEmpty) {
+          unawaited(CrashlyticsService.setUserId(savedUserId));
+        }
 
         runApp(const SecurityGate(child: ApnaClinicApp()),
         );
@@ -53,6 +61,14 @@ void main() {
           name: 'main',
           error: e,
           stackTrace: stackTrace,
+        );
+        unawaited(
+          CrashlyticsService.recordError(
+            e,
+            stackTrace,
+            fatal: true,
+            reason: 'app initialization',
+          ),
         );
 
         // Show error screen in debug mode
@@ -107,6 +123,9 @@ void main() {
         name: 'main',
         error: error,
         stackTrace: stackTrace,
+      );
+      unawaited(
+        CrashlyticsService.recordError(error, stackTrace, fatal: true),
       );
       // Avoid calling runApp here to prevent zone mismatch errors.
     },

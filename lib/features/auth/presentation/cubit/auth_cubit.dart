@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/analytics/analytics_event_keys.dart';
 import '../../../../core/analytics/analytics_service.dart';
 import '../../../../core/di/dependency_injection.dart';
+import '../../../../core/firebase/crashlytics_service.dart';
 import '../../../../core/enums/app_enums.dart';
 import '../../../../core/enums/state_status.dart';
 import '../../../../core/preference/app_pref.dart';
@@ -290,6 +291,7 @@ class AuthCubit extends Cubit<AuthState> {
     await _appPref.setLoginStatus(true);
     sl<ProfileSessionSync>().invalidate();
     await _appPref.setUserId(resolvedUserId);
+    unawaited(CrashlyticsService.setUserId(resolvedUserId));
     await _appPref.setToken(entity.token ?? '');
     await _appPref.setRefreshToken(entity.refreshToken ?? '');
     await _appPref.setAccessTokenExpiresIn(entity.accessTokenExpiresIn ?? 0);

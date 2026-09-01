@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import '../di/dependency_injection.dart';
+import '../firebase/crashlytics_service.dart';
 import '../network/api_service.dart';
 import '../preference/app_pref.dart';
 import '../preference/app_pref_keys.dart';
@@ -38,6 +39,7 @@ class LocalLogoutService {
     await _appPref.setProfileCompleted(false);
     await _appPref.setToken('');
     await _appPref.setUserId('');
+    unawaited(CrashlyticsService.setUserId(null));
     await _appPref.clearUserLocalModel();
     await _appPref.remove(AppPrefKeys.fcmToken);
     await _appPref.remove(AppPrefKeys.fcmTokenSentToBackend);
