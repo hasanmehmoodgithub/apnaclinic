@@ -2,7 +2,7 @@
 
 This project uses **Danger Dart** to run merge-request quality checks before merge.
 
-Danger runs in GitLab CI and comments/fails the MR when rules are violated.
+Danger runs in GitLab CI and comments/fails the MR when rules are violated. The rest of the pipeline (tests, Android APK/AAB) is documented in [CICD.md](CICD.md).
 
 ---
 
@@ -11,7 +11,7 @@ Danger runs in GitLab CI and comments/fails the MR when rules are violated.
 The setup is already added in this repo:
 
 - `dangerfile.dart` - Danger rules and checks.
-- `.gitlab-ci.yml` - MR analyze + Danger jobs.
+- `.gitlab-ci.yml` - MR `analyze` + `danger` jobs (plus test/build; see [CICD.md](CICD.md)).
 
 Current enforced checks:
 

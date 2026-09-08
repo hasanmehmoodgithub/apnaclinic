@@ -74,6 +74,8 @@ flutter build apk --dart-define=APP_FLAVOR=staging
 flutter build apk --dart-define=APP_FLAVOR=development
 ```
 
+CI builds the staging APK and production AAB on GitLab; see [CICD.md](../../../../CICD.md).
+
 Copy-ready matrix (run / build × Android / iOS, Chucker, security): open [APK_BUILD.html](APK_BUILD.html) in a browser.
 
 ### Chucker (release APKs)
