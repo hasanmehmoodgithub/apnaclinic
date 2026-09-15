@@ -18,6 +18,7 @@ class SubmitConsultationBookingParams {
     required this.msisdn,
     this.issue = '',
     this.attachments = const [],
+    this.promoCode,
   });
 
   final int doctorId;
@@ -32,6 +33,7 @@ class SubmitConsultationBookingParams {
   final String msisdn;
   final String issue;
   final List<ConsultationBookingAttachmentEntity> attachments;
+  final String? promoCode;
 }
 
 class SubmitConsultationBookingUseCase

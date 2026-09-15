@@ -20,6 +20,7 @@ import '../../features/consultation/presentation/doctor_consultation_results_arg
 import '../../features/consultation/presentation/screens/doctor_consultation_screen.dart';
 import '../../features/consultation/presentation/consultation_analytics.dart';
 import '../../features/consultation/presentation/cubit/doctor_consultation_checkout_cubit.dart';
+import '../../features/promo_code/presentation/cubit/promo_code_cubit.dart';
 import '../../features/consultation/presentation/doctor_consultation_book_doctor_args.dart';
 import '../../features/consultation/presentation/doctor_consultation_checkout_args.dart';
 import '../../features/consultation/presentation/doctor_consultation_summary_args.dart';
@@ -229,8 +230,15 @@ class AppRouter {
           if (extra is! DoctorConsultationCheckoutArgs) {
             return const SizedBox.shrink();
           }
-          return BlocProvider<DoctorConsultationCheckoutCubit>(
-            create: (_) => sl<DoctorConsultationCheckoutCubit>(),
+          return MultiBlocProvider(
+            providers: [
+              BlocProvider<DoctorConsultationCheckoutCubit>(
+                create: (_) => sl<DoctorConsultationCheckoutCubit>(),
+              ),
+              BlocProvider<PromoCodeCubit>(
+                create: (_) => sl<PromoCodeCubit>(),
+              ),
+            ],
             child: DoctorConsultationCheckoutScreen(args: extra),
           );
         },

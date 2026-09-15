@@ -526,6 +526,9 @@
   "consultationDiscountLabel": "رعایت",
   "consultationDiscountNotAvailable": "دستیاب نہیں",
   "consultationTotalChargesLabel": "کل چارجز",
+  "promoCodeHint": "پرومو کوڈ درج کریں",
+  "promoCodeInvalid": "غلط پرومو کوڈ",
+  "promoCodeDiscountLabel": "پرومو رعایت",
   "consultationSelectAccountTitle": "اکاؤنٹ منتخب کریں",
   "consultationProceedCta": "آگے بڑھیں",
   "consultationJazzCashChargeDescription": "رقم آپ کے جاز کیش اکاؤنٹ سے کاٹی جائے گی۔",
@@ -620,5 +623,35 @@
       }
     }
   },
-  "securityGateChecking": "آلے کی سیکیورٹی چیک کی جا رہی ہے…"
+  "securityGateChecking": "آلے کی سیکیورٹی چیک کی جا رہی ہے…",
+  "proCatalogLoadError": "ابھی ApnaClinic Pro لوڈ نہیں ہو سکا۔ براہِ کرم دوبارہ کوشش کریں۔",
+  "proRetry": "دوبارہ کوشش کریں",
+  "proMenuTitle": "ApnaClinic Pro",
+  "proMenuYouAreMember": "آپ Pro ممبر ہیں",
+  "proShowInfoSectionTitle": "Pro سبسکرائب کریں",
+  "proShowInfoSubscribeCta": "ابھی سبسکرائب کریں!",
+  "proSubscribeSuccessTitle": "آپ Pro ورژن میں سبسکرائب ہو گئے!",
+  "proSubscribeSuccessMessage": "Pro بنڈل پر چھوٹ سے لطف اٹھائیں",
+  "proSubscribeSuccessOk": "ٹھیک ہے",
+  "proHomeSectionTitle": "Apna Clinic PRO",
+  "proHomeCardFallbackCta": "سبسکرائب کرنے کے لیے تھپتھپائیں",
+  "proActiveMemberSubtitle": "آپ Apna Clinic پر درج ذیل چھوٹ کے اہل ہیں",
+  "proActiveBenefitsSuffix": "فوائد",
+  "proPlanRenewsOn": "پلان {date} کو تجدید ہوگا",
+  "@proPlanRenewsOn": {
+    "placeholders": {
+      "date": { "type": "String" }
+    }
+  },
+  "proPlanExpiresOn": "پلان {date} کو ختم ہوگا",
+  "@proPlanExpiresOn": {
+    "placeholders": {
+      "date": { "type": "String" }
+    }
+  },
+  "proCancelSubscription": "سبسکرپشن منسوخ کریں",
+  "proCancelSubscriptionTitle": "کیا آپ واقعی اپنی Pro سبسکرپشن منسوخ کرنا چاہتے ہیں؟",
+  "proCancelSubscriptionMessage": "اگر آپ سبسکرپشن منسوخ کریں گے تو تمام PRO چھوٹ اور مفت ڈیلیوری آپ کے اکاؤنٹ سے ہٹا دی جائیں گی۔",
+  "proCancelSubscriptionConfirm": "سبسکرپشن منسوخ کریں",
+  "proCancelSubscriptionDiscard": "منسوخ نہ کریں"
 }

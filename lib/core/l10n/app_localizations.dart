@@ -3053,6 +3053,24 @@ abstract class AppLocalizations {
   /// **'Total Charges'**
   String get consultationTotalChargesLabel;
 
+  /// No description provided for @promoCodeHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter promo code'**
+  String get promoCodeHint;
+
+  /// No description provided for @promoCodeInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid Promo Code'**
+  String get promoCodeInvalid;
+
+  /// No description provided for @promoCodeDiscountLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Promo Discount'**
+  String get promoCodeDiscountLabel;
+
   /// No description provided for @consultationSelectAccountTitle.
   ///
   /// In en, this message translates to:
@@ -3496,6 +3514,126 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Checking device security…'**
   String get securityGateChecking;
+
+  /// No description provided for @proCatalogLoadError.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to load ApnaClinic Pro right now. Please try again.'**
+  String get proCatalogLoadError;
+
+  /// No description provided for @proRetry.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get proRetry;
+
+  /// No description provided for @proMenuTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'ApnaClinic Pro'**
+  String get proMenuTitle;
+
+  /// No description provided for @proMenuYouAreMember.
+  ///
+  /// In en, this message translates to:
+  /// **'You are a Pro Member'**
+  String get proMenuYouAreMember;
+
+  /// No description provided for @proShowInfoSectionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Subscribe to Pro'**
+  String get proShowInfoSectionTitle;
+
+  /// No description provided for @proShowInfoSubscribeCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Subscribe Now!'**
+  String get proShowInfoSubscribeCta;
+
+  /// No description provided for @proSubscribeSuccessTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re subscribed to the Pro version!'**
+  String get proSubscribeSuccessTitle;
+
+  /// No description provided for @proSubscribeSuccessMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Enjoy discounts on the Pro bundle'**
+  String get proSubscribeSuccessMessage;
+
+  /// No description provided for @proSubscribeSuccessOk.
+  ///
+  /// In en, this message translates to:
+  /// **'OK'**
+  String get proSubscribeSuccessOk;
+
+  /// No description provided for @proHomeSectionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Apna Clinic PRO'**
+  String get proHomeSectionTitle;
+
+  /// No description provided for @proHomeCardFallbackCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to Subscribe'**
+  String get proHomeCardFallbackCta;
+
+  /// No description provided for @proActiveMemberSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'You are eligible for the following discounts on Apna Clinic'**
+  String get proActiveMemberSubtitle;
+
+  /// No description provided for @proActiveBenefitsSuffix.
+  ///
+  /// In en, this message translates to:
+  /// **'Benefits'**
+  String get proActiveBenefitsSuffix;
+
+  /// No description provided for @proPlanRenewsOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Plan renews on {date}'**
+  String proPlanRenewsOn(String date);
+
+  /// No description provided for @proPlanExpiresOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Plan expires on {date}'**
+  String proPlanExpiresOn(String date);
+
+  /// No description provided for @proCancelSubscription.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel Subscription'**
+  String get proCancelSubscription;
+
+  /// No description provided for @proCancelSubscriptionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to cancel your Pro Subscription?'**
+  String get proCancelSubscriptionTitle;
+
+  /// No description provided for @proCancelSubscriptionMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'All the PRO discounts and free delivery will be removed from your account if you choose to cancel the subscription.'**
+  String get proCancelSubscriptionMessage;
+
+  /// No description provided for @proCancelSubscriptionConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel Subscription'**
+  String get proCancelSubscriptionConfirm;
+
+  /// No description provided for @proCancelSubscriptionDiscard.
+  ///
+  /// In en, this message translates to:
+  /// **'Don\'t Cancel'**
+  String get proCancelSubscriptionDiscard;
 }
 
 class _AppLocalizationsDelegate

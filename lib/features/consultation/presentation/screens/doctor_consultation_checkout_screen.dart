@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/constants/app_colors.dart';
 import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
@@ -22,6 +23,9 @@ import '../widgets/doctor_consultation_checkout_billing_section_widget.dart';
 import '../widgets/doctor_consultation_checkout_payment_method_tile_widget.dart';
 import '../widgets/doctor_consultation_checkout_shimmer_widget.dart';
 import '../widgets/doctor_consultation_jazzcash_accounts_sheet_widget.dart';
+import '../../../promo_code/domain/entities/promo_code_service.dart';
+import '../../../promo_code/presentation/cubit/promo_code_cubit.dart';
+import '../../../promo_code/presentation/cubit/promo_code_state.dart';
 
 class DoctorConsultationCheckoutScreen extends StatefulWidget {
   const DoctorConsultationCheckoutScreen({
@@ -63,6 +67,16 @@ class _DoctorConsultationCheckoutScreenState
   Future<void> _onContinuePressed(DoctorConsultationCheckoutState state) async {
     final selectedPaymentMethodCode = state.selectedPaymentMethodId;
     if (selectedPaymentMethodCode == null) return;
+
+    final checkoutData = state.data;
+    if (checkoutData == null) return;
+
+    final promoCubit = context.read<PromoCodeCubit>();
+    final promoOk = await promoCubit.ensureValidated(
+      service: PromoCodeService.consultation,
+      amount: checkoutData.consultationFee,
+    );
+    if (!promoOk || !mounted) return;
 
     final selectedOption = _selectedPaymentOption(state);
     if (ConsultationBookingUtils.isJazzCashPayment(
@@ -129,6 +143,8 @@ class _DoctorConsultationCheckoutScreenState
         context.read<DoctorConsultationCheckoutCubit>().state.data;
     if (checkoutData == null || !mounted) return;
 
+    final promo = context.read<PromoCodeCubit>().state;
+
     await context.pushNamed(
       AppRoutes.consultationSummary,
       extra: DoctorConsultationSummaryArgs(
@@ -139,8 +155,9 @@ class _DoctorConsultationCheckoutScreenState
         accountNumber: accountNumber,
         msisdn: msisdn,
         consultationFee: checkoutData.consultationFee,
-        discount: checkoutData.discount,
-        total: checkoutData.total,
+        discount: promo.displayDiscount(checkoutData.discount),
+        total: promo.payableTotal(checkoutData.total),
+        promoCode: promo.appliedCode,
       ),
     );
   }
@@ -221,68 +238,97 @@ class _DoctorConsultationCheckoutScreenState
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            DoctorConsultationCheckoutBillingSectionWidget(data: data),
-                            SizedBox(height: 18.h),
-                            Text(
-                              l10n.consultationPaymentMethodTitle,
-                              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                    color: const Color(0xFF061E40),
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                            ),
-                            SizedBox(height: 10.h),
                             Expanded(
-                              child: ListView.separated(
-                                itemCount: data.paymentOptions.length,
-                                separatorBuilder: (context, index) =>
-                                    SizedBox(height: 12.h),
-                                itemBuilder: (context, index) {
-                                  final option = data.paymentOptions[index];
-                                  final isSelected =
-                                      state.selectedPaymentMethodId == option.code;
-                                  return DoctorConsultationCheckoutPaymentMethodTileWidget(
-                                    option: option,
-                                    isSelected: isSelected,
-                                    onTap: () => _onPaymentMethodTap(option.code),
-                                  );
-                                },
+                              child: ListView(
+                                children: [
+                                  DoctorConsultationCheckoutBillingSectionWidget(
+                                    data: data,
+                                  ),
+                                  SizedBox(height: 18.h),
+                                  Text(
+                                    l10n.consultationPaymentMethodTitle,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleMedium
+                                        ?.copyWith(
+                                          color: AppColors.clr061E40,
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                  ),
+                                  SizedBox(height: 10.h),
+                                  ...List.generate(data.paymentOptions.length, (
+                                    index,
+                                  ) {
+                                    final option = data.paymentOptions[index];
+                                    final isSelected =
+                                        state.selectedPaymentMethodId ==
+                                            option.code;
+                                    return Padding(
+                                      padding: EdgeInsets.only(
+                                        bottom: index ==
+                                                data.paymentOptions.length - 1
+                                            ? 0
+                                            : 12.h,
+                                      ),
+                                      child:
+                                          DoctorConsultationCheckoutPaymentMethodTileWidget(
+                                        option: option,
+                                        isSelected: isSelected,
+                                        onTap: () =>
+                                            _onPaymentMethodTap(option.code),
+                                      ),
+                                    );
+                                  }),
+                                ],
                               ),
                             ),
-                            SizedBox(
-                              width: double.infinity,
-                              height: 56.h,
-                              child: FilledButton(
-                                onPressed: state.selectedPaymentMethodId == null ||
-                                        state.isSubmitting
-                                    ? null
-                                    : () => _onContinuePressed(state),
-                                style: FilledButton.styleFrom(
-                                  backgroundColor: const Color(0xFF1FAFA3),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(16.r),
-                                  ),
-                                ),
-                                child: state.isSubmitting
-                                    ? SizedBox(
-                                        width: 22.r,
-                                        height: 22.r,
-                                        child: const CircularProgressIndicator(
-                                          strokeWidth: 2,
-                                          color: Colors.white,
-                                        ),
-                                      )
-                                    : Text(
-                                        l10n.commonContinue,
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .titleMedium
-                                            ?.copyWith(
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.w700,
-                                              fontSize: 17.sp,
-                                            ),
+                            SizedBox(height: 12.h),
+                            BlocBuilder<PromoCodeCubit, PromoCodeState>(
+                              buildWhen: (previous, current) =>
+                                  previous.isValidating != current.isValidating,
+                              builder: (context, promo) {
+                                final isBusy =
+                                    state.isSubmitting || promo.isValidating;
+                                return SizedBox(
+                                  width: double.infinity,
+                                  height: 56.h,
+                                  child: FilledButton(
+                                    onPressed: state.selectedPaymentMethodId ==
+                                                null ||
+                                            isBusy
+                                        ? null
+                                        : () => _onContinuePressed(state),
+                                    style: FilledButton.styleFrom(
+                                      backgroundColor: AppColors.clr1FAFA3,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(16.r),
                                       ),
-                              ),
+                                    ),
+                                    child: state.isSubmitting
+                                        ? SizedBox(
+                                            width: 22.r,
+                                            height: 22.r,
+                                            child:
+                                                const CircularProgressIndicator(
+                                              strokeWidth: 2,
+                                              color: Colors.white,
+                                            ),
+                                          )
+                                        : Text(
+                                            l10n.commonContinue,
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .titleMedium
+                                                ?.copyWith(
+                                                  color: AppColors.clrWhite,
+                                                  fontWeight: FontWeight.w700,
+                                                  fontSize: 17.sp,
+                                                ),
+                                          ),
+                                  ),
+                                );
+                              },
                             ),
                           ],
                         ),

@@ -22,6 +22,11 @@ Future<FormData> consultationBookingFormData(
     'issue': params.issue.trim().isEmpty ? 'N/A' : params.issue.trim(),
   };
 
+  final promoCode = params.promoCode?.trim() ?? '';
+  if (promoCode.isNotEmpty) {
+    payload['promoCode'] = promoCode;
+  }
+
   final attachmentFiles = <MultipartFile>[];
   for (final attachment in params.attachments) {
     final path = attachment.path.trim();

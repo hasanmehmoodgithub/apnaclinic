@@ -39,6 +39,7 @@ class DoctorConsultationSummaryScreen extends StatelessWidget {
       args: args.checkoutArgs,
       paymentMethodCode: args.paymentMethodCode,
       msisdn: args.msisdn,
+      promoCode: args.promoCode,
     );
     if (!context.mounted) return;
 
@@ -100,6 +101,7 @@ class DoctorConsultationSummaryScreen extends StatelessWidget {
         msisdn: args.msisdn,
         paymentStatus: AnalyticsConsultationPaymentStatusKeys.failed,
         discount: args.discount,
+        promoCode: args.promoCode,
         initiation: initiation,
       );
       await showCardPaymentOutcomeDialog(
@@ -119,6 +121,7 @@ class DoctorConsultationSummaryScreen extends StatelessWidget {
       msisdn: args.msisdn,
       paymentStatus: AnalyticsConsultationPaymentStatusKeys.successful,
       discount: args.discount,
+      promoCode: args.promoCode,
       initiation: initiation,
     );
 
@@ -284,6 +287,7 @@ class DoctorConsultationSummaryScreen extends StatelessWidget {
                               consultationFee: args.consultationFee,
                               discount: args.discount,
                               total: args.total,
+                              promoCode: args.promoCode,
                             ),
                           ],
                         ),

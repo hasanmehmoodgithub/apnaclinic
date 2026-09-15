@@ -20,9 +20,13 @@ import '../../../../core/services/notification_service.dart';
 import '../../../../core/widgets/heart_loader_widget.dart';
 import '../../domain/entities/our_service_entity.dart';
 import '../../domain/services/promotional_banner_session.dart';
+import '../../../pro/domain/entities/pro_membership_entity.dart';
+import '../../../pro/domain/use_cases/get_pro_catalog_use_case.dart';
+import '../../../pro/presentation/show_pro_bottom_sheet.dart';
 import '../cubit/dashboard_services_cubit.dart';
 import '../cubit/dashboard_services_state.dart';
 import '../widgets/app_update_dialog.dart';
+import '../widgets/apna_clinic_pro_home_banner.dart';
 import '../widgets/fikrfree_health_banner.dart';
 import '../widgets/home_header_section.dart';
 import '../widgets/instant_doctor_home_banner.dart';
@@ -54,6 +58,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   late final PromotionalBannerSession _bannerSession;
   StreamSubscription<NotificationPayload>? _pushSubscription;
   late final AuthSessionRefresh _sessionRefresh;
+  ProMembershipEntity? _proMembership;
+  bool _isProMembershipLoading = false;
 
   @override
   void initState() {
@@ -70,6 +76,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     }
     _bindPushRefresh();
     unawaited(sl<AnalyticsService>().logEvent(AnalyticsEventKeys.homeScreen));
+    unawaited(_loadProMembership());
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       unawaited(_maybePresentHomeDialogs());
@@ -101,6 +108,34 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     if (!mounted) return;
     setState(() => _isLoggedIn = AuthGuard.isLoggedIn());
     unawaited(_maybePresentHomeDialogs());
+    unawaited(_loadProMembership());
+  }
+
+  Future<void> _loadProMembership() async {
+    if (!mounted) return;
+    setState(() => _isProMembershipLoading = true);
+    final result = await sl<GetProCatalogUseCase>()();
+    if (!mounted) return;
+    result.fold(
+      (_) {
+        setState(() {
+          _proMembership = null;
+          _isProMembershipLoading = false;
+        });
+      },
+      (catalog) {
+        setState(() {
+          _proMembership = catalog.membership;
+          _isProMembershipLoading = false;
+        });
+      },
+    );
+  }
+
+  Future<void> _openPro() async {
+    await showApnaClinicProSheet(context);
+    if (!mounted) return;
+    unawaited(_loadProMembership());
   }
 
   bool _isHomeRouteActive(BuildContext context) {
@@ -303,6 +338,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                 );
               },
             ),
+
             Expanded(
               child: CustomScrollView(
                 key: const ValueKey('dashboard_content'),
@@ -319,6 +355,16 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                         child: InstantDoctorHomeBanner(
                           onTap: () => openInstantDoctorTab(context),
                         ),
+                      ),
+                    ),
+                  ),
+                  SliverPadding(
+                    padding: EdgeInsets.fromLTRB(20.w, 20.h, 20.w, 0),
+                    sliver: SliverToBoxAdapter(
+                      child: ApnaClinicProHomeBanner(
+                        membership: _proMembership,
+                        isLoading: _isProMembershipLoading,
+                        onTap: () => unawaited(_openPro()),
                       ),
                     ),
                   ),

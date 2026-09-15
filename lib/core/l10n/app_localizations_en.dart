@@ -1615,6 +1615,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get consultationTotalChargesLabel => 'Total Charges';
 
   @override
+  String get promoCodeHint => 'Enter promo code';
+
+  @override
+  String get promoCodeInvalid => 'Invalid Promo Code';
+
+  @override
+  String get promoCodeDiscountLabel => 'Promo Discount';
+
+  @override
   String get consultationSelectAccountTitle => 'Select Account';
 
   @override
@@ -1858,4 +1867,73 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get securityGateChecking => 'Checking device security…';
+
+  @override
+  String get proCatalogLoadError =>
+      'Unable to load ApnaClinic Pro right now. Please try again.';
+
+  @override
+  String get proRetry => 'Retry';
+
+  @override
+  String get proMenuTitle => 'ApnaClinic Pro';
+
+  @override
+  String get proMenuYouAreMember => 'You are a Pro Member';
+
+  @override
+  String get proShowInfoSectionTitle => 'Subscribe to Pro';
+
+  @override
+  String get proShowInfoSubscribeCta => 'Subscribe Now!';
+
+  @override
+  String get proSubscribeSuccessTitle =>
+      'You\'re subscribed to the Pro version!';
+
+  @override
+  String get proSubscribeSuccessMessage => 'Enjoy discounts on the Pro bundle';
+
+  @override
+  String get proSubscribeSuccessOk => 'OK';
+
+  @override
+  String get proHomeSectionTitle => 'Apna Clinic PRO';
+
+  @override
+  String get proHomeCardFallbackCta => 'Tap to Subscribe';
+
+  @override
+  String get proActiveMemberSubtitle =>
+      'You are eligible for the following discounts on Apna Clinic';
+
+  @override
+  String get proActiveBenefitsSuffix => 'Benefits';
+
+  @override
+  String proPlanRenewsOn(String date) {
+    return 'Plan renews on $date';
+  }
+
+  @override
+  String proPlanExpiresOn(String date) {
+    return 'Plan expires on $date';
+  }
+
+  @override
+  String get proCancelSubscription => 'Cancel Subscription';
+
+  @override
+  String get proCancelSubscriptionTitle =>
+      'Are you sure you want to cancel your Pro Subscription?';
+
+  @override
+  String get proCancelSubscriptionMessage =>
+      'All the PRO discounts and free delivery will be removed from your account if you choose to cancel the subscription.';
+
+  @override
+  String get proCancelSubscriptionConfirm => 'Cancel Subscription';
+
+  @override
+  String get proCancelSubscriptionDiscard => 'Don\'t Cancel';
 }

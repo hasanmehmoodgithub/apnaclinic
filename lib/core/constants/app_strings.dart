@@ -49,6 +49,10 @@ class AppStrings {
       'Unable to upload prescription right now. Please try again.';
   static const String surgeryLoadError =
       'Unable to load surgery content right now. Please try again in a moment.';
+  static const String proCatalogLoadError =
+      'Unable to load ApnaClinic Pro right now. Please try again in a moment.';
+  static const String promoCodeValidateError =
+      'Unable to apply promo code right now. Please try again.';
   // Auth
   static const String authRequestOtpError =
       'Unable to send OTP right now. Please try again.';

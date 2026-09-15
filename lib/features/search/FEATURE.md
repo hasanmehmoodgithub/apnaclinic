@@ -35,7 +35,7 @@ Global search for doctors, pharmacy, lab tests, surgery, and more. Supports text
 
 - `SpeechToTextService` wraps `speech_to_text` (mic permission is requested by the plugin on initialize).
 - Mic tap on home opens search with `startVoiceSearch: true`; search screen mic toggles listen/stop.
-- Listening uses `ListenMode.search`, up to **60s**, with **3s** pause before auto-stop. `error_no_match` / speech timeout restarts instead of ending the session. The first `finalResult` does not stop listening.
+- Listening uses `ListenMode.search`, up to **60s**, with **3s** pause before auto-stop. Silence (`error_no_match` / `error_speech_timeout`) **ends** the session; empty transcript does not submit a search. Do not call `listen()` again from those callbacks (Android SpeechRecognizer crash). `error_busy` is ignored. The first `finalResult` does not stop listening.
 - While listening, the static mic is replaced by `voice_search_record.json` Lottie (field + centered listening view). Tap the animation to stop. Voice errors do not show a snackbar.
 
 ## DI

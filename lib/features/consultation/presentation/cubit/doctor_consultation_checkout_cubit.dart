@@ -95,6 +95,7 @@ class DoctorConsultationCheckoutCubit
     required DoctorConsultationCheckoutArgs args,
     required String paymentMethodCode,
     required String msisdn,
+    String? promoCode,
   }) async {
     emit(state.copyWith(isSubmitting: true, clearError: true));
 
@@ -143,6 +144,7 @@ class DoctorConsultationCheckoutCubit
         msisdn: normalizedMsisdn,
         issue: args.issueDescription.trim(),
         attachments: args.attachments,
+        promoCode: promoCode,
       ),
     );
 

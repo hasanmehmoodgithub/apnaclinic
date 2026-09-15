@@ -11,6 +11,8 @@ import '../../features/pharmacy/pharmacy_injection.dart';
 import '../../features/search/search_injection.dart';
 import '../../features/surgery/surgery_injection.dart';
 import '../../features/instant_doctor/instant_doctor_injection.dart';
+import '../../features/pro/pro_injection.dart';
+import '../../features/promo_code/promo_code_injection.dart';
 import '../../features/auth/auth_injection.dart';
 import '../../features/profile_setup/profile_setup_injection.dart';
 import '../analytics/analytics_service.dart';
@@ -41,6 +43,8 @@ Future<void> initDependencyInjection() async {
   initConsultationInjector();
   initBookingsInjector();
   initInstantDoctorInjector();
+  initProInjector();
+  initPromoCodeInjector();
   initCustomerSupportInjector();
   initDashboardInjector();
   initNotificationInjector();

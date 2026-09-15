@@ -1615,6 +1615,15 @@ class AppLocalizationsUr extends AppLocalizations {
   String get consultationTotalChargesLabel => 'کل چارجز';
 
   @override
+  String get promoCodeHint => 'پرومو کوڈ درج کریں';
+
+  @override
+  String get promoCodeInvalid => 'غلط پرومو کوڈ';
+
+  @override
+  String get promoCodeDiscountLabel => 'پرومو رعایت';
+
+  @override
   String get consultationSelectAccountTitle => 'اکاؤنٹ منتخب کریں';
 
   @override
@@ -1860,4 +1869,72 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get securityGateChecking => 'آلے کی سیکیورٹی چیک کی جا رہی ہے…';
+
+  @override
+  String get proCatalogLoadError =>
+      'ابھی ApnaClinic Pro لوڈ نہیں ہو سکا۔ براہِ کرم دوبارہ کوشش کریں۔';
+
+  @override
+  String get proRetry => 'دوبارہ کوشش کریں';
+
+  @override
+  String get proMenuTitle => 'ApnaClinic Pro';
+
+  @override
+  String get proMenuYouAreMember => 'آپ Pro ممبر ہیں';
+
+  @override
+  String get proShowInfoSectionTitle => 'Pro سبسکرائب کریں';
+
+  @override
+  String get proShowInfoSubscribeCta => 'ابھی سبسکرائب کریں!';
+
+  @override
+  String get proSubscribeSuccessTitle => 'آپ Pro ورژن میں سبسکرائب ہو گئے!';
+
+  @override
+  String get proSubscribeSuccessMessage => 'Pro بنڈل پر چھوٹ سے لطف اٹھائیں';
+
+  @override
+  String get proSubscribeSuccessOk => 'ٹھیک ہے';
+
+  @override
+  String get proHomeSectionTitle => 'Apna Clinic PRO';
+
+  @override
+  String get proHomeCardFallbackCta => 'سبسکرائب کرنے کے لیے تھپتھپائیں';
+
+  @override
+  String get proActiveMemberSubtitle =>
+      'آپ Apna Clinic پر درج ذیل چھوٹ کے اہل ہیں';
+
+  @override
+  String get proActiveBenefitsSuffix => 'فوائد';
+
+  @override
+  String proPlanRenewsOn(String date) {
+    return 'پلان $date کو تجدید ہوگا';
+  }
+
+  @override
+  String proPlanExpiresOn(String date) {
+    return 'پلان $date کو ختم ہوگا';
+  }
+
+  @override
+  String get proCancelSubscription => 'سبسکرپشن منسوخ کریں';
+
+  @override
+  String get proCancelSubscriptionTitle =>
+      'کیا آپ واقعی اپنی Pro سبسکرپشن منسوخ کرنا چاہتے ہیں؟';
+
+  @override
+  String get proCancelSubscriptionMessage =>
+      'اگر آپ سبسکرپشن منسوخ کریں گے تو تمام PRO چھوٹ اور مفت ڈیلیوری آپ کے اکاؤنٹ سے ہٹا دی جائیں گی۔';
+
+  @override
+  String get proCancelSubscriptionConfirm => 'سبسکرپشن منسوخ کریں';
+
+  @override
+  String get proCancelSubscriptionDiscard => 'منسوخ نہ کریں';
 }

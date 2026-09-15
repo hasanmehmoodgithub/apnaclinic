@@ -88,7 +88,7 @@ include `user_name` and `msisdn`).
 | `pharmacy_cart_Viewed` | Cart screen opens | `af_content_type`=`Pharmacy Cart` |
 | `pharmacy_checkout` | Checkout screen opens | `af_content_type`=`Pharmacy`, `number_of_products` |
 | `pharmacy_confirm_payment` | User confirms checkout (after JazzCash MSISDN if needed) | `payment_method` (`COD` / `JC` / `Card`) |
-| `pharmacy_order_confirmed` | Order placed and card WebView succeeds when required | `order_id`, `user_name`, `msisdn`, `cart_items`, `sub_total`, `order_value`, `promo_applied`, `timestamp`, `delivery_charges`, `payment_method`, `payment_status` |
+| `pharmacy_order_confirmed` | Order placed and card WebView succeeds when required | `order_id`, `user_name`, `msisdn`, `cart_items`, `sub_total`, `order_value`, `promo_applied`, `promo` (when a code is applied), `timestamp`, `delivery_charges`, `payment_method`, `payment_status` |
 
 ## Auth / profile
 | Event | When | Params |
@@ -113,7 +113,7 @@ include `user_name` and `msisdn`).
 | `doctor_profile_screen` | Book-doctor screen opens | same doctor params |
 | `doctor_document_uploaded` | Attachment(s) accepted | — |
 | `doctor_consultation_confirm` | Get Appointment continues to checkout | doctor params, `timeslot` |
-| `doctor_consultation_booked` | Summary confirm succeeds or fails | `af_content_type`=`Consultancy`, `booking_id`, `user_name`, `msisdn`, doctor params, `consultation_timeslot`, `booking_timestamp`, `payment_method` (`JC`/`Card`), `payment_status` (`successful`/`failed`), `promo_applied` |
+| `doctor_consultation_booked` | Summary confirm succeeds or fails | `af_content_type`=`Consultancy`, `booking_id`, `user_name`, `msisdn`, doctor params, `consultation_timeslot`, `booking_timestamp`, `payment_method` (`JC`/`Card`), `payment_status` (`successful`/`failed`), `promo_applied`, `promo` (when a code is applied) |
 
 ## Lab
 | Event | When | Params |

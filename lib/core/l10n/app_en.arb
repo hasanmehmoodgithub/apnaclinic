@@ -632,6 +632,9 @@
   "consultationDiscountLabel": "Discount",
   "consultationDiscountNotAvailable": "N/A",
   "consultationTotalChargesLabel": "Total Charges",
+  "promoCodeHint": "Enter promo code",
+  "promoCodeInvalid": "Invalid Promo Code",
+  "promoCodeDiscountLabel": "Promo Discount",
   "consultationSelectAccountTitle": "Select Account",
   "consultationProceedCta": "Proceed",
   "consultationJazzCashChargeDescription": "Amount will be charged from your jazz cash account.",
@@ -733,5 +736,35 @@
       }
     }
   },
-  "securityGateChecking": "Checking device security…"
+  "securityGateChecking": "Checking device security…",
+  "proCatalogLoadError": "Unable to load ApnaClinic Pro right now. Please try again.",
+  "proRetry": "Retry",
+  "proMenuTitle": "ApnaClinic Pro",
+  "proMenuYouAreMember": "You are a Pro Member",
+  "proShowInfoSectionTitle": "Subscribe to Pro",
+  "proShowInfoSubscribeCta": "Subscribe Now!",
+  "proSubscribeSuccessTitle": "You're subscribed to the Pro version!",
+  "proSubscribeSuccessMessage": "Enjoy discounts on the Pro bundle",
+  "proSubscribeSuccessOk": "OK",
+  "proHomeSectionTitle": "Apna Clinic PRO",
+  "proHomeCardFallbackCta": "Tap to Subscribe",
+  "proActiveMemberSubtitle": "You are eligible for the following discounts on Apna Clinic",
+  "proActiveBenefitsSuffix": "Benefits",
+  "proPlanRenewsOn": "Plan renews on {date}",
+  "@proPlanRenewsOn": {
+    "placeholders": {
+      "date": { "type": "String" }
+    }
+  },
+  "proPlanExpiresOn": "Plan expires on {date}",
+  "@proPlanExpiresOn": {
+    "placeholders": {
+      "date": { "type": "String" }
+    }
+  },
+  "proCancelSubscription": "Cancel Subscription",
+  "proCancelSubscriptionTitle": "Are you sure you want to cancel your Pro Subscription?",
+  "proCancelSubscriptionMessage": "All the PRO discounts and free delivery will be removed from your account if you choose to cancel the subscription.",
+  "proCancelSubscriptionConfirm": "Cancel Subscription",
+  "proCancelSubscriptionDiscard": "Don't Cancel"
 }

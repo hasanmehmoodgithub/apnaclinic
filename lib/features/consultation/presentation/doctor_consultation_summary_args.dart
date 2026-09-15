@@ -11,6 +11,7 @@ class DoctorConsultationSummaryArgs {
     required this.consultationFee,
     required this.discount,
     required this.total,
+    this.promoCode,
   });
 
   final DoctorConsultationCheckoutArgs checkoutArgs;
@@ -24,4 +25,7 @@ class DoctorConsultationSummaryArgs {
   final int consultationFee;
   final int discount;
   final int total;
+
+  /// Applied promo code from checkout; null/empty when none.
+  final String? promoCode;
 }

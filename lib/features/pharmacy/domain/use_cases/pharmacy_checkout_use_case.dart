@@ -26,6 +26,7 @@ class PharmacyCheckoutParams {
     this.name,
     this.deliveryInstructions,
     this.prescriptions = const [],
+    this.promoCode,
   });
 
   final String userLocationId;
@@ -34,6 +35,7 @@ class PharmacyCheckoutParams {
   final String? name;
   final String? deliveryInstructions;
   final List<PharmacyCheckoutPrescriptionParams> prescriptions;
+  final String? promoCode;
 
   Map<String, dynamic> toJson() {
     final data = <String, dynamic>{
@@ -58,6 +60,10 @@ class PharmacyCheckoutParams {
       data['delivery_instructions'] = instructions.length > 500
           ? instructions.substring(0, 500)
           : instructions;
+    }
+    final promo = promoCode?.trim() ?? '';
+    if (promo.isNotEmpty) {
+      data['promo_code'] = promo;
     }
     return data;
   }

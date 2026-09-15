@@ -153,6 +153,15 @@ class AppUrls {
   static String get instantDoctorCancelSubscription =>
       '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/doctor-consultation/instant/cancel-subscription';
 
+  /// ApnaClinic Pro membership catalog (aggregator mobile API).
+  static String get membershipCatalog =>
+      '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/membership/catalog';
+
+  /// Promo code validate (aggregator mobile API).
+  /// Body: `{ code, service, amount }` where `service` is CONSULTATION | LAB | PHARMACY.
+  static String get promoCodeValidate =>
+      '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/promo-code/validate';
+
   /// Profile setup details endpoint
   static String userProfileById(String userId) =>
       '$_normalizedApiBaseUrl/acs-auth/api/v1/users/$userId';

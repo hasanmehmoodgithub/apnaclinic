@@ -128,6 +128,12 @@ class Assets {
   static const String onboardingOrderMedicine = 'assets/img/onboarding/order_medicine.png';
   static const String onboardingPharmacy = 'assets/img/onboarding/pharmacy.webp';
   static const String onboardingSurgeryBooking = 'assets/img/onboarding/surgery_booking.webp';
+  static const String proBadge = 'assets/img/pro/badge.svg';
+  static const String proBadgeCrown = 'assets/img/pro/badgeCrown.svg';
+  static const String proLeftLeave = 'assets/img/pro/leftLeave.png';
+  static const String proProBadge = 'assets/img/pro/proBadge.svg';
+  static const String proProSuccessBadge = 'assets/img/pro/pro_success_badge.png';
+  static const String proRight = 'assets/img/pro/right.png';
   static const String supportSupportHero = 'assets/img/support/support_hero.png';
   static const String svgApnaClinicLogo = 'assets/svg/apna_clinic_logo.svg';
   static const String svgAppbarbackground = 'assets/svg/appbarbackground.svg';

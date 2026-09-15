@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/extensions/screen_util_extensions.dart';
+import '../../../pro/domain/entities/pro_membership_entity.dart';
 import '../helpers/menu_profile_mapper.dart';
 import '../helpers/menu_screen_config.dart';
 import 'menu_about_card.dart';
 import 'menu_action_tile.dart';
+import 'menu_pro_card.dart';
 import 'menu_profile_card.dart';
 
 class MenuScreenBody extends StatelessWidget {
@@ -16,6 +18,9 @@ class MenuScreenBody extends StatelessWidget {
     required this.onProfileActionTap,
     required this.onActionTap,
     required this.onAboutTap,
+    this.proMembership,
+    this.onProTap,
+    this.isProMembershipLoading = false,
   });
 
   final MenuProfileViewData profile;
@@ -24,6 +29,9 @@ class MenuScreenBody extends StatelessWidget {
   final VoidCallback onProfileActionTap;
   final ValueChanged<MenuActionId> onActionTap;
   final VoidCallback onAboutTap;
+  final ProMembershipEntity? proMembership;
+  final VoidCallback? onProTap;
+  final bool isProMembershipLoading;
 
   @override
   Widget build(BuildContext context) {
@@ -39,6 +47,24 @@ class MenuScreenBody extends StatelessWidget {
           onActionTap: onProfileActionTap,
         ),
         SizedBox(height: 14.h),
+        if (isProMembershipLoading)
+          Padding(
+            padding: EdgeInsets.symmetric(vertical: 8.h),
+            child: const Center(
+              child: SizedBox(
+                width: 24,
+                height: 24,
+                child: CircularProgressIndicator(strokeWidth: 2.5),
+              ),
+            ),
+          )
+        else ...[
+          MenuProCard(
+            membership: proMembership,
+            onTap: onProTap,
+          ),
+          SizedBox(height: 14.h),
+        ],
         for (final item in actionItems) ...[
           MenuActionTile(
             title: item.title,

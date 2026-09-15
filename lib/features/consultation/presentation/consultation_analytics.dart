@@ -124,6 +124,7 @@ abstract final class ConsultationAnalytics {
     required String msisdn,
     required String paymentStatus,
     required int discount,
+    String? promoCode,
     PaymentInitiationResult? initiation,
   }) {
     final user = sl<AppPref>().getUserLocalModel();
@@ -146,9 +147,12 @@ abstract final class ConsultationAnalytics {
           name: paymentMethodName,
         ),
         AnalyticsParamKeys.paymentStatus: paymentStatus,
-        AnalyticsParamKeys.promoApplied: discount > 0
-            ? AnalyticsYesNoKeys.yes
-            : AnalyticsYesNoKeys.no,
+        AnalyticsParamKeys.promoApplied:
+            (discount > 0 || (promoCode != null && promoCode.trim().isNotEmpty))
+                ? AnalyticsYesNoKeys.yes
+                : AnalyticsYesNoKeys.no,
+        if (promoCode != null && promoCode.trim().isNotEmpty)
+          AnalyticsParamKeys.promo: promoCode.trim(),
       }),
     );
   }

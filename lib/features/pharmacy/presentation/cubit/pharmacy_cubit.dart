@@ -535,6 +535,7 @@ class PharmacyCubit extends Cubit<PharmacyState> {
     String? jazzCashNumber,
     String? deliveryInstructions,
     List<PharmacyCheckoutPrescriptionParams>? prescriptions,
+    String? promoCode,
   }) async {
     if (!AuthGuard.isLoggedIn(appPref)) {
       return const Left(AppStrings.pharmacyCheckoutMissingContextError);
@@ -587,6 +588,7 @@ class PharmacyCubit extends Cubit<PharmacyState> {
         jazzCashNumber: isJazzCash ? jazzCash : null,
         deliveryInstructions: deliveryInstructions,
         prescriptions: checkoutPrescriptions,
+        promoCode: promoCode,
       ),
     );
 
@@ -937,6 +939,8 @@ class PharmacyCubit extends Cubit<PharmacyState> {
   void logOrderConfirmed({
     required String orderId,
     required String paymentStatus,
+    String? promoCode,
+    double? orderValue,
   }) {
     final user = appPref.getUserLocalModel();
     final userName =
@@ -945,8 +949,11 @@ class PharmacyCubit extends Cubit<PharmacyState> {
     final now = DateTime.now();
     final timestamp =
         '${now.month}/${now.day}/${now.year} ${now.hour}:${now.minute.toString().padLeft(2, '0')}';
+    final appliedPromo = promoCode?.trim() ?? '';
     final promoApplied =
-        state.discount > 0 ? AnalyticsYesNoKeys.yes : AnalyticsYesNoKeys.no;
+        state.discount > 0 || appliedPromo.isNotEmpty
+            ? AnalyticsYesNoKeys.yes
+            : AnalyticsYesNoKeys.no;
 
     unawaited(
       _analytics.logEvent(AnalyticsEventKeys.pharmacyOrderConfirmed, {
@@ -956,8 +963,9 @@ class PharmacyCubit extends Cubit<PharmacyState> {
         if (msisdn.isNotEmpty) AnalyticsParamKeys.msisdn: msisdn,
         AnalyticsParamKeys.cartItems: state.cartItems.length,
         AnalyticsParamKeys.subTotal: state.subtotal,
-        AnalyticsParamKeys.orderValue: state.total,
+        AnalyticsParamKeys.orderValue: orderValue ?? state.total,
         AnalyticsParamKeys.promoApplied: promoApplied,
+        if (appliedPromo.isNotEmpty) AnalyticsParamKeys.promo: appliedPromo,
         AnalyticsParamKeys.timestamp: timestamp,
         AnalyticsParamKeys.deliveryCharges: state.deliveryCharges,
         AnalyticsParamKeys.paymentMethod: _analyticsPaymentMethod(

@@ -15,6 +15,10 @@ import '../../../consultation/presentation/models/doctor_consultation_jazzcash_s
 import '../../../consultation/presentation/widgets/doctor_consultation_jazzcash_accounts_sheet_widget.dart';
 import '../../../payment/domain/entities/payment_initiation_result.dart';
 import '../../../payment/presentation/payment_navigation.dart';
+import '../../../promo_code/domain/entities/promo_code_service.dart';
+import '../../../promo_code/presentation/cubit/promo_code_cubit.dart';
+import '../../../promo_code/presentation/cubit/promo_code_state.dart';
+import '../../../promo_code/presentation/widgets/promo_code_field_widget.dart';
 import '../cubit/pharmacy_cubit.dart';
 import '../cubit/pharmacy_state.dart';
 import '../pharmacy_navigation.dart';
@@ -39,6 +43,13 @@ class PharmacyCheckoutBodyWidget extends StatelessWidget {
 
   Future<void> _onConfirm(BuildContext context) async {
     final cubit = context.read<PharmacyCubit>();
+    final promoCubit = context.read<PromoCodeCubit>();
+    final promoOk = await promoCubit.ensureValidated(
+      service: PromoCodeService.pharmacy,
+      amount: cubit.state.subtotal.round(),
+    );
+    if (!promoOk || !context.mounted) return;
+
     final paymentMethod =
         _paymentMethodApiValue(cubit.state.selectedPaymentMethod);
     String? jazzCashNumber;
@@ -60,6 +71,7 @@ class PharmacyCheckoutBodyWidget extends StatelessWidget {
       region: cubit.state.selectedCity,
       jazzCashNumber: jazzCashNumber,
       deliveryInstructions: specialInstructionsController.text,
+      promoCode: promoCubit.state.appliedCode,
     );
     HeartLoaderDialogController.close(_checkoutLoaderId);
     if (!context.mounted) return;
@@ -124,6 +136,8 @@ class PharmacyCheckoutBodyWidget extends StatelessWidget {
         cubit.logOrderConfirmed(
           orderId: checkout.displayOrderNo,
           paymentStatus: AnalyticsPaymentStatusKeys.successful,
+          promoCode: promoCubit.state.appliedCode,
+          orderValue: _payableTotal(cubit.state, promoCubit.state),
         );
         cubit.clearCart();
         await showPharmacyOrderPlacedDialog(
@@ -237,21 +251,66 @@ class PharmacyCheckoutBodyWidget extends StatelessWidget {
                   isBold: true,
                   padding: EdgeInsets.symmetric(vertical: 2.h),
                 ),
-                PharmacySummaryRow(
-                  title: _discountTitle(l10n, state),
-                  value: state.discount,
-                  isBold: true,
-                  padding: EdgeInsets.symmetric(vertical: 2.h),
-                ),
-                SizedBox(height: 12.h),
-                PharmacySummaryRow(
-                  title: l10n.pharmacyCheckoutTotalLabel,
-                  value: state.total,
-                  isBold: true,
-                  bgColor: AppColors.clrBBBBBB,
-                  padding: const EdgeInsets.all(8),
-                  titleFontSize: 16.sp,
-                  valueFontSize: 18.sp,
+                SizedBox(height: 10.h),
+                BlocBuilder<PromoCodeCubit, PromoCodeState>(
+                  builder: (context, promo) {
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        PromoCodeFieldWidget(
+                          status: promo.status,
+                          displayCode: promo.displayCode,
+                          enabled: !promo.isValidating,
+                          onChanged:
+                              context.read<PromoCodeCubit>().onInputChanged,
+                          onSubmitted: (code) =>
+                              context.read<PromoCodeCubit>().validate(
+                                    service: PromoCodeService.pharmacy,
+                                    amount: state.subtotal.round(),
+                                    code: code,
+                                  ),
+                          onCleared: context.read<PromoCodeCubit>().clear,
+                        ),
+                        if (promo.isInvalid) ...[
+                          SizedBox(height: 8.h),
+                          Text(
+                            l10n.promoCodeInvalid,
+                            style:
+                                Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                      color: AppColors.clrC9252C,
+                                      fontSize: 13.sp,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                          ),
+                        ],
+                        SizedBox(height: 10.h),
+                        if (promo.isApplied)
+                          PharmacySummaryRow(
+                            title: l10n.promoCodeDiscountLabel,
+                            value: promo.result!.discountAmount.toDouble(),
+                            isBold: true,
+                            padding: EdgeInsets.symmetric(vertical: 2.h),
+                          )
+                        else
+                          PharmacySummaryRow(
+                            title: _discountTitle(l10n, state),
+                            value: state.discount,
+                            isBold: true,
+                            padding: EdgeInsets.symmetric(vertical: 2.h),
+                          ),
+                        SizedBox(height: 12.h),
+                        PharmacySummaryRow(
+                          title: l10n.pharmacyCheckoutTotalLabel,
+                          value: _payableTotal(state, promo),
+                          isBold: true,
+                          bgColor: AppColors.clrBBBBBB,
+                          padding: const EdgeInsets.all(8),
+                          titleFontSize: 16.sp,
+                          valueFontSize: 18.sp,
+                        ),
+                      ],
+                    );
+                  },
                 ),
                 SizedBox(height: 24.h),
                 PharmacyCheckoutEditableField(
@@ -322,12 +381,18 @@ class PharmacyCheckoutBodyWidget extends StatelessWidget {
               bottom: 14.h,
               child: SafeArea(
                 top: false,
-                child: AppButtonWidget(
-                  title: l10n.pharmacyCheckoutConfirmCta,
-                  bgClr: AppColors.clr1FAFA3,
-                  onTap: state.cartItems.isEmpty
-                      ? null
-                      : () => _onConfirm(context),
+                child: BlocBuilder<PromoCodeCubit, PromoCodeState>(
+                  buildWhen: (previous, current) =>
+                      previous.isValidating != current.isValidating,
+                  builder: (context, promo) {
+                    return AppButtonWidget(
+                      title: l10n.pharmacyCheckoutConfirmCta,
+                      bgClr: AppColors.clr1FAFA3,
+                      onTap: state.cartItems.isEmpty || promo.isValidating
+                          ? null
+                          : () => _onConfirm(context),
+                    );
+                  },
                 ),
               ),
             ),
@@ -343,5 +408,12 @@ class PharmacyCheckoutBodyWidget extends StatelessWidget {
       return '${l10n.pharmacyCheckoutDiscountLabel} (${percent.toStringAsFixed(0)}%)';
     }
     return l10n.pharmacyCheckoutDiscountLabel;
+  }
+
+  double _payableTotal(PharmacyState state, PromoCodeState promo) {
+    if (promo.isApplied) {
+      return promo.result!.payableAmount + state.deliveryCharges;
+    }
+    return state.total;
   }
 }

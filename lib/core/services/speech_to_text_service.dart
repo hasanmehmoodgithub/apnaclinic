@@ -21,7 +21,6 @@ class SpeechToTextService {
 
   bool _sessionActive = false;
   String? _localeId;
-  DateTime? _sessionStartedAt;
   void Function(String text, bool isFinal)? _onResult;
   VoidCallback? _onSessionDone;
 
@@ -39,8 +38,6 @@ class SpeechToTextService {
     Duration listenFor = _defaultListenFor,
     Duration pauseFor = _defaultPauseFor,
   }) async {
-    _onResult = onResult;
-    _onSessionDone = onSessionDone;
     _localeId = localeId;
     _listenFor = listenFor;
     _pauseFor = pauseFor;
@@ -54,8 +51,9 @@ class SpeechToTextService {
       await stop();
     }
 
+    _onResult = onResult;
+    _onSessionDone = onSessionDone;
     _sessionActive = true;
-    _sessionStartedAt = DateTime.now();
     return _beginListen();
   }
 
@@ -67,7 +65,7 @@ class SpeechToTextService {
           _onResult?.call(result.recognizedWords, result.finalResult);
         },
         listenOptions: SpeechListenOptions(
-          cancelOnError: false,
+          cancelOnError: true,
           partialResults: true,
           listenMode: ListenMode.search,
           localeId: _localeId,
@@ -116,18 +114,7 @@ class SpeechToTextService {
   void _handleStatus(String status) {
     if (!_sessionActive) return;
     if (status != SpeechToText.doneStatus) return;
-
-    final hasWords = _speech.lastRecognizedWords.trim().isNotEmpty;
-    final elapsed = _sessionStartedAt == null
-        ? Duration.zero
-        : DateTime.now().difference(_sessionStartedAt!);
-
-    if (hasWords || elapsed >= _listenFor) {
-      _endSession(notify: true);
-      return;
-    }
-
-    _restartIfTimeRemains();
+    _endSession(notify: true);
   }
 
   void _handleError(SpeechRecognitionError error) {
@@ -136,8 +123,10 @@ class SpeechToTextService {
     switch (error.errorMsg) {
       case 'error_no_match':
       case 'error_speech_timeout':
+        _endSession(notify: true);
+        return;
       case 'error_busy':
-        _restartIfTimeRemains();
+        // Native recognizer still tearing down — do not listen() again.
         return;
       default:
         if (error.permanent) {
@@ -146,27 +135,14 @@ class SpeechToTextService {
     }
   }
 
-  Future<void> _restartIfTimeRemains() async {
-    if (!_sessionActive) return;
-
-    final startedAt = _sessionStartedAt;
-    if (startedAt != null &&
-        DateTime.now().difference(startedAt) >= _listenFor) {
-      _endSession(notify: true);
-      return;
-    }
-
-    await Future<void>.delayed(const Duration(milliseconds: 250));
-    if (!_sessionActive || _speech.isListening) return;
-    await _beginListen();
-  }
-
   void _endSession({required bool notify}) {
     if (!_sessionActive) return;
     _sessionActive = false;
-    if (notify) {
-      _onSessionDone?.call();
-    }
+    if (!notify) return;
+    final onDone = _onSessionDone;
+    _onResult = null;
+    _onSessionDone = null;
+    onDone?.call();
   }
 
   VoiceSearchFailure _mapPlatformException(PlatformException error) {
@@ -188,8 +164,8 @@ class SpeechToTextService {
       if (_speech.isListening) {
         await _speech.stop();
       }
-    } on MissingPluginException {
-      // Plugin not linked — no-op.
+    } on Object {
+      // Native already stopped / destroyed.
     }
   }
 
@@ -199,8 +175,8 @@ class SpeechToTextService {
       if (_speech.isListening) {
         await _speech.cancel();
       }
-    } on MissingPluginException {
-      // Plugin not linked — no-op.
+    } on Object {
+      // Native already stopped / destroyed.
     }
   }
 }
