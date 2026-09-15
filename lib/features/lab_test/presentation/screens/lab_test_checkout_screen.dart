@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/analytics/analytics_event_keys.dart';
@@ -22,10 +23,14 @@ import '../../../consultation/presentation/widgets/doctor_consultation_jazzcash_
 import '../../../dashboard/presentation/constants/main_navigation_tabs.dart';
 import '../../../payment/domain/entities/payment_initiation_result.dart';
 import '../../../payment/presentation/payment_navigation.dart';
+import '../../../promo_code/domain/entities/promo_code_service.dart';
+import '../../../promo_code/presentation/cubit/promo_code_cubit.dart';
+import '../../../promo_code/presentation/cubit/promo_code_state.dart';
 import '../../domain/entities/lab_test_cart_item.dart';
 import '../../domain/repositories/lab_test_cart_repository.dart';
 import '../../domain/use_cases/book_lab_test_use_case.dart';
 import '../../domain/use_cases/abandon_lab_test_booking_use_case.dart';
+import '../../domain/utils/lab_test_price_formatter.dart';
 import '../cubit/lab_test_cart_cubit.dart';
 import '../lab_test_analytics.dart';
 import '../lab_test_route_args.dart';
@@ -199,6 +204,13 @@ class _LabTestCheckoutScreenState extends State<LabTestCheckoutScreen> {
       });
     }
 
+    final promoCubit = context.read<PromoCodeCubit>();
+    final promoOk = await promoCubit.ensureValidated(
+      service: PromoCodeService.lab,
+      amount: LabTestPriceFormatter.parseRsAmount(widget.args.originalFee),
+    );
+    if (!promoOk || !mounted) return;
+
     final selected = await showModalBottomSheet<String>(
       context: context,
       backgroundColor: Colors.transparent,
@@ -265,6 +277,7 @@ class _LabTestCheckoutScreenState extends State<LabTestCheckoutScreen> {
           phoneNumber: _phoneController.text.trim(),
         ),
         testIds: args.testIds,
+        promoCode: context.read<PromoCodeCubit>().state.appliedCode,
       ),
     );
 
@@ -357,6 +370,7 @@ class _LabTestCheckoutScreenState extends State<LabTestCheckoutScreen> {
       msisdn: msisdn,
       paymentStatus: paymentStatus,
       initiation: initiation,
+      appliedPromoCode: context.read<PromoCodeCubit>().state.appliedCode,
     );
   }
 
@@ -497,10 +511,16 @@ class _LabTestCheckoutScreenState extends State<LabTestCheckoutScreen> {
                     ),
                   ),
                 ),
-                LabTestCheckoutBottomBarWidget(
-                  onProceed: _onProceed,
-                  errorMessage: _checkoutErrorMessage,
-                  isBusy: _isBooking,
+                BlocBuilder<PromoCodeCubit, PromoCodeState>(
+                  buildWhen: (previous, current) =>
+                      previous.isValidating != current.isValidating,
+                  builder: (context, promo) {
+                    return LabTestCheckoutBottomBarWidget(
+                      onProceed: _onProceed,
+                      errorMessage: _checkoutErrorMessage,
+                      isBusy: _isBooking || promo.isValidating,
+                    );
+                  },
                 ),
               ],
             ),

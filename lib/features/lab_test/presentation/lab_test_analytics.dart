@@ -123,11 +123,12 @@ abstract final class LabTestAnalytics {
     required String msisdn,
     required String paymentStatus,
     PaymentInitiationResult? initiation,
+    String? appliedPromoCode,
   }) {
     final bookingId = initiation?.orderId?.trim() ?? '';
     final name = userName.trim();
     final labName = args.labDisplayName.trim();
-    final promoCode = args.discountCode.trim();
+    final promoCode = (appliedPromoCode ?? args.discountCode).trim();
     final promoApplied =
         LabTestPriceFormatter.parseRsAmount(args.discountAmount) > 0 ||
         args.discountPercent > 0 ||

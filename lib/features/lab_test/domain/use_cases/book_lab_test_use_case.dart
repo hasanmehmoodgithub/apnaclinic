@@ -27,6 +27,7 @@ class BookLabTestParams {
     required this.msisdn,
     required this.patient,
     required this.testIds,
+    this.promoCode,
   });
 
   final String partnerId;
@@ -37,6 +38,7 @@ class BookLabTestParams {
   final String msisdn;
   final BookLabTestPatientParams patient;
   final List<int> testIds;
+  final String? promoCode;
 }
 
 class BookLabTestUseCase

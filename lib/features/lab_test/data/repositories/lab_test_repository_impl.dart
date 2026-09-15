@@ -217,6 +217,10 @@ class LabTestRepositoryImpl implements LabTestRepository {
             .map((id) => {'testId': id})
             .toList(growable: false),
       };
+      final promo = params.promoCode?.trim() ?? '';
+      if (promo.isNotEmpty) {
+        body['promoCode'] = promo;
+      }
 
       final result = await remoteDataSource.bookLabTest(body);
       return Right(result);

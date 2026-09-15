@@ -514,7 +514,10 @@ class AppRouter {
               child: const LabTestScreen(),
             );
           }
-          return LabTestCheckoutScreen(args: extra);
+          return BlocProvider(
+            create: (_) => sl<PromoCodeCubit>(),
+            child: LabTestCheckoutScreen(args: extra),
+          );
         },
       ),
       GoRoute(

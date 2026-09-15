@@ -10,7 +10,7 @@ No dedicated route. Hosted inside checkout UIs:
 
 - Doctor consultation checkout (`AppRoutes.consultationCheckout`) via `PromoCodeCubit` + `PromoCodeFieldWidget` (`service=CONSULTATION`).
 - Pharmacy checkout (`AppRoutes.pharmacyCheckout`) via the same cubit/widget (`service=PHARMACY`, `amount` = cart subtotal). Applied code is sent as `promo_code` on order checkout.
-- Lab checkout is not wired yet (`PromoCodeService.lab`).
+- Lab checkout (`AppRoutes.labTestCheckout`) via the same cubit/widget (`service=LAB`, `amount` = original fee). Applied code is sent as `promoCode` on `POST lab/book-test`.
 
 ## Data & APIs
 
