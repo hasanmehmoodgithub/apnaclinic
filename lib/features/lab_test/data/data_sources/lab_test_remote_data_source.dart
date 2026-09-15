@@ -1,3 +1,4 @@
+import '../models/lab_list_response_model.dart';
 import '../models/lab_order_model.dart';
 import '../models/lab_test_catalog_model.dart';
 import '../models/lab_test_detail_response_model.dart';
@@ -7,6 +8,8 @@ import '../../../payment/domain/entities/payment_initiation_result.dart';
 
 abstract class LabTestRemoteDataSource {
   Future<LabTestCatalogResponseModel> getLabTestCatalog();
+
+  Future<LabListResponseModel> getLabs({required String cityId});
 
   Future<LabTestMobileTestsResponseModel> getLabTests({
     required String cityId,

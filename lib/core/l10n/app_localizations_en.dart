@@ -1113,6 +1113,32 @@ class AppLocalizationsEn extends AppLocalizations {
   String get labTestSelectTestHeading => 'Select Test';
 
   @override
+  String get labTestSelectLabHeading => 'Select Lab';
+
+  @override
+  String get labTestLabsLoadFailed => 'Failed to load labs.';
+
+  @override
+  String get labTestNoLabsFound => 'No labs found';
+
+  @override
+  String get labTestRequirementsHeading => 'Requirements';
+
+  @override
+  String get labTestHomeSamplingUnavailable =>
+      'Home sampling is not available for this test';
+
+  @override
+  String labTestFulfilledBy(String partner) {
+    return 'This test service is fulfilled by $partner.';
+  }
+
+  @override
+  String labTestCartFulfilledBy(String partner) {
+    return 'Test fulfilled by $partner';
+  }
+
+  @override
   String get labTestSearchFieldHint => 'Search';
 
   @override
@@ -1204,7 +1230,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get labTestCartEmptyMessage => 'No items in cart';
 
   @override
-  String get labTestCartProceedCheckout => 'Proceed Checkout';
+  String get labTestCartProceedCheckout => 'Proceed to Checkout';
 
   @override
   String get labTestViewDetailsLoadError =>
@@ -1399,6 +1425,22 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get labTestAgeLabel => 'Age';
+
+  @override
+  String get labTestAddPatientDetailsHeading => 'Add Patient Details';
+
+  @override
+  String get labTestAddPatientSheetTitle => 'Add patient details';
+
+  @override
+  String get labTestAddPatientSeparateCharges =>
+      'Separate charges will be charged for each patient.';
+
+  @override
+  String get labTestAddPatientCta => 'Add Patient';
+
+  @override
+  String get labTestPatientSelfLabel => 'Self';
 
   @override
   String get labTestAddressHint => 'Type address here...';

@@ -363,6 +363,23 @@
   "labTestCityFieldLabel": "شہر",
   "labTestChangeCityCta": "تبدیل کریں",
   "labTestSelectTestHeading": "ٹیسٹ منتخب کریں",
+  "labTestSelectLabHeading": "لیب منتخب کریں",
+  "labTestLabsLoadFailed": "لیبز لوڈ نہیں ہو سکیں۔",
+  "labTestNoLabsFound": "کوئی لیب نہیں ملی",
+  "labTestRequirementsHeading": "ضروریات",
+  "labTestHomeSamplingUnavailable": "اس ٹیسٹ کے لیے ہوم سیمپلنگ دستیاب نہیں",
+  "labTestFulfilledBy": "یہ ٹیسٹ سروس {partner} کے ذریعے پوری کی جاتی ہے۔",
+  "@labTestFulfilledBy": {
+    "placeholders": {
+      "partner": { "type": "String" }
+    }
+  },
+  "labTestCartFulfilledBy": "ٹیسٹ {partner} کے ذریعے پورا کیا جاتا ہے",
+  "@labTestCartFulfilledBy": {
+    "placeholders": {
+      "partner": { "type": "String" }
+    }
+  },
   "labTestSearchFieldHint": "تلاش",
   "labTestSelectCitySheetTitle": "شہر منتخب کریں",
   "labTestSelectCitySheetSearchHint": "نام سے تلاش کریں",
@@ -453,6 +470,11 @@
   "labTestFullNameHint": "مکمل نام",
   "labTestPhonebookHint": "نمبر ٹائپ کریں یا فون بک سے منتخب کریں",
   "labTestAgeLabel": "عمر",
+  "labTestAddPatientDetailsHeading": "مریض کی تفصیلات شامل کریں",
+  "labTestAddPatientSheetTitle": "مریض کی تفصیلات شامل کریں",
+  "labTestAddPatientSeparateCharges": "ہر مریض کے لیے الگ چارجز لگے گا۔",
+  "labTestAddPatientCta": "مریض شامل کریں",
+  "labTestPatientSelfLabel": "خود",
   "labTestAddressHint": "یہاں پتہ درج کریں...",
   "commonMale": "مرد",
   "commonFemale": "عورت",

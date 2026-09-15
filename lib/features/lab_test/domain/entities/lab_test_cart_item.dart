@@ -9,6 +9,7 @@ class LabTestCartItem {
     required this.labLogoUrl,
     required this.partnerId,
     required this.partnerLogoUrl,
+    this.partnerName = '',
     required this.sampleType,
     this.requirementLabel,
     required this.requirementLines,
@@ -19,6 +20,9 @@ class LabTestCartItem {
     required this.discountCode,
     required this.totalAmount,
     required this.bookingMethodIsHomeSample,
+    this.patientName = '',
+    this.patientAge = '',
+    this.patientGender = '',
   });
 
   final int testId;
@@ -29,6 +33,7 @@ class LabTestCartItem {
   final String labLogoUrl;
   final String partnerId;
   final String partnerLogoUrl;
+  final String partnerName;
   final String sampleType;
   final String? requirementLabel;
   final List<String> requirementLines;
@@ -39,6 +44,19 @@ class LabTestCartItem {
   final String discountCode;
   final String totalAmount;
   final bool bookingMethodIsHomeSample;
+  final String patientName;
+  final String patientAge;
+  final String patientGender;
+
+  /// Lines saved before `partnerName` existed: recover it from logo/partner id.
+  String get displayPartnerName {
+    final named = partnerName.trim();
+    if (named.isNotEmpty) return named;
+    final blob = '$partnerLogoUrl $partnerId'.toLowerCase();
+    if (blob.contains('mediq')) return 'MedIQ';
+    if (blob.contains('oladoc')) return 'Oladoc';
+    return '';
+  }
 
   factory LabTestCartItem.fromJson(Map<String, dynamic> json) {
     return LabTestCartItem(
@@ -50,6 +68,7 @@ class LabTestCartItem {
       labLogoUrl: (json['labLogoUrl'] ?? '').toString(),
       partnerId: (json['partnerId'] ?? '').toString(),
       partnerLogoUrl: (json['partnerLogoUrl'] ?? '').toString(),
+      partnerName: (json['partnerName'] ?? '').toString(),
       sampleType: (json['sampleType'] ?? '').toString(),
       requirementLabel: json['requirementLabel']?.toString(),
       requirementLines:
@@ -65,6 +84,9 @@ class LabTestCartItem {
       discountCode: (json['discountCode'] ?? '').toString(),
       totalAmount: (json['totalAmount'] ?? '').toString(),
       bookingMethodIsHomeSample: json['bookingMethodIsHomeSample'] == true,
+      patientName: (json['patientName'] ?? '').toString(),
+      patientAge: (json['patientAge'] ?? '').toString(),
+      patientGender: (json['patientGender'] ?? '').toString(),
     );
   }
 
@@ -78,6 +100,7 @@ class LabTestCartItem {
       'labLogoUrl': labLogoUrl,
       'partnerId': partnerId,
       'partnerLogoUrl': partnerLogoUrl,
+      'partnerName': partnerName,
       'sampleType': sampleType,
       'requirementLabel': requirementLabel,
       'requirementLines': requirementLines,
@@ -88,6 +111,9 @@ class LabTestCartItem {
       'discountCode': discountCode,
       'totalAmount': totalAmount,
       'bookingMethodIsHomeSample': bookingMethodIsHomeSample,
+      'patientName': patientName,
+      'patientAge': patientAge,
+      'patientGender': patientGender,
     };
   }
 }

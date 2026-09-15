@@ -2,38 +2,48 @@
 
 ## Purpose
 
-Browse lab tests, booking/cart flow, payment details checkout, and order view details.
+Browse labs in a city, then tests for a selected lab, booking/cart flow, payment details checkout, and order view details.
 
 ## Routes / entry
 
-- `AppRoutes.labTest`, `labTestBooking`, `labTestCart`, `labTestCheckout`, `labTestViewDetails`, `labTestReportViewer`.
-- Tapping a catalog test requires login (`AuthGuard.requireLogin`); guests are redirected to `AppRoutes.authLogin`.
+- `AppRoutes.labTest` — city + **Select Lab** grid (`GET` labs).
+- `AppRoutes.labTestSelectTest` — tests for the chosen lab (`GET` lab/tests?labId=). Extra: `LabTestSelectTestArgs` (`city`, `lab`, `requirementLines`).
+- `AppRoutes.labTestBooking`, `labTestCart`, `labTestCheckout`, `labTestViewDetails`, `labTestReportViewer`.
+- Tapping a lab or catalog test requires login (`AuthGuard.requireLogin`); guests are redirected to `AppRoutes.authLogin`.
 - Opening cart (`labTestOpenCart`) also requires login; guests are redirected to `AppRoutes.authLogin`. Cart badge count is hidden for guests.
 
 ## UI
 
-- `LabTestPricePill` (catalog, booking, cart) hides the strikethrough original price when it matches the discounted price.
+- Hub (`LabTestScreen`): city selector + lab logo grid (`LabTestBookingVendorGridWidget`). No cart icon. First visit without a saved city auto-opens the city sheet; after a city is chosen, labs load.
+- Select Test (`LabTestSelectTestScreen`): selected-lab Change row, search, catalog tiles (no labs-summary line). Tiles show Sample Type + price on the first row and Requirement below when present. Change pops back to the hub.
+- Booking with a preferred lab hides partner tabs and the lab grid (lab already chosen). Partner “fulfilled by” banner, Walk In / Home Sample (no requirements card — requirement shows as a pill on the test tile); Home Sample is omitted when that lab/test has no home-sampling offer, with `labTestHomeSamplingUnavailable` copy. **Add Patient Details** shows **Self** until the pencil opens a bottom sheet (name, age, gender). Saved details go on the cart line and prefill checkout.
+- Cart (`LabTestCartScreen`): `LabTestCartItemTileWidget.fromCartItem` cards — lab logo, test title, partner “Test fulfilled by” line, trash remove, divider, Sample Type + Requirement pills. Prices are not shown on cart tiles. CTA **Proceed to Checkout**.
+- `LabTestPricePill` (catalog, booking) hides the strikethrough original price when it matches the discounted price.
 - Checkout **Payment Details** (`LabTestCheckoutScreen`):
-  - One summary card per cart line (`LabTestCheckoutSummaryCardWidget` / `LabTestCheckoutLineArgs`): lab logo, test title, lab name, sample type + Walk In/Home Sample pill, per-test fee + strikethrough when original differs, partner logo.
+  - One test card per cart line — the **same** `LabTestCartItemTileWidget` as the cart, built from `LabTestCheckoutLineArgs` with `onRemove` omitted (no trash, no price).
   - `labTestCartToCheckoutArgs` sums original fees, discounts, and discounted totals across all cart lines for the breakdown.
-  - Payment breakdown: section title, aggregated Fee / Discount (%) / Total (discount row hidden when amount is 0), divider, gray total bar.
-  - Patient details: **before Edit** = read-only rows with **Edit**; **after Edit** = form with **Done**. Age accepts digits only, max 3. Emergency contact always below (required; accepts 10-digit landline or 11-digit mobile). Empty or invalid emergency number turns the input red (`clrFFF8F8` fill, `clrBA2025` border/text) together with the CTA error banner.
+  - Payment breakdown card (`LabTestCheckoutPaymentBreakdownCardWidget`): white card with title, aggregated Fee / Discount (%) rows (discount row hidden when amount is 0), yellow discount-code strip (`discountCode` non-empty only) with `labTestShowCodeInstruction`, then a grey **Total** bar flush to the card bottom.
+  - Emergency contact sits in its own white card (required; accepts 10-digit landline or 11-digit mobile). Empty or invalid number turns the input red (`clrFFF8F8` fill, `clrBA2025` border/text) together with the CTA error banner.
+  - Patient details card is a **fallback only** (`showPatientDetails`): it renders when name / phone / age are not already complete from the Add Patient sheet or profile. **before Edit** = read-only rows with **Edit**; **after Edit** = form with **Done** (age digits only, max 3).
   - Required-fields / invalid-phone errors above the CTA use `LabTestCheckoutErrorBannerWidget` (light-pink background + info icon), not plain red text.
   - Bottom CTA has no separate white bar behind the button. Panel top radius `20`.
-- On open, `LabTestCubit.bootstrap()` reads `AppPrefKeys.labTestSelectedCity`, loads cities, then immediately calls the lab tests API when a saved city resolves to a `cityId`; first visit without a saved city auto-opens the city selection dialog (tests load after pick).
+- On open, `LabTestCubit.bootstrap()` reads `AppPrefKeys.labTestSelectedCity`, loads cities, then calls **GET labs** when a saved city resolves to a `cityId`; first visit without a saved city auto-opens the city selection dialog (labs load after pick).
 - Booking detail load shows the shared heart loader (`showHeartLoaderDialog`); failure renders the shared `EmptyBookingWidget` with the API message and a retry CTA.
 - Selected city is persisted in `AppPrefKeys.labTestSelectedCity` and restored on every lab test visit until the user changes it.
 
 ## Data & APIs
 
 - **Cities:** shared `CitiesRepository` + `showSelectCityDialog` (`lib/core/cities/`). Catalog load resolves `cityId` via `cityIdForName`.
+- **Labs in a city:** `GET AppUrls.labs` → `/acs-aggregator/api/v1/mobile/labs?cityId=...`
+  - Required: `cityId` (resolved from the selected city name).
+  - Response `data[]`: `id`, `publicId`, `name`, `slug`, `logoUrl` (HTTP upgraded to HTTPS), `supportsHomeSampling`, `supportsWalkIn`, `homeSamplingFee`, `rating`, `estimatedReportHours`, `accreditationBadges`. Mapped to `LabTestVendorEntity` via `LabListMapper`. Tests catalog uses `id` as `labId`.
 - **Lab tests catalog:** `GET AppUrls.labTests` → `/acs-aggregator/api/v1/mobile/lab/tests`
   - Required: `cityId`
-  - Optional: `page` (default 1), `limit` (default 20, max 50), `search`, `labId`
+  - Optional: `page` (default 1), `limit` (default 20, max 50), `search`, `labId` (**required on Select Test** so prices/offers are for the chosen lab)
   - Response: `data.items[]` with `testId`, `testName`, `sampleType`, `fastingRequired`, `turnaroundHours`, `description`, `labs[]` (pricing per lab/order type); pagination via `data.page`, `data.limit`, `data.total`, `data.totalPages`.
   - Browse list loads **page 1 / limit 20**, then `LabTestCubit.loadMoreCatalog()` appends the next page when the user scrolls near the bottom.
 - **Lab test detail (booking):** `GET AppUrls.labTestDetail` → `/acs-aggregator/api/v1/mobile/lab/tests/{id}?cityId=...`
-  - On test tap, app navigates to booking with `LabTestBookingArgs.pending`; `LabTestBookingCubit.loadDetailIfNeeded()` fetches detail on that screen (shimmer → content, same route).
+  - On test tap, app navigates to booking with `LabTestBookingArgs.pending` including `preferredLabId` from the hub selection; `LabTestBookingCubit.loadDetailIfNeeded()` fetches detail and locks partner/lab to that id.
   - Response: `data.partners[]` each with `labs[]` and `pricing.HOME_SAMPLING` / `pricing.WALK_IN` (`price`, `discountPct`, `finalPrice`).
   - Lab `logoUrl` may be a full `http(s)` URL (e.g. `{host}/acs-media/apna-clinic/{id}.svg|.webp`) or a relative key (`apna-clinic/{id}.webp`). `LabTestMediaUrlResolver` upgrades HTTP→HTTPS (cleartext is blocked on iOS/Android), prefixes relative keys with `{apiBaseUrl}/acs-media/`, and ignores localhost. SVG/WebP/PNG render via `LabTestFigmaImage`. Partner `partnerLogoUrl` uses the same media rules, then bundled MedIQ/Oladoc assets if empty.
   - Booking screen filters partners/labs by booking method (`WALK_IN` / `HOME_SAMPLING`). On detail load, auto-selects the first available method (Walk In when both exist; Home Sample when only `HOME_SAMPLING` offers). Method tiles are disabled when that order type has no pricing. When the selected method has no offers, partner/lab grids are hidden, sample type shows **N/A**, and **Add to Cart** is disabled.
@@ -50,13 +60,13 @@ Browse lab tests, booking/cart flow, payment details checkout, and order view de
 
 ## State
 
-- `LabTestCubit` — `bootstrap()` on create loads cities then `GET lab/tests` when saved/selected city is set; `selectCity()` / `submitSearch()` re-fetches page 1; `loadMoreCatalog()` appends the next page while scrolling.
-- `LabTestBookingCubit` — cart + partner/vendor selection for a single test. Opening another test while the cart has items prefills the cart’s booking method and partner tab (and lab when offered on that test). If the test only has one partner and it differs from the cart partner, labs for that partner are hidden; tapping that partner shows the cart-clear warning so the user can clear the cart and continue (Add to Cart stays disabled until cart is cleared or partner can match).
+- `LabTestCubit` — `bootstrap()` on create loads cities then `GET labs` when saved/selected city is set; `selectCity()` re-fetches labs; Select Test uses `autoBootstrap: false` + `startSelectTest()` then `GET lab/tests` with `labId`. `submitSearch()` / `loadMoreCatalog()` keep that `labId`.
+- `LabTestBookingCubit` — cart + partner/vendor selection for a single test. When `preferredLabId` is set, partner tabs and lab grid are hidden and offers are scoped to that lab. Opening another test while the cart has items prefills the cart’s booking method and partner tab (and lab when offered on that test). If the test only has one partner and it differs from the cart partner, labs for that partner are hidden; tapping that partner shows the cart-clear warning so the user can clear the cart and continue (Add to Cart stays disabled until cart is cleared or partner can match). Patient details from the booking sheet are stored on the cubit and copied onto each cart line.
 - Changing **city** (browse), **booking method**, **service provider**, or **lab** while the cart has items shows `LabTestCartChangeWarningDialogWidget` via `labTestGuardCartClearingChange`; Continue clears the cart (`LabTestCartRepository` + shared `LabTestCartCubit`), View Cart opens the cart without applying the change. **Add to Cart** uses the same warning when the selected lab / partner / method differs from the cart (e.g. user went back to the listing and opened a test from another lab). Continue then adds the new selection. Listing / booking headers rebuild cart badge from the shared cubit on add/remove/clear.
 
 ## DI
 
-- `lab_test_injection.dart` — `LabTestRemoteDataSource`, `LabTestRepository`, `GetLabTestCatalogUseCase`, `GetLabTestDetailUseCase`, `GetLabOrdersUseCase`, `GetLabOrderDetailUseCase`, `BookLabTestUseCase`, `AbandonLabTestBookingUseCase`, `DownloadLabReportUseCase`, `LabTestCubit`, singleton `LabTestCartCubit` (shared badge/count across listing, booking, and cart).
+- `lab_test_injection.dart` — data source, repository, use cases (`GetLabsUseCase`, catalog/detail/book/abandon/orders), cubit factory (`AppPref` + catalog/labs use cases), singleton `LabTestCartCubit`.
 
 ## Analytics
 
@@ -77,4 +87,4 @@ Firebase via `LabTestAnalytics` / `AnalyticsService`. `lab_module` fires on the 
 
 ## Mocks
 
-- When `MockConfig.enableLabTestMocks` is true, `LabTestMockApi` / `LabOrdersMockApi` return sample mobile API shapes (defaults to real API). Lab orders mock matches the nested `data.data[]` list (`Confirmed` / `Payment Pending`, no invoice).
+- When `MockConfig.enableLabTestMocks` is true, `LabTestMockApi` / `LabOrdersMockApi` return sample mobile API shapes (defaults to real API), including `getLabsSuccessResponse`. Lab orders mock matches the nested `data.data[]` list (`Confirmed` / `Payment Pending`, no invoice).

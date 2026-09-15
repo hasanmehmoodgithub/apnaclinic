@@ -5,8 +5,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../components/shimmer/app_shimmer.dart';
+import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
+import '../../../../core/preference/app_pref.dart';
 import '../../../../core/widgets/app_scaffold_gradient.dart';
 import '../../../../core/widgets/heart_loader_widget.dart';
 import '../../../../generated/assets.dart';
@@ -15,14 +17,17 @@ import '../cubit/lab_test_booking_cubit.dart';
 import '../cubit/lab_test_booking_state.dart';
 import '../lab_test_cart_change_guard.dart';
 import '../lab_test_navigation.dart';
+import '../widgets/lab_test_add_patient_sheet.dart';
 import '../widgets/lab_test_booking_bottom_bar_widget.dart';
 import '../widgets/lab_test_booking_city_box_widget.dart';
 import '../widgets/lab_test_booking_content_shimmer_widget.dart';
 import '../widgets/lab_test_booking_method_tile_widget.dart';
 import '../widgets/lab_test_booking_partner_tabs_widget.dart';
+import '../widgets/lab_test_booking_patient_field_widget.dart';
 import '../widgets/lab_test_booking_test_summary_card_widget.dart';
 import '../widgets/lab_test_booking_vendor_grid_widget.dart';
 import '../widgets/lab_test_browse_header_widget.dart';
+import '../widgets/lab_test_figma_image.dart';
 
 class LabTestBookingScreen extends StatefulWidget {
   const LabTestBookingScreen({super.key});
@@ -98,12 +103,16 @@ class _LabTestBookingScreenState extends State<LabTestBookingScreen> {
     return AppScaffoldGradient(
       child: Column(
         children: [
-          BlocSelector<LabTestBookingCubit, LabTestBookingState, int>(
-            selector: (s) => s.cartItems.length,
-            builder: (context, cartCount) {
+          BlocSelector<LabTestBookingCubit, LabTestBookingState, (int, String)>(
+            selector: (s) => (s.cartItems.length, s.args.testTitle),
+            builder: (context, header) {
+              final cartCount = header.$1;
+              final testTitle = header.$2.trim();
               return LabTestBrowseHeaderWidget(
                 padding: EdgeInsets.fromLTRB(8.w, 4.h, 16.w, 18.h),
-                title: l10n.labTestScreenTitle,
+                title: testTitle.isNotEmpty
+                    ? testTitle
+                    : l10n.labTestScreenTitle,
                 cartCount: cartCount,
                 cartBadgeOverflowLabel: l10n.labTestCartBadgeOverflow,
                 onCartTap: cartCount > 0
@@ -149,64 +158,31 @@ class _LabTestBookingScreenState extends State<LabTestBookingScreen> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.stretch,
                                 children: [
-                                  LabTestBookingCityBoxWidget(
-                                    city: state.args.city,
-                                    cityLabel: l10n.labTestCityFieldLabel,
-                                  ),
-                                  SizedBox(height: 16.h),
-                                  Text(
-                                    l10n.labTestBookingChooseMethodTitle,
-                                    style:
-                                        theme.textTheme.titleMedium?.copyWith(
-                                      color: const Color(0xFF061E40),
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: 16.sp,
+                                  if (!state.args.hasPreferredLab) ...[
+                                    LabTestBookingCityBoxWidget(
+                                      city: state.args.city,
+                                      cityLabel: l10n.labTestCityFieldLabel,
                                     ),
-                                  ),
-                                  SizedBox(height: 12.h),
-                                  Row(
-                                    children: [
-                                      Expanded(
-                                        child: LabTestBookingMethodTileWidget(
-                                          title: l10n.labTestBookingMethodWalkIn,
-                                          iconUrl: Assets.labTestWalkin,
-                                          selected: state.labVisit,
-                                          enabled: state.walkInAvailable,
-                                          onTap: state.labVisit
-                                              ? () {}
-                                              : () => _guardAndApply(
-                                                    context,
-                                                    (c) async =>
-                                                        c.setLabVisit(true),
-                                                  ),
-                                        ),
+                                    SizedBox(height: 16.h),
+                                  ],
+                                  if (state.args.hasPreferredLab &&
+                                      state.selectedPartner != null) ...[
+                                    _FulfilledByBanner(
+                                      theme: theme,
+                                      partnerLogoUrl:
+                                          state.selectedPartner!.logoUrl,
+                                      message: l10n.labTestFulfilledBy(
+                                        state.selectedPartner!.name,
                                       ),
-                                      SizedBox(width: 12.w),
-                                      Expanded(
-                                        child: LabTestBookingMethodTileWidget(
-                                          title: l10n
-                                              .labTestBookingMethodHomeSample,
-                                          iconUrl: Assets.labTestHomeSample,
-                                          selected: !state.labVisit,
-                                          enabled: state.homeSamplingAvailable,
-                                          onTap: !state.labVisit
-                                              ? () {}
-                                              : () => _guardAndApply(
-                                                    context,
-                                                    (c) async =>
-                                                        c.setLabVisit(false),
-                                                  ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  SizedBox(height: 16.h),
+                                    ),
+                                    SizedBox(height: 16.h),
+                                  ],
                                   LabTestBookingTestSummaryCardWidget(
                                     title: state.args.testTitle,
                                     labName: state.isWalkInUnavailable ||
                                             state.isHomeSamplingUnavailable ||
                                             state.selectedVendor == null
-                                        ? ''
+                                        ? (state.args.preferredLabName ?? '')
                                         : (state.selectedVendor?.name ?? ''),
                                     requirement: state.isWalkInUnavailable ||
                                             state.isHomeSamplingUnavailable
@@ -225,7 +201,90 @@ class _LabTestBookingScreenState extends State<LabTestBookingScreen> {
                                         !state.isHomeSamplingUnavailable &&
                                         state.selectedVendor != null,
                                   ),
-                                  if (!state.isWalkInUnavailable &&
+                                  SizedBox(height: 16.h),
+                                  Text(
+                                    l10n.labTestBookingChooseMethodTitle,
+                                    style:
+                                        theme.textTheme.titleMedium?.copyWith(
+                                      color: const Color(0xFF061E40),
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 16.sp,
+                                    ),
+                                  ),
+                                  if (state.args.hasPreferredLab &&
+                                      !state.homeSamplingAvailable) ...[
+                                    SizedBox(height: 6.h),
+                                    Text(
+                                      l10n.labTestHomeSamplingUnavailable,
+                                      style: theme.textTheme.bodySmall
+                                          ?.copyWith(
+                                        color: const Color(0xFF9BA6A7),
+                                        fontSize: 12.sp,
+                                      ),
+                                    ),
+                                  ],
+                                  SizedBox(height: 12.h),
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: LabTestBookingMethodTileWidget(
+                                          title: l10n.labTestBookingMethodWalkIn,
+                                          iconUrl: Assets.labTestWalkin,
+                                          selected: state.labVisit,
+                                          enabled: state.walkInAvailable,
+                                          onTap: state.labVisit
+                                              ? () {}
+                                              : () => _guardAndApply(
+                                                    context,
+                                                    (c) async =>
+                                                        c.setLabVisit(true),
+                                                  ),
+                                        ),
+                                      ),
+                                      if (state.homeSamplingAvailable ||
+                                          !state.args.hasPreferredLab) ...[
+                                        SizedBox(width: 12.w),
+                                        Expanded(
+                                          child: LabTestBookingMethodTileWidget(
+                                            title: l10n
+                                                .labTestBookingMethodHomeSample,
+                                            iconUrl: Assets.labTestHomeSample,
+                                            selected: !state.labVisit,
+                                            enabled:
+                                                state.homeSamplingAvailable,
+                                            onTap: !state.labVisit
+                                                ? () {}
+                                                : () => _guardAndApply(
+                                                      context,
+                                                      (c) async =>
+                                                          c.setLabVisit(false),
+                                                    ),
+                                          ),
+                                        ),
+                                      ],
+                                    ],
+                                  ),
+                                  SizedBox(height: 16.h),
+                                  BlocSelector<
+                                      LabTestBookingCubit,
+                                      LabTestBookingState,
+                                      String>(
+                                    selector: (s) =>
+                                        s.patientDetails?.name.trim() ?? '',
+                                    builder: (context, name) {
+                                      return LabTestBookingPatientFieldWidget(
+                                        heading:
+                                            l10n.labTestAddPatientDetailsHeading,
+                                        displayName: name.isEmpty
+                                            ? l10n.labTestPatientSelfLabel
+                                            : name,
+                                        onEditTap: () =>
+                                            _openAddPatientSheet(context),
+                                      );
+                                    },
+                                  ),
+                                  if (!state.args.hasPreferredLab &&
+                                      !state.isWalkInUnavailable &&
                                       !state.isHomeSamplingUnavailable) ...[
                                     SizedBox(height: 16.h),
                                     LabTestBookingPartnerTabsWidget(
@@ -363,4 +422,60 @@ class _LabTestBookingScreenState extends State<LabTestBookingScreen> {
     }
     await cubit.addCurrentSelectionToCart();
   }
+
+  Future<void> _openAddPatientSheet(BuildContext context) async {
+    final cubit = context.read<LabTestBookingCubit>();
+    final result = await showLabTestAddPatientSheet(
+      context,
+      initial: cubit.state.patientDetails ??
+          labTestPatientFromAppPref(sl<AppPref>()),
+    );
+    if (result == null || !mounted) return;
+    cubit.setPatientDetails(result);
+  }
 }
+
+class _FulfilledByBanner extends StatelessWidget {
+  const _FulfilledByBanner({
+    required this.theme,
+    required this.partnerLogoUrl,
+    required this.message,
+  });
+
+  final ThemeData theme;
+  final String partnerLogoUrl;
+  final String message;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF3FBFA),
+        borderRadius: BorderRadius.circular(12.r),
+      ),
+      child: Row(
+        children: [
+          LabTestFigmaImage(
+            url: partnerLogoUrl,
+            width: 28,
+            height: 28,
+          ),
+          SizedBox(width: 8.w),
+          Expanded(
+            child: Text(
+              message,
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: const Color(0xFF061E40),
+                fontSize: 12.sp,
+                height: 1.25,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+

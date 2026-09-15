@@ -13,6 +13,17 @@ class LabTestItemBookingHelper {
   static String orderTypeFor({required bool labVisit}) =>
       labVisit ? orderTypeWalkIn : orderTypeHomeSampling;
 
+  static List<LabTestLabOfferEntity> offersForLab({
+    required List<LabTestLabOfferEntity> labOffers,
+    String? labId,
+  }) {
+    final id = labId?.trim() ?? '';
+    if (id.isEmpty) return labOffers;
+    return labOffers
+        .where((offer) => offer.labId.toString() == id)
+        .toList(growable: false);
+  }
+
   static bool hasOffersForBookingMethod({
     required List<LabTestLabOfferEntity> labOffers,
     required bool labVisit,

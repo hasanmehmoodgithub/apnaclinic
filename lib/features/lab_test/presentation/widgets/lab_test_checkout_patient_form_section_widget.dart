@@ -6,10 +6,10 @@ import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/utils/no_emoji_text_input_formatter.dart';
 
-/// Patient details + emergency contact for checkout.
+/// Emergency contact for checkout, plus patient details when still incomplete.
 ///
-/// Design 1 (before Edit): read-only patient rows with **Edit**.
-/// Design 2 (after Edit): editable form fields.
+/// Patient name/age/gender normally come from the Add Patient sheet, so the
+/// patient card only appears as a fallback ([showPatientDetails]).
 class LabTestCheckoutPatientFormSectionWidget extends StatelessWidget {
   const LabTestCheckoutPatientFormSectionWidget({
     super.key,
@@ -22,6 +22,7 @@ class LabTestCheckoutPatientFormSectionWidget extends StatelessWidget {
     required this.onGender,
     required this.isEditingPatientDetails,
     required this.onToggleEdit,
+    this.showPatientDetails = false,
     this.showEmergencyError = false,
   });
 
@@ -34,6 +35,7 @@ class LabTestCheckoutPatientFormSectionWidget extends StatelessWidget {
   final ValueChanged<String> onGender;
   final bool isEditingPatientDetails;
   final VoidCallback onToggleEdit;
+  final bool showPatientDetails;
   final bool showEmergencyError;
 
   @override
@@ -45,28 +47,30 @@ class LabTestCheckoutPatientFormSectionWidget extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        if (isEditingPatientDetails)
-          _EditPatientCard(
-            theme: theme,
-            l10n: l10n,
-            nameController: nameController,
-            phoneController: phoneController,
-            ageController: ageController,
-            gender: gender,
-            onGender: onGender,
-            onDone: onToggleEdit,
-          )
-        else
-          _ReadonlyPatientCard(
-            theme: theme,
-            l10n: l10n,
-            name: nameController.text.trim(),
-            genderLabel: genderLabel,
-            age: ageController.text.trim(),
-            phone: phoneController.text.trim(),
-            onEdit: onToggleEdit,
-          ),
-        SizedBox(height: 12.h),
+        if (showPatientDetails) ...[
+          if (isEditingPatientDetails)
+            _EditPatientCard(
+              theme: theme,
+              l10n: l10n,
+              nameController: nameController,
+              phoneController: phoneController,
+              ageController: ageController,
+              gender: gender,
+              onGender: onGender,
+              onDone: onToggleEdit,
+            )
+          else
+            _ReadonlyPatientCard(
+              theme: theme,
+              l10n: l10n,
+              name: nameController.text.trim(),
+              genderLabel: genderLabel,
+              age: ageController.text.trim(),
+              phone: phoneController.text.trim(),
+              onEdit: onToggleEdit,
+            ),
+          SizedBox(height: 12.h),
+        ],
         _EmergencyContactCard(
           theme: theme,
           l10n: l10n,
@@ -318,39 +322,44 @@ class _EmergencyContactCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Text(
-          l10n.labTestEmergencyContactTitle,
-          style: theme.textTheme.titleMedium?.copyWith(
-            color: AppColors.clr061E40,
-            fontWeight: FontWeight.w600,
-            fontSize: 16.sp,
-          ),
-        ),
-        SizedBox(height: 6.h),
-        Text(
-          l10n.labTestEmergencyContactHintText,
-          style: theme.textTheme.bodySmall?.copyWith(
-            color: AppColors.clr667B99,
-            fontSize: 12.sp,
-            height: 1.35,
-          ),
-        ),
-        SizedBox(height: 10.h),
-        _InputBox(
-          theme: theme,
-          controller: controller,
-          hint: l10n.labTestEmergencyNumberHint,
-          keyboardType: TextInputType.phone,
-          hasError: hasError,
-          inputFormatters: [
-            FilteringTextInputFormatter.digitsOnly,
-            LengthLimitingTextInputFormatter(11),
+    return _WhiteCard(
+      child: Padding(
+        padding: EdgeInsets.fromLTRB(14.w, 14.h, 14.w, 14.h),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(
+              l10n.labTestEmergencyContactTitle,
+              style: theme.textTheme.titleMedium?.copyWith(
+                color: AppColors.clr061E40,
+                fontWeight: FontWeight.w600,
+                fontSize: 16.sp,
+              ),
+            ),
+            SizedBox(height: 6.h),
+            Text(
+              l10n.labTestEmergencyContactHintText,
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: AppColors.clr667B99,
+                fontSize: 12.sp,
+                height: 1.35,
+              ),
+            ),
+            SizedBox(height: 10.h),
+            _InputBox(
+              theme: theme,
+              controller: controller,
+              hint: l10n.labTestEmergencyNumberHint,
+              keyboardType: TextInputType.phone,
+              hasError: hasError,
+              inputFormatters: [
+                FilteringTextInputFormatter.digitsOnly,
+                LengthLimitingTextInputFormatter(11),
+              ],
+            ),
           ],
         ),
-      ],
+      ),
     );
   }
 }
@@ -366,7 +375,7 @@ class _WhiteCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppColors.clrWhite,
         borderRadius: BorderRadius.circular(14.r),
-        border: Border.all(color: AppColors.clrE5E8EC),
+        border: Border.all(color: AppColors.clrEDEDED),
       ),
       child: child,
     );
@@ -465,7 +474,6 @@ class _InputBox extends StatelessWidget {
     this.hint,
     this.keyboardType,
     this.inputFormatters,
-    this.textAlign = TextAlign.start,
     this.hasError = false,
   });
 
@@ -474,7 +482,6 @@ class _InputBox extends StatelessWidget {
   final String? hint;
   final TextInputType? keyboardType;
   final List<TextInputFormatter>? inputFormatters;
-  final TextAlign textAlign;
   final bool hasError;
 
   @override
@@ -497,7 +504,6 @@ class _InputBox extends StatelessWidget {
           allowBasicPunctuation: keyboardType != TextInputType.number &&
               keyboardType != TextInputType.phone,
         ),
-        textAlign: textAlign,
         style: theme.textTheme.bodyMedium?.copyWith(
           color: hasError ? AppColors.clrBA2025 : AppColors.clr061E40,
           fontSize: 14.sp,

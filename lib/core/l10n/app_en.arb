@@ -469,6 +469,23 @@
   "labTestCityFieldLabel": "City",
   "labTestChangeCityCta": "Change",
   "labTestSelectTestHeading": "Select Test",
+  "labTestSelectLabHeading": "Select Lab",
+  "labTestLabsLoadFailed": "Failed to load labs.",
+  "labTestNoLabsFound": "No labs found",
+  "labTestRequirementsHeading": "Requirements",
+  "labTestHomeSamplingUnavailable": "Home sampling is not available for this test",
+  "labTestFulfilledBy": "This test service is fulfilled by {partner}.",
+  "@labTestFulfilledBy": {
+    "placeholders": {
+      "partner": { "type": "String" }
+    }
+  },
+  "labTestCartFulfilledBy": "Test fulfilled by {partner}",
+  "@labTestCartFulfilledBy": {
+    "placeholders": {
+      "partner": { "type": "String" }
+    }
+  },
   "labTestSearchFieldHint": "Search",
   "labTestSelectCitySheetTitle": "Select a city",
   "labTestSelectCitySheetSearchHint": "Search by name",
@@ -499,7 +516,7 @@
   "labTestCartBadgeOverflow99": "99+",
   "labTestCartScreenTitle": "Cart",
   "labTestCartEmptyMessage": "No items in cart",
-  "labTestCartProceedCheckout": "Proceed Checkout",
+  "labTestCartProceedCheckout": "Proceed to Checkout",
   "labTestViewDetailsLoadError": "Unable to load details. Please try again.",
   "labTestSomethingWentWrong": "Something went wrong",
   "commonRetry": "Retry",
@@ -559,6 +576,11 @@
   "labTestFullNameHint": "Full name",
   "labTestPhonebookHint": "Type or select from phonebook",
   "labTestAgeLabel": "Age",
+  "labTestAddPatientDetailsHeading": "Add Patient Details",
+  "labTestAddPatientSheetTitle": "Add patient details",
+  "labTestAddPatientSeparateCharges": "Separate charges will be charged for each patient.",
+  "labTestAddPatientCta": "Add Patient",
+  "labTestPatientSelfLabel": "Self",
   "labTestAddressHint": "Type address here...",
   "commonMale": "Male",
   "commonFemale": "Female",

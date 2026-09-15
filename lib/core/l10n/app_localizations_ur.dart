@@ -1114,6 +1114,32 @@ class AppLocalizationsUr extends AppLocalizations {
   String get labTestSelectTestHeading => 'ٹیسٹ منتخب کریں';
 
   @override
+  String get labTestSelectLabHeading => 'لیب منتخب کریں';
+
+  @override
+  String get labTestLabsLoadFailed => 'لیبز لوڈ نہیں ہو سکیں۔';
+
+  @override
+  String get labTestNoLabsFound => 'کوئی لیب نہیں ملی';
+
+  @override
+  String get labTestRequirementsHeading => 'ضروریات';
+
+  @override
+  String get labTestHomeSamplingUnavailable =>
+      'اس ٹیسٹ کے لیے ہوم سیمپلنگ دستیاب نہیں';
+
+  @override
+  String labTestFulfilledBy(String partner) {
+    return 'یہ ٹیسٹ سروس $partner کے ذریعے پوری کی جاتی ہے۔';
+  }
+
+  @override
+  String labTestCartFulfilledBy(String partner) {
+    return 'ٹیسٹ $partner کے ذریعے پورا کیا جاتا ہے';
+  }
+
+  @override
   String get labTestSearchFieldHint => 'تلاش';
 
   @override
@@ -1399,6 +1425,22 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get labTestAgeLabel => 'عمر';
+
+  @override
+  String get labTestAddPatientDetailsHeading => 'مریض کی تفصیلات شامل کریں';
+
+  @override
+  String get labTestAddPatientSheetTitle => 'مریض کی تفصیلات شامل کریں';
+
+  @override
+  String get labTestAddPatientSeparateCharges =>
+      'ہر مریض کے لیے الگ چارجز لگے گا۔';
+
+  @override
+  String get labTestAddPatientCta => 'مریض شامل کریں';
+
+  @override
+  String get labTestPatientSelfLabel => 'خود';
 
   @override
   String get labTestAddressHint => 'یہاں پتہ درج کریں...';

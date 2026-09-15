@@ -104,6 +104,7 @@ class Assets {
   static const String labTestCheckoutPartnerLogo = 'assets/svg/lab_test/checkout_partner_logo.svg';
   static const String labTestChughtaiLabLogo = 'assets/svg/lab_test/chughtai_lab_logo.svg';
   static const String labTestCityChevron = 'assets/svg/lab_test/city_chevron.svg';
+  static const String labTestDeleteTrash = 'assets/svg/lab_test/delete_trash.svg';
   static const String labTestDiscountIcon = 'assets/svg/lab_test/discount_icon.svg';
   static const String labTestDownloadIcon = 'assets/img/lab_test/download_icon.png';
   static const String labTestExcelLabLogo = 'assets/svg/lab_test/excel_lab_logo.svg';
@@ -114,6 +115,7 @@ class Assets {
   static const String labTestMethodLabTest = 'assets/svg/lab_test/method_lab_test.svg';
   static const String labTestNayaLabLogo = 'assets/svg/lab_test/naya_lab_logo.svg';
   static const String labTestOladocOgo = 'assets/svg/lab_test/oladoc_ogo.svg';
+  static const String labTestPencil = 'assets/img/lab_test/pencil.png';
   static const String labTestSearchGlyph = 'assets/svg/lab_test/search_glyph.svg';
   static const String labTestSearchGlyphSmall = 'assets/svg/lab_test/search_glyph_small.svg';
   static const String labTestSheetHandle = 'assets/svg/lab_test/sheet_handle.svg';

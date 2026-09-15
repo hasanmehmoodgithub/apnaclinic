@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/constants/app_colors.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../domain/entities/lab_test_item_entity.dart';
 import 'lab_test_info_pill_widget.dart';
@@ -14,6 +15,7 @@ class LabTestBrowseItemTileWidget extends StatelessWidget {
     required this.requirementLabel,
     required this.sampleTypeLabel,
     required this.feeFallbackText,
+    this.showLabsSummary = true,
   });
 
   final LabTestItemEntity item;
@@ -21,98 +23,80 @@ class LabTestBrowseItemTileWidget extends StatelessWidget {
   final String requirementLabel;
   final String sampleTypeLabel;
   final String feeFallbackText;
+  final bool showLabsSummary;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final discountedFee = item.discountedFee ?? feeFallbackText;
     final originalFee = item.originalFee;
+    final requirement = item.requirement?.trim();
+    final hasRequirement = requirement != null && requirement.isNotEmpty;
+    final radius = 16.r;
+
     return Material(
       color: Colors.transparent,
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(14.r),
+        borderRadius: BorderRadius.circular(radius),
         child: Container(
+          clipBehavior: Clip.antiAlias,
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(14.r),
-            border: Border.all(color: const Color(0xFFEDE4E4), width: 1.0),
+            color: AppColors.clrWhite,
+            borderRadius: BorderRadius.circular(radius),
+            border: Border.all(color: AppColors.clrEDEDED, width: 1.0),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
                 width: double.infinity,
-                padding: EdgeInsets.fromLTRB(14.w, 13.h, 14.w, 13.h),
-                decoration: BoxDecoration(
-                  color: const Color(0xFFF5F5F5),
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(14.r)),
-                ),
+                padding: EdgeInsets.fromLTRB(16.w, 14.h, 16.w, 14.h),
+                color: AppColors.clrF4F4F4,
                 child: Text(
                   item.title,
                   style: theme.textTheme.titleMedium?.copyWith(
                     fontFamily: 'Afacad',
-                    color: Colors.black,
-                    fontWeight: FontWeight.w500,
+                    color: AppColors.clr061E40,
+                    fontWeight: FontWeight.w600,
                     fontSize: 18.sp,
                     height: 1.2,
                   ),
                 ),
               ),
-              Container(
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.vertical(
-                    bottom: Radius.circular(14.r),
-                  ),
-                ),
-                padding: EdgeInsets.fromLTRB(14.w, 13.h, 14.w, 13.h),
+              Padding(
+                padding: EdgeInsets.fromLTRB(16.w, 14.h, 16.w, 14.h),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      item.labsSummary ?? '',
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        color: const Color(0xFF4B5B72),
-                        fontSize: 13.sp,
-                        height: 1.15,
-                      ),
-                    ),
-                    SizedBox(height: 10.h),
-                    if (item.requirement != null && item.requirement!.isNotEmpty) ...[
-                      Row(
-                        children: [
-                          Text(
-                            requirementLabel,
-                            style: theme.textTheme.bodyMedium?.copyWith(
-                              color: const Color(0xFF2F3E54),
-                              fontSize: 13.sp,
-                            ),
-                          ),
-                          SizedBox(width: 6.w),
-                          LabTestInfoPillWidget(
-                            value: item.requirement!,
-                            highlight: true,
-                          ),
-                        ],
+                    if (showLabsSummary &&
+                        item.labsSummary != null &&
+                        item.labsSummary!.isNotEmpty) ...[
+                      Text(
+                        item.labsSummary!,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: AppColors.clr4B5668,
+                          fontSize: 13.sp,
+                          height: 1.15,
+                        ),
                       ),
                       SizedBox(height: 10.h),
                     ],
                     Row(
-                      crossAxisAlignment: CrossAxisAlignment.end,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Expanded(
                           child: Wrap(
-                            spacing: 6.w,
+                            spacing: 8.w,
                             runSpacing: 6.h,
                             crossAxisAlignment: WrapCrossAlignment.center,
                             children: [
                               Text(
                                 sampleTypeLabel,
                                 style: theme.textTheme.bodyMedium?.copyWith(
-                                  color: const Color(0xFF2F3E54),
+                                  color: AppColors.clr303D4F,
                                   fontSize: 13.sp,
                                 ),
                               ),
@@ -129,14 +113,15 @@ class LabTestBrowseItemTileWidget extends StatelessWidget {
                               child: LabTestPricePill(
                                 originalFee: originalFee,
                                 discountedFee: discountedFee,
-                                originalTextStyle: theme.textTheme.bodySmall?.copyWith(
-                                  fontSize: 11.sp,
+                                originalTextStyle:
+                                    theme.textTheme.bodySmall?.copyWith(
+                                  fontSize: 12.sp,
                                   fontWeight: FontWeight.w500,
                                 ),
                                 discountedTextStyle:
                                     theme.textTheme.bodyMedium?.copyWith(
-                                  fontSize: 11.sp,
-                                  fontWeight: FontWeight.w500,
+                                  fontSize: 12.sp,
+                                  fontWeight: FontWeight.w600,
                                 ),
                               ),
                             ),
@@ -144,6 +129,25 @@ class LabTestBrowseItemTileWidget extends StatelessWidget {
                         ),
                       ],
                     ),
+                    if (hasRequirement) ...[
+                      SizedBox(height: 10.h),
+                      Row(
+                        children: [
+                          Text(
+                            requirementLabel,
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              color: AppColors.clr303D4F,
+                              fontSize: 13.sp,
+                            ),
+                          ),
+                          SizedBox(width: 8.w),
+                          LabTestInfoPillWidget(
+                            value: requirement,
+                            highlight: true,
+                          ),
+                        ],
+                      ),
+                    ],
                   ],
                 ),
               ),

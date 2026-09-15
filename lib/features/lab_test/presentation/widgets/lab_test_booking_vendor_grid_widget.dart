@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/constants/app_colors.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../lab_test_route_args.dart';
 import 'lab_test_booking_vendor_logo_widget.dart';
@@ -13,21 +14,26 @@ class LabTestBookingVendorGridWidget extends StatelessWidget {
     required this.onSelect,
   });
 
+  static const spacing = 9.0;
+  static const minTile = 121.33;
+  static const tileRadius = 17.215;
+
   final List<LabTestBookingVendorOption> vendors;
   final int selectedIndex;
   final ValueChanged<int> onSelect;
+
+  static double tileWidth(double rowWidth) {
+    final tileW = (rowWidth - spacing * 2) / 3;
+    return tileW.clamp(minTile * 0.85, minTile);
+  }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return LayoutBuilder(
       builder: (context, constraints) {
-        const spacing = 9.0;
-        const minTile = 121.33;
         final n = vendors.length;
-        final rowW = constraints.maxWidth;
-        final tileW = (rowW - spacing * 2) / 3;
-        final w = tileW.clamp(minTile * 0.85, minTile);
+        final w = tileWidth(constraints.maxWidth);
 
         return Wrap(
           spacing: spacing,
@@ -42,19 +48,20 @@ class LabTestBookingVendorGridWidget extends StatelessWidget {
                 color: Colors.transparent,
                 child: InkWell(
                   onTap: () => onSelect(i),
-                  borderRadius: BorderRadius.circular(17.215.r),
+                  borderRadius: BorderRadius.circular(tileRadius.r),
                   child: Column(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
                       Container(
                         width: w,
                         height: w,
                         decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(17.215.r),
+                          color: AppColors.clrWhite,
+                          borderRadius: BorderRadius.circular(tileRadius.r),
                           border: Border.all(
                             color: selected
-                                ? const Color(0xFF0FAA9A)
-                                : const Color(0xFF9BA6A7),
+                                ? AppColors.clr0FAA9A
+                                : AppColors.clrD6DCE2,
                             width: 1.0,
                           ),
                         ),

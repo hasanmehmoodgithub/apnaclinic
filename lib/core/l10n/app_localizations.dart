@@ -2135,6 +2135,48 @@ abstract class AppLocalizations {
   /// **'Select Test'**
   String get labTestSelectTestHeading;
 
+  /// No description provided for @labTestSelectLabHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Lab'**
+  String get labTestSelectLabHeading;
+
+  /// No description provided for @labTestLabsLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load labs.'**
+  String get labTestLabsLoadFailed;
+
+  /// No description provided for @labTestNoLabsFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No labs found'**
+  String get labTestNoLabsFound;
+
+  /// No description provided for @labTestRequirementsHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Requirements'**
+  String get labTestRequirementsHeading;
+
+  /// No description provided for @labTestHomeSamplingUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Home sampling is not available for this test'**
+  String get labTestHomeSamplingUnavailable;
+
+  /// No description provided for @labTestFulfilledBy.
+  ///
+  /// In en, this message translates to:
+  /// **'This test service is fulfilled by {partner}.'**
+  String labTestFulfilledBy(String partner);
+
+  /// No description provided for @labTestCartFulfilledBy.
+  ///
+  /// In en, this message translates to:
+  /// **'Test fulfilled by {partner}'**
+  String labTestCartFulfilledBy(String partner);
+
   /// No description provided for @labTestSearchFieldHint.
   ///
   /// In en, this message translates to:
@@ -2318,7 +2360,7 @@ abstract class AppLocalizations {
   /// No description provided for @labTestCartProceedCheckout.
   ///
   /// In en, this message translates to:
-  /// **'Proceed Checkout'**
+  /// **'Proceed to Checkout'**
   String get labTestCartProceedCheckout;
 
   /// No description provided for @labTestViewDetailsLoadError.
@@ -2674,6 +2716,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Age'**
   String get labTestAgeLabel;
+
+  /// No description provided for @labTestAddPatientDetailsHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Patient Details'**
+  String get labTestAddPatientDetailsHeading;
+
+  /// No description provided for @labTestAddPatientSheetTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add patient details'**
+  String get labTestAddPatientSheetTitle;
+
+  /// No description provided for @labTestAddPatientSeparateCharges.
+  ///
+  /// In en, this message translates to:
+  /// **'Separate charges will be charged for each patient.'**
+  String get labTestAddPatientSeparateCharges;
+
+  /// No description provided for @labTestAddPatientCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Patient'**
+  String get labTestAddPatientCta;
+
+  /// No description provided for @labTestPatientSelfLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Self'**
+  String get labTestPatientSelfLabel;
 
   /// No description provided for @labTestAddressHint.
   ///

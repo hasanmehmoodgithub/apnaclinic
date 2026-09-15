@@ -5,14 +5,17 @@ import '../../../payment/domain/entities/payment_initiation_result.dart';
 import '../../domain/entities/lab_order_entity.dart';
 import '../../domain/entities/lab_test_catalog_entity.dart';
 import '../../domain/entities/lab_test_detail_entity.dart';
+import '../../domain/entities/lab_test_vendor_entity.dart';
 import '../../domain/repositories/lab_test_repository.dart';
 import '../../domain/use_cases/abandon_lab_test_booking_use_case.dart';
 import '../../domain/use_cases/book_lab_test_use_case.dart';
 import '../../domain/use_cases/download_lab_report_use_case.dart';
 import '../../domain/use_cases/get_lab_test_catalog_use_case.dart';
 import '../../domain/use_cases/get_lab_test_detail_use_case.dart';
+import '../../domain/use_cases/get_labs_use_case.dart';
 import '../constants/lab_test_catalog_defaults.dart';
 import '../data_sources/lab_test_remote_data_source.dart';
+import '../mappers/lab_list_mapper.dart';
 import '../mappers/lab_orders_mapper.dart';
 import '../mappers/lab_test_detail_mapper.dart';
 import '../mappers/lab_test_mobile_tests_mapper.dart';
@@ -76,6 +79,24 @@ class LabTestRepositoryImpl implements LabTestRepository {
       );
     } catch (e) {
       return Left(e.toString());
+    }
+  }
+
+  @override
+  Future<Either<ErrorMsg, List<LabTestVendorEntity>>> getLabs(
+    GetLabsParams params,
+  ) async {
+    try {
+      await citiesRepository.loadCities();
+      final cityId = citiesRepository.cityIdForName(params.cityName);
+      if (cityId == null || cityId.isEmpty) {
+        return const Left('Please select a valid city.');
+      }
+
+      final model = await remoteDataSource.getLabs(cityId: cityId);
+      return Right(LabListMapper.toVendors(model));
+    } catch (e) {
+      return Left(ErrorHandler.handleExceptions(e));
     }
   }
 

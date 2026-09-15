@@ -49,10 +49,10 @@ class LabTestBrowseSearchFieldWidget extends StatelessWidget {
       height: 48.h,
       padding: EdgeInsets.symmetric(horizontal: 11.w),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.clrWhite,
         borderRadius: BorderRadius.circular(39.988.r),
         border: Border.all(
-          color: AppColors.clr9BA6A7,
+          color: AppColors.clrD6DCE2,
           width: 1.0,
         ),
       ),
@@ -67,7 +67,7 @@ class LabTestBrowseSearchFieldWidget extends StatelessWidget {
               onSubmitted: (_) => _submit(),
               textInputAction: TextInputAction.search,
               style: theme.textTheme.bodyMedium?.copyWith(
-                color: const Color(0xFF061E40),
+                color: AppColors.clr061E40,
                 fontSize: 14.sp,
               ),
               decoration: InputDecoration(

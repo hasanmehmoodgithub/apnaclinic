@@ -18,8 +18,10 @@ LabTestCheckoutArgs labTestCartToCheckoutArgs(List<LabTestCartItem> items) {
           testTitle: e.testTitle,
           labDisplayName: e.labDisplayName,
           labLogoUrl: e.labLogoUrl,
+          partnerName: e.displayPartnerName,
           partnerLogoUrl: e.partnerLogoUrl,
           sampleType: e.sampleType,
+          requirementLabel: e.requirementLabel ?? '',
           discountedFee: e.discountedFee,
           originalFee: e.originalFee,
           bookingMethodIsHomeSample: e.bookingMethodIsHomeSample,
@@ -70,5 +72,8 @@ LabTestCheckoutArgs labTestCartToCheckoutArgs(List<LabTestCartItem> items) {
     partnerId: first.partnerId,
     labId: first.labId,
     lines: lines,
+    patientName: first.patientName,
+    patientAge: first.patientAge,
+    patientGender: first.patientGender,
   );
 }

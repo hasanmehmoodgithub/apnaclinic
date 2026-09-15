@@ -23,6 +23,7 @@ class LabTestCatalogListBlockWidget extends StatefulWidget {
     required this.requirementLabel,
     required this.sampleTypeLabel,
     required this.feeFallbackText,
+    this.showLabsSummary = true,
   });
 
   final ValueChanged<LabTestItemEntity> onItemTap;
@@ -32,6 +33,7 @@ class LabTestCatalogListBlockWidget extends StatefulWidget {
   final String requirementLabel;
   final String sampleTypeLabel;
   final String feeFallbackText;
+  final bool showLabsSummary;
 
   @override
   State<LabTestCatalogListBlockWidget> createState() =>
@@ -110,9 +112,9 @@ class _LabTestCatalogListBlockWidgetState
 
         return ListView.separated(
           controller: _scrollController,
-          padding: EdgeInsets.symmetric(vertical: 10.h),
+          padding: EdgeInsets.only(top: 8.h, bottom: 10.h),
           itemCount: itemCount,
-          separatorBuilder: (context, index) => SizedBox(height: 14.h),
+          separatorBuilder: (context, index) => SizedBox(height: 12.h),
           itemBuilder: (context, index) {
             if (index >= state.filteredItems.length) {
               return Padding(
@@ -137,6 +139,7 @@ class _LabTestCatalogListBlockWidgetState
               requirementLabel: widget.requirementLabel,
               sampleTypeLabel: widget.sampleTypeLabel,
               feeFallbackText: widget.feeFallbackText,
+              showLabsSummary: widget.showLabsSummary,
             );
           },
         );
