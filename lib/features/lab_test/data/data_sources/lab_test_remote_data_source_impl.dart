@@ -14,6 +14,7 @@ import '../../../payment/domain/entities/payment_initiation_result.dart';
 import '../../domain/use_cases/abandon_lab_test_booking_use_case.dart';
 import '../mock/lab_orders_mock_api.dart';
 import '../mock/lab_test_mock_api.dart';
+import '../models/lab_list_response_model.dart';
 import '../models/lab_order_model.dart';
 import '../models/lab_test_catalog_model.dart';
 import '../models/lab_test_detail_response_model.dart';
@@ -60,6 +61,36 @@ class LabTestRemoteDataSourceImpl implements LabTestRemoteDataSource {
         e,
         endpoint: AppUrls.labTestCatalog,
       );
+      return Future.error(message);
+    }
+  }
+
+  @override
+  Future<LabListResponseModel> getLabs({required String cityId}) async {
+    final endpoint = AppUrls.labs(cityId: cityId);
+    try {
+      final Map<String, dynamic> response;
+      if (LabTestMockApi.useMockResponses) {
+        response = await mockApi.getLabsSuccessResponse(cityId: cityId);
+      } else {
+        response = await apiService.get(endpoint);
+        log('getLabs response: $response');
+      }
+
+      final parsed = LabListResponseModel.fromJson(response);
+      if (_isSuccessResponse(response) || parsed.labs.isNotEmpty) {
+        return parsed;
+      }
+
+      if (response['data'] != null) {
+        return parsed;
+      }
+
+      final message = (response['message'] ?? AppStrings.ourServicesLoadError)
+          .toString();
+      return Future.error(message);
+    } catch (e) {
+      final message = ErrorHandler.handleExceptions(e, endpoint: endpoint);
       return Future.error(message);
     }
   }

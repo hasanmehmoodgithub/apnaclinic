@@ -102,6 +102,71 @@ class LabTestMockApi {
     };
   }
 
+  Future<Map<String, dynamic>> getLabsSuccessResponse({
+    required String cityId,
+  }) async {
+    await Future<void>.delayed(const Duration(milliseconds: 400));
+    final _ = cityId;
+    return {
+      'success': true,
+      'message': 'Labs retrieved',
+      'data': [
+        {
+          'id': 10,
+          'publicId': 'idc-public',
+          'name': 'Islamabad Diagnostic Center (IDC)',
+          'slug': 'islamabad-diagnostic-center-idc',
+          'logoUrl': 'assets/svg/lab_test/IDC_logo.svg',
+          'supportsHomeSampling': true,
+          'supportsWalkIn': true,
+          'homeSamplingFee': '0.00',
+          'rating': '4.50',
+          'estimatedReportHours': 24,
+          'accreditationBadges': null,
+        },
+        {
+          'id': 1,
+          'publicId': 'chughtai-public',
+          'name': 'Chughtai Lab',
+          'slug': 'chughtai-lab',
+          'logoUrl': 'assets/svg/lab_test/chughtai_lab_logo.svg',
+          'supportsHomeSampling': true,
+          'supportsWalkIn': true,
+          'homeSamplingFee': '0.00',
+          'rating': '4.50',
+          'estimatedReportHours': 24,
+          'accreditationBadges': null,
+        },
+        {
+          'id': 15,
+          'publicId': 'nayab-public',
+          'name': 'Nayab labs',
+          'slug': 'nayab-labs',
+          'logoUrl': 'assets/svg/lab_test/naya_lab_logo.svg',
+          'supportsHomeSampling': true,
+          'supportsWalkIn': true,
+          'homeSamplingFee': '0.00',
+          'rating': '4.50',
+          'estimatedReportHours': 24,
+          'accreditationBadges': null,
+        },
+        {
+          'id': 12,
+          'publicId': 'excel-public',
+          'name': 'Excel Lab',
+          'slug': 'excel-lab',
+          'logoUrl': 'assets/svg/lab_test/excel_lab_logo.svg',
+          'supportsHomeSampling': true,
+          'supportsWalkIn': true,
+          'homeSamplingFee': '0.00',
+          'rating': '4.50',
+          'estimatedReportHours': 24,
+          'accreditationBadges': null,
+        },
+      ],
+    };
+  }
+
   Future<Map<String, dynamic>> getLabTestsSuccessResponse({
     required String cityId,
     int page = 1,

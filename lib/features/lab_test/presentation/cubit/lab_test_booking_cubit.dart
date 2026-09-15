@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../domain/entities/lab_test_cart_item.dart';
+import '../../domain/entities/lab_test_patient_details.dart';
 import '../../domain/repositories/lab_test_cart_repository.dart';
 import '../../domain/use_cases/get_lab_test_detail_use_case.dart';
 import '../../domain/utils/lab_test_item_booking_helper.dart';
@@ -27,8 +28,17 @@ class LabTestBookingCubit extends Cubit<LabTestBookingState> {
   Future<void> hydrate() async {
     final items = await _cartRepository.readCart();
     _sharedCartCubit.replaceItems(items);
-    emit(state.copyWith(cartItems: items));
+    emit(
+      state.copyWith(
+        cartItems: items,
+        patientDetails: state.patientDetails ?? _patientFromCart(items),
+      ),
+    );
     _applyCartSelectionPreferences();
+  }
+
+  void setPatientDetails(LabTestPatientDetails details) {
+    emit(state.copyWith(patientDetails: details));
   }
 
   Future<void> loadDetailIfNeeded() async {
@@ -51,8 +61,12 @@ class LabTestBookingCubit extends Cubit<LabTestBookingState> {
           return;
         }
 
-        final labVisit = LabTestItemBookingHelper.resolveInitialLabVisit(
+        final scopedOffers = LabTestItemBookingHelper.offersForLab(
           labOffers: detail.labOffers,
+          labId: args.preferredLabId,
+        );
+        final labVisit = LabTestItemBookingHelper.resolveInitialLabVisit(
+          labOffers: scopedOffers.isNotEmpty ? scopedOffers : detail.labOffers,
           preferLabVisit: state.cartItems.isEmpty
               ? null
               : !state.cartItems.first.bookingMethodIsHomeSample,
@@ -64,6 +78,9 @@ class LabTestBookingCubit extends Cubit<LabTestBookingState> {
               detail: detail,
               city: args.city,
               requirementLines: args.requirementLines,
+              preferredLabId: args.preferredLabId,
+              preferredLabName: args.preferredLabName,
+              preferredLabLogoUrl: args.preferredLabLogoUrl,
             ),
             clearLoadError: true,
             labVisit: labVisit,
@@ -71,6 +88,7 @@ class LabTestBookingCubit extends Cubit<LabTestBookingState> {
             selectedVendorIndex: 0,
           ),
         );
+        _applyPreferredLabSelection();
         _applyCartSelectionPreferences();
       },
     );
@@ -113,6 +131,7 @@ class LabTestBookingCubit extends Cubit<LabTestBookingState> {
         selectedVendorIndex: 0,
       ),
     );
+    _applyPreferredLabSelection();
     _selectCartPartnerForCurrentMethod();
   }
 
@@ -123,7 +142,35 @@ class LabTestBookingCubit extends Cubit<LabTestBookingState> {
       emit(state.copyWith(selectedVendorIndex: index));
 
   /// Prefill booking method + partner (+ lab when available) from the cart.
+  void _applyPreferredLabSelection() {
+    if (state.args.isPending || !state.args.hasPreferredLab) return;
+    final labId = state.args.preferredLabId!.trim();
+    final partners = state.filteredPartners;
+    for (var partnerIndex = 0; partnerIndex < partners.length; partnerIndex++) {
+      final partner = partners[partnerIndex];
+      final vendors = LabTestItemBookingHelper.vendorsForPartner(
+        labOffers: state.scopedLabOffers,
+        partnerId: partner.id,
+        labVisit: state.labVisit,
+      );
+      final vendorIndex = vendors.indexWhere((v) => v.id == labId);
+      if (vendorIndex < 0) continue;
+      emit(
+        state.copyWith(
+          partnerTab: partnerIndex,
+          selectedVendorIndex: vendorIndex,
+        ),
+      );
+      return;
+    }
+  }
+
+  /// Prefill booking method + partner (+ lab when available) from the cart.
   void _applyCartSelectionPreferences() {
+    if (state.args.hasPreferredLab) {
+      _applyPreferredLabSelection();
+      return;
+    }
     if (state.cartItems.isEmpty || state.args.isPending) return;
 
     final first = state.cartItems.first;
@@ -151,7 +198,7 @@ class LabTestBookingCubit extends Cubit<LabTestBookingState> {
     if (partnerId.isEmpty) return;
 
     final partnerIds = LabTestItemBookingHelper.partnerIdsForBookingMethod(
-      labOffers: state.args.labOffers,
+      labOffers: state.scopedLabOffers,
       labVisit: state.labVisit,
     );
     final partners = state.args.partners
@@ -161,7 +208,7 @@ class LabTestBookingCubit extends Cubit<LabTestBookingState> {
     if (partnerIndex < 0) return;
 
     final vendors = LabTestItemBookingHelper.vendorsForPartner(
-      labOffers: state.args.labOffers,
+      labOffers: state.scopedLabOffers,
       partnerId: partnerId,
       labVisit: state.labVisit,
     );
@@ -190,6 +237,7 @@ class LabTestBookingCubit extends Cubit<LabTestBookingState> {
       labLogoUrl: vendor.logoUrl,
       partnerId: partner.id,
       partnerLogoUrl: partner.logoUrl,
+      partnerName: partner.name,
       sampleType: a.sampleType,
       requirementLabel: a.requirementLabel,
       requirementLines: a.requirementLines,
@@ -200,6 +248,21 @@ class LabTestBookingCubit extends Cubit<LabTestBookingState> {
       discountCode: pricing.discountCode,
       totalAmount: pricing.totalAmount,
       bookingMethodIsHomeSample: !state.labVisit,
+      patientName: state.patientDetails?.name ?? '',
+      patientAge: state.patientDetails?.age ?? '',
+      patientGender: state.patientDetails?.gender ?? '',
+    );
+  }
+
+  LabTestPatientDetails? _patientFromCart(List<LabTestCartItem> items) {
+    if (items.isEmpty) return null;
+    final first = items.first;
+    final name = first.patientName.trim();
+    if (name.isEmpty) return null;
+    return LabTestPatientDetails(
+      name: name,
+      age: first.patientAge,
+      gender: first.patientGender == 'female' ? 'female' : 'male',
     );
   }
 }

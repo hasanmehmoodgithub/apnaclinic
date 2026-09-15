@@ -3,15 +3,21 @@ import '../../../payment/domain/entities/payment_initiation_result.dart';
 import '../entities/lab_order_entity.dart';
 import '../entities/lab_test_catalog_entity.dart';
 import '../entities/lab_test_detail_entity.dart';
+import '../entities/lab_test_vendor_entity.dart';
 import '../use_cases/abandon_lab_test_booking_use_case.dart';
 import '../use_cases/book_lab_test_use_case.dart';
 import '../use_cases/download_lab_report_use_case.dart';
 import '../use_cases/get_lab_test_catalog_use_case.dart';
 import '../use_cases/get_lab_test_detail_use_case.dart';
+import '../use_cases/get_labs_use_case.dart';
 
 abstract class LabTestRepository {
   Future<Either<ErrorMsg, LabTestCatalogEntity>> getLabTestCatalog(
     GetLabTestCatalogParams params,
+  );
+
+  Future<Either<ErrorMsg, List<LabTestVendorEntity>>> getLabs(
+    GetLabsParams params,
   );
 
   Future<Either<ErrorMsg, LabTestDetailEntity>> getLabTestDetail(

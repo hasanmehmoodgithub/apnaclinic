@@ -333,6 +333,10 @@ class AppUrls {
 
   static String get labTestCatalog => '$_normalizedApiBaseUrl/lab/test';
 
+  /// Labs available in a city (pick a lab before tests).
+  static String labs({required String cityId}) =>
+      '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/labs?cityId=${Uri.encodeComponent(cityId)}';
+
   /// Paginated lab tests with available labs, sample type, and pricing.
   static String labTests({
     required String cityId,

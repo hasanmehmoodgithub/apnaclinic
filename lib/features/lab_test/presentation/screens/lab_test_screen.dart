@@ -1,5 +1,4 @@
-// Lab test browse: composes gradient shell + white panel; city prompt runs once
-// after catalog load via BlocListener + post-frame (avoids sheet during loading).
+// Lab test hub: city + labs grid. Tests load after a lab is picked.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -16,9 +15,8 @@ import '../../../../core/preference/app_pref_keys.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/utils/auth_guard.dart';
 import '../../../../core/widgets/app_scaffold_gradient.dart';
-import '../../domain/entities/lab_test_item_entity.dart';
+import '../../domain/entities/lab_test_vendor_entity.dart';
 import '../cubit/lab_test_cart_cubit.dart';
-import '../cubit/lab_test_cart_state.dart';
 import '../cubit/lab_test_cubit.dart';
 import '../cubit/lab_test_state.dart';
 import '../lab_test_analytics.dart';
@@ -26,10 +24,9 @@ import '../lab_test_cart_change_guard.dart';
 import '../lab_test_navigation.dart';
 import '../lab_test_route_args.dart';
 import '../widgets/lab_test_browse_header_widget.dart';
-import '../widgets/lab_test_browse_search_field_widget.dart';
 import '../widgets/lab_test_browse_white_panel_widget.dart';
-import '../widgets/lab_test_catalog_list_block_widget.dart';
 import '../widgets/lab_test_city_selector_field_widget.dart';
+import '../widgets/lab_test_labs_grid_block_widget.dart';
 
 class LabTestScreen extends StatefulWidget {
   const LabTestScreen({super.key});
@@ -39,7 +36,6 @@ class LabTestScreen extends StatefulWidget {
 }
 
 class _LabTestScreenState extends State<LabTestScreen> {
-  final TextEditingController _searchController = TextEditingController();
   final AppPref _appPref = sl<AppPref>();
 
   bool _hasResolvedInitialCity = false;
@@ -65,20 +61,12 @@ class _LabTestScreenState extends State<LabTestScreen> {
   }
 
   @override
-  void dispose() {
-    _searchController.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final cubit = context.read<LabTestCubit>();
 
     return BlocListener<LabTestCubit, LabTestState>(
       listenWhen: (previous, current) =>
-          previous.catalogLoadingStateStatus !=
-              current.catalogLoadingStateStatus ||
+          previous.labsLoadingStateStatus != current.labsLoadingStateStatus ||
           previous.cities != current.cities ||
           previous.selectedCity != current.selectedCity,
       listener: (context, state) =>
@@ -86,25 +74,12 @@ class _LabTestScreenState extends State<LabTestScreen> {
       child: AppScaffoldGradient(
         child: Column(
           children: [
-            BlocBuilder<LabTestCartCubit, LabTestCartState>(
-              buildWhen: (previous, current) =>
-                  previous.items.length != current.items.length,
-              builder: (context, cartState) {
-                final cartCount = AuthGuard.isLoggedIn(_appPref)
-                    ? cartState.items.length
-                    : 0;
-                return LabTestBrowseHeaderWidget(
-                  padding: EdgeInsets.fromLTRB(12.w, 4.h, 16.w, 18.h),
-                  title: l10n.labTestScreenTitle,
-                  cartCount: cartCount,
-                  cartBadgeOverflowLabel: l10n.labTestCartBadgeOverflow,
-                  onCartTap: () async {
-                    await labTestOpenCart(context);
-                    if (!mounted) return;
-                    await context.read<LabTestCartCubit>().load();
-                  },
-                );
-              },
+            LabTestBrowseHeaderWidget(
+              padding: EdgeInsets.fromLTRB(12.w, 4.h, 16.w, 18.h),
+              title: l10n.labTestScreenTitle,
+              cartCount: 0,
+              cartBadgeOverflowLabel: l10n.labTestCartBadgeOverflow,
+              showCart: false,
             ),
             Expanded(
               child: LabTestBrowseWhitePanelWidget(
@@ -123,7 +98,7 @@ class _LabTestScreenState extends State<LabTestScreen> {
                     ),
                     SizedBox(height: 16.h),
                     Text(
-                      l10n.labTestSelectTestHeading,
+                      l10n.labTestSelectLabHeading,
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
                             color: const Color(0xFF061E40),
                             fontWeight: FontWeight.w500,
@@ -131,23 +106,13 @@ class _LabTestScreenState extends State<LabTestScreen> {
                           ),
                     ),
                     SizedBox(height: 12.h),
-                    LabTestBrowseSearchFieldWidget(
-                      controller: _searchController,
-                      hintText: l10n.labTestSearchFieldHint,
-                      onSearchTapped: LabTestAnalytics.logSearchClicked,
-                      onSearch: cubit.submitSearch,
-                      onClear: () => cubit.submitSearch(''),
-                    ),
                     Expanded(
-                      child: LabTestCatalogListBlockWidget(
-                        loadFailedMessage: l10n.labTestCatalogLoadFailed,
-                        emptyMessage: l10n.labTestNoRecordFound,
+                      child: LabTestLabsGridBlockWidget(
+                        loadFailedMessage: l10n.labTestLabsLoadFailed,
+                        emptyMessage: l10n.labTestNoLabsFound,
                         selectCityFirstMessage:
                             l10n.labTestPleaseSelectCityFirst,
-                        requirementLabel: l10n.labTestRequirementLabel,
-                        sampleTypeLabel: l10n.labTestSampleTypeLabel,
-                        feeFallbackText: l10n.labTestBrowseItemFeeFallback,
-                        onItemTap: (item) => _onTestTap(context, item),
+                        onLabTap: (lab) => _onLabTap(context, lab),
                       ),
                     ),
                   ],
@@ -201,8 +166,7 @@ class _LabTestScreenState extends State<LabTestScreen> {
     LabTestState state,
   ) {
     if (_hasResolvedInitialCity) return;
-    if (state.catalogLoadingStateStatus == StateStatus.loading ||
-        state.catalogLoadingStateStatus == StateStatus.refreshing) {
+    if (state.labsLoadingStateStatus == StateStatus.loading) {
       return;
     }
 
@@ -224,7 +188,7 @@ class _LabTestScreenState extends State<LabTestScreen> {
     }
 
     if (state.cities.isEmpty) {
-      if (state.catalogLoadingStateStatus == StateStatus.error) {
+      if (state.labsLoadingStateStatus == StateStatus.error) {
         _hasResolvedInitialCity = true;
       }
       return;
@@ -243,40 +207,24 @@ class _LabTestScreenState extends State<LabTestScreen> {
     }
   }
 
-  Future<void> _onTestTap(BuildContext context, LabTestItemEntity item) async {
+  Future<void> _onLabTap(
+    BuildContext context,
+    LabTestVendorEntity lab,
+  ) async {
     if (!context.requireLogin(loginSource: AnalyticsAuthSourceKeys.lab)) {
       return;
     }
 
-    final l10n = AppLocalizations.of(context)!;
     final cubit = context.read<LabTestCubit>();
-    final state = cubit.state;
-    final selectedCity = state.selectedCity;
-    if (selectedCity == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.labTestPleaseSelectCityFirst)),
-      );
-      _openCityDialog(context, state.cities, l10n);
-      return;
-    }
-
-    final testId = int.tryParse(item.id);
-    if (testId == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.labTestBookingDataUnavailable)),
-      );
-      return;
-    }
-
-    LabTestAnalytics.logItemSelectFromCatalog(item);
+    final city = cubit.state.selectedCity;
+    if (city == null || city.isEmpty) return;
 
     await context.pushNamed(
-      AppRoutes.labTestBooking,
-      extra: LabTestBookingArgs.pending(
-        testId: testId,
-        city: selectedCity,
-        requirementLines: state.requirementLines,
-        testTitle: item.title,
+      AppRoutes.labTestSelectTest,
+      extra: LabTestSelectTestArgs(
+        city: city,
+        lab: lab,
+        requirementLines: cubit.state.requirementLines,
       ),
     );
     if (!context.mounted) return;

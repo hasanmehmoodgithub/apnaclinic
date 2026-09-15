@@ -53,6 +53,7 @@ class AppRoutes {
   static String labTestCart = 'labTestCart';
   static String labTestViewDetails = 'labTestViewDetails';
   static String labTestReportViewer = 'labTestReportViewer';
+  static String labTestSelectTest = 'labTestSelectTest';
 
   /// Get route path with leading "/"
   static String path(String route) {

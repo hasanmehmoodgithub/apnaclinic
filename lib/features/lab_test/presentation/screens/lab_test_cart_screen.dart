@@ -61,9 +61,8 @@ class _LabTestCartScreenState extends State<LabTestCartScreen> {
                                 separatorBuilder: (_, _) =>
                                     SizedBox(height: 12.h),
                                 itemBuilder: (context, index) {
-                                  return LabTestCartItemTileWidget(
+                                  return LabTestCartItemTileWidget.fromCartItem(
                                     item: state.items[index],
-                                    sampleTypeLabel: l10n.labTestSampleTypeLabel,
                                     onRemove: () => _onRemoveAt(context, index),
                                   );
                                 },

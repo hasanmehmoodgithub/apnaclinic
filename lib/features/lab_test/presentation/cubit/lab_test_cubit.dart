@@ -7,34 +7,41 @@ import '../../../../core/preference/app_pref_keys.dart';
 import '../../domain/entities/lab_test_item_entity.dart';
 import '../../domain/entities/lab_test_vendor_entity.dart';
 import '../../domain/use_cases/get_lab_test_catalog_use_case.dart';
+import '../../domain/use_cases/get_labs_use_case.dart';
 import '../lab_test_analytics.dart';
+import '../lab_test_route_args.dart';
 import 'lab_test_state.dart';
 
 class LabTestCubit extends Cubit<LabTestState> {
   LabTestCubit({
     required this.getLabTestCatalogUseCase,
+    required this.getLabsUseCase,
     required this.appPref,
     required this.citiesRepository,
+    this.autoBootstrap = true,
   }) : super(const LabTestState()) {
-    bootstrap();
+    if (autoBootstrap) bootstrap();
   }
 
   static const int _pageSize = 20;
 
   final GetLabTestCatalogUseCase getLabTestCatalogUseCase;
+  final GetLabsUseCase getLabsUseCase;
   final AppPref appPref;
   final CitiesRepository citiesRepository;
+  final bool autoBootstrap;
 
   /// Set by [submitSearch] so city/browse loads do not fire search analytics.
   bool _pendingSearchPerformedLog = false;
 
-  /// Loads cities, restores saved city from prefs, then calls lab tests API.
+  /// Loads cities, restores saved city from prefs, then loads labs for that city.
   Future<void> bootstrap() async {
     final savedRaw = appPref.getString(AppPrefKeys.labTestSelectedCity)?.trim();
 
     emit(
       state.copyWith(
-        catalogLoadingStateStatus: StateStatus.loading,
+        labsLoadingStateStatus: StateStatus.loading,
+        catalogLoadingStateStatus: StateStatus.idle,
         clearErrorMessage: true,
       ),
     );
@@ -48,7 +55,7 @@ class LabTestCubit extends Cubit<LabTestState> {
       (error) async {
         emit(
           state.copyWith(
-            catalogLoadingStateStatus: StateStatus.error,
+            labsLoadingStateStatus: StateStatus.error,
             errorMessage: error,
           ),
         );
@@ -68,17 +75,69 @@ class LabTestCubit extends Cubit<LabTestState> {
 
         if (resolvedCity != null) {
           emit(state.copyWith(selectedCity: resolvedCity));
-          await loadCatalog(cityName: resolvedCity);
+          await loadLabs(cityName: resolvedCity);
           return;
         }
 
         emit(
           state.copyWith(
-            catalogLoadingStateStatus: StateStatus.idle,
+            labsLoadingStateStatus: StateStatus.idle,
             clearSelectedCity: true,
+            clearSelectedLab: true,
           ),
         );
       },
+    );
+  }
+
+  Future<void> startSelectTest(LabTestSelectTestArgs args) async {
+    emit(
+      state.copyWith(
+        selectedCity: args.city,
+        selectedLab: args.lab,
+        requirementLines: args.requirementLines,
+        searchQuery: '',
+        clearErrorMessage: true,
+      ),
+    );
+    await loadCatalog(cityName: args.city, lab: args.lab);
+  }
+
+  Future<void> loadLabs({required String cityName}) async {
+    final resolvedCity = _resolveCityName(cityName) ?? cityName.trim();
+    if (resolvedCity.isEmpty) return;
+
+    emit(
+      state.copyWith(
+        labsLoadingStateStatus: StateStatus.loading,
+        selectedCity: resolvedCity,
+        labs: const [],
+        clearSelectedLab: true,
+        items: const [],
+        filteredItems: const [],
+        catalogLoadingStateStatus: StateStatus.idle,
+        clearErrorMessage: true,
+      ),
+    );
+
+    final result = await getLabsUseCase(GetLabsParams(cityName: resolvedCity));
+    if (isClosed) return;
+
+    result.fold(
+      (error) => emit(
+        state.copyWith(
+          labsLoadingStateStatus: StateStatus.error,
+          errorMessage: error,
+        ),
+      ),
+      (labs) => emit(
+        state.copyWith(
+          labsLoadingStateStatus:
+              labs.isEmpty ? StateStatus.empty : StateStatus.success,
+          labs: labs,
+          clearErrorMessage: true,
+        ),
+      ),
     );
   }
 
@@ -86,6 +145,7 @@ class LabTestCubit extends Cubit<LabTestState> {
     required String cityName,
     bool refresh = false,
     String? search,
+    LabTestVendorEntity? lab,
   }) async {
     final resolvedCity = _resolveCityName(cityName) ?? cityName.trim();
     if (resolvedCity.isEmpty) {
@@ -93,12 +153,14 @@ class LabTestCubit extends Cubit<LabTestState> {
       return;
     }
 
+    final selectedLab = lab ?? state.selectedLab;
     emit(
       state.copyWith(
         catalogLoadingStateStatus: refresh
             ? StateStatus.refreshing
             : StateStatus.loading,
         selectedCity: resolvedCity,
+        selectedLab: selectedLab,
         isLoadingMore: false,
         currentPage: 1,
         totalPages: 1,
@@ -113,6 +175,7 @@ class LabTestCubit extends Cubit<LabTestState> {
         page: 1,
         limit: _pageSize,
         search: search,
+        labId: selectedLab?.id,
       ),
     );
     if (isClosed) return;
@@ -144,7 +207,7 @@ class LabTestCubit extends Cubit<LabTestState> {
             catalogLoadingStateStatus: items.isEmpty
                 ? StateStatus.empty
                 : StateStatus.success,
-            cities: catalog.cities,
+            cities: catalog.cities.isEmpty ? state.cities : catalog.cities,
             items: items,
             filteredItems: items,
             requirementLines: catalog.requirementLines,
@@ -188,6 +251,7 @@ class LabTestCubit extends Cubit<LabTestState> {
         search: state.searchQuery.trim().isEmpty
             ? null
             : state.searchQuery.trim(),
+        labId: state.selectedLab?.id,
       ),
     );
     if (isClosed) return;
@@ -247,6 +311,7 @@ class LabTestCubit extends Cubit<LabTestState> {
     await loadCatalog(
       cityName: city,
       search: query.isEmpty ? null : query,
+      lab: state.selectedLab,
     );
   }
 
@@ -257,12 +322,7 @@ class LabTestCubit extends Cubit<LabTestState> {
     await appPref.setString(AppPrefKeys.labTestSelectedCity, resolvedCity);
     LabTestAnalytics.logCityChange(resolvedCity);
 
-    await loadCatalog(
-      cityName: resolvedCity,
-      search: state.searchQuery.trim().isEmpty
-          ? null
-          : state.searchQuery.trim(),
-    );
+    await loadLabs(cityName: resolvedCity);
   }
 
   bool isCityInList(String city) => _resolveCityName(city) != null;

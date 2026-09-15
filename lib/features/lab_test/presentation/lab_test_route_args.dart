@@ -1,5 +1,6 @@
 import '../domain/entities/lab_test_detail_entity.dart';
 import '../domain/entities/lab_test_lab_offer_entity.dart';
+import '../domain/entities/lab_test_vendor_entity.dart';
 
 class LabTestBookingPartnerOption {
   const LabTestBookingPartnerOption({
@@ -27,12 +28,27 @@ class LabTestBookingVendorOption {
   final String? markUrl;
 }
 
+class LabTestSelectTestArgs {
+  const LabTestSelectTestArgs({
+    required this.city,
+    required this.lab,
+    this.requirementLines = const [],
+  });
+
+  final String city;
+  final LabTestVendorEntity lab;
+  final List<String> requirementLines;
+}
+
 class LabTestBookingArgs {
   const LabTestBookingArgs.pending({
     required this.testId,
     required this.city,
     required this.requirementLines,
     this.testTitle = '',
+    this.preferredLabId,
+    this.preferredLabName,
+    this.preferredLabLogoUrl,
   }) : isPending = true,
        sampleType = '',
        requirementLabel = null,
@@ -48,12 +64,18 @@ class LabTestBookingArgs {
     required this.partners,
     required this.labOffers,
     this.testId,
+    this.preferredLabId,
+    this.preferredLabName,
+    this.preferredLabLogoUrl,
   }) : isPending = false;
 
   factory LabTestBookingArgs.fromDetail({
     required LabTestDetailEntity detail,
     required String city,
     required List<String> requirementLines,
+    String? preferredLabId,
+    String? preferredLabName,
+    String? preferredLabLogoUrl,
   }) {
     return LabTestBookingArgs(
       testId: detail.id,
@@ -72,6 +94,9 @@ class LabTestBookingArgs {
           )
           .toList(growable: false),
       labOffers: detail.labOffers,
+      preferredLabId: preferredLabId,
+      preferredLabName: preferredLabName,
+      preferredLabLogoUrl: preferredLabLogoUrl,
     );
   }
 
@@ -84,6 +109,12 @@ class LabTestBookingArgs {
   final List<String> requirementLines;
   final List<LabTestBookingPartnerOption> partners;
   final List<LabTestLabOfferEntity> labOffers;
+  final String? preferredLabId;
+  final String? preferredLabName;
+  final String? preferredLabLogoUrl;
+
+  bool get hasPreferredLab =>
+      preferredLabId != null && preferredLabId!.trim().isNotEmpty;
 }
 
 /// One cart test shown on checkout (Payment Details) before the totals card.
@@ -92,8 +123,10 @@ class LabTestCheckoutLineArgs {
     required this.testTitle,
     required this.labDisplayName,
     required this.labLogoUrl,
+    required this.partnerName,
     required this.partnerLogoUrl,
     required this.sampleType,
+    this.requirementLabel = '',
     required this.discountedFee,
     required this.originalFee,
     required this.bookingMethodIsHomeSample,
@@ -102,8 +135,10 @@ class LabTestCheckoutLineArgs {
   final String testTitle;
   final String labDisplayName;
   final String labLogoUrl;
+  final String partnerName;
   final String partnerLogoUrl;
   final String sampleType;
+  final String requirementLabel;
   final String discountedFee;
   final String originalFee;
   final bool bookingMethodIsHomeSample;
@@ -130,6 +165,9 @@ class LabTestCheckoutArgs {
     this.partnerId = '',
     this.labId = '',
     this.lines = const <LabTestCheckoutLineArgs>[],
+    this.patientName = '',
+    this.patientAge = '',
+    this.patientGender = '',
   });
 
   final String city;
@@ -161,6 +199,10 @@ class LabTestCheckoutArgs {
 
   /// Every cart test to render above the payment breakdown.
   final List<LabTestCheckoutLineArgs> lines;
+
+  final String patientName;
+  final String patientAge;
+  final String patientGender;
 }
 
 class LabTestViewDetailsArgs {

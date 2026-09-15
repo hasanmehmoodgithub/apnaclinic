@@ -17,6 +17,7 @@ import 'domain/use_cases/abandon_lab_test_booking_use_case.dart';
 import 'domain/use_cases/download_lab_report_use_case.dart';
 import 'domain/use_cases/get_lab_test_catalog_use_case.dart';
 import 'domain/use_cases/get_lab_test_detail_use_case.dart';
+import 'domain/use_cases/get_labs_use_case.dart';
 import 'presentation/cubit/lab_test_cart_cubit.dart';
 import 'presentation/cubit/lab_test_cubit.dart';
 
@@ -47,6 +48,10 @@ void initLabTestInjector() {
     () => GetLabTestCatalogUseCase(repository: sl<LabTestRepository>()),
   );
 
+  sl.registerLazySingleton<GetLabsUseCase>(
+    () => GetLabsUseCase(repository: sl<LabTestRepository>()),
+  );
+
   sl.registerLazySingleton<GetLabTestDetailUseCase>(
     () => GetLabTestDetailUseCase(repository: sl<LabTestRepository>()),
   );
@@ -74,6 +79,7 @@ void initLabTestInjector() {
   sl.registerFactory<LabTestCubit>(
     () => LabTestCubit(
       getLabTestCatalogUseCase: sl<GetLabTestCatalogUseCase>(),
+      getLabsUseCase: sl<GetLabsUseCase>(),
       appPref: sl<AppPref>(),
       citiesRepository: sl<CitiesRepository>(),
     ),

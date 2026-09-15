@@ -15,6 +15,7 @@ class LabTestBrowseHeaderWidget extends StatelessWidget {
     required this.cartCount,
     required this.cartBadgeOverflowLabel,
     this.onCartTap,
+    this.showCart = true,
   });
 
   final EdgeInsetsGeometry padding;
@@ -22,6 +23,7 @@ class LabTestBrowseHeaderWidget extends StatelessWidget {
   final int cartCount;
   final String cartBadgeOverflowLabel;
   final Future<void> Function()? onCartTap;
+  final bool showCart;
 
   @override
   Widget build(BuildContext context) {
@@ -59,7 +61,10 @@ class LabTestBrowseHeaderWidget extends StatelessWidget {
               ),
             ),
           ),
-          InkWell(
+          if (!showCart)
+            SizedBox(width: 40.r, height: 40.r)
+          else
+            InkWell(
             onTap: onCartTap == null ? null : () async => onCartTap!(),
             borderRadius: BorderRadius.circular(20.r),
             child: Stack(

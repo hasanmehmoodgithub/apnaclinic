@@ -37,6 +37,10 @@ import '../../features/lab_test/presentation/screens/lab_test_checkout_screen.da
 import '../../features/lab_test/presentation/screens/lab_test_screen.dart';
 import '../../features/lab_test/presentation/screens/lab_test_view_details_screen.dart';
 import '../../features/lab_test/presentation/screens/lab_test_report_viewer_screen.dart';
+import '../../features/lab_test/presentation/screens/lab_test_select_test_screen.dart';
+import '../../features/lab_test/domain/use_cases/get_lab_test_catalog_use_case.dart';
+import '../../features/lab_test/domain/use_cases/get_labs_use_case.dart';
+import '../cities/domain/repositories/cities_repository.dart';
 import '../../features/notification/presentation/cubit/notification_cubit.dart';
 import '../../features/notification/presentation/screens/notifcation_screen.dart';
 import '../../features/bookings/presentation/screens/surgery_booking_details_screen.dart';
@@ -424,6 +428,41 @@ class AppRouter {
           ],
           child: const LabTestScreen(),
         ),
+      ),
+      GoRoute(
+        path: AppRoutes.path(AppRoutes.labTestSelectTest),
+        name: AppRoutes.labTestSelectTest,
+        builder: (context, state) {
+          final extra = state.extra;
+          if (extra is! LabTestSelectTestArgs) {
+            return MultiBlocProvider(
+              providers: [
+                BlocProvider<LabTestCubit>(create: (_) => sl<LabTestCubit>()),
+                BlocProvider<LabTestCartCubit>.value(
+                  value: sl<LabTestCartCubit>(),
+                ),
+              ],
+              child: const LabTestScreen(),
+            );
+          }
+          return MultiBlocProvider(
+            providers: [
+              BlocProvider<LabTestCubit>(
+                create: (_) => LabTestCubit(
+                  getLabTestCatalogUseCase: sl<GetLabTestCatalogUseCase>(),
+                  getLabsUseCase: sl<GetLabsUseCase>(),
+                  appPref: sl<AppPref>(),
+                  citiesRepository: sl<CitiesRepository>(),
+                  autoBootstrap: false,
+                )..startSelectTest(extra),
+              ),
+              BlocProvider<LabTestCartCubit>.value(
+                value: sl<LabTestCartCubit>(),
+              ),
+            ],
+            child: const LabTestSelectTestScreen(),
+          );
+        },
       ),
       GoRoute(
         path: AppRoutes.path(AppRoutes.labTestBooking),

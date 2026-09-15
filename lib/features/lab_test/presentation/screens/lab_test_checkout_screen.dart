@@ -30,11 +30,11 @@ import '../cubit/lab_test_cart_cubit.dart';
 import '../lab_test_analytics.dart';
 import '../lab_test_route_args.dart';
 import '../widgets/lab_test_booking_confirmation_dialog_widget.dart';
+import '../widgets/lab_test_cart_item_tile_widget.dart';
 import '../widgets/lab_test_checkout_bottom_bar_widget.dart';
 import '../widgets/lab_test_checkout_header_widget.dart';
 import '../widgets/lab_test_checkout_patient_form_section_widget.dart';
 import '../widgets/lab_test_checkout_payment_breakdown_card_widget.dart';
-import '../widgets/lab_test_checkout_summary_card_widget.dart';
 
 /// Checkout + patient details (Figma node `2303:63721`). Success overlay matches `2303:64679`.
 class LabTestCheckoutScreen extends StatefulWidget {
@@ -82,6 +82,12 @@ class _LabTestCheckoutScreenState extends State<LabTestCheckoutScreen> {
     super.dispose();
   }
 
+  /// Patient card stays hidden while the Add Patient sheet data is complete.
+  bool get _hasCompletePatientDetails =>
+      _nameController.text.trim().isNotEmpty &&
+      _phoneController.text.trim().isNotEmpty &&
+      _ageController.text.trim().isNotEmpty;
+
   void _onEmergencyChanged() {
     final emergency = _emergencyController.text.trim();
     final shouldClearBanner =
@@ -119,6 +125,19 @@ class _LabTestCheckoutScreenState extends State<LabTestCheckoutScreen> {
     final age = _ageFromDateOfBirth(user.dateOfBirth);
     if (age != null && age > 0) {
       _ageController.text = age.toString();
+    }
+
+    final cartName = widget.args.patientName.trim();
+    if (cartName.isNotEmpty) {
+      _nameController.text = cartName;
+    }
+    final cartAge = widget.args.patientAge.trim();
+    if (cartAge.isNotEmpty) {
+      _ageController.text = cartAge;
+    }
+    final cartGender = _normalizeGender(widget.args.patientGender);
+    if (cartGender != null) {
+      _gender = cartGender;
     }
   }
 
@@ -349,6 +368,7 @@ class _LabTestCheckoutScreenState extends State<LabTestCheckoutScreen> {
         : l10n.labTestSomethingWentWrong;
 
     await showDialog<void>(
+
       context: context,
       barrierDismissible: false,
       useRootNavigator: true,
@@ -440,13 +460,21 @@ class _LabTestCheckoutScreenState extends State<LabTestCheckoutScreen> {
                       children: [
                         for (var i = 0; i < a.lines.length; i++) ...[
                           if (i > 0) SizedBox(height: 12.h),
-                          LabTestCheckoutSummaryCardWidget(line: a.lines[i]),
+                          LabTestCartItemTileWidget(
+                            testTitle: a.lines[i].testTitle,
+                            labLogoUrl: a.lines[i].labLogoUrl,
+                            partnerName: a.lines[i].partnerName,
+                            partnerLogoUrl: a.lines[i].partnerLogoUrl,
+                            sampleType: a.lines[i].sampleType,
+                            requirementLabel: a.lines[i].requirementLabel,
+                          ),
                         ],
-                        SizedBox(height: 18.h),
+                        SizedBox(height: 12.h),
                         LabTestCheckoutPaymentBreakdownCardWidget(args: a),
-                        SizedBox(height: 18.h),
+                        SizedBox(height: 12.h),
                         LabTestCheckoutPatientFormSectionWidget(
                           theme: theme,
+                          showPatientDetails: !_hasCompletePatientDetails,
                           nameController: _nameController,
                           phoneController: _phoneController,
                           ageController: _ageController,
