@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../../../../components/shimmer/app_shimmer.dart';
 
 import '../../../../core/analytics/analytics_event_keys.dart';
+import '../../../../core/constants/app_colors.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/router/app_routes.dart';
@@ -15,6 +17,7 @@ import '../../../../core/utils/webview_media_permission_utils.dart';
 import '../../domain/entities/ai_screening_entity.dart';
 import '../../domain/entities/consultation_category_entity.dart';
 import '../consultation_analytics.dart';
+import '../constants/consultation_system_ui.dart';
 import '../constants/consultation_ui_config.dart';
 import '../cubit/consultation_cubit.dart';
 import '../cubit/consultation_state.dart';
@@ -61,115 +64,119 @@ class _DoctorConsultationScreenState extends State<DoctorConsultationScreen> {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
-    return Scaffold(
-      body: DecoratedBox(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              ConsultationUiConfig.pageTopGradient,
-              ConsultationUiConfig.pageBottomGradient,
-            ],
-            stops: [0.09, 0.36],
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: consultationSystemUiOverlay,
+      child: Scaffold(
+        backgroundColor: AppColors.clrWhite,
+        body: DecoratedBox(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                ConsultationUiConfig.pageTopGradient,
+                ConsultationUiConfig.pageBottomGradient,
+              ],
+              stops: [0.09, 0.36],
+            ),
           ),
-        ),
-        child: SafeArea(
-          bottom: false,
-          child: Column(
-            children: [
-              ConsultationScreenHeaderWidget(
-                title: ConsultationUiConfig.screenTitle,
-                onBackTap: () => context.pop(),
-              ),
+          child: SafeArea(
+            bottom: false,
+            child: Column(
+              children: [
+                ConsultationScreenHeaderWidget(
+                  title: ConsultationUiConfig.screenTitle,
+                  onBackTap: () => context.pop(),
+                ),
 
-              // ───── Hero illustration (fixed) ─────
-              SizedBox(height: 2.h),
-              SizedBox(
-                height: 178.h,
-                child: Center(
-                  child: SizedBox(
-                    width: 240.w,
-                    height: 178.h,
-                    child: Stack(
-                      alignment: Alignment.topCenter,
-                      children: [
-                        Positioned(
-                          top: 2.h,
-                          child: SvgPicture.asset(
-                            ConsultationUiConfig.heroVectorAsset,
-                            width: 238.w,
-                            height: 172.h,
-                            fit: BoxFit.contain,
+                // ───── Hero illustration (fixed) ─────
+                SizedBox(height: 2.h),
+                SizedBox(
+                  height: 178.h,
+                  child: Center(
+                    child: SizedBox(
+                      width: 240.w,
+                      height: 178.h,
+                      child: Stack(
+                        alignment: Alignment.topCenter,
+                        children: [
+                          Positioned(
+                            top: 2.h,
+                            child: SvgPicture.asset(
+                              ConsultationUiConfig.heroVectorAsset,
+                              width: 238.w,
+                              height: 172.h,
+                              fit: BoxFit.contain,
+                            ),
                           ),
-                        ),
-                        Positioned(
-                          top: 0,
-                          child: Image.asset(
-                            ConsultationUiConfig.heroDoctorAsset,
-                            width: 188.w,
-                            height: 177.h,
-                            fit: BoxFit.cover,
+                          Positioned(
+                            top: 0,
+                            child: Image.asset(
+                              ConsultationUiConfig.heroDoctorAsset,
+                              width: 188.w,
+                              height: 177.h,
+                              fit: BoxFit.cover,
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 ),
-              ),
 
-              // ───── White sheet: fixed assistant + scroll from categories ─────
-              Expanded(
-                child: Container(
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.vertical(
-                      top: Radius.circular(42.r),
+                // ───── White sheet: fixed assistant + scroll from categories ─────
+                Expanded(
+                  child: Container(
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.vertical(
+                        top: Radius.circular(42.r),
+                      ),
                     ),
-                  ),
-                  child: BlocBuilder<ConsultationCubit, ConsultationState>(
-                    builder: (context, state) {
-                      return Padding(
-                        padding: EdgeInsets.fromLTRB(24.w, 22.h, 24.w, 0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            if (state.isLoading) ...[
-                              AppShimmerCard(
-                                height: 150.h,
-                                borderRadius: 10.7.r,
-                              ),
-                              SizedBox(height: 21.h),
-                            ] else if (state.aiScreening?.shouldShow ??
-                                false) ...[
-                              _AssistantCard(
-                                textTheme: textTheme,
-                                screening: state.aiScreening!,
-                              ),
-                              SizedBox(height: 21.h),
-                            ],
-                            Expanded(
-                              child: Padding(
-                                padding: EdgeInsets.only(bottom: 22.h),
-                                child: CustomScrollView(
-                                  slivers: _buildScrollableSlivers(
-                                    context,
-                                    state,
-                                    textTheme,
+                    child: SafeArea(
+                      top: false,
+                      bottom: false,
+                      child: BlocBuilder<ConsultationCubit, ConsultationState>(
+                        builder: (context, state) {
+                          return Padding(
+                            padding: EdgeInsets.fromLTRB(24.w, 22.h, 24.w, 0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                if (state.isLoading) ...[
+                                  AppShimmerCard(
+                                    height: 150.h,
+                                    borderRadius: 10.7.r,
+                                  ),
+                                  SizedBox(height: 21.h),
+                                ] else if (state.aiScreening?.shouldShow ??
+                                    false) ...[
+                                  _AssistantCard(
+                                    textTheme: textTheme,
+                                    screening: state.aiScreening!,
+                                  ),
+                                  SizedBox(height: 21.h),
+                                ],
+                                Expanded(
+                                  child: CustomScrollView(
+                                    slivers: _buildScrollableSlivers(
+                                      context,
+                                      state,
+                                      textTheme,
+                                    ),
                                   ),
                                 ),
-                              ),
+                              ],
                             ),
-                            SizedBox(height: 40.h),
-                          ],
-                        ),
-                      );
-                    },
+                          );
+                        },
+                      ),
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -209,14 +216,19 @@ class _DoctorConsultationScreenState extends State<DoctorConsultationScreen> {
 
     if (state.isLoading) {
       slivers.add(
-        SliverToBoxAdapter(
-          child: AppShimmerGrid(
-            itemCount: 8,
-            crossAxisCount: 2,
-            mainAxisSpacing: 8.h,
-            crossAxisSpacing: 6.w,
-            childAspectRatio: 189.4 / 81.7,
-            borderRadius: 10.7.r,
+        SliverPadding(
+          padding: EdgeInsets.only(
+            bottom: 28.h + MediaQuery.paddingOf(context).bottom,
+          ),
+          sliver: SliverToBoxAdapter(
+            child: AppShimmerGrid(
+              itemCount: 8,
+              crossAxisCount: 2,
+              mainAxisSpacing: 8.h,
+              crossAxisSpacing: 6.w,
+              childAspectRatio: 189.4 / 81.7,
+              borderRadius: 10.7.r,
+            ),
           ),
         ),
       );
@@ -239,42 +251,47 @@ class _DoctorConsultationScreenState extends State<DoctorConsultationScreen> {
     }
 
     slivers.add(
-      SliverGrid(
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          mainAxisSpacing: 8,
-          crossAxisSpacing: 6,
-          childAspectRatio: 189.4 / 81.7,
+      SliverPadding(
+        padding: EdgeInsets.only(
+          bottom: 24.h + MediaQuery.paddingOf(context).bottom,
         ),
-        delegate: SliverChildBuilderDelegate(
-          (context, index) {
-            final category = state.filteredCategories[index];
-            return Builder(
-              builder: (tileContext) {
-                return ConsultationCategoryCard(
-                  category: category,
-                  index: index,
-                  onTap: () {
-                    ConsultationAnalytics.logCategoryClicked(category.title);
-                    context.pushNamed(
-                      AppRoutes.consultationDoctors,
-                      extra: DoctorConsultationResultsArgs(
-                        selectedCategory: category.title,
-                        mainCategoryId: category.id,
-                        categoryOptions: state.categories,
-                      ),
-                    );
-                  },
-                  onInfoTap: (_) => ()
+        sliver: SliverGrid(
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            mainAxisSpacing: 8,
+            crossAxisSpacing: 6,
+            childAspectRatio: 189.4 / 81.7,
+          ),
+          delegate: SliverChildBuilderDelegate(
+            (context, index) {
+              final category = state.filteredCategories[index];
+              return Builder(
+                builder: (tileContext) {
+                  return ConsultationCategoryCard(
+                    category: category,
+                    index: index,
+                    onTap: () {
+                      ConsultationAnalytics.logCategoryClicked(category.title);
+                      context.pushNamed(
+                        AppRoutes.consultationDoctors,
+                        extra: DoctorConsultationResultsArgs(
+                          selectedCategory: category.title,
+                          mainCategoryId: category.id,
+                          categoryOptions: state.categories,
+                        ),
+                      );
+                    },
+                    onInfoTap: (_) => ()
 
-                      // _showProcedureInfo(tileContext, category),
+                        // _showProcedureInfo(tileContext, category),
 
 
-                );
-              },
-            );
-          },
-          childCount: state.filteredCategories.length,
+                  );
+                },
+              );
+            },
+            childCount: state.filteredCategories.length,
+          ),
         ),
       ),
     );

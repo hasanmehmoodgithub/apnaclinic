@@ -22,6 +22,7 @@ import '../../domain/use_cases/get_consultation_doctor_slots_use_case.dart';
 import '../../domain/use_cases/get_payment_providers_use_case.dart';
 import '../consultation_analytics.dart';
 import '../constants/consultation_booking_attachment_config.dart';
+import '../constants/consultation_system_ui.dart';
 import '../constants/consultation_ui_config.dart';
 import '../doctor_consultation_checkout_args.dart';
 import '../widgets/consultation_hero_banner_widget.dart';
@@ -134,7 +135,10 @@ class _DoctorConsultationBookDoctorScreenState
         slotsInfo?.ratings ?? _parseDoctorRating(doctor.rating);
     final showPmdcVerified = slotsInfo?.pmdcVerified == true;
 
-    return Scaffold(
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: consultationSystemUiOverlay,
+      child: Scaffold(
+      backgroundColor: AppColors.clrWhite,
       body: DecoratedBox(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
@@ -148,6 +152,7 @@ class _DoctorConsultationBookDoctorScreenState
           ),
         ),
         child: SafeArea(
+          bottom: false,
           child: Column(
             children: [
               ConsultationScreenHeaderWidget(
@@ -166,7 +171,10 @@ class _DoctorConsultationBookDoctorScreenState
                       top: Radius.circular(30.r),
                     ),
                   ),
-                  child: Column(
+                  child: SafeArea(
+                    top: false,
+                    bottom: false,
+                    child: Column(
                     children: [
                       DoctorConsultationBookingBodyWidget(
                         doctorName: doctor.name,
@@ -269,11 +277,13 @@ class _DoctorConsultationBookDoctorScreenState
                       ),
                     ],
                   ),
+                  ),
                 ),
               ),
             ],
           ),
         ),
+      ),
       ),
     );
   }

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../components/shimmer/app_shimmer.dart';
 import '../../../../core/analytics/analytics_event_keys.dart';
+import '../../../../core/constants/app_colors.dart';
 import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/router/app_routes.dart';
 
@@ -12,6 +14,7 @@ import '../../../../core/utils/auth_guard.dart';
 import '../../domain/use_cases/get_consultation_categories_use_case.dart';
 import '../../domain/use_cases/get_consultation_doctors_use_case.dart';
 import '../consultation_analytics.dart';
+import '../constants/consultation_system_ui.dart';
 import '../constants/consultation_ui_config.dart';
 import '../widgets/results_doctor_card.dart';
 import '../widgets/results_doctor_category_card.dart';
@@ -280,7 +283,10 @@ class _DoctorConsultationResultsScreenState
     final textTheme = Theme.of(context).textTheme;
     final doctors = _allDoctors;
 
-    return Scaffold(
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: consultationSystemUiOverlay,
+      child: Scaffold(
+      backgroundColor: AppColors.clrWhite,
       body: DecoratedBox(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
@@ -294,6 +300,7 @@ class _DoctorConsultationResultsScreenState
           ),
         ),
         child: SafeArea(
+          bottom: false,
           child: Column(
             children: [
               ConsultationScreenHeaderWidget(
@@ -317,7 +324,10 @@ class _DoctorConsultationResultsScreenState
                       top: Radius.circular(42.r),
                     ),
                   ),
-                  child: Padding(
+                  child: SafeArea(
+                    top: false,
+                    bottom: false,
+                    child: Padding(
                     padding: EdgeInsets.fromLTRB(18.w, 18.h, 18.w, 12.h),
                     child: Column(
                       children: [
@@ -389,18 +399,23 @@ class _DoctorConsultationResultsScreenState
                       ],
                     ),
                   ),
+                  ),
                 ),
               ),
             ],
           ),
         ),
       ),
+      ),
     );
   }
 
   Widget _buildFullScreenShimmer(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    return Scaffold(
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: consultationSystemUiOverlay,
+      child: Scaffold(
+      backgroundColor: AppColors.clrWhite,
       body: DecoratedBox(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
@@ -414,6 +429,7 @@ class _DoctorConsultationResultsScreenState
           ),
         ),
         child: SafeArea(
+          bottom: false,
           child: Column(
             children: [
               ConsultationScreenHeaderWidget(
@@ -437,7 +453,10 @@ class _DoctorConsultationResultsScreenState
                       top: Radius.circular(42.r),
                     ),
                   ),
-                  child: Padding(
+                  child: SafeArea(
+                    top: false,
+                    bottom: false,
+                    child: Padding(
                     padding: EdgeInsets.fromLTRB(18.w, 18.h, 18.w, 12.h),
                     child: Column(
                       children: [
@@ -484,11 +503,13 @@ class _DoctorConsultationResultsScreenState
                       ],
                     ),
                   ),
+                  ),
                 ),
               ),
             ],
           ),
         ),
+      ),
       ),
     );
   }

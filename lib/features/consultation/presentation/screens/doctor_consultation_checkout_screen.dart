@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
@@ -13,6 +14,7 @@ import '../../../../core/utils/phone_format_utils.dart';
 import '../models/doctor_consultation_jazzcash_sheet_result.dart';
 import '../../data/models/doctor_consultation_checkout_model.dart';
 import '../../data/utils/consultation_booking_utils.dart';
+import '../constants/consultation_system_ui.dart';
 import '../constants/consultation_ui_config.dart';
 import '../cubit/doctor_consultation_checkout_cubit.dart';
 import '../cubit/doctor_consultation_checkout_state.dart';
@@ -165,7 +167,10 @@ class _DoctorConsultationCheckoutScreenState
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    return Scaffold(
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: consultationSystemUiOverlay,
+      child: Scaffold(
+      backgroundColor: AppColors.clrWhite,
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
@@ -176,6 +181,7 @@ class _DoctorConsultationCheckoutScreenState
           ),
         ),
         child: SafeArea(
+          bottom: false,
           child: Column(
             children: [
               ConsultationScreenHeaderWidget(
@@ -201,7 +207,10 @@ class _DoctorConsultationCheckoutScreenState
                     color: Colors.white,
                     borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
                   ),
-                  child: BlocBuilder<
+                  child: SafeArea(
+                    top: false,
+                    bottom: false,
+                    child: BlocBuilder<
                       DoctorConsultationCheckoutCubit,
                       DoctorConsultationCheckoutState>(
                     builder: (context, state) {
@@ -335,11 +344,13 @@ class _DoctorConsultationCheckoutScreenState
                       );
                     },
                   ),
+                  ),
                 ),
               ),
             ],
           ),
         ),
+      ),
       ),
     );
   }

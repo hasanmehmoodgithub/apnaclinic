@@ -252,6 +252,7 @@ class DoctorConsultationSummaryScreen extends StatelessWidget {
                     BorderRadius.vertical(top: Radius.circular(24.r)),
                 child: SafeArea(
                   top: false,
+                  bottom: false,
                   child: Column(
                     children: [
                     Expanded(
