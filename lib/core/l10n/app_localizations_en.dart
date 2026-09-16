@@ -1642,6 +1642,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get consultationPaymentMethodTitle => 'Payment Method';
 
   @override
+  String get paymentTermsAndConditionsApply => 'Terms & Conditions apply';
+
+  @override
   String get consultationVideoConsultationLabel => 'Video Consultation';
 
   @override

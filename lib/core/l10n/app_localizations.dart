@@ -3095,6 +3095,12 @@ abstract class AppLocalizations {
   /// **'Payment Method'**
   String get consultationPaymentMethodTitle;
 
+  /// No description provided for @paymentTermsAndConditionsApply.
+  ///
+  /// In en, this message translates to:
+  /// **'Terms & Conditions apply'**
+  String get paymentTermsAndConditionsApply;
+
   /// No description provided for @consultationVideoConsultationLabel.
   ///
   /// In en, this message translates to:

@@ -543,6 +543,7 @@
   "consultationMaxFilesReached": "ہر بکنگ میں زیادہ سے زیادہ 5 فائلیں اپلوڈ کی جا سکتی ہیں۔",
   "consultationUnsupportedFileType": "فائل کی قسم معاون نہیں ہے۔ صرف تصاویر اور PDF دستاویزات اجازت ہیں۔",
   "consultationPaymentMethodTitle": "ادائیگی کا طریقہ",
+  "paymentTermsAndConditionsApply": "شرائط و ضوابط لاگو ہیں",
   "consultationVideoConsultationLabel": "ویڈیو مشاورت",
   "consultationConsultationFeesLabel": "مشاورت فیس",
   "consultationDiscountLabel": "رعایت",

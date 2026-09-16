@@ -312,13 +312,7 @@ class _DoctorConsultationBookDoctorScreenState
         return null;
       },
       (providers) => providers
-          .map(
-            (provider) => DoctorConsultationPaymentOptionModel(
-              code: provider.code,
-              name: provider.name,
-              iconUrl: provider.iconUrl,
-            ),
-          )
+          .map(DoctorConsultationPaymentOptionModel.fromProvider)
           .toList(growable: false),
     );
 

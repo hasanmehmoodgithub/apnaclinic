@@ -33,6 +33,7 @@ class _PharmacyCheckoutScreenState extends State<PharmacyCheckoutScreen> {
       final cubit = context.read<PharmacyCubit>();
       cubit.logCheckout();
       cubit.loadCart();
+      cubit.loadPaymentProviders();
       await cubit.loadCheckoutCities();
       if (!mounted) return;
       final preferred = await cubit.loadProfileAddressesForCheckout();

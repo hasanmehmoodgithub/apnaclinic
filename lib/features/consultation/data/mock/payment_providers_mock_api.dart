@@ -10,21 +10,38 @@ class PaymentProvidersMockApi {
     return {
       'success': true,
       'message': 'Payment providers retrieved',
-      'code': 200,
       'data': [
         {
-          'name': 'JazzCash',
           'code': 'JAZZCASH',
-          'isActive': true,
-          'iconUrl':
+          'title': 'JazzCash',
+          'subtitle': '20% of on all labs',
+          'label': {
+            'text': 'enjoy discount',
+            'color': '#343434',
+          },
+          'termsAndCondition': {
+            'title': 'terms',
+            'description': 'tt\nt\nt\nt',
+          },
+          'logo':
               'https://jazzred-app-stg.jazz.com.pk/api/storage/v1/fintech/05912a86-d6b7-457c-960a-ce7e1c4e5bf8.png',
         },
         {
-          'name': 'Card',
           'code': 'CARD',
-          'isActive': true,
-          'iconUrl':
-              'https://jazzred-app-stg.jazz.com.pk/api/storage/v1/fintech/766cc1ae-760a-4fbd-8d39-3c9761c35ac7.png',
+          'title': 'Card',
+          'subtitle': 'Card',
+          'label': null,
+          'termsAndCondition': null,
+          'logo':
+              'https://jazzred-msa-stg.jazz.com.pk/acs-media/apna-clinic/8a4168e7-4089-4ad3-ba78-e0773d1de4e0.png',
+        },
+        {
+          'code': 'COD',
+          'title': 'Cash on Delivery',
+          'subtitle': 'Cash on Delivery',
+          'label': null,
+          'termsAndCondition': null,
+          'logo': null,
         },
       ],
     };

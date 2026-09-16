@@ -53,13 +53,7 @@ class DoctorConsultationCheckoutCubit
       ),
       (providers) {
         final paymentOptions = providers
-            .map(
-              (provider) => DoctorConsultationPaymentOptionModel(
-                code: provider.code,
-                name: provider.name,
-                iconUrl: provider.iconUrl,
-              ),
-            )
+            .map(DoctorConsultationPaymentOptionModel.fromProvider)
             .toList(growable: false);
         _emitCheckoutData(args: args, paymentOptions: paymentOptions);
       },

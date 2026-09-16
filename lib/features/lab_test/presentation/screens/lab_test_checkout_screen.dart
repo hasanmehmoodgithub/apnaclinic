@@ -216,8 +216,7 @@ class _LabTestCheckoutScreenState extends State<LabTestCheckoutScreen> {
       backgroundColor: Colors.transparent,
       isScrollControlled: true,
       builder: (_) => const PaymentMethodSheet(
-        module: PaymentProviderModule.lab,
-        includeLocalCashOption: true,
+        module: PaymentProviderModule.labTesting,
       ),
     );
     if (!mounted || selected == null) return;

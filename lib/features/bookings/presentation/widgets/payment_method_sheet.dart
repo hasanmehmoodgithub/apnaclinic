@@ -7,10 +7,13 @@ import '../../../../core/constants/app_strings.dart';
 import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
+import '../../../../core/utils/app_url_launcher.dart';
+import '../../../../core/widgets/app_info_dialog.dart';
 import '../../../../generated/assets.dart';
 import '../../../consultation/data/utils/consultation_booking_utils.dart';
 import '../../../consultation/domain/entities/payment_provider_entity.dart';
 import '../../../consultation/domain/use_cases/get_payment_providers_use_case.dart';
+import 'payment_method_option_shimmer_widget.dart';
 import 'payment_option.dart';
 
 class PaymentMethodSheet extends StatefulWidget {
@@ -20,7 +23,7 @@ class PaymentMethodSheet extends StatefulWidget {
     this.includeLocalCashOption = false,
   });
 
-  /// One of [PaymentProviderModule] values: consultation, lab, surgery, pharmacy.
+  /// One of [PaymentProviderModule] values: consultation, pharmacy, lab-testing, surgery.
   final String module;
 
   /// Adds a local **Pay via Cash** row (`COD`) that is not returned by the API.
@@ -144,14 +147,7 @@ class PaymentMethodSheetState extends State<PaymentMethodSheet> {
             ),
             SizedBox(height: 16.h),
             if (_isLoading)
-              Padding(
-                padding: EdgeInsets.symmetric(vertical: 28.h),
-                child: SizedBox(
-                  width: 28.r,
-                  height: 28.r,
-                  child: const CircularProgressIndicator(strokeWidth: 2.4),
-                ),
-              )
+              const PaymentMethodOptionShimmerWidget()
             else if (_errorMessage != null)
               Padding(
                 padding: EdgeInsets.fromLTRB(20.w, 8.h, 20.w, 8.h),
@@ -230,9 +226,12 @@ class PaymentMethodSheetState extends State<PaymentMethodSheet> {
           value: provider.code,
           groupValue: _selectedCode ?? '',
           onChanged: (value) => setState(() => _selectedCode = value),
-          label: ConsultationBookingUtils.isCashPayment(provider.code)
-              ? l10n.pharmacyPaymentCash
-              : provider.name,
+          label: _providerTitle(l10n, provider),
+          subtitle: provider.displaySubtitle,
+          badge: provider.displayLabel,
+          badgeColorHex: provider.displayLabelColor,
+          termsTitle: provider.displayTermsTitle,
+          onTermsTap: _termsTapHandler(context, l10n, provider),
           iconBuilder: () => _paymentIcon(
             child: _providerIcon(provider),
           ),
@@ -240,6 +239,45 @@ class PaymentMethodSheetState extends State<PaymentMethodSheet> {
       );
     }
     return widgets;
+  }
+
+  String _providerTitle(AppLocalizations l10n, PaymentProviderEntity provider) {
+    final title = provider.displayTitle;
+    if (title.isNotEmpty) return title;
+    if (ConsultationBookingUtils.isCashPayment(provider.code)) {
+      return l10n.pharmacyPaymentCash;
+    }
+    return provider.code;
+  }
+
+  VoidCallback? _termsTapHandler(
+    BuildContext context,
+    AppLocalizations l10n,
+    PaymentProviderEntity provider,
+  ) {
+    final description = provider.displayTermsDescription;
+    if (description.isEmpty) return null;
+    return () {
+      if (_isHttpUrl(description)) {
+        AppUrlLauncher.open(url: description);
+        return;
+      }
+      AppInfoDialog.show(
+        context,
+        title: provider.displayTermsTitle.isNotEmpty
+            ? provider.displayTermsTitle
+            : l10n.authTermsLabel,
+        description: description,
+        okLabel: l10n.commonOk,
+        icon: Icons.info_outline_rounded,
+      );
+    };
+  }
+
+  bool _isHttpUrl(String value) {
+    final uri = Uri.tryParse(value.trim());
+    if (uri == null || !uri.hasScheme) return false;
+    return uri.scheme == 'http' || uri.scheme == 'https';
   }
 
   Widget _providerIcon(PaymentProviderEntity provider) {

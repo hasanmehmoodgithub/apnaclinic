@@ -1,6 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 import '../../../../core/enums/state_status.dart';
+import '../../../consultation/domain/entities/payment_provider_entity.dart';
 import '../../domain/entities/pharmacy_cart_address_entity.dart';
 import '../../domain/entities/pharmacy_cart_item_entity.dart';
 import '../../domain/entities/pharmacy_medicine_entity.dart';
@@ -8,8 +9,6 @@ import '../../domain/entities/pharmacy_cart_messages_entity.dart';
 import '../../domain/entities/pharmacy_payment_breakdown_entity.dart';
 
 part 'pharmacy_state.freezed.dart';
-
-enum PharmacyPaymentMethod { jazzCash, debitCard, cashOnDelivery }
 
 @freezed
 abstract class PharmacyState with _$PharmacyState {
@@ -32,13 +31,24 @@ abstract class PharmacyState with _$PharmacyState {
     @Default([]) List<PharmacyCartItemEntity> cartItems,
     @Default([]) List<PharmacyCartAddressEntity> cartAddresses,
     PharmacyPaymentBreakdownEntity? paymentBreakdown,
-    @Default(PharmacyPaymentMethod.jazzCash)
-    PharmacyPaymentMethod selectedPaymentMethod,
+    @Default([]) List<PaymentProviderEntity> paymentProviders,
+    @Default(StateStatus.idle) StateStatus paymentProvidersStatus,
+    String? paymentProvidersErrorMessage,
+    String? selectedPaymentProviderCode,
     PharmacyCartMessagesEntity? cartMessages,
   }) = _PharmacyState;
 }
 
 extension PharmacyStateX on PharmacyState {
+  PaymentProviderEntity? get selectedPaymentProvider {
+    final code = selectedPaymentProviderCode?.trim();
+    if (code == null || code.isEmpty) return null;
+    for (final provider in paymentProviders) {
+      if (provider.code == code) return provider;
+    }
+    return null;
+  }
+
   bool get hasMoreProducts => currentPage < lastPage;
 
   int get cartCount =>

@@ -94,6 +94,11 @@ class ConsultationRepositoryImpl implements ConsultationRepository {
                 name: provider.name,
                 code: provider.code,
                 iconUrl: provider.iconUrl,
+                subtitle: provider.subtitle,
+                label: provider.label,
+                labelColor: provider.labelColor,
+                termsTitle: provider.termsTitle,
+                termsDescription: provider.termsDescription,
               ),
             )
             .toList(growable: false),

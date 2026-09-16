@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/cities/presentation/show_select_city_dialog.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/analytics/analytics_event_keys.dart';
+import '../../../../core/enums/state_status.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/utils/phone_format_utils.dart';
@@ -26,6 +27,7 @@ import 'pharmacy_checkout_notices_widget.dart';
 import 'pharmacy_checkout_widgets.dart';
 import 'pharmacy_error_dialog.dart';
 import 'pharmacy_order_placed_dialog.dart';
+import 'pharmacy_payment_option_shimmer_widget.dart';
 import 'pharmacy_payment_option_tile.dart';
 
 /// Checkout panel content and confirm action.
@@ -51,9 +53,13 @@ class PharmacyCheckoutBodyWidget extends StatelessWidget {
     if (!promoOk || !context.mounted) return;
 
     final paymentMethod =
-        _paymentMethodApiValue(cubit.state.selectedPaymentMethod);
+        cubit.state.selectedPaymentProviderCode?.trim() ?? '';
+    if (paymentMethod.isEmpty) return;
     String? jazzCashNumber;
-    if (ConsultationBookingUtils.isJazzCashPayment(paymentMethod)) {
+    if (ConsultationBookingUtils.isJazzCashPayment(
+      paymentMethod,
+      name: cubit.state.selectedPaymentProvider?.name ?? '',
+    )) {
       jazzCashNumber = await _resolveJazzCashMsisdn(context);
       if (!context.mounted ||
           jazzCashNumber == null ||
@@ -69,6 +75,7 @@ class PharmacyCheckoutBodyWidget extends StatelessWidget {
     final result = await cubit.checkoutOrder(
       address: addressController.text,
       region: cubit.state.selectedCity,
+      paymentMethod: paymentMethod,
       jazzCashNumber: jazzCashNumber,
       deliveryInstructions: specialInstructionsController.text,
       promoCode: promoCubit.state.appliedCode,
@@ -163,14 +170,6 @@ class PharmacyCheckoutBodyWidget extends StatelessWidget {
     return result?.msisdn.trim();
   }
 
-  String _paymentMethodApiValue(PharmacyPaymentMethod method) {
-    return switch (method) {
-      PharmacyPaymentMethod.jazzCash => 'JAZZCASH',
-      PharmacyPaymentMethod.debitCard => 'CARD',
-      PharmacyPaymentMethod.cashOnDelivery => 'COD',
-    };
-  }
-
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
@@ -181,7 +180,12 @@ class PharmacyCheckoutBodyWidget extends StatelessWidget {
           previous.checkoutCities != current.checkoutCities ||
           previous.paymentBreakdown != current.paymentBreakdown ||
           previous.cartMessages != current.cartMessages ||
-          previous.selectedPaymentMethod != current.selectedPaymentMethod,
+          previous.paymentProviders != current.paymentProviders ||
+          previous.paymentProvidersStatus != current.paymentProvidersStatus ||
+          previous.paymentProvidersErrorMessage !=
+              current.paymentProvidersErrorMessage ||
+          previous.selectedPaymentProviderCode !=
+              current.selectedPaymentProviderCode,
       builder: (context, state) {
         final cities = state.checkoutCities.isNotEmpty
             ? state.checkoutCities
@@ -347,30 +351,7 @@ class PharmacyCheckoutBodyWidget extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: 7.h),
-                PharmacyPaymentOptionTile(
-                  method: PharmacyPaymentMethod.jazzCash,
-                  selectedMethod: state.selectedPaymentMethod,
-                  onTap: () => context
-                      .read<PharmacyCubit>()
-                      .selectPaymentMethod(PharmacyPaymentMethod.jazzCash),
-                ),
-                SizedBox(height: 7.h),
-                PharmacyPaymentOptionTile(
-                  method: PharmacyPaymentMethod.debitCard,
-                  selectedMethod: state.selectedPaymentMethod,
-                  onTap: () => context
-                      .read<PharmacyCubit>()
-                      .selectPaymentMethod(PharmacyPaymentMethod.debitCard),
-                ),
-                SizedBox(height: 7.h),
-                PharmacyPaymentOptionTile(
-                  method: PharmacyPaymentMethod.cashOnDelivery,
-                  selectedMethod: state.selectedPaymentMethod,
-                  onTap: () =>
-                      context.read<PharmacyCubit>().selectPaymentMethod(
-                        PharmacyPaymentMethod.cashOnDelivery,
-                      ),
-                ),
+                ..._paymentMethodSection(context, l10n, state),
                 SizedBox(height: 16.h),
                 PharmacyCheckoutNoticesWidget(messages: state.cartMessages),
               ],
@@ -388,7 +369,11 @@ class PharmacyCheckoutBodyWidget extends StatelessWidget {
                     return AppButtonWidget(
                       title: l10n.pharmacyCheckoutConfirmCta,
                       bgClr: AppColors.clr1FAFA3,
-                      onTap: state.cartItems.isEmpty || promo.isValidating
+                      onTap: state.cartItems.isEmpty ||
+                              promo.isValidating ||
+                              state.paymentProvidersStatus ==
+                                  StateStatus.loading ||
+                              state.selectedPaymentProviderCode == null
                           ? null
                           : () => _onConfirm(context),
                     );
@@ -408,6 +393,56 @@ class PharmacyCheckoutBodyWidget extends StatelessWidget {
       return '${l10n.pharmacyCheckoutDiscountLabel} (${percent.toStringAsFixed(0)}%)';
     }
     return l10n.pharmacyCheckoutDiscountLabel;
+  }
+
+  List<Widget> _paymentMethodSection(
+    BuildContext context,
+    AppLocalizations l10n,
+    PharmacyState state,
+  ) {
+    if (state.paymentProvidersStatus == StateStatus.loading ||
+        state.paymentProvidersStatus == StateStatus.idle) {
+      return const [PharmacyPaymentOptionShimmerWidget()];
+    }
+    final error = state.paymentProvidersErrorMessage?.trim();
+    if (error != null &&
+        error.isNotEmpty &&
+        state.paymentProviders.isEmpty) {
+      return [
+        Padding(
+          padding: EdgeInsets.symmetric(vertical: 12.h),
+          child: Column(
+            children: [
+              Text(
+                error,
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: AppColors.clr5D758F,
+                      fontSize: 14.sp,
+                    ),
+              ),
+              TextButton(
+                onPressed: () =>
+                    context.read<PharmacyCubit>().loadPaymentProviders(),
+                child: Text(l10n.commonRetry),
+              ),
+            ],
+          ),
+        ),
+      ];
+    }
+    return [
+      for (final provider in state.paymentProviders) ...[
+        PharmacyPaymentOptionTile(
+          provider: provider,
+          isSelected: provider.code == state.selectedPaymentProviderCode,
+          onTap: () => context
+              .read<PharmacyCubit>()
+              .selectPaymentProvider(provider.code),
+        ),
+        SizedBox(height: 7.h),
+      ],
+    ];
   }
 
   double _payableTotal(PharmacyState state, PromoCodeState promo) {

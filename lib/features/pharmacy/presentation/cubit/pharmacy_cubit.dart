@@ -17,6 +17,9 @@ import '../../domain/entities/pharmacy_cart_messages_entity.dart';
 import '../../domain/entities/pharmacy_checkout_result_entity.dart';
 import '../../domain/entities/pharmacy_medicine_entity.dart';
 import '../../domain/entities/pharmacy_payment_breakdown_entity.dart';
+import '../../../consultation/data/utils/consultation_booking_utils.dart';
+import '../../../consultation/domain/entities/payment_provider_entity.dart';
+import '../../../consultation/domain/use_cases/get_payment_providers_use_case.dart';
 import '../../domain/use_cases/abandon_pharmacy_order_use_case.dart';
 import '../../domain/use_cases/add_pharmacy_profile_address_use_case.dart';
 import '../../domain/use_cases/add_to_cart_use_case.dart';
@@ -41,6 +44,7 @@ class PharmacyCubit extends Cubit<PharmacyState> {
     required this.abandonPharmacyOrderUseCase,
     required this.getPharmacyProfileAddressesUseCase,
     required this.addPharmacyProfileAddressUseCase,
+    required this.getPaymentProvidersUseCase,
     required this.citiesRepository,
     required this.appPref,
     required AnalyticsService analytics,
@@ -59,6 +63,7 @@ class PharmacyCubit extends Cubit<PharmacyState> {
   final AbandonPharmacyOrderUseCase abandonPharmacyOrderUseCase;
   final GetPharmacyProfileAddressesUseCase getPharmacyProfileAddressesUseCase;
   final AddPharmacyProfileAddressUseCase addPharmacyProfileAddressUseCase;
+  final GetPaymentProvidersUseCase getPaymentProvidersUseCase;
   final CitiesRepository citiesRepository;
   final AppPref appPref;
   final AnalyticsService _analytics;
@@ -445,8 +450,81 @@ class PharmacyCubit extends Cubit<PharmacyState> {
     return _setCartQuantity(medicineId: medicineId, quantity: 0);
   }
 
-  void selectPaymentMethod(PharmacyPaymentMethod method) {
-    emit(state.copyWith(selectedPaymentMethod: method));
+  void selectPaymentProvider(String code) {
+    if (code == state.selectedPaymentProviderCode) return;
+    emit(state.copyWith(selectedPaymentProviderCode: code));
+  }
+
+  Future<void> loadPaymentProviders() async {
+    emit(
+      state.copyWith(
+        paymentProvidersStatus: StateStatus.loading,
+        paymentProvidersErrorMessage: null,
+      ),
+    );
+
+    final result = await getPaymentProvidersUseCase(
+      const GetPaymentProvidersParams(module: PaymentProviderModule.pharmacy),
+    );
+    if (isClosed) return;
+
+    result.fold(
+      (error) {
+        final providers = _withLocalCash(const []);
+        emit(
+          state.copyWith(
+            paymentProviders: providers,
+            paymentProvidersStatus: providers.isEmpty
+                ? StateStatus.error
+                : StateStatus.success,
+            paymentProvidersErrorMessage: providers.isEmpty ? error : null,
+            selectedPaymentProviderCode: _resolveSelectedProviderCode(providers),
+          ),
+        );
+      },
+      (providers) {
+        final merged = _withLocalCash(providers);
+        emit(
+          state.copyWith(
+            paymentProviders: merged,
+            paymentProvidersStatus: merged.isEmpty
+                ? StateStatus.error
+                : StateStatus.success,
+            paymentProvidersErrorMessage: merged.isEmpty
+                ? AppStrings.genericErrorMessage
+                : null,
+            selectedPaymentProviderCode: _resolveSelectedProviderCode(merged),
+          ),
+        );
+      },
+    );
+  }
+
+  List<PaymentProviderEntity> _withLocalCash(
+    List<PaymentProviderEntity> providers,
+  ) {
+    final alreadyHasCash = providers.any(
+      (provider) => ConsultationBookingUtils.isCashPayment(provider.code),
+    );
+    if (alreadyHasCash) return providers;
+    return [
+      ...providers,
+      const PaymentProviderEntity(
+        name: '',
+        code: ConsultationBookingUtils.cashPaymentCode,
+        iconUrl: '',
+      ),
+    ];
+  }
+
+  String? _resolveSelectedProviderCode(List<PaymentProviderEntity> providers) {
+    if (providers.isEmpty) return null;
+    final current = state.selectedPaymentProviderCode;
+    if (current != null &&
+        providers.any((provider) => provider.code == current)) {
+      return current;
+    }
+    return providers.first.code;
   }
 
   void submitSearch(String query) {
@@ -558,15 +636,18 @@ class PharmacyCubit extends Cubit<PharmacyState> {
         citiesRepository.cityIdForName(trimmedRegion)?.trim() ?? '';
     final resolvedPaymentMethod = (paymentMethod?.trim().isNotEmpty == true)
         ? paymentMethod!.trim().toUpperCase()
-        : _paymentMethodApiValue(state.selectedPaymentMethod);
-    if (cityId.isEmpty) {
+        : (state.selectedPaymentProviderCode ?? '').trim().toUpperCase();
+    if (cityId.isEmpty || resolvedPaymentMethod.isEmpty) {
       return const Left(AppStrings.pharmacyCheckoutMissingContextError);
     }
 
     final checkoutPrescriptions =
         prescriptions ?? _prescriptionsFromCartItems();
 
-    final isJazzCash = resolvedPaymentMethod == 'JAZZCASH';
+    final isJazzCash = ConsultationBookingUtils.isJazzCashPayment(
+      resolvedPaymentMethod,
+      name: state.selectedPaymentProvider?.name ?? '',
+    );
     final jazzCash = jazzCashNumber?.trim() ?? '';
     if (isJazzCash && jazzCash.isEmpty) {
       return const Left(AppStrings.pharmacyCheckoutMissingContextError);
@@ -735,14 +816,6 @@ class PharmacyCubit extends Cubit<PharmacyState> {
 
   String _normalizeAddress(String value) =>
       value.trim().toLowerCase().replaceAll(RegExp(r'\s+'), ' ');
-
-  String _paymentMethodApiValue(PharmacyPaymentMethod method) {
-    return switch (method) {
-      PharmacyPaymentMethod.jazzCash => 'JAZZCASH',
-      PharmacyPaymentMethod.debitCard => 'CARD',
-      PharmacyPaymentMethod.cashOnDelivery => 'COD',
-    };
-  }
 
   Future<String?> _updateQuantity(String medicineId, {required int delta}) async {
     final items = state.cartItems;
@@ -929,9 +1002,7 @@ class PharmacyCubit extends Cubit<PharmacyState> {
   void logConfirmPayment() {
     unawaited(
       _analytics.logEvent(AnalyticsEventKeys.pharmacyConfirmPayment, {
-        AnalyticsParamKeys.paymentMethod: _analyticsPaymentMethod(
-          state.selectedPaymentMethod,
-        ),
+        AnalyticsParamKeys.paymentMethod: _analyticsPaymentMethod(),
       }),
     );
   }
@@ -968,9 +1039,7 @@ class PharmacyCubit extends Cubit<PharmacyState> {
         if (appliedPromo.isNotEmpty) AnalyticsParamKeys.promo: appliedPromo,
         AnalyticsParamKeys.timestamp: timestamp,
         AnalyticsParamKeys.deliveryCharges: state.deliveryCharges,
-        AnalyticsParamKeys.paymentMethod: _analyticsPaymentMethod(
-          state.selectedPaymentMethod,
-        ),
+        AnalyticsParamKeys.paymentMethod: _analyticsPaymentMethod(),
         AnalyticsParamKeys.paymentStatus: paymentStatus,
       }),
     );
@@ -1016,15 +1085,19 @@ class PharmacyCubit extends Cubit<PharmacyState> {
     };
   }
 
-  String _analyticsPaymentMethod(PharmacyPaymentMethod method) {
-    return switch (method) {
-      PharmacyPaymentMethod.jazzCash =>
-        AnalyticsPharmacyPaymentMethodKeys.jazzCash,
-      PharmacyPaymentMethod.debitCard =>
-        AnalyticsPharmacyPaymentMethodKeys.card,
-      PharmacyPaymentMethod.cashOnDelivery =>
-        AnalyticsPharmacyPaymentMethodKeys.cod,
-    };
+  String _analyticsPaymentMethod() {
+    final provider = state.selectedPaymentProvider;
+    final code = provider?.code ?? state.selectedPaymentProviderCode ?? '';
+    if (ConsultationBookingUtils.isCashPayment(code)) {
+      return AnalyticsPharmacyPaymentMethodKeys.cod;
+    }
+    if (ConsultationBookingUtils.isJazzCashPayment(
+      code,
+      name: provider?.name ?? '',
+    )) {
+      return AnalyticsPharmacyPaymentMethodKeys.jazzCash;
+    }
+    return AnalyticsPharmacyPaymentMethodKeys.card;
   }
 
   String _analyticsMsisdn(String phone) {

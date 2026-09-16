@@ -6,9 +6,12 @@ import '../repositories/consultation_repository.dart';
 /// Module query values for [AppUrls.paymentProviders].
 abstract final class PaymentProviderModule {
   static const consultation = 'consultation';
-  static const lab = 'lab';
-  static const surgery = 'surgery';
   static const pharmacy = 'pharmacy';
+  static const labTesting = 'lab-testing';
+  static const surgery = 'surgery';
+
+  /// Same as [labTesting].
+  static const lab = labTesting;
 }
 
 class GetPaymentProvidersParams {

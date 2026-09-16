@@ -1642,6 +1642,9 @@ class AppLocalizationsUr extends AppLocalizations {
   String get consultationPaymentMethodTitle => 'ادائیگی کا طریقہ';
 
   @override
+  String get paymentTermsAndConditionsApply => 'شرائط و ضوابط لاگو ہیں';
+
+  @override
   String get consultationVideoConsultationLabel => 'ویڈیو مشاورت';
 
   @override
