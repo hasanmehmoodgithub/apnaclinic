@@ -36,6 +36,7 @@ class SurgeryLeadsMapper {
       discount: model.discount,
       total: model.total,
       currency: model.currency,
+      discountCode: model.discountCode,
     );
   }
 

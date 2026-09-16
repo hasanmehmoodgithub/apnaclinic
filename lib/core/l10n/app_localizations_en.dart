@@ -1790,6 +1790,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bookingsTotalLabel => 'Total';
 
   @override
+  String get bookingsPaymentDetailsTitle => 'Payment Details';
+
+  @override
+  String get bookingsDiscountCodeLabel => 'Discount Code';
+
+  @override
+  String get bookingsShowCodeInstruction =>
+      'Show this code to the hospital representative';
+
+  @override
   String get bookingsSurgeryProcedureSubtitle =>
       'Photorefractive keratectomy Surgery';
 

@@ -1,7 +1,9 @@
 import '../../../../core/config/mock_config.dart';
 
 class PaymentProvidersMockApi {
-  static bool useMockResponses = MockConfig.enableConsultationMocks;
+  static bool useMockResponses =
+      MockConfig.enableConsultationMocks ||
+      MockConfig.enablePaymentProviderMocks;
 
   Future<Map<String, dynamic>> getPaymentProvidersSuccessResponse({
     String? module,

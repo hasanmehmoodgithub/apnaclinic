@@ -3371,6 +3371,24 @@ abstract class AppLocalizations {
   /// **'Total'**
   String get bookingsTotalLabel;
 
+  /// No description provided for @bookingsPaymentDetailsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment Details'**
+  String get bookingsPaymentDetailsTitle;
+
+  /// No description provided for @bookingsDiscountCodeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Discount Code'**
+  String get bookingsDiscountCodeLabel;
+
+  /// No description provided for @bookingsShowCodeInstruction.
+  ///
+  /// In en, this message translates to:
+  /// **'Show this code to the hospital representative'**
+  String get bookingsShowCodeInstruction;
+
   /// No description provided for @bookingsSurgeryProcedureSubtitle.
   ///
   /// In en, this message translates to:

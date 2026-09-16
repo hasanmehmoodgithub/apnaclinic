@@ -27,4 +27,8 @@ class MockConfig {
   static bool get enableProMocks => true;
 
   static bool get enablePromoCodeMocks => false;
+
+  /// Payment method sheet / checkout providers for every module
+  /// (consultation, pharmacy, lab-testing, surgery).
+  static bool get enablePaymentProviderMocks => false;
 }

@@ -66,6 +66,7 @@ class SurgeryBookingListMapper {
       discountPercent: discountPercent,
       discountAmount: discountAmount,
       total: total,
+      discountCode: lead.discountCode,
       appointmentDay: appointment.day,
       appointmentMonth: appointment.month,
       appointmentWeekday: appointment.weekday,

@@ -104,6 +104,7 @@ class SurgeryLeadsMockApi {
         'discount': 25000,
         'total': 225000,
         'currency': 'PKR',
+        'discountCode': '12345678',
       },
     },
     {

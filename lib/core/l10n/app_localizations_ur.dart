@@ -1792,6 +1792,16 @@ class AppLocalizationsUr extends AppLocalizations {
   String get bookingsTotalLabel => 'کل';
 
   @override
+  String get bookingsPaymentDetailsTitle => 'ادائیگی کی تفصیلات';
+
+  @override
+  String get bookingsDiscountCodeLabel => 'ڈسکاؤنٹ کوڈ';
+
+  @override
+  String get bookingsShowCodeInstruction =>
+      'یہ کوڈ ہسپتال کے نمائندے کو دکھائیں';
+
+  @override
   String get bookingsSurgeryProcedureSubtitle =>
       'فوٹوریفریکٹو کیراٹیکٹومی سرجری';
 

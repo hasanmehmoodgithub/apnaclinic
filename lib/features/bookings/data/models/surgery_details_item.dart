@@ -31,6 +31,9 @@ class SurgeryDetailsItem {
   final int discountPercent;
   final int discountAmount;
   final int total;
+
+  /// Empty when the API sends no discount code; hides the discount strip.
+  final String discountCode;
   final bool paymentAllowed;
   final String appointmentDay;
   final String appointmentMonth;
@@ -59,6 +62,7 @@ class SurgeryDetailsItem {
     required this.discountPercent,
     required this.discountAmount,
     required this.total,
+    this.discountCode = '',
     required this.paymentAllowed,
     required this.appointmentDay,
     required this.appointmentMonth,
@@ -92,6 +96,7 @@ class SurgeryDetailsItem {
       discountPercent: discountPercent,
       discountAmount: discountAmount,
       total: total,
+      discountCode: discountCode,
       paymentAllowed: paymentAllowed ?? this.paymentAllowed,
       appointmentDay: appointmentDay,
       appointmentMonth: appointmentMonth,

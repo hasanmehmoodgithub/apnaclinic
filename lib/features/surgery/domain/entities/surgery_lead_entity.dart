@@ -30,6 +30,7 @@ class SurgeryLeadEntity {
     required this.discount,
     required this.total,
     required this.currency,
+    this.discountCode = '',
   });
 
   final String leadId;
@@ -64,6 +65,9 @@ class SurgeryLeadEntity {
   final int discount;
   final int total;
   final String currency;
+
+  /// Empty when the API sends no `pricing.discountCode`.
+  final String discountCode;
 }
 
 class SurgeryLeadsPageEntity {

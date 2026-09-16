@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
+import '../../../../core/constants/app_colors.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
+import '../../../../core/l10n/app_localizations.dart';
+import '../../../../generated/assets.dart';
 import '../../data/models/surgery_details_item.dart';
 
-
+/// Payment Details card: fee, discount, discount code strip and total bar.
+///
+/// Mirrors the lab checkout breakdown card.
 class SurgeryBookingPaymentDetailsCardWidget extends StatelessWidget {
   const SurgeryBookingPaymentDetailsCardWidget({
     super.key,
@@ -14,166 +20,185 @@ class SurgeryBookingPaymentDetailsCardWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
+    final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
+    final hasDiscount = item.discountAmount > 0 || item.discountPercent > 0;
+    final discountCode = item.discountCode.trim();
 
     return Container(
       clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.clrWhite,
         borderRadius: BorderRadius.circular(14.r),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x0F053453),
-            blurRadius: 16,
-            offset: Offset(0, 4),
-          ),
-        ],
+        border: Border.all(color: AppColors.clrEDEDED),
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // ── Title + Fee + Discount get horizontal padding ──
           Padding(
-            padding: EdgeInsets.fromLTRB(10.w, 10.h, 10.w, 0),
+            padding: EdgeInsets.fromLTRB(14.w, 14.h, 14.w, 12.h),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Text(
-                  'Payment Details',
-                  style: textTheme.titleMedium?.copyWith(
-                    color: const Color(0xFF061E40),
-                    fontSize: 14.sp,
+                  l10n.bookingsPaymentDetailsTitle,
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    color: AppColors.clr061E40,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 16.sp,
                   ),
                 ),
                 SizedBox(height: 12.h),
-                _PaymentRow(
-                  label: 'Fee',
-                  amount: item.fee,
-                  textTheme: textTheme,
-                ),
-                Container(
-                  height: 0.6,
-                  margin: EdgeInsets.symmetric(vertical: 6.h),
-                  color: const Color(0xFFE2E8EE),
-                ),
-                _PaymentRow(
-                  label: 'Discount (${item.discountPercent}%)',
-                  amount: item.discountAmount,
-                  trailingDecimal: '.0',
-                  textTheme: textTheme,
-                ),
-                SizedBox(height: 14.h),
+                _PaymentRow(label: l10n.bookingsFeeLabel, amount: item.fee),
+                if (hasDiscount) ...[
+                  SizedBox(height: 10.h),
+                  Divider(height: 1, thickness: 1, color: AppColors.clrE4E4E4),
+                  SizedBox(height: 10.h),
+                  _PaymentRow(
+                    label: l10n.bookingsDiscountLabel('${item.discountPercent}'),
+                    amount: item.discountAmount,
+                  ),
+                ],
+                if (discountCode.isNotEmpty) ...[
+                  SizedBox(height: 12.h),
+                  _DiscountCodeStrip(code: discountCode),
+                ],
               ],
             ),
           ),
-          // ── Total bar: NO outer padding → spans full card width ──
-          _TotalBar(total: item.total, textTheme: textTheme),
+          _TotalBar(total: item.total),
         ],
       ),
     );
   }
 }
 
-// ─── Single Fee/Discount row with muted "Rs." prefix and dark amount ───
+/// Fee / Discount row with a muted `Rs.` prefix and dark amount.
 class _PaymentRow extends StatelessWidget {
-  const _PaymentRow({
-    required this.label,
-    required this.amount,
-    required this.textTheme,
-    this.trailingDecimal = '',
-  });
+  const _PaymentRow({required this.label, required this.amount});
 
   final String label;
   final int amount;
-  final String trailingDecimal;
-  final TextTheme textTheme;
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Row(
       children: [
         Expanded(
           child: Text(
             label,
-            style: textTheme.bodyMedium?.copyWith(
-              color: const Color(0xFF8593A8),
-              fontSize: 12.sp,
-              fontWeight: FontWeight.w400,
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: AppColors.clr667B99,
+              fontSize: 14.sp,
             ),
           ),
         ),
-        RichText(
-          text: TextSpan(
-            children: [
-              TextSpan(
-                text: 'Rs.',
-                style: TextStyle(
-                  fontSize: 12.sp,
-                  color: const Color(0xFF8593A8),
-                  fontWeight: FontWeight.w400,
-                ),
-              ),
-              TextSpan(
-                text: '${_formatNumber(amount)}$trailingDecimal',
-                style: TextStyle(
-                  fontSize: 13.sp,
-                  color: const Color(0xFF061E40),
-                  fontWeight: FontWeight.w400,
-                ),
-              ),
-            ],
-          ),
+        _Amount(
+          amount: amount,
+          color: AppColors.clr061E40,
+          fontSize: 14.sp,
+          fontWeight: FontWeight.w500,
         ),
       ],
     );
   }
 }
 
-// ─── Edge-to-edge total bar ───
+/// Edge-to-edge total bar at the bottom of the card.
 class _TotalBar extends StatelessWidget {
-  const _TotalBar({required this.total, required this.textTheme});
+  const _TotalBar({required this.total});
 
   final int total;
-  final TextTheme textTheme;
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
+
     return Container(
-      width: double.infinity,
-      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
-      color: const Color(0xFFEEF1F3),
+      color: AppColors.clrF2F2F2,
+      padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
       child: Row(
         children: [
           Expanded(
             child: Text(
-              'Total',
-              style: textTheme.titleSmall?.copyWith(
-                color: const Color(0xFF061E40),
-                fontSize: 12.sp,
+              l10n.bookingsTotalLabel,
+              style: theme.textTheme.titleMedium?.copyWith(
+                color: AppColors.clr061E40,
                 fontWeight: FontWeight.w600,
+                fontSize: 15.sp,
               ),
             ),
           ),
-          RichText(
-            text: TextSpan(
-              children: [
-                TextSpan(
-                  text: 'Rs.',
-                  style: TextStyle(
-                    fontSize: 12.sp,
-                    color: const Color(0xFF8593A8),
-                    fontWeight: FontWeight.w400,
-                  ),
-                ),
-                TextSpan(
-                  text: _formatNumber(total),
-                  style: TextStyle(
-                    fontSize: 13.sp,
-                    color: const Color(0xFF061E40),
+          _Amount(
+            amount: total,
+            color: AppColors.clr110844,
+            fontSize: 15.sp,
+            fontWeight: FontWeight.w700,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _DiscountCodeStrip extends StatelessWidget {
+  const _DiscountCodeStrip({required this.code});
+
+  final String code;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
+
+    return Container(
+      padding: EdgeInsets.fromLTRB(12.w, 10.h, 12.w, 10.h),
+      decoration: BoxDecoration(
+        color: AppColors.clrF7EFC7,
+        borderRadius: BorderRadius.circular(8.r),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              SvgPicture.asset(
+                Assets.labTestDiscountIcon,
+                width: 15.r,
+                height: 15.r,
+              ),
+              SizedBox(width: 6.w),
+              Expanded(
+                child: Text(
+                  l10n.bookingsDiscountCodeLabel,
+                  style: theme.textTheme.titleSmall?.copyWith(
+                    color: AppColors.clr1C232D,
                     fontWeight: FontWeight.w600,
+                    fontSize: 15.sp,
                   ),
                 ),
-              ],
+              ),
+              Text(
+                code,
+                style: theme.textTheme.titleSmall?.copyWith(
+                  color: AppColors.clr1C232D,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 15.sp,
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 8.h),
+          Container(height: 1, color: AppColors.clrE1D49D),
+          SizedBox(height: 8.h),
+          Text(
+            l10n.bookingsShowCodeInstruction,
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: AppColors.clr1C232D,
+              fontSize: 12.sp,
+              height: 1.2,
             ),
           ),
         ],
@@ -182,7 +207,47 @@ class _TotalBar extends StatelessWidget {
   }
 }
 
-// ─── Shared number-formatting helper (top-level, file-private) ───
+class _Amount extends StatelessWidget {
+  const _Amount({
+    required this.amount,
+    required this.color,
+    required this.fontSize,
+    required this.fontWeight,
+  });
+
+  final int amount;
+  final Color color;
+  final double fontSize;
+  final FontWeight fontWeight;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Text.rich(
+      TextSpan(
+        children: [
+          TextSpan(
+            text: 'Rs.',
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: AppColors.clr667B99,
+              fontSize: 12.sp,
+              fontWeight: FontWeight.w400,
+            ),
+          ),
+          TextSpan(
+            text: _formatNumber(amount),
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: color,
+              fontSize: fontSize,
+              fontWeight: fontWeight,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 String _formatNumber(int n) {
   final s = n.toString();
   final buf = StringBuffer();

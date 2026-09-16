@@ -22,6 +22,7 @@ class SurgeryBookingListItemModel {
     required this.discountPercent,
     required this.discountAmount,
     required this.total,
+    this.discountCode = '',
     required this.appointmentDay,
     required this.appointmentMonth,
     required this.appointmentWeekday,
@@ -51,6 +52,7 @@ class SurgeryBookingListItemModel {
   final int discountPercent;
   final int discountAmount;
   final int total;
+  final String discountCode;
   final String appointmentDay;
   final String appointmentMonth;
   final String appointmentWeekday;
@@ -79,6 +81,7 @@ class SurgeryBookingListItemModel {
       discountPercent: discountPercent,
       discountAmount: discountAmount,
       total: total,
+      discountCode: discountCode,
       paymentAllowed: paymentAllowed,
       appointmentDay: appointmentDay,
       appointmentMonth: appointmentMonth,

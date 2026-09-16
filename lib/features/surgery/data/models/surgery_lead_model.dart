@@ -30,6 +30,7 @@ class SurgeryLeadModel {
     required this.discount,
     required this.total,
     required this.currency,
+    this.discountCode = '',
   });
 
   final String leadId;
@@ -62,6 +63,9 @@ class SurgeryLeadModel {
   final int discount;
   final int total;
   final String currency;
+
+  /// Optional `pricing.discountCode`; empty hides the checkout discount strip.
+  final String discountCode;
 
   factory SurgeryLeadModel.fromJson(Map<String, dynamic> json) {
     final provider = json['provider'];
@@ -151,6 +155,12 @@ class SurgeryLeadModel {
       discount: discount,
       total: total,
       currency: _asString(pricingMap['currency'], fallback: 'PKR'),
+      discountCode: _asString(
+        pricingMap['discountCode'] ??
+            pricingMap['discount_code'] ??
+            json['discountCode'] ??
+            json['discount_code'],
+      ),
     );
   }
 
