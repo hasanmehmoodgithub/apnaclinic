@@ -3,11 +3,15 @@ import 'package:go_router/go_router.dart';
 
 import '../../../core/l10n/app_localizations.dart';
 import '../../../core/router/app_routes.dart';
+import '../../../core/widgets/heart_loader_widget.dart';
 import '../domain/entities/payment_initiation_result.dart';
 import '../domain/entities/payment_webview_result.dart';
 import 'payment_webview_args.dart';
+import 'widgets/jazz_cash_payment_verification_sheet.dart';
 import 'widgets/payment_outcome_dialog_widget.dart';
 import 'widgets/payment_pending_dialog_widget.dart';
+
+export 'widgets/jazz_cash_payment_verification_sheet.dart';
 
 /// Opens the card payment WebView and returns the gateway result.
 Future<PaymentWebViewResult?>    openCardPaymentWebView(
@@ -120,4 +124,26 @@ Future<void> showPaymentPendingDialog(
       );
     },
   );
+}
+
+/// Shows [JazzCashPaymentVerificationDialog] when [isJazzCash] is true,
+/// otherwise falls back to [showHeartLoaderDialog].
+Future<void> showPaymentProcessingLoader(
+  BuildContext context, {
+  required String id,
+  required bool isJazzCash,
+  double heartLoaderSize = 120,
+}) {
+  if (isJazzCash) {
+    return showJazzCashPaymentVerificationDialog(context, id: id);
+  } else {
+    return showHeartLoaderDialog(context, id: id, size: heartLoaderSize);
+  }
+}
+
+/// Safely closes either [JazzCashPaymentVerificationDialogController] or
+/// [HeartLoaderDialogController] associated with [id].
+void closePaymentProcessingLoader(String id) {
+  JazzCashPaymentVerificationDialogController.close(id);
+  HeartLoaderDialogController.close(id);
 }

@@ -6,8 +6,8 @@ After a booking API returns `data.paymentUrl`, open an in-app WebView for JazzCa
 
 ## Routes / entry
 
-- `AppRoutes.cardPayment` — `PaymentWebViewScreen` via `PaymentWebViewArgs(paymentUrl:, title?)`.
-- Helpers: `openCardPaymentWebView`, `settleCardPaymentIfNeeded`, `showCardPaymentOutcomeDialog`, `showPaymentPendingDialog` in `payment_navigation.dart`.
+- Helpers: `openCardPaymentWebView`, `settleCardPaymentIfNeeded`, `showCardPaymentOutcomeDialog`, `showPaymentPendingDialog`, `showJazzCashPaymentVerificationSheet`, `showPaymentProcessingLoader`, `closePaymentProcessingLoader` in `payment_navigation.dart`.
+- JazzCash payment confirmation dialog (`JazzCashPaymentVerificationDialog`): shown in place of heartloader when paying via JazzCash as a non-cancellable modal dialog (`barrierDismissible: false`, `PopScope(canPop: false)`) with title "Waiting for payment\nconfirmation", Status card with a circular progress loader and "Waiting for approval...", "For Jazz Users" card with Jazz logo and MPIN prompt instructions, and "For Other Networks" card with blue satellite dish icon and JazzCash app approval steps (non-dismissible while in flight; automatically dismissed when the API completes).
 
 ## Success / fail / cancel detection
 

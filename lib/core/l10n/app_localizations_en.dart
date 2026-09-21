@@ -1991,4 +1991,56 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get proCancelSubscriptionDiscard => 'Don\'t Cancel';
+
+  @override
+  String get jazzCashVerificationRequiredTitle => 'Verification Required';
+
+  @override
+  String get jazzCashVerificationRequiredDescription =>
+      'Please enter your JazzCash MPIN for your registered number.';
+
+  @override
+  String get jazzCashWaitingForApproval => 'Waiting for approval...';
+
+  @override
+  String get jazzCashWaitingForPaymentConfirmationTitle =>
+      'Waiting for payment\nconfirmation';
+
+  @override
+  String get jazzCashStatusTitle => 'Status';
+
+  @override
+  String get jazzCashStatusWaitingMessage =>
+      'Waiting for JazzCash confirmation...';
+
+  @override
+  String jazzCashSecondsRemaining(int seconds) {
+    return '$seconds seconds remaining';
+  }
+
+  @override
+  String get jazzCashForJazzUsersTitle => 'For Jazz Users';
+
+  @override
+  String get jazzCashForJazzUsersDescription =>
+      'Please unlock your phone and you will get a PIN input prompt. Enter your MPIN to confirm the payment';
+
+  @override
+  String get jazzCashForOtherNetworksTitle => 'For Other Networks';
+
+  @override
+  String get jazzCashForOtherNetworksSubtitle =>
+      'Approve payment in your JazzCash App';
+
+  @override
+  String get jazzCashOtherNetworksStep1 =>
+      'Login to JazzCash App and tap on profile picture to open the menu';
+
+  @override
+  String get jazzCashOtherNetworksStep2 =>
+      'Then tap on “Payment Requests” and accept the payment request';
+
+  @override
+  String get jazzCashOtherNetworksStep3 =>
+      'Then enter your MPIN to confirm the payment.';
 }

@@ -679,5 +679,19 @@
   "proCancelSubscriptionTitle": "کیا آپ واقعی اپنی Pro سبسکرپشن منسوخ کرنا چاہتے ہیں؟",
   "proCancelSubscriptionMessage": "اگر آپ سبسکرپشن منسوخ کریں گے تو تمام PRO چھوٹ اور مفت ڈیلیوری آپ کے اکاؤنٹ سے ہٹا دی جائیں گی۔",
   "proCancelSubscriptionConfirm": "سبسکرپشن منسوخ کریں",
-  "proCancelSubscriptionDiscard": "منسوخ نہ کریں"
+  "proCancelSubscriptionDiscard": "منسوخ نہ کریں",
+  "jazzCashVerificationRequiredTitle": "تصدیق درکار ہے",
+  "jazzCashVerificationRequiredDescription": "برائے مہربانی اپنے رجسٹرڈ نمبر کے لیے اپنا جاز کیش ایم پن (MPIN) درج کریں۔",
+  "jazzCashWaitingForApproval": "منظوری کا انتظار ہے...",
+  "jazzCashWaitingForPaymentConfirmationTitle": "ادائیگی کی تصدیق کا انتظار ہے",
+  "jazzCashStatusTitle": "حالت",
+  "jazzCashStatusWaitingMessage": "جاز کیش کی تصدیق کا انتظار ہے...",
+  "jazzCashSecondsRemaining": "{seconds} سیکنڈ باقی ہیں",
+  "jazzCashForJazzUsersTitle": "جاز صارفین کے لیے",
+  "jazzCashForJazzUsersDescription": "براہ کرم اپنا فون انلاک کریں اور آپ کو پن درج کرنے کی پرامپٹ موصول ہوگی۔ ادائیگی کی تصدیق کے لیے اپنا ایم پن درج کریں۔",
+  "jazzCashForOtherNetworksTitle": "دیگر نیٹ ورکس کے لیے",
+  "jazzCashForOtherNetworksSubtitle": "اپنی جاز کیش ایپ میں ادائیگی منظور کریں",
+  "jazzCashOtherNetworksStep1": "جاز کیش ایپ میں لاگ ان کریں اور مینو کھولنے کے لیے پروفائل تصویر پر ٹیپ کریں",
+  "jazzCashOtherNetworksStep2": "پھر \"پیمنٹ ریکویسٹ\" پر ٹیپ کریں اور ادائیگی کی درخواست قبول کریں",
+  "jazzCashOtherNetworksStep3": "پھر ادائیگی کی تصدیق کے لیے اپنا ایم پن درج کریں۔"
 }

@@ -175,6 +175,13 @@ class _SurgeryDetailsScreenState extends State<SurgeryDetailsScreen> {
       return;
     }
 
+    final isJazzCash =
+        ConsultationBookingUtils.isJazzCashPayment(paymentMethod);
+    const loaderId = 'surgery_booking_loader';
+    if (isJazzCash) {
+      showJazzCashPaymentVerificationSheet(context, id: loaderId);
+    }
+
     setState(() => _isBooking = true);
 
     final result = await sl<BookSurgeryUseCase>()(
@@ -185,6 +192,9 @@ class _SurgeryDetailsScreenState extends State<SurgeryDetailsScreen> {
       ),
     );
 
+    if (isJazzCash) {
+      JazzCashPaymentVerificationSheetController.close(loaderId);
+    }
     if (!mounted) return;
     setState(() => _isBooking = false);
 

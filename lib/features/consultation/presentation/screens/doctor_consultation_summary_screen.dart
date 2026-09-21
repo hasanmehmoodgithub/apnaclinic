@@ -12,7 +12,7 @@ import '../../../../core/widgets/heart_loader_widget.dart';
 import '../../../bookings/presentation/constants/bookings_tabs.dart';
 import '../../../dashboard/presentation/constants/main_navigation_tabs.dart';
 import '../../../payment/presentation/payment_navigation.dart';
-import '../../../payment/presentation/widgets/payment_pending_dialog_widget.dart';
+import '../../data/utils/consultation_booking_utils.dart';
 import '../consultation_analytics.dart';
 import '../cubit/doctor_consultation_checkout_cubit.dart';
 import '../cubit/doctor_consultation_checkout_state.dart';
@@ -35,12 +35,26 @@ class DoctorConsultationSummaryScreen extends StatelessWidget {
   Future<void> _submitBooking(BuildContext context) async {
     final l10n = AppLocalizations.of(context)!;
     final cubit = context.read<DoctorConsultationCheckoutCubit>();
+    final isJazzCash = ConsultationBookingUtils.isJazzCashPayment(
+      args.paymentMethodCode,
+      name: args.paymentMethodName,
+    );
+
+    const loaderId = 'consultation_submit_booking_loader';
+    if (isJazzCash) {
+      showJazzCashPaymentVerificationSheet(context, id: loaderId);
+    }
+
     final initiation = await cubit.submitBooking(
       args: args.checkoutArgs,
       paymentMethodCode: args.paymentMethodCode,
       msisdn: args.msisdn,
       promoCode: args.promoCode,
     );
+
+    if (isJazzCash) {
+      JazzCashPaymentVerificationSheetController.close(loaderId);
+    }
     if (!context.mounted) return;
 
     if (initiation == null) {

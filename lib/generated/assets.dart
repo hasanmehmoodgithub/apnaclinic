@@ -66,6 +66,7 @@ class Assets {
   static const String iconsNurse = 'assets/icons/nurse.png';
   static const String iconsPharmacy = 'assets/icons/pharmacy.svg';
   static const String iconsPlaceholder = 'assets/icons/placeholder.txt';
+  static const String iconsSatelliteDish = 'assets/icons/satellite_dish.png';
   static const String iconsSurgery = 'assets/icons/surgery.svg';
   static const String iconsSurgerybooking = 'assets/icons/surgerybooking.svg';
   static const String iconsSurgerymessage = 'assets/icons/surgerymessage.svg';
@@ -152,6 +153,8 @@ class Assets {
   static const String svgIcServiceOffer = 'assets/svg/ic_service_offer.svg';
   static const String svgIcSupportCardArrow = 'assets/svg/ic_support_card_arrow.svg';
   static const String svgJazzCash = 'assets/svg/jazzCash.svg';
+  static const String svgJazzLogo = 'assets/svg/ic_jazz_logo.svg';
+  static const String svgSatelliteDish = 'assets/svg/ic_satellite_dish.svg';
   static const String svgNavBookings = 'assets/svg/nav_bookings.svg';
   static const String svgNavBookingsFilled = 'assets/svg/nav_bookings_filled.svg';
   static const String svgNavBookingsOutline = 'assets/svg/nav_bookings_outline.svg';

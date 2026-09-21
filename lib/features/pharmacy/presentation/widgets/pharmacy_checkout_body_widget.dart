@@ -10,7 +10,6 @@ import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/utils/phone_format_utils.dart';
 import '../../../../core/widgets/app_button_widget.dart';
-import '../../../../core/widgets/heart_loader_widget.dart';
 import '../../../consultation/data/utils/consultation_booking_utils.dart';
 import '../../../consultation/presentation/models/doctor_consultation_jazzcash_sheet_result.dart';
 import '../../../consultation/presentation/widgets/doctor_consultation_jazzcash_accounts_sheet_widget.dart';
@@ -55,11 +54,12 @@ class PharmacyCheckoutBodyWidget extends StatelessWidget {
     final paymentMethod =
         cubit.state.selectedPaymentProviderCode?.trim() ?? '';
     if (paymentMethod.isEmpty) return;
-    String? jazzCashNumber;
-    if (ConsultationBookingUtils.isJazzCashPayment(
+    final isJazzCash = ConsultationBookingUtils.isJazzCashPayment(
       paymentMethod,
       name: cubit.state.selectedPaymentProvider?.name ?? '',
-    )) {
+    );
+    String? jazzCashNumber;
+    if (isJazzCash) {
       jazzCashNumber = await _resolveJazzCashMsisdn(context);
       if (!context.mounted ||
           jazzCashNumber == null ||
@@ -71,7 +71,11 @@ class PharmacyCheckoutBodyWidget extends StatelessWidget {
 
     cubit.logConfirmPayment();
 
-    showHeartLoaderDialog(context, id: _checkoutLoaderId, size: 120);
+    showPaymentProcessingLoader(
+      context,
+      id: _checkoutLoaderId,
+      isJazzCash: isJazzCash,
+    );
     final result = await cubit.checkoutOrder(
       address: addressController.text,
       region: cubit.state.selectedCity,
@@ -80,7 +84,7 @@ class PharmacyCheckoutBodyWidget extends StatelessWidget {
       deliveryInstructions: specialInstructionsController.text,
       promoCode: promoCubit.state.appliedCode,
     );
-    HeartLoaderDialogController.close(_checkoutLoaderId);
+    closePaymentProcessingLoader(_checkoutLoaderId);
     if (!context.mounted) return;
 
     await result.fold(

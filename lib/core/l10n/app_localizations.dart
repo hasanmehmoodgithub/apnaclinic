@@ -3730,6 +3730,90 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Don\'t Cancel'**
   String get proCancelSubscriptionDiscard;
+
+  /// Title for JazzCash MPIN payment verification bottom sheet
+  ///
+  /// In en, this message translates to:
+  /// **'Verification Required'**
+  String get jazzCashVerificationRequiredTitle;
+
+  /// Description for JazzCash MPIN payment verification bottom sheet
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter your JazzCash MPIN for your registered number.'**
+  String get jazzCashVerificationRequiredDescription;
+
+  /// Waiting status in JazzCash MPIN verification sheet
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for approval...'**
+  String get jazzCashWaitingForApproval;
+
+  /// Title for JazzCash payment confirmation bottom sheet
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for payment\nconfirmation'**
+  String get jazzCashWaitingForPaymentConfirmationTitle;
+
+  /// Status section header
+  ///
+  /// In en, this message translates to:
+  /// **'Status'**
+  String get jazzCashStatusTitle;
+
+  /// Status waiting message for JazzCash
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for JazzCash confirmation...'**
+  String get jazzCashStatusWaitingMessage;
+
+  /// Seconds remaining countdown label
+  ///
+  /// In en, this message translates to:
+  /// **'{seconds} seconds remaining'**
+  String jazzCashSecondsRemaining(int seconds);
+
+  /// Header for Jazz users instructions card
+  ///
+  /// In en, this message translates to:
+  /// **'For Jazz Users'**
+  String get jazzCashForJazzUsersTitle;
+
+  /// Instructions for Jazz SIM users
+  ///
+  /// In en, this message translates to:
+  /// **'Please unlock your phone and you will get a PIN input prompt. Enter your MPIN to confirm the payment'**
+  String get jazzCashForJazzUsersDescription;
+
+  /// Header for Other networks instructions card
+  ///
+  /// In en, this message translates to:
+  /// **'For Other Networks'**
+  String get jazzCashForOtherNetworksTitle;
+
+  /// Subtitle for Other networks instructions card
+  ///
+  /// In en, this message translates to:
+  /// **'Approve payment in your JazzCash App'**
+  String get jazzCashForOtherNetworksSubtitle;
+
+  /// Step 1 for other networks
+  ///
+  /// In en, this message translates to:
+  /// **'Login to JazzCash App and tap on profile picture to open the menu'**
+  String get jazzCashOtherNetworksStep1;
+
+  /// Step 2 for other networks
+  ///
+  /// In en, this message translates to:
+  /// **'Then tap on “Payment Requests” and accept the payment request'**
+  String get jazzCashOtherNetworksStep2;
+
+  /// Step 3 for other networks
+  ///
+  /// In en, this message translates to:
+  /// **'Then enter your MPIN to confirm the payment.'**
+  String get jazzCashOtherNetworksStep3;
 }
 
 class _AppLocalizationsDelegate

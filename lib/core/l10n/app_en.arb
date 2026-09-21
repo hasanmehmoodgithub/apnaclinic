@@ -792,5 +792,64 @@
   "proCancelSubscriptionTitle": "Are you sure you want to cancel your Pro Subscription?",
   "proCancelSubscriptionMessage": "All the PRO discounts and free delivery will be removed from your account if you choose to cancel the subscription.",
   "proCancelSubscriptionConfirm": "Cancel Subscription",
-  "proCancelSubscriptionDiscard": "Don't Cancel"
+  "proCancelSubscriptionDiscard": "Don't Cancel",
+  "jazzCashVerificationRequiredTitle": "Verification Required",
+  "@jazzCashVerificationRequiredTitle": {
+    "description": "Title for JazzCash MPIN payment verification bottom sheet"
+  },
+  "jazzCashVerificationRequiredDescription": "Please enter your JazzCash MPIN for your registered number.",
+  "@jazzCashVerificationRequiredDescription": {
+    "description": "Description for JazzCash MPIN payment verification bottom sheet"
+  },
+  "jazzCashWaitingForApproval": "Waiting for approval...",
+  "@jazzCashWaitingForApproval": {
+    "description": "Waiting status in JazzCash MPIN verification sheet"
+  },
+  "jazzCashWaitingForPaymentConfirmationTitle": "Waiting for payment\nconfirmation",
+  "@jazzCashWaitingForPaymentConfirmationTitle": {
+    "description": "Title for JazzCash payment confirmation bottom sheet"
+  },
+  "jazzCashStatusTitle": "Status",
+  "@jazzCashStatusTitle": {
+    "description": "Status section header"
+  },
+  "jazzCashStatusWaitingMessage": "Waiting for JazzCash confirmation...",
+  "@jazzCashStatusWaitingMessage": {
+    "description": "Status waiting message for JazzCash"
+  },
+  "jazzCashSecondsRemaining": "{seconds} seconds remaining",
+  "@jazzCashSecondsRemaining": {
+    "description": "Seconds remaining countdown label",
+    "placeholders": {
+      "seconds": { "type": "int" }
+    }
+  },
+  "jazzCashForJazzUsersTitle": "For Jazz Users",
+  "@jazzCashForJazzUsersTitle": {
+    "description": "Header for Jazz users instructions card"
+  },
+  "jazzCashForJazzUsersDescription": "Please unlock your phone and you will get a PIN input prompt. Enter your MPIN to confirm the payment",
+  "@jazzCashForJazzUsersDescription": {
+    "description": "Instructions for Jazz SIM users"
+  },
+  "jazzCashForOtherNetworksTitle": "For Other Networks",
+  "@jazzCashForOtherNetworksTitle": {
+    "description": "Header for Other networks instructions card"
+  },
+  "jazzCashForOtherNetworksSubtitle": "Approve payment in your JazzCash App",
+  "@jazzCashForOtherNetworksSubtitle": {
+    "description": "Subtitle for Other networks instructions card"
+  },
+  "jazzCashOtherNetworksStep1": "Login to JazzCash App and tap on profile picture to open the menu",
+  "@jazzCashOtherNetworksStep1": {
+    "description": "Step 1 for other networks"
+  },
+  "jazzCashOtherNetworksStep2": "Then tap on “Payment Requests” and accept the payment request",
+  "@jazzCashOtherNetworksStep2": {
+    "description": "Step 2 for other networks"
+  },
+  "jazzCashOtherNetworksStep3": "Then enter your MPIN to confirm the payment.",
+  "@jazzCashOtherNetworksStep3": {
+    "description": "Step 3 for other networks"
+  }
 }

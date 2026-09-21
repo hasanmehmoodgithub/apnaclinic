@@ -78,7 +78,7 @@ class _LabTestCheckoutScreenState extends State<LabTestCheckoutScreen> {
 
   @override
   void dispose() {
-    HeartLoaderDialogController.close(_bookLoaderId);
+    closePaymentProcessingLoader(_bookLoaderId);
     _emergencyController.removeListener(_onEmergencyChanged);
     _nameController.dispose();
     _phoneController.dispose();
@@ -258,8 +258,14 @@ class _LabTestCheckoutScreenState extends State<LabTestCheckoutScreen> {
     required String msisdn,
   }) async {
     final args = widget.args;
+    final isJazzCash =
+        ConsultationBookingUtils.isJazzCashPayment(paymentMethod);
     setState(() => _isBooking = true);
-    showHeartLoaderDialog(context, id: _bookLoaderId);
+    showPaymentProcessingLoader(
+      context,
+      id: _bookLoaderId,
+      isJazzCash: isJazzCash,
+    );
 
     final result = await sl<BookLabTestUseCase>()(
       BookLabTestParams(
@@ -280,7 +286,7 @@ class _LabTestCheckoutScreenState extends State<LabTestCheckoutScreen> {
       ),
     );
 
-    HeartLoaderDialogController.close(_bookLoaderId);
+    closePaymentProcessingLoader(_bookLoaderId);
     if (!mounted) return;
     setState(() => _isBooking = false);
 

@@ -1992,4 +1992,55 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get proCancelSubscriptionDiscard => 'منسوخ نہ کریں';
+
+  @override
+  String get jazzCashVerificationRequiredTitle => 'تصدیق درکار ہے';
+
+  @override
+  String get jazzCashVerificationRequiredDescription =>
+      'برائے مہربانی اپنے رجسٹرڈ نمبر کے لیے اپنا جاز کیش ایم پن (MPIN) درج کریں۔';
+
+  @override
+  String get jazzCashWaitingForApproval => 'منظوری کا انتظار ہے...';
+
+  @override
+  String get jazzCashWaitingForPaymentConfirmationTitle =>
+      'ادائیگی کی تصدیق کا انتظار ہے';
+
+  @override
+  String get jazzCashStatusTitle => 'حالت';
+
+  @override
+  String get jazzCashStatusWaitingMessage => 'جاز کیش کی تصدیق کا انتظار ہے...';
+
+  @override
+  String jazzCashSecondsRemaining(int seconds) {
+    return '$seconds سیکنڈ باقی ہیں';
+  }
+
+  @override
+  String get jazzCashForJazzUsersTitle => 'جاز صارفین کے لیے';
+
+  @override
+  String get jazzCashForJazzUsersDescription =>
+      'براہ کرم اپنا فون انلاک کریں اور آپ کو پن درج کرنے کی پرامپٹ موصول ہوگی۔ ادائیگی کی تصدیق کے لیے اپنا ایم پن درج کریں۔';
+
+  @override
+  String get jazzCashForOtherNetworksTitle => 'دیگر نیٹ ورکس کے لیے';
+
+  @override
+  String get jazzCashForOtherNetworksSubtitle =>
+      'اپنی جاز کیش ایپ میں ادائیگی منظور کریں';
+
+  @override
+  String get jazzCashOtherNetworksStep1 =>
+      'جاز کیش ایپ میں لاگ ان کریں اور مینو کھولنے کے لیے پروفائل تصویر پر ٹیپ کریں';
+
+  @override
+  String get jazzCashOtherNetworksStep2 =>
+      'پھر \"پیمنٹ ریکویسٹ\" پر ٹیپ کریں اور ادائیگی کی درخواست قبول کریں';
+
+  @override
+  String get jazzCashOtherNetworksStep3 =>
+      'پھر ادائیگی کی تصدیق کے لیے اپنا ایم پن درج کریں۔';
 }
