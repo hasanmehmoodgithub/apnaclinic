@@ -7,6 +7,7 @@ import '../../../../core/constants/app_colors.dart';
 import '../../../../core/extensions/build_context_extensions.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
+import '../../../../core/utils/webview_file_selector_utils.dart';
 import '../../../../core/utils/webview_media_permission_utils.dart';
 import '../instant_doctor_consultation_args.dart';
 import '../widgets/instant_doctor_consultation_app_bar_widget.dart';
@@ -83,6 +84,9 @@ class _InstantDoctorConsultationWebViewScreenState
     if (platformController is AndroidWebViewController) {
       platformController.setMediaPlaybackRequiresUserGesture(false);
       platformController.setMixedContentMode(MixedContentMode.alwaysAllow);
+      platformController.setAllowFileAccess(true);
+      platformController.setAllowContentAccess(true);
+      platformController.setOnShowFileSelector(handleAndroidWebViewFileSelection);
     }
 
     return controller;

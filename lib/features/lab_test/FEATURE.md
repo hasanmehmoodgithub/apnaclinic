@@ -70,20 +70,24 @@ Browse labs in a city, then tests for a selected lab, booking/cart flow, payment
 
 ## Analytics
 
-Firebase via `LabTestAnalytics` / `AnalyticsService`. `lab_module` fires on the hub (`AppRoutes.labTest`). City restore on bootstrap does not fire `lab_city_change`; only a user pick in the city dialog does. Global search lab results fire `lab_item_select` (and `search_result_clicked`); they do not fire `lab_module` (no `source` on that event). Not logged: `fb_content_type` / `content_type` (Firebase only), `transaction_id`, `partner` on confirm (cart stores partner id, not display name), `address` (checkout has no street field). `promo` is the applied checkout promo code when present, otherwise cart `discountCode`. Pending card payment without URL does not fire `lab_booking_confirmed`. Cash checkout sends `payment_method`=`COD` (spec samples list JazzCash / Card). Lab booking details fire `booking_viewed` (`type=lab`) via `BookingsAnalytics`.
+Firebase via `LabTestAnalytics` / `AnalyticsService`. BRD Lab Journey events are logged in addition to existing lab events (Meta/TikTok not wired). `lab_module` + `lab_module_opened` fire on the hub (`AppRoutes.labTest`); `source` is `home` / `search` / `bookings` from route extra (defaults to `home`). City restore on bootstrap does not fire `lab_city_change`; only a user pick in the city dialog does. Global search lab results fire `lab_item_select` + `lab_test_selected` (and `search_result_clicked`); they do not fire `lab_module` / `lab_module_opened` unless the hub opens. Not logged: `fb_content_type` / `content_type` (Firebase only), JazzCash `auth_code` (not on book-test response). `transaction_id` uses booking `publicId` when present. `promo` is the applied checkout promo code when present, otherwise cart `discountCode`. Pending card payment without URL does not fire confirm/booked. Cash checkout sends `payment_method`=`COD`. Lab booking details fire `booking_viewed` (`type=lab`) via `BookingsAnalytics`.
 
 | Event | When | Params |
 |---|---|---|
 | `lab_module` | Lab hub opens | — |
+| `lab_module_opened` | Lab hub opens (BRD) | `source` |
 | `lab_city_change` | User picks a city | `selected_city` |
 | `lab_search_clicked` | Search field or search icon tap | — |
 | `lab_search_performed` | Non-empty catalog search | `keyword`, `result_items` |
+| `lab_selected` | User taps a lab (BRD) | `lab_name` |
 | `lab_item_select` | Catalog card or global search result | `test_name`, `lab_name`, `sample_type` |
+| `lab_test_selected` | Same as item select (BRD) | `test_name` |
 | `lab_add_to_cart` | Add to cart succeeds | `af_content_type`=`Lab`, `test_name`, `lab_name`, `partner_name`, `sample_type`, `sampling_mode` |
 | `lab_cart_viewed` | Cart screen opens | `af_content_type`=`Lab Cart` |
-| `lab_checkout` | Checkout screen opens | `af_content_type`=`Lab Checkout` |
+| `lab_checkout` | Checkout screen opens (BRD) | `af_content_type`=`Lab Checkout` |
 | `lab_patient_details_edit` | Patient details Edit tap | — |
 | `lab_booking_confirmed` | Book succeeds or fails | `af_content_type`=`Lab`, `booking_id`, `user_name`, `msisdn`, `number_of_tests`, `lab_name`, `timestamp`, `payment_method`, `payment_status`, `promo_applied`, `promo` |
+| `lab_test_booked` | Same confirm path (BRD) | `booking_id`, `timestamp`, `user_name`, `msisdn`, `lab_name`, `test_name`, `test_id`, `sampling_mode`, `total_amount`, `discount`, `payment_method`, `payment_status`, `transaction_id` (when available) |
 
 ## Mocks
 

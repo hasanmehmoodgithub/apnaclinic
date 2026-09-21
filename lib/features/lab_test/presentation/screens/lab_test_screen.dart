@@ -29,7 +29,13 @@ import '../widgets/lab_test_city_selector_field_widget.dart';
 import '../widgets/lab_test_labs_grid_block_widget.dart';
 
 class LabTestScreen extends StatefulWidget {
-  const LabTestScreen({super.key});
+  const LabTestScreen({
+    super.key,
+    this.source = AnalyticsLabSourceKeys.home,
+  });
+
+  /// Analytics `source` for BRD `lab_module_opened` (e.g. home / search / bookings).
+  final String source;
 
   @override
   State<LabTestScreen> createState() => _LabTestScreenState();
@@ -54,7 +60,7 @@ class _LabTestScreenState extends State<LabTestScreen> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
-      LabTestAnalytics.logModule();
+      LabTestAnalytics.logModule(widget.source);
       if (!AuthGuard.isLoggedIn(_appPref)) return;
       context.read<LabTestCartCubit>().load();
     });
@@ -218,6 +224,8 @@ class _LabTestScreenState extends State<LabTestScreen> {
     final cubit = context.read<LabTestCubit>();
     final city = cubit.state.selectedCity;
     if (city == null || city.isEmpty) return;
+
+    LabTestAnalytics.logLabSelected(lab.name);
 
     await context.pushNamed(
       AppRoutes.labTestSelectTest,
