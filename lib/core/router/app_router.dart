@@ -30,6 +30,7 @@ import '../../features/lab_test/domain/repositories/lab_test_cart_repository.dar
 import '../../features/lab_test/presentation/cubit/lab_test_booking_cubit.dart';
 import '../../features/lab_test/presentation/cubit/lab_test_cart_cubit.dart';
 import '../../features/lab_test/presentation/cubit/lab_test_cubit.dart';
+import '../../features/lab_test/presentation/lab_test_analytics.dart';
 import '../../features/lab_test/presentation/lab_test_route_args.dart';
 import '../../features/lab_test/presentation/screens/lab_test_booking_screen.dart';
 import '../../features/lab_test/presentation/screens/lab_test_cart_screen.dart';
@@ -426,7 +427,7 @@ class AppRouter {
             BlocProvider<LabTestCubit>(create: (_) => sl<LabTestCubit>()),
             BlocProvider<LabTestCartCubit>.value(value: sl<LabTestCartCubit>()),
           ],
-          child: const LabTestScreen(),
+          child: LabTestScreen(source: labHubSourceFromExtra(state.extra)),
         ),
       ),
       GoRoute(

@@ -10,13 +10,39 @@ import '../domain/entities/lab_test_item_entity.dart';
 import '../domain/utils/lab_test_price_formatter.dart';
 import 'lab_test_route_args.dart';
 
+class LabTestRouteExtraKeys {
+  LabTestRouteExtraKeys._();
+
+  static const source = 'source';
+}
+
+String? labSourceFromExtra(Object? extra) {
+  if (extra is! Map) return null;
+  final source =
+      extra[LabTestRouteExtraKeys.source]?.toString().trim() ?? '';
+  return source.isEmpty ? null : source;
+}
+
+String labHubSourceFromExtra(Object? extra) {
+  return labSourceFromExtra(extra) ?? AnalyticsLabSourceKeys.home;
+}
+
 abstract final class LabTestAnalytics {
   LabTestAnalytics._();
 
   static AnalyticsService get _analytics => sl<AnalyticsService>();
 
-  static void logModule() {
+  /// Legacy hub open + BRD [AnalyticsEventKeys.labModuleOpened] with [source].
+  static void logModule([String source = AnalyticsLabSourceKeys.home]) {
+    final resolved = source.trim().isEmpty
+        ? AnalyticsLabSourceKeys.home
+        : source.trim();
     unawaited(_analytics.logEvent(AnalyticsEventKeys.labModule));
+    unawaited(
+      _analytics.logEvent(AnalyticsEventKeys.labModuleOpened, {
+        AnalyticsParamKeys.source: resolved,
+      }),
+    );
   }
 
   static void logCityChange(String selectedCity) {
@@ -47,6 +73,17 @@ abstract final class LabTestAnalytics {
     );
   }
 
+  /// BRD [AnalyticsEventKeys.labSelected].
+  static void logLabSelected(String labName) {
+    final name = labName.trim();
+    if (name.isEmpty) return;
+    unawaited(
+      _analytics.logEvent(AnalyticsEventKeys.labSelected, {
+        AnalyticsParamKeys.labName: name,
+      }),
+    );
+  }
+
   static void logItemSelect({
     required String testName,
     String labName = '',
@@ -61,6 +98,18 @@ abstract final class LabTestAnalytics {
         AnalyticsParamKeys.testName: name,
         if (lab.isNotEmpty) AnalyticsParamKeys.labName: lab,
         if (sample.isNotEmpty) AnalyticsParamKeys.sampleType: sample,
+      }),
+    );
+    logTestSelected(name);
+  }
+
+  /// BRD [AnalyticsEventKeys.labTestSelected].
+  static void logTestSelected(String testName) {
+    final name = testName.trim();
+    if (name.isEmpty) return;
+    unawaited(
+      _analytics.logEvent(AnalyticsEventKeys.labTestSelected, {
+        AnalyticsParamKeys.testName: name,
       }),
     );
   }
@@ -104,6 +153,7 @@ abstract final class LabTestAnalytics {
     );
   }
 
+  /// BRD [AnalyticsEventKeys.labCheckout].
   static void logCheckout() {
     unawaited(
       _analytics.logEvent(AnalyticsEventKeys.labCheckout, {
@@ -116,6 +166,7 @@ abstract final class LabTestAnalytics {
     unawaited(_analytics.logEvent(AnalyticsEventKeys.labPatientDetailsEdit));
   }
 
+  /// Legacy confirm + BRD [AnalyticsEventKeys.labTestBooked].
   static void logBookingConfirmed({
     required LabTestCheckoutArgs args,
     required String paymentMethodCode,
@@ -133,23 +184,64 @@ abstract final class LabTestAnalytics {
         LabTestPriceFormatter.parseRsAmount(args.discountAmount) > 0 ||
         args.discountPercent > 0 ||
         promoCode.isNotEmpty;
+    final paymentMethod = _analyticsPaymentMethod(paymentMethodCode);
+    final normalizedMsisdn = _analyticsMsisdn(msisdn);
+    final timestamp = formatAnalyticsTimestamp(DateTime.now());
+
     unawaited(
       _analytics.logEvent(AnalyticsEventKeys.labBookingConfirmed, {
         AnalyticsParamKeys.afContentType: AnalyticsContentTypeKeys.lab,
         if (bookingId.isNotEmpty) AnalyticsParamKeys.bookingId: bookingId,
         if (name.isNotEmpty) AnalyticsParamKeys.userName: name,
-        AnalyticsParamKeys.msisdn: _analyticsMsisdn(msisdn),
+        AnalyticsParamKeys.msisdn: normalizedMsisdn,
         AnalyticsParamKeys.numberOfTests: args.testIds.length,
         if (labName.isNotEmpty) AnalyticsParamKeys.labName: labName,
-        AnalyticsParamKeys.timestamp: formatAnalyticsTimestamp(DateTime.now()),
-        AnalyticsParamKeys.paymentMethod: _analyticsPaymentMethod(
-          paymentMethodCode,
-        ),
+        AnalyticsParamKeys.timestamp: timestamp,
+        AnalyticsParamKeys.paymentMethod: paymentMethod,
         AnalyticsParamKeys.paymentStatus: paymentStatus,
         AnalyticsParamKeys.promoApplied: promoApplied
             ? AnalyticsYesNoKeys.yes
             : AnalyticsYesNoKeys.no,
         if (promoCode.isNotEmpty) AnalyticsParamKeys.promo: promoCode,
+      }),
+    );
+
+    final testName = args.testTitle.trim().isNotEmpty
+        ? args.testTitle.trim()
+        : args.lines
+              .map((line) => line.testTitle.trim())
+              .where((title) => title.isNotEmpty)
+              .join(', ');
+    final testId = args.testIds.isEmpty
+        ? ''
+        : args.testIds.map((id) => id.toString()).join(',');
+    final totalAmount = LabTestPriceFormatter.parseRsAmount(
+      args.totalAmount.trim().isNotEmpty
+          ? args.totalAmount
+          : args.discountedFee,
+    );
+    final discount = LabTestPriceFormatter.parseRsAmount(args.discountAmount);
+    final transactionId = initiation?.publicId?.trim() ?? '';
+
+    unawaited(
+      _analytics.logEvent(AnalyticsEventKeys.labTestBooked, {
+        if (bookingId.isNotEmpty) AnalyticsParamKeys.bookingId: bookingId,
+        AnalyticsParamKeys.timestamp: timestamp,
+        if (name.isNotEmpty) AnalyticsParamKeys.userName: name,
+        AnalyticsParamKeys.msisdn: normalizedMsisdn,
+        if (labName.isNotEmpty) AnalyticsParamKeys.labName: labName,
+        if (testName.isNotEmpty) AnalyticsParamKeys.testName: testName,
+        if (testId.isNotEmpty) AnalyticsParamKeys.testId: testId,
+        AnalyticsParamKeys.samplingMode: args.bookingMethodIsHomeSample
+            ? AnalyticsLabSamplingModeKeys.homeSample
+            : AnalyticsLabSamplingModeKeys.walkIn,
+        AnalyticsParamKeys.totalAmount: totalAmount,
+        AnalyticsParamKeys.discount: discount,
+        AnalyticsParamKeys.paymentMethod: paymentMethod,
+        AnalyticsParamKeys.paymentStatus: paymentStatus,
+        if (transactionId.isNotEmpty)
+          AnalyticsParamKeys.transactionId: transactionId,
+        // Auth code is not returned by the lab book-test API.
       }),
     );
   }

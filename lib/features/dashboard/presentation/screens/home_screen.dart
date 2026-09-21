@@ -34,6 +34,7 @@ import '../widgets/our_services_widget.dart';
 import '../widgets/promotional_banner_dialog.dart';
 import '../instant_doctor_tab_navigation.dart';
 import '../../../consultation/presentation/consultation_analytics.dart';
+import '../../../lab_test/presentation/lab_test_analytics.dart';
 import '../../../pharmacy/presentation/pharmacy_navigation.dart';
 import '../../../surgery/presentation/surgery_analytics.dart';
 import '../../../search/presentation/models/search_launch_args.dart';
@@ -413,6 +414,10 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     } else if (normalizedRoute == AppRoutes.surgery) {
       extra = {
         SurgeryRouteExtraKeys.source: AnalyticsSurgerySourceKeys.home,
+      };
+    } else if (normalizedRoute == AppRoutes.labTest) {
+      extra = {
+        LabTestRouteExtraKeys.source: AnalyticsLabSourceKeys.home,
       };
     }
     context.push(AppRoutes.path(normalizedRoute), extra: extra);

@@ -49,15 +49,23 @@ class AnalyticsEventKeys {
   static const doctorConsultationBooked = 'doctor_consultation_booked';
 
   static const labModule = 'lab_module';
+  /// BRD Lab Journey: module open with `source`.
+  static const labModuleOpened = 'lab_module_opened';
   static const labCityChange = 'lab_city_change';
   static const labSearchClicked = 'lab_search_clicked';
   static const labSearchPerformed = 'lab_search_performed';
+  /// BRD Lab Journey: user selects a lab.
+  static const labSelected = 'lab_selected';
   static const labItemSelect = 'lab_item_select';
+  /// BRD Lab Journey: user selects a test.
+  static const labTestSelected = 'lab_test_selected';
   static const labAddToCart = 'lab_add_to_cart';
   static const labCartViewed = 'lab_cart_viewed';
   static const labCheckout = 'lab_checkout';
   static const labPatientDetailsEdit = 'lab_patient_details_edit';
   static const labBookingConfirmed = 'lab_booking_confirmed';
+  /// BRD Lab Journey: successful/failed book (Purchase funnel).
+  static const labTestBooked = 'lab_test_booked';
 
   static const surgeryModule = 'surgery_module';
   static const surgeryCityChange = 'surgery_city_change';
@@ -127,11 +135,16 @@ class AnalyticsParamKeys {
   static const bookingTimestamp = 'booking_timestamp';
   static const selectedCity = 'selected_city';
   static const testName = 'test_name';
+  static const testId = 'test_id';
   static const labName = 'lab_name';
   static const sampleType = 'sample_type';
   static const partnerName = 'partner_name';
   static const samplingMode = 'sampling_mode';
   static const numberOfTests = 'number_of_tests';
+  static const totalAmount = 'total_amount';
+  static const discount = 'discount';
+  static const transactionId = 'transaction_id';
+  static const authCode = 'auth_code';
   static const promo = 'promo';
   static const surgeryName = 'surgery_name';
   static const amount = 'amount';
@@ -257,6 +270,14 @@ class AnalyticsConsultationPaymentStatusKeys {
 
   static const successful = 'successful';
   static const failed = 'failed';
+}
+
+class AnalyticsLabSourceKeys {
+  AnalyticsLabSourceKeys._();
+
+  static const home = 'home';
+  static const search = 'search';
+  static const bookings = 'bookings';
 }
 
 class AnalyticsLabPaymentMethodKeys {

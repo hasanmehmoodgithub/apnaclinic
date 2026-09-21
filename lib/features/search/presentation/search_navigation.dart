@@ -134,7 +134,12 @@ void openSearchLabBooking(
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text(l10n.labTestPleaseSelectCityFirst)),
     );
-    context.pushNamed(AppRoutes.labTest);
+    context.pushNamed(
+      AppRoutes.labTest,
+      extra: {
+        LabTestRouteExtraKeys.source: AnalyticsLabSourceKeys.search,
+      },
+    );
     return;
   }
 
