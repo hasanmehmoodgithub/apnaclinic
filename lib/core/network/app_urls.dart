@@ -114,6 +114,10 @@ class AppUrls {
   static String get doctorConsultationFeedback =>
       '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/doctor-consultation/feedback';
 
+  /// Record an AI assistant screening conversation (aggregator mobile API).
+  static String get aiAssistantInteractions =>
+      '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/ai-assistant/interactions';
+
   /// Payment providers for checkout (aggregator mobile API).
   /// [module] is one of: `consultation` | `pharmacy` | `lab-testing` | `surgery`.
   static String paymentProviders({required String module}) =>

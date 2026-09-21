@@ -17,6 +17,7 @@ import 'domain/use_cases/get_consultation_categories_use_case.dart';
 import 'domain/use_cases/get_consultation_doctor_slots_use_case.dart';
 import 'domain/use_cases/get_consultation_doctors_use_case.dart';
 import 'domain/use_cases/get_payment_providers_use_case.dart';
+import 'domain/use_cases/record_ai_assistant_interaction_use_case.dart';
 import 'domain/use_cases/submit_consultation_booking_use_case.dart';
 import 'domain/use_cases/submit_consultation_feedback_use_case.dart';
 import 'presentation/cubit/consultation_cubit.dart';
@@ -95,6 +96,12 @@ void initConsultationInjector() {
 
   sl.registerLazySingleton<SubmitConsultationFeedbackUseCase>(
     () => SubmitConsultationFeedbackUseCase(
+      repository: sl<ConsultationRepository>(),
+    ),
+  );
+
+  sl.registerLazySingleton<RecordAiAssistantInteractionUseCase>(
+    () => RecordAiAssistantInteractionUseCase(
       repository: sl<ConsultationRepository>(),
     ),
   );

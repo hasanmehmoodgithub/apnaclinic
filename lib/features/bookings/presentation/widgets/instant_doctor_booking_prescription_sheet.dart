@@ -1,19 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../core/analytics/analytics_event_keys.dart';
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
+import '../../../../core/router/app_routes.dart';
+import '../../../../core/widgets/heart_loader_widget.dart';
 import '../../../instant_doctor/domain/entities/instant_doctor_booking_entity.dart';
+import '../../../lab_test/domain/use_cases/download_lab_report_use_case.dart';
+import '../../../lab_test/presentation/lab_test_route_args.dart';
+import '../../data/mappers/doctor_consultation_booking_mapper.dart';
 import '../bookings_analytics.dart';
+import 'booking_invoice_tile_widget.dart';
 
 class InstantDoctorBookingPrescriptionSheet extends StatelessWidget {
   const InstantDoctorBookingPrescriptionSheet({
     super.key,
-    required this.prescription,
+    required this.booking,
   });
 
-  final String prescription;
+  final InstantDoctorBookingEntity booking;
+
+  static const _pdfLoaderId = 'instant_doctor_prescription_pdf';
 
   static Future<void> show(
     BuildContext context, {
@@ -30,9 +40,7 @@ class InstantDoctorBookingPrescriptionSheet extends StatelessWidget {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (_) => InstantDoctorBookingPrescriptionSheet(
-        prescription: booking.prescription,
-      ),
+      builder: (_) => InstantDoctorBookingPrescriptionSheet(booking: booking),
     );
   }
 
@@ -41,11 +49,8 @@ class InstantDoctorBookingPrescriptionSheet extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
     final textTheme = Theme.of(context).textTheme;
     final sheetHeight = MediaQuery.sizeOf(context).height * 0.85;
-    final lines = prescription
-        .split(RegExp(r'[\r\n]+'))
-        .map((line) => line.trim())
-        .where((line) => line.isNotEmpty)
-        .toList(growable: false);
+    final lines = booking.prescriptionLines;
+    final showPdf = booking.hasPrescriptionUrl;
 
     return SizedBox(
       height: sheetHeight,
@@ -83,24 +88,41 @@ class InstantDoctorBookingPrescriptionSheet extends StatelessWidget {
                 SizedBox(height: 12.h),
                 Expanded(
                   child: SingleChildScrollView(
-                    child: Container(
-                      width: double.infinity,
-                      constraints: BoxConstraints(
-                        minHeight: sheetHeight * 0.7,
-                      ),
-                      padding: EdgeInsets.all(16.w),
-                      decoration: BoxDecoration(
-                        color: AppColors.clrF7F7F7,
-                        borderRadius: BorderRadius.circular(8.r),
-                      ),
-                      child: Text(
-                        lines.join('\n'),
-                        style: textTheme.bodyMedium?.copyWith(
-                          color: AppColors.clr060,
-                          fontSize: 14.sp,
-                          height: 1.5,
-                        ),
-                      ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        if (lines.isNotEmpty)
+                          Container(
+                            width: double.infinity,
+                            constraints: BoxConstraints(
+                              minHeight: showPdf ? 0 : sheetHeight * 0.7,
+                            ),
+                            padding: EdgeInsets.all(16.w),
+                            decoration: BoxDecoration(
+                              color: AppColors.clrF7F7F7,
+                              borderRadius: BorderRadius.circular(8.r),
+                            ),
+                            child: Text(
+                              lines.join('\n'),
+                              style: textTheme.bodyMedium?.copyWith(
+                                color: AppColors.clr060,
+                                fontSize: 14.sp,
+                                height: 1.5,
+                              ),
+                            ),
+                          ),
+                        if (showPdf) ...[
+                          if (lines.isNotEmpty) SizedBox(height: 12.h),
+                          BookingInvoiceTileWidget(
+                            fileName:
+                                DoctorConsultationBookingMapper.prescriptionDisplayName(
+                                  booking.prescriptionUrl,
+                                  0,
+                                ),
+                            onDownload: () => _openPrescriptionPdf(context),
+                          ),
+                        ],
+                      ],
                     ),
                   ),
                 ),
@@ -109,6 +131,44 @@ class InstantDoctorBookingPrescriptionSheet extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+
+  Future<void> _openPrescriptionPdf(BuildContext context) async {
+    final l10n = AppLocalizations.of(context)!;
+    final url = booking.prescriptionUrl.trim();
+    if (url.isEmpty) return;
+
+    BookingsAnalytics.logPrescriptionDownloaded(
+      bookingId: booking.orderId,
+      service: AnalyticsBookingTypeKeys.instantDoctor,
+    );
+
+    showHeartLoaderDialog(context, id: _pdfLoaderId, size: 120);
+    final result = await sl<DownloadLabReportUseCase>()(
+      DownloadLabReportParams.fromUrl(url: url, orderId: booking.orderId),
+    );
+    HeartLoaderDialogController.close(_pdfLoaderId);
+    if (!context.mounted) return;
+
+    result.fold(
+      (error) {
+        final message = error.trim().isNotEmpty
+            ? error.trim()
+            : l10n.pdfViewerDownloadFailed;
+        ScaffoldMessenger.of(context)
+          ..hideCurrentSnackBar()
+          ..showSnackBar(SnackBar(content: Text(message)));
+      },
+      (path) {
+        final router = GoRouter.of(context);
+        final title = l10n.bookingsPrescriptionsTitle;
+        context.pop();
+        router.pushNamed(
+          AppRoutes.labTestReportViewer,
+          extra: LabTestReportViewerArgs(filePath: path, title: title),
+        );
+      },
     );
   }
 }

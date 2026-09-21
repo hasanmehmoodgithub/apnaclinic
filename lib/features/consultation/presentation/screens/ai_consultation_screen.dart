@@ -14,8 +14,10 @@ import '../../../../core/constants/app_colors.dart';
 import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
+import '../../../../core/preference/app_pref.dart';
 import '../../../../core/utils/microphone_permission_utils.dart';
 import '../../../../core/utils/webview_media_permission_utils.dart';
+import '../../domain/use_cases/record_ai_assistant_interaction_use_case.dart';
 import '../constants/consultation_ui_config.dart';
 import '../widgets/ai_screening_exit_dialog.dart';
 import '../widgets/ai_screening_shimmer_widget.dart';
@@ -34,7 +36,9 @@ class _AiScreeningScreenState extends State<AiScreeningScreen>
     with WidgetsBindingObserver {
   WebViewController? _controller;
   late final AnalyticsService _analytics;
+  late final RecordAiAssistantInteractionUseCase _recordInteraction;
   late final DateTime _startedAt;
+  late final String _sessionId;
   var _isLoading = true;
   var _hasError = false;
   var _isExitDialogVisible = false;
@@ -51,7 +55,11 @@ class _AiScreeningScreenState extends State<AiScreeningScreen>
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     _analytics = sl<AnalyticsService>();
+    _recordInteraction = sl<RecordAiAssistantInteractionUseCase>();
     _startedAt = DateTime.now();
+    _sessionId = RecordAiAssistantInteractionParams.buildSessionId(
+      sl<AppPref>().getUserId(),
+    );
     unawaited(_analytics.logEvent(AnalyticsEventKeys.aiChatStarted));
     unawaited(_prepareAndLoad());
   }
@@ -186,6 +194,17 @@ class _AiScreeningScreenState extends State<AiScreeningScreen>
       _analytics.logEvent(
         AnalyticsEventKeys.aiChatEnded,
         {AnalyticsParamKeys.callDuration: '${seconds}s'},
+      ),
+    );
+    unawaited(_recordAiAssistantInteraction(seconds));
+  }
+
+  Future<void> _recordAiAssistantInteraction(int durationSeconds) async {
+    await _recordInteraction(
+      RecordAiAssistantInteractionParams(
+        sessionId: _sessionId,
+        startedAt: _startedAt,
+        durationSeconds: durationSeconds,
       ),
     );
   }

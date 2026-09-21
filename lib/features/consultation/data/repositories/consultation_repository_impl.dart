@@ -6,6 +6,7 @@ import '../../domain/entities/consultation_doctor_slots_entity.dart';
 import '../../domain/repositories/consultation_repository.dart';
 import '../../domain/entities/payment_provider_entity.dart';
 import '../../domain/use_cases/abandon_consultation_booking_use_case.dart';
+import '../../domain/use_cases/record_ai_assistant_interaction_use_case.dart';
 import '../../domain/use_cases/submit_consultation_booking_use_case.dart';
 import '../../domain/use_cases/submit_consultation_feedback_use_case.dart';
 import '../../domain/entities/consultation_doctors_page_entity.dart';
@@ -198,6 +199,21 @@ class ConsultationRepositoryImpl implements ConsultationRepository {
         return Left(e.trim());
       }
       return const Left('Unable to submit feedback right now.');
+    }
+  }
+
+  @override
+  Future<Either<ErrorMsg, void>> recordAiAssistantInteraction(
+    RecordAiAssistantInteractionParams params,
+  ) async {
+    try {
+      await remoteDataSource.recordAiAssistantInteraction(params);
+      return const Right(null);
+    } catch (e) {
+      if (e is String && e.trim().isNotEmpty) {
+        return Left(e.trim());
+      }
+      return const Left('Unable to record the AI assistant interaction.');
     }
   }
 }

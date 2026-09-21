@@ -6,6 +6,7 @@ import '../entities/consultation_categories_page_entity.dart';
 import '../entities/consultation_doctor_slots_entity.dart';
 import '../entities/payment_provider_entity.dart';
 import '../use_cases/abandon_consultation_booking_use_case.dart';
+import '../use_cases/record_ai_assistant_interaction_use_case.dart';
 import '../use_cases/submit_consultation_booking_use_case.dart';
 import '../use_cases/submit_consultation_feedback_use_case.dart';
 
@@ -40,5 +41,8 @@ abstract class ConsultationRepository {
   );
   Future<Either<ErrorMsg, void>> submitFeedback(
     SubmitConsultationFeedbackParams params,
+  );
+  Future<Either<ErrorMsg, void>> recordAiAssistantInteraction(
+    RecordAiAssistantInteractionParams params,
   );
 }

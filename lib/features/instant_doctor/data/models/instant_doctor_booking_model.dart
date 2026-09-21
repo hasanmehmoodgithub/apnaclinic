@@ -13,6 +13,7 @@ class InstantDoctorBookingItemModel {
     required this.partnerName,
     required this.partnerImageUrl,
     required this.prescription,
+    this.prescriptionUrl = '',
   });
 
   final String orderId;
@@ -28,6 +29,7 @@ class InstantDoctorBookingItemModel {
   final String partnerName;
   final String partnerImageUrl;
   final String prescription;
+  final String prescriptionUrl;
 
   factory InstantDoctorBookingItemModel.fromJson(Map<String, dynamic> json) {
     return InstantDoctorBookingItemModel(
@@ -46,6 +48,9 @@ class InstantDoctorBookingItemModel {
         json['partnerImageUrl'] ?? json['partner_image_url'],
       ),
       prescription: _asPrescription(json['prescription']),
+      prescriptionUrl: _asString(
+        json['prescriptionUrl'] ?? json['prescription_url'],
+      ),
     );
   }
 
@@ -101,7 +106,8 @@ class InstantDoctorBookingsPageModel {
       payload = json;
     }
 
-    final listRaw = payload['data'] ??
+    final listRaw =
+        payload['data'] ??
         payload['bookings'] ??
         payload['items'] ??
         (root is List ? root : null);
@@ -124,9 +130,11 @@ class InstantDoctorBookingsPageModel {
     return InstantDoctorBookingsPageModel(
       items: items,
       page: InstantDoctorBookingItemModel._asInt(payload['page']) ?? 1,
-      limit: InstantDoctorBookingItemModel._asInt(payload['limit']) ??
+      limit:
+          InstantDoctorBookingItemModel._asInt(payload['limit']) ??
           items.length,
-      total: InstantDoctorBookingItemModel._asInt(payload['total']) ??
+      total:
+          InstantDoctorBookingItemModel._asInt(payload['total']) ??
           items.length,
     );
   }

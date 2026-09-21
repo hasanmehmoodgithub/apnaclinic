@@ -146,5 +146,5 @@ include `user_name` and `msisdn`).
 | `my_bookings_tab` | Bookings bottom tab is shown | — |
 | `booking_viewed` | Booking details load | `type` (`consultancy` / `pharmacy` / `lab` / `surgery`) |
 | `prescription_available` | Consultation details include doctor prescriptions, or prescription push | `booking_id`, `service` (`consultancy` / `instant_doctor`) |
-| `prescription_downloaded` | User taps a consultation prescription file | `booking_id`, `service`, `user_name`, `msisdn` |
+| `prescription_downloaded` | User taps a consultation prescription file or Instant Doctor prescription PDF | `booking_id`, `service`, `user_name`, `msisdn` |
 | `pharmacy_status_changed` | Pharmacy status push / inbox | `booking_id`, `status`, `changed_by` |

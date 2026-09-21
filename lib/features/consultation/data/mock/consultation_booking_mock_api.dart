@@ -40,4 +40,13 @@ class ConsultationBookingMockApi {
       'data': null,
     };
   }
+
+  Future<Map<String, dynamic>> recordAiAssistantInteractionResponse() async {
+    await Future<void>.delayed(const Duration(milliseconds: 200));
+    return {
+      'success': true,
+      'message': 'Interaction recorded',
+      'data': null,
+    };
+  }
 }

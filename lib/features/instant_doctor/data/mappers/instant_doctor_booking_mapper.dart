@@ -20,8 +20,9 @@ class InstantDoctorBookingMapper {
   static InstantDoctorBookingEntity toEntity(
     InstantDoctorBookingItemModel model,
   ) {
-    final dateSource =
-        model.bookingAt.isNotEmpty ? model.bookingAt : model.createdAt;
+    final dateSource = model.bookingAt.isNotEmpty
+        ? model.bookingAt
+        : model.createdAt;
     return InstantDoctorBookingEntity(
       orderId: model.orderId,
       status: model.status,
@@ -36,6 +37,7 @@ class InstantDoctorBookingMapper {
       partnerName: model.partnerName,
       partnerImageUrl: model.partnerImageUrl,
       prescription: model.prescription,
+      prescriptionUrl: model.prescriptionUrl,
       listDate: _formatListDate(dateSource),
       feeLabel: _formatFee(model.fee, model.currency),
     );

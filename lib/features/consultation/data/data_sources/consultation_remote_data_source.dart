@@ -1,5 +1,6 @@
 import '../../../payment/domain/entities/payment_initiation_result.dart';
 import '../../domain/use_cases/abandon_consultation_booking_use_case.dart';
+import '../../domain/use_cases/record_ai_assistant_interaction_use_case.dart';
 import '../../domain/use_cases/submit_consultation_booking_use_case.dart';
 import '../../domain/use_cases/submit_consultation_feedback_use_case.dart';
 import '../models/consultation_booking_list_model.dart';
@@ -38,4 +39,7 @@ abstract class ConsultationRemoteDataSource {
     AbandonConsultationBookingParams params,
   );
   Future<void> submitFeedback(SubmitConsultationFeedbackParams params);
+  Future<void> recordAiAssistantInteraction(
+    RecordAiAssistantInteractionParams params,
+  );
 }

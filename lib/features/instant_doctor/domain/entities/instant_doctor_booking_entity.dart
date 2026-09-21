@@ -13,6 +13,7 @@ class InstantDoctorBookingEntity {
     required this.partnerName,
     required this.partnerImageUrl,
     required this.prescription,
+    this.prescriptionUrl = '',
     required this.listDate,
     required this.feeLabel,
   });
@@ -30,6 +31,7 @@ class InstantDoctorBookingEntity {
   final String partnerName;
   final String partnerImageUrl;
   final String prescription;
+  final String prescriptionUrl;
   final String listDate;
   final String feeLabel;
 
@@ -50,7 +52,18 @@ class InstantDoctorBookingEntity {
       .where((line) => line.isNotEmpty)
       .toList(growable: false);
 
-  bool get hasPrescription => prescriptionLines.isNotEmpty;
+  bool get hasPrescriptionText => prescriptionLines.isNotEmpty;
+
+  bool get hasPrescriptionUrl {
+    final url = prescriptionUrl.trim();
+    if (url.isEmpty) return false;
+    final uri = Uri.tryParse(url);
+    return uri != null &&
+        (uri.scheme == 'http' || uri.scheme == 'https') &&
+        uri.host.isNotEmpty;
+  }
+
+  bool get hasPrescription => hasPrescriptionText || hasPrescriptionUrl;
 }
 
 class InstantDoctorBookingsPageEntity {

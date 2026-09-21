@@ -77,6 +77,8 @@ class InstantDoctorMockApi {
             'partnerName': 'MedIQ',
             'partnerImageUrl': '',
             'prescription': 'Panadol\nAzomax\nAcefyl syrup',
+            'prescriptionUrl':
+                'https://www.health.gov.za/wp-content/uploads/2023/10/Prescription-Pads_Gauteng.pdf',
           },
         ],
         'page': page,
@@ -128,10 +130,6 @@ class InstantDoctorMockApi {
         },
       };
     }
-    return {
-      'success': false,
-      'message': 'Invalid OTP code.',
-      'code': 400,
-    };
+    return {'success': false, 'message': 'Invalid OTP code.', 'code': 400};
   }
 }
