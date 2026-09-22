@@ -470,51 +470,30 @@ class PharmacyCubit extends Cubit<PharmacyState> {
 
     result.fold(
       (error) {
-        final providers = _withLocalCash(const []);
+        emit(
+          state.copyWith(
+            paymentProviders: const [],
+            paymentProvidersStatus: StateStatus.error,
+            paymentProvidersErrorMessage: error,
+            selectedPaymentProviderCode: null,
+          ),
+        );
+      },
+      (providers) {
         emit(
           state.copyWith(
             paymentProviders: providers,
             paymentProvidersStatus: providers.isEmpty
                 ? StateStatus.error
                 : StateStatus.success,
-            paymentProvidersErrorMessage: providers.isEmpty ? error : null,
+            paymentProvidersErrorMessage: providers.isEmpty
+                ? AppStrings.genericErrorMessage
+                : null,
             selectedPaymentProviderCode: _resolveSelectedProviderCode(providers),
           ),
         );
       },
-      (providers) {
-        final merged = _withLocalCash(providers);
-        emit(
-          state.copyWith(
-            paymentProviders: merged,
-            paymentProvidersStatus: merged.isEmpty
-                ? StateStatus.error
-                : StateStatus.success,
-            paymentProvidersErrorMessage: merged.isEmpty
-                ? AppStrings.genericErrorMessage
-                : null,
-            selectedPaymentProviderCode: _resolveSelectedProviderCode(merged),
-          ),
-        );
-      },
     );
-  }
-
-  List<PaymentProviderEntity> _withLocalCash(
-    List<PaymentProviderEntity> providers,
-  ) {
-    final alreadyHasCash = providers.any(
-      (provider) => ConsultationBookingUtils.isCashPayment(provider.code),
-    );
-    if (alreadyHasCash) return providers;
-    return [
-      ...providers,
-      const PaymentProviderEntity(
-        name: '',
-        code: ConsultationBookingUtils.cashPaymentCode,
-        iconUrl: '',
-      ),
-    ];
   }
 
   String? _resolveSelectedProviderCode(List<PaymentProviderEntity> providers) {
