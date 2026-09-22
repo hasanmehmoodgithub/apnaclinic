@@ -86,46 +86,55 @@ class AppInfoDialog extends StatelessWidget {
 
     return Dialog(
       backgroundColor: Colors.white,
-      insetPadding: EdgeInsets.symmetric(horizontal: 28.w),
+      insetPadding: EdgeInsets.symmetric(horizontal: 28.w, vertical: 24.h),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20.r),
       ),
-      child: Padding(
-        padding: EdgeInsets.fromLTRB(20.w, 24.h, 20.w, 16.h),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (icon != null) ...[
-              Icon(
-                icon,
-                size: 44.r,
-                color: iconColor ?? _navy,
+      child: ConstrainedBox(
+        constraints: BoxConstraints(
+          maxHeight: MediaQuery.sizeOf(context).height * 0.75,
+        ),
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(20.w, 24.h, 20.w, 16.h),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (icon != null) ...[
+                Icon(
+                  icon,
+                  size: 44.r,
+                  color: iconColor ?? _navy,
+                ),
+                SizedBox(height: 12.h),
+              ],
+              Text(
+                title,
+                textAlign: TextAlign.center,
+                style: textTheme.titleLarge?.copyWith(
+                  color: _navy,
+                  fontSize: 18.sp,
+                  fontWeight: FontWeight.w700,
+                ),
               ),
-              SizedBox(height: 12.h),
+              SizedBox(height: 10.h),
+              Flexible(
+                child: SingleChildScrollView(
+                  child: Text(
+                    description,
+                    textAlign: TextAlign.center,
+                    style: textTheme.bodyMedium?.copyWith(
+                      color: _navy.withOpacity(0.75),
+                      fontSize: 14.sp,
+                      height: 1.4,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(height: 22.h),
+              _buildActions(context, textTheme),
             ],
-            Text(
-              title,
-              textAlign: TextAlign.center,
-              style: textTheme.titleLarge?.copyWith(
-                color: _navy,
-                fontSize: 18.sp,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-            SizedBox(height: 10.h),
-            Text(
-              description,
-              textAlign: TextAlign.center,
-              style: textTheme.bodyMedium?.copyWith(
-                color: _navy.withOpacity(0.75),
-                fontSize: 14.sp,
-                height: 1.4,
-                fontWeight: FontWeight.w400,
-              ),
-            ),
-            SizedBox(height: 22.h),
-            _buildActions(context, textTheme),
-          ],
+          ),
         ),
       ),
     );
