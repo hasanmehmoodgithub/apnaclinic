@@ -272,16 +272,23 @@ class _SurgeryDetailsScreenState extends State<SurgeryDetailsScreen> {
     final appointmentLabel = i.appointmentDateFull.isNotEmpty
         ? i.appointmentDateFull
         : i.dateCreated;
+    final l10n = AppLocalizations.of(context)!;
+    final appointmentSuffix =
+        appointmentLabel.isNotEmpty ? ' at $appointmentLabel' : '';
+    final hospitalSuffix =
+        i.hospital.isNotEmpty ? ' via ${i.hospital}' : '';
     await showDialog<void>(
       context: context,
       barrierDismissible: false,
       builder: (_) => AlertDialogCard(
         kind: AlertKind.success,
-        title: 'Booking Confirmed',
-        message:
-            'Your surgery booking with ${i.doctor} for ${i.procedure} '
-            'is confirmed${appointmentLabel.isNotEmpty ? ' at $appointmentLabel' : ''}'
-            '${i.hospital.isNotEmpty ? ' via ${i.hospital}' : ''}.',
+        title: l10n.surgeryBookingConfirmedTitle,
+        message: l10n.surgeryBookingConfirmedMessageAfterPayment(
+          i.doctor,
+          i.procedure,
+          appointmentSuffix,
+          hospitalSuffix,
+        ),
       ),
     );
   }

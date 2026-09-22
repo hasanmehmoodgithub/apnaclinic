@@ -208,6 +208,14 @@
       }
     }
   },
+  "pharmacyOrderPlacedMessageAfterPayment": "After your payment is verified, you will be able to track your pharmacy order {orderNo} in My Orders. A representative will reach out to you for order confirmation.",
+  "@pharmacyOrderPlacedMessageAfterPayment": {
+    "placeholders": {
+      "orderNo": {
+        "type": "String"
+      }
+    }
+  },
   "pharmacyOrderPlacedViewOrdersCta": "View My Orders",
   "pharmacyPaymentJazzCash": "Jazz Cash",
   "pharmacyPaymentDebitCard": "Debit / Credit Card",
@@ -456,6 +464,24 @@
   "surgeryStartingFrom": "Starting from",
   "surgeryBookingSubmittedTitle": "Booking Request Submitted",
   "surgeryBookingSubmittedMessage": "Your surgery request has been received. Our representative will contact you within 24 hours to gather your medical history and relevant details for confirmation.",
+  "surgeryBookingConfirmedTitle": "Booking Confirmed",
+  "surgeryBookingConfirmedMessageAfterPayment": "After your payment is verified, you will be able to view your surgery booking with {doctorName} for {procedure}{appointmentSuffix}{hospitalSuffix} in the Bookings tab.",
+  "@surgeryBookingConfirmedMessageAfterPayment": {
+    "placeholders": {
+      "doctorName": {
+        "type": "String"
+      },
+      "procedure": {
+        "type": "String"
+      },
+      "appointmentSuffix": {
+        "type": "String"
+      },
+      "hospitalSuffix": {
+        "type": "String"
+      }
+    }
+  },
   "surgeryBookingViewBookingsCta": "View My Bookings",
   "surgeryBookingPaymentPendingTitle": "Payment Pending",
   "surgeryBookingPaymentPendingMessage": "Your surgery booking is waiting for payment. We'll update it once payment completes — check Bookings for the latest status.",
@@ -555,7 +581,7 @@
   "labTestAgeInvalid": "Please enter a valid age (1-99).",
   "labTestCheckoutPhoneInvalid": "Enter a valid mobile or landline number.",
   "labTestCheckoutBookedTitle": "Lab Test Booked!",
-  "labTestCheckoutBookedMessage": "A lab representative will reach out to you soon to confirm your booking.\nYou can view your booking in Bookings Tab.",
+  "labTestCheckoutBookedMessage": "After your payment is verified, you will be able to view your lab test booking in the Bookings tab. A lab representative will reach out to you soon to confirm your booking.",
   "labTestCheckoutPaymentPendingTitle": "Payment Pending",
   "labTestCheckoutPaymentPendingMessage": "Your lab booking is waiting for payment. We'll update it once payment completes — check Bookings for the latest status.",
   "labTestAbandonUnpaidOrderCta": "Didn't pay? Cancel unpaid booking",
@@ -617,7 +643,7 @@
   "consultationBookingPaymentPendingMessage": "Your appointment is waiting for payment. We'll update it once payment completes — check Bookings for the latest status.",
   "consultationAbandonUnpaidOrderCta": "Didn't pay? Cancel unpaid booking",
   "consultationAbandonUnpaidOrderFailed": "Unable to cancel the unpaid booking right now. Please try again.",
-  "consultationBookingConfirmedMessage": "Your appointment has been booked with {doctorName}. You can join the consultation call from booking screen at the time of appointment",
+  "consultationBookingConfirmedMessage": "After your payment is verified, you will be able to join the consultation call with {doctorName} from the Bookings tab at the time of your appointment.",
   "@consultationBookingConfirmedMessage": {
     "placeholders": {
       "doctorName": {}

@@ -830,6 +830,12 @@ abstract class AppLocalizations {
   /// **'Your order number {orderNo} has been placed and will be processed soon. A representative will reach out to you for order confirmation.'**
   String pharmacyOrderPlacedMessage(String orderNo);
 
+  /// No description provided for @pharmacyOrderPlacedMessageAfterPayment.
+  ///
+  /// In en, this message translates to:
+  /// **'After your payment is verified, you will be able to track your pharmacy order {orderNo} in My Orders. A representative will reach out to you for order confirmation.'**
+  String pharmacyOrderPlacedMessageAfterPayment(String orderNo);
+
   /// No description provided for @pharmacyOrderPlacedViewOrdersCta.
   ///
   /// In en, this message translates to:
@@ -2075,6 +2081,23 @@ abstract class AppLocalizations {
   /// **'Your surgery request has been received. Our representative will contact you within 24 hours to gather your medical history and relevant details for confirmation.'**
   String get surgeryBookingSubmittedMessage;
 
+  /// No description provided for @surgeryBookingConfirmedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Booking Confirmed'**
+  String get surgeryBookingConfirmedTitle;
+
+  /// No description provided for @surgeryBookingConfirmedMessageAfterPayment.
+  ///
+  /// In en, this message translates to:
+  /// **'After your payment is verified, you will be able to view your surgery booking with {doctorName} for {procedure}{appointmentSuffix}{hospitalSuffix} in the Bookings tab.'**
+  String surgeryBookingConfirmedMessageAfterPayment(
+    String doctorName,
+    String procedure,
+    String appointmentSuffix,
+    String hospitalSuffix,
+  );
+
   /// No description provided for @surgeryBookingViewBookingsCta.
   ///
   /// In en, this message translates to:
@@ -2594,7 +2617,7 @@ abstract class AppLocalizations {
   /// No description provided for @labTestCheckoutBookedMessage.
   ///
   /// In en, this message translates to:
-  /// **'A lab representative will reach out to you soon to confirm your booking.\nYou can view your booking in Bookings Tab.'**
+  /// **'After your payment is verified, you will be able to view your lab test booking in the Bookings tab. A lab representative will reach out to you soon to confirm your booking.'**
   String get labTestCheckoutBookedMessage;
 
   /// No description provided for @labTestCheckoutPaymentPendingTitle.
@@ -2966,7 +2989,7 @@ abstract class AppLocalizations {
   /// No description provided for @consultationBookingConfirmedMessage.
   ///
   /// In en, this message translates to:
-  /// **'Your appointment has been booked with {doctorName}. You can join the consultation call from booking screen at the time of appointment'**
+  /// **'After your payment is verified, you will be able to join the consultation call with {doctorName} from the Bookings tab at the time of your appointment.'**
   String consultationBookingConfirmedMessage(Object doctorName);
 
   /// No description provided for @consultationBookingFailed.

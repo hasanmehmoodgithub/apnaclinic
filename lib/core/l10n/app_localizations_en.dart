@@ -394,6 +394,11 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String pharmacyOrderPlacedMessageAfterPayment(String orderNo) {
+    return 'After your payment is verified, you will be able to track your pharmacy order $orderNo in My Orders. A representative will reach out to you for order confirmation.';
+  }
+
+  @override
   String get pharmacyOrderPlacedViewOrdersCta => 'View My Orders';
 
   @override
@@ -1080,6 +1085,19 @@ class AppLocalizationsEn extends AppLocalizations {
       'Your surgery request has been received. Our representative will contact you within 24 hours to gather your medical history and relevant details for confirmation.';
 
   @override
+  String get surgeryBookingConfirmedTitle => 'Booking Confirmed';
+
+  @override
+  String surgeryBookingConfirmedMessageAfterPayment(
+    String doctorName,
+    String procedure,
+    String appointmentSuffix,
+    String hospitalSuffix,
+  ) {
+    return 'After your payment is verified, you will be able to view your surgery booking with $doctorName for $procedure$appointmentSuffix$hospitalSuffix in the Bookings tab.';
+  }
+
+  @override
   String get surgeryBookingViewBookingsCta => 'View My Bookings';
 
   @override
@@ -1360,7 +1378,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get labTestCheckoutBookedMessage =>
-      'A lab representative will reach out to you soon to confirm your booking.\nYou can view your booking in Bookings Tab.';
+      'After your payment is verified, you will be able to view your lab test booking in the Bookings tab. A lab representative will reach out to you soon to confirm your booking.';
 
   @override
   String get labTestCheckoutPaymentPendingTitle => 'Payment Pending';
@@ -1561,7 +1579,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String consultationBookingConfirmedMessage(Object doctorName) {
-    return 'Your appointment has been booked with $doctorName. You can join the consultation call from booking screen at the time of appointment';
+    return 'After your payment is verified, you will be able to join the consultation call with $doctorName from the Bookings tab at the time of your appointment.';
   }
 
   @override

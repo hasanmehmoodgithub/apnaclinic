@@ -52,7 +52,7 @@ class InstantDoctorCubit extends Cubit<InstantDoctorState> {
     return msisdn.isEmpty ? null : msisdn;
   }
 
-  Future<void> loadContent({bool refresh = false}) async {
+  Future<void> loadContent({bool refresh = false, bool silent = false}) async {
     if (!AuthGuard.isLoggedIn(appPref)) {
       emit(
         state.copyWith(
@@ -64,16 +64,19 @@ class InstantDoctorCubit extends Cubit<InstantDoctorState> {
       return;
     }
 
-    emit(
-      state.copyWith(
-        loadingStateStatus:
-            refresh ? StateStatus.refreshing : StateStatus.loading,
-        errorMessage: null,
-      ),
-    );
+    if (!silent) {
+      emit(
+        state.copyWith(
+          loadingStateStatus:
+              refresh ? StateStatus.refreshing : StateStatus.loading,
+          errorMessage: null,
+        ),
+      );
+    }
 
     final msisdn = _resolveMsisdn();
     if (msisdn == null) {
+      if (silent) return;
       emit(
         state.copyWith(
           loadingStateStatus: StateStatus.error,
@@ -88,12 +91,15 @@ class InstantDoctorCubit extends Cubit<InstantDoctorState> {
     );
     if (isClosed) return;
     result.fold(
-      (error) => emit(
-        state.copyWith(
-          loadingStateStatus: StateStatus.error,
-          errorMessage: error,
-        ),
-      ),
+      (error) {
+        if (silent) return;
+        emit(
+          state.copyWith(
+            loadingStateStatus: StateStatus.error,
+            errorMessage: error,
+          ),
+        );
+      },
       (content) => emit(
         state.copyWith(
           loadingStateStatus: content.providers.isEmpty
@@ -303,7 +309,6 @@ class InstantDoctorCubit extends Cubit<InstantDoctorState> {
             otpErrorMessage: null,
           ),
         );
-        await loadContent(refresh: true);
         if (action == InstantDoctorOtpAction.subscribe) {
           _logEvent(
             AnalyticsEventKeys.fbMobileSubscribe,
