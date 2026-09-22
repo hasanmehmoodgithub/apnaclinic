@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:apnaclinic/core/constants/app_colors.dart';
 import 'package:apnaclinic/core/extensions/screen_util_extensions.dart';
 import 'package:apnaclinic/core/l10n/app_localizations.dart';
@@ -275,10 +277,12 @@ class _InstantDoctorScreenState extends State<InstantDoctorScreen> {
 
     if (otpAction == InstantDoctorOtpAction.unsubscribe) {
       _showSnackBar(_l10n.instantDoctorCancelSubscriptionSuccess);
-      await _cubit.loadContent(refresh: true);
+      unawaited(_cubit.loadContent(silent: true));
       return;
     }
 
+    // Refresh providers behind the success dialog (no list shimmer).
+    unawaited(_cubit.loadContent(silent: true));
     await _showSubscribeSuccessDialog(provider, outcome);
   }
 

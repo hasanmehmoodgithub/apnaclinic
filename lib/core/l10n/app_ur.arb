@@ -129,6 +129,14 @@
       }
     }
   },
+  "pharmacyOrderPlacedMessageAfterPayment": "ادائیگی کی تصدیق کے بعد، آپ اپنے فارمیسی آرڈر {orderNo} کو میرے آرڈرز میں ٹریک کر سکیں گے۔ آرڈر کی تصدیق کے لیے ایک نمائندہ آپ سے رابطہ کرے گا۔",
+  "@pharmacyOrderPlacedMessageAfterPayment": {
+    "placeholders": {
+      "orderNo": {
+        "type": "String"
+      }
+    }
+  },
   "pharmacyOrderPlacedViewOrdersCta": "میرے آرڈرز دیکھیں",
   "pharmacyPaymentJazzCash": "جاز کیش",
   "pharmacyPaymentDebitCard": "ڈیبٹ / کریڈٹ کارڈ",
@@ -353,6 +361,24 @@
   "surgeryStartingFrom": "شروع سے",
   "surgeryBookingSubmittedTitle": "بکنگ کی درخواست جمع ہو گئی",
   "surgeryBookingSubmittedMessage": "آپ کی سرجری کی درخواست موصول ہو گئی ہے۔ ہمارا نمائندہ تصدیق کے لیے آپ کی طبی تاریخ اور متعلقہ تفصیلات لینے کے لیے 24 گھنٹوں کے اندر آپ سے رابطہ کرے گا۔",
+  "surgeryBookingConfirmedTitle": "بکنگ کنفرم ہو گئی",
+  "surgeryBookingConfirmedMessageAfterPayment": "ادائیگی کی تصدیق کے بعد، آپ اپنی سرجری بکنگ ({doctorName}، {procedure}){appointmentSuffix}{hospitalSuffix} بکنگز ٹیب میں دیکھ سکیں گے۔",
+  "@surgeryBookingConfirmedMessageAfterPayment": {
+    "placeholders": {
+      "doctorName": {
+        "type": "String"
+      },
+      "procedure": {
+        "type": "String"
+      },
+      "appointmentSuffix": {
+        "type": "String"
+      },
+      "hospitalSuffix": {
+        "type": "String"
+      }
+    }
+  },
   "surgeryBookingViewBookingsCta": "میری بکنگز دیکھیں",
   "surgeryBookingPaymentPendingTitle": "ادائیگی زیر التوا",
   "surgeryBookingPaymentPendingMessage": "آپ کی سرجری بکنگ ادائیگی کا انتظار کر رہی ہے۔ ادائیگی مکمل ہونے پر ہم اسے اپ ڈیٹ کر دیں گے — تازہ ترین صورتحال بکنگز میں دیکھیں۔",
@@ -449,7 +475,7 @@
   "labTestAgeInvalid": "براہ کرم درست عمر درج کریں (1-99)۔",
   "labTestCheckoutPhoneInvalid": "براہ کرم درست موبائل یا لینڈ لائن نمبر درج کریں۔",
   "labTestCheckoutBookedTitle": "لیب ٹیسٹ بک ہو گیا!",
-  "labTestCheckoutBookedMessage": "لیب کا نمائندہ جلد آپ سے رابطہ کرے گا تاکہ آپ کی بکنگ کی تصدیق کی جا سکے۔\nآپ اپنی بکنگ بکنگز ٹیب میں دیکھ سکتے ہیں۔",
+  "labTestCheckoutBookedMessage": "ادائیگی کی تصدیق کے بعد، آپ اپنی لیب ٹیسٹ بکنگ بکنگز ٹیب میں دیکھ سکیں گے۔ لیب کا نمائندہ جلد آپ سے رابطہ کر کے بکنگ کی تصدیق کرے گا۔",
   "labTestCheckoutPaymentPendingTitle": "ادائیگی زیر التوا",
   "labTestCheckoutPaymentPendingMessage": "آپ کی لیب بکنگ ادائیگی کا انتظار کر رہی ہے۔ ادائیگی مکمل ہونے پر ہم اسے اپ ڈیٹ کر دیں گے — تازہ ترین صورتحال بکنگز میں دیکھیں۔",
   "labTestAbandonUnpaidOrderCta": "ادائیگی نہیں کی؟ غیر ادا شدہ بکنگ منسوخ کریں",
@@ -511,7 +537,7 @@
   "consultationBookingPaymentPendingMessage": "آپ کی اپائنٹمنٹ ادائیگی کا انتظار کر رہی ہے۔ ادائیگی مکمل ہونے پر ہم اسے اپ ڈیٹ کر دیں گے — تازہ ترین صورتحال بکنگز میں دیکھیں۔",
   "consultationAbandonUnpaidOrderCta": "ادائیگی نہیں کی؟ غیر ادا شدہ بکنگ منسوخ کریں",
   "consultationAbandonUnpaidOrderFailed": "اس وقت غیر ادا شدہ بکنگ منسوخ نہیں ہو سکی۔ براہ کرم دوبارہ کوشش کریں۔",
-  "consultationBookingConfirmedMessage": "آپ کی اپائنٹمنٹ {doctorName} کے ساتھ بک ہو گئی ہے۔ آپ اپائنٹمنٹ کے وقت بکنگ اسکرین سے مشاورت کال میں شامل ہو سکتے ہیں۔",
+  "consultationBookingConfirmedMessage": "ادائیگی کی تصدیق کے بعد، آپ اپائنٹمنٹ کے وقت بکنگز ٹیب سے {doctorName} کے ساتھ مشاورت کال میں شامل ہو سکیں گے۔",
   "@consultationBookingConfirmedMessage": {
     "placeholders": {
       "doctorName": {}

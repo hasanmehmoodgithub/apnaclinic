@@ -13,16 +13,21 @@ class PharmacyOrderPlacedDialog extends StatelessWidget {
     super.key,
     required this.orderNo,
     required this.onViewOrders,
+    this.afterPaymentVerified = true,
   });
 
   final String orderNo;
   final VoidCallback onViewOrders;
+  final bool afterPaymentVerified;
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final displayOrderNo = orderNo.trim().isEmpty ? '—' : orderNo.trim();
+    final message = afterPaymentVerified
+        ? l10n.pharmacyOrderPlacedMessageAfterPayment(displayOrderNo)
+        : l10n.pharmacyOrderPlacedMessage(displayOrderNo);
 
     // Back / system pop must not dismiss; only the CTA closes this dialog.
     return PopScope(
@@ -52,7 +57,7 @@ class PharmacyOrderPlacedDialog extends StatelessWidget {
               ),
               SizedBox(height: 10.h),
               Text(
-                l10n.pharmacyOrderPlacedMessage(displayOrderNo),
+                message,
                 textAlign: TextAlign.center,
                 style: theme.textTheme.bodyMedium?.copyWith(
                   color: AppColors.clr6B7C96,
@@ -85,6 +90,7 @@ Future<void> showPharmacyOrderPlacedDialog(
   BuildContext context, {
   required String orderNo,
   required VoidCallback onViewOrders,
+  bool afterPaymentVerified = true,
 }) {
   return showDialog<void>(
     context: context,
@@ -93,6 +99,7 @@ Future<void> showPharmacyOrderPlacedDialog(
     barrierColor: AppColors.clrBlack.withValues(alpha: 0.38),
     builder: (dialogContext) => PharmacyOrderPlacedDialog(
       orderNo: orderNo,
+      afterPaymentVerified: afterPaymentVerified,
       onViewOrders: () {
         if (dialogContext.canPop()) dialogContext.pop();
         onViewOrders();

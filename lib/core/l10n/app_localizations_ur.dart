@@ -394,6 +394,11 @@ class AppLocalizationsUr extends AppLocalizations {
   }
 
   @override
+  String pharmacyOrderPlacedMessageAfterPayment(String orderNo) {
+    return 'ادائیگی کی تصدیق کے بعد، آپ اپنے فارمیسی آرڈر $orderNo کو میرے آرڈرز میں ٹریک کر سکیں گے۔ آرڈر کی تصدیق کے لیے ایک نمائندہ آپ سے رابطہ کرے گا۔';
+  }
+
+  @override
   String get pharmacyOrderPlacedViewOrdersCta => 'میرے آرڈرز دیکھیں';
 
   @override
@@ -1081,6 +1086,19 @@ class AppLocalizationsUr extends AppLocalizations {
       'آپ کی سرجری کی درخواست موصول ہو گئی ہے۔ ہمارا نمائندہ تصدیق کے لیے آپ کی طبی تاریخ اور متعلقہ تفصیلات لینے کے لیے 24 گھنٹوں کے اندر آپ سے رابطہ کرے گا۔';
 
   @override
+  String get surgeryBookingConfirmedTitle => 'بکنگ کنفرم ہو گئی';
+
+  @override
+  String surgeryBookingConfirmedMessageAfterPayment(
+    String doctorName,
+    String procedure,
+    String appointmentSuffix,
+    String hospitalSuffix,
+  ) {
+    return 'ادائیگی کی تصدیق کے بعد، آپ اپنی سرجری بکنگ ($doctorName، $procedure)$appointmentSuffix$hospitalSuffix بکنگز ٹیب میں دیکھ سکیں گے۔';
+  }
+
+  @override
   String get surgeryBookingViewBookingsCta => 'میری بکنگز دیکھیں';
 
   @override
@@ -1360,7 +1378,7 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get labTestCheckoutBookedMessage =>
-      'لیب کا نمائندہ جلد آپ سے رابطہ کرے گا تاکہ آپ کی بکنگ کی تصدیق کی جا سکے۔\nآپ اپنی بکنگ بکنگز ٹیب میں دیکھ سکتے ہیں۔';
+      'ادائیگی کی تصدیق کے بعد، آپ اپنی لیب ٹیسٹ بکنگ بکنگز ٹیب میں دیکھ سکیں گے۔ لیب کا نمائندہ جلد آپ سے رابطہ کر کے بکنگ کی تصدیق کرے گا۔';
 
   @override
   String get labTestCheckoutPaymentPendingTitle => 'ادائیگی زیر التوا';
@@ -1561,7 +1579,7 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String consultationBookingConfirmedMessage(Object doctorName) {
-    return 'آپ کی اپائنٹمنٹ $doctorName کے ساتھ بک ہو گئی ہے۔ آپ اپائنٹمنٹ کے وقت بکنگ اسکرین سے مشاورت کال میں شامل ہو سکتے ہیں۔';
+    return 'ادائیگی کی تصدیق کے بعد، آپ اپائنٹمنٹ کے وقت بکنگز ٹیب سے $doctorName کے ساتھ مشاورت کال میں شامل ہو سکیں گے۔';
   }
 
   @override

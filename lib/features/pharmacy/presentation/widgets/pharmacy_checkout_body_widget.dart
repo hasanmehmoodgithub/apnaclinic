@@ -154,6 +154,8 @@ class PharmacyCheckoutBodyWidget extends StatelessWidget {
         await showPharmacyOrderPlacedDialog(
           context,
           orderNo: checkout.displayOrderNo,
+          afterPaymentVerified:
+              !ConsultationBookingUtils.isCashPayment(paymentMethod),
           onViewOrders: () {
             if (!context.mounted) return;
             pharmacyGoToOrderDetailsAfterPlace(context);
