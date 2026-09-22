@@ -61,7 +61,7 @@ class DoctorConsultationCheckoutBillingSectionWidget extends StatelessWidget {
               onChanged: context.read<PromoCodeCubit>().onInputChanged,
               onSubmitted: (code) => context.read<PromoCodeCubit>().validate(
                     service: PromoCodeService.consultation,
-                    amount: data.consultationFee,
+                    amount: data.total,
                     code: code,
                   ),
               onCleared: context.read<PromoCodeCubit>().clear,

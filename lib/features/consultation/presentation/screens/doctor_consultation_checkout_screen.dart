@@ -76,7 +76,7 @@ class _DoctorConsultationCheckoutScreenState
     final promoCubit = context.read<PromoCodeCubit>();
     final promoOk = await promoCubit.ensureValidated(
       service: PromoCodeService.consultation,
-      amount: checkoutData.consultationFee,
+      amount: checkoutData.total,
     );
     if (!promoOk || !mounted) return;
 
@@ -157,9 +157,10 @@ class _DoctorConsultationCheckoutScreenState
         accountNumber: accountNumber,
         msisdn: msisdn,
         consultationFee: checkoutData.consultationFee,
-        discount: promo.displayDiscount(checkoutData.discount),
+        discount: checkoutData.discount,
         total: promo.payableTotal(checkoutData.total),
         promoCode: promo.appliedCode,
+        promoDiscount: promo.isApplied ? promo.result!.discountAmount : 0,
       ),
     );
   }
