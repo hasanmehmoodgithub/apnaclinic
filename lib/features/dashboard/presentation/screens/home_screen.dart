@@ -20,8 +20,6 @@ import '../../../../core/services/notification_service.dart';
 import '../../../../core/widgets/heart_loader_widget.dart';
 import '../../domain/entities/our_service_entity.dart';
 import '../../domain/services/promotional_banner_session.dart';
-import '../../../pro/domain/entities/pro_membership_entity.dart';
-import '../../../pro/domain/use_cases/get_pro_catalog_use_case.dart';
 import '../../../pro/presentation/show_pro_bottom_sheet.dart';
 import '../cubit/dashboard_services_cubit.dart';
 import '../cubit/dashboard_services_state.dart';
@@ -40,6 +38,9 @@ import '../../../surgery/presentation/surgery_analytics.dart';
 import '../../../search/presentation/models/search_launch_args.dart';
 import '../../../notification/presentation/cubit/notification_cubit.dart';
 import '../../../notification/presentation/cubit/notification_state.dart';
+import '../../../pro/domain/entities/pro_membership_entity.dart';
+import '../../../pro/presentation/cubit/pro_cubit.dart';
+import '../../../pro/presentation/cubit/pro_state.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -50,26 +51,24 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   static const String _bannerLoaderId = 'banner_loader';
-  bool _isLoggedIn = false;
   bool _isPresentingBannerQueue = false;
   bool _isPresentingUpdateDialog = false;
   bool _updatePromptHandled = false;
   late final DashboardCubit _dashboardCubit;
   late final NotificationCubit _notificationCubit;
+  late final ProCubit _proCubit;
   late final PromotionalBannerSession _bannerSession;
   StreamSubscription<NotificationPayload>? _pushSubscription;
   late final AuthSessionRefresh _sessionRefresh;
-  ProMembershipEntity? _proMembership;
-  bool _isProMembershipLoading = false;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    _isLoggedIn = AuthGuard.isLoggedIn();
     _bannerSession = sl<PromotionalBannerSession>();
     _dashboardCubit = sl<DashboardCubit>();
     _notificationCubit = sl<NotificationCubit>();
+    _proCubit = sl<ProCubit>()..loadCatalog();
     _sessionRefresh = sl<AuthSessionRefresh>();
     _sessionRefresh.addListener(_onAuthSessionChanged);
     if (AuthGuard.isLoggedIn()) {
@@ -77,7 +76,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     }
     _bindPushRefresh();
     unawaited(sl<AnalyticsService>().logEvent(AnalyticsEventKeys.homeScreen));
-    unawaited(_loadProMembership());
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       unawaited(_maybePresentHomeDialogs());
@@ -102,41 +100,20 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     HeartLoaderDialogController.close(_bannerLoaderId);
     WidgetsBinding.instance.removeObserver(this);
     _dashboardCubit.close();
+    _proCubit.close();
     super.dispose();
   }
 
   void _onAuthSessionChanged() {
     if (!mounted) return;
-    setState(() => _isLoggedIn = AuthGuard.isLoggedIn());
     unawaited(_maybePresentHomeDialogs());
-    unawaited(_loadProMembership());
-  }
-
-  Future<void> _loadProMembership() async {
-    if (!mounted) return;
-    setState(() => _isProMembershipLoading = true);
-    final result = await sl<GetProCatalogUseCase>()();
-    if (!mounted) return;
-    result.fold(
-      (_) {
-        setState(() {
-          _proMembership = null;
-          _isProMembershipLoading = false;
-        });
-      },
-      (catalog) {
-        setState(() {
-          _proMembership = catalog.membership;
-          _isProMembershipLoading = false;
-        });
-      },
-    );
+    unawaited(_proCubit.loadCatalog(refresh: true));
   }
 
   Future<void> _openPro() async {
     await showApnaClinicProSheet(context);
     if (!mounted) return;
-    unawaited(_loadProMembership());
+    unawaited(_proCubit.loadCatalog(refresh: true));
   }
 
   bool _isHomeRouteActive(BuildContext context) {
@@ -158,15 +135,27 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    _isLoggedIn = AuthGuard.isLoggedIn();
-    final greetingName = _resolveGreetingName(l10n);
 
-    return BlocProvider.value(
-      value: _dashboardCubit,
-      child: BlocConsumer<DashboardCubit, DashboardServicesState>(
-        listener: _onDashboardStateChanged,
-        builder: (context, state) =>
-            _buildHomeBody(context, state, greetingName),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider.value(value: _dashboardCubit),
+        BlocProvider.value(value: _proCubit),
+      ],
+      child: ListenableBuilder(
+        listenable: _sessionRefresh,
+        builder: (context, _) {
+          final isLoggedIn = AuthGuard.isLoggedIn();
+          final greetingName = _resolveGreetingName(l10n, isLoggedIn);
+          return BlocConsumer<DashboardCubit, DashboardServicesState>(
+            listener: _onDashboardStateChanged,
+            builder: (context, state) => _buildHomeBody(
+              context,
+              state,
+              greetingName,
+              isLoggedIn,
+            ),
+          );
+        },
       ),
     );
   }
@@ -288,6 +277,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     BuildContext context,
     DashboardServicesState state,
     String greetingName,
+    bool isLoggedIn,
   ) {
     return Scaffold(
       backgroundColor: AppColors.clrf4f4f4,
@@ -302,7 +292,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                 final unreadCount = notificationState.notifications
                     .where((item) => !item.isRead)
                     .length;
-                final profileImageUrl = _isLoggedIn
+                final profileImageUrl = isLoggedIn
                     ? sl<AppPref>().getUserLocalModel()?.imageUrl
                     : null;
                 final profileRevision =
@@ -314,7 +304,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                 final _ = state.profileSyncNonce;
                 return HomeHeaderSection(
                   userName: greetingName,
-                  isLoggedIn: _isLoggedIn,
+                  isLoggedIn: isLoggedIn,
                   hasUnreadNotifications: unreadCount > 0,
                   profileImageUrl: profileImageUrl,
                   profileImageCacheKey: profileImageCacheKey,
@@ -362,10 +352,21 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                   SliverPadding(
                     padding: EdgeInsets.fromLTRB(20.w, 20.h, 20.w, 0),
                     sliver: SliverToBoxAdapter(
-                      child: ApnaClinicProHomeBanner(
-                        membership: _proMembership,
-                        isLoading: _isProMembershipLoading,
-                        onTap: () => unawaited(_openPro()),
+                      child: BlocSelector<
+                          ProCubit,
+                          ProState,
+                          ({ProMembershipEntity? membership, bool isLoading})>(
+                        selector: (proState) => (
+                          membership: proState.membership,
+                          isLoading: proState.isCatalogLoading,
+                        ),
+                        builder: (context, pro) {
+                          return ApnaClinicProHomeBanner(
+                            membership: pro.membership,
+                            isLoading: pro.isLoading,
+                            onTap: () => unawaited(_openPro()),
+                          );
+                        },
                       ),
                     ),
                   ),
@@ -384,8 +385,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     );
   }
 
-  String _resolveGreetingName(AppLocalizations l10n) {
-    if (!_isLoggedIn) return l10n.dashboardGuestName;
+  String _resolveGreetingName(AppLocalizations l10n, bool isLoggedIn) {
+    if (!isLoggedIn) return l10n.dashboardGuestName;
     final appPref = sl<AppPref>();
     final userLocal = appPref.getUserLocalModel();
     final firstName = userLocal?.firstName.trim() ?? '';

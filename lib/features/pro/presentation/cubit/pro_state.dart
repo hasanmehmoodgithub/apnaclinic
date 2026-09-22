@@ -2,6 +2,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 
 import '../../../../core/enums/state_status.dart';
 import '../../domain/entities/pro_catalog_entity.dart';
+import '../../domain/entities/pro_membership_entity.dart';
 
 part 'pro_state.freezed.dart';
 
@@ -17,4 +18,10 @@ abstract class ProState with _$ProState {
   const ProState._();
 
   bool get hasCatalog => catalog != null;
+
+  ProMembershipEntity? get membership => catalog?.membership;
+
+  bool get isCatalogLoading =>
+      loadingStateStatus == StateStatus.loading ||
+      (loadingStateStatus == StateStatus.refreshing && catalog == null);
 }

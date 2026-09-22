@@ -19,6 +19,7 @@ class ProCubit extends Cubit<ProState> {
     );
 
     final result = await getCatalogUseCase();
+    if (isClosed) return;
     result.fold(
       (error) {
         emit(

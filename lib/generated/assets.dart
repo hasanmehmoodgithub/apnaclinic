@@ -135,6 +135,7 @@ class Assets {
   static const String proBadgeCrown = 'assets/img/pro/badgeCrown.svg';
   static const String proLeftLeave = 'assets/img/pro/leftLeave.png';
   static const String proProBadge = 'assets/img/pro/proBadge.svg';
+  static const String proProBagde2 = 'assets/img/pro/proBagde2.svg';
   static const String proProSuccessBadge = 'assets/img/pro/pro_success_badge.png';
   static const String proRight = 'assets/img/pro/right.png';
   static const String supportSupportHero = 'assets/img/support/support_hero.png';

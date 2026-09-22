@@ -32,7 +32,7 @@ Subscribe / payment / unsubscribe APIs are not wired yet (sheet CTA currently re
 
 ## State
 
-- `ProCubit` / `ProState` — load catalog, `selectedPlanId` (defaults to `isCurrent` then `isRecommended`).
+- `ProCubit` / `ProState` — load catalog, `selectedPlanId` (defaults to `isCurrent` then `isRecommended`). Home banner reads `membership` / `isCatalogLoading` via `BlocSelector` (no screen `setState`).
 
 ## DI
 
