@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
+import '../../../../core/utils/max_int_text_input_formatter.dart';
 import '../../../../core/utils/no_emoji_text_input_formatter.dart';
 
 /// Emergency contact for checkout, plus patient details when still incomplete.
@@ -549,7 +550,8 @@ class _AgeInputBox extends StatelessWidget {
           keyboardType: TextInputType.number,
           inputFormatters: NoEmojiTextInputFormatter.merge([
             FilteringTextInputFormatter.digitsOnly,
-            LengthLimitingTextInputFormatter(3),
+            LengthLimitingTextInputFormatter(2),
+            const MaxIntTextInputFormatter(99),
           ]),
           textAlign: TextAlign.left,
           style: theme.textTheme.bodyMedium?.copyWith(

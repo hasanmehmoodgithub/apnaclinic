@@ -1270,6 +1270,9 @@ class AppLocalizationsUr extends AppLocalizations {
   String get paymentPendingViewBookingsCta => 'میری بکنگز دیکھیں';
 
   @override
+  String get labTestViewDetailsTitle => 'تفصیلات';
+
+  @override
   String get labTestViewDetailsResultsTitle => 'ٹیسٹ نتائج';
 
   @override
@@ -1344,6 +1347,9 @@ class AppLocalizationsUr extends AppLocalizations {
   @override
   String get labTestCheckoutRequiredFieldsError =>
       'براہ کرم تمام ضروری فیلڈز بھریں';
+
+  @override
+  String get labTestAgeInvalid => 'براہ کرم درست عمر درج کریں (1-99)۔';
 
   @override
   String get labTestCheckoutPhoneInvalid =>

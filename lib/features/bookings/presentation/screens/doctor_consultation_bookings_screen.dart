@@ -6,6 +6,7 @@ import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/router/app_routes.dart';
+import '../bookings_analytics.dart';
 import '../constants/bookings_tabs.dart';
 import '../cubit/doctor_consultation_bookings_cubit.dart';
 import '../cubit/doctor_consultation_bookings_state.dart';
@@ -55,6 +56,7 @@ class _DoctorConsultationBookingsBodyState
 
   void _tryLoad() {
     if (!mounted) return;
+    BookingsAnalytics.logMyBookingConsultation();
     context.read<DoctorConsultationBookingsCubit>().load(refresh: true);
   }
 

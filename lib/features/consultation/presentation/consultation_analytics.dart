@@ -5,6 +5,7 @@ import '../../../core/analytics/analytics_service.dart';
 import '../../../core/di/dependency_injection.dart';
 import '../../../core/preference/app_pref.dart';
 import '../../payment/domain/entities/payment_initiation_result.dart';
+import '../../promo_code/presentation/promo_code_analytics.dart';
 import '../data/utils/consultation_booking_utils.dart';
 import '../domain/entities/consultation_selected_slot_entity.dart';
 import 'widgets/results_doctor_item.dart';
@@ -131,8 +132,17 @@ abstract final class ConsultationAnalytics {
     final userName =
         '${user?.firstName.trim() ?? ''} ${user?.lastName.trim() ?? ''}'.trim();
     final bookingId = initiation?.orderId?.trim() ?? '';
-    unawaited(
-      _analytics.logEvent(AnalyticsEventKeys.doctorConsultationBooked, {
+    final appliedPromo = promoCode?.trim() ?? '';
+    final promoApplied =
+        (discount > 0 || appliedPromo.isNotEmpty)
+            ? AnalyticsYesNoKeys.yes
+            : AnalyticsYesNoKeys.no;
+    unawaited(() async {
+      final promoParams = await PromoCodeAnalytics.confirmPromoParams(
+        promoCode: appliedPromo,
+        promoUsedOverride: promoApplied == AnalyticsYesNoKeys.yes,
+      );
+      await _analytics.logEvent(AnalyticsEventKeys.doctorConsultationBooked, {
         AnalyticsParamKeys.afContentType: AnalyticsContentTypeKeys.consultancy,
         if (bookingId.isNotEmpty) AnalyticsParamKeys.bookingId: bookingId,
         if (userName.isNotEmpty) AnalyticsParamKeys.userName: userName,
@@ -147,14 +157,11 @@ abstract final class ConsultationAnalytics {
           name: paymentMethodName,
         ),
         AnalyticsParamKeys.paymentStatus: paymentStatus,
-        AnalyticsParamKeys.promoApplied:
-            (discount > 0 || (promoCode != null && promoCode.trim().isNotEmpty))
-                ? AnalyticsYesNoKeys.yes
-                : AnalyticsYesNoKeys.no,
-        if (promoCode != null && promoCode.trim().isNotEmpty)
-          AnalyticsParamKeys.promo: promoCode.trim(),
-      }),
-    );
+        AnalyticsParamKeys.promoApplied: promoApplied,
+        if (appliedPromo.isNotEmpty) AnalyticsParamKeys.promo: appliedPromo,
+        ...promoParams,
+      });
+    }());
   }
 
   static Map<String, Object> _doctorParams(ResultsDoctorItem doctor) {

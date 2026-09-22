@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../components/shimmer/app_shimmer.dart';
+import '../../../../core/constants/app_colors.dart';
 import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
@@ -169,6 +170,8 @@ class _LabTestBookingScreenState extends State<LabTestBookingScreen> {
                                       state.selectedPartner != null) ...[
                                     _FulfilledByBanner(
                                       theme: theme,
+                                      partnerName:
+                                          state.selectedPartner!.name,
                                       partnerLogoUrl:
                                           state.selectedPartner!.logoUrl,
                                       message: l10n.labTestFulfilledBy(
@@ -184,6 +187,13 @@ class _LabTestBookingScreenState extends State<LabTestBookingScreen> {
                                             state.selectedVendor == null
                                         ? (state.args.preferredLabName ?? '')
                                         : (state.selectedVendor?.name ?? ''),
+                                    labLogoUrl: state.selectedVendor?.logoUrl
+                                            .trim()
+                                            .isNotEmpty ==
+                                        true
+                                        ? state.selectedVendor!.logoUrl
+                                        : (state.args.preferredLabLogoUrl ??
+                                            ''),
                                     requirement: state.isWalkInUnavailable ||
                                             state.isHomeSamplingUnavailable
                                         ? null
@@ -438,11 +448,13 @@ class _LabTestBookingScreenState extends State<LabTestBookingScreen> {
 class _FulfilledByBanner extends StatelessWidget {
   const _FulfilledByBanner({
     required this.theme,
+    required this.partnerName,
     required this.partnerLogoUrl,
     required this.message,
   });
 
   final ThemeData theme;
+  final String partnerName;
   final String partnerLogoUrl;
   final String message;
 
@@ -454,6 +466,7 @@ class _FulfilledByBanner extends StatelessWidget {
       decoration: BoxDecoration(
         color: const Color(0xFFF3FBFA),
         borderRadius: BorderRadius.circular(12.r),
+        border: Border.all(color: AppColors.clrEDEDED),
       ),
       child: Row(
         children: [
@@ -464,18 +477,51 @@ class _FulfilledByBanner extends StatelessWidget {
           ),
           SizedBox(width: 8.w),
           Expanded(
-            child: Text(
-              message,
-              style: theme.textTheme.bodySmall?.copyWith(
-                color: const Color(0xFF061E40),
-                fontSize: 12.sp,
-                height: 1.25,
-              ),
+            child: Text.rich(
+              _partnerFulfilledBySpans(message, partnerName, theme),
             ),
+          ),
+          SizedBox(width: 8.w),
+          Icon(
+            Icons.error_outline_rounded,
+            size: 20.sp,
+            color: AppColors.clr0FAA9A,
           ),
         ],
       ),
     );
   }
+}
+
+TextSpan _partnerFulfilledBySpans(
+  String fullText,
+  String partnerName,
+  ThemeData theme,
+) {
+  final base =
+      theme.textTheme.bodySmall?.copyWith(
+        color: AppColors.clr061E40,
+        fontSize: 12.sp,
+        height: 1.25,
+        fontWeight: FontWeight.w400,
+      ) ??
+      const TextStyle();
+  final bold = base.copyWith(fontWeight: FontWeight.w700);
+  final name = partnerName.trim();
+  if (name.isEmpty) {
+    return TextSpan(text: fullText, style: base);
+  }
+  final index = fullText.indexOf(name);
+  if (index < 0) {
+    return TextSpan(text: fullText, style: base);
+  }
+  return TextSpan(
+    style: base,
+    children: [
+      TextSpan(text: fullText.substring(0, index)),
+      TextSpan(text: name, style: bold),
+      TextSpan(text: fullText.substring(index + name.length)),
+    ],
+  );
 }
 

@@ -2,6 +2,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../domain/entities/promo_code_service.dart';
 import '../../domain/use_cases/validate_promo_code_use_case.dart';
+import '../promo_code_analytics.dart';
 import 'promo_code_state.dart';
 
 class PromoCodeCubit extends Cubit<PromoCodeState> {
@@ -23,6 +24,8 @@ class PromoCodeCubit extends Cubit<PromoCodeState> {
     final submitted = (code ?? state.draftCode).trim().toUpperCase();
     if (submitted.isEmpty || state.isValidating) return;
 
+    PromoCodeAnalytics.logEntered(code: submitted, service: service);
+
     emit(
       state.copyWith(
         status: PromoCodeStatus.validating,
@@ -42,21 +45,31 @@ class PromoCodeCubit extends Cubit<PromoCodeState> {
 
     if (isClosed) return;
     result.fold(
-      (_) => emit(
-        state.copyWith(
-          status: PromoCodeStatus.invalid,
-          displayCode: submitted,
-          clearResult: true,
-        ),
-      ),
-      (entity) => emit(
-        state.copyWith(
-          status: PromoCodeStatus.applied,
-          draftCode: entity.code,
-          displayCode: entity.code,
-          result: entity,
-        ),
-      ),
+      (error) {
+        PromoCodeAnalytics.logRejected(
+          code: submitted,
+          service: service,
+          reason: PromoCodeAnalytics.reasonFromMessage(error),
+        );
+        emit(
+          state.copyWith(
+            status: PromoCodeStatus.invalid,
+            displayCode: submitted,
+            clearResult: true,
+          ),
+        );
+      },
+      (entity) {
+        PromoCodeAnalytics.logApplied(result: entity, service: service);
+        emit(
+          state.copyWith(
+            status: PromoCodeStatus.applied,
+            draftCode: entity.code,
+            displayCode: entity.code,
+            result: entity,
+          ),
+        );
+      },
     );
   }
 

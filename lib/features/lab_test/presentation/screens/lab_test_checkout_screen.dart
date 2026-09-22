@@ -70,6 +70,7 @@ class _LabTestCheckoutScreenState extends State<LabTestCheckoutScreen> {
     super.initState();
     _prefillPatientDetailsFromSavedProfile();
     _emergencyController.addListener(_onEmergencyChanged);
+    _ageController.addListener(_onAgeChanged);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       LabTestAnalytics.logCheckout();
@@ -80,6 +81,7 @@ class _LabTestCheckoutScreenState extends State<LabTestCheckoutScreen> {
   void dispose() {
     closePaymentProcessingLoader(_bookLoaderId);
     _emergencyController.removeListener(_onEmergencyChanged);
+    _ageController.removeListener(_onAgeChanged);
     _nameController.dispose();
     _phoneController.dispose();
     _ageController.dispose();
@@ -88,10 +90,13 @@ class _LabTestCheckoutScreenState extends State<LabTestCheckoutScreen> {
   }
 
   /// Patient card stays hidden while the Add Patient sheet data is complete.
-  bool get _hasCompletePatientDetails =>
-      _nameController.text.trim().isNotEmpty &&
-      _phoneController.text.trim().isNotEmpty &&
-      _ageController.text.trim().isNotEmpty;
+  bool get _hasCompletePatientDetails {
+    final age = int.tryParse(_ageController.text.trim()) ?? 0;
+    return _nameController.text.trim().isNotEmpty &&
+        _phoneController.text.trim().isNotEmpty &&
+        age > 0 &&
+        age <= 99;
+  }
 
   void _onEmergencyChanged() {
     final emergency = _emergencyController.text.trim();
@@ -107,38 +112,47 @@ class _LabTestCheckoutScreenState extends State<LabTestCheckoutScreen> {
     });
   }
 
+  void _onAgeChanged() {
+    if (_checkoutErrorMessage == null) return;
+    final age = int.tryParse(_ageController.text.trim()) ?? 0;
+    if (age > 0 && age <= 99) {
+      setState(() => _checkoutErrorMessage = null);
+    }
+  }
+
   void _prefillPatientDetailsFromSavedProfile() {
-    if (!AuthGuard.isLoggedIn(_appPref)) return;
-    final user = _appPref.getUserLocalModel();
-    if (user == null) return;
+    if (AuthGuard.isLoggedIn(_appPref)) {
+      final user = _appPref.getUserLocalModel();
+      if (user != null) {
+        final fullName = '${user.firstName} ${user.lastName}'.trim();
+        if (fullName.isNotEmpty) {
+          _nameController.text = fullName;
+        }
 
-    final fullName = '${user.firstName} ${user.lastName}'.trim();
-    if (fullName.isNotEmpty) {
-      _nameController.text = fullName;
-    }
+        final phone = user.phone.trim();
+        if (phone.isNotEmpty) {
+          _phoneController.text = phone;
+        }
 
-    final phone = user.phone.trim();
-    if (phone.isNotEmpty) {
-      _phoneController.text = phone;
-    }
+        final normalizedGender = _normalizeGender(user.gender);
+        if (normalizedGender != null) {
+          _gender = normalizedGender;
+        }
 
-    final normalizedGender = _normalizeGender(user.gender);
-    if (normalizedGender != null) {
-      _gender = normalizedGender;
-    }
-
-    final age = _ageFromDateOfBirth(user.dateOfBirth);
-    if (age != null && age > 0) {
-      _ageController.text = age.toString();
+        final age = _ageFromDateOfBirth(user.dateOfBirth);
+        if (age != null && age > 0 && age <= 99) {
+          _ageController.text = age.toString();
+        }
+      }
     }
 
     final cartName = widget.args.patientName.trim();
     if (cartName.isNotEmpty) {
       _nameController.text = cartName;
     }
-    final cartAge = widget.args.patientAge.trim();
-    if (cartAge.isNotEmpty) {
-      _ageController.text = cartAge;
+    final cartAge = int.tryParse(widget.args.patientAge.trim()) ?? 0;
+    if (cartAge > 0 && cartAge <= 99) {
+      _ageController.text = cartAge.toString();
     }
     final cartGender = _normalizeGender(widget.args.patientGender);
     if (cartGender != null) {
@@ -178,6 +192,14 @@ class _LabTestCheckoutScreenState extends State<LabTestCheckoutScreen> {
       setState(() {
         _checkoutErrorMessage = l10n.labTestCheckoutRequiredFieldsError;
         _showEmergencyError = _emergencyController.text.trim().isEmpty;
+      });
+      return;
+    }
+    final age = int.tryParse(_ageController.text.trim()) ?? 0;
+    if (age <= 0 || age > 99) {
+      setState(() {
+        _checkoutErrorMessage = l10n.labTestAgeInvalid;
+        _showEmergencyError = false;
       });
       return;
     }

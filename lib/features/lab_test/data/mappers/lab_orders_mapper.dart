@@ -41,7 +41,12 @@ class LabOrdersMapper {
       patientPhone: model.patient.phone,
       tests: model.tests
           .map(
-            (t) => LabOrderTestEntity(name: t.name, price: t.price, status: t.status),
+            (t) => LabOrderTestEntity(
+              name: t.name,
+              price: t.price,
+              status: t.status,
+              sampleType: t.sampleType,
+            ),
           )
           .toList(growable: false),
       pricing: LabOrderPricingEntity(
@@ -55,6 +60,7 @@ class LabOrdersMapper {
       invoice: model.invoice,
       placedAt: model.placedAt,
       createdAt: model.createdAt,
+      sampleType: model.sampleType,
     );
   }
 }

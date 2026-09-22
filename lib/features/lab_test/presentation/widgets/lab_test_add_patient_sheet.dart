@@ -7,6 +7,7 @@ import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/preference/app_pref.dart';
+import '../../../../core/utils/max_int_text_input_formatter.dart';
 import '../../../../core/utils/no_emoji_text_input_formatter.dart';
 import '../../domain/entities/lab_test_patient_details.dart';
 
@@ -41,7 +42,7 @@ LabTestPatientDetails? labTestPatientFromAppPref(AppPref appPref) {
 
   return LabTestPatientDetails(
     name: name,
-    age: age != null && age > 0 ? age.toString() : '',
+    age: age != null && age > 0 && age <= 99 ? age.toString() : '',
     gender: gender,
   );
 }
@@ -88,7 +89,10 @@ class _LabTestAddPatientSheetWidgetState
     super.initState();
     final initial = widget.initial;
     _nameController = TextEditingController(text: initial?.name ?? '');
-    _ageController = TextEditingController(text: initial?.age ?? '');
+    final initialAge = int.tryParse(initial?.age ?? '') ?? 0;
+    _ageController = TextEditingController(
+      text: initialAge > 0 && initialAge <= 99 ? initialAge.toString() : '',
+    );
     _gender = initial?.gender == 'female' ? 'female' : 'male';
     _nameController.addListener(_onChanged);
     _ageController.addListener(_onChanged);
@@ -110,7 +114,7 @@ class _LabTestAddPatientSheetWidgetState
   bool get _canSubmit {
     final name = _nameController.text.trim();
     final age = int.tryParse(_ageController.text.trim()) ?? 0;
-    return name.isNotEmpty && age > 0;
+    return name.isNotEmpty && age > 0 && age <= 99;
   }
 
   void _submit() {
@@ -199,7 +203,8 @@ class _LabTestAddPatientSheetWidgetState
                 keyboardType: TextInputType.number,
                 inputFormatters: [
                   FilteringTextInputFormatter.digitsOnly,
-                  LengthLimitingTextInputFormatter(3),
+                  LengthLimitingTextInputFormatter(2),
+                  const MaxIntTextInputFormatter(99),
                 ],
               ),
               SizedBox(height: 14.h),

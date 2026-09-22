@@ -10,6 +10,7 @@ import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../pharmacy/domain/entities/pharmacy_booking_entity.dart';
 import '../../../pharmacy/domain/use_cases/get_pharmacy_bookings_use_case.dart';
+import '../bookings_analytics.dart';
 import '../constants/bookings_tabs.dart';
 import '../widgets/bookings_list_shimmer_widget.dart';
 import '../widgets/bookings_refresh_view.dart';
@@ -29,7 +30,9 @@ class _PharmacyBookingsScreenState extends State<PharmacyBookingsScreen> {
   bool _hasLoaded = false;
 
   void _tryLoad() {
-    if (!mounted || _isLoading) return;
+    if (!mounted) return;
+    BookingsAnalytics.logMyBookingPharmacy();
+    if (_isLoading) return;
     _load();
   }
 

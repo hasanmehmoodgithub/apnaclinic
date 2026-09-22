@@ -36,6 +36,7 @@ class LabOrdersMockApi {
             'name': 'glycosylated hemoglobin (hba1c)',
             'price': 2100,
             'status': 'PENDING',
+            'sampleType': 'Blood',
           },
         ],
         'pricing': {
@@ -75,6 +76,7 @@ class LabOrdersMockApi {
             'name': '24 hrs holter monitor',
             'price': 6900,
             'status': 'PENDING',
+            'sampleType': 'Blood',
           },
         ],
         'pricing': {
@@ -115,6 +117,7 @@ class LabOrdersMockApi {
                 '1666 gtt / gct (75 grams glucose tolerance test ( for pregnantpatient) (fasting 75gm glucose 1 hours 2 hours)',
             'price': 1500,
             'status': 'PENDING',
+            'sampleType': 'Blood',
           },
         ],
         'pricing': {
@@ -154,6 +157,7 @@ class LabOrdersMockApi {
             'name': 'Blood Sugar (Fasting)',
             'price': 500,
             'status': 'PENDING',
+            'sampleType': 'Blood',
           },
         ],
         'pricing': {
@@ -224,7 +228,12 @@ class LabOrdersMockApi {
         'phone': '03001234567',
       },
       'tests': [
-        {'name': 'Complete Blood Count (CBC)', 'price': 800, 'status': 'PENDING'},
+        {
+          'name': 'Complete Blood Count (CBC)',
+          'price': 800,
+          'status': 'PENDING',
+          'sampleType': 'Blood',
+        },
       ],
       'pricing': {
         'subtotal': 800,

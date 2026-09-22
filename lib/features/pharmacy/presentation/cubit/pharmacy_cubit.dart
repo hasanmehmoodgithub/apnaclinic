@@ -20,6 +20,7 @@ import '../../domain/entities/pharmacy_payment_breakdown_entity.dart';
 import '../../../consultation/data/utils/consultation_booking_utils.dart';
 import '../../../consultation/domain/entities/payment_provider_entity.dart';
 import '../../../consultation/domain/use_cases/get_payment_providers_use_case.dart';
+import '../../../promo_code/presentation/promo_code_analytics.dart';
 import '../../domain/use_cases/abandon_pharmacy_order_use_case.dart';
 import '../../domain/use_cases/add_pharmacy_profile_address_use_case.dart';
 import '../../domain/use_cases/add_to_cart_use_case.dart';
@@ -1026,8 +1027,12 @@ class PharmacyCubit extends Cubit<PharmacyState> {
             ? AnalyticsYesNoKeys.yes
             : AnalyticsYesNoKeys.no;
 
-    unawaited(
-      _analytics.logEvent(AnalyticsEventKeys.pharmacyOrderConfirmed, {
+    unawaited(() async {
+      final promoParams = await PromoCodeAnalytics.confirmPromoParams(
+        promoCode: appliedPromo,
+        promoUsedOverride: promoApplied == AnalyticsYesNoKeys.yes,
+      );
+      await _analytics.logEvent(AnalyticsEventKeys.pharmacyOrderConfirmed, {
         AnalyticsParamKeys.afContentType: AnalyticsContentTypeKeys.pharmacy,
         AnalyticsParamKeys.orderId: orderId,
         if (userName.isNotEmpty) AnalyticsParamKeys.userName: userName,
@@ -1037,12 +1042,13 @@ class PharmacyCubit extends Cubit<PharmacyState> {
         AnalyticsParamKeys.orderValue: orderValue ?? state.total,
         AnalyticsParamKeys.promoApplied: promoApplied,
         if (appliedPromo.isNotEmpty) AnalyticsParamKeys.promo: appliedPromo,
+        ...promoParams,
         AnalyticsParamKeys.timestamp: timestamp,
         AnalyticsParamKeys.deliveryCharges: state.deliveryCharges,
         AnalyticsParamKeys.paymentMethod: _analyticsPaymentMethod(),
         AnalyticsParamKeys.paymentStatus: paymentStatus,
-      }),
-    );
+      });
+    }());
   }
 
   void _logSearchPerformed({

@@ -148,7 +148,6 @@ class LabTestViewDetailsResultCard extends StatelessWidget {
                         alignment: WrapAlignment.end,
                         children: [
                           _Tag(text: sampleType),
-                          _Tag(text: l10n.labTestScreenTitle),
                         ],
                       ),
                     ),

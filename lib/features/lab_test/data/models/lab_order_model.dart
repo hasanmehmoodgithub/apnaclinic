@@ -94,17 +94,22 @@ class LabOrderTestModel {
     required this.name,
     required this.price,
     required this.status,
+    this.sampleType = '',
   });
 
   final String name;
   final int price;
   final String status;
+  final String sampleType;
 
   factory LabOrderTestModel.fromJson(Map<String, dynamic> json) {
     return LabOrderTestModel(
       name: _asString(json['name']),
       price: _asInt(json['price']),
       status: _asString(json['status']),
+      sampleType: _asString(
+        json['sampleType'] ?? json['sample_type'] ?? json['sample'],
+      ),
     );
   }
 }
@@ -162,6 +167,7 @@ class LabOrderModel {
     this.invoice,
     required this.placedAt,
     required this.createdAt,
+    this.sampleType = '',
   });
 
   final String orderId;
@@ -187,6 +193,9 @@ class LabOrderModel {
   final String? invoice;
   final String placedAt;
   final String createdAt;
+
+  /// Biological sample type (e.g. Blood). Prefer over [orderType] for Sample Type UI.
+  final String sampleType;
 
   factory LabOrderModel.fromJson(Map<String, dynamic> json) {
     final lab = json['lab'];
@@ -234,6 +243,9 @@ class LabOrderModel {
       invoice: invoice,
       placedAt: _asString(json['placedAt'] ?? json['placed_at']),
       createdAt: _asString(json['createdAt'] ?? json['created_at']),
+      sampleType: _asString(
+        json['sampleType'] ?? json['sample_type'] ?? json['sample'],
+      ),
     );
   }
 

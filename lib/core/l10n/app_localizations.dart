@@ -2429,6 +2429,12 @@ abstract class AppLocalizations {
   /// **'View My Bookings'**
   String get paymentPendingViewBookingsCta;
 
+  /// No description provided for @labTestViewDetailsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Details'**
+  String get labTestViewDetailsTitle;
+
   /// No description provided for @labTestViewDetailsResultsTitle.
   ///
   /// In en, this message translates to:
@@ -2566,6 +2572,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Please fill all the required fields'**
   String get labTestCheckoutRequiredFieldsError;
+
+  /// No description provided for @labTestAgeInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a valid age (1-99).'**
+  String get labTestAgeInvalid;
 
   /// No description provided for @labTestCheckoutPhoneInvalid.
   ///

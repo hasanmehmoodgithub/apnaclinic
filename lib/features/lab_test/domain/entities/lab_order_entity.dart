@@ -3,11 +3,13 @@ class LabOrderTestEntity {
     required this.name,
     required this.price,
     required this.status,
+    this.sampleType = '',
   });
 
   final String name;
   final int price;
   final String status;
+  final String sampleType;
 }
 
 class LabOrderPricingEntity {
@@ -50,6 +52,7 @@ class LabOrderEntity {
     this.invoice,
     required this.placedAt,
     required this.createdAt,
+    this.sampleType = '',
   });
 
   final String orderId;
@@ -74,6 +77,9 @@ class LabOrderEntity {
   final String? invoice;
   final String placedAt;
   final String createdAt;
+
+  /// Biological sample type (e.g. Blood). Not the booking method / orderType.
+  final String sampleType;
 }
 
 class LabOrdersPageEntity {

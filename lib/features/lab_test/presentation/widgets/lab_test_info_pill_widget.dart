@@ -20,7 +20,7 @@ class LabTestInfoPillWidget extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
       decoration: BoxDecoration(
-        color: highlight ? AppColors.clrE5F7EA : AppColors.clrWhite,
+        color: highlight ? AppColors.clrB7EAC3 : AppColors.clrWhite,
         borderRadius: BorderRadius.circular(59.r),
         border: highlight
             ? null
@@ -29,7 +29,7 @@ class LabTestInfoPillWidget extends StatelessWidget {
       child: Text(
         value,
         style: theme.textTheme.bodySmall?.copyWith(
-          color: highlight ? AppColors.clr1F8F4A : AppColors.clrA1A1A1,
+          color: highlight ? AppColors.clr198733 : AppColors.clrA1A1A1,
           fontSize: 13.sp,
           height: 1.1,
         ),

@@ -57,11 +57,16 @@ Tabbed bookings hub (Instant Doctor, Pharmacy, Doctor Consultation, Lab Tests, S
 
 ## Analytics
 
-Firebase via `BookingsAnalytics` / `AnalyticsService`. `my_bookings_tab` fires when the bottom Bookings tab is shown. `booking_viewed` fires after details load for consultancy / pharmacy / lab / surgery, and when the Instant Doctor prescription sheet opens (`type`). `prescription_available` fires when consultation details include doctor prescriptions, when Instant Doctor `prescription` text is shown in the sheet, and when a push/inbox `type` contains `PRESCRIPTION` (`service` `consultancy` / `instant_doctor`). `prescription_downloaded` fires on prescription file tap. `pharmacy_status_changed` fires from push/inbox when `serviceType` is `PHARMACY` and `type` contains `STATUS` / `DELIVER` / `DISPATCH` (`changed_by` only if the payload includes it). Meta/TikTok keys are not sent.
+Firebase via `BookingsAnalytics` / `AnalyticsService`. `my_bookings_tab` fires when the bottom Bookings tab is shown. Inner tab events fire every time the respective tab is opened or changed: `my_booking_instant_doc`, `my_booking_consultation`, `my_booking_pharmacy`, `my_booking_lab`, `my_booking_surgery`. `booking_viewed` fires after details load for consultancy / pharmacy / lab / surgery, and when the Instant Doctor prescription sheet opens (`type`). `prescription_available` fires when consultation details include doctor prescriptions, when Instant Doctor `prescription` text is shown in the sheet, and when a push/inbox `type` contains `PRESCRIPTION` (`service` `consultancy` / `instant_doctor`). `prescription_downloaded` fires on prescription file tap. `pharmacy_status_changed` fires from push/inbox when `serviceType` is `PHARMACY` and `type` contains `STATUS` / `DELIVER` / `DISPATCH` (`changed_by` only if the payload includes it). Meta/TikTok keys are not sent.
 
 | Event | When | Params |
 |---|---|---|
 | `my_bookings_tab` | Bookings bottom tab is shown | — |
+| `my_booking_instant_doc` | Instant Doctor bookings tab opened or selected | — |
+| `my_booking_consultation` | Doctor Consultation bookings tab opened or selected | — |
+| `my_booking_pharmacy` | Pharmacy bookings tab opened or selected | — |
+| `my_booking_lab` | Lab Test bookings tab opened or selected | — |
+| `my_booking_surgery` | Surgery bookings tab opened or selected | — |
 | `booking_viewed` | Booking details load | `type` (`consultancy` / `pharmacy` / `lab` / `surgery` / `instant_doctor`) |
 | `prescription_available` | Consultation details have prescriptions, or prescription push | `booking_id`, `service` |
 | `prescription_downloaded` | User taps a consultation prescription | `booking_id`, `service`, `user_name`, `msisdn` |
