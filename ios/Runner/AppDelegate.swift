@@ -110,6 +110,8 @@ import UserNotifications
           mode: .voiceChat,
           result: result
         )
+      case "deactivate":
+        self.deactivateAudioSession(result: result)
       default:
         result(FlutterMethodNotImplemented)
       }
@@ -130,6 +132,31 @@ import UserNotifications
         )
         try session.overrideOutputAudioPort(.speaker)
         try session.setActive(true)
+        result(true)
+      } catch {
+        result(
+          FlutterError(
+            code: "audio_session",
+            message: error.localizedDescription,
+            details: nil
+          )
+        )
+      }
+    }
+    if Thread.isMainThread {
+      apply()
+    } else {
+      DispatchQueue.main.async(execute: apply)
+    }
+  }
+
+  private func deactivateAudioSession(result: @escaping FlutterResult) {
+    let apply = {
+      do {
+        try AVAudioSession.sharedInstance().setActive(
+          false,
+          options: .notifyOthersOnDeactivation
+        )
         result(true)
       } catch {
         result(

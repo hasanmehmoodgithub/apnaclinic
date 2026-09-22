@@ -39,6 +39,11 @@ Future<void> configureWebViewPlaybackSession() async {
   await _configureIosAudioSession('configureForWebAudio');
 }
 
+/// Releases the iOS PlayAndRecord session so WebView TTS/WebAudio stops routing.
+Future<void> deactivateWebViewPlaybackSession() async {
+  await _configureIosAudioSession('deactivate');
+}
+
 Future<void> _configureIosAudioSession(String method) async {
   if (defaultTargetPlatform != TargetPlatform.iOS) return;
   try {

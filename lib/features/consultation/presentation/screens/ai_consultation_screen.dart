@@ -43,6 +43,7 @@ class _AiScreeningScreenState extends State<AiScreeningScreen>
   var _hasError = false;
   var _isExitDialogVisible = false;
   var _hasLoggedEnd = false;
+  var _didStopWebViewAudio = false;
 
   String get _url {
     final extra = widget.url?.trim() ?? '';
@@ -67,11 +68,19 @@ class _AiScreeningScreenState extends State<AiScreeningScreen>
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
+    final controller = _controller;
+    _controller = null;
+    if (controller != null) {
+      unawaited(_stopWebViewAudio(controller));
+    } else {
+      unawaited(deactivateWebViewPlaybackSession());
+    }
     super.dispose();
   }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (_didStopWebViewAudio) return;
     if (state == AppLifecycleState.resumed) {
       unawaited(configureWebViewPlaybackSession());
     }
@@ -101,19 +110,19 @@ class _AiScreeningScreenState extends State<AiScreeningScreen>
       ..setNavigationDelegate(
         NavigationDelegate(
           onPageStarted: (_) {
-            if (!mounted) return;
+            if (!mounted || _didStopWebViewAudio) return;
             setState(() {
               _isLoading = true;
               _hasError = false;
             });
           },
           onPageFinished: (_) {
-            if (!mounted) return;
+            if (!mounted || _didStopWebViewAudio) return;
             setState(() => _isLoading = false);
             unawaited(_onPageReady(controller));
           },
           onWebResourceError: (_) {
-            if (!mounted) return;
+            if (!mounted || _didStopWebViewAudio) return;
             setState(() {
               _isLoading = false;
               _hasError = true;
@@ -153,8 +162,9 @@ class _AiScreeningScreenState extends State<AiScreeningScreen>
   }
 
   Future<void> _onPageReady(WebViewController controller) async {
+    if (_didStopWebViewAudio) return;
     await configureWebViewPlaybackSession();
-    if (!mounted) return;
+    if (!mounted || _didStopWebViewAudio) return;
     try {
       await controller.runJavaScript(_kUnlockWebAudioJs);
     } catch (_) {}
@@ -199,6 +209,44 @@ class _AiScreeningScreenState extends State<AiScreeningScreen>
     unawaited(_recordAiAssistantInteraction(seconds));
   }
 
+  static const _kStopWebAudioJs = '''
+(function() {
+  try { if (window.speechSynthesis) window.speechSynthesis.cancel(); } catch (e) {}
+  try {
+    if (window.__apnaAudioCtx) {
+      window.__apnaAudioCtx.close();
+      window.__apnaAudioCtx = null;
+    }
+  } catch (e) {}
+  try {
+    document.querySelectorAll('audio, video').forEach(function(el) {
+      el.pause();
+      el.muted = true;
+      el.src = '';
+      el.removeAttribute('src');
+      el.load();
+    });
+  } catch (e) {}
+})();
+''';
+
+  Future<void> _stopWebViewAudio([WebViewController? controller]) async {
+    if (_didStopWebViewAudio) return;
+    _didStopWebViewAudio = true;
+    final webView = controller ?? _controller;
+    if (webView != null) {
+      try {
+        await webView.runJavaScript(_kStopWebAudioJs);
+      } catch (_) {}
+      try {
+        await webView.loadRequest(Uri.parse('about:blank'));
+      } catch (_) {}
+    }
+    try {
+      await deactivateWebViewPlaybackSession();
+    } catch (_) {}
+  }
+
   Future<void> _recordAiAssistantInteraction(int durationSeconds) async {
     await _recordInteraction(
       RecordAiAssistantInteractionParams(
@@ -216,6 +264,8 @@ class _AiScreeningScreenState extends State<AiScreeningScreen>
     _isExitDialogVisible = false;
     if (!shouldExit || !mounted) return;
     _logChatEnded();
+    await _stopWebViewAudio();
+    if (!mounted) return;
     context.pop();
   }
 
