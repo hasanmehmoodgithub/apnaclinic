@@ -12,6 +12,7 @@ class DoctorConsultationSummaryArgs {
     required this.discount,
     required this.total,
     this.promoCode,
+    this.promoDiscount = 0,
   });
 
   final DoctorConsultationCheckoutArgs checkoutArgs;
@@ -28,4 +29,7 @@ class DoctorConsultationSummaryArgs {
 
   /// Applied promo code from checkout; null/empty when none.
   final String? promoCode;
+
+  /// Promo-code discount from validate API; 0 when none applied.
+  final int promoDiscount;
 }

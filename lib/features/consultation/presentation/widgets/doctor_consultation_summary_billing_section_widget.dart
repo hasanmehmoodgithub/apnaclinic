@@ -11,12 +11,19 @@ class DoctorConsultationSummaryBillingSectionWidget extends StatelessWidget {
     required this.discount,
     required this.total,
     this.promoCode,
+    this.promoDiscount = 0,
   });
 
   final int consultationFee;
   final int discount;
   final int total;
   final String? promoCode;
+  final int promoDiscount;
+
+  bool get _hasPromoDiscount {
+    final code = promoCode?.trim() ?? '';
+    return code.isNotEmpty || promoDiscount > 0;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,14 +40,22 @@ class DoctorConsultationSummaryBillingSectionWidget extends StatelessWidget {
                 label: l10n.consultationConsultationFeesLabel,
                 amount: consultationFee,
               ),
-              SizedBox(height: 10.h),
-              _AmountRow(
-                textTheme: textTheme,
-                label: (promoCode != null && promoCode!.trim().isNotEmpty)
-                    ? l10n.promoCodeDiscountLabel
-                    : l10n.consultationDiscountLabel,
-                amount: discount,
-              ),
+              if (discount > 0) ...[
+                SizedBox(height: 10.h),
+                _AmountRow(
+                  textTheme: textTheme,
+                  label: l10n.consultationDiscountLabel,
+                  amount: discount,
+                ),
+              ],
+              if (_hasPromoDiscount) ...[
+                SizedBox(height: 10.h),
+                _AmountRow(
+                  textTheme: textTheme,
+                  label: l10n.promoCodeDiscountLabel,
+                  amount: promoDiscount,
+                ),
+              ],
             ],
           ),
         ),

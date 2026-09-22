@@ -227,9 +227,14 @@ class _LabTestCheckoutScreenState extends State<LabTestCheckoutScreen> {
     }
 
     final promoCubit = context.read<PromoCodeCubit>();
+    final discountedAmount = LabTestPriceFormatter.parseRsAmount(
+      widget.args.totalAmount.trim().isNotEmpty
+          ? widget.args.totalAmount
+          : widget.args.discountedFee,
+    );
     final promoOk = await promoCubit.ensureValidated(
       service: PromoCodeService.lab,
-      amount: LabTestPriceFormatter.parseRsAmount(widget.args.originalFee),
+      amount: discountedAmount,
     );
     if (!promoOk || !mounted) return;
 

@@ -303,6 +303,7 @@ class DoctorConsultationSummaryScreen extends StatelessWidget {
                               discount: args.discount,
                               total: args.total,
                               promoCode: args.promoCode,
+                              promoDiscount: args.promoDiscount,
                             ),
                           ],
                         ),

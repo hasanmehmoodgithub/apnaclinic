@@ -22,8 +22,11 @@ class LabTestCheckoutPaymentBreakdownCardWidget extends StatelessWidget {
 
   final LabTestCheckoutArgs args;
 
-  int get _originalAmount =>
-      LabTestPriceFormatter.parseRsAmount(args.originalFee);
+  int get _discountedAmount {
+    final fromTotal = LabTestPriceFormatter.parseRsAmount(args.totalAmount);
+    if (fromTotal > 0) return fromTotal;
+    return LabTestPriceFormatter.parseRsAmount(args.discountedFee);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,10 +40,9 @@ class LabTestCheckoutPaymentBreakdownCardWidget extends StatelessWidget {
     return BlocBuilder<PromoCodeCubit, PromoCodeState>(
       builder: (context, promo) {
         final hasPromo = promo.isApplied;
-        final showCatalogDiscount = catalogDiscount && !hasPromo;
-        final totalText = hasPromo
-            ? LabTestPriceFormatter.formatRs(promo.result!.payableAmount)
-            : args.totalAmount;
+        final totalText = LabTestPriceFormatter.formatRs(
+          promo.payableTotal(_discountedAmount),
+        );
 
         return Container(
           clipBehavior: Clip.antiAlias,
@@ -80,7 +82,7 @@ class LabTestCheckoutPaymentBreakdownCardWidget extends StatelessWidget {
                       onSubmitted: (code) =>
                           context.read<PromoCodeCubit>().validate(
                                 service: PromoCodeService.lab,
-                                amount: _originalAmount,
+                                amount: _discountedAmount,
                                 code: code,
                               ),
                       onCleared: context.read<PromoCodeCubit>().clear,
@@ -96,13 +98,23 @@ class LabTestCheckoutPaymentBreakdownCardWidget extends StatelessWidget {
                         ),
                       ),
                     ],
-                    if (hasPromo) ...[
+                    if (catalogDiscount || hasPromo) ...[
                       SizedBox(height: 10.h),
                       Divider(
                         height: 1,
                         thickness: 1,
                         color: AppColors.clrE4E4E4,
                       ),
+                    ],
+                    if (catalogDiscount) ...[
+                      SizedBox(height: 10.h),
+                      _moneyRow(
+                        context,
+                        '${l10n.labTestCheckoutDiscountLabel} (${args.discountPercent}%)',
+                        args.discountAmount,
+                      ),
+                    ],
+                    if (hasPromo) ...[
                       SizedBox(height: 10.h),
                       _moneyRow(
                         context,
@@ -110,19 +122,6 @@ class LabTestCheckoutPaymentBreakdownCardWidget extends StatelessWidget {
                         LabTestPriceFormatter.formatRs(
                           promo.result!.discountAmount,
                         ),
-                      ),
-                    ] else if (showCatalogDiscount) ...[
-                      SizedBox(height: 10.h),
-                      Divider(
-                        height: 1,
-                        thickness: 1,
-                        color: AppColors.clrE4E4E4,
-                      ),
-                      SizedBox(height: 10.h),
-                      _moneyRow(
-                        context,
-                        '${l10n.labTestCheckoutDiscountLabel} (${args.discountPercent}%)',
-                        args.discountAmount,
                       ),
                     ],
                     if (catalogCode.isNotEmpty) ...[
