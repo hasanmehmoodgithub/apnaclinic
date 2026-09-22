@@ -9,6 +9,7 @@ import '../../../lab_test/domain/use_cases/get_lab_orders_use_case.dart';
 import '../../../lab_test/presentation/lab_test_analytics.dart';
 import '../../data/mappers/lab_test_booking_list_mapper.dart';
 import '../../data/models/lab_test_booking_item_model.dart';
+import '../bookings_analytics.dart';
 import '../constants/bookings_tabs.dart';
 import '../widgets/bookings_list_shimmer_widget.dart';
 import '../widgets/bookings_refresh_view.dart';
@@ -29,7 +30,9 @@ class _LabTestBookingsScreenState extends State<LabTestBookingsScreen> {
   bool _hasLoaded = false;
 
   void _tryLoad() {
-    if (!mounted || _isLoading) return;
+    if (!mounted) return;
+    BookingsAnalytics.logMyBookingLab();
+    if (_isLoading) return;
     _load();
   }
 

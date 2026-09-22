@@ -43,7 +43,11 @@ class _BookingsTabVisibilityListenerState
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _nav = context.read<MainNavigationCubit>();
+    try {
+      _nav = context.read<MainNavigationCubit>();
+    } catch (_) {
+      _nav = null;
+    }
     final tabs = DefaultTabController.maybeOf(context);
     if (tabs != _tabs) {
       _tabs?.removeListener(_onTab);
@@ -91,8 +95,10 @@ class _BookingsTabVisibilityListenerState
     if (!mounted || !_isActive) return false;
     if (_tabs != null && _tabs!.index != widget.tabIndex) return false;
     final nav = _nav;
-    if (nav == null) return false;
-    return nav.state.currentIndex == MainNavigationTabs.bookings;
+    if (nav != null && nav.state.currentIndex != MainNavigationTabs.bookings) {
+      return false;
+    }
+    return true;
   }
 
   void _notifyIfVisible() {
@@ -107,10 +113,13 @@ class _BookingsTabVisibilityListenerState
 
   @override
   Widget build(BuildContext context) {
+    if (_nav == null) {
+      return widget.child;
+    }
     return BlocListener<MainNavigationCubit, MainNavigationState>(
       listenWhen: (previous, current) =>
           previous.currentIndex != current.currentIndex,
-      listener: (_, __) => _scheduleNotify(),
+      listener: (_, _) => _scheduleNotify(),
       child: widget.child,
     );
   }

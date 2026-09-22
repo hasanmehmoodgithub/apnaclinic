@@ -137,11 +137,20 @@ class LabTestDetailDataModel {
       name: (json['name'] ?? '').toString(),
       description: (json['description'] ?? '').toString(),
       sampleType: (json['sampleType'] ?? '').toString(),
-      fastingRequired: json['fastingRequired'] == true,
+      fastingRequired: _asBool(
+        json['fastingRequired'] ?? json['fasting_required'],
+      ),
       turnaroundHours: (json['turnaroundHours'] as num?)?.toInt() ?? 0,
       partners: partners,
     );
   }
+}
+
+bool _asBool(dynamic value) {
+  if (value == true || value == 1) return true;
+  if (value == false || value == 0 || value == null) return false;
+  final text = value.toString().trim().toLowerCase();
+  return text == '1' || text == 'true' || text == 'yes';
 }
 
 class LabTestDetailResponseModel {

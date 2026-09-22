@@ -259,9 +259,10 @@ class LabTestBookingCubit extends Cubit<LabTestBookingState> {
     final first = items.first;
     final name = first.patientName.trim();
     if (name.isEmpty) return null;
+    final parsedAge = int.tryParse(first.patientAge.trim()) ?? 0;
     return LabTestPatientDetails(
       name: name,
-      age: first.patientAge,
+      age: parsedAge > 0 && parsedAge <= 99 ? parsedAge.toString() : '',
       gender: first.patientGender == 'female' ? 'female' : 'male',
     );
   }

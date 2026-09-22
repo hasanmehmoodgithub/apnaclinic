@@ -142,7 +142,7 @@ class _LabTestViewDetailsScreenState extends State<LabTestViewDetailsScreen> {
       return AppScaffoldGradient(
         child: Column(
           children: [
-            LabTestViewDetailsHeader(title: l10n.labTestScreenTitle),
+            LabTestViewDetailsHeader(title: l10n.labTestViewDetailsTitle),
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(20, 150, 20, 20),
@@ -164,7 +164,7 @@ class _LabTestViewDetailsScreenState extends State<LabTestViewDetailsScreen> {
     return AppScaffoldGradient(
       child: Column(
         children: [
-          LabTestViewDetailsHeader(title: l10n.labTestScreenTitle),
+          LabTestViewDetailsHeader(title: l10n.labTestViewDetailsTitle),
           AppScaffoldGradientPanel(
             child: SingleChildScrollView(
               padding: const EdgeInsets.fromLTRB(20, 22, 20, 20),

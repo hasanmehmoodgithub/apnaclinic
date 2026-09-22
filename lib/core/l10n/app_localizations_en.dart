@@ -1269,6 +1269,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get paymentPendingViewBookingsCta => 'View My Bookings';
 
   @override
+  String get labTestViewDetailsTitle => 'Details';
+
+  @override
   String get labTestViewDetailsResultsTitle => 'Test Results';
 
   @override
@@ -1344,6 +1347,9 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get labTestCheckoutRequiredFieldsError =>
       'Please fill all the required fields';
+
+  @override
+  String get labTestAgeInvalid => 'Please enter a valid age (1-99).';
 
   @override
   String get labTestCheckoutPhoneInvalid =>

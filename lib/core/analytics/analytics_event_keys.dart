@@ -67,6 +67,10 @@ class AnalyticsEventKeys {
   /// BRD Lab Journey: successful/failed book (Purchase funnel).
   static const labTestBooked = 'lab_test_booked';
 
+  static const promoCodeEntered = 'promo_code_entered';
+  static const promoCodeApplied = 'promo_code_applied';
+  static const promoCodeRejected = 'promo_code_rejected';
+
   static const surgeryModule = 'surgery_module';
   static const surgeryCityChange = 'surgery_city_change';
   static const surgerySearchClicked = 'surgery_search_clicked';
@@ -76,6 +80,11 @@ class AnalyticsEventKeys {
   static const surgeryBooked = 'surgery_booked';
 
   static const myBookingsTab = 'my_bookings_tab';
+  static const myBookingInstantDoc = 'my_booking_instant_doc';
+  static const myBookingConsultation = 'my_booking_consultation';
+  static const myBookingPharmacy = 'my_booking_pharmacy';
+  static const myBookingLab = 'my_booking_lab';
+  static const myBookingSurgery = 'my_booking_surgery';
   static const bookingViewed = 'booking_viewed';
   static const prescriptionAvailable = 'prescription_available';
   static const prescriptionDownloaded = 'prescription_downloaded';
@@ -122,6 +131,14 @@ class AnalyticsParamKeys {
   static const subTotal = 'sub_total';
   static const orderValue = 'order_value';
   static const promoApplied = 'promo_applied';
+  static const promo = 'promo';
+  static const promoCodeUsed = 'promo_code_used';
+  static const promoCode = 'promo_code';
+  static const code = 'code';
+  static const discountType = 'discount_type';
+  static const discountValue = 'discount_value';
+  static const userType = 'user_type';
+  static const reason = 'reason';
   static const timestamp = 'timestamp';
   static const deliveryCharges = 'delivery_charges';
   static const paymentStatus = 'payment_status';
@@ -145,7 +162,6 @@ class AnalyticsParamKeys {
   static const discount = 'discount';
   static const transactionId = 'transaction_id';
   static const authCode = 'auth_code';
-  static const promo = 'promo';
   static const surgeryName = 'surgery_name';
   static const amount = 'amount';
   static const service = 'service';
@@ -211,6 +227,23 @@ class AnalyticsYesNoKeys {
 
   static const yes = 'Yes';
   static const no = 'No';
+}
+
+class AnalyticsUserTypeKeys {
+  AnalyticsUserTypeKeys._();
+
+  static const pro = 'pro';
+  static const standard = 'standard';
+}
+
+class AnalyticsPromoRejectReasonKeys {
+  AnalyticsPromoRejectReasonKeys._();
+
+  static const expired = 'expired';
+  static const notStarted = 'not_started';
+  static const ineligibleService = 'ineligible_service';
+  static const ineligibleUserType = 'ineligible_user_type';
+  static const invalidCode = 'invalid_code';
 }
 
 class AnalyticsPaymentStatusKeys {

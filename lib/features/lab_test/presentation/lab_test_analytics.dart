@@ -6,6 +6,7 @@ import '../../../core/di/dependency_injection.dart';
 import '../../consultation/data/utils/consultation_booking_utils.dart';
 import '../../consultation/presentation/consultation_analytics.dart';
 import '../../payment/domain/entities/payment_initiation_result.dart';
+import '../../promo_code/presentation/promo_code_analytics.dart';
 import '../domain/entities/lab_test_item_entity.dart';
 import '../domain/utils/lab_test_price_formatter.dart';
 import 'lab_test_route_args.dart';
@@ -188,24 +189,6 @@ abstract final class LabTestAnalytics {
     final normalizedMsisdn = _analyticsMsisdn(msisdn);
     final timestamp = formatAnalyticsTimestamp(DateTime.now());
 
-    unawaited(
-      _analytics.logEvent(AnalyticsEventKeys.labBookingConfirmed, {
-        AnalyticsParamKeys.afContentType: AnalyticsContentTypeKeys.lab,
-        if (bookingId.isNotEmpty) AnalyticsParamKeys.bookingId: bookingId,
-        if (name.isNotEmpty) AnalyticsParamKeys.userName: name,
-        AnalyticsParamKeys.msisdn: normalizedMsisdn,
-        AnalyticsParamKeys.numberOfTests: args.testIds.length,
-        if (labName.isNotEmpty) AnalyticsParamKeys.labName: labName,
-        AnalyticsParamKeys.timestamp: timestamp,
-        AnalyticsParamKeys.paymentMethod: paymentMethod,
-        AnalyticsParamKeys.paymentStatus: paymentStatus,
-        AnalyticsParamKeys.promoApplied: promoApplied
-            ? AnalyticsYesNoKeys.yes
-            : AnalyticsYesNoKeys.no,
-        if (promoCode.isNotEmpty) AnalyticsParamKeys.promo: promoCode,
-      }),
-    );
-
     final testName = args.testTitle.trim().isNotEmpty
         ? args.testTitle.trim()
         : args.lines
@@ -223,8 +206,29 @@ abstract final class LabTestAnalytics {
     final discount = LabTestPriceFormatter.parseRsAmount(args.discountAmount);
     final transactionId = initiation?.publicId?.trim() ?? '';
 
-    unawaited(
-      _analytics.logEvent(AnalyticsEventKeys.labTestBooked, {
+    unawaited(() async {
+      final promoParams = await PromoCodeAnalytics.confirmPromoParams(
+        promoCode: promoCode,
+        promoUsedOverride: promoApplied,
+      );
+      await _analytics.logEvent(AnalyticsEventKeys.labBookingConfirmed, {
+        AnalyticsParamKeys.afContentType: AnalyticsContentTypeKeys.lab,
+        if (bookingId.isNotEmpty) AnalyticsParamKeys.bookingId: bookingId,
+        if (name.isNotEmpty) AnalyticsParamKeys.userName: name,
+        AnalyticsParamKeys.msisdn: normalizedMsisdn,
+        AnalyticsParamKeys.numberOfTests: args.testIds.length,
+        if (labName.isNotEmpty) AnalyticsParamKeys.labName: labName,
+        AnalyticsParamKeys.timestamp: timestamp,
+        AnalyticsParamKeys.paymentMethod: paymentMethod,
+        AnalyticsParamKeys.paymentStatus: paymentStatus,
+        AnalyticsParamKeys.promoApplied: promoApplied
+            ? AnalyticsYesNoKeys.yes
+            : AnalyticsYesNoKeys.no,
+        if (promoCode.isNotEmpty) AnalyticsParamKeys.promo: promoCode,
+        ...promoParams,
+      });
+
+      await _analytics.logEvent(AnalyticsEventKeys.labTestBooked, {
         if (bookingId.isNotEmpty) AnalyticsParamKeys.bookingId: bookingId,
         AnalyticsParamKeys.timestamp: timestamp,
         if (name.isNotEmpty) AnalyticsParamKeys.userName: name,
@@ -241,9 +245,9 @@ abstract final class LabTestAnalytics {
         AnalyticsParamKeys.paymentStatus: paymentStatus,
         if (transactionId.isNotEmpty)
           AnalyticsParamKeys.transactionId: transactionId,
-        // Auth code is not returned by the lab book-test API.
-      }),
-    );
+        ...promoParams,
+      });
+    }());
   }
 
   static String labNameFromCatalogItem(LabTestItemEntity item) {

@@ -178,6 +178,9 @@ static const Color clrf4f4f4  = Color(0xFFF4F4F4);
   static const Color clrC85600 = Color(0xFFC85600);
   static const Color clrE5F7EA = Color(0xFFE5F7EA);
   static const Color clr1F8F4A = Color(0xFF1F8F4A);
+  /// Lab Fasting / requirement pill (booking details + cart).
+  static const Color clrB7EAC3 = Color(0xFFB7EAC3);
+  static const Color clr198733 = Color(0xFF198733);
   static const Color clrBFC7CF = Color(0xFFBFC7CF);
   static const Color clrPromoCodeBorder = Color(0xFFB7C9C4);
   static const Color clr7C8797 = Color(0xFF7C8797);

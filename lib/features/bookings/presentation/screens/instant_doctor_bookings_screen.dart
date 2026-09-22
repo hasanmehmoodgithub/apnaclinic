@@ -7,6 +7,7 @@ import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/session/auth_session_refresh.dart';
 import '../../../dashboard/presentation/constants/main_navigation_tabs.dart';
+import '../bookings_analytics.dart';
 import '../constants/bookings_tabs.dart';
 import '../cubit/instant_doctor_bookings_cubit.dart';
 import '../cubit/instant_doctor_bookings_state.dart';
@@ -56,6 +57,7 @@ class _InstantDoctorBookingsBodyState
 
   void _tryLoad() {
     if (!mounted) return;
+    BookingsAnalytics.logMyBookingInstantDoc();
     context.read<InstantDoctorBookingsCubit>().load(refresh: true);
   }
 

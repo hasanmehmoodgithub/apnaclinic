@@ -82,7 +82,7 @@ class LabTestBookingListMapper {
       labName: booking.labName,
       labLogoUrl: booking.labLogoUrl,
       partnerLogoUrl: booking.partnerLogoUrl,
-      sampleType: _orderTypeLabel(order.orderType, l10n),
+      sampleType: _sampleTypeLabel(order, l10n),
       discountedFee: booking.discountedFee,
       originalFee: booking.originalFee,
       discountCode: booking.discountCode,
@@ -100,17 +100,28 @@ class LabTestBookingListMapper {
     );
   }
 
-  /// Maps API `orderType` (`HOME_SAMPLING` / `WALK_IN`) for the Sample Type pill.
-  static String _orderTypeLabel(String orderType, AppLocalizations l10n) {
-    switch (orderType.trim().toUpperCase()) {
-      case 'HOME_SAMPLING':
-        return l10n.labTestBookingMethodHomeSample;
-      case 'WALK_IN':
-        return l10n.labTestBookingMethodWalkIn;
-      default:
-        final raw = orderType.trim();
-        return raw.isEmpty ? l10n.labTestSampleTypeNotAvailable : raw;
+  /// Biological sample type for the Sample Type pill (not Walk In / Home Sample).
+  static String _sampleTypeLabel(LabOrderEntity order, AppLocalizations l10n) {
+    final fromOrder = _formatSampleType(order.sampleType);
+    if (fromOrder.isNotEmpty) return fromOrder;
+
+    for (final test in order.tests) {
+      final fromTest = _formatSampleType(test.sampleType);
+      if (fromTest.isNotEmpty) return fromTest;
     }
+
+    return l10n.labTestSampleTypeNotAvailable;
+  }
+
+  static String _formatSampleType(String raw) {
+    final trimmed = raw.trim();
+    if (trimmed.isEmpty) return '';
+    return trimmed
+        .toLowerCase()
+        .split(RegExp(r'\s+'))
+        .where((part) => part.isNotEmpty)
+        .map((part) => '${part[0].toUpperCase()}${part.substring(1)}')
+        .join(' ');
   }
 
   static String _reportNote(String reportStatus, AppLocalizations l10n) {

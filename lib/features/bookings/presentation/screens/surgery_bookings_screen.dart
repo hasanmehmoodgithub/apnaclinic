@@ -9,6 +9,7 @@ import '../../../surgery/domain/use_cases/get_surgery_leads_use_case.dart';
 import '../../data/mappers/surgery_booking_list_mapper.dart';
 import '../../data/models/surgery_booking_list_item_model.dart';
 import '../../data/models/surgery_details_item.dart';
+import '../bookings_analytics.dart';
 import '../constants/bookings_tabs.dart';
 import '../widgets/bookings_list_shimmer_widget.dart';
 import '../widgets/bookings_refresh_view.dart';
@@ -30,7 +31,9 @@ class _SurgeryBookingsScreenState extends State<SurgeryBookingsScreen> {
   bool _hasLoaded = false;
 
   void _tryLoad() {
-    if (!mounted || _isLoading) return;
+    if (!mounted) return;
+    BookingsAnalytics.logMyBookingSurgery();
+    if (_isLoading) return;
     _load(refresh: true);
   }
 

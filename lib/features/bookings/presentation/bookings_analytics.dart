@@ -6,6 +6,8 @@ import '../../../core/di/dependency_injection.dart';
 import '../../../core/preference/app_pref.dart';
 import '../../notification/domain/entities/notification_entity.dart';
 
+import 'constants/bookings_tabs.dart';
+
 abstract final class BookingsAnalytics {
   BookingsAnalytics._();
 
@@ -13,6 +15,46 @@ abstract final class BookingsAnalytics {
 
   static void logMyBookingsTab() {
     unawaited(_analytics.logEvent(AnalyticsEventKeys.myBookingsTab));
+  }
+
+  static void logMyBookingInstantDoc() {
+    unawaited(_analytics.logEvent(AnalyticsEventKeys.myBookingInstantDoc));
+  }
+
+  static void logMyBookingConsultation() {
+    unawaited(_analytics.logEvent(AnalyticsEventKeys.myBookingConsultation));
+  }
+
+  static void logMyBookingPharmacy() {
+    unawaited(_analytics.logEvent(AnalyticsEventKeys.myBookingPharmacy));
+  }
+
+  static void logMyBookingLab() {
+    unawaited(_analytics.logEvent(AnalyticsEventKeys.myBookingLab));
+  }
+
+  static void logMyBookingSurgery() {
+    unawaited(_analytics.logEvent(AnalyticsEventKeys.myBookingSurgery));
+  }
+
+  static void logBookingTabByIndex(int index) {
+    switch (index) {
+      case BookingsTabs.instantDoctor:
+        logMyBookingInstantDoc();
+        break;
+      case BookingsTabs.pharmacy:
+        logMyBookingPharmacy();
+        break;
+      case BookingsTabs.doctorConsultation:
+        logMyBookingConsultation();
+        break;
+      case BookingsTabs.labTest:
+        logMyBookingLab();
+        break;
+      case BookingsTabs.surgery:
+        logMyBookingSurgery();
+        break;
+    }
   }
 
   static void logBookingViewed(String type) {

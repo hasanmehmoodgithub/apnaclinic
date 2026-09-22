@@ -33,3 +33,21 @@ Success `data`: `code`, `discountType`, `discountValue`, `originalAmount`, `disc
 ## Mocks
 
 - `PromoCodeMockApi` when `MockConfig.enablePromoCodeMocks` is true (default **false**). Mock success codes: `SAVE20` (20%), `JC50OFF` (50%).
+
+## Analytics
+
+Firebase via `PromoCodeAnalytics` / `AnalyticsService` (mobile app only). CRM admin events (`promo_code_created` / `promo_code_edited` / `promo_code_deactivated`) are **not** logged in the Flutter app.
+
+| Event | When | Params |
+|---|---|---|
+| `promo_code_entered` | User submits a code to validate | `code`, `service` (`CONSULTATION` / `LAB` / `PHARMACY`) |
+| `promo_code_applied` | Validate succeeds | `code`, `service`, `discount_type`, `discount_value`, `user_type` (`pro` / `standard`) |
+| `promo_code_rejected` | Validate fails | `code`, `service`, `reason` (`expired` / `not_started` / `ineligible_service` / `ineligible_user_type` / `invalid_code`) |
+
+Order-confirmed events also include `promo_code_used` (Yes/No), `promo_code` (when used), and `user_type`:
+
+- `pharmacy_order_confirmed`
+- `doctor_consultation_booked`
+- `lab_booking_confirmed` / `lab_test_booked`
+
+Reject `reason` is inferred from the API/error message when the backend does not send a structured code.
