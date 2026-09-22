@@ -20,11 +20,11 @@ import '../../../../core/services/notification_service.dart';
 import '../../../../core/widgets/heart_loader_widget.dart';
 import '../../domain/entities/our_service_entity.dart';
 import '../../domain/services/promotional_banner_session.dart';
-import '../../../pro/presentation/show_pro_bottom_sheet.dart';
+// import '../../../pro/presentation/show_pro_bottom_sheet.dart';
 import '../cubit/dashboard_services_cubit.dart';
 import '../cubit/dashboard_services_state.dart';
 import '../widgets/app_update_dialog.dart';
-import '../widgets/apna_clinic_pro_home_banner.dart';
+// import '../widgets/apna_clinic_pro_home_banner.dart';
 import '../widgets/fikrfree_health_banner.dart';
 import '../widgets/home_header_section.dart';
 import '../widgets/instant_doctor_home_banner.dart';
@@ -38,9 +38,10 @@ import '../../../surgery/presentation/surgery_analytics.dart';
 import '../../../search/presentation/models/search_launch_args.dart';
 import '../../../notification/presentation/cubit/notification_cubit.dart';
 import '../../../notification/presentation/cubit/notification_state.dart';
-import '../../../pro/domain/entities/pro_membership_entity.dart';
-import '../../../pro/presentation/cubit/pro_cubit.dart';
-import '../../../pro/presentation/cubit/pro_state.dart';
+// TODO(pro): re-enable ApnaClinic Pro home banner
+// import '../../../pro/domain/entities/pro_membership_entity.dart';
+// import '../../../pro/presentation/cubit/pro_cubit.dart';
+// import '../../../pro/presentation/cubit/pro_state.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -56,7 +57,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   bool _updatePromptHandled = false;
   late final DashboardCubit _dashboardCubit;
   late final NotificationCubit _notificationCubit;
-  late final ProCubit _proCubit;
+  // TODO(pro): re-enable
+  // late final ProCubit _proCubit;
   late final PromotionalBannerSession _bannerSession;
   StreamSubscription<NotificationPayload>? _pushSubscription;
   late final AuthSessionRefresh _sessionRefresh;
@@ -68,7 +70,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     _bannerSession = sl<PromotionalBannerSession>();
     _dashboardCubit = sl<DashboardCubit>();
     _notificationCubit = sl<NotificationCubit>();
-    _proCubit = sl<ProCubit>()..loadCatalog();
+    // TODO(pro): re-enable
+    // _proCubit = sl<ProCubit>()..loadCatalog();
     _sessionRefresh = sl<AuthSessionRefresh>();
     _sessionRefresh.addListener(_onAuthSessionChanged);
     if (AuthGuard.isLoggedIn()) {
@@ -100,21 +103,24 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     HeartLoaderDialogController.close(_bannerLoaderId);
     WidgetsBinding.instance.removeObserver(this);
     _dashboardCubit.close();
-    _proCubit.close();
+    // TODO(pro): re-enable
+    // _proCubit.close();
     super.dispose();
   }
 
   void _onAuthSessionChanged() {
     if (!mounted) return;
     unawaited(_maybePresentHomeDialogs());
-    unawaited(_proCubit.loadCatalog(refresh: true));
+    // TODO(pro): re-enable
+    // unawaited(_proCubit.loadCatalog(refresh: true));
   }
 
-  Future<void> _openPro() async {
-    await showApnaClinicProSheet(context);
-    if (!mounted) return;
-    unawaited(_proCubit.loadCatalog(refresh: true));
-  }
+  // TODO(pro): re-enable
+  // Future<void> _openPro() async {
+  //   await showApnaClinicProSheet(context);
+  //   if (!mounted) return;
+  //   unawaited(_proCubit.loadCatalog(refresh: true));
+  // }
 
   bool _isHomeRouteActive(BuildContext context) {
     final route = ModalRoute.of(context);
@@ -139,7 +145,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     return MultiBlocProvider(
       providers: [
         BlocProvider.value(value: _dashboardCubit),
-        BlocProvider.value(value: _proCubit),
+        // TODO(pro): re-enable
+        // BlocProvider.value(value: _proCubit),
       ],
       child: ListenableBuilder(
         listenable: _sessionRefresh,
@@ -349,27 +356,28 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                       ),
                     ),
                   ),
-                  SliverPadding(
-                    padding: EdgeInsets.fromLTRB(20.w, 20.h, 20.w, 0),
-                    sliver: SliverToBoxAdapter(
-                      child: BlocSelector<
-                          ProCubit,
-                          ProState,
-                          ({ProMembershipEntity? membership, bool isLoading})>(
-                        selector: (proState) => (
-                          membership: proState.membership,
-                          isLoading: proState.isCatalogLoading,
-                        ),
-                        builder: (context, pro) {
-                          return ApnaClinicProHomeBanner(
-                            membership: pro.membership,
-                            isLoading: pro.isLoading,
-                            onTap: () => unawaited(_openPro()),
-                          );
-                        },
-                      ),
-                    ),
-                  ),
+                  // TODO(pro): re-enable ApnaClinic Pro home banner
+                  // SliverPadding(
+                  //   padding: EdgeInsets.fromLTRB(20.w, 20.h, 20.w, 0),
+                  //   sliver: SliverToBoxAdapter(
+                  //     child: BlocSelector<
+                  //         ProCubit,
+                  //         ProState,
+                  //         ({ProMembershipEntity? membership, bool isLoading})>(
+                  //       selector: (proState) => (
+                  //         membership: proState.membership,
+                  //         isLoading: proState.isCatalogLoading,
+                  //       ),
+                  //       builder: (context, pro) {
+                  //         return ApnaClinicProHomeBanner(
+                  //           membership: pro.membership,
+                  //           isLoading: pro.isLoading,
+                  //           onTap: () => unawaited(_openPro()),
+                  //         );
+                  //       },
+                  //     ),
+                  //   ),
+                  // ),
                   SliverPadding(
                     padding: EdgeInsets.fromLTRB(20.w, 20.h, 20.w, 32.h),
                     sliver: SliverToBoxAdapter(

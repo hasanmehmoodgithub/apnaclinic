@@ -12,6 +12,7 @@ Paid **ApnaClinic Pro** membership: show catalog (benefits + plans) in a bottom 
 - Home → `ApnaClinicProHomeBanner` (above Secure Your Health) opens the sheet.
 - Also ready for checkout upsell / profile later.
 
+**Temporarily disabled in UI** (`TODO(pro)`): home banner + menu Pro card / debug widgets are commented out; feature code and DI remain.
 ## UI
 
 - Catalog bottom sheet: logo/banner, title, tagline, benefits table, plan cards, CTA (all from API). Uses `useSafeArea: true` so the sheet top sits below the status bar / Dynamic Island; CTA includes bottom inset padding.

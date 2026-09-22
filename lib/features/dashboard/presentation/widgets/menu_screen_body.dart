@@ -6,7 +6,8 @@ import '../helpers/menu_profile_mapper.dart';
 import '../helpers/menu_screen_config.dart';
 import 'menu_about_card.dart';
 import 'menu_action_tile.dart';
-import 'menu_pro_card.dart';
+// TODO(pro): re-enable
+// import 'menu_pro_card.dart';
 import 'menu_profile_card.dart';
 
 class MenuScreenBody extends StatelessWidget {
@@ -47,24 +48,25 @@ class MenuScreenBody extends StatelessWidget {
           onActionTap: onProfileActionTap,
         ),
         SizedBox(height: 14.h),
-        if (isProMembershipLoading)
-          Padding(
-            padding: EdgeInsets.symmetric(vertical: 8.h),
-            child: const Center(
-              child: SizedBox(
-                width: 24,
-                height: 24,
-                child: CircularProgressIndicator(strokeWidth: 2.5),
-              ),
-            ),
-          )
-        else ...[
-          MenuProCard(
-            membership: proMembership,
-            onTap: onProTap,
-          ),
-          SizedBox(height: 14.h),
-        ],
+        // TODO(pro): re-enable MenuProCard
+        // if (isProMembershipLoading)
+        //   Padding(
+        //     padding: EdgeInsets.symmetric(vertical: 8.h),
+        //     child: const Center(
+        //       child: SizedBox(
+        //         width: 24,
+        //         height: 24,
+        //         child: CircularProgressIndicator(strokeWidth: 2.5),
+        //       ),
+        //     ),
+        //   )
+        // else ...[
+        //   MenuProCard(
+        //     membership: proMembership,
+        //     onTap: onProTap,
+        //   ),
+        //   SizedBox(height: 14.h),
+        // ],
         for (final item in actionItems) ...[
           MenuActionTile(
             title: item.title,
