@@ -225,8 +225,6 @@ class _StatusFeeRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final showOriginal = item.discountAmount > 0 && item.originalFee > 0;
-
     return IntrinsicHeight(
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -284,17 +282,6 @@ class _StatusFeeRow extends StatelessWidget {
                     fontWeight: FontWeight.w500,
                   ),
                 ),
-                if (showOriginal)
-                  Text(
-                    'Rs. ${item.originalFee}/-',
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: textTheme.bodySmall?.copyWith(
-                      color: const Color(0xFF979797),
-                      fontSize: 11.sp,
-                      decoration: TextDecoration.lineThrough,
-                    ),
-                  ),
               ],
             ),
           ),
