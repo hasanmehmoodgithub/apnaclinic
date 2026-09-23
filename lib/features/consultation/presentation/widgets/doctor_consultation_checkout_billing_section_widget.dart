@@ -22,10 +22,12 @@ class DoctorConsultationCheckoutBillingSectionWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final textTheme = Theme.of(context).textTheme;
+    // Show payable (post doctor-discount) as Consultation fee.
+    final discountedFee = data.total;
 
     return BlocBuilder<PromoCodeCubit, PromoCodeState>(
       builder: (context, promo) {
-        final total = promo.payableTotal(data.total);
+        final total = promo.payableTotal(discountedFee);
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -51,7 +53,7 @@ class DoctorConsultationCheckoutBillingSectionWidget extends StatelessWidget {
             SizedBox(height: 16.h),
             _StackedAmount(
               label: l10n.consultationConsultationFeesLabel,
-              amount: data.consultationFee,
+              amount: discountedFee,
             ),
             SizedBox(height: 14.h),
             PromoCodeFieldWidget(
@@ -61,7 +63,7 @@ class DoctorConsultationCheckoutBillingSectionWidget extends StatelessWidget {
               onChanged: context.read<PromoCodeCubit>().onInputChanged,
               onSubmitted: (code) => context.read<PromoCodeCubit>().validate(
                     service: PromoCodeService.consultation,
-                    amount: data.total,
+                    amount: discountedFee,
                     code: code,
                   ),
               onCleared: context.read<PromoCodeCubit>().clear,

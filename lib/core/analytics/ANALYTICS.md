@@ -53,8 +53,8 @@ Each `logEvent` / `logScreenView` writes a `developer.log` (`AnalyticsService`)
 before fan-out. Fan-out to Firebase runs only on the production flavor.
 Events before Firebase init are dropped. Do not put PII in parameters except
 where a tracking spec requires it (`pharmacy_order_confirmed`,
-`lab_booking_confirmed`, `surgery_booked`, and `prescription_downloaded`
-include `user_name` and `msisdn`).
+`lab_booking_confirmed`, `surgery_booked`, `prescription_downloaded`, and
+`instant_doc_prescription_download` include `user_name` and `msisdn`).
 
 ## Consultation AI chat
 | Event | When | Param |
@@ -75,6 +75,9 @@ include `user_name` and `msisdn`).
 | `instant_doc_subscribe_clicked` | Subscribe tap | `partner` |
 | `fb_mobile_subscribe` | Subscribe OTP succeeds | `partner`, `msisdn` |
 | `start_consultation_clicked` | Consultation WebView opens | `partner`, `msisdn` |
+| `instant_doc_booking_opened` | My Bookings Instant Doctor View Details | `booking_id` |
+| `instant_doc_prescription_view` | Prescription text/PDF shown in sheet | `booking_id` |
+| `instant_doc_prescription_download` | Prescription PDF download / open | `booking_id`, `user_name`, `msisdn` |
 
 ## Pharmacy
 | Event | When | Params |
@@ -144,7 +147,10 @@ include `user_name` and `msisdn`).
 | Event | When | Params |
 |---|---|---|
 | `my_bookings_tab` | Bookings bottom tab is shown | — |
-| `booking_viewed` | Booking details load | `type` (`consultancy` / `pharmacy` / `lab` / `surgery`) |
+| `booking_viewed` | Booking details load | `type` (`consultancy` / `pharmacy` / `lab` / `surgery` / `instant_doctor`) |
+| `instant_doc_booking_opened` | Instant Doctor View Details opens | `booking_id` |
+| `instant_doc_prescription_view` | Instant Doctor prescription shown | `booking_id` |
+| `instant_doc_prescription_download` | Instant Doctor prescription PDF download | `booking_id`, `user_name`, `msisdn` |
 | `prescription_available` | Consultation details include doctor prescriptions, or prescription push | `booking_id`, `service` (`consultancy` / `instant_doctor`) |
-| `prescription_downloaded` | User taps a consultation prescription file or Instant Doctor prescription PDF | `booking_id`, `service`, `user_name`, `msisdn` |
+| `prescription_downloaded` | User taps a consultation prescription file | `booking_id`, `service`, `user_name`, `msisdn` |
 | `pharmacy_status_changed` | Pharmacy status push / inbox | `booking_id`, `status`, `changed_by` |

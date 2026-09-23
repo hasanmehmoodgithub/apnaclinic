@@ -17,6 +17,10 @@ class AnalyticsEventKeys {
   static const fbMobileSubscribe = 'fb_mobile_subscribe';
   static const startConsultationClicked = 'start_consultation_clicked';
   static const instantDoctorModule = 'instant_doctor_module';
+  static const instantDocBookingOpened = 'instant_doc_booking_opened';
+  static const instantDocPrescriptionView = 'instant_doc_prescription_view';
+  static const instantDocPrescriptionDownload =
+      'instant_doc_prescription_download';
 
   static const pharmacyModule = 'pharmacy_module';
   static const pharmacySearchClicked = 'pharmacy_search_clicked';

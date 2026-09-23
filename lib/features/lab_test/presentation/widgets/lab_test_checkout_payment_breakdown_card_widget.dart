@@ -32,9 +32,6 @@ class LabTestCheckoutPaymentBreakdownCardWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
-    final catalogDiscount =
-        LabTestPriceFormatter.parseRsAmount(args.discountAmount) > 0 ||
-            args.discountPercent > 0;
     final catalogCode = args.discountCode.trim();
 
     return BlocBuilder<PromoCodeCubit, PromoCodeState>(
@@ -71,7 +68,7 @@ class LabTestCheckoutPaymentBreakdownCardWidget extends StatelessWidget {
                     _moneyRow(
                       context,
                       l10n.labTestCheckoutFeeLabel,
-                      args.originalFee,
+                      LabTestPriceFormatter.formatRs(_discountedAmount),
                     ),
                     SizedBox(height: 12.h),
                     PromoCodeFieldWidget(
@@ -98,23 +95,13 @@ class LabTestCheckoutPaymentBreakdownCardWidget extends StatelessWidget {
                         ),
                       ),
                     ],
-                    if (catalogDiscount || hasPromo) ...[
+                    if (hasPromo) ...[
                       SizedBox(height: 10.h),
                       Divider(
                         height: 1,
                         thickness: 1,
                         color: AppColors.clrE4E4E4,
                       ),
-                    ],
-                    if (catalogDiscount) ...[
-                      SizedBox(height: 10.h),
-                      _moneyRow(
-                        context,
-                        '${l10n.labTestCheckoutDiscountLabel} (${args.discountPercent}%)',
-                        args.discountAmount,
-                      ),
-                    ],
-                    if (hasPromo) ...[
                       SizedBox(height: 10.h),
                       _moneyRow(
                         context,
