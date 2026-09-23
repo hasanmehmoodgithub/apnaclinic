@@ -19,7 +19,6 @@ class LabTestViewDetailsResultCard extends StatelessWidget {
     required this.status,
     required this.discountedFee,
     required this.originalFee,
-    this.onDownload,
   });
 
   final String title;
@@ -31,7 +30,6 @@ class LabTestViewDetailsResultCard extends StatelessWidget {
   final String status;
   final String discountedFee;
   final String originalFee;
-  final VoidCallback? onDownload;
 
   @override
   Widget build(BuildContext context) {
@@ -255,41 +253,6 @@ class LabTestViewDetailsResultCard extends StatelessWidget {
                               ),
                             ),
                         ],
-                      ),
-                    ),
-                    SizedBox(width: 8.w),
-                    SizedBox(
-                      height: 28.h,
-                      child: OutlinedButton(
-                        onPressed: onDownload,
-                        style: OutlinedButton.styleFrom(
-                          side: BorderSide(
-                            color: onDownload == null
-                                ? AppColors.clrD0D5DD
-                                : AppColors.clr9BA6A7,
-                            width: 0.275.r,
-                          ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(39.433.r),
-                          ),
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 10.w,
-                            vertical: 4.h,
-                          ),
-                          foregroundColor: onDownload == null
-                              ? AppColors.clr6B7280
-                              : AppColors.clr061E40,
-                          disabledForegroundColor: AppColors.clr6B7280,
-                          textStyle: TextStyle(
-                            fontSize: 11.sp,
-                            fontWeight: FontWeight.w400,
-                            height: 1.2,
-                          ),
-                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                          minimumSize: Size.zero,
-                          visualDensity: VisualDensity.compact,
-                        ),
-                        child: Text(l10n.bookingsDownloadCta),
                       ),
                     ),
                   ],
