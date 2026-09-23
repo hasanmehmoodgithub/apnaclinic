@@ -105,15 +105,17 @@ class ConsultationBookingListItemModel {
         'patient_relation',
         'relation',
       ]),
-      issue: _readString(json, const [
-        'issue',
-        'issueDescription',
-        'issue_description',
-        'chiefComplaint',
-        'chief_complaint',
-        'reason',
-        'description',
-      ]),
+      issue: _normalizeIssue(
+        _readString(json, const [
+          'issue',
+          'issueDescription',
+          'issue_description',
+          'chiefComplaint',
+          'chief_complaint',
+          'reason',
+          'description',
+        ]),
+      ),
       doctorName: _readString(
         json,
         const ['doctorName', 'doctor_name'],
@@ -410,6 +412,14 @@ class ConsultationBookingListItemModel {
       if (asDouble != null) return asDouble.round();
     }
     return null;
+  }
+
+  static String _normalizeIssue(String raw) {
+    final trimmed = raw.trim();
+    if (trimmed.isEmpty) return '';
+    final lower = trimmed.toLowerCase();
+    if (lower == 'n/a' || lower == 'na' || lower == '-') return '';
+    return trimmed;
   }
 
   static List<String> _parseAttachments(dynamic raw) {
