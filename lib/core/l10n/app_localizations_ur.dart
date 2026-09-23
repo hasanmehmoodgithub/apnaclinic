@@ -1188,6 +1188,9 @@ class AppLocalizationsUr extends AppLocalizations {
   String get labTestSampleTypeNotAvailable => 'N/A';
 
   @override
+  String get labTestBookingMethodLabel => 'بکنگ کا طریقہ';
+
+  @override
   String get labTestPleaseSelectCityFirst => 'براہ کرم پہلے شہر منتخب کریں۔';
 
   @override

@@ -16,7 +16,6 @@ import '../../../bookings/presentation/widgets/empty_booking_widget.dart';
 import '../../domain/use_cases/download_lab_report_use_case.dart';
 import '../../domain/use_cases/get_lab_order_detail_use_case.dart';
 import '../lab_test_route_args.dart';
-import '../widgets/lab_test_view_details_download_report_chip.dart';
 import '../widgets/lab_test_view_details_header.dart';
 import '../widgets/lab_test_view_details_note_card.dart';
 import '../widgets/lab_test_view_details_order_card.dart';
@@ -192,18 +191,16 @@ class _LabTestViewDetailsScreenState extends State<LabTestViewDetailsScreen> {
                         labLogoUrl: a.labLogoUrl,
                         partnerLogoUrl: a.partnerLogoUrl,
                         sampleType: a.sampleType,
+                        orderTypeLabel: a.orderTypeLabel,
                         status: test.status,
                         discountedFee: test.fee,
                         originalFee: test.fee,
+                        onDownload: a.canDownloadReport
+                            ? () => _downloadReports(a.reportUrls)
+                            : null,
                       ),
                     );
                   }),
-                  const SizedBox(height: 12),
-                  LabTestViewDetailsDownloadReportChip(
-                    onDownload: a.canDownloadReport
-                        ? () => _downloadReports(a.reportUrls)
-                        : null,
-                  ),
                   const SizedBox(height: 18),
                   Text(
                     l10n.labTestViewDetailsOrderTitle,

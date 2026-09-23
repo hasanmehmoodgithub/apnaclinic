@@ -240,6 +240,7 @@ class LabTestViewDetailsContent {
     required this.labLogoUrl,
     required this.partnerLogoUrl,
     required this.sampleType,
+    required this.orderTypeLabel,
     required this.discountedFee,
     required this.originalFee,
     this.discountCode,
@@ -259,6 +260,8 @@ class LabTestViewDetailsContent {
   final String labLogoUrl;
   final String partnerLogoUrl;
   final String sampleType;
+  /// Localized Walk In / Home Sample from API `orderType`.
+  final String orderTypeLabel;
   final String discountedFee;
   final String originalFee;
 

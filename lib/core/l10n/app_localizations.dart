@@ -2260,6 +2260,12 @@ abstract class AppLocalizations {
   /// **'N/A'**
   String get labTestSampleTypeNotAvailable;
 
+  /// No description provided for @labTestBookingMethodLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Booking Method'**
+  String get labTestBookingMethodLabel;
+
   /// No description provided for @labTestPleaseSelectCityFirst.
   ///
   /// In en, this message translates to:

@@ -48,6 +48,7 @@ class LabTestBookingItemModel {
     required this.orderId,
     required this.publicId,
     required this.orderType,
+    required this.sampleType,
     required this.reportTitle,
     required this.statusLabel,
     required this.reportStatus,
@@ -72,7 +73,10 @@ class LabTestBookingItemModel {
 
   final String orderId;
   final String publicId;
+  /// API `orderType`: `WALK_IN` / `HOME_SAMPLING`.
   final String orderType;
+  /// API biological `sampleType` (e.g. Blood, Urine).
+  final String sampleType;
   final String reportTitle;
   final String statusLabel;
   final String reportStatus;

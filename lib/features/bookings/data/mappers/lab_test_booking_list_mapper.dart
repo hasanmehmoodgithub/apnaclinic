@@ -2,6 +2,7 @@ import 'package:intl/intl.dart';
 
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../lab_test/domain/entities/lab_order_entity.dart';
+import '../../../lab_test/domain/utils/lab_test_item_booking_helper.dart';
 import '../../../lab_test/presentation/lab_test_route_args.dart';
 import '../models/lab_test_booking_item_model.dart';
 
@@ -17,6 +18,7 @@ class LabTestBookingListMapper {
       orderId: order.orderId,
       publicId: order.publicId,
       orderType: order.orderType,
+      sampleType: _rawSampleType(order),
       reportTitle: order.tests
           .map((t) => t.name)
           .where((n) => n.isNotEmpty)
@@ -84,7 +86,8 @@ class LabTestBookingListMapper {
       labName: booking.labName,
       labLogoUrl: booking.labLogoUrl,
       partnerLogoUrl: booking.partnerLogoUrl,
-      sampleType: _sampleTypeLabel(order, l10n),
+      sampleType: sampleTypeLabel(booking.sampleType, l10n),
+      orderTypeLabel: orderTypeLabel(booking.orderType, l10n),
       discountedFee: booking.discountedFee,
       originalFee: booking.originalFee,
       discountCode: booking.discountCode,
@@ -102,17 +105,33 @@ class LabTestBookingListMapper {
     );
   }
 
-  /// Biological sample type for the Sample Type pill (not Walk In / Home Sample).
-  static String _sampleTypeLabel(LabOrderEntity order, AppLocalizations l10n) {
-    final fromOrder = _formatSampleType(order.sampleType);
-    if (fromOrder.isNotEmpty) return fromOrder;
+  /// Biological `sampleType` (Blood / Urine).
+  static String sampleTypeLabel(String raw, AppLocalizations l10n) {
+    final formatted = _formatSampleType(raw);
+    if (formatted.isNotEmpty) return formatted;
+    return l10n.labTestSampleTypeNotAvailable;
+  }
 
+  /// Booking method from API `orderType` (`WALK_IN` / `HOME_SAMPLING`).
+  static String orderTypeLabel(String raw, AppLocalizations l10n) {
+    switch (raw.trim().toUpperCase()) {
+      case LabTestItemBookingHelper.orderTypeWalkIn:
+        return l10n.labTestBookingMethodWalkIn;
+      case LabTestItemBookingHelper.orderTypeHomeSampling:
+        return l10n.labTestBookingMethodHomeSample;
+      default:
+        return l10n.labTestSampleTypeNotAvailable;
+    }
+  }
+
+  static String _rawSampleType(LabOrderEntity order) {
+    final fromOrder = order.sampleType.trim();
+    if (fromOrder.isNotEmpty) return fromOrder;
     for (final test in order.tests) {
-      final fromTest = _formatSampleType(test.sampleType);
+      final fromTest = test.sampleType.trim();
       if (fromTest.isNotEmpty) return fromTest;
     }
-
-    return l10n.labTestSampleTypeNotAvailable;
+    return '';
   }
 
   static String _formatSampleType(String raw) {

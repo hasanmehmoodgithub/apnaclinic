@@ -416,6 +416,7 @@
   "labTestRequirementLabel": "ضروریات",
   "labTestSampleTypeLabel": "نمونے کی قسم",
   "labTestSampleTypeNotAvailable": "N/A",
+  "labTestBookingMethodLabel": "بکنگ کا طریقہ",
   "labTestPleaseSelectCityFirst": "براہ کرم پہلے شہر منتخب کریں۔",
   "labTestDataStillLoading": "لیب ٹیسٹ ڈیٹا ابھی لوڈ ہو رہا ہے۔",
   "labTestCatalogLoadFailed": "لیب ٹیسٹ لوڈ نہیں ہو سکے۔",
