@@ -69,6 +69,14 @@ class DashboardCubit extends Cubit<DashboardServicesState> {
     );
   }
 
+  /// Pull-to-refresh: services + profile (when logged in).
+  Future<void> refreshHome() async {
+    await Future.wait([
+      loadOurServices(),
+      syncUserProfileFromApi(),
+    ]);
+  }
+
   /// Hits CMS app-version on every dashboard open and emits an update prompt when needed.
   Future<void> checkAppUpdate() async {
     _safeEmit(

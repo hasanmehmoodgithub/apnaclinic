@@ -280,6 +280,14 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     );
   }
 
+  Future<void> _onHomeRefresh() async {
+    await _dashboardCubit.refreshHome();
+    if (!mounted) return;
+    if (AuthGuard.isLoggedIn()) {
+      await _notificationCubit.loadNotifications(refresh: true);
+    }
+  }
+
   Widget _buildHomeBody(
     BuildContext context,
     DashboardServicesState state,
@@ -338,53 +346,60 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
             ),
 
             Expanded(
-              child: CustomScrollView(
-                key: const ValueKey('dashboard_content'),
-                slivers: [
-                  SliverPadding(padding: EdgeInsets.only(top: 8.h)),
-                  OurServicesWidget(
-                    state: state,
-                    onServiceTap: (service) => _onServiceTap(context, service),
-                  ),
-                  SliverPadding(
-                    padding: EdgeInsets.fromLTRB(20.w, 20.h, 20.w, 0),
-                    sliver: SliverToBoxAdapter(
-                      child: Center(
-                        child: InstantDoctorHomeBanner(
-                          onTap: () => openInstantDoctorTab(context),
+              child: RefreshIndicator(
+                color: AppColors.clr0FAA9A,
+                onRefresh: _onHomeRefresh,
+                child: CustomScrollView(
+                  key: const ValueKey('dashboard_content'),
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  slivers: [
+                    SliverPadding(padding: EdgeInsets.only(top: 8.h)),
+                    OurServicesWidget(
+                      state: state,
+                      onServiceTap: (service) =>
+                          _onServiceTap(context, service),
+                      onRetry: () => unawaited(_onHomeRefresh()),
+                    ),
+                    SliverPadding(
+                      padding: EdgeInsets.fromLTRB(20.w, 20.h, 20.w, 0),
+                      sliver: SliverToBoxAdapter(
+                        child: Center(
+                          child: InstantDoctorHomeBanner(
+                            onTap: () => openInstantDoctorTab(context),
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                  // TODO(pro): re-enable ApnaClinic Pro home banner
-                  // SliverPadding(
-                  //   padding: EdgeInsets.fromLTRB(20.w, 20.h, 20.w, 0),
-                  //   sliver: SliverToBoxAdapter(
-                  //     child: BlocSelector<
-                  //         ProCubit,
-                  //         ProState,
-                  //         ({ProMembershipEntity? membership, bool isLoading})>(
-                  //       selector: (proState) => (
-                  //         membership: proState.membership,
-                  //         isLoading: proState.isCatalogLoading,
-                  //       ),
-                  //       builder: (context, pro) {
-                  //         return ApnaClinicProHomeBanner(
-                  //           membership: pro.membership,
-                  //           isLoading: pro.isLoading,
-                  //           onTap: () => unawaited(_openPro()),
-                  //         );
-                  //       },
-                  //     ),
-                  //   ),
-                  // ),
-                  SliverPadding(
-                    padding: EdgeInsets.fromLTRB(20.w, 20.h, 20.w, 32.h),
-                    sliver: SliverToBoxAdapter(
-                      child: const FikrfreeHealthBanner(),
+                    // TODO(pro): re-enable ApnaClinic Pro home banner
+                    // SliverPadding(
+                    //   padding: EdgeInsets.fromLTRB(20.w, 20.h, 20.w, 0),
+                    //   sliver: SliverToBoxAdapter(
+                    //     child: BlocSelector<
+                    //         ProCubit,
+                    //         ProState,
+                    //         ({ProMembershipEntity? membership, bool isLoading})>(
+                    //       selector: (proState) => (
+                    //         membership: proState.membership,
+                    //         isLoading: proState.isCatalogLoading,
+                    //       ),
+                    //       builder: (context, pro) {
+                    //         return ApnaClinicProHomeBanner(
+                    //           membership: pro.membership,
+                    //           isLoading: pro.isLoading,
+                    //           onTap: () => unawaited(_openPro()),
+                    //         );
+                    //       },
+                    //     ),
+                    //   ),
+                    // ),
+                    SliverPadding(
+                      padding: EdgeInsets.fromLTRB(20.w, 20.h, 20.w, 32.h),
+                      sliver: SliverToBoxAdapter(
+                        child: const FikrfreeHealthBanner(),
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ],
