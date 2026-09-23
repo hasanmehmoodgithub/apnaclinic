@@ -163,6 +163,7 @@ class LabOrderModel {
     required this.patient,
     required this.tests,
     required this.pricing,
+    this.totalFee,
     required this.reports,
     this.invoice,
     required this.placedAt,
@@ -187,6 +188,9 @@ class LabOrderModel {
   final LabOrderPatientModel patient;
   final List<LabOrderTestModel> tests;
   final LabOrderPricingModel pricing;
+
+  /// Final payable from aggregator (`totalFee`). Prefer over [pricing.total].
+  final int? totalFee;
   final List<String> reports;
 
   /// PDF download URL for the order invoice, when available.
@@ -196,6 +200,9 @@ class LabOrderModel {
 
   /// Biological sample type (e.g. Blood). Prefer over [orderType] for Sample Type UI.
   final String sampleType;
+
+  /// Payable amount for UI (top-level `totalFee`, else `pricing.total`).
+  int get payableTotal => totalFee ?? pricing.total;
 
   factory LabOrderModel.fromJson(Map<String, dynamic> json) {
     final lab = json['lab'];
@@ -217,6 +224,10 @@ class LabOrderModel {
         _usableHttpUrl(_nullableString(json['invoice'])) ??
         _firstUsableUrl(reports);
 
+    final pricingModel = pricing is Map
+        ? LabOrderPricingModel.fromJson(Map<String, dynamic>.from(pricing))
+        : LabOrderPricingModel.empty;
+
     return LabOrderModel(
       orderId: _asString(json['orderId'] ?? json['order_id'] ?? json['id']),
       publicId: _asString(json['publicId'] ?? json['public_id']),
@@ -225,7 +236,7 @@ class LabOrderModel {
       reportStatus: _asString(json['reportStatus'] ?? json['report_status']),
       paymentMethod: _asString(json['paymentMethod'] ?? json['payment_method']),
       partnerRef: _nullableString(json['partnerRef'] ?? json['partner_ref']),
-      discountCode: _nullableString(json['discountCode'] ?? json['discount_code']),
+      discountCode: _resolveDiscountCode(json),
       lab: lab is Map
           ? LabOrderLabModel.fromJson(Map<String, dynamic>.from(lab))
           : LabOrderLabModel.empty,
@@ -236,9 +247,8 @@ class LabOrderModel {
           ? LabOrderPatientModel.fromJson(Map<String, dynamic>.from(patient))
           : LabOrderPatientModel.empty,
       tests: tests,
-      pricing: pricing is Map
-          ? LabOrderPricingModel.fromJson(Map<String, dynamic>.from(pricing))
-          : LabOrderPricingModel.empty,
+      pricing: pricingModel,
+      totalFee: _readOptionalInt(json['totalFee'] ?? json['total_fee']),
       reports: reports,
       invoice: invoice,
       placedAt: _asString(json['placedAt'] ?? json['placed_at']),
@@ -247,6 +257,32 @@ class LabOrderModel {
         json['sampleType'] ?? json['sample_type'] ?? json['sample'],
       ),
     );
+  }
+
+  static String? _resolveDiscountCode(Map<String, dynamic> json) {
+    final fromField = _nullableString(
+      json['discountCode'] ?? json['discount_code'],
+    );
+    if (fromField != null) return fromField;
+
+    final promo = json['promoCode'] ?? json['promo_code'];
+    if (promo is String) return _nullableString(promo);
+    if (promo is Map) {
+      return _nullableString(
+        promo['code'] ?? promo['promoCode'] ?? promo['discountCode'],
+      );
+    }
+    return null;
+  }
+
+  static int? _readOptionalInt(dynamic value) {
+    if (value == null) return null;
+    if (value is num) return value.round();
+    final parsed = int.tryParse(value.toString());
+    if (parsed != null) return parsed;
+    final asDouble = double.tryParse(value.toString());
+    if (asDouble != null) return asDouble.round();
+    return null;
   }
 
   static String _parseStatus(Map<String, dynamic> json) {

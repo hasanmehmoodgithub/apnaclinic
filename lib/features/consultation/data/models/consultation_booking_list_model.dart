@@ -105,15 +105,17 @@ class ConsultationBookingListItemModel {
         'patient_relation',
         'relation',
       ]),
-      issue: _readString(json, const [
-        'issue',
-        'issueDescription',
-        'issue_description',
-        'chiefComplaint',
-        'chief_complaint',
-        'reason',
-        'description',
-      ]),
+      issue: _normalizeIssue(
+        _readString(json, const [
+          'issue',
+          'issueDescription',
+          'issue_description',
+          'chiefComplaint',
+          'chief_complaint',
+          'reason',
+          'description',
+        ]),
+      ),
       doctorName: _readString(
         json,
         const ['doctorName', 'doctor_name'],
@@ -308,32 +310,69 @@ class ConsultationBookingListItemModel {
 
   static ({int payable, int discount, int original, double percent})
   _resolveFees(Map<String, dynamic>? doctor, Map<String, dynamic> json) {
+    final apiTotalFee = _readOptionalInt(json, const [
+      'totalFee',
+      'total_fee',
+    ]);
+
     if (doctor != null) {
       if (doctor['isFree'] == true) {
         final original = _readDouble(doctor['consultationFee']).round();
         return (
-          payable: 0,
+          payable: apiTotalFee ?? 0,
           discount: original,
           original: original,
           percent: 100,
         );
       }
 
-      final original = _readDouble(doctor['consultationFee']);
+      final original = _readDouble(doctor['consultationFee']).round();
       final discountPercent = _readDouble(doctor['discountPercent']);
+
+      // Prefer aggregator `totalFee` (after doctor discount + promo).
+      if (apiTotalFee != null) {
+        final payable = apiTotalFee < 0 ? 0 : apiTotalFee;
+        final discount = original > payable ? original - payable : 0;
+        return (
+          payable: payable,
+          discount: discount,
+          original: original > 0 ? original : payable + discount,
+          percent: discountPercent,
+        );
+      }
+
       if (original > 0) {
         if (discountPercent <= 0) {
-          final amount = original.round();
+          final amount = original;
           return (payable: amount, discount: 0, original: amount, percent: 0);
         }
         final discount = (original * discountPercent / 100).round();
         return (
-          payable: (original - discount).round(),
+          payable: (original - discount).clamp(0, original),
           discount: discount,
-          original: original.round(),
+          original: original,
           percent: discountPercent,
         );
       }
+    }
+
+    if (apiTotalFee != null) {
+      final payable = apiTotalFee < 0 ? 0 : apiTotalFee;
+      final discount = _readInt(json, const [
+        'discountAmount',
+        'discount_amount',
+        'discount',
+      ]);
+      final promoDiscount = _readPromoDiscount(json['promoCode']);
+      final resolvedDiscount = discount > 0
+          ? discount
+          : (promoDiscount > 0 ? promoDiscount : 0);
+      return (
+        payable: payable,
+        discount: resolvedDiscount,
+        original: payable + resolvedDiscount,
+        percent: 0,
+      );
     }
 
     final payable = _readInt(json, const [
@@ -354,6 +393,33 @@ class ConsultationBookingListItemModel {
       original: payable + discount,
       percent: 0,
     );
+  }
+
+  static int _readPromoDiscount(dynamic raw) {
+    if (raw is! Map) return 0;
+    final map = Map<String, dynamic>.from(raw);
+    return _readInt(map, const ['discount', 'discountAmount', 'discount_amount']);
+  }
+
+  static int? _readOptionalInt(Map<String, dynamic> json, List<String> keys) {
+    for (final key in keys) {
+      final value = json[key];
+      if (value == null) continue;
+      if (value is num) return value.round();
+      final parsed = int.tryParse(value.toString());
+      if (parsed != null) return parsed;
+      final asDouble = double.tryParse(value.toString());
+      if (asDouble != null) return asDouble.round();
+    }
+    return null;
+  }
+
+  static String _normalizeIssue(String raw) {
+    final trimmed = raw.trim();
+    if (trimmed.isEmpty) return '';
+    final lower = trimmed.toLowerCase();
+    if (lower == 'n/a' || lower == 'na' || lower == '-') return '';
+    return trimmed;
   }
 
   static List<String> _parseAttachments(dynamic raw) {

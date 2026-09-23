@@ -11,6 +11,7 @@ class LabTestBookingListMapper {
   static LabTestBookingItemModel fromOrder(LabOrderEntity order) {
     final pricing = order.pricing;
     final invoice = order.invoice?.trim();
+    final totalText = _formatAmount(pricing.total, pricing.currency);
 
     return LabTestBookingItemModel(
       orderId: order.orderId,
@@ -23,9 +24,10 @@ class LabTestBookingListMapper {
       statusLabel: order.status,
       reportStatus: order.reportStatus,
       paymentMethod: order.paymentMethod,
-      totalFee: _formatAmount(pricing.total, pricing.currency),
-      discountedFee: _formatAmount(pricing.total, pricing.currency),
-      originalFee: _formatAmount(pricing.subtotal, pricing.currency),
+      totalFee: totalText,
+      discountedFee: totalText,
+      // List / details show total only; keep original aligned to total.
+      originalFee: totalText,
       dateLabel: _formatDate(
         order.placedAt.isNotEmpty ? order.placedAt : order.createdAt,
       ),

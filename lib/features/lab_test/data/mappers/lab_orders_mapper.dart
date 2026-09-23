@@ -53,7 +53,7 @@ class LabOrdersMapper {
         subtotal: model.pricing.subtotal,
         discount: model.pricing.discount,
         homeSamplingFee: model.pricing.homeSamplingFee,
-        total: model.pricing.total,
+        total: model.payableTotal,
         currency: model.pricing.currency,
       ),
       reports: model.reports,

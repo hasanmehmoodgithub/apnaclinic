@@ -44,16 +44,6 @@ class DoctorConsultationBookingDetailsBillingWidget extends StatelessWidget {
           ),
           child: Column(
             children: [
-              _BillRow(
-                label: l10n.bookingsConsultationFeeLabel,
-                value: 'Rs.${data.originalFee}',
-              ),
-              _BillRow(
-                label: l10n.bookingsDiscountLabel(
-                  _percentLabel(data.discountPercent),
-                ),
-                value: 'Rs.${data.discountAmount}',
-              ),
               Container(
                 color: AppColors.clrF7F7F7,
                 padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
@@ -69,12 +59,6 @@ class DoctorConsultationBookingDetailsBillingWidget extends StatelessWidget {
         ),
       ],
     );
-  }
-
-  static String _percentLabel(double percent) {
-    if (percent <= 0) return '0';
-    if (percent % 1 == 0) return percent.toInt().toString();
-    return percent.toStringAsFixed(1);
   }
 }
 

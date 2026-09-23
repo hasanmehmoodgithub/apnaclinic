@@ -14,10 +14,12 @@ class OurServicesWidget extends StatelessWidget {
     super.key,
     required this.state,
     required this.onServiceTap,
+    this.onRetry,
   });
 
   final DashboardServicesState state;
   final ValueChanged<OurServiceEntity> onServiceTap;
+  final VoidCallback? onRetry;
 
   static const int _gridCrossAxisCount = 2;
 
@@ -61,10 +63,14 @@ class OurServicesWidget extends StatelessWidget {
             horizontalPadding,
             8.h,
           ),
-          child: Text(
-            state.servicesErrorMessage ?? AppStrings.ourServicesLoadError,
-            style: theme.textTheme.bodyMedium?.copyWith(
-              color: Colors.red,
+          child: GestureDetector(
+            onTap: onRetry,
+            behavior: HitTestBehavior.opaque,
+            child: Text(
+              state.servicesErrorMessage ?? AppStrings.ourServicesLoadError,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: Colors.red,
+              ),
             ),
           ),
         ),
