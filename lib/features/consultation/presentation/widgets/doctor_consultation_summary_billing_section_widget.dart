@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/constants/app_colors.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import 'doctor_consultation_summary_card_shell_widget.dart';
@@ -29,6 +30,8 @@ class DoctorConsultationSummaryBillingSectionWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final textTheme = Theme.of(context).textTheme;
+    final discountedFee =
+        discount > 0 ? (consultationFee - discount) : consultationFee;
 
     return Column(
       children: [
@@ -38,22 +41,15 @@ class DoctorConsultationSummaryBillingSectionWidget extends StatelessWidget {
               _AmountRow(
                 textTheme: textTheme,
                 label: l10n.consultationConsultationFeesLabel,
-                amount: consultationFee,
+                amount: discountedFee,
               ),
-              if (discount > 0) ...[
-                SizedBox(height: 10.h),
-                _AmountRow(
-                  textTheme: textTheme,
-                  label: l10n.consultationDiscountLabel,
-                  amount: discount,
-                ),
-              ],
               if (_hasPromoDiscount) ...[
                 SizedBox(height: 10.h),
                 _AmountRow(
                   textTheme: textTheme,
                   label: l10n.promoCodeDiscountLabel,
                   amount: promoDiscount,
+                  isNegative: true,
                 ),
               ],
             ],
@@ -66,7 +62,7 @@ class DoctorConsultationSummaryBillingSectionWidget extends StatelessWidget {
               Text(
                 l10n.consultationSummaryTotalAmountLabel,
                 style: textTheme.titleMedium?.copyWith(
-                  color: const Color(0xFF061E40),
+                  color: AppColors.clr061E40,
                   fontSize: 15.sp,
                   fontWeight: FontWeight.w600,
                 ),
@@ -90,11 +86,13 @@ class _AmountRow extends StatelessWidget {
     required this.textTheme,
     required this.label,
     required this.amount,
+    this.isNegative = false,
   });
 
   final TextTheme textTheme;
   final String label;
   final int amount;
+  final bool isNegative;
 
   @override
   Widget build(BuildContext context) {
@@ -103,13 +101,17 @@ class _AmountRow extends StatelessWidget {
         Text(
           label,
           style: textTheme.bodyMedium?.copyWith(
-            color: const Color(0xFF667B99),
+            color: AppColors.clr667B99,
             fontSize: 13.sp,
             fontWeight: FontWeight.w400,
           ),
         ),
         const Spacer(),
-        _AmountValue(textTheme: textTheme, amount: amount),
+        _AmountValue(
+          textTheme: textTheme,
+          amount: amount,
+          isNegative: isNegative,
+        ),
       ],
     );
   }
@@ -120,11 +122,13 @@ class _AmountValue extends StatelessWidget {
     required this.textTheme,
     required this.amount,
     this.fontSize,
+    this.isNegative = false,
   });
 
   final TextTheme textTheme;
   final int amount;
   final double? fontSize;
+  final bool isNegative;
 
   @override
   Widget build(BuildContext context) {
@@ -132,10 +136,19 @@ class _AmountValue extends StatelessWidget {
     return Text.rich(
       TextSpan(
         children: [
+          if (isNegative)
+            TextSpan(
+              text: '- ',
+              style: textTheme.titleMedium?.copyWith(
+                color: AppColors.clr061E40,
+                fontSize: amountSize,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
           TextSpan(
             text: '$amount',
             style: textTheme.titleMedium?.copyWith(
-              color: const Color(0xFF061E40),
+              color: AppColors.clr061E40,
               fontSize: amountSize,
               fontWeight: FontWeight.w600,
             ),
@@ -143,7 +156,7 @@ class _AmountValue extends StatelessWidget {
           TextSpan(
             text: ' Rs.',
             style: textTheme.titleMedium?.copyWith(
-              color: const Color(0xFF667B99),
+              color: AppColors.clr667B99,
               fontSize: 11.sp,
               fontWeight: FontWeight.w500,
             ),

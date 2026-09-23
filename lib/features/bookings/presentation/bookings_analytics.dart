@@ -65,6 +65,44 @@ abstract final class BookingsAnalytics {
     );
   }
 
+  /// My Bookings → Instant Doctor → View Details / card open.
+  static void logInstantDocBookingOpened({required String bookingId}) {
+    final id = bookingId.trim();
+    unawaited(
+      _analytics.logEvent(AnalyticsEventKeys.instantDocBookingOpened, {
+        if (id.isNotEmpty) AnalyticsParamKeys.bookingId: id,
+      }),
+    );
+  }
+
+  /// Instant Doctor prescription sheet shows prescription text and/or PDF.
+  static void logInstantDocPrescriptionView({required String bookingId}) {
+    final id = bookingId.trim();
+    if (id.isEmpty) return;
+    unawaited(
+      _analytics.logEvent(AnalyticsEventKeys.instantDocPrescriptionView, {
+        AnalyticsParamKeys.bookingId: id,
+      }),
+    );
+  }
+
+  /// Instant Doctor prescription PDF download / open.
+  static void logInstantDocPrescriptionDownload({required String bookingId}) {
+    final id = bookingId.trim();
+    if (id.isEmpty) return;
+    final user = sl<AppPref>().getUserLocalModel();
+    final userName =
+        '${user?.firstName.trim() ?? ''} ${user?.lastName.trim() ?? ''}'.trim();
+    final msisdn = _analyticsMsisdn(user?.phone ?? '');
+    unawaited(
+      _analytics.logEvent(AnalyticsEventKeys.instantDocPrescriptionDownload, {
+        AnalyticsParamKeys.bookingId: id,
+        if (userName.isNotEmpty) AnalyticsParamKeys.userName: userName,
+        if (msisdn.isNotEmpty) AnalyticsParamKeys.msisdn: msisdn,
+      }),
+    );
+  }
+
   static void logPrescriptionAvailable({
     required String bookingId,
     required String service,
