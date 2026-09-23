@@ -17,20 +17,22 @@ class LabTestViewDetailsDownloadReportChip extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final enabled = onDownload != null;
+
     return AbsorbPointer(
       absorbing: !enabled,
       child: AppButton.primary(
         text: l10n.labTestDownloadReport,
         onPressed: onDownload ?? () {},
         backgroundColor:
-            enabled ? AppColors.clr0FAA9A : AppColors.clrD0D5DD,
+            enabled ? AppColors.clr0FAA9A : AppColors.clrEDEDED,
         foregroundColor:
-            enabled ? AppColors.clrWhite : AppColors.clr6B7280,
+            enabled ? AppColors.clrWhite : AppColors.clr9A9A9A,
         elevation: enabled ? null : 0,
         width: double.infinity,
-        height: 48.h,
-        borderRadius: 12.r,
-        fontWeight: FontWeight.w700,
+        height: 60.h,
+        borderRadius: 19.r,
+        fontWeight: enabled ? FontWeight.w700 : FontWeight.w700,
+        fontSize: 20,
       ),
     );
   }
