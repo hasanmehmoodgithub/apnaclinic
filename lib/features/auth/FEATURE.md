@@ -29,8 +29,8 @@ that service. Cold/onboarding entry still ends on **home**.
 `AppPref.isOnboardingCompleted` is only for the intro carousel (not overwritten
 on login). `AppPref.isProfileCompleted` tracks whether profile setup is done.
 
-After login, Crashlytics `setUserIdentifier` uses the resolved user id; logout
-clears it.
+After login, Crashlytics `setUserIdentifier` and AppsFlyer `setCustomerUserId`
+use the resolved user id; logout clears both.
 
 Guest login from a service passes `source` on `AppRoutes.authLogin` via
 `AuthGuard.requireLogin(loginSource:)` (`pharmacy` / `instant_doctor` /

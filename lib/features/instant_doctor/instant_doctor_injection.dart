@@ -2,6 +2,7 @@ import '../../core/analytics/analytics_service.dart';
 import '../../core/di/dependency_injection.dart';
 import '../../core/network/api_service.dart';
 import '../../core/preference/app_pref.dart';
+import '../../core/services/appsflyer_service.dart';
 import 'data/data_sources/instant_doctor_remote_data_source.dart';
 import 'data/data_sources/instant_doctor_remote_data_source_impl.dart';
 import 'data/mock/instant_doctor_mock_api.dart';
@@ -61,6 +62,7 @@ void initInstantDoctorInjector() {
       verifyOtpUseCase: sl<VerifyInstantDoctorOtpUseCase>(),
       appPref: sl<AppPref>(),
       analytics: sl<AnalyticsService>(),
+      appsFlyer: sl<AppsFlyerService>(),
     ),
   );
 }

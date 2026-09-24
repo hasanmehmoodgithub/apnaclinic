@@ -74,7 +74,11 @@ class _SurgeryPatientDetailsScreenState
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
-      SurgeryAnalytics.logCheckout();
+      SurgeryAnalytics.logCheckout(
+        surgeryName: widget.procedureName,
+        doctorId: widget.doctorId,
+        doctorName: widget.doctorName,
+      );
       final cubit = context.read<SurgeryPatientDetailsCubit>();
       final name = cubit.prefillFullName();
       final phone = cubit.prefillPhone();

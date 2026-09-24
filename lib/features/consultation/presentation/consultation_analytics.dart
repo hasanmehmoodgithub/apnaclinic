@@ -4,6 +4,8 @@ import '../../../core/analytics/analytics_event_keys.dart';
 import '../../../core/analytics/analytics_service.dart';
 import '../../../core/di/dependency_injection.dart';
 import '../../../core/preference/app_pref.dart';
+import '../../../core/services/appsflyer_event_keys.dart';
+import '../../../core/services/appsflyer_service.dart';
 import '../../payment/domain/entities/payment_initiation_result.dart';
 import '../../promo_code/presentation/promo_code_analytics.dart';
 import '../data/utils/consultation_booking_utils.dart';
@@ -32,6 +34,7 @@ abstract final class ConsultationAnalytics {
   ConsultationAnalytics._();
 
   static AnalyticsService get _analytics => sl<AnalyticsService>();
+  static AppsFlyerService get _appsFlyer => sl<AppsFlyerService>();
 
   static void logModule(String source) {
     unawaited(
@@ -39,6 +42,7 @@ abstract final class ConsultationAnalytics {
         AnalyticsParamKeys.source: source,
       }),
     );
+    _logAppsFlyerConsultancyModule(source: source);
   }
 
   static void logSearchClicked() {
@@ -53,6 +57,7 @@ abstract final class ConsultationAnalytics {
         AnalyticsParamKeys.categoryName: categoryName,
       }),
     );
+    _logAppsFlyerConsultancyModule(categoryName: categoryName);
   }
 
   static void logListingScreen(String categoryName) {
@@ -61,6 +66,7 @@ abstract final class ConsultationAnalytics {
         AnalyticsParamKeys.categoryName: categoryName,
       }),
     );
+    _logAppsFlyerConsultancyModule(categoryName: categoryName);
   }
 
   static void logDoctorSearchClicked() {
@@ -73,6 +79,7 @@ abstract final class ConsultationAnalytics {
         AnalyticsParamKeys.keyword: keyword,
       }),
     );
+    _logAppsFlyerConsultancyModule(keyword: keyword);
   }
 
   static void logFilterApplied(String partner) {
@@ -81,6 +88,7 @@ abstract final class ConsultationAnalytics {
         AnalyticsParamKeys.partner: partner,
       }),
     );
+    _logAppsFlyerConsultancyModule(partner: partner);
   }
 
   static void logProfileClicked(ResultsDoctorItem doctor) {
@@ -90,6 +98,7 @@ abstract final class ConsultationAnalytics {
         _doctorParams(doctor),
       ),
     );
+    _logAppsFlyerDoctorProfile(doctor);
   }
 
   static void logProfileScreen(ResultsDoctorItem doctor) {
@@ -99,6 +108,7 @@ abstract final class ConsultationAnalytics {
         _doctorParams(doctor),
       ),
     );
+    _logAppsFlyerDoctorProfile(doctor);
   }
 
   static void logDocumentUploaded() {
@@ -109,12 +119,14 @@ abstract final class ConsultationAnalytics {
     required ResultsDoctorItem doctor,
     required ConsultationSelectedSlotEntity slot,
   }) {
+    final timeslot = formatSlotTimeslot(slot);
     unawaited(
       _analytics.logEvent(AnalyticsEventKeys.doctorConsultationConfirm, {
         ..._doctorParams(doctor),
-        AnalyticsParamKeys.timeslot: formatSlotTimeslot(slot),
+        AnalyticsParamKeys.timeslot: timeslot,
       }),
     );
+    _logAppsFlyerDoctorProfile(doctor, timeslot: timeslot);
   }
 
   static void logConsultationBooked({
@@ -132,11 +144,21 @@ abstract final class ConsultationAnalytics {
     final userName =
         '${user?.firstName.trim() ?? ''} ${user?.lastName.trim() ?? ''}'.trim();
     final bookingId = initiation?.orderId?.trim() ?? '';
+    final transactionId = initiation?.publicId?.trim() ?? '';
     final appliedPromo = promoCode?.trim() ?? '';
     final promoApplied =
         (discount > 0 || appliedPromo.isNotEmpty)
             ? AnalyticsYesNoKeys.yes
             : AnalyticsYesNoKeys.no;
+    final consultationTimeslot = formatSlotTimeslot(slot);
+    final bookingTimestamp = formatAnalyticsTimestamp(DateTime.now());
+    final paymentMethod = _analyticsPaymentMethod(
+      paymentMethodCode,
+      name: paymentMethodName,
+    );
+    final doctorParams = _doctorParams(doctor);
+    final analyticsMsisdn = _analyticsMsisdn(msisdn);
+
     unawaited(() async {
       final promoParams = await PromoCodeAnalytics.confirmPromoParams(
         promoCode: appliedPromo,
@@ -146,22 +168,72 @@ abstract final class ConsultationAnalytics {
         AnalyticsParamKeys.afContentType: AnalyticsContentTypeKeys.consultancy,
         if (bookingId.isNotEmpty) AnalyticsParamKeys.bookingId: bookingId,
         if (userName.isNotEmpty) AnalyticsParamKeys.userName: userName,
-        AnalyticsParamKeys.msisdn: _analyticsMsisdn(msisdn),
-        ..._doctorParams(doctor),
-        AnalyticsParamKeys.consultationTimeslot: formatSlotTimeslot(slot),
-        AnalyticsParamKeys.bookingTimestamp: formatAnalyticsTimestamp(
-          DateTime.now(),
-        ),
-        AnalyticsParamKeys.paymentMethod: _analyticsPaymentMethod(
-          paymentMethodCode,
-          name: paymentMethodName,
-        ),
+        AnalyticsParamKeys.msisdn: analyticsMsisdn,
+        ...doctorParams,
+        AnalyticsParamKeys.consultationTimeslot: consultationTimeslot,
+        AnalyticsParamKeys.bookingTimestamp: bookingTimestamp,
+        AnalyticsParamKeys.paymentMethod: paymentMethod,
         AnalyticsParamKeys.paymentStatus: paymentStatus,
         AnalyticsParamKeys.promoApplied: promoApplied,
         if (appliedPromo.isNotEmpty) AnalyticsParamKeys.promo: appliedPromo,
         ...promoParams,
       });
+
+      final userType =
+          promoParams[AnalyticsParamKeys.userType]?.toString() ??
+          AnalyticsUserTypeKeys.standard;
+      await _appsFlyer.logEvent(AppsFlyerEventKeys.purchase, {
+        AppsFlyerParamKeys.contentType: AppsFlyerContentTypeKeys.consultancy,
+        AppsFlyerParamKeys.afContentType: AppsFlyerContentTypeKeys.consultancy,
+        AppsFlyerParamKeys.bookingId: bookingId,
+        AppsFlyerParamKeys.userName: userName,
+        AppsFlyerParamKeys.userType: userType,
+        AppsFlyerParamKeys.msisdn: analyticsMsisdn,
+        AppsFlyerParamKeys.doctorId: doctorParams[AnalyticsParamKeys.doctorId],
+        AppsFlyerParamKeys.doctorName:
+            doctorParams[AnalyticsParamKeys.doctorName],
+        AppsFlyerParamKeys.category: doctorParams[AnalyticsParamKeys.category],
+        AppsFlyerParamKeys.consultationTimeslot: consultationTimeslot,
+        AppsFlyerParamKeys.bookingTimestamp: bookingTimestamp,
+        AppsFlyerParamKeys.paymentMethod: paymentMethod,
+        AppsFlyerParamKeys.paymentStatus: paymentStatus,
+        AppsFlyerParamKeys.transactionId: transactionId,
+        AppsFlyerParamKeys.wellnessOrder: '',
+        AppsFlyerParamKeys.promoApplied: promoApplied,
+        if (appliedPromo.isNotEmpty) AppsFlyerParamKeys.promo: appliedPromo,
+      });
     }());
+  }
+
+  static void _logAppsFlyerConsultancyModule({
+    String source = '',
+    String categoryName = '',
+    String keyword = '',
+    String partner = '',
+  }) {
+    unawaited(
+      _appsFlyer.logEvent(AppsFlyerEventKeys.consultancyModule, {
+        AppsFlyerParamKeys.source: source,
+        AppsFlyerParamKeys.categoryName: categoryName,
+        AppsFlyerParamKeys.keyword: keyword,
+        AppsFlyerParamKeys.partner: partner,
+      }),
+    );
+  }
+
+  static void _logAppsFlyerDoctorProfile(
+    ResultsDoctorItem doctor, {
+    String timeslot = '',
+  }) {
+    final params = _doctorParams(doctor);
+    unawaited(
+      _appsFlyer.logEvent(AppsFlyerEventKeys.doctorProfile, {
+        AppsFlyerParamKeys.doctorId: params[AnalyticsParamKeys.doctorId],
+        AppsFlyerParamKeys.doctorName: params[AnalyticsParamKeys.doctorName],
+        AppsFlyerParamKeys.category: params[AnalyticsParamKeys.category],
+        AppsFlyerParamKeys.timeslot: timeslot,
+      }),
+    );
   }
 
   static Map<String, Object> _doctorParams(ResultsDoctorItem doctor) {

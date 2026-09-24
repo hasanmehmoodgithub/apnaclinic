@@ -24,6 +24,7 @@ import '../network/hmac/hmac_secret_store.dart';
 import '../preference/app_pref.dart';
 import '../preference/app_pref_impl.dart';
 import '../services/encryption_service.dart';
+import '../services/appsflyer_service.dart';
 import '../services/connectivity_service.dart';
 import '../services/notification_service.dart';
 import '../services/responsive_config_service.dart';
@@ -97,5 +98,6 @@ Future<void> _initCore() async {
   sl.registerLazySingleton<AnalyticsService>(
     () => AnalyticsServiceImpl([FirebaseAnalyticsProvider()]),
   );
+  sl.registerLazySingleton<AppsFlyerService>(() => AppsFlyerService());
   initCitiesInjector();
 }

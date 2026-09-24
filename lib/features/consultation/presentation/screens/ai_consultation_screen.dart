@@ -15,7 +15,10 @@ import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/preference/app_pref.dart';
+import '../../../../core/services/appsflyer_event_keys.dart';
+import '../../../../core/services/appsflyer_service.dart';
 import '../../../../core/utils/microphone_permission_utils.dart';
+import '../../../../core/utils/phone_format_utils.dart';
 import '../../../../core/utils/webview_media_permission_utils.dart';
 import '../../domain/use_cases/record_ai_assistant_interaction_use_case.dart';
 import '../constants/consultation_ui_config.dart';
@@ -36,6 +39,7 @@ class _AiScreeningScreenState extends State<AiScreeningScreen>
     with WidgetsBindingObserver {
   WebViewController? _controller;
   late final AnalyticsService _analytics;
+  late final AppsFlyerService _appsFlyer;
   late final RecordAiAssistantInteractionUseCase _recordInteraction;
   late final DateTime _startedAt;
   late final String _sessionId;
@@ -56,12 +60,19 @@ class _AiScreeningScreenState extends State<AiScreeningScreen>
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     _analytics = sl<AnalyticsService>();
+    _appsFlyer = sl<AppsFlyerService>();
     _recordInteraction = sl<RecordAiAssistantInteractionUseCase>();
     _startedAt = DateTime.now();
     _sessionId = RecordAiAssistantInteractionParams.buildSessionId(
       sl<AppPref>().getUserId(),
     );
     unawaited(_analytics.logEvent(AnalyticsEventKeys.aiChatStarted));
+    unawaited(
+      _appsFlyer.logEvent(AppsFlyerEventKeys.aiChatStarted, {
+        AppsFlyerParamKeys.msisdn: _analyticsMsisdn(),
+        AppsFlyerParamKeys.callDuration: '0s',
+      }),
+    );
     unawaited(_prepareAndLoad());
   }
 
@@ -200,13 +211,29 @@ class _AiScreeningScreenState extends State<AiScreeningScreen>
     if (_hasLoggedEnd) return;
     _hasLoggedEnd = true;
     final seconds = DateTime.now().difference(_startedAt).inSeconds;
+    final duration = '${seconds}s';
     unawaited(
       _analytics.logEvent(
         AnalyticsEventKeys.aiChatEnded,
-        {AnalyticsParamKeys.callDuration: '${seconds}s'},
+        {AnalyticsParamKeys.callDuration: duration},
       ),
     );
+    unawaited(
+      _appsFlyer.logEvent(AppsFlyerEventKeys.aiChatEnded, {
+        AppsFlyerParamKeys.msisdn: _analyticsMsisdn(),
+        AppsFlyerParamKeys.callDuration: duration,
+      }),
+    );
     unawaited(_recordAiAssistantInteraction(seconds));
+  }
+
+  String _analyticsMsisdn() {
+    final phone = sl<AppPref>().getUserLocalModel()?.phone ?? '';
+    final msisdn = PhoneFormatUtils.toMsisdn(phone);
+    if (msisdn.startsWith('92') && msisdn.length >= 12) {
+      return msisdn.substring(2);
+    }
+    return msisdn;
   }
 
   static const _kStopWebAudioJs = '''

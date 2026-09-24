@@ -76,6 +76,15 @@ class FlavorConfig {
   /// Check if debug features are enabled
   static bool get enableDebugFeatures => currentFlavor.enableDebugFeatures;
 
+  /// AppsFlyer Dev Key for current flavor (empty until business fills it).
+  static String get appsFlyerDevKey => currentFlavor.appsFlyerDevKey;
+
+  /// AppsFlyer iOS App Store numeric id for current flavor.
+  static String get appsFlyerIosAppId => currentFlavor.appsFlyerIosAppId;
+
+  /// True when Dev Key is non-empty (iOS still needs [appsFlyerIosAppId] to start).
+  static bool get isAppsFlyerConfigured => appsFlyerDevKey.trim().isNotEmpty;
+
   /// Check if current flavor is development
   static bool get isDevelopment => currentFlavor == AppFlavor.development;
 

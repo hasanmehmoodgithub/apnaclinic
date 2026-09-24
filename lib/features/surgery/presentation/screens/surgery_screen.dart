@@ -33,7 +33,8 @@ class _SurgeryScreenState extends State<SurgeryScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
-      SurgeryAnalytics.logModule(widget.source);
+      final city = context.read<SurgeryCubit>().state.selectedCity;
+      SurgeryAnalytics.logModule(widget.source, selectedCity: city);
     });
   }
 
