@@ -234,7 +234,7 @@ if (sl.isRegistered<AppsFlyerService>()) {
 - Optionally add an `AppsFlyerAnalyticsProvider` to `AnalyticsServiceImpl` so existing `AnalyticsEventKeys` also go to AppsFlyer.
 - OneLink / deferred deep links into `go_router` (callbacks were registered, but nothing routed).
 - ATT prompt UX on iOS 14.5+ (SDK already waits up to 15s when configured).
-
+//
 ### Constraints
 
 - Keep business logic out of widgets; service in `lib/core/services/`.
