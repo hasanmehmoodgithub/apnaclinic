@@ -60,6 +60,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   // TODO(pro): re-enable
   // late final ProCubit _proCubit;
   late final PromotionalBannerSession _bannerSession;
+  //change
   StreamSubscription<NotificationPayload>? _pushSubscription;
   late final AuthSessionRefresh _sessionRefresh;
 
