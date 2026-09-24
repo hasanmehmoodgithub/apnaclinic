@@ -3,6 +3,7 @@ import '../../core/cities/domain/repositories/cities_repository.dart';
 import '../../core/di/dependency_injection.dart';
 import '../../core/network/api_service.dart';
 import '../../core/preference/app_pref.dart';
+import '../../core/services/appsflyer_service.dart';
 import '../consultation/domain/use_cases/get_payment_providers_use_case.dart';
 import 'data/data_sources/pharmacy_remote_data_source.dart';
 import 'data/data_sources/pharmacy_remote_data_source_impl.dart';
@@ -117,6 +118,7 @@ void initPharmacyInjector() {
       citiesRepository: sl<CitiesRepository>(),
       appPref: sl<AppPref>(),
       analytics: sl<AnalyticsService>(),
+      appsFlyer: sl<AppsFlyerService>(),
     ),
   );
 }

@@ -51,6 +51,8 @@ Cart products: each `products[]` row may nest `product { …Partner product fiel
 
 Firebase events via `PharmacyCubit` / `AnalyticsService`. Hub `source`: home services, promotional banner. Global search opens product detail and logs `pharmacy_module` with `source=search`. Not logged: `source=ad` (no ad entry), `source=notification` (push opens booking details). Order confirmed sends `promo` when a checkout promo code is applied. `promo_applied` is Yes when cart discount > 0 or a promo code is applied. Booking details fire `booking_viewed` (`type=pharmacy`) via `BookingsAnalytics`; pharmacy status push/inbox may fire `pharmacy_status_changed`.
 
+AppsFlyer (separate): `af_content_view` (`af_content_type`) on product detail success; `af_add_to_cart` (`af_content_type`, `product_id`, `product_name`, `prescription_required`) on add-to-cart success; `af_initiated_checkout` (`af_content_type`) on checkout open; `af_purchase` on order confirmed (`content_type`, `af_content_type`, order/user/cart/payment fields). `wellness_order`, `JazzCash Auth Code`, and `transaction_id` are sent empty until API exposes them.
+
 ## Order placed flow
 
 After checkout confirm + order-placed dialog **View My Orders**: `pharmacyGoToOrderDetailsAfterPlace` → `home` shell with bottom **Bookings** tab and **Pharmacy** sub-tab selected (`AuthSessionRefresh.requestTabIndex` + `BookingsTabs.pharmacy`). Success dialog is non-cancelable (`barrierDismissible: false` + `PopScope(canPop: false)`); only the CTA dismisses it. Dialog copy uses `pharmacyOrderPlacedTitle` / `pharmacyOrderPlacedMessage(displayOrderNo)` / `pharmacyOrderPlacedViewOrdersCta`; `displayOrderNo` is `data.unified_order_id`. `pharmacyPopOrGoHome` on hub/details headers if the stack is empty.

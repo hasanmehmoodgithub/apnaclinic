@@ -3,6 +3,8 @@ import 'dart:async';
 import '../../../core/analytics/analytics_event_keys.dart';
 import '../../../core/analytics/analytics_service.dart';
 import '../../../core/di/dependency_injection.dart';
+import '../../../core/services/appsflyer_event_keys.dart';
+import '../../../core/services/appsflyer_service.dart';
 import '../../consultation/data/utils/consultation_booking_utils.dart';
 import '../../consultation/presentation/consultation_analytics.dart';
 import '../../payment/domain/entities/payment_initiation_result.dart';
@@ -32,6 +34,7 @@ abstract final class LabTestAnalytics {
   LabTestAnalytics._();
 
   static AnalyticsService get _analytics => sl<AnalyticsService>();
+  static AppsFlyerService get _appsFlyer => sl<AppsFlyerService>();
 
   /// Legacy hub open + BRD [AnalyticsEventKeys.labModuleOpened] with [source].
   static void logModule([String source = AnalyticsLabSourceKeys.home]) {
@@ -102,6 +105,11 @@ abstract final class LabTestAnalytics {
       }),
     );
     logTestSelected(name);
+    unawaited(
+      _appsFlyer.logEvent(AppsFlyerEventKeys.contentView, {
+        AppsFlyerParamKeys.afContentType: AppsFlyerContentTypeKeys.lab,
+      }),
+    );
   }
 
   /// BRD [AnalyticsEventKeys.labTestSelected].
@@ -130,6 +138,9 @@ abstract final class LabTestAnalytics {
     required String sampleType,
     required bool bookingMethodIsHomeSample,
   }) {
+    final samplingMode = bookingMethodIsHomeSample
+        ? AnalyticsLabSamplingModeKeys.homeSample
+        : AnalyticsLabSamplingModeKeys.walkIn;
     unawaited(
       _analytics.logEvent(AnalyticsEventKeys.labAddToCart, {
         AnalyticsParamKeys.afContentType: AnalyticsContentTypeKeys.lab,
@@ -139,9 +150,17 @@ abstract final class LabTestAnalytics {
           AnalyticsParamKeys.partnerName: partnerName.trim(),
         if (sampleType.trim().isNotEmpty)
           AnalyticsParamKeys.sampleType: sampleType.trim(),
-        AnalyticsParamKeys.samplingMode: bookingMethodIsHomeSample
-            ? AnalyticsLabSamplingModeKeys.homeSample
-            : AnalyticsLabSamplingModeKeys.walkIn,
+        AnalyticsParamKeys.samplingMode: samplingMode,
+      }),
+    );
+    unawaited(
+      _appsFlyer.logEvent(AppsFlyerEventKeys.addToCart, {
+        AppsFlyerParamKeys.afContentType: AppsFlyerContentTypeKeys.lab,
+        AppsFlyerParamKeys.testName: testName.trim(),
+        AppsFlyerParamKeys.labName: labName.trim(),
+        AppsFlyerParamKeys.partnerName: partnerName.trim(),
+        AppsFlyerParamKeys.sampleType: sampleType.trim(),
+        AppsFlyerParamKeys.samplingMode: samplingMode,
       }),
     );
   }
@@ -159,6 +178,11 @@ abstract final class LabTestAnalytics {
     unawaited(
       _analytics.logEvent(AnalyticsEventKeys.labCheckout, {
         AnalyticsParamKeys.afContentType: AnalyticsContentTypeKeys.labCheckout,
+      }),
+    );
+    unawaited(
+      _appsFlyer.logEvent(AppsFlyerEventKeys.initiatedCheckout, {
+        AppsFlyerParamKeys.afContentType: AppsFlyerContentTypeKeys.labCheckout,
       }),
     );
   }
@@ -180,6 +204,7 @@ abstract final class LabTestAnalytics {
     final bookingId = initiation?.orderId?.trim() ?? '';
     final name = userName.trim();
     final labName = args.labDisplayName.trim();
+    final partner = _partnerNameFromCheckout(args);
     final promoCode = (appliedPromoCode ?? args.discountCode).trim();
     final promoApplied =
         LabTestPriceFormatter.parseRsAmount(args.discountAmount) > 0 ||
@@ -205,6 +230,8 @@ abstract final class LabTestAnalytics {
     );
     final discount = LabTestPriceFormatter.parseRsAmount(args.discountAmount);
     final transactionId = initiation?.publicId?.trim() ?? '';
+    final promoAppliedLabel =
+        promoApplied ? AnalyticsYesNoKeys.yes : AnalyticsYesNoKeys.no;
 
     unawaited(() async {
       final promoParams = await PromoCodeAnalytics.confirmPromoParams(
@@ -221,9 +248,7 @@ abstract final class LabTestAnalytics {
         AnalyticsParamKeys.timestamp: timestamp,
         AnalyticsParamKeys.paymentMethod: paymentMethod,
         AnalyticsParamKeys.paymentStatus: paymentStatus,
-        AnalyticsParamKeys.promoApplied: promoApplied
-            ? AnalyticsYesNoKeys.yes
-            : AnalyticsYesNoKeys.no,
+        AnalyticsParamKeys.promoApplied: promoAppliedLabel,
         if (promoCode.isNotEmpty) AnalyticsParamKeys.promo: promoCode,
         ...promoParams,
       });
@@ -247,7 +272,34 @@ abstract final class LabTestAnalytics {
           AnalyticsParamKeys.transactionId: transactionId,
         ...promoParams,
       });
+
+      await _appsFlyer.logEvent(AppsFlyerEventKeys.purchase, {
+        AppsFlyerParamKeys.contentType: AppsFlyerContentTypeKeys.lab,
+        AppsFlyerParamKeys.afContentType: AppsFlyerContentTypeKeys.lab,
+        AppsFlyerParamKeys.bookingId: bookingId,
+        AppsFlyerParamKeys.userName: name,
+        AppsFlyerParamKeys.msisdn: normalizedMsisdn,
+        AppsFlyerParamKeys.numberOfTests: args.testIds.length,
+        AppsFlyerParamKeys.labName: labName,
+        AppsFlyerParamKeys.partner: partner,
+        // Street address not on checkout model.
+        AppsFlyerParamKeys.address: '',
+        AppsFlyerParamKeys.timestamp: timestamp,
+        AppsFlyerParamKeys.paymentMethod: paymentMethod,
+        AppsFlyerParamKeys.paymentStatus: paymentStatus,
+        AppsFlyerParamKeys.transactionId: transactionId,
+        AppsFlyerParamKeys.promoApplied: promoAppliedLabel,
+        if (promoCode.isNotEmpty) AppsFlyerParamKeys.promo: promoCode,
+      });
     }());
+  }
+
+  static String _partnerNameFromCheckout(LabTestCheckoutArgs args) {
+    for (final line in args.lines) {
+      final name = line.partnerName.trim();
+      if (name.isNotEmpty) return name;
+    }
+    return '';
   }
 
   static String labNameFromCatalogItem(LabTestItemEntity item) {

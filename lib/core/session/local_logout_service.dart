@@ -6,6 +6,7 @@ import '../network/api_service.dart';
 import '../preference/app_pref.dart';
 import '../preference/app_pref_keys.dart';
 import '../services/notification_service.dart';
+import '../services/appsflyer_service.dart';
 import 'auth_session_refresh.dart';
 import 'profile_session_sync.dart';
 
@@ -40,6 +41,9 @@ class LocalLogoutService {
     await _appPref.setToken('');
     await _appPref.setUserId('');
     unawaited(CrashlyticsService.setUserId(null));
+    if (sl.isRegistered<AppsFlyerService>()) {
+      sl<AppsFlyerService>().clearCustomerUserId();
+    }
     await _appPref.clearUserLocalModel();
     await _appPref.remove(AppPrefKeys.fcmToken);
     await _appPref.remove(AppPrefKeys.fcmTokenSentToBackend);

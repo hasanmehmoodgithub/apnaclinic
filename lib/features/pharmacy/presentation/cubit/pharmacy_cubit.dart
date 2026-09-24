@@ -10,6 +10,8 @@ import '../../../../core/constants/app_strings.dart';
 import '../../../../core/enums/state_status.dart';
 import '../../../../core/functional/functional_export.dart';
 import '../../../../core/preference/app_pref.dart';
+import '../../../../core/services/appsflyer_event_keys.dart';
+import '../../../../core/services/appsflyer_service.dart';
 import '../../../../core/utils/auth_guard.dart';
 import '../../domain/entities/pharmacy_cart_item_entity.dart';
 import '../../domain/entities/pharmacy_cart_address_entity.dart';
@@ -49,7 +51,9 @@ class PharmacyCubit extends Cubit<PharmacyState> {
     required this.citiesRepository,
     required this.appPref,
     required AnalyticsService analytics,
+    required AppsFlyerService appsFlyer,
   }) : _analytics = analytics,
+       _appsFlyer = appsFlyer,
        super(const PharmacyState()) {
     loadMedicines();
   }
@@ -68,6 +72,7 @@ class PharmacyCubit extends Cubit<PharmacyState> {
   final CitiesRepository citiesRepository;
   final AppPref appPref;
   final AnalyticsService _analytics;
+  final AppsFlyerService _appsFlyer;
 
   /// From last cart / qty-update `failed_payment.unified_order_id`.
   int? _failedPaymentUnifiedOrderId;
@@ -977,6 +982,11 @@ class PharmacyCubit extends Cubit<PharmacyState> {
         AnalyticsParamKeys.numberOfProducts: state.cartItems.length,
       }),
     );
+    unawaited(
+      _appsFlyer.logEvent(AppsFlyerEventKeys.initiatedCheckout, {
+        AppsFlyerParamKeys.afContentType: AppsFlyerContentTypeKeys.pharmacy,
+      }),
+    );
   }
 
   void logConfirmPayment() {
@@ -1005,6 +1015,7 @@ class PharmacyCubit extends Cubit<PharmacyState> {
         state.discount > 0 || appliedPromo.isNotEmpty
             ? AnalyticsYesNoKeys.yes
             : AnalyticsYesNoKeys.no;
+    final resolvedOrderValue = orderValue ?? state.total;
 
     unawaited(() async {
       final promoParams = await PromoCodeAnalytics.confirmPromoParams(
@@ -1018,7 +1029,7 @@ class PharmacyCubit extends Cubit<PharmacyState> {
         if (msisdn.isNotEmpty) AnalyticsParamKeys.msisdn: msisdn,
         AnalyticsParamKeys.cartItems: state.cartItems.length,
         AnalyticsParamKeys.subTotal: state.subtotal,
-        AnalyticsParamKeys.orderValue: orderValue ?? state.total,
+        AnalyticsParamKeys.orderValue: resolvedOrderValue,
         AnalyticsParamKeys.promoApplied: promoApplied,
         if (appliedPromo.isNotEmpty) AnalyticsParamKeys.promo: appliedPromo,
         ...promoParams,
@@ -1026,6 +1037,32 @@ class PharmacyCubit extends Cubit<PharmacyState> {
         AnalyticsParamKeys.deliveryCharges: state.deliveryCharges,
         AnalyticsParamKeys.paymentMethod: _analyticsPaymentMethod(),
         AnalyticsParamKeys.paymentStatus: paymentStatus,
+      });
+
+      final userType =
+          promoParams[AnalyticsParamKeys.userType]?.toString() ??
+          AnalyticsUserTypeKeys.standard;
+      await _appsFlyer.logEvent(AppsFlyerEventKeys.purchase, {
+        AppsFlyerParamKeys.contentType: AppsFlyerContentTypeKeys.pharmacy,
+        AppsFlyerParamKeys.afContentType: AppsFlyerContentTypeKeys.pharmacy,
+        AppsFlyerParamKeys.orderId: orderId,
+        AppsFlyerParamKeys.userName: userName,
+        AppsFlyerParamKeys.userType: userType,
+        AppsFlyerParamKeys.msisdn: msisdn,
+        AppsFlyerParamKeys.cartItems: state.cartItems.length,
+        AppsFlyerParamKeys.subTotal: state.subtotal,
+        AppsFlyerParamKeys.orderValue: resolvedOrderValue,
+        AppsFlyerParamKeys.promoApplied: promoApplied,
+        AppsFlyerParamKeys.timestamp: timestamp,
+        // Not available on checkout / profile models yet.
+        AppsFlyerParamKeys.wellnessOrder: '',
+        if (appliedPromo.isNotEmpty) AppsFlyerParamKeys.promo: appliedPromo,
+        AppsFlyerParamKeys.deliveryCharges: state.deliveryCharges,
+        AppsFlyerParamKeys.paymentMethod: _analyticsPaymentMethod(),
+        AppsFlyerParamKeys.paymentStatus: paymentStatus,
+        // Not returned on pharmacy checkout result.
+        AppsFlyerParamKeys.jazzCashAuthCode: '',
+        AppsFlyerParamKeys.transactionId: '',
       });
     }());
   }
@@ -1049,13 +1086,30 @@ class PharmacyCubit extends Cubit<PharmacyState> {
         _medicineParams(medicine),
       ),
     );
+    unawaited(
+      _appsFlyer.logEvent(AppsFlyerEventKeys.contentView, {
+        AppsFlyerParamKeys.afContentType: AppsFlyerContentTypeKeys.pharmacy,
+      }),
+    );
   }
 
   void _logAddToCart(PharmacyMedicineEntity medicine) {
+    final medicineParams = _medicineParams(medicine);
     unawaited(
       _analytics.logEvent(AnalyticsEventKeys.pharmacyAddToCart, {
         AnalyticsParamKeys.afContentType: AnalyticsContentTypeKeys.pharmacy,
-        ..._medicineParams(medicine),
+        ...medicineParams,
+      }),
+    );
+    unawaited(
+      _appsFlyer.logEvent(AppsFlyerEventKeys.addToCart, {
+        AppsFlyerParamKeys.afContentType: AppsFlyerContentTypeKeys.pharmacy,
+        AppsFlyerParamKeys.productId: medicine.id,
+        AppsFlyerParamKeys.productName: medicine.name,
+        AppsFlyerParamKeys.prescriptionRequired:
+            medicine.prescriptionRequired
+                ? AnalyticsYesNoKeys.yes
+                : AnalyticsYesNoKeys.no,
       }),
     );
   }

@@ -89,6 +89,8 @@ Firebase via `LabTestAnalytics` / `AnalyticsService`. BRD Lab Journey events are
 | `lab_booking_confirmed` | Book succeeds or fails | `af_content_type`=`Lab`, `booking_id`, `user_name`, `msisdn`, `number_of_tests`, `lab_name`, `timestamp`, `payment_method`, `payment_status`, `promo_applied`, `promo` |
 | `lab_test_booked` | Same confirm path (BRD) | `booking_id`, `timestamp`, `user_name`, `msisdn`, `lab_name`, `test_name`, `test_id`, `sampling_mode`, `total_amount`, `discount`, `payment_method`, `payment_status`, `transaction_id` (when available) |
 
+AppsFlyer (separate): `af_content_view` (`af_content_type`=`Lab`) on catalog/search test select; `af_add_to_cart` (`af_content_type`, `test_name`, `lab_name`, `partner_name`, `sample_type`, `sampling_mode`); `af_initiated_checkout` (`af_content_type`=`Lab Checkout`); `af_purchase` on booking confirm (`content_type`/`af_content_type`=`Lab`, booking/user/lab/payment fields; `address` empty until available; `partner` from cart line; `transaction_id` from `publicId`).
+
 ## Mocks
 
 - When `MockConfig.enableLabTestMocks` is true, `LabTestMockApi` / `LabOrdersMockApi` return sample mobile API shapes (defaults to real API), including `getLabsSuccessResponse`. Lab orders mock matches the nested `data.data[]` list (`Confirmed` / `Payment Pending`, no invoice).

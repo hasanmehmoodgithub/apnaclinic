@@ -7,6 +7,8 @@ import '../../../../core/analytics/analytics_service.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/enums/state_status.dart';
 import '../../../../core/preference/app_pref.dart';
+import '../../../../core/services/appsflyer_event_keys.dart';
+import '../../../../core/services/appsflyer_service.dart';
 import '../../../../core/utils/auth_guard.dart';
 import '../../../../core/utils/phone_format_utils.dart';
 import '../../../../core/utils/subscription_uuid_utils.dart';
@@ -28,7 +30,9 @@ class InstantDoctorCubit extends Cubit<InstantDoctorState> {
     required this.verifyOtpUseCase,
     required this.appPref,
     required AnalyticsService analytics,
+    required AppsFlyerService appsFlyer,
   }) : _analytics = analytics,
+       _appsFlyer = appsFlyer,
        super(const InstantDoctorState()) {
     loadContent();
   }
@@ -38,7 +42,12 @@ class InstantDoctorCubit extends Cubit<InstantDoctorState> {
   final VerifyInstantDoctorOtpUseCase verifyOtpUseCase;
   final AppPref appPref;
   final AnalyticsService _analytics;
+  final AppsFlyerService _appsFlyer;
   Timer? _otpTimer;
+
+  /// Last Instant Doctor entry source for AppsFlyer (`banner` / `bottom_tab`).
+  String _appsFlyerSourceScreen = '';
+
 
   @override
   Future<void> close() {
@@ -315,6 +324,7 @@ class InstantDoctorCubit extends Cubit<InstantDoctorState> {
             provider,
             includeMsisdn: true,
           );
+          _logAppsFlyerPurchase(provider);
         }
         final redirectUrl = verifyResult.redirectUrl.trim();
         return InstantDoctorOtpVerifyOutcome.success(
@@ -370,18 +380,40 @@ class InstantDoctorCubit extends Cubit<InstantDoctorState> {
         {AnalyticsParamKeys.source: clickedSource},
       ),
     );
-    final legacySource =
-        sourceScreen == AnalyticsInstantDoctorSourceKeys.popup
-            ? AnalyticsInstantDoctorSourceKeys.banner
-            : sourceScreen == AnalyticsInstantDoctorSourceKeys.navigationTab
-                ? AnalyticsInstantDoctorSourceKeys.bottomTab
-                : sourceScreen;
+    final legacySource = _legacySourceScreen(sourceScreen);
+    _appsFlyerSourceScreen = legacySource;
     unawaited(
       _analytics.logEvent(
         AnalyticsEventKeys.instantDoctorModule,
         {AnalyticsParamKeys.sourceScreen: legacySource},
       ),
     );
+    // Partner unknown at tab open; empty until purchase selects a provider.
+    unawaited(
+      _appsFlyer.logEvent(AppsFlyerEventKeys.instantDoctorModule, {
+        AppsFlyerParamKeys.sourceScreen: legacySource,
+        AppsFlyerParamKeys.partner: '',
+      }),
+    );
+  }
+
+  void _logAppsFlyerPurchase(InstantDoctorProviderEntity provider) {
+    unawaited(
+      _appsFlyer.logEvent(AppsFlyerEventKeys.purchase, {
+        AppsFlyerParamKeys.sourceScreen: _appsFlyerSourceScreen,
+        AppsFlyerParamKeys.partner: provider.providerName,
+      }),
+    );
+  }
+
+  String _legacySourceScreen(String sourceScreen) {
+    if (sourceScreen == AnalyticsInstantDoctorSourceKeys.popup) {
+      return AnalyticsInstantDoctorSourceKeys.banner;
+    }
+    if (sourceScreen == AnalyticsInstantDoctorSourceKeys.navigationTab) {
+      return AnalyticsInstantDoctorSourceKeys.bottomTab;
+    }
+    return sourceScreen;
   }
 
   void _logEvent(
