@@ -42,6 +42,7 @@ class LabOrderEntity {
     required this.labLogoUrl,
     required this.partnerName,
     required this.partnerLogoUrl,
+    this.bookedCityName = '',
     required this.patientName,
     required this.patientAge,
     required this.patientGender,
@@ -67,6 +68,9 @@ class LabOrderEntity {
   final String labLogoUrl;
   final String partnerName;
   final String partnerLogoUrl;
+
+  /// City name from API `bookedCity` (e.g. Islamabad).
+  final String bookedCityName;
   final String patientName;
   final int patientAge;
   final String patientGender;

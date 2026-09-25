@@ -45,12 +45,15 @@ class InstantDoctorCubit extends Cubit<InstantDoctorState> {
   final AppsFlyerService _appsFlyer;
   Timer? _otpTimer;
 
+  /// Cancels in-flight post-OTP subscription refresh retries.
+  int _subscriptionRefreshToken = 0;
+
   /// Last Instant Doctor entry source for AppsFlyer (`banner` / `bottom_tab`).
   String _appsFlyerSourceScreen = '';
 
-
   @override
   Future<void> close() {
+    _subscriptionRefreshToken++;
     _otpTimer?.cancel();
     return super.close();
   }
@@ -119,6 +122,16 @@ class InstantDoctorCubit extends Cubit<InstantDoctorState> {
         ),
       ),
     );
+  }
+
+  /// Waits for partner lag, then reloads providers once with list shimmer.
+  Future<void> refreshProvidersAfterSubscriptionChange({
+    Duration delay = const Duration(seconds: 3),
+  }) async {
+    final token = ++_subscriptionRefreshToken;
+    await Future<void>.delayed(delay);
+    if (isClosed || token != _subscriptionRefreshToken) return;
+    await loadContent(refresh: true);
   }
 
   Future<InstantDoctorProviderTapOutcome> onProviderPrimaryTap(

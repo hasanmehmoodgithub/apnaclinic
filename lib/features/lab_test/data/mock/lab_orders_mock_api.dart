@@ -67,6 +67,7 @@ class LabOrdersMockApi {
           'logoUrl':
               'http://localhost:9000/main/019f5f96-27ef-73f7-8952-7afbd0cb367b.png',
         },
+        'bookedCity': {'id': 3, 'name': 'Islamabad'},
         'patient': {
           'name': 'hasan aaa',
           'age': 20,

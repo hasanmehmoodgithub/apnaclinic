@@ -59,6 +59,25 @@ class LabOrderPartnerModel {
   static const empty = LabOrderPartnerModel(id: '', name: '', logoUrl: '');
 }
 
+class LabOrderBookedCityModel {
+  const LabOrderBookedCityModel({
+    required this.id,
+    required this.name,
+  });
+
+  final String id;
+  final String name;
+
+  factory LabOrderBookedCityModel.fromJson(Map<String, dynamic> json) {
+    return LabOrderBookedCityModel(
+      id: _asString(json['id']),
+      name: _asString(json['name']),
+    );
+  }
+
+  static const empty = LabOrderBookedCityModel(id: '', name: '');
+}
+
 class LabOrderPatientModel {
   const LabOrderPatientModel({
     required this.name,
@@ -160,6 +179,7 @@ class LabOrderModel {
     required this.discountCode,
     required this.lab,
     required this.partner,
+    this.bookedCity = LabOrderBookedCityModel.empty,
     required this.patient,
     required this.tests,
     required this.pricing,
@@ -185,6 +205,7 @@ class LabOrderModel {
   final String? discountCode;
   final LabOrderLabModel lab;
   final LabOrderPartnerModel partner;
+  final LabOrderBookedCityModel bookedCity;
   final LabOrderPatientModel patient;
   final List<LabOrderTestModel> tests;
   final LabOrderPricingModel pricing;
@@ -207,6 +228,7 @@ class LabOrderModel {
   factory LabOrderModel.fromJson(Map<String, dynamic> json) {
     final lab = json['lab'];
     final partner = json['partner'];
+    final bookedCity = json['bookedCity'] ?? json['booked_city'];
     final patient = json['patient'];
     final pricing = json['pricing'];
 
@@ -243,6 +265,11 @@ class LabOrderModel {
       partner: partner is Map
           ? LabOrderPartnerModel.fromJson(Map<String, dynamic>.from(partner))
           : LabOrderPartnerModel.empty,
+      bookedCity: bookedCity is Map
+          ? LabOrderBookedCityModel.fromJson(
+              Map<String, dynamic>.from(bookedCity),
+            )
+          : LabOrderBookedCityModel.empty,
       patient: patient is Map
           ? LabOrderPatientModel.fromJson(Map<String, dynamic>.from(patient))
           : LabOrderPatientModel.empty,
@@ -260,19 +287,10 @@ class LabOrderModel {
   }
 
   static String? _resolveDiscountCode(Map<String, dynamic> json) {
-    final fromField = _nullableString(
-      json['discountCode'] ?? json['discount_code'],
-    );
-    if (fromField != null) return fromField;
-
-    final promo = json['promoCode'] ?? json['promo_code'];
-    if (promo is String) return _nullableString(promo);
-    if (promo is Map) {
-      return _nullableString(
-        promo['code'] ?? promo['promoCode'] ?? promo['discountCode'],
-      );
-    }
-    return null;
+    final code = _nullableString(json['discountCode'] ?? json['discount_code']);
+    if (code == null) return null;
+    if (code.toLowerCase() == 'n/a') return null;
+    return code;
   }
 
   static int? _readOptionalInt(dynamic value) {

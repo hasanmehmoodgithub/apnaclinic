@@ -277,12 +277,10 @@ class _InstantDoctorScreenState extends State<InstantDoctorScreen> {
 
     if (otpAction == InstantDoctorOtpAction.unsubscribe) {
       _showSnackBar(_l10n.instantDoctorCancelSubscriptionSuccess);
-      unawaited(_cubit.loadContent(silent: true));
+      unawaited(_cubit.refreshProvidersAfterSubscriptionChange());
       return;
     }
 
-    // Refresh providers behind the success dialog (no list shimmer).
-    unawaited(_cubit.loadContent(silent: true));
     await _showSubscribeSuccessDialog(provider, outcome);
   }
 
@@ -290,35 +288,55 @@ class _InstantDoctorScreenState extends State<InstantDoctorScreen> {
     InstantDoctorProviderEntity provider,
     InstantDoctorOtpVerifyOutcome outcome,
   ) async {
-    await showDialog<void>(
+    final actionsEnabled = ValueNotifier<bool>(false);
+
+    final dialogFuture = showDialog<void>(
       context: context,
       barrierDismissible: false,
       builder: (dialogContext) {
-        return InstantDoctorSubscriptionSuccessDialog(
-          providerName: provider.providerName,
-          onStartConsultation: () {
-            dialogContext.pop();
-            if (!mounted) return;
+        return ValueListenableBuilder<bool>(
+          valueListenable: actionsEnabled,
+          builder: (_, enabled, _) {
+            return InstantDoctorSubscriptionSuccessDialog(
+              providerName: provider.providerName,
+              actionsEnabled: enabled,
+              onStartConsultation: () {
+                dialogContext.pop();
+                if (!mounted) return;
 
-            final url = outcome.redirectUrl ?? _cubit.consultationUrl(provider);
-            if (url == null) {
-              _showSnackBar(
-                _l10n.instantDoctorOpenAppError,
-                behavior: SnackBarBehavior.floating,
-              );
-              return;
-            }
+                final refreshed = _cubit.state.providers
+                    .where((item) => item.providerId == provider.providerId)
+                    .firstOrNull;
+                final url = outcome.redirectUrl ??
+                    _cubit.consultationUrl(refreshed ?? provider);
+                if (url == null) {
+                  _showSnackBar(
+                    _l10n.instantDoctorOpenAppError,
+                    behavior: SnackBarBehavior.floating,
+                  );
+                  return;
+                }
 
-            _openConsultationUrl(
-              url: url,
-              title: provider.providerName,
-              providerId: provider.providerId,
-              provider: provider,
+                _openConsultationUrl(
+                  url: url,
+                  title: provider.providerName,
+                  providerId: provider.providerId,
+                  provider: refreshed ?? provider,
+                );
+              },
             );
           },
         );
       },
     );
+
+    // Delay for partner lag, then shimmer refresh behind the dialog.
+    await _cubit.refreshProvidersAfterSubscriptionChange();
+    if (mounted) {
+      actionsEnabled.value = true;
+    }
+    await dialogFuture;
+    actionsEnabled.dispose();
   }
 
   void _showOtpSendError() {

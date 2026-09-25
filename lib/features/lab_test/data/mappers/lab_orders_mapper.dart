@@ -35,6 +35,7 @@ class LabOrdersMapper {
         partnerName: model.partner.name,
         raw: model.partner.logoUrl,
       ),
+      bookedCityName: model.bookedCity.name,
       patientName: model.patient.name,
       patientAge: model.patient.age,
       patientGender: model.patient.gender,

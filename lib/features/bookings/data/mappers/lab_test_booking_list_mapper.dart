@@ -83,7 +83,7 @@ class LabTestBookingListMapper {
                 status: booking.statusLabel,
               ),
             ],
-      labName: booking.labName,
+      labName: _labNameWithCity(booking.labName, order.bookedCityName),
       labLogoUrl: booking.labLogoUrl,
       partnerLogoUrl: booking.partnerLogoUrl,
       sampleType: sampleTypeLabel(booking.sampleType, l10n),
@@ -143,6 +143,15 @@ class LabTestBookingListMapper {
         .where((part) => part.isNotEmpty)
         .map((part) => '${part[0].toUpperCase()}${part.substring(1)}')
         .join(' ');
+  }
+
+  /// Lab + booked city for View Details (e.g. `Chughtai Lab, Islamabad`).
+  static String _labNameWithCity(String labName, String bookedCityName) {
+    final lab = labName.trim();
+    final city = bookedCityName.trim();
+    if (lab.isEmpty) return city;
+    if (city.isEmpty) return lab;
+    return '$lab, $city';
   }
 
   static String _reportNote(String reportStatus, AppLocalizations l10n) {
