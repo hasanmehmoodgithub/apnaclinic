@@ -25,6 +25,7 @@ import '../widgets/lab_test_booking_content_shimmer_widget.dart';
 import '../widgets/lab_test_booking_method_tile_widget.dart';
 import '../widgets/lab_test_booking_partner_tabs_widget.dart';
 import '../widgets/lab_test_booking_patient_field_widget.dart';
+import '../widgets/lab_test_booking_requirements_card_widget.dart';
 import '../widgets/lab_test_booking_test_summary_card_widget.dart';
 import '../widgets/lab_test_booking_vendor_grid_widget.dart';
 import '../widgets/lab_test_browse_header_widget.dart';
@@ -194,10 +195,6 @@ class _LabTestBookingScreenState extends State<LabTestBookingScreen> {
                                         ? state.selectedVendor!.logoUrl
                                         : (state.args.preferredLabLogoUrl ??
                                             ''),
-                                    requirement: state.isWalkInUnavailable ||
-                                            state.isHomeSamplingUnavailable
-                                        ? null
-                                        : state.args.requirementLabel,
                                     sampleType: state.isWalkInUnavailable ||
                                             state.isHomeSamplingUnavailable
                                         ? l10n.labTestSampleTypeNotAvailable
@@ -211,6 +208,17 @@ class _LabTestBookingScreenState extends State<LabTestBookingScreen> {
                                         !state.isHomeSamplingUnavailable &&
                                         state.selectedVendor != null,
                                   ),
+                                  if (state.args.requirementLabel != null &&
+                                      state.args.requirementLines
+                                          .isNotEmpty) ...[
+                                    SizedBox(height: 16.h),
+                                    LabTestBookingRequirementsCardWidget(
+                                      heading: l10n.labTestRequirementsHeading,
+                                      badgeLabel:
+                                          state.args.requirementLabel!,
+                                      lines: state.args.requirementLines,
+                                    ),
+                                  ],
                                   SizedBox(height: 16.h),
                                   Text(
                                     l10n.labTestBookingChooseMethodTitle,

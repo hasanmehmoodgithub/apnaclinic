@@ -200,6 +200,17 @@ class LabTestRepositoryImpl implements LabTestRepository {
         return const Left('Missing lab booking details. Please retry.');
       }
 
+      final patient = <String, dynamic>{
+        'name': params.patient.name,
+        'age': params.patient.age,
+        'gender': params.patient.gender,
+        'phoneNumber': params.patient.phoneNumber,
+      };
+      final address = params.patient.address?.trim() ?? '';
+      if (address.isNotEmpty) {
+        patient['address'] = address;
+      }
+
       final body = <String, dynamic>{
         'partnerId': partnerId,
         'labId': labId,
@@ -207,12 +218,7 @@ class LabTestRepositoryImpl implements LabTestRepository {
         'homeSample': params.homeSample,
         'paymentMethod': params.paymentMethod,
         'msisdn': params.msisdn,
-        'patient': {
-          'name': params.patient.name,
-          'age': params.patient.age,
-          'gender': params.patient.gender,
-          'phoneNumber': params.patient.phoneNumber,
-        },
+        'patient': patient,
         'tests': params.testIds
             .map((id) => {'testId': id})
             .toList(growable: false),

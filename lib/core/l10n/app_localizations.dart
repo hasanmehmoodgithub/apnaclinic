@@ -2740,6 +2740,18 @@ abstract class AppLocalizations {
   /// **'Address'**
   String get labTestAddressLabel;
 
+  /// No description provided for @labTestUseSavedAddressFromProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Use saved address from profile'**
+  String get labTestUseSavedAddressFromProfile;
+
+  /// No description provided for @labTestUseDifferentAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Use a different address'**
+  String get labTestUseDifferentAddress;
+
   /// No description provided for @labTestFullNameHint.
   ///
   /// In en, this message translates to:
@@ -2791,7 +2803,7 @@ abstract class AppLocalizations {
   /// No description provided for @labTestAddressHint.
   ///
   /// In en, this message translates to:
-  /// **'Type address here...'**
+  /// **'Enter your address here'**
   String get labTestAddressHint;
 
   /// No description provided for @commonMale.

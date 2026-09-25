@@ -9,12 +9,14 @@ class BookLabTestPatientParams {
     required this.age,
     required this.gender,
     required this.phoneNumber,
+    this.address,
   });
 
   final String name;
   final String age;
   final String gender;
   final String phoneNumber;
+  final String? address;
 }
 
 class BookLabTestParams {

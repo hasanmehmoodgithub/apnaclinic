@@ -200,6 +200,7 @@ abstract final class LabTestAnalytics {
     required String paymentStatus,
     PaymentInitiationResult? initiation,
     String? appliedPromoCode,
+    String? address,
   }) {
     final bookingId = initiation?.orderId?.trim() ?? '';
     final name = userName.trim();
@@ -213,6 +214,7 @@ abstract final class LabTestAnalytics {
     final paymentMethod = _analyticsPaymentMethod(paymentMethodCode);
     final normalizedMsisdn = _analyticsMsisdn(msisdn);
     final timestamp = formatAnalyticsTimestamp(DateTime.now());
+    final resolvedAddress = address?.trim() ?? '';
 
     final testName = args.testTitle.trim().isNotEmpty
         ? args.testTitle.trim()
@@ -282,8 +284,7 @@ abstract final class LabTestAnalytics {
         AppsFlyerParamKeys.numberOfTests: args.testIds.length,
         AppsFlyerParamKeys.labName: labName,
         AppsFlyerParamKeys.partner: partner,
-        // Street address not on checkout model.
-        AppsFlyerParamKeys.address: '',
+        AppsFlyerParamKeys.address: resolvedAddress,
         AppsFlyerParamKeys.timestamp: timestamp,
         AppsFlyerParamKeys.paymentMethod: paymentMethod,
         AppsFlyerParamKeys.paymentStatus: paymentStatus,

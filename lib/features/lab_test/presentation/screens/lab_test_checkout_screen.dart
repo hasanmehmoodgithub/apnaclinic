@@ -36,6 +36,7 @@ import '../lab_test_analytics.dart';
 import '../lab_test_route_args.dart';
 import '../widgets/lab_test_booking_confirmation_dialog_widget.dart';
 import '../widgets/lab_test_cart_item_tile_widget.dart';
+import '../widgets/lab_test_checkout_address_card_widget.dart';
 import '../widgets/lab_test_checkout_bottom_bar_widget.dart';
 import '../widgets/lab_test_checkout_header_widget.dart';
 import '../widgets/lab_test_checkout_patient_form_section_widget.dart';
@@ -57,11 +58,16 @@ class _LabTestCheckoutScreenState extends State<LabTestCheckoutScreen> {
   final _nameController = TextEditingController();
   final _phoneController = TextEditingController();
   final _ageController = TextEditingController();
+  final _addressController = TextEditingController();
   final _emergencyController = TextEditingController();
   final AppPref _appPref = sl<AppPref>();
   String _gender = 'male';
+  String _profileAddress = '';
+  LabTestCheckoutAddressSource _addressSource =
+      LabTestCheckoutAddressSource.savedFromProfile;
   bool _isEditingPatientDetails = false;
   bool _isBooking = false;
+  bool _showAddressError = false;
   bool _showEmergencyError = false;
   String? _checkoutErrorMessage;
 
@@ -69,6 +75,7 @@ class _LabTestCheckoutScreenState extends State<LabTestCheckoutScreen> {
   void initState() {
     super.initState();
     _prefillPatientDetailsFromSavedProfile();
+    _addressController.addListener(_onAddressChanged);
     _emergencyController.addListener(_onEmergencyChanged);
     _ageController.addListener(_onAgeChanged);
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -80,11 +87,13 @@ class _LabTestCheckoutScreenState extends State<LabTestCheckoutScreen> {
   @override
   void dispose() {
     closePaymentProcessingLoader(_bookLoaderId);
+    _addressController.removeListener(_onAddressChanged);
     _emergencyController.removeListener(_onEmergencyChanged);
     _ageController.removeListener(_onAgeChanged);
     _nameController.dispose();
     _phoneController.dispose();
     _ageController.dispose();
+    _addressController.dispose();
     _emergencyController.dispose();
     super.dispose();
   }
@@ -96,6 +105,35 @@ class _LabTestCheckoutScreenState extends State<LabTestCheckoutScreen> {
         _phoneController.text.trim().isNotEmpty &&
         age > 0 &&
         age <= 99;
+  }
+
+  void _onAddressChanged() {
+    final address = _addressController.text.trim();
+    final shouldClearBanner =
+        _checkoutErrorMessage != null && address.isNotEmpty;
+    final shouldClearFieldError = _showAddressError && address.isNotEmpty;
+    if (!shouldClearBanner && !shouldClearFieldError) return;
+    setState(() {
+      if (shouldClearBanner) _checkoutErrorMessage = null;
+      if (shouldClearFieldError) _showAddressError = false;
+    });
+  }
+
+  void _onAddressSourceChanged(LabTestCheckoutAddressSource source) {
+    if (_addressSource == source) return;
+    setState(() {
+      _addressSource = source;
+      if (source == LabTestCheckoutAddressSource.savedFromProfile) {
+        _addressController.text = _profileAddress;
+      } else {
+        _addressController.clear();
+      }
+      _showAddressError = false;
+      if (_checkoutErrorMessage != null &&
+          _addressController.text.trim().isNotEmpty) {
+        _checkoutErrorMessage = null;
+      }
+    });
   }
 
   void _onEmergencyChanged() {
@@ -143,6 +181,14 @@ class _LabTestCheckoutScreenState extends State<LabTestCheckoutScreen> {
         if (age != null && age > 0 && age <= 99) {
           _ageController.text = age.toString();
         }
+
+        _profileAddress = user.address.trim();
+        if (_profileAddress.isNotEmpty) {
+          _addressController.text = _profileAddress;
+          _addressSource = LabTestCheckoutAddressSource.savedFromProfile;
+        } else {
+          _addressSource = LabTestCheckoutAddressSource.different;
+        }
       }
     }
 
@@ -186,11 +232,13 @@ class _LabTestCheckoutScreenState extends State<LabTestCheckoutScreen> {
     if (_isBooking) return;
     final l10n = AppLocalizations.of(context)!;
     if (_emergencyController.text.trim().isEmpty ||
+        _addressController.text.trim().isEmpty ||
         _nameController.text.trim().isEmpty ||
         _phoneController.text.trim().isEmpty ||
         _ageController.text.trim().isEmpty) {
       setState(() {
         _checkoutErrorMessage = l10n.labTestCheckoutRequiredFieldsError;
+        _showAddressError = _addressController.text.trim().isEmpty;
         _showEmergencyError = _emergencyController.text.trim().isEmpty;
       });
       return;
@@ -199,6 +247,7 @@ class _LabTestCheckoutScreenState extends State<LabTestCheckoutScreen> {
     if (age <= 0 || age > 99) {
       setState(() {
         _checkoutErrorMessage = l10n.labTestAgeInvalid;
+        _showAddressError = false;
         _showEmergencyError = false;
       });
       return;
@@ -208,6 +257,7 @@ class _LabTestCheckoutScreenState extends State<LabTestCheckoutScreen> {
     )) {
       setState(() {
         _checkoutErrorMessage = l10n.labTestCheckoutPhoneInvalid;
+        _showAddressError = false;
         _showEmergencyError = true;
       });
       return;
@@ -215,14 +265,18 @@ class _LabTestCheckoutScreenState extends State<LabTestCheckoutScreen> {
     if (widget.args.testIds.isEmpty) {
       setState(() {
         _checkoutErrorMessage = l10n.labTestCheckoutRequiredFieldsError;
+        _showAddressError = false;
         _showEmergencyError = false;
       });
       return;
     }
-    if (_checkoutErrorMessage != null || _showEmergencyError) {
+    if (_checkoutErrorMessage != null ||
+        _showEmergencyError ||
+        _showAddressError) {
       setState(() {
         _checkoutErrorMessage = null;
         _showEmergencyError = false;
+        _showAddressError = false;
       });
     }
 
@@ -307,6 +361,7 @@ class _LabTestCheckoutScreenState extends State<LabTestCheckoutScreen> {
           age: _ageController.text.trim(),
           gender: _gender == 'female' ? 'Female' : 'Male',
           phoneNumber: _phoneController.text.trim(),
+          address: _addressController.text.trim(),
         ),
         testIds: args.testIds,
         promoCode: context.read<PromoCodeCubit>().state.appliedCode,
@@ -403,6 +458,7 @@ class _LabTestCheckoutScreenState extends State<LabTestCheckoutScreen> {
       paymentStatus: paymentStatus,
       initiation: initiation,
       appliedPromoCode: context.read<PromoCodeCubit>().state.appliedCode,
+      address: _addressController.text.trim(),
     );
   }
 
@@ -524,10 +580,14 @@ class _LabTestCheckoutScreenState extends State<LabTestCheckoutScreen> {
                           nameController: _nameController,
                           phoneController: _phoneController,
                           ageController: _ageController,
+                          addressController: _addressController,
+                          addressSource: _addressSource,
+                          onAddressSourceChanged: _onAddressSourceChanged,
                           emergencyController: _emergencyController,
                           gender: _gender,
                           onGender: (g) => setState(() => _gender = g),
                           isEditingPatientDetails: _isEditingPatientDetails,
+                          showAddressError: _showAddressError,
                           showEmergencyError: _showEmergencyError,
                           onToggleEdit: () {
                             if (!_isEditingPatientDetails) {

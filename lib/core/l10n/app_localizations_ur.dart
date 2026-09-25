@@ -1445,6 +1445,13 @@ class AppLocalizationsUr extends AppLocalizations {
   String get labTestAddressLabel => 'پتہ';
 
   @override
+  String get labTestUseSavedAddressFromProfile =>
+      'پروفائل سے محفوظ پتہ استعمال کریں';
+
+  @override
+  String get labTestUseDifferentAddress => 'مختلف پتہ استعمال کریں';
+
+  @override
   String get labTestFullNameHint => 'مکمل نام';
 
   @override
@@ -1470,7 +1477,7 @@ class AppLocalizationsUr extends AppLocalizations {
   String get labTestPatientSelfLabel => 'خود';
 
   @override
-  String get labTestAddressHint => 'یہاں پتہ درج کریں...';
+  String get labTestAddressHint => 'یہاں اپنا پتہ درج کریں';
 
   @override
   String get commonMale => 'مرد';

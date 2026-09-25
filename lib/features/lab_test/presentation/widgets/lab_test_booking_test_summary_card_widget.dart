@@ -6,7 +6,7 @@ import '../../domain/utils/lab_test_media_url_resolver.dart';
 import 'lab_test_figma_image.dart';
 import 'lab_test_price_pill.dart';
 
-/// Selected test summary (title, lab logo, requirement, sample type, fees).
+/// Selected test summary (title, lab logo, sample type, fees).
 class LabTestBookingTestSummaryCardWidget extends StatelessWidget {
   const LabTestBookingTestSummaryCardWidget({
     super.key,
@@ -23,6 +23,7 @@ class LabTestBookingTestSummaryCardWidget extends StatelessWidget {
   });
 
   final String title;
+  /// Used for logo resolution / asset fallback; not shown in the UI.
   final String labName;
   final String labLogoUrl;
   final String sampleType;
@@ -56,33 +57,15 @@ class LabTestBookingTestSummaryCardWidget extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        title,
-                        style: theme.textTheme.titleMedium?.copyWith(
-                          fontFamily: 'Afacad',
-                          fontWeight: FontWeight.w500,
-                          fontSize: 18.sp,
-                          height: 1.2,
-                          color: AppColors.clr061E40,
-                        ),
-                      ),
-                      if (labName.trim().isNotEmpty) ...[
-                        SizedBox(height: 6.h),
-                        Text(
-                          labName.trim(),
-                          style: theme.textTheme.bodyMedium?.copyWith(
-                            fontFamily: 'Afacad',
-                            fontWeight: FontWeight.w500,
-                            fontSize: 16.sp,
-                            height: 1.2,
-                            color: AppColors.clr061E40,
-                          ),
-                        ),
-                      ],
-                    ],
+                  child: Text(
+                    title,
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontFamily: 'Afacad',
+                      fontWeight: FontWeight.w500,
+                      fontSize: 18.sp,
+                      height: 1.2,
+                      color: AppColors.clr061E40,
+                    ),
                   ),
                 ),
                 if (logo.isNotEmpty) ...[

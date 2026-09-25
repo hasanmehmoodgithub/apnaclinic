@@ -6,8 +6,9 @@ import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/utils/max_int_text_input_formatter.dart';
 import '../../../../core/utils/no_emoji_text_input_formatter.dart';
+import 'lab_test_checkout_address_card_widget.dart';
 
-/// Emergency contact for checkout, plus patient details when still incomplete.
+/// Address + emergency contact for checkout, plus patient details when incomplete.
 ///
 /// Patient name/age/gender normally come from the Add Patient sheet, so the
 /// patient card only appears as a fallback ([showPatientDetails]).
@@ -18,12 +19,16 @@ class LabTestCheckoutPatientFormSectionWidget extends StatelessWidget {
     required this.nameController,
     required this.phoneController,
     required this.ageController,
+    required this.addressController,
+    required this.addressSource,
+    required this.onAddressSourceChanged,
     required this.emergencyController,
     required this.gender,
     required this.onGender,
     required this.isEditingPatientDetails,
     required this.onToggleEdit,
     this.showPatientDetails = false,
+    this.showAddressError = false,
     this.showEmergencyError = false,
   });
 
@@ -31,12 +36,16 @@ class LabTestCheckoutPatientFormSectionWidget extends StatelessWidget {
   final TextEditingController nameController;
   final TextEditingController phoneController;
   final TextEditingController ageController;
+  final TextEditingController addressController;
+  final LabTestCheckoutAddressSource addressSource;
+  final ValueChanged<LabTestCheckoutAddressSource> onAddressSourceChanged;
   final TextEditingController emergencyController;
   final String gender;
   final ValueChanged<String> onGender;
   final bool isEditingPatientDetails;
   final VoidCallback onToggleEdit;
   final bool showPatientDetails;
+  final bool showAddressError;
   final bool showEmergencyError;
 
   @override
@@ -72,6 +81,14 @@ class LabTestCheckoutPatientFormSectionWidget extends StatelessWidget {
             ),
           SizedBox(height: 12.h),
         ],
+        LabTestCheckoutAddressCardWidget(
+          theme: theme,
+          controller: addressController,
+          source: addressSource,
+          onSourceChanged: onAddressSourceChanged,
+          hasError: showAddressError,
+        ),
+        SizedBox(height: 12.h),
         _EmergencyContactCard(
           theme: theme,
           l10n: l10n,

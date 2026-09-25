@@ -1445,6 +1445,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get labTestAddressLabel => 'Address';
 
   @override
+  String get labTestUseSavedAddressFromProfile =>
+      'Use saved address from profile';
+
+  @override
+  String get labTestUseDifferentAddress => 'Use a different address';
+
+  @override
   String get labTestFullNameHint => 'Full name';
 
   @override
@@ -1470,7 +1477,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get labTestPatientSelfLabel => 'Self';
 
   @override
-  String get labTestAddressHint => 'Type address here...';
+  String get labTestAddressHint => 'Enter your address here';
 
   @override
   String get commonMale => 'Male';
