@@ -1,14 +1,20 @@
+import 'dart:async';
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:webview_flutter_android/webview_flutter_android.dart';
 import 'package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart';
 
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/extensions/build_context_extensions.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/utils/webview_file_selector_utils.dart';
 import '../../../../core/utils/webview_media_permission_utils.dart';
+import '../../domain/use_cases/log_instant_doctor_session_params.dart';
+import '../../domain/use_cases/log_instant_doctor_session_use_case.dart';
 import '../instant_doctor_consultation_args.dart';
 import '../widgets/instant_doctor_consultation_app_bar_widget.dart';
 import '../widgets/instant_doctor_consultation_exit_dialog.dart';
@@ -18,6 +24,8 @@ class InstantDoctorConsultationWebViewScreen extends StatefulWidget {
     super.key,
     required this.args,
   });
+
+  static const String instantDocLogChannelName = 'instant_doc_log';
 
   final InstantDoctorConsultationArgs args;
 
@@ -29,13 +37,17 @@ class InstantDoctorConsultationWebViewScreen extends StatefulWidget {
 class _InstantDoctorConsultationWebViewScreenState
     extends State<InstantDoctorConsultationWebViewScreen> {
   late final WebViewController _controller;
+  late final String _startTime;
   var _isLoading = true;
   var _hasError = false;
   var _isExitDialogVisible = false;
+  var _didSubmitSessionLog = false;
+  String _instantDocLog = '';
 
   @override
   void initState() {
     super.initState();
+    _startTime = DateTime.now().toIso8601String();
     _controller = _createController();
     _prepareAndLoad();
   }
@@ -57,6 +69,10 @@ class _InstantDoctorConsultationWebViewScreenState
       onPermissionRequest: grantWebViewMediaPermission,
     )
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
+      ..addJavaScriptChannel(
+        InstantDoctorConsultationWebViewScreen.instantDocLogChannelName,
+        onMessageReceived: _onInstantDocLogMessage,
+      )
       ..setNavigationDelegate(
         NavigationDelegate(
           onPageStarted: (_) {
@@ -135,12 +151,55 @@ class _InstantDoctorConsultationWebViewScreenState
     return WebViewWidget(controller: _controller);
   }
 
+  void _onInstantDocLogMessage(JavaScriptMessage message) {
+    _instantDocLog = message.message;
+  }
+
+  String get _instantDocLogPayload {
+    if (_instantDocLog.trim().isEmpty) return '';
+    return _instantDocLog;
+  }
+
+  void _submitSessionLog() {
+    if (_didSubmitSessionLog) return;
+    _didSubmitSessionLog = true;
+    final endTime = DateTime.now().toIso8601String();
+    try {
+      unawaited(
+        sl<LogInstantDoctorSessionUseCase>()(
+          LogInstantDoctorSessionParams(
+            startTime: _startTime,
+            endTime: endTime,
+            instantDocLog: _instantDocLogPayload,
+            providerName: widget.args.providerName,
+          ),
+        ).then(
+          (result) {
+            result.fold(
+              (error) => log('logInstantDoctorSession failed: $error'),
+              (_) {},
+            );
+          },
+          onError: (Object error, StackTrace stackTrace) {
+            log(
+              'logInstantDoctorSession failed: $error',
+              stackTrace: stackTrace,
+            );
+          },
+        ),
+      );
+    } catch (error, stackTrace) {
+      log('logInstantDoctorSession failed: $error', stackTrace: stackTrace);
+    }
+  }
+
   Future<void> _onBackRequested() async {
     if (_isExitDialogVisible) return;
     _isExitDialogVisible = true;
     final shouldExit = await showInstantDoctorConsultationExitDialog(context);
     _isExitDialogVisible = false;
     if (!shouldExit || !mounted) return;
+    _submitSessionLog();
     context.pop();
   }
 

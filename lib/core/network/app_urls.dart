@@ -157,6 +157,11 @@ class AppUrls {
   static String get instantDoctorCancelSubscription =>
       '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/doctor-consultation/instant/cancel-subscription';
 
+  /// Instant doctor consultation WebView session log.
+  /// Body: `start_time`, `end_time`, `instant_doc_log` (page JSON, or `""`), `providerName`.
+  static String get instantDoctorSessionLog =>
+      '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/doctor-consultation/instant/session-log';
+
   /// ApnaClinic Pro membership catalog (aggregator mobile API).
   static String get membershipCatalog =>
       '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/membership/catalog';

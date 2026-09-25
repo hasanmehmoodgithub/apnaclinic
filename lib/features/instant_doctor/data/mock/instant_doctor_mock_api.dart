@@ -132,4 +132,13 @@ class InstantDoctorMockApi {
     }
     return {'success': false, 'message': 'Invalid OTP code.', 'code': 400};
   }
+
+  Future<Map<String, dynamic>> logSessionSuccessResponse() async {
+    await Future<void>.delayed(const Duration(milliseconds: 200));
+    return {
+      'success': true,
+      'message': 'Session logged',
+      'code': 200,
+    };
+  }
 }

@@ -10,6 +10,7 @@ import 'data/repositories/instant_doctor_repository_impl.dart';
 import 'domain/repositories/instant_doctor_repository.dart';
 import 'domain/use_cases/get_instant_doctor_bookings_use_case.dart';
 import 'domain/use_cases/get_instant_doctor_content_use_case.dart';
+import 'domain/use_cases/log_instant_doctor_session_use_case.dart';
 import 'domain/use_cases/send_instant_doctor_otp_use_case.dart';
 import 'domain/use_cases/verify_instant_doctor_otp_use_case.dart';
 import 'presentation/cubit/instant_doctor_cubit.dart';
@@ -47,6 +48,12 @@ void initInstantDoctorInjector() {
 
   sl.registerLazySingleton<VerifyInstantDoctorOtpUseCase>(
     () => VerifyInstantDoctorOtpUseCase(repository: sl<InstantDoctorRepository>()),
+  );
+
+  sl.registerLazySingleton<LogInstantDoctorSessionUseCase>(
+    () => LogInstantDoctorSessionUseCase(
+      repository: sl<InstantDoctorRepository>(),
+    ),
   );
 
   sl.registerFactory<InstantDoctorBookingsCubit>(

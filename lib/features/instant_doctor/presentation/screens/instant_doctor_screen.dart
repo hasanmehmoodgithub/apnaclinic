@@ -208,7 +208,11 @@ class _InstantDoctorScreenState extends State<InstantDoctorScreen> {
 
     await context.pushNamed(
       AppRoutes.instantDoctorConsultation,
-      extra: InstantDoctorConsultationArgs(url: url, title: title),
+      extra: InstantDoctorConsultationArgs(
+        url: url,
+        title: title,
+        providerName: provider?.providerName ?? title,
+      ),
     );
     if (!mounted) return;
 

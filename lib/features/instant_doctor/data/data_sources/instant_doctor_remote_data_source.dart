@@ -25,4 +25,11 @@ abstract class InstantDoctorRemoteDataSource {
     required String uuid,
     required String action,
   });
+
+  Future<void> logSession({
+    required String startTime,
+    required String endTime,
+    required String instantDocLog,
+    required String providerName,
+  });
 }

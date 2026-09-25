@@ -15,6 +15,22 @@
 - Instant Doctor bookings list: **GET** `AppUrls.instantDoctorBookings(page, limit)` → `/acs-aggregator/api/v1/mobile/bookings?type=teleconsultation&page=1&limit=20` via `GetInstantDoctorBookingsUseCase`. Called when My Bookings is selected and the Instant Doctor inner tab becomes visible (including switching inner tabs or leaving/returning to Bookings). Response `data.data[]`: `orderId`, `status`, `createdAt`, `bookingAt`, `imageUrl`, `doctorName`, `specialty`, `fee`, `currency`, `partnerId`, `partnerName`, `partnerImageUrl`, `prescription` (newline-separated), optional `prescriptionUrl`. Pagination: `page`, `limit`, `total`. Aggregator may omit `success`/`code`; `data` present is treated as success. List card omits the Fee column when `fee` is 0. **View Details** shows prescription text; a PDF row opens the in-app viewer only when `prescriptionUrl` is a non-empty `http(s)` URL (null/empty/missing hides it).
 - `AppUrls.instantDoctorSendOtp` — `POST …/doctor-consultation/instant/send-otp` — body: `msisdn`, `productId`, `uuid`, `action` (`subscribe` | `unsubscribe`). Android auto-fill SMS body/hash is the same as Auth (`lib/features/auth/FEATURE.md`).
 - `AppUrls.instantDoctorVerifyOtp` — `POST …/doctor-consultation/instant/verify-otp` — body: `msisdn`, `productId`, `otp`, `uuid`, `action` (`subscribe` | `unsubscribe`); success `data`: `resultCode`, `status`, `transactionId`, `description`, `redirectUrl`
+- `AppUrls.instantDoctorSessionLog` — `POST …/doctor-consultation/instant/session-log` — body: `start_time`, `end_time` (ISO-8601 local), `providerName`, `instant_doc_log` (decoded page JSON from the `instant_doc_log` channel, or `""` when the page sent nothing). Called once when the consultation WebView exits. Failure is logged and does not block leaving the screen. Example when the page posts JSON:
+
+```json
+{
+  "start_time": "2026-09-25T23:28:00.000",
+  "end_time": "2026-09-25T23:35:12.000",
+  "providerName": "BIMA",
+  "instant_doc_log": {
+    "event": "consultation_ended",
+    "doctor_name": "Dr. Sara Khan",
+    "specialty": "General Practitioner",
+    "status": "completed",
+    "prescription": "Panadol\nAzomax"
+  }
+}
+```
 - Response `data[]`: `providerId`, `providerName`, `logoUrl`, `isSubscribed`, `product` (`productId`, `productCode`, `productType`, `productTitle`, `priceDisplay`, `benefits[]`, `redirectUrl`)
 - `msisdn` from logged-in user (`AppPref.getUserLocalModel().phone`, normalized via `PhoneFormatUtils.toMsisdn`)
 - `uuid` generated per OTP flow via `SubscriptionUuidUtils.generate()`
@@ -27,12 +43,12 @@
 - Start Consultation CTAs include a phone icon. Provider cards and the OTP summary card show API `product.productTitle` under the provider name when present.
 - Analytics: `instant_doctor_clicked` (`source` `banner` / `popup` / `navigation_tab`) and legacy `instant_doctor_module` (`source_screen` `banner` / `bottom_tab`) when entering the Instant Doctor tab; `instant_doc_subscribe_clicked` (`partner`) on Subscribe tap; `fb_mobile_subscribe` (`partner`, `msisdn`) on successful subscribe OTP; `start_consultation_clicked` (`partner`, `msisdn`) when consultation WebView opens. My Bookings Instant Doctor: `instant_doc_booking_opened` (`booking_id`) when View Details opens; `instant_doc_prescription_view` (`booking_id`) when prescription text/PDF is present; `instant_doc_prescription_download` (`booking_id`, `user_name`, `msisdn`) on PDF download.
 - AppsFlyer (separate from Firebase): `instant_doctor_module` (`source_screen`, `partner`) on tab entry (`partner` empty until a provider is chosen); `af_purchase` (`source_screen`, `partner`) on successful subscribe OTP.
-- `InstantDoctorConsultationWebViewScreen` — requests OS camera + microphone **before** loading `redirectUrl`, then **immediately** `grant()`s WebView getUserMedia (waiting in that callback lets Android/iOS auto-deny). Android uses hybrid composition + a Chrome-like user agent, and `setOnShowFileSelector` so Instant Doctor `<input type="file">` opens gallery/camera/file pickers (`image_picker` / `file_picker`, no broad storage permission). iOS WKWebView handles file inputs natively (`NSPhotoLibraryUsageDescription` + camera/mic strings). iOS: `PERMISSION_CAMERA` + `PERMISSION_MICROPHONE` in the Podfile, inline playback, PlayAndRecord audio session (`apna_clinic/media_session`), and `audio` background mode. Back (AppBar or system) shows exit confirm (`showInstantDoctorConsultationExitDialog`); Exit pops, Cancel stays.
+- `InstantDoctorConsultationWebViewScreen` — requests OS camera + microphone **before** loading `redirectUrl`, then **immediately** `grant()`s WebView getUserMedia (waiting in that callback lets Android/iOS auto-deny). Android uses hybrid composition + a Chrome-like user agent, and `setOnShowFileSelector` so Instant Doctor `<input type="file">` opens gallery/camera/file pickers (`image_picker` / `file_picker`, no broad storage permission). iOS WKWebView handles file inputs natively (`NSPhotoLibraryUsageDescription` + camera/mic strings). iOS: `PERMISSION_CAMERA` + `PERMISSION_MICROPHONE` in the Podfile, inline playback, PlayAndRecord audio session (`apna_clinic/media_session`), and `audio` background mode. Back (AppBar or system) shows exit confirm (`showInstantDoctorConsultationExitDialog`); Exit pops, Cancel stays. On open, records `start_time`. JavaScript channel `instant_doc_log` stores the latest page message. On confirmed exit, records `end_time` and posts `LogInstantDoctorSessionUseCase` once (`start_time`, `end_time`, `instant_doc_log` or `""`).
 
 ## DI
 
-- `instant_doctor_injection.dart` — data source, repository, use cases, cubit factory (`AppPref` + content/OTP use cases), `InstantDoctorBookingsCubit` factory.
+- `instant_doctor_injection.dart` — data source, repository, use cases (including `LogInstantDoctorSessionUseCase`), cubit factory (`AppPref` + content/OTP use cases), `InstantDoctorBookingsCubit` factory.
 
 ## Mocks
 
-- `InstantDoctorMockApi` mirrors live multi-provider + OTP responses when mocks enabled (verify accepts OTP `1234`). Bookings list mock returns one teleconsultation item matching the aggregator payload.
+- `InstantDoctorMockApi` mirrors live multi-provider + OTP responses when mocks enabled (verify accepts OTP `1234`). Bookings list mock returns one teleconsultation item matching the aggregator payload. Session log mock returns success.

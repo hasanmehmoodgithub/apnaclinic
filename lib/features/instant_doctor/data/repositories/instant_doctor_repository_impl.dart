@@ -9,6 +9,7 @@ import '../../domain/entities/instant_doctor_verify_otp_entity.dart';
 import '../../domain/repositories/instant_doctor_repository.dart';
 import '../../domain/use_cases/get_instant_doctor_bookings_params.dart';
 import '../../domain/use_cases/get_instant_doctor_content_params.dart';
+import '../../domain/use_cases/log_instant_doctor_session_params.dart';
 import '../../domain/use_cases/send_instant_doctor_otp_params.dart';
 import '../../domain/use_cases/verify_instant_doctor_otp_params.dart';
 import '../data_sources/instant_doctor_remote_data_source.dart';
@@ -103,6 +104,29 @@ class InstantDoctorRepositoryImpl implements InstantDoctorRepository {
         ErrorHandler.handleExceptions(
           e,
           endpoint: AppUrls.instantDoctorVerifyOtp,
+        ),
+      );
+    }
+  }
+
+  @override
+  Future<Either<ErrorMsg, void>> logSession(
+    LogInstantDoctorSessionParams params,
+  ) async {
+    try {
+      await remoteDataSource.logSession(
+        startTime: params.startTime,
+        endTime: params.endTime,
+        instantDocLog: params.instantDocLog,
+        providerName: params.providerName,
+      );
+      return const Right(null);
+    } catch (e) {
+      log('logInstantDoctorSession repository error: $e');
+      return Left(
+        ErrorHandler.handleExceptions(
+          e,
+          endpoint: AppUrls.instantDoctorSessionLog,
         ),
       );
     }

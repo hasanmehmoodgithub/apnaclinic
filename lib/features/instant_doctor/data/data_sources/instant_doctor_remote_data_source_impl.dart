@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:developer';
 
 import '../../../../core/constants/app_strings.dart';
@@ -18,6 +19,19 @@ class InstantDoctorRemoteDataSourceImpl implements InstantDoctorRemoteDataSource
 
   final ApiService apiService;
   final InstantDoctorMockApi mockApi;
+
+  /// Page channel payload is JSON. Empty or whitespace stays `""`.
+  static Object _pageJsonOrEmpty(String raw) {
+    final trimmed = raw.trim();
+    if (trimmed.isEmpty) return '';
+    try {
+      final decoded = jsonDecode(trimmed);
+      if (decoded == null) return '';
+      return decoded;
+    } catch (_) {
+      return raw;
+    }
+  }
 
   static bool _isSuccessResponse(Map<String, dynamic> response) {
     if (response['success'] == true) return true;
@@ -204,4 +218,43 @@ class InstantDoctorRemoteDataSourceImpl implements InstantDoctorRemoteDataSource
     }
   }
 
+  @override
+  Future<void> logSession({
+    required String startTime,
+    required String endTime,
+    required String instantDocLog,
+    required String providerName,
+  }) async {
+    try {
+      final Map<String, dynamic> response;
+      if (InstantDoctorMockApi.useMockResponses) {
+        response = await mockApi.logSessionSuccessResponse();
+      } else {
+        response = await apiService.post(
+          AppUrls.instantDoctorSessionLog,
+          data: <String, dynamic>{
+            'start_time': startTime,
+            'end_time': endTime,
+            'instant_doc_log': _pageJsonOrEmpty(instantDocLog),
+            'providerName': providerName,
+          },
+        );
+        log('logInstantDoctorSession response: $response');
+      }
+
+      if (_isSuccessResponse(response)) return;
+
+      final message =
+          (response['message'] ?? AppStrings.instantDoctorSessionLogError)
+              .toString();
+      return Future.error(message);
+    } catch (e) {
+      log('logInstantDoctorSession error: $e');
+      final message = ErrorHandler.handleExceptions(
+        e,
+        endpoint: AppUrls.instantDoctorSessionLog,
+      );
+      return Future.error(message);
+    }
+  }
 }
