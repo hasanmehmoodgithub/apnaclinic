@@ -162,6 +162,50 @@
       margin: 0;
     }
     .opts input { accent-color: var(--teal); }
+    .field { margin-top: 10px; }
+    .field input[type="text"],
+    .define-form input[type="text"] {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-size: 13px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      color: var(--navy);
+      background: #fff;
+    }
+    .define-form {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .define-form input[type="text"] { flex: 1; min-width: 140px; width: auto; }
+    .add-btn, .rm-btn {
+      border: 0;
+      border-radius: 10px;
+      background: var(--teal);
+      color: #fff;
+      font-weight: 700;
+      font-size: 12px;
+      cursor: pointer;
+      padding: 10px 14px;
+    }
+    .add-btn:hover { background: var(--teal-dark); }
+    .rm-btn { background: var(--skip); padding: 6px 10px; }
+    .define-list { display: flex; flex-direction: column; gap: 6px; margin-top: 8px; }
+    .define-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #f8fafc;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 6px 8px 6px 12px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 12.5px;
+    }
+    .define-item span { flex: 1; word-break: break-all; }
     .toast {
       position: fixed;
       bottom: 20px;
@@ -269,6 +313,18 @@
         <label class="opt"><input type="checkbox" id="jazz" /> JazzCash sandbox</label>
         <label class="opt"><input type="checkbox" id="nosec" /> Skip security checks</label>
       </div>
+      <div id="proxy-wrap" class="field hidden">
+        <label for="proxyValue">HTTP_PROXIES <span class="meta">comma-separated host:port</span></label>
+        <input type="text" id="proxyValue" spellcheck="false" autocomplete="off"
+          value="192.168.100.77:8080,10.124.74.71:8080,192.168.13.1:8080,192.168.19.1:9000" />
+      </div>
+      <label>Custom dart-defines</label>
+      <div class="define-form">
+        <input type="text" id="defineKey" placeholder="KEY" spellcheck="false" autocomplete="off" />
+        <input type="text" id="defineValue" placeholder="value" spellcheck="false" autocomplete="off" />
+        <button type="button" class="add-btn" id="addDefine">Add</button>
+      </div>
+      <div id="defineList" class="define-list"></div>
       <p class="filename" id="builtName"></p>
       <div class="cmd" style="margin-top:14px">
         <pre id="built"></pre>
@@ -296,6 +352,26 @@
   <script>
     const PROXY = '192.168.100.77:8080,10.124.74.71:8080,192.168.13.1:8080,192.168.19.1:9000';
     const PHONE = '03123456789';
+    const extraDefines = [];
+
+    function esc(s) {
+      return String(s)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+    function dartDefineArg(key, value) {
+      const raw = key + '=' + (value == null ? '' : String(value));
+      if (/[\s"'\\$`,]/.test(raw)) {
+        return '--dart-define="' + raw.replace(/\\/g, '\\\\').replace(/"/g, '\\"') + '"';
+      }
+      return '--dart-define=' + raw;
+    }
+    function proxyList(p) {
+      const typed = p.proxyValue != null ? String(p.proxyValue).trim() : '';
+      return typed || PROXY;
+    }
 
     function pad(n) { return String(n).padStart(2, '0'); }
     function previewStamp(d) {
@@ -329,7 +405,11 @@
         parts.push('--dart-define=JAZZCASH_SANDBOX=true');
         parts.push('--dart-define=ACCOUNT_TEST_PHONE=' + PHONE);
       }
-      if (p.proxy) parts.push('--dart-define="HTTP_PROXIES=' + PROXY + '"');
+      if (p.proxy) parts.push('--dart-define="HTTP_PROXIES=' + proxyList(p).replace(/"/g, '') + '"');
+      (p.defines || []).forEach(function (d) {
+        if (!d || !d.key) return;
+        parts.push(dartDefineArg(d.key, d.value));
+      });
       return parts;
     }
     function flutterLine(p) {
@@ -518,10 +598,44 @@
         outIos: outIos,
         mode: document.querySelector('input[name="mode"]:checked').value,
         proxy: document.getElementById('proxy').checked,
+        proxyValue: document.getElementById('proxyValue').value,
         jazz: document.getElementById('jazz').checked,
         nosec: document.getElementById('nosec').checked,
         stamp: action === 'build' && document.getElementById('stamp').checked,
+        defines: extraDefines.map(function (d) { return { key: d.key, value: d.value }; }),
       };
+    }
+    const toast = document.getElementById('toast');
+    function showToast(message) {
+      toast.textContent = message;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 1200);
+    }
+    function renderDefines() {
+      const list = document.getElementById('defineList');
+      list.innerHTML = extraDefines.map(function (d, i) {
+        return '<div class="define-item"><span>' + esc(d.key) + '=' + esc(d.value) +
+          '</span><button type="button" class="rm-btn" data-rm="' + i + '">Remove</button></div>';
+      }).join('');
+    }
+    function addDefineFromForm() {
+      const keyEl = document.getElementById('defineKey');
+      const valEl = document.getElementById('defineValue');
+      const key = keyEl.value.trim();
+      const value = valEl.value;
+      if (!key || /[\s=]/.test(key)) {
+        showToast('Enter a key without spaces or =');
+        keyEl.focus();
+        return;
+      }
+      const existing = extraDefines.findIndex(function (d) { return d.key === key; });
+      if (existing >= 0) extraDefines[existing].value = value;
+      else extraDefines.push({ key: key, value: value });
+      keyEl.value = '';
+      valEl.value = '';
+      renderDefines();
+      refreshBuilt();
+      keyEl.focus();
     }
     let lastAction = 'build';
     function syncBuilderUi() {
@@ -537,18 +651,40 @@
       document.getElementById('output-android').classList.toggle('hidden', !isBuild || platform !== 'android');
       document.getElementById('output-ios').classList.toggle('hidden', !isBuild || platform !== 'ios');
       document.getElementById('stamp-opt').classList.toggle('hidden', !isBuild);
+      document.getElementById('proxy-wrap').classList.toggle('hidden', !document.getElementById('proxy').checked);
     }
     function refreshBuilt() {
       syncBuilderUi();
       const opts = builtOpts();
       document.getElementById('built').textContent = cmd(opts);
       const label = isRun(opts) ? 'Target' : 'Output file';
-      document.getElementById('builtName').innerHTML = label + ': <b>' + outputHint(opts) + '</b>';
+      let extra = '';
+      if (opts.proxy) extra += ' · HTTP_PROXIES';
+      if (opts.defines.length) {
+        extra += ' · ' + opts.defines.map(function (d) { return d.key; }).join(', ');
+      }
+      document.getElementById('builtName').innerHTML = label + ': <b>' + outputHint(opts) + '</b>' + extra;
     }
     document.querySelectorAll('.builder input').forEach(el => el.addEventListener('change', refreshBuilt));
+    document.getElementById('proxyValue').addEventListener('input', refreshBuilt);
+    document.getElementById('addDefine').addEventListener('click', addDefineFromForm);
+    ['defineKey', 'defineValue'].forEach(function (id) {
+      document.getElementById(id).addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          addDefineFromForm();
+        }
+      });
+    });
+    document.getElementById('defineList').addEventListener('click', function (e) {
+      const btn = e.target.closest('[data-rm]');
+      if (!btn) return;
+      extraDefines.splice(Number(btn.dataset.rm), 1);
+      renderDefines();
+      refreshBuilt();
+    });
     refreshBuilt();
 
-    const toast = document.getElementById('toast');
     async function copyText(text, btn) {
       try {
         await navigator.clipboard.writeText(text);
@@ -560,8 +696,7 @@
         document.execCommand('copy');
         ta.remove();
       }
-      toast.classList.add('show');
-      setTimeout(() => toast.classList.remove('show'), 1200);
+      showToast('Copied');
       if (btn) {
         btn.classList.add('done');
         btn.textContent = 'Copied';

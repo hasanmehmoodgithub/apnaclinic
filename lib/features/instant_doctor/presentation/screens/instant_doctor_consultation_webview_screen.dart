@@ -25,7 +25,7 @@ class InstantDoctorConsultationWebViewScreen extends StatefulWidget {
     required this.args,
   });
 
-  static const String instantDocLogChannelName = 'instant_doc_log';
+  static const String instantDocLogChannelName = 'instant_doctor_call_log';
 
   final InstantDoctorConsultationArgs args;
 
