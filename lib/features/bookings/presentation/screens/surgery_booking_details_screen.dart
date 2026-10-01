@@ -19,6 +19,7 @@ import '../../../dashboard/presentation/constants/main_navigation_tabs.dart';
 import '../../../payment/presentation/payment_navigation.dart';
 import '../../../surgery/domain/use_cases/book_surgery_use_case.dart';
 import '../../../surgery/domain/use_cases/get_surgery_lead_use_case.dart';
+import '../../../surgery/presentation/surgery_analytics.dart';
 import '../../data/mappers/surgery_booking_list_mapper.dart';
 import '../../data/models/surgery_details_item.dart';
 import '../../domain/entities/invoice_module_type.dart';
@@ -55,6 +56,7 @@ class _SurgeryDetailsScreenState extends State<SurgeryDetailsScreen> {
   bool _isBooking = false;
   bool _isLoadingDetail = true;
   String? _loadError;
+  String _doctorId = '';
 
   @override
   void initState() {
@@ -99,6 +101,7 @@ class _SurgeryDetailsScreenState extends State<SurgeryDetailsScreen> {
           _item = details;
           _statusLabel = details.status;
           _paymentAllowed = details.paymentAllowed;
+          _doctorId = lead.doctorId.trim();
           _isLoadingDetail = false;
           _loadError = null;
         });
@@ -243,6 +246,19 @@ class _SurgeryDetailsScreenState extends State<SurgeryDetailsScreen> {
           );
           return;
         }
+        SurgeryAnalytics.logBooked(
+          bookingId: _item.leadId,
+          userName: _item.patientName,
+          msisdn: msisdn,
+          doctorName: _item.doctor,
+          doctorId: _doctorId,
+          surgeryName: _item.procedure.trim().isNotEmpty
+              ? _item.procedure.trim()
+              : _item.procedureSubtitle.trim(),
+          paidAmount: _item.total > 0 ? _item.total : _item.fee,
+          paymentMethodCode: paymentMethod,
+          paymentStatus: AnalyticsPaymentStatusKeys.successful,
+        );
         setState(() {
           _statusLabel = 'Paid';
           _paymentAllowed = false;

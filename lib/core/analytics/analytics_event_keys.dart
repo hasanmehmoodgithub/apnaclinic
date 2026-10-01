@@ -81,6 +81,9 @@ class AnalyticsEventKeys {
   static const surgerySelectItem = 'surgery_select_item';
   static const surgeryDoctorSelect = 'surgery_doctor_select';
   static const surgeryCheckout = 'surgery_checkout';
+  /// Lead created (Confirm Booking) — not payment.
+  static const surgeryLeadGenerated = 'surgery_lead_generated';
+  /// Successful book-surgery / payment settle.
   static const surgeryBooked = 'surgery_booked';
 
   static const myBookingsTab = 'my_bookings_tab';
@@ -168,6 +171,7 @@ class AnalyticsParamKeys {
   static const authCode = 'auth_code';
   static const surgeryName = 'surgery_name';
   static const amount = 'amount';
+  static const paidAmount = 'paid_amount';
   static const service = 'service';
   static const status = 'status';
   static const changedBy = 'changed_by';

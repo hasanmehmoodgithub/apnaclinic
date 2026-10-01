@@ -55,7 +55,7 @@ Each `logEvent` / `logScreenView` writes a `developer.log` (`AnalyticsService`)
 before fan-out. Fan-out to Firebase runs only on the production flavor.
 Events before Firebase init are dropped. Do not put PII in parameters except
 where a tracking spec requires it (`pharmacy_order_confirmed`,
-`lab_booking_confirmed`, `surgery_booked`, `prescription_downloaded`, and
+`lab_booking_confirmed`, `surgery_lead_generated`, `surgery_booked`, `prescription_downloaded`, and
 `instant_doc_prescription_download` include `user_name` and `msisdn`).
 
 ## Consultation AI chat
@@ -118,7 +118,7 @@ where a tracking spec requires it (`pharmacy_order_confirmed`,
 | `doctor_profile_screen` | Book-doctor screen opens | same doctor params |
 | `doctor_document_uploaded` | Attachment(s) accepted | — |
 | `doctor_consultation_confirm` | Get Appointment continues to checkout | doctor params, `timeslot` |
-| `doctor_consultation_booked` | Summary confirm succeeds or fails | `af_content_type`=`Consultancy`, `booking_id`, `user_name`, `msisdn`, doctor params, `consultation_timeslot`, `booking_timestamp`, `payment_method` (`JC`/`Card`), `payment_status` (`successful`/`failed`), `promo_applied`, `promo` (when a code is applied) |
+| `doctor_consultation_booked` | Summary confirm succeeds (after payment) | `af_content_type`=`Consultancy`, `booking_id`, `user_name`, `msisdn`, doctor params, `consultation_timeslot`, `booking_timestamp`, `payment_method` (`JC`/`Card`), `payment_status`=`successful`, `promo_applied`, `promo` (when a code is applied) |
 
 ## Lab
 | Event | When | Params |
@@ -132,7 +132,7 @@ where a tracking spec requires it (`pharmacy_order_confirmed`,
 | `lab_cart_viewed` | Cart screen opens | `af_content_type`=`Lab Cart` |
 | `lab_checkout` | Checkout screen opens | `af_content_type`=`Lab Checkout` |
 | `lab_patient_details_edit` | User taps Edit on patient details | — |
-| `lab_booking_confirmed` | Book API succeeds or fails (card WebView when required) | `af_content_type`=`Lab`, `booking_id`, `user_name`, `msisdn`, `number_of_tests`, `lab_name`, `timestamp`, `payment_method` (`JazzCash` / `Card` / `COD`), `payment_status` (`Successful` / `Failed`), `promo_applied`, `promo` |
+| `lab_booking_confirmed` | Book + payment succeed (card WebView when required) | `af_content_type`=`Lab`, `booking_id`, `user_name`, `msisdn`, `number_of_tests`, `lab_name`, `timestamp`, `payment_method` (`JazzCash` / `Card` / `COD`), `payment_status`=`Successful`, `promo_applied`, `promo` |
 
 ## Surgery
 | Event | When | Params |
@@ -143,7 +143,8 @@ where a tracking spec requires it (`pharmacy_order_confirmed`,
 | `surgery_select_item` | Procedure tile or global search surgery result | `surgery_name` |
 | `surgery_doctor_select` | Doctor card / Book Now, or search result | `doctor_id`, `doctor_name`, `surgery_name` |
 | `surgery_checkout` | Patient details screen opens | `af_content_type`=`Surgery` |
-| `surgery_booked` | Lead submit succeeds | `af_content_type`=`Surgery`, `booking_id`, `user_name`, `msisdn`, `surgery_name`, `doctor_name`, `amount`, `timestamp` |
+| `surgery_lead_generated` | Confirm Booking (lead) succeeds | `booking_id`, `user_name`, `msisdn`, `doctor_name`, `doctor_id`, `surgery_name`, `amount`, `timestamp` |
+| `surgery_booked` | Book-surgery + payment succeed | `booking_id`, `user_name`, `msisdn`, `doctor_name`, `doctor_id`, `surgery_name`, `paid_amount`, `payment_method` (`JazzCash` / `Card` / `COD`), `payment_status`=`Successful`, `timestamp` |
 
 ## My Bookings
 | Event | When | Params |

@@ -107,17 +107,6 @@ class DoctorConsultationSummaryScreen extends StatelessWidget {
         );
     if (!context.mounted) return;
     if (!paymentResult.isSuccess) {
-      ConsultationAnalytics.logConsultationBooked(
-        doctor: args.checkoutArgs.doctor,
-        slot: args.checkoutArgs.selectedSlot,
-        paymentMethodCode: args.paymentMethodCode,
-        paymentMethodName: args.paymentMethodName,
-        msisdn: args.msisdn,
-        paymentStatus: AnalyticsConsultationPaymentStatusKeys.failed,
-        discount: args.discount,
-        promoCode: args.promoCode,
-        initiation: initiation,
-      );
       await showCardPaymentOutcomeDialog(
         context,
         paymentResult,

@@ -374,11 +374,6 @@ class _LabTestCheckoutScreenState extends State<LabTestCheckoutScreen> {
 
     await result.fold(
       (error) async {
-        _logBookingConfirmed(
-          paymentMethod: paymentMethod,
-          msisdn: msisdn,
-          paymentStatus: AnalyticsPaymentStatusKeys.failed,
-        );
         await _showBookErrorDialog(error);
       },
       (initiation) async {
@@ -418,12 +413,6 @@ class _LabTestCheckoutScreenState extends State<LabTestCheckoutScreen> {
         );
         if (!mounted) return;
         if (!paymentResult.isSuccess) {
-          _logBookingConfirmed(
-            paymentMethod: paymentMethod,
-            msisdn: msisdn,
-            paymentStatus: AnalyticsPaymentStatusKeys.failed,
-            initiation: initiation,
-          );
           await showCardPaymentOutcomeDialog(
             context,
             paymentResult,

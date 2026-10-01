@@ -40,9 +40,9 @@ Surgery mocks use `MockConfig.enableSurgeryMocks` (default false).
 
 ## Analytics
 
-Firebase via `SurgeryAnalytics` / `AnalyticsService`. Hub extra `source_screen`: home services (`Home`), promotional banner (`Banner`). Global search opens patient details and logs `surgery_module` with `source_screen=Search`, plus `surgery_select_item` and `surgery_doctor_select`. City event fires when the user taps the city dropdown (current city). Lead submit returns `bookingId` / `leadId` from the API for `surgery_booked`. `fb_content_type` / `content_type` are not sent (Firebase only). Notifications open booking details, not the hub.
+Firebase via `SurgeryAnalytics` / `AnalyticsService`. Hub extra `source_screen`: home services (`Home`), promotional banner (`Banner`). Global search opens patient details and logs `surgery_module` with `source_screen=Search`, plus `surgery_select_item` and `surgery_doctor_select`. City event fires when the user taps the city dropdown (current city). Lead submit fires `surgery_lead_generated` (`booking_id` from API). Book-surgery + successful payment settle (COD / JazzCash / Card) fires `surgery_booked` from bookings details. Fail / pending payment do not fire `surgery_booked`. `fb_content_type` / `content_type` are not sent (Firebase only). Notifications open booking details, not the hub.
 
-AppsFlyer (separate): `surgery_module` (`source_screen`, `selected_city`) on hub open / city change; `af_initiated_checkout` (`af_content_type`=`Surgery`, `surgery_name`, `doctor_id`, `doctor_name`) on patient details open; `af_purchase` on lead submit (`content_type`/`af_content_type`=`Surgery`, booking/user/surgery fields; `promo_applied`/`promo_code` empty until promo exists on surgery checkout).
+AppsFlyer (separate): `surgery_module` (`source_screen`, `selected_city`) on hub open / city change; `af_initiated_checkout` (`af_content_type`=`Surgery`, `surgery_name`, `doctor_id`, `doctor_name`) on patient details open; `af_purchase` on **paid** book-surgery success (`content_type`/`af_content_type`=`Surgery`, booking/user/surgery/payment fields).
 
 | Event | When | Params |
 |---|---|---|
@@ -52,7 +52,8 @@ AppsFlyer (separate): `surgery_module` (`source_screen`, `selected_city`) on hub
 | `surgery_select_item` | Procedure tile or search result | `surgery_name` |
 | `surgery_doctor_select` | Doctor card / search result | `doctor_id`, `doctor_name`, `surgery_name` |
 | `surgery_checkout` | Patient details opens | `af_content_type`=`Surgery` |
-| `surgery_booked` | Confirm Booking succeeds | `af_content_type`=`Surgery`, `booking_id`, `user_name`, `msisdn`, `surgery_name`, `doctor_name`, `amount`, `timestamp` |
+| `surgery_lead_generated` | Confirm Booking (lead) succeeds | `booking_id`, `user_name`, `msisdn`, `doctor_name`, `doctor_id`, `surgery_name`, `amount`, `timestamp` |
+| `surgery_booked` | Book-surgery + payment succeed | `booking_id`, `user_name`, `msisdn`, `doctor_name`, `doctor_id`, `surgery_name`, `paid_amount`, `payment_method`, `payment_status`, `timestamp` |
 
 ## DI
 `initSurgeryInjector()` registers mocks, `SurgeryRemoteDataSourceImpl`, repository, use cases (`GetSurgeryLeadsUseCase`, `GetSurgeryLeadUseCase` included), factory `SurgeryCubit`, factory `SurgeryPatientDetailsCubit`.

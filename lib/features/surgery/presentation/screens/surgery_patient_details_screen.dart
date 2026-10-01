@@ -126,13 +126,14 @@ class _SurgeryPatientDetailsScreenState
         final cubit = context.read<SurgeryPatientDetailsCubit>();
 
         if (state.bookingSubmitted) {
-          SurgeryAnalytics.logBooked(
+          SurgeryAnalytics.logLeadGenerated(
             bookingId: state.bookingId,
             userName: patientNameController.text.trim(),
             msisdn: contactNumberController.text.trim(),
+            doctorName: widget.doctorName,
+            doctorId: widget.doctorId,
             surgeryName: (state.selectedPackage?.name ?? widget.procedureName)
                 .trim(),
-            doctorName: widget.doctorName,
             amount: SurgeryAnalytics.amountFromPrice(
               state.selectedPackage?.price ?? widget.price,
             ),

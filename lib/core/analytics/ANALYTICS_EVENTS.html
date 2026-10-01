@@ -187,7 +187,7 @@
     <p class="meta">Sent only on these events (from local profile / checkout MSISDN): <code>user_name</code>, <code>msisdn</code>.</p>
     <ul>
       <li><code>fb_mobile_subscribe</code>, <code>start_consultation_clicked</code> — MSISDN</li>
-      <li><code>pharmacy_order_confirmed</code>, <code>doctor_consultation_booked</code>, <code>lab_booking_confirmed</code>, <code>surgery_booked</code>, <code>prescription_downloaded</code> — name + MSISDN</li>
+      <li><code>pharmacy_order_confirmed</code>, <code>doctor_consultation_booked</code>, <code>lab_booking_confirmed</code>, <code>surgery_lead_generated</code>, <code>surgery_booked</code>, <code>prescription_downloaded</code> — name + MSISDN</li>
     </ul>
   </div>
 
@@ -666,7 +666,7 @@ const events = [
   },
   {
     mod: "Consultation", name: "doctor_consultation_booked",
-    trigger: "Summary confirm succeeds or fails (including card WebView outcome).",
+    trigger: "Summary confirm succeeds after payment (not on fail or pending).",
     ui: "Consultation summary / payment.",
     control: "Confirm booking / pay",
     params: [
@@ -678,7 +678,7 @@ const events = [
       ["consultation_timeslot", "Slot"],
       ["booking_timestamp", "Formatted now"],
       ["payment_method", "JC | Card"],
-      ["payment_status", "successful | failed"],
+      ["payment_status", "successful"],
       ["promo_applied", "Yes if discount > 0"]
     ],
     pii: true,
@@ -770,7 +770,7 @@ const events = [
   },
   {
     mod: "Lab", name: "lab_booking_confirmed",
-    trigger: "Book API succeeds or fails; card WebView counted when required.",
+    trigger: "Book + payment succeed (not on API fail, card fail, or pending).",
     ui: "Lab checkout confirm / pay.",
     control: "Place booking",
     params: [
@@ -782,13 +782,13 @@ const events = [
       ["lab_name", "Display name"],
       ["timestamp", "Formatted now"],
       ["payment_method", "JazzCash | Card | COD"],
-      ["payment_status", "Successful | Failed"],
+      ["payment_status", "Successful"],
       ["promo_applied", "Yes/No"],
       ["promo", "discountCode only if non-empty"]
     ],
     pii: true,
     code: "LabTestAnalytics.logBookingConfirmed",
-    notes: "Pending card payment without URL does not fire. No transaction_id / street address."
+    notes: "Fires only after successful book + payment. Not on API fail, card fail, or pending."
   },
 
   /* Surgery */
@@ -843,22 +843,42 @@ const events = [
     code: "surgery_patient_details_screen.dart"
   },
   {
-    mod: "Surgery", name: "surgery_booked",
-    trigger: "Lead submit succeeds.",
+    mod: "Surgery", name: "surgery_lead_generated",
+    trigger: "Confirm Booking (lead API) succeeds.",
     ui: "Patient details submit.",
-    control: "Submit / Book",
+    control: "Confirm Booking",
     params: [
-      ["af_content_type", "Surgery"],
       ["booking_id", "Lead / booking id"],
-      ["user_name", "Profile"],
-      ["msisdn", "…"],
-      ["surgery_name", "…"],
+      ["user_name", "Patient name"],
+      ["msisdn", "Contact"],
       ["doctor_name", "…"],
-      ["amount", "Integer from price digits"],
+      ["doctor_id", "…"],
+      ["surgery_name", "Package / procedure"],
+      ["amount", "Integer from price"],
       ["timestamp", "Formatted now"]
     ],
     pii: true,
-    code: "SurgeryAnalytics.logBooked"
+    code: "surgery_patient_details_screen.dart → logLeadGenerated"
+  },
+  {
+    mod: "Surgery", name: "surgery_booked",
+    trigger: "Book-surgery + payment settle succeeds (not on fail/pending).",
+    ui: "Surgery booking details checkout.",
+    control: "Proceed Checkout / pay",
+    params: [
+      ["booking_id", "Lead id"],
+      ["user_name", "Patient"],
+      ["msisdn", "Checkout MSISDN"],
+      ["doctor_name", "…"],
+      ["doctor_id", "From lead detail"],
+      ["surgery_name", "Procedure"],
+      ["paid_amount", "Lead total / fee"],
+      ["payment_method", "JazzCash | Card | COD"],
+      ["payment_status", "Successful"],
+      ["timestamp", "Formatted now"]
+    ],
+    pii: true,
+    code: "surgery_booking_details_screen.dart → SurgeryAnalytics.logBooked"
   },
 
   /* My Bookings */

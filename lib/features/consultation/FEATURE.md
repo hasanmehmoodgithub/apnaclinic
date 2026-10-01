@@ -61,7 +61,7 @@ Doctor consultation category browse, doctor results, booking, and checkout.
 
 ## Analytics
 
-Firebase via `ConsultationAnalytics` / `AnalyticsService`. Hub `source`: home services, promotional banner. Global search opens book-doctor and logs `consultancy_module` with `source=search`. Not logged: `source=ad` (no ad entry), `source=notification` (push opens booking details). `doctor_consultation_booked` sends `promo` when a promo code is applied. `promo_applied` is Yes when checkout discount > 0 or a promo code is applied. Pending card payment without URL does not fire `doctor_consultation_booked`.
+Firebase via `ConsultationAnalytics` / `AnalyticsService`. Hub `source`: home services, promotional banner. Global search opens book-doctor and logs `consultancy_module` with `source=search`. Not logged: `source=ad` (no ad entry), `source=notification` (push opens booking details). `doctor_consultation_booked` fires only after successful payment (not on fail or pending blocking order) and sends `promo` when a promo code is applied. `promo_applied` is Yes when checkout discount > 0 or a promo code is applied.
 
 AppsFlyer (separate): `consultancy_module` (`source`, `category_name`, `keyword`, `partner`) on hub open / category / search / filter; `doctor_profile` (`doctor_id`, `doctor_name`, `category`, `timeslot`) on profile click/screen/confirm; `af_purchase` on booked with consultancy content types + booking/user/doctor/payment fields (`wellness_order` empty; `transaction_id` from `publicId` when present). No Meta/TikTok `fb_content_type` on AF.
 
@@ -78,7 +78,7 @@ AppsFlyer (separate): `consultancy_module` (`source`, `category_name`, `keyword`
 | `doctor_profile_screen` | Book-doctor screen opens | same doctor params |
 | `doctor_document_uploaded` | Attachment(s) accepted | — |
 | `doctor_consultation_confirm` | Get Appointment continues to checkout | doctor params, `timeslot` |
-| `doctor_consultation_booked` | Summary confirm succeeds or fails | `af_content_type`=`Consultancy`, `booking_id`, `user_name`, `msisdn`, doctor params, `consultation_timeslot`, `booking_timestamp`, `payment_method` (`JC`/`Card`), `payment_status`, `promo_applied`, `promo` (when applied) |
+| `doctor_consultation_booked` | Summary confirm succeeds (after payment) | `af_content_type`=`Consultancy`, `booking_id`, `user_name`, `msisdn`, doctor params, `consultation_timeslot`, `booking_timestamp`, `payment_method` (`JC`/`Card`), `payment_status`=`successful`, `promo_applied`, `promo` (when applied) |
 
 ## DI
 

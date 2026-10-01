@@ -5,6 +5,7 @@ import '../../../core/analytics/analytics_service.dart';
 import '../../../core/di/dependency_injection.dart';
 import '../../../core/services/appsflyer_event_keys.dart';
 import '../../../core/services/appsflyer_service.dart';
+import '../../consultation/data/utils/consultation_booking_utils.dart';
 import '../../consultation/presentation/consultation_analytics.dart';
 import '../../promo_code/presentation/promo_code_analytics.dart';
 
@@ -101,35 +102,71 @@ abstract final class SurgeryAnalytics {
     );
   }
 
-  static void logBooked({
+  /// Confirm Booking (lead API) succeeds.
+  static void logLeadGenerated({
     required String bookingId,
     required String userName,
     required String msisdn,
-    required String surgeryName,
     required String doctorName,
+    required String doctorId,
+    required String surgeryName,
     required int amount,
-    String? promoCode,
   }) {
     final id = bookingId.trim();
     final name = userName.trim();
-    final appliedPromo = promoCode?.trim() ?? '';
-    final promoApplied = appliedPromo.isNotEmpty
-        ? AnalyticsYesNoKeys.yes
-        : AnalyticsYesNoKeys.no;
     final timestamp = formatAnalyticsTimestamp(DateTime.now());
     final analyticsMsisdn = _analyticsMsisdn(msisdn);
     final surgery = surgeryName.trim();
     final doctor = doctorName.trim();
+    final docId = doctorId.trim();
 
     unawaited(
-      _analytics.logEvent(AnalyticsEventKeys.surgeryBooked, {
-        AnalyticsParamKeys.afContentType: AnalyticsContentTypeKeys.surgery,
+      _analytics.logEvent(AnalyticsEventKeys.surgeryLeadGenerated, {
         if (id.isNotEmpty) AnalyticsParamKeys.bookingId: id,
         if (name.isNotEmpty) AnalyticsParamKeys.userName: name,
         AnalyticsParamKeys.msisdn: analyticsMsisdn,
-        AnalyticsParamKeys.surgeryName: surgery,
         AnalyticsParamKeys.doctorName: doctor,
+        if (docId.isNotEmpty) AnalyticsParamKeys.doctorId: docId,
+        AnalyticsParamKeys.surgeryName: surgery,
         AnalyticsParamKeys.amount: amount,
+        AnalyticsParamKeys.timestamp: timestamp,
+      }),
+    );
+  }
+
+  /// Book-surgery + payment settle succeeds (COD / JazzCash / Card).
+  static void logBooked({
+    required String bookingId,
+    required String userName,
+    required String msisdn,
+    required String doctorName,
+    required String doctorId,
+    required String surgeryName,
+    required int paidAmount,
+    required String paymentMethodCode,
+    required String paymentStatus,
+  }) {
+    final id = bookingId.trim();
+    final name = userName.trim();
+    final timestamp = formatAnalyticsTimestamp(DateTime.now());
+    final analyticsMsisdn = _analyticsMsisdn(msisdn);
+    final surgery = surgeryName.trim();
+    final doctor = doctorName.trim();
+    final docId = doctorId.trim();
+    final paymentMethod = _analyticsPaymentMethod(paymentMethodCode);
+    final status = paymentStatus.trim();
+
+    unawaited(
+      _analytics.logEvent(AnalyticsEventKeys.surgeryBooked, {
+        if (id.isNotEmpty) AnalyticsParamKeys.bookingId: id,
+        if (name.isNotEmpty) AnalyticsParamKeys.userName: name,
+        AnalyticsParamKeys.msisdn: analyticsMsisdn,
+        AnalyticsParamKeys.doctorName: doctor,
+        if (docId.isNotEmpty) AnalyticsParamKeys.doctorId: docId,
+        AnalyticsParamKeys.surgeryName: surgery,
+        AnalyticsParamKeys.paidAmount: paidAmount,
+        AnalyticsParamKeys.paymentMethod: paymentMethod,
+        AnalyticsParamKeys.paymentStatus: status,
         AnalyticsParamKeys.timestamp: timestamp,
       }),
     );
@@ -143,11 +180,12 @@ abstract final class SurgeryAnalytics {
         AppsFlyerParamKeys.userType: userType,
         AppsFlyerParamKeys.userName: name,
         AppsFlyerParamKeys.msisdn: analyticsMsisdn,
-        AppsFlyerParamKeys.surgeryName: surgery,
+        AppsFlyerParamKeys.doctorId: docId,
         AppsFlyerParamKeys.doctorName: doctor,
-        AppsFlyerParamKeys.amount: amount,
-        AppsFlyerParamKeys.promoApplied: promoApplied,
-        if (appliedPromo.isNotEmpty) AppsFlyerParamKeys.promoCode: appliedPromo,
+        AppsFlyerParamKeys.surgeryName: surgery,
+        AppsFlyerParamKeys.amount: paidAmount,
+        AppsFlyerParamKeys.paymentMethod: paymentMethod,
+        AppsFlyerParamKeys.paymentStatus: status,
         AppsFlyerParamKeys.timestamp: timestamp,
       });
     }());
@@ -169,6 +207,16 @@ abstract final class SurgeryAnalytics {
     final digits = price.replaceAll(RegExp(r'\D'), '');
     if (digits.isEmpty) return 0;
     return int.tryParse(digits) ?? 0;
+  }
+
+  static String _analyticsPaymentMethod(String code) {
+    if (ConsultationBookingUtils.isJazzCashPayment(code)) {
+      return AnalyticsLabPaymentMethodKeys.jazzCash;
+    }
+    if (ConsultationBookingUtils.isCashPayment(code)) {
+      return AnalyticsLabPaymentMethodKeys.cod;
+    }
+    return AnalyticsLabPaymentMethodKeys.card;
   }
 
   static String _analyticsMsisdn(String phone) {
