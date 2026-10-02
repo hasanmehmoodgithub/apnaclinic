@@ -69,6 +69,7 @@ class _LabTestSelectTestScreenState extends State<LabTestSelectTestScreen> {
                   : 0;
               return LabTestBrowseHeaderWidget(
                 padding: EdgeInsets.fromLTRB(12.w, 4.h, 16.w, 18.h),
+                titleFontSize: 19.sp,
                 title: l10n.labTestSelectTestHeading,
                 cartCount: cartCount,
                 cartBadgeOverflowLabel: l10n.labTestCartBadgeOverflow,
@@ -106,7 +107,7 @@ class _LabTestSelectTestScreenState extends State<LabTestSelectTestScreen> {
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
                           color: AppColors.clr061E40,
                           fontWeight: FontWeight.w500,
-                          fontSize: 16.sp,
+                          fontSize: 15.sp,
                         ),
                   ),
                   SizedBox(height: 4.h),

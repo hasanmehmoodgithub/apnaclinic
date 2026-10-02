@@ -12,6 +12,7 @@ class LabTestBookingVendorGridWidget extends StatelessWidget {
     required this.vendors,
     required this.selectedIndex,
     required this.onSelect,
+    this.nameFontSize,
   });
 
   static const spacing = 9.0;
@@ -21,6 +22,7 @@ class LabTestBookingVendorGridWidget extends StatelessWidget {
   final List<LabTestBookingVendorOption> vendors;
   final int selectedIndex;
   final ValueChanged<int> onSelect;
+  final double? nameFontSize;
 
   static double tileWidth(double rowWidth) {
     final tileW = (rowWidth - spacing * 2) / 3;
@@ -77,7 +79,7 @@ class LabTestBookingVendorGridWidget extends StatelessWidget {
                         textAlign: TextAlign.center,
                         style: theme.textTheme.bodyMedium?.copyWith(
                           color: const Color(0xFF110844),
-                          fontSize: 14.sp,
+                          fontSize: nameFontSize ?? 14.sp,
                           height: 1,
                         ),
                       ),

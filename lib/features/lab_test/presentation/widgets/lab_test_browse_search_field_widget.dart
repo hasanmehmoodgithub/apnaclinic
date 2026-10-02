@@ -68,7 +68,7 @@ class LabTestBrowseSearchFieldWidget extends StatelessWidget {
               textInputAction: TextInputAction.search,
               style: theme.textTheme.bodyMedium?.copyWith(
                 color: AppColors.clr061E40,
-                fontSize: 14.sp,
+                fontSize: 13.sp,
               ),
               decoration: InputDecoration(
                 isDense: true,
@@ -76,7 +76,7 @@ class LabTestBrowseSearchFieldWidget extends StatelessWidget {
                 hintText: hintText,
                 hintStyle: theme.textTheme.bodyMedium?.copyWith(
                   color: AppColors.clr667B99,
-                  fontSize: 14.sp,
+                  fontSize: 13.sp,
                 ),
               ),
             ),

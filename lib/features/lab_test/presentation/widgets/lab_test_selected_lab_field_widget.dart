@@ -55,7 +55,7 @@ class LabTestSelectedLabFieldWidget extends StatelessWidget {
                   style: theme.textTheme.bodyMedium?.copyWith(
                     color: AppColors.clr061E40,
                     fontWeight: FontWeight.w600,
-                    fontSize: 14.sp,
+                    fontSize: 13.sp,
                   ),
                 ),
               ),
@@ -63,7 +63,7 @@ class LabTestSelectedLabFieldWidget extends StatelessWidget {
                 changeCta,
                 style: theme.textTheme.bodySmall?.copyWith(
                   color: AppColors.clr667B99,
-                  fontSize: 12.sp,
+                  fontSize: 11.sp,
                   height: 1,
                 ),
               ),

@@ -112,6 +112,9 @@ class _LabTestBookingScreenState extends State<LabTestBookingScreen> {
               final testTitle = header.$2.trim();
               return LabTestBrowseHeaderWidget(
                 padding: EdgeInsets.fromLTRB(8.w, 4.h, 16.w, 18.h),
+                titleMaxLines: 1,
+                titleHorizontalPadding: 12.w,
+                titleFontSize: 18.sp,
                 title: testTitle.isNotEmpty
                     ? testTitle
                     : l10n.labTestScreenTitle,
@@ -226,7 +229,7 @@ class _LabTestBookingScreenState extends State<LabTestBookingScreen> {
                                         theme.textTheme.titleMedium?.copyWith(
                                       color: const Color(0xFF061E40),
                                       fontWeight: FontWeight.w500,
-                                      fontSize: 16.sp,
+                                      fontSize: 15.sp,
                                     ),
                                   ),
                                   if (state.args.hasPreferredLab &&
@@ -237,7 +240,7 @@ class _LabTestBookingScreenState extends State<LabTestBookingScreen> {
                                       style: theme.textTheme.bodySmall
                                           ?.copyWith(
                                         color: const Color(0xFF9BA6A7),
-                                        fontSize: 12.sp,
+                                        fontSize: 11.sp,
                                       ),
                                     ),
                                   ],
@@ -326,6 +329,7 @@ class _LabTestBookingScreenState extends State<LabTestBookingScreen> {
                                     if (vendors.isNotEmpty) ...[
                                       SizedBox(height: 12.h),
                                       LabTestBookingVendorGridWidget(
+                                        nameFontSize: 13.sp,
                                         vendors: vendors,
                                         selectedIndex: vendorIndex,
                                         onSelect: (i) {
@@ -509,7 +513,7 @@ TextSpan _partnerFulfilledBySpans(
   final base =
       theme.textTheme.bodySmall?.copyWith(
         color: AppColors.clr061E40,
-        fontSize: 12.sp,
+        fontSize: 11.sp,
         height: 1.25,
         fontWeight: FontWeight.w400,
       ) ??

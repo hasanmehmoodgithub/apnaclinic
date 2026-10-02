@@ -16,6 +16,9 @@ class LabTestBrowseHeaderWidget extends StatelessWidget {
     required this.cartBadgeOverflowLabel,
     this.onCartTap,
     this.showCart = true,
+    this.titleMaxLines,
+    this.titleHorizontalPadding,
+    this.titleFontSize,
   });
 
   final EdgeInsetsGeometry padding;
@@ -24,6 +27,15 @@ class LabTestBrowseHeaderWidget extends StatelessWidget {
   final String cartBadgeOverflowLabel;
   final Future<void> Function()? onCartTap;
   final bool showCart;
+
+  /// When set, the title is limited to this many lines and ellipsized.
+  final int? titleMaxLines;
+
+  /// Extra space on both sides of the title, inside the back and cart controls.
+  final double? titleHorizontalPadding;
+
+  /// Overrides the default 20sp title size.
+  final double? titleFontSize;
 
   @override
   Widget build(BuildContext context) {
@@ -50,14 +62,21 @@ class LabTestBrowseHeaderWidget extends StatelessWidget {
             ),
           ),
           Expanded(
-            child: Text(
-              title,
-              textAlign: TextAlign.center,
-              style: theme.textTheme.titleLarge?.copyWith(
-                color: const Color(0xFF061E40),
-                fontWeight: FontWeight.w700,
-                fontSize: 20.sp,
-                height: 30.9 / 20,
+            child: Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: titleHorizontalPadding ?? 0,
+              ),
+              child: Text(
+                title,
+                textAlign: TextAlign.center,
+                maxLines: titleMaxLines,
+                overflow: titleMaxLines == null ? null : TextOverflow.ellipsis,
+                style: theme.textTheme.titleLarge?.copyWith(
+                  color: const Color(0xFF061E40),
+                  fontWeight: FontWeight.w700,
+                  fontSize: titleFontSize ?? 20.sp,
+                  height: 30.9 / 20,
+                ),
               ),
             ),
           ),

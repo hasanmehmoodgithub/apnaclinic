@@ -86,6 +86,7 @@ class _LabTestCatalogListBlockWidgetState
           return LabTestCatalogEmptyWidget(
             message: widget.selectCityFirstMessage,
             showIllustration: false,
+            fontSize: 13.sp,
           );
         }
 
@@ -103,7 +104,10 @@ class _LabTestCatalogListBlockWidgetState
         }
 
         if (state.filteredItems.isEmpty) {
-          return LabTestCatalogEmptyWidget(message: widget.emptyMessage);
+          return LabTestCatalogEmptyWidget(
+            message: widget.emptyMessage,
+            fontSize: 13.sp,
+          );
         }
 
         final showFooter = state.isLoadingMore;
@@ -140,6 +144,7 @@ class _LabTestCatalogListBlockWidgetState
               sampleTypeLabel: widget.sampleTypeLabel,
               feeFallbackText: widget.feeFallbackText,
               showLabsSummary: widget.showLabsSummary,
+              compactText: true,
             );
           },
         );

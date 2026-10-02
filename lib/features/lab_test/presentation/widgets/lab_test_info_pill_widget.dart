@@ -9,10 +9,12 @@ class LabTestInfoPillWidget extends StatelessWidget {
     super.key,
     required this.value,
     this.highlight = false,
+    this.fontSize,
   });
 
   final String value;
   final bool highlight;
+  final double? fontSize;
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +32,7 @@ class LabTestInfoPillWidget extends StatelessWidget {
         value,
         style: theme.textTheme.bodySmall?.copyWith(
           color: highlight ? AppColors.clr198733 : AppColors.clrA1A1A1,
-          fontSize: 13.sp,
+          fontSize: fontSize ?? 13.sp,
           height: 1.1,
         ),
       ),

@@ -45,7 +45,7 @@ class PharmacyPaymentOptionTile extends StatelessWidget {
         color: AppColors.clrWhite,
         borderRadius: BorderRadius.circular(2.r),
         child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
           decoration: BoxDecoration(
             color: AppColors.clrWhite,
             borderRadius: BorderRadius.circular(2.r),
@@ -53,8 +53,8 @@ class PharmacyPaymentOptionTile extends StatelessWidget {
           child: Row(
             children: [
               Container(
-                width: 46.r,
-                height: 46.r,
+                width: 42.r,
+                height: 42.r,
                 decoration: BoxDecoration(
                   border: Border.all(
                     width: 0.3,
@@ -63,7 +63,7 @@ class PharmacyPaymentOptionTile extends StatelessWidget {
                   shape: BoxShape.circle,
                 ),
                 alignment: Alignment.center,
-                padding: EdgeInsets.all(8.r),
+                padding: EdgeInsets.all(6.r),
                 child: _leading(),
               ),
               SizedBox(width: 12.w),
@@ -81,7 +81,7 @@ class PharmacyPaymentOptionTile extends StatelessWidget {
                           style: theme.textTheme.titleSmall?.copyWith(
                             color: AppColors.clr060,
                             fontWeight: FontWeight.w600,
-                            fontSize: 16.sp,
+                            fontSize: 13.sp,
                           ),
                         ),
                         if (hasBadge)

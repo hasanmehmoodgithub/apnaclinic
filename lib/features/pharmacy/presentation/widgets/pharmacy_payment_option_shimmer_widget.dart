@@ -17,12 +17,12 @@ class PharmacyPaymentOptionShimmerWidget extends StatelessWidget {
           return Padding(
             padding: EdgeInsets.only(bottom: 7.h),
             child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
               child: Row(
                 children: [
                   Container(
-                    width: 46.r,
-                    height: 46.r,
+                    width: 42.r,
+                    height: 42.r,
                     decoration: const BoxDecoration(
                       color: AppColors.clrWhite,
                       shape: BoxShape.circle,
@@ -34,7 +34,7 @@ class PharmacyPaymentOptionShimmerWidget extends StatelessWidget {
                       alignment: Alignment.centerLeft,
                       child: Container(
                         width: 140.w,
-                        height: 16.h,
+                        height: 13.h,
                         decoration: BoxDecoration(
                           color: AppColors.clrWhite,
                           borderRadius: BorderRadius.circular(4.r),

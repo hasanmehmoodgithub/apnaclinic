@@ -62,7 +62,7 @@ class LabTestBookingTestSummaryCardWidget extends StatelessWidget {
                     style: theme.textTheme.titleMedium?.copyWith(
                       fontFamily: 'Afacad',
                       fontWeight: FontWeight.w500,
-                      fontSize: 18.sp,
+                      fontSize: 17.sp,
                       height: 1.2,
                       color: AppColors.clr061E40,
                     ),
@@ -124,7 +124,7 @@ class LabTestBookingTestSummaryCardWidget extends StatelessWidget {
                                 style: theme.textTheme.bodyMedium?.copyWith(
                                   fontFamily: 'Afacad',
                                   color: const Color(0xFF2B2B2B),
-                                  fontSize: 14.sp,
+                                  fontSize: 13.sp,
                                 ),
                               ),
                               SizedBox(width: 6.w),
@@ -149,7 +149,7 @@ class LabTestBookingTestSummaryCardWidget extends StatelessWidget {
                                           ?.copyWith(
                                         fontFamily: 'Afacad',
                                         color: AppColors.clr198733,
-                                        fontSize: 14.sp,
+                                        fontSize: 13.sp,
                                       ),
                                     ),
                                   ),
@@ -171,7 +171,7 @@ class LabTestBookingTestSummaryCardWidget extends StatelessWidget {
                               style: theme.textTheme.bodyMedium?.copyWith(
                                 fontFamily: 'Afacad',
                                 color: const Color(0xFF2B2B2B),
-                                fontSize: 14.sp,
+                                fontSize: 13.sp,
                               ),
                             ),
                             Container(
@@ -191,7 +191,7 @@ class LabTestBookingTestSummaryCardWidget extends StatelessWidget {
                                 style: theme.textTheme.bodySmall?.copyWith(
                                   fontFamily: 'Afacad',
                                   color: const Color(0xFF959595),
-                                  fontSize: 14.sp,
+                                  fontSize: 13.sp,
                                 ),
                               ),
                             ),
@@ -215,13 +215,13 @@ class LabTestBookingTestSummaryCardWidget extends StatelessWidget {
                     originalTextColor: const Color(0xFF979797),
                     originalTextStyle: theme.textTheme.bodySmall?.copyWith(
                       fontFamily: 'Afacad',
-                      fontSize: 12.sp,
+                      fontSize: 11.sp,
                       height: 1.3,
                     ),
                     discountedTextStyle:
                         theme.textTheme.bodyMedium?.copyWith(
                       fontFamily: 'Afacad',
-                      fontSize: 12.sp,
+                      fontSize: 11.sp,
                       height: 1.3,
                     ),
                   ),

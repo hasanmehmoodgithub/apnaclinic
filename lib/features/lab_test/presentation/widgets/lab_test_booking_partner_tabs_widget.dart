@@ -70,7 +70,7 @@ class LabTestBookingPartnerTabsWidget extends StatelessWidget {
                                 fontWeight: selected
                                     ? FontWeight.w700
                                     : FontWeight.w500,
-                                fontSize: 16.sp,
+                                fontSize: 15.sp,
                               ),
                             ),
                           ],

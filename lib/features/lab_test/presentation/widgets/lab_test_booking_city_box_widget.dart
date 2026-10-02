@@ -31,7 +31,7 @@ class LabTestBookingCityBoxWidget extends StatelessWidget {
             cityLabel,
             style: theme.textTheme.bodySmall?.copyWith(
               color: const Color(0xFF667B99),
-              fontSize: 12.sp,
+              fontSize: 11.sp,
               height: 1,
             ),
           ),
@@ -40,7 +40,7 @@ class LabTestBookingCityBoxWidget extends StatelessWidget {
             style: theme.textTheme.bodyMedium?.copyWith(
               color: const Color(0xFF061E40),
               fontWeight: FontWeight.w500,
-              fontSize: 14.sp,
+              fontSize: 13.sp,
               height: 1,
             ),
           ),

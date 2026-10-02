@@ -62,7 +62,7 @@ class LabTestBookingMethodTileWidget extends StatelessWidget {
                         overflow: TextOverflow.ellipsis,
                         style: theme.textTheme.bodyLarge?.copyWith(
                           color: titleColor,
-                          fontSize: 14.sp,
+                          fontSize: 13.sp,
                           height: 1,
                         ),
                       ),

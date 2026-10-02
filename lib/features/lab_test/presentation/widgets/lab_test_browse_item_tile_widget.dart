@@ -16,6 +16,7 @@ class LabTestBrowseItemTileWidget extends StatelessWidget {
     required this.sampleTypeLabel,
     required this.feeFallbackText,
     this.showLabsSummary = true,
+    this.compactText = false,
   });
 
   final LabTestItemEntity item;
@@ -24,6 +25,9 @@ class LabTestBrowseItemTileWidget extends StatelessWidget {
   final String sampleTypeLabel;
   final String feeFallbackText;
   final bool showLabsSummary;
+
+  /// Text 1sp smaller. Used on select-test.
+  final bool compactText;
 
   @override
   Widget build(BuildContext context) {
@@ -59,7 +63,7 @@ class LabTestBrowseItemTileWidget extends StatelessWidget {
                     fontFamily: 'Afacad',
                     color: AppColors.clr061E40,
                     fontWeight: FontWeight.w600,
-                    fontSize: 18.sp,
+                    fontSize: (compactText ? 17 : 18).sp,
                     height: 1.2,
                   ),
                 ),
@@ -78,7 +82,7 @@ class LabTestBrowseItemTileWidget extends StatelessWidget {
                         overflow: TextOverflow.ellipsis,
                         style: theme.textTheme.bodyMedium?.copyWith(
                           color: AppColors.clr4B5668,
-                          fontSize: 13.sp,
+                          fontSize: (compactText ? 12 : 13).sp,
                           height: 1.15,
                         ),
                       ),
@@ -97,10 +101,13 @@ class LabTestBrowseItemTileWidget extends StatelessWidget {
                                 sampleTypeLabel,
                                 style: theme.textTheme.bodyMedium?.copyWith(
                                   color: AppColors.clr303D4F,
-                                  fontSize: 13.sp,
+                                  fontSize: (compactText ? 12 : 13).sp,
                                 ),
                               ),
-                              LabTestInfoPillWidget(value: item.sampleType),
+                              LabTestInfoPillWidget(
+                            value: item.sampleType,
+                            fontSize: compactText ? 12.sp : null,
+                          ),
                             ],
                           ),
                         ),
@@ -115,12 +122,12 @@ class LabTestBrowseItemTileWidget extends StatelessWidget {
                                 discountedFee: discountedFee,
                                 originalTextStyle:
                                     theme.textTheme.bodySmall?.copyWith(
-                                  fontSize: 12.sp,
+                                  fontSize: (compactText ? 11 : 12).sp,
                                   fontWeight: FontWeight.w500,
                                 ),
                                 discountedTextStyle:
                                     theme.textTheme.bodyMedium?.copyWith(
-                                  fontSize: 12.sp,
+                                  fontSize: (compactText ? 11 : 12).sp,
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
@@ -137,13 +144,14 @@ class LabTestBrowseItemTileWidget extends StatelessWidget {
                             requirementLabel,
                             style: theme.textTheme.bodyMedium?.copyWith(
                               color: AppColors.clr303D4F,
-                              fontSize: 13.sp,
+                              fontSize: (compactText ? 12 : 13).sp,
                             ),
                           ),
                           SizedBox(width: 8.w),
                           LabTestInfoPillWidget(
                             value: requirement,
                             highlight: true,
+                            fontSize: compactText ? 12.sp : null,
                           ),
                         ],
                       ),

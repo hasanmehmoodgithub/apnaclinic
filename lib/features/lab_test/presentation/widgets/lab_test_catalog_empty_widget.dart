@@ -10,10 +10,12 @@ class LabTestCatalogEmptyWidget extends StatelessWidget {
     super.key,
     required this.message,
     this.showIllustration = true,
+    this.fontSize,
   });
 
   final String message;
   final bool showIllustration;
+  final double? fontSize;
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +39,7 @@ class LabTestCatalogEmptyWidget extends StatelessWidget {
               textAlign: TextAlign.center,
               style: theme.textTheme.bodyMedium?.copyWith(
                 color: AppColors.clr8A97A8,
-                fontSize: 14.sp,
+                fontSize: fontSize ?? 14.sp,
                 fontWeight: FontWeight.w500,
               ),
             ),

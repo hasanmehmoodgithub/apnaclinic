@@ -28,7 +28,7 @@ class LabTestBookingPatientFieldWidget extends StatelessWidget {
           style: theme.textTheme.titleMedium?.copyWith(
             color: AppColors.clr061E40,
             fontWeight: FontWeight.w500,
-            fontSize: 16.sp,
+            fontSize: 15.sp,
           ),
         ),
         SizedBox(height: 12.h),
@@ -49,7 +49,7 @@ class LabTestBookingPatientFieldWidget extends StatelessWidget {
                   style: theme.textTheme.bodyMedium?.copyWith(
                     color: AppColors.clr110844,
                     fontWeight: FontWeight.w400,
-                    fontSize: 16.sp,
+                    fontSize: 15.sp,
                     height: 1.0,
                   ),
                 ),

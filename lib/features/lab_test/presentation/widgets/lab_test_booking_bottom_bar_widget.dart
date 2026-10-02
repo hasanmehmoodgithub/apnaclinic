@@ -43,7 +43,7 @@ class LabTestBookingBottomBarWidget extends StatelessWidget {
               ),
               textStyle: TextStyle(
                 fontWeight: FontWeight.w700,
-                fontSize: 16.sp,
+                fontSize: 15.sp,
               ),
             ),
             onPressed: enabled ? onPressed : null,
@@ -71,7 +71,7 @@ class LabTestBookingBottomBarWidget extends StatelessWidget {
                               ?.copyWith(
                             color: const Color(0xFF0FAA9A),
                             fontWeight: FontWeight.w700,
-                            fontSize: 14.sp,
+                            fontSize: 13.sp,
                             height: 1,
                           ),
                         ),

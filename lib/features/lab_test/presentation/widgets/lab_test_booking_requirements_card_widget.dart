@@ -42,7 +42,7 @@ class LabTestBookingRequirementsCardWidget extends StatelessWidget {
                     style: theme.textTheme.titleMedium?.copyWith(
                       color: AppColors.clr061E40,
                       fontWeight: FontWeight.w600,
-                      fontSize: 16.sp,
+                      fontSize: 15.sp,
                     ),
                   ),
                 ),
@@ -57,7 +57,7 @@ class LabTestBookingRequirementsCardWidget extends StatelessWidget {
                     badgeLabel,
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: AppColors.clr198733,
-                      fontSize: 12.sp,
+                      fontSize: 11.sp,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -84,7 +84,7 @@ class LabTestBookingRequirementsCardWidget extends StatelessWidget {
                       '${i + 1}. ${lines[i]}',
                       style: theme.textTheme.bodyMedium?.copyWith(
                         color: AppColors.clr061E40,
-                        fontSize: 14.sp,
+                        fontSize: 13.sp,
                         fontWeight: FontWeight.w400,
                         height: 1.35,
                       ),
