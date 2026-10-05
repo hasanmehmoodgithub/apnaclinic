@@ -41,7 +41,7 @@ class AppPrefKeys {
   static String get fcmTokenSentToBackend =>
       _encryption.obfuscateKey('fcm_token_sent$_prefVersion');
   static String get labTestSelectedCity =>
-      _encryption.obfuscateKey('4lab_test_selected_city$_prefVersion');
+      _encryption.obfuscateKey('lab_test_selected_city$_prefVersion');
   static String get surgerySelectedCity =>
       _encryption.obfuscateKey('surgery_selected_city$_prefVersion');
   static String get supportSettings =>
