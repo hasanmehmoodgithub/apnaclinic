@@ -42,7 +42,7 @@ Surgery mocks use `MockConfig.enableSurgeryMocks` (default false).
 
 Firebase via `SurgeryAnalytics` / `AnalyticsService`. Hub extra `source_screen`: home services (`Home`), promotional banner (`Banner`). Global search opens patient details and logs `surgery_module` with `source_screen=Search`, plus `surgery_select_item` and `surgery_doctor_select`. City event fires when the user taps the city dropdown (current city). Lead submit fires `surgery_lead_generated` (`booking_id` from API). Book-surgery + successful payment settle (COD / JazzCash / Card) fires `surgery_booked` from bookings details. Fail / pending payment do not fire `surgery_booked`. `fb_content_type` / `content_type` are not sent (Firebase only). Notifications open booking details, not the hub.
 
-AppsFlyer (separate): `surgery_module` (`source_screen`, `selected_city`) on hub open / city change; `af_initiated_checkout` (`af_content_type`=`Surgery`, `surgery_name`, `doctor_id`, `doctor_name`) on patient details open; `af_purchase` on **paid** book-surgery success (`content_type`/`af_content_type`=`Surgery`, booking/user/surgery/payment fields).
+AppsFlyer (separate): `surgery_module` (`source_screen`, `selected_city`) on hub open / city change; `af_initiated_checkout` (`af_content_type`=`Surgery`, `surgery_name`, `doctor_id`, `doctor_name`) on patient details open; `af_lead_surgery` on Confirm Booking lead success (same booking/user/surgery fields as `surgery_lead_generated`, plus `content_type`/`af_content_type`=`Surgery`); `af_purchase_surgery` on **paid** book-surgery success (`content_type`/`af_content_type`=`Surgery`, booking/user/surgery/payment fields).
 
 | Event | When | Params |
 |---|---|---|

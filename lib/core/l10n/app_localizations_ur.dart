@@ -1700,6 +1700,9 @@ class AppLocalizationsUr extends AppLocalizations {
   String get promoCodeInvalid => 'غلط پرومو کوڈ';
 
   @override
+  String get promoCodeApplyRequired => 'براہ کرم پرومو کوڈ لاگو کریں';
+
+  @override
   String get promoCodeDiscountLabel => 'پرومو رعایت';
 
   @override

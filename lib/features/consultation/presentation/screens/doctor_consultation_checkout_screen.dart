@@ -25,8 +25,8 @@ import '../widgets/doctor_consultation_checkout_billing_section_widget.dart';
 import '../widgets/doctor_consultation_checkout_payment_method_tile_widget.dart';
 import '../widgets/doctor_consultation_checkout_shimmer_widget.dart';
 import '../widgets/doctor_consultation_jazzcash_accounts_sheet_widget.dart';
-import '../../../promo_code/domain/entities/promo_code_service.dart';
 import '../../../promo_code/presentation/cubit/promo_code_cubit.dart';
+import '../../../promo_code/presentation/widgets/promo_code_field_widget.dart';
 import '../../../promo_code/presentation/cubit/promo_code_state.dart';
 
 class DoctorConsultationCheckoutScreen extends StatefulWidget {
@@ -73,12 +73,7 @@ class _DoctorConsultationCheckoutScreenState
     final checkoutData = state.data;
     if (checkoutData == null) return;
 
-    final promoCubit = context.read<PromoCodeCubit>();
-    final promoOk = await promoCubit.ensureValidated(
-      service: PromoCodeService.consultation,
-      amount: checkoutData.total,
-    );
-    if (!promoOk || !mounted) return;
+    if (!context.read<PromoCodeCubit>().allowCheckout()) return;
 
     final selectedOption = _selectedPaymentOption(state);
     if (ConsultationBookingUtils.isJazzCashPayment(
@@ -299,15 +294,23 @@ class _DoctorConsultationCheckoutScreenState
                               builder: (context, promo) {
                                 final isBusy =
                                     state.isSubmitting || promo.isValidating;
+                                final canContinue =
+                                    state.selectedPaymentMethodId != null &&
+                                    !isBusy;
                                 return SizedBox(
                                   width: double.infinity,
                                   height: 56.h,
-                                  child: FilledButton(
-                                    onPressed: state.selectedPaymentMethodId ==
-                                                null ||
-                                            isBusy
-                                        ? null
-                                        : () => _onContinuePressed(state),
+                                  child: Listener(
+                                    behavior: HitTestBehavior.opaque,
+                                    onPointerDown: (_) {
+                                      if (canContinue) {
+                                        PromoCodeFieldWidget.ignoreNextSubmit();
+                                      }
+                                    },
+                                    child: FilledButton(
+                                    onPressed: canContinue
+                                        ? () => _onContinuePressed(state)
+                                        : null,
                                     style: FilledButton.styleFrom(
                                       backgroundColor: AppColors.clr1FAFA3,
                                       shape: RoundedRectangleBorder(
@@ -336,6 +339,7 @@ class _DoctorConsultationCheckoutScreenState
                                                   fontSize: 17.sp,
                                                 ),
                                           ),
+                                    ),
                                   ),
                                 );
                               },

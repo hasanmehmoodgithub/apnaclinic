@@ -10,12 +10,16 @@ class PromoCodeState extends Equatable {
     this.draftCode = '',
     this.displayCode = '',
     this.result,
+    this.needsApply = false,
   });
 
   final PromoCodeStatus status;
   final String draftCode;
   final String displayCode;
   final PromoCodeValidationEntity? result;
+
+  /// True when a code was typed but not applied, and checkout was attempted.
+  final bool needsApply;
 
   bool get isValidating => status == PromoCodeStatus.validating;
   bool get isApplied =>
@@ -42,15 +46,17 @@ class PromoCodeState extends Equatable {
     String? displayCode,
     PromoCodeValidationEntity? result,
     bool clearResult = false,
+    bool? needsApply,
   }) {
     return PromoCodeState(
       status: status ?? this.status,
       draftCode: draftCode ?? this.draftCode,
       displayCode: displayCode ?? this.displayCode,
       result: clearResult ? null : (result ?? this.result),
+      needsApply: needsApply ?? this.needsApply,
     );
   }
 
   @override
-  List<Object?> get props => [status, draftCode, displayCode, result];
+  List<Object?> get props => [status, draftCode, displayCode, result, needsApply];
 }

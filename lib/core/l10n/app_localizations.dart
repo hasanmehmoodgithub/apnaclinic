@@ -3196,6 +3196,12 @@ abstract class AppLocalizations {
   /// **'Invalid Promo Code'**
   String get promoCodeInvalid;
 
+  /// No description provided for @promoCodeApplyRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Please apply the promo code'**
+  String get promoCodeApplyRequired;
+
   /// No description provided for @promoCodeDiscountLabel.
   ///
   /// In en, this message translates to:

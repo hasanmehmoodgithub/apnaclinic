@@ -55,6 +55,9 @@ class SearchResultEntity {
     this.packageName,
     this.experience,
     this.qualification,
+    this.labId,
+    this.cityName,
+    this.requirement,
   });
 
   final String id;
@@ -94,6 +97,15 @@ class SearchResultEntity {
 
   /// Education / qualifications for doctor / surgery cards and booking screens.
   final String? qualification;
+
+  /// Lab id from the first search `labs[]` entry. Opens the preferred-lab booking flow.
+  final String? labId;
+
+  /// City name from the first search `labs[]` entry.
+  final String? cityName;
+
+  /// `Fasting` when the lab test requires fasting.
+  final String? requirement;
 
   /// Appointment/availability date shown as a pill on doctor cards
   /// (e.g. "10/09/24").

@@ -127,9 +127,11 @@ void openSearchLabBooking(
     return;
   }
 
-  final city =
+  final cityFromResult = (item.cityName ?? '').trim();
+  final savedCity =
       (sl<AppPref>().getString(AppPrefKeys.labTestSelectedCity) ?? '')
           .trim();
+  final city = cityFromResult.isNotEmpty ? cityFromResult : savedCity;
   if (city.isEmpty) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text(l10n.labTestPleaseSelectCityFirst)),
@@ -143,9 +145,20 @@ void openSearchLabBooking(
     return;
   }
 
+  final labId = (item.labId ?? '').trim();
+  if (labId.isEmpty) {
+    context.pushNamed(
+      AppRoutes.labTest,
+      extra: {
+        LabTestRouteExtraKeys.source: AnalyticsLabSourceKeys.search,
+      },
+    );
+    return;
+  }
+
   LabTestAnalytics.logItemSelect(
     testName: item.title,
-    labName: item.subtitle,
+    labName: item.providerLabel ?? item.subtitle,
     sampleType: item.sampleType ?? '',
   );
   context.pushNamed(
@@ -155,6 +168,9 @@ void openSearchLabBooking(
       city: city,
       requirementLines: LabTestCatalogDefaults.requirementLines,
       testTitle: item.title,
+      preferredLabId: labId,
+      preferredLabName: (item.providerLabel ?? '').trim(),
+      preferredLabLogoUrl: (item.labLogo ?? '').trim(),
     ),
   );
 }

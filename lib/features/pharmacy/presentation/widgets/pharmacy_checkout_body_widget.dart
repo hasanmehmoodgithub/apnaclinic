@@ -45,11 +45,7 @@ class PharmacyCheckoutBodyWidget extends StatelessWidget {
   Future<void> _onConfirm(BuildContext context) async {
     final cubit = context.read<PharmacyCubit>();
     final promoCubit = context.read<PromoCodeCubit>();
-    final promoOk = await promoCubit.ensureValidated(
-      service: PromoCodeService.pharmacy,
-      amount: cubit.state.subtotal.round(),
-    );
-    if (!promoOk || !context.mounted) return;
+    if (!promoCubit.allowCheckout()) return;
 
     final paymentMethod =
         cubit.state.selectedPaymentProviderCode?.trim() ?? '';
@@ -281,10 +277,12 @@ class PharmacyCheckoutBodyWidget extends StatelessWidget {
                                   ),
                           onCleared: context.read<PromoCodeCubit>().clear,
                         ),
-                        if (promo.isInvalid) ...[
+                        if (promo.isInvalid || promo.needsApply) ...[
                           SizedBox(height: 8.h),
                           Text(
-                            l10n.promoCodeInvalid,
+                            promo.needsApply
+                                ? l10n.promoCodeApplyRequired
+                                : l10n.promoCodeInvalid,
                             style:
                                 Theme.of(context).textTheme.bodyMedium?.copyWith(
                                       color: AppColors.clrC9252C,
@@ -372,16 +370,22 @@ class PharmacyCheckoutBodyWidget extends StatelessWidget {
                   buildWhen: (previous, current) =>
                       previous.isValidating != current.isValidating,
                   builder: (context, promo) {
-                    return AppButtonWidget(
-                      title: l10n.pharmacyCheckoutConfirmCta,
-                      bgClr: AppColors.clr1FAFA3,
-                      onTap: state.cartItems.isEmpty ||
-                              promo.isValidating ||
-                              state.paymentProvidersStatus ==
-                                  StateStatus.loading ||
-                              state.selectedPaymentProviderCode == null
-                          ? null
-                          : () => _onConfirm(context),
+                    final confirmEnabled = state.cartItems.isNotEmpty &&
+                        !promo.isValidating &&
+                        state.paymentProvidersStatus != StateStatus.loading &&
+                        state.selectedPaymentProviderCode != null;
+                    return Listener(
+                      behavior: HitTestBehavior.opaque,
+                      onPointerDown: (_) {
+                        if (confirmEnabled) {
+                          PromoCodeFieldWidget.ignoreNextSubmit();
+                        }
+                      },
+                      child: AppButtonWidget(
+                        title: l10n.pharmacyCheckoutConfirmCta,
+                        bgClr: AppColors.clr1FAFA3,
+                        onTap: confirmEnabled ? () => _onConfirm(context) : null,
+                      ),
                     );
                   },
                 ),

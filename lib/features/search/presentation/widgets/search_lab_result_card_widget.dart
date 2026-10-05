@@ -22,12 +22,6 @@ class SearchLabResultCardWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final labsSummary = [
-      if (item.subtitle.trim().isNotEmpty) item.subtitle.trim(),
-      if ((item.hospital ?? '').trim().isNotEmpty &&
-          item.hospital!.trim() != item.subtitle.trim())
-        item.hospital!.trim(),
-    ].join(' - ');
     final sampleType = (item.sampleType ?? '').trim();
     final discounted = (item.price ?? item.fee)?.trim();
     final original = item.oldFee?.trim();
@@ -39,7 +33,7 @@ class SearchLabResultCardWidget extends StatelessWidget {
           id: item.id,
           title: item.title,
           sampleType: sampleType.isEmpty ? 'N/A' : sampleType,
-          labsSummary: labsSummary.isEmpty ? null : labsSummary,
+          requirement: item.requirement,
           discountedFee: (discounted == null || discounted.isEmpty)
               ? null
               : discounted,
@@ -54,6 +48,8 @@ class SearchLabResultCardWidget extends StatelessWidget {
         requirementLabel: l10n.labTestRequirementLabel,
         sampleTypeLabel: l10n.labTestSampleTypeLabel,
         feeFallbackText: l10n.labTestBrowseItemFeeFallback,
+        showLabsSummary: false,
+        compactText: true,
       ),
     );
   }

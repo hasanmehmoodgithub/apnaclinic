@@ -13,7 +13,18 @@ class PromoCodeCubit extends Cubit<PromoCodeState> {
   final ValidatePromoCodeUseCase _validateUseCase;
 
   void onInputChanged(String value) {
-    emit(state.copyWith(draftCode: value));
+    emit(state.copyWith(draftCode: value, needsApply: false));
+  }
+
+  /// Checkout may continue when no code is typed, or one is already applied.
+  /// A typed code that was not submitted blocks checkout and asks the user to apply it.
+  bool allowCheckout() {
+    if (state.isValidating || state.isInvalid) return false;
+    if (state.isApplied || state.draftCode.trim().isEmpty) return true;
+    if (!state.needsApply) {
+      emit(state.copyWith(needsApply: true));
+    }
+    return false;
   }
 
   Future<void> validate({
@@ -32,6 +43,7 @@ class PromoCodeCubit extends Cubit<PromoCodeState> {
         draftCode: submitted,
         displayCode: submitted,
         clearResult: true,
+        needsApply: false,
       ),
     );
 
@@ -56,6 +68,7 @@ class PromoCodeCubit extends Cubit<PromoCodeState> {
             status: PromoCodeStatus.invalid,
             displayCode: submitted,
             clearResult: true,
+            needsApply: false,
           ),
         );
       },
@@ -67,27 +80,11 @@ class PromoCodeCubit extends Cubit<PromoCodeState> {
             draftCode: entity.code,
             displayCode: entity.code,
             result: entity,
+            needsApply: false,
           ),
         );
       },
     );
-  }
-
-  /// Applies a pending draft code, or keeps an already-applied code.
-  /// Returns false when the current chip is invalid.
-  Future<bool> ensureValidated({
-    required PromoCodeService service,
-    required int amount,
-  }) async {
-    if (state.isApplied) return true;
-    if (state.isInvalid) return false;
-    if (state.isValidating) return false;
-
-    final draft = state.draftCode.trim();
-    if (draft.isEmpty) return true;
-
-    await validate(service: service, amount: amount, code: draft);
-    return state.isApplied;
   }
 
   void clear() {

@@ -4,6 +4,7 @@ import '../../../../core/constants/app_colors.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/widgets/app_button_widget.dart';
+import '../../../promo_code/presentation/widgets/promo_code_field_widget.dart';
 import 'lab_test_checkout_error_banner_widget.dart';
 
 class LabTestCheckoutBottomBarWidget extends StatelessWidget {
@@ -32,10 +33,16 @@ class LabTestCheckoutBottomBarWidget extends StatelessWidget {
                 padding: EdgeInsets.only(bottom: 10.h),
                 child: LabTestCheckoutErrorBannerWidget(message: errorMessage!),
               ),
-            AppButtonWidget(
-              title: AppLocalizations.of(context)!.labTestBookCta,
-              bgClr: AppColors.clr1FAFA3,
-              onTap: isBusy ? null : onProceed,
+            Listener(
+              behavior: HitTestBehavior.opaque,
+              onPointerDown: (_) {
+                if (!isBusy) PromoCodeFieldWidget.ignoreNextSubmit();
+              },
+              child: AppButtonWidget(
+                title: AppLocalizations.of(context)!.labTestBookCta,
+                bgClr: AppColors.clr1FAFA3,
+                onTap: isBusy ? null : onProceed,
+              ),
             ),
           ],
         ),

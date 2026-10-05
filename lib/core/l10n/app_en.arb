@@ -688,6 +688,7 @@
   "consultationTotalChargesLabel": "Total Charges",
   "promoCodeHint": "Enter promo code",
   "promoCodeInvalid": "Invalid Promo Code",
+  "promoCodeApplyRequired": "Please apply the promo code",
   "promoCodeDiscountLabel": "Promo Discount",
   "consultationSelectAccountTitle": "Select Account",
   "consultationProceedCta": "Proceed",

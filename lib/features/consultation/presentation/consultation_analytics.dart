@@ -42,7 +42,9 @@ abstract final class ConsultationAnalytics {
         AnalyticsParamKeys.source: source,
       }),
     );
-    _logAppsFlyerConsultancyModule(source: source);
+    if (source != AnalyticsConsultancySourceKeys.search) {
+      _logAppsFlyerConsultancyModule(source);
+    }
   }
 
   static void logSearchClicked() {
@@ -57,7 +59,6 @@ abstract final class ConsultationAnalytics {
         AnalyticsParamKeys.categoryName: categoryName,
       }),
     );
-    _logAppsFlyerConsultancyModule(categoryName: categoryName);
   }
 
   static void logListingScreen(String categoryName) {
@@ -66,7 +67,6 @@ abstract final class ConsultationAnalytics {
         AnalyticsParamKeys.categoryName: categoryName,
       }),
     );
-    _logAppsFlyerConsultancyModule(categoryName: categoryName);
   }
 
   static void logDoctorSearchClicked() {
@@ -79,7 +79,6 @@ abstract final class ConsultationAnalytics {
         AnalyticsParamKeys.keyword: keyword,
       }),
     );
-    _logAppsFlyerConsultancyModule(keyword: keyword);
   }
 
   static void logFilterApplied(String partner) {
@@ -88,7 +87,6 @@ abstract final class ConsultationAnalytics {
         AnalyticsParamKeys.partner: partner,
       }),
     );
-    _logAppsFlyerConsultancyModule(partner: partner);
   }
 
   static void logProfileClicked(ResultsDoctorItem doctor) {
@@ -181,8 +179,8 @@ abstract final class ConsultationAnalytics {
 
       final userType =
           promoParams[AnalyticsParamKeys.userType]?.toString() ??
-          AnalyticsUserTypeKeys.standard;
-      await _appsFlyer.logEvent(AppsFlyerEventKeys.purchase, {
+          AnalyticsUserTypeKeys.free;
+      await _appsFlyer.logEvent(AppsFlyerEventKeys.purchaseConsultation, {
         AppsFlyerParamKeys.contentType: AppsFlyerContentTypeKeys.consultancy,
         AppsFlyerParamKeys.afContentType: AppsFlyerContentTypeKeys.consultancy,
         AppsFlyerParamKeys.bookingId: bookingId,
@@ -205,18 +203,10 @@ abstract final class ConsultationAnalytics {
     }());
   }
 
-  static void _logAppsFlyerConsultancyModule({
-    String source = '',
-    String categoryName = '',
-    String keyword = '',
-    String partner = '',
-  }) {
+  static void _logAppsFlyerConsultancyModule(String source) {
     unawaited(
       _appsFlyer.logEvent(AppsFlyerEventKeys.consultancyModule, {
         AppsFlyerParamKeys.source: source,
-        AppsFlyerParamKeys.categoryName: categoryName,
-        AppsFlyerParamKeys.keyword: keyword,
-        AppsFlyerParamKeys.partner: partner,
       }),
     );
   }

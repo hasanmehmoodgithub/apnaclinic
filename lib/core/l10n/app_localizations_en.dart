@@ -1700,6 +1700,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get promoCodeInvalid => 'Invalid Promo Code';
 
   @override
+  String get promoCodeApplyRequired => 'Please apply the promo code';
+
+  @override
   String get promoCodeDiscountLabel => 'Promo Discount';
 
   @override

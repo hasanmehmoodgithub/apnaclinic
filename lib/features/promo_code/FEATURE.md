@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Shared **promo code** validate + input for checkout. Users enter a code, the aggregator returns the discount, and the hosting module updates payable total.
+Shared **promo code** validate + input for checkout. Users enter a code, the aggregator returns the discount, and the hosting module updates payable total. Validate runs only when the user presses keyboard Done on the promo field. Pharmacy Confirm, lab Book, and consultation Continue do not call validate. If a code is typed but not applied, those buttons stay on the screen and show `promoCodeApplyRequired`.
 
 ## Routes / entry
 
@@ -41,10 +41,10 @@ Firebase via `PromoCodeAnalytics` / `AnalyticsService` (mobile app only). CRM ad
 | Event | When | Params |
 |---|---|---|
 | `promo_code_entered` | User submits a code to validate | `code`, `service` (`CONSULTATION` / `LAB` / `PHARMACY`) |
-| `promo_code_applied` | Validate succeeds | `code`, `service`, `discount_type`, `discount_value`, `user_type` (`pro` / `standard`) |
+| `promo_code_applied` | Validate succeeds | `code`, `service`, `discount_type`, `discount_value`, `user_type` (`free` for now; Pro membership is not sent) |
 | `promo_code_rejected` | Validate fails | `code`, `service`, `reason` (`expired` / `not_started` / `ineligible_service` / `ineligible_user_type` / `invalid_code`) |
 
-Order-confirmed events also include `promo_code_used` (Yes/No), `promo_code` (when used), and `user_type`:
+Order-confirmed events also include `promo_code_used` (Yes/No), `promo_code` (when used), and `user_type` (`free`):
 
 - `pharmacy_order_confirmed`
 - `doctor_consultation_booked`

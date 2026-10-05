@@ -275,7 +275,7 @@ abstract final class LabTestAnalytics {
         ...promoParams,
       });
 
-      await _appsFlyer.logEvent(AppsFlyerEventKeys.purchase, {
+      await _appsFlyer.logEvent(AppsFlyerEventKeys.purchaseLab, {
         AppsFlyerParamKeys.contentType: AppsFlyerContentTypeKeys.lab,
         AppsFlyerParamKeys.afContentType: AppsFlyerContentTypeKeys.lab,
         AppsFlyerParamKeys.bookingId: bookingId,

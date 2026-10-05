@@ -8,7 +8,7 @@ Global search for doctors, pharmacy, lab tests, surgery, and more. Supports text
 
 - Results show `Search for "{query}"` then section pills (Doctor Consultation / Laboratory Tests / Surgery Booking / Pharmacy). If every section is empty after submit, shows `SearchEmptyResultsWidget` (“No result found for "{query}"”).
 - Doctor cards: match consultation list — avatar, name + rating badge, specialty/experience/education, partner logo, Fee + strikethrough, Book Now; soft shadow.
-- Lab cards: same catalog tile as lab test browse (`LabTestBrowseItemTileWidget`) — grey title header, labs summary, Sample Type pill + price pill.
+- Lab cards: same catalog tile as Select Test (`LabTestBrowseItemTileWidget`, no labs-summary line, compact text). Fasting shows the Requirement pill when `fastingRequired` is true.
 - Surgery cards: doctor header + specialty/credentials + partner logo; hospital/procedure + “Starting from”/old fee; shorter full-width Book Now.
 - Pharmacy cards: product image, name, price (no card border).
 - Search field: mic/clear + search icon inside the input (no separate search button). Allows punctuation/symbols; emoji are still blocked. Max **100** characters (`SearchUiConfig.queryMaxLength`; counter hidden). Voice transcripts and submit are truncated to the same cap.
@@ -16,13 +16,13 @@ Global search for doctors, pharmacy, lab tests, surgery, and more. Supports text
 ## Routes / entry
 
 - `AppRoutes.search` — `SearchScreen` with optional `SearchLaunchArgs` (`initialQuery`, `startVoiceSearch`).
-- Result taps: pharmacy → `AppRoutes.pharmacy`; doctor → `AppRoutes.consultationBookDoctor` (login); lab → `AppRoutes.labTestBooking` (login + saved city, else lab hub); surgery offer → `AppRoutes.surgeryPatientDetails` (login).
+- Result taps: pharmacy → `AppRoutes.pharmacy`; doctor → `AppRoutes.consultationBookDoctor` (login); lab → `AppRoutes.labTestBooking` with `preferredLabId` from the first `labs[]` entry (login + city from that lab, else saved city; missing city or lab id opens the lab hub); surgery offer → `AppRoutes.surgeryPatientDetails` (login).
 
 ## Data & APIs
 
 - **GET** `AppUrls.mobileSearchPopular` → `/acs-aggregator/api/v1/mobile/search/popular`. Called on initial / cleared state to populate popular chips (`data[]` string list).
 - **GET** `AppUrls.mobileSearch(text:, limit:)` → `/acs-aggregator/api/v1/mobile/search?text=&limit=` (default `limit=5`). Called **only on submit** (search icon / keyboard submit / recent·popular·suggestion tap / voice final). Typing does not hit the network.
-- Response `data`: `doctorConsultation[]` (fee applies `discountPercent`; `yearsOfExperience` / `education` / `bio` mapped separately), `labTests[]` (first `labs[]` entry only), `surgeryBooking[]` (doctor/package offers with `surgeryId` / `doctorId` / `cityId` / prices / hospital / partner; experience and education mapped separately), `pharmacy[]` (Partner product fields). Mapped into search sections.
+- Response `data`: `doctorConsultation[]` (fee applies `discountPercent`; `yearsOfExperience` / `education` / `bio` mapped separately), `labTests[]` (first `labs[]` entry: `labId`, `labName`, `logoUrl`, city, price; `fastingRequired` maps to the Requirement pill), `surgeryBooking[]` (doctor/package offers with `surgeryId` / `doctorId` / `cityId` / prices / hospital / partner; experience and education mapped separately), `pharmacy[]` (Partner product fields). Mapped into search sections.
 - Doctor Book Now → `ResultsDoctorItem` with `experience`, `qualification`, and `description` (bio). Surgery Book Now → `SurgeryPatientDetailsArgs` with `experience` and `qualifications`. Search cards show experience/education only (not bio).
 
 ## State

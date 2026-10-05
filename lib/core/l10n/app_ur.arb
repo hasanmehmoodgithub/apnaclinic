@@ -582,6 +582,7 @@
   "consultationTotalChargesLabel": "کل چارجز",
   "promoCodeHint": "پرومو کوڈ درج کریں",
   "promoCodeInvalid": "غلط پرومو کوڈ",
+  "promoCodeApplyRequired": "براہ کرم پرومو کوڈ لاگو کریں",
   "promoCodeDiscountLabel": "پرومو رعایت",
   "consultationSelectAccountTitle": "اکاؤنٹ منتخب کریں",
   "consultationProceedCta": "آگے بڑھیں",

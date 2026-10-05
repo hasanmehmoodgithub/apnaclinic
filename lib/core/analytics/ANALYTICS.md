@@ -5,9 +5,11 @@ Full UI + parameter report for product and engineering:
 
 Use `AnalyticsService.logEvent` for every **Firebase** event. Do not add feature-specific
 methods on the service. Firebase is the first backend; add more in DI later.
-AppsFlyer is scaffolded separately for attribution + its own events — see
-[APPSFLYER.md](../services/APPSFLYER.md). Do not fan out Firebase events to AppsFlyer
-unless product asks.
+AppsFlyer is separate from Firebase. Event names, triggers, and how a shared
+name is told apart by parameters:
+[APPSFLYER_EVENTS.html](APPSFLYER_EVENTS.html) (open in a browser).
+SDK wiring: [APPSFLYER.md](../services/APPSFLYER.md). Do not fan out Firebase events
+to AppsFlyer unless product asks.
 
 Firebase receives events **only when `FlavorConfig.isProduction`**.
 Development and staging still print `developer.log` (`event:` / `screen:`) so

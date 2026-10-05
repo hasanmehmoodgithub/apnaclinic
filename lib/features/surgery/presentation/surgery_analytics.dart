@@ -132,6 +132,20 @@ abstract final class SurgeryAnalytics {
         AnalyticsParamKeys.timestamp: timestamp,
       }),
     );
+    unawaited(
+      _appsFlyer.logEvent(AppsFlyerEventKeys.leadSurgery, {
+        AppsFlyerParamKeys.contentType: AppsFlyerContentTypeKeys.surgery,
+        AppsFlyerParamKeys.afContentType: AppsFlyerContentTypeKeys.surgery,
+        AppsFlyerParamKeys.bookingId: id,
+        AppsFlyerParamKeys.userName: name,
+        AppsFlyerParamKeys.msisdn: analyticsMsisdn,
+        AppsFlyerParamKeys.doctorId: docId,
+        AppsFlyerParamKeys.doctorName: doctor,
+        AppsFlyerParamKeys.surgeryName: surgery,
+        AppsFlyerParamKeys.amount: amount,
+        AppsFlyerParamKeys.timestamp: timestamp,
+      }),
+    );
   }
 
   /// Book-surgery + payment settle succeeds (COD / JazzCash / Card).
@@ -173,7 +187,7 @@ abstract final class SurgeryAnalytics {
 
     unawaited(() async {
       final userType = await PromoCodeAnalytics.resolveUserType();
-      await _appsFlyer.logEvent(AppsFlyerEventKeys.purchase, {
+      await _appsFlyer.logEvent(AppsFlyerEventKeys.purchaseSurgery, {
         AppsFlyerParamKeys.contentType: AppsFlyerContentTypeKeys.surgery,
         AppsFlyerParamKeys.afContentType: AppsFlyerContentTypeKeys.surgery,
         AppsFlyerParamKeys.bookingId: id,

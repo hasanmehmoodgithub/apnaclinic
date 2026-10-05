@@ -242,6 +242,7 @@ class AnalyticsUserTypeKeys {
 
   static const pro = 'pro';
   static const standard = 'standard';
+  static const free = 'free';
 }
 
 class AnalyticsPromoRejectReasonKeys {

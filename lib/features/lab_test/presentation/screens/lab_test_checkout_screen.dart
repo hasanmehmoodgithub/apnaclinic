@@ -23,7 +23,6 @@ import '../../../consultation/presentation/widgets/doctor_consultation_jazzcash_
 import '../../../dashboard/presentation/constants/main_navigation_tabs.dart';
 import '../../../payment/domain/entities/payment_initiation_result.dart';
 import '../../../payment/presentation/payment_navigation.dart';
-import '../../../promo_code/domain/entities/promo_code_service.dart';
 import '../../../promo_code/presentation/cubit/promo_code_cubit.dart';
 import '../../../promo_code/presentation/cubit/promo_code_state.dart';
 import '../../domain/entities/lab_test_cart_item.dart';
@@ -280,17 +279,7 @@ class _LabTestCheckoutScreenState extends State<LabTestCheckoutScreen> {
       });
     }
 
-    final promoCubit = context.read<PromoCodeCubit>();
-    final discountedAmount = LabTestPriceFormatter.parseRsAmount(
-      widget.args.totalAmount.trim().isNotEmpty
-          ? widget.args.totalAmount
-          : widget.args.discountedFee,
-    );
-    final promoOk = await promoCubit.ensureValidated(
-      service: PromoCodeService.lab,
-      amount: discountedAmount,
-    );
-    if (!promoOk || !mounted) return;
+    if (!context.read<PromoCodeCubit>().allowCheckout()) return;
 
     final selected = await showModalBottomSheet<String>(
       context: context,

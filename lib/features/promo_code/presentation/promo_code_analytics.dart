@@ -3,7 +3,6 @@ import 'dart:async';
 import '../../../core/analytics/analytics_event_keys.dart';
 import '../../../core/analytics/analytics_service.dart';
 import '../../../core/di/dependency_injection.dart';
-import '../../pro/domain/use_cases/get_pro_catalog_use_case.dart';
 import '../domain/entities/promo_code_service.dart';
 import '../domain/entities/promo_code_validation_entity.dart';
 
@@ -93,21 +92,9 @@ abstract final class PromoCodeAnalytics {
     return AnalyticsPromoRejectReasonKeys.invalidCode;
   }
 
+  /// Always `free` until Pro membership should be reported again.
   static Future<String> resolveUserType() async {
-    try {
-      if (!sl.isRegistered<GetProCatalogUseCase>()) {
-        return AnalyticsUserTypeKeys.standard;
-      }
-      final result = await sl<GetProCatalogUseCase>()();
-      return result.fold(
-        (_) => AnalyticsUserTypeKeys.standard,
-        (catalog) => catalog.membership.isActivePro
-            ? AnalyticsUserTypeKeys.pro
-            : AnalyticsUserTypeKeys.standard,
-      );
-    } catch (_) {
-      return AnalyticsUserTypeKeys.standard;
-    }
+    return AnalyticsUserTypeKeys.free;
   }
 
   /// Shared confirm-event promo params (`promo_code_used`, `promo_code`, `user_type`).

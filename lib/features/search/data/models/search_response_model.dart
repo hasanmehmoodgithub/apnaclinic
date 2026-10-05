@@ -79,6 +79,9 @@ class SearchResultModel {
     this.packageName,
     this.experience,
     this.qualification,
+    this.labId,
+    this.cityName,
+    this.requirement,
   });
 
   final String id;
@@ -106,6 +109,15 @@ class SearchResultModel {
   final String? packageName;
   final String? experience;
   final String? qualification;
+
+  /// First `labs[]` entry id for the new lab booking flow.
+  final String? labId;
+
+  /// City name from the first `labs[]` entry.
+  final String? cityName;
+
+  /// `Fasting` when the test requires fasting; otherwise null.
+  final String? requirement;
 
   factory SearchResultModel.fromDoctorJson(Map<String, dynamic> json) {
     final specialty =
@@ -184,7 +196,15 @@ class SearchResultModel {
     final sampleType = (json['sampleType'] ?? json['sample_type'] ?? '')
         .toString()
         .trim();
+    final labIdRaw = firstLab?['labId'] ?? firstLab?['lab_id'];
+    final labId = labIdRaw == null ? '' : labIdRaw.toString().trim();
     final labName = (firstLab?['labName'] ?? firstLab?['lab_name'] ?? '')
+        .toString()
+        .trim();
+    final labLogo = (firstLab?['logoUrl'] ??
+            firstLab?['logo_url'] ??
+            firstLab?['labLogoUrl'] ??
+            '')
         .toString()
         .trim();
     final city = (firstLab?['city'] ??
@@ -195,6 +215,9 @@ class SearchResultModel {
             '')
         .toString()
         .trim();
+    final fastingRequired = _asBool(
+      json['fastingRequired'] ?? json['fasting_required'],
+    );
     final labsSummary = [
       if (labName.isNotEmpty) labName,
       if (city.isNotEmpty) city,
@@ -215,6 +238,10 @@ class SearchResultModel {
       subtitle: labsSummary.isNotEmpty ? labsSummary : labName,
       description: json['description']?.toString(),
       sampleType: sampleType.isEmpty ? null : sampleType,
+      labId: labId.isEmpty || labId == '0' ? null : labId,
+      cityName: city.isEmpty ? null : city,
+      labLogo: labLogo.isEmpty ? null : labLogo,
+      requirement: fastingRequired ? 'Fasting' : null,
       price: _formatMoney(priceRaw),
       fee: _formatMoney(priceRaw),
       oldFee: hasDiscount ? _formatMoney(listPrice) : null,
@@ -452,6 +479,13 @@ class SearchResultModel {
     if (value == null) return null;
     if (value is num) return value.toDouble();
     return double.tryParse(value.toString().trim());
+  }
+
+  static bool _asBool(Object? value) {
+    if (value == true || value == 1) return true;
+    if (value == false || value == 0 || value == null) return false;
+    final text = value.toString().trim().toLowerCase();
+    return text == '1' || text == 'true' || text == 'yes';
   }
 
   static String? _formatMoney(Object? value) {

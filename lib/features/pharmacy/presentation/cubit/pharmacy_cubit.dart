@@ -1041,8 +1041,8 @@ class PharmacyCubit extends Cubit<PharmacyState> {
 
       final userType =
           promoParams[AnalyticsParamKeys.userType]?.toString() ??
-          AnalyticsUserTypeKeys.standard;
-      await _appsFlyer.logEvent(AppsFlyerEventKeys.purchase, {
+          AnalyticsUserTypeKeys.free;
+      await _appsFlyer.logEvent(AppsFlyerEventKeys.purchasePharmacy, {
         AppsFlyerParamKeys.contentType: AppsFlyerContentTypeKeys.pharmacy,
         AppsFlyerParamKeys.afContentType: AppsFlyerContentTypeKeys.pharmacy,
         AppsFlyerParamKeys.orderId: orderId,

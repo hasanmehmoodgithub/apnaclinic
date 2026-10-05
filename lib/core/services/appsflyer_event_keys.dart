@@ -8,8 +8,23 @@ class AppsFlyerEventKeys {
   /// Instant Doctor tab / entry opens.
   static const String instantDoctorModule = 'instant_doctor_module';
 
-  /// Purchase / order confirmed (Instant Doctor subscribe or Pharmacy order).
+  /// Instant Doctor subscribe OTP succeeds.
   static const String purchase = 'af_purchase';
+
+  /// Pharmacy order confirmed.
+  static const String purchasePharmacy = 'af_purchase_pharmacy';
+
+  /// Lab booking payment succeeds.
+  static const String purchaseLab = 'af_purchase_lab';
+
+  /// Doctor consultation payment succeeds.
+  static const String purchaseConsultation = 'af_purchase_consultation';
+
+  /// Surgery lead (Confirm Booking) succeeds, before payment.
+  static const String leadSurgery = 'af_lead_surgery';
+
+  /// Surgery payment succeeds.
+  static const String purchaseSurgery = 'af_purchase_surgery';
 
   /// Pharmacy: add to cart succeeds.
   static const String addToCart = 'af_add_to_cart';
@@ -24,7 +39,7 @@ class AppsFlyerEventKeys {
   static const String aiChatStarted = 'ai_chat_started';
   static const String aiChatEnded = 'ai_chat_ended';
 
-  /// Consultation hub / related discovery.
+  /// Consultation category hub opens (home or banner).
   static const String consultancyModule = 'consultancy_module';
 
   /// Doctor profile tap, screen open, or confirm with timeslot.

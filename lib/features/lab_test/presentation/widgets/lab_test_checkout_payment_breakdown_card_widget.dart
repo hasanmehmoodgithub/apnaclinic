@@ -84,10 +84,12 @@ class LabTestCheckoutPaymentBreakdownCardWidget extends StatelessWidget {
                               ),
                       onCleared: context.read<PromoCodeCubit>().clear,
                     ),
-                    if (promo.isInvalid) ...[
+                    if (promo.isInvalid || promo.needsApply) ...[
                       SizedBox(height: 8.h),
                       Text(
-                        l10n.promoCodeInvalid,
+                        promo.needsApply
+                            ? l10n.promoCodeApplyRequired
+                            : l10n.promoCodeInvalid,
                         style: theme.textTheme.bodyMedium?.copyWith(
                           color: AppColors.clrC9252C,
                           fontSize: 13.sp,

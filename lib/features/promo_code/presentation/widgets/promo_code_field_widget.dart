@@ -8,6 +8,17 @@ import '../../../../core/utils/no_emoji_text_input_formatter.dart';
 import '../cubit/promo_code_state.dart';
 
 class PromoCodeFieldWidget extends StatefulWidget {
+  /// Checkout action buttons call this on pointer-down so that tap does not
+  /// apply the code. Keyboard Done still calls [onSubmitted].
+  static var _ignoreNextSubmit = false;
+
+  static void ignoreNextSubmit() {
+    _ignoreNextSubmit = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _ignoreNextSubmit = false;
+    });
+  }
+
   const PromoCodeFieldWidget({
     super.key,
     required this.status,
@@ -106,6 +117,7 @@ class _PromoCodeFieldWidgetState extends State<PromoCodeFieldWidget> {
         ),
         onChanged: widget.onChanged,
         onSubmitted: (value) {
+          if (PromoCodeFieldWidget._ignoreNextSubmit) return;
           final code = value.trim();
           if (code.isEmpty) return;
           _focusNode.unfocus();

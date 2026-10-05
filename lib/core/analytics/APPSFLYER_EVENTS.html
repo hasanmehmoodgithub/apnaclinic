@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Apna Clinic — AppsFlyer events</title>
+  <style>
+    :root {
+      --navy: #061e40;
+      --teal: #00897b;
+      --teal-dark: #00695c;
+      --bg: #f4f7f8;
+      --card: #fff;
+      --line: #e2e8ee;
+      --muted: #5b6b7c;
+      --warn: #b45309;
+      --warn-bg: #fff7ed;
+      --skip: #9f1239;
+      --skip-bg: #fff1f2;
+      --ok: #047857;
+      --ok-bg: #ecfdf5;
+      --code: #0f172a;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--navy);
+      line-height: 1.45;
+    }
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: var(--navy);
+      color: #fff;
+      padding: 18px 24px 16px;
+      box-shadow: 0 8px 24px rgba(6, 30, 64, 0.18);
+    }
+    header h1 { margin: 0 0 4px; font-size: 20px; font-weight: 700; }
+    header p { margin: 0; color: #c5d0dc; font-size: 13px; }
+    .bar {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+      margin-top: 14px;
+    }
+    input[type="search"] {
+      flex: 1;
+      min-width: 220px;
+      border: 0;
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-size: 14px;
+    }
+    .chip {
+      border: 0;
+      background: rgba(255,255,255,.12);
+      color: #fff;
+      border-radius: 999px;
+      padding: 7px 12px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+    .chip.active { background: var(--teal); }
+    main { max-width: 1180px; margin: 0 auto; padding: 20px 16px 64px; }
+    .note, .arch {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 16px 18px;
+      margin-bottom: 16px;
+    }
+    .arch h2, section h2, .note h2 { margin: 0 0 10px; font-size: 17px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; }
+    .stat {
+      background: #f0f7f6;
+      border-radius: 12px;
+      padding: 12px;
+    }
+    .stat b { display: block; font-size: 22px; color: var(--teal-dark); }
+    .stat span { font-size: 12px; color: var(--muted); }
+    .event {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 14px 16px;
+      margin: 0 0 12px;
+    }
+    .top {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: flex-start;
+      flex-wrap: wrap;
+    }
+    .name {
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--teal-dark);
+    }
+    .mod {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+      background: #e6f4f2;
+      color: var(--teal-dark);
+      border-radius: 999px;
+      padding: 3px 8px;
+    }
+    .meta { font-size: 13px; color: var(--muted); margin: 8px 0; }
+    .meta strong { color: var(--navy); }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; margin: 8px 0; }
+    th, td { border: 1px solid var(--line); padding: 6px 8px; text-align: left; vertical-align: top; }
+    th { background: #f8fafb; }
+    code, .path {
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 12px;
+      background: #f1f5f9;
+      padding: 1px 5px;
+      border-radius: 4px;
+      color: var(--code);
+    }
+    .tag {
+      display: inline-block;
+      font-size: 11px;
+      border-radius: 6px;
+      padding: 2px 7px;
+      margin: 0 4px 4px 0;
+      font-weight: 600;
+    }
+    .tag.ok { background: var(--ok-bg); color: var(--ok); }
+    .tag.warn { background: var(--warn-bg); color: var(--warn); }
+    .tag.skip { background: var(--skip-bg); color: var(--skip); }
+    .tag.dest { background: #eef2ff; color: #3730a3; }
+    .hidden { display: none; }
+    ul { margin: 6px 0 0 18px; padding: 0; }
+    footer { color: var(--muted); font-size: 12px; text-align: center; }
+  </style>
+</head>
+<body>
+<header>
+  <h1>Apna Clinic AppsFlyer events</h1>
+  <p>Separate from Firebase. One AppsFlyer name can cover several user actions. The filled parameter is what tells them apart. Generated from the Flutter app as of 5 Oct 2026.</p>
+  <div class="bar">
+    <input id="q" type="search" placeholder="Search event, screen, param, file…" />
+    <button class="chip active" data-mod="all">All</button>
+    <button class="chip" data-mod="Instant Doctor">Instant Doctor</button>
+    <button class="chip" data-mod="Consultation">Consultation</button>
+    <button class="chip" data-mod="Pharmacy">Pharmacy</button>
+    <button class="chip" data-mod="Lab">Lab</button>
+    <button class="chip" data-mod="Surgery">Surgery</button>
+    <button class="chip" data-mod="Shared">Shared names</button>
+  </div>
+</header>
+<main>
+  <div class="arch">
+    <h2>How to read this</h2>
+    <ul>
+      <li>AppsFlyer is <strong>not</strong> a copy of Firebase. Firebase keeps a different event name per action. AppsFlyer often reuses one name and changes the parameters.</li>
+      <li>Calls go through <code>AppsFlyerService.logEvent</code>. Names live in <code>lib/core/services/appsflyer_event_keys.dart</code>.</li>
+      <li>If the SDK has not started (missing Dev Key, or missing iOS App ID), <code>logEvent</code> does nothing.</li>
+      <li>MSISDN is digits only, with country code <code>92</code> or a leading <code>0</code> removed (example <code>3012345678</code>).</li>
+      <li>Timestamps use <code>M/D/YYYY H:mm</code> (example <code>10/5/2026 12:58</code>).</li>
+    </ul>
+    <div class="grid" style="margin-top:14px">
+      <div class="stat"><b id="count">—</b><span>AppsFlyer event names</span></div>
+      <div class="stat"><b id="shared">—</b><span>Names reused across actions</span></div>
+      <div class="stat"><b>Params</b><span>Tell shared events apart</span></div>
+      <div class="stat"><b>PII</b><span>user_name and msisdn on purchase / AI chat</span></div>
+    </div>
+  </div>
+
+  <div class="note">
+    <h2>Same name, different action</h2>
+    <p class="meta">In the AppsFlyer dashboard these show up as one event. Filter or group by the parameter that is filled.</p>
+    <table>
+      <thead>
+        <tr><th>AppsFlyer event</th><th>Actions that send it</th><th>How to tell them apart</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>doctor_profile</code></td>
+          <td>Doctor card tap, book-doctor screen, Get Appointment</td>
+          <td><code>timeslot</code> is empty until confirm. Click and screen open look the same.</td>
+        </tr>
+        <tr>
+          <td><code>surgery_module</code></td>
+          <td>Surgery hub open, city picker open</td>
+          <td>Hub fills <code>source_screen</code> and current <code>selected_city</code>. City picker fills only <code>selected_city</code> (the city already selected when the dialog opens).</td>
+        </tr>
+        <tr>
+          <td><code>af_content_view</code></td>
+          <td>Pharmacy product detail, lab test select</td>
+          <td><code>af_content_type</code> is <code>Pharmacy</code> or <code>Lab</code>.</td>
+        </tr>
+        <tr>
+          <td><code>af_add_to_cart</code></td>
+          <td>Pharmacy add to cart, lab add to cart</td>
+          <td><code>af_content_type</code> plus product fields (pharmacy) or test fields (lab).</td>
+        </tr>
+        <tr>
+          <td><code>af_initiated_checkout</code></td>
+          <td>Pharmacy checkout, lab checkout, surgery patient details</td>
+          <td><code>af_content_type</code> is <code>Pharmacy</code>, <code>Lab Checkout</code>, or <code>Surgery</code>.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <section id="events"></section>
+  <footer>Open this file in a browser. Source of truth is the Dart call sites listed on each card.</footer>
+</main>
+<script>
+const events = [
+  {
+    mod: "Consultation",
+    name: "consultancy_module",
+    summary: "Fires only when the consultancy category hub opens. Category open, doctor search, partner filter, and book-doctor from global search do not send this event.",
+    scenarios: [
+      ["Hub opens", "Doctor consultation category grid", "Screen open from home services or a promotional banner", "source = home or banner", "Firebase consultancy_module"]
+    ],
+    params: [
+      ["source", "home / banner"]
+    ],
+    code: "ConsultationAnalytics.logModule",
+    notes: "Firebase still logs consultancy_module with source=search when global search opens book-doctor, plus doctor_category_clicked, doctor_listing_screen, doctor_search_performed, and doctor_filter_applied. Those do not call AppsFlyer."
+  },
+  {
+    mod: "Consultation",
+    shared: true,
+    name: "doctor_profile",
+    summary: "Doctor card, book-doctor screen, and appointment confirm share this name.",
+    scenarios: [
+      ["Doctor card / Book Now", "Doctor results or search", "Doctor card or Book Now", "doctor_id, doctor_name, category. timeslot empty", "Firebase doctor_profile_clicked"],
+      ["Book-doctor screen opens", "Book doctor", "Screen open", "Same doctor fields. timeslot empty", "Firebase doctor_profile_screen"],
+      ["Get Appointment continues", "Book doctor", "Get Appointment after a slot is selected", "Same doctor fields plus timeslot (date and start time)", "Firebase doctor_consultation_confirm"]
+    ],
+    params: [
+      ["doctor_id", "API doctor id, else local id"],
+      ["doctor_name", "Doctor name"],
+      ["category", "Specialty shown on the card"],
+      ["timeslot", "M/D/YYYY start time on confirm; empty on click and screen open"]
+    ],
+    code: "ConsultationAnalytics.logProfileClicked / logProfileScreen / logConsultationConfirm",
+    notes: "Opening this screen from global search logs Firebase consultancy_module with source=search. That path does not send AppsFlyer consultancy_module."
+  },
+  {
+    mod: "Consultation",
+    name: "ai_chat_started",
+    summary: "AI screening WebView opens.",
+    scenarios: [
+      ["AI screening opens", "AI consultation WebView", "Start now after login and permissions", "msisdn from profile. call_duration = 0s", "Firebase ai_chat_started (no params)"]
+    ],
+    params: [
+      ["msisdn", "Logged-in phone, country code stripped"],
+      ["call_duration", "0s"]
+    ],
+    pii: true,
+    code: "ai_consultation_screen.dart initState"
+  },
+  {
+    mod: "Consultation",
+    name: "ai_chat_ended",
+    summary: "User confirms leaving AI screening.",
+    scenarios: [
+      ["Exit confirmed", "AI consultation WebView", "Exit", "msisdn and call_duration in seconds, for example 35s", "Firebase ai_chat_ended"]
+    ],
+    params: [
+      ["msisdn", "Logged-in phone, country code stripped"],
+      ["call_duration", "Elapsed seconds with an s suffix"]
+    ],
+    pii: true,
+    code: "ai_consultation_screen.dart _logChatEnded",
+    notes: "Sent once per session."
+  },
+  {
+    mod: "Instant Doctor",
+    name: "instant_doctor_module",
+    summary: "Instant Doctor entry opens. Partner is unknown here.",
+    scenarios: [
+      ["Tab or entry opens", "Instant Doctor", "Bottom tab, banner, or popup", "source_screen set. partner empty", "Firebase instant_doctor_clicked and instant_doctor_module"]
+    ],
+    params: [
+      ["source_screen", "banner (popup is stored as banner), bottom_tab (navigation tab is stored as bottom_tab), or the incoming source"],
+      ["partner", "Always empty on this event"]
+    ],
+    code: "InstantDoctorCubit.logModuleViewed"
+  },
+  {
+    mod: "Surgery",
+    shared: true,
+    name: "surgery_module",
+    summary: "Surgery hub open and opening the city picker share this name.",
+    scenarios: [
+      ["Hub opens", "Surgery home", "Screen open", "source_screen = Home / Search / Banner, plus the current selected_city", "Firebase surgery_module (city is AppsFlyer only)"],
+      ["City picker opens", "Surgery home", "City control, before a new city is chosen", "selected_city = city already selected. source_screen empty", "Firebase surgery_city_change"]
+    ],
+    params: [
+      ["source_screen", "Home / Search / Banner on hub open; empty when the picker opens"],
+      ["selected_city", "City name already on screen"]
+    ],
+    code: "SurgeryAnalytics.logModule / logCityChange",
+    notes: "The city event uses the city shown when the dialog opens. It does not wait for the city the user confirms."
+  },
+  {
+    mod: "Pharmacy",
+    shared: true,
+    name: "af_content_view",
+    summary: "A product or lab test is viewed. Pharmacy and lab share the name.",
+    scenarios: [
+      ["Pharmacy product detail loads", "Medicine detail", "Detail API success", "af_content_type = Pharmacy", "Firebase pharmacy_item_description"],
+      ["Lab test selected", "Lab catalog or global search lab result", "Test card", "af_content_type = Lab. No test name on AppsFlyer", "Firebase lab_item_select and lab_test_selected"]
+    ],
+    params: [
+      ["af_content_type", "Pharmacy or Lab"]
+    ],
+    code: "PharmacyCubit._logItemDescription; LabTestAnalytics.logItemSelect"
+  },
+  {
+    mod: "Pharmacy",
+    shared: true,
+    name: "af_add_to_cart",
+    summary: "Add to cart succeeds. Pharmacy and lab share the name.",
+    scenarios: [
+      ["Pharmacy add succeeds", "Medicine detail or listing", "Add to cart API success", "af_content_type = Pharmacy, product_id, product_name, prescription_required Yes/No", "Firebase pharmacy_add_to_cart"],
+      ["Lab add succeeds", "Lab test detail", "Add to cart API success", "af_content_type = Lab plus test, lab, partner, sample, sampling mode", "Firebase lab_add_to_cart"]
+    ],
+    params: [
+      ["af_content_type", "Pharmacy or Lab"],
+      ["product_id / product_name / prescription_required", "Pharmacy only"],
+      ["test_name / lab_name / partner_name / sample_type / sampling_mode", "Lab only. sampling_mode is Home Sample or Walk In"]
+    ],
+    code: "PharmacyCubit._logAddToCart; LabTestAnalytics.logAddToCart"
+  },
+  {
+    mod: "Pharmacy",
+    shared: true,
+    name: "af_initiated_checkout",
+    summary: "Checkout (or surgery patient details) opens. Three modules share the name.",
+    scenarios: [
+      ["Pharmacy checkout opens", "Pharmacy checkout", "Screen open", "af_content_type = Pharmacy", "Firebase pharmacy_checkout"],
+      ["Lab checkout opens", "Lab checkout", "Screen open", "af_content_type = Lab Checkout", "Firebase lab_checkout"],
+      ["Surgery patient details opens", "Surgery patient details", "Screen open", "af_content_type = Surgery, surgery_name, doctor_id, doctor_name", "Firebase surgery_checkout"]
+    ],
+    params: [
+      ["af_content_type", "Pharmacy, Lab Checkout, or Surgery"],
+      ["surgery_name / doctor_id / doctor_name", "Surgery only"]
+    ],
+    code: "PharmacyCubit.logCheckout; LabTestAnalytics.logCheckout; SurgeryAnalytics.logCheckout"
+  },
+  {
+    mod: "Pharmacy",
+    name: "af_purchase_pharmacy",
+    summary: "Pharmacy order is confirmed.",
+    scenarios: [
+      ["Order confirmed", "Pharmacy checkout success", "Order placed (card WebView when required)", "content_type and af_content_type = Pharmacy. Order, cart, promo, and payment fields.", "Firebase pharmacy_order_confirmed"]
+    ],
+    params: [
+      ["content_type / af_content_type", "Pharmacy"],
+      ["order_id", "Order id"],
+      ["user_name / msisdn / user_type", "Name, phone, free"],
+      ["cart_items / sub_total / order_value / delivery_charges", "Cart totals"],
+      ["promo_applied / promo", "Yes/No. promo code when one is applied"],
+      ["payment_method", "COD, JC, or Card"],
+      ["payment_status", "Successful"],
+      ["timestamp", "M/D/YYYY H:mm"],
+      ["wellness_order / JazzCash Auth Code / transaction_id", "Empty until the API returns them"]
+    ],
+    pii: true,
+    code: "PharmacyCubit.logOrderConfirmed"
+  },
+  {
+    mod: "Lab",
+    name: "af_purchase_lab",
+    summary: "Lab booking and payment succeed.",
+    scenarios: [
+      ["Booking confirmed", "Lab checkout", "Book and payment succeed", "content_type and af_content_type = Lab. Booking, tests, lab, address, payment.", "Firebase lab_booking_confirmed and lab_test_booked"]
+    ],
+    params: [
+      ["content_type / af_content_type", "Lab"],
+      ["booking_id", "Order id"],
+      ["user_name / msisdn", "Name and phone"],
+      ["number_of_tests / lab_name / partner / address", "Cart lab, partner from the line, address from the Address card"],
+      ["promo_applied / promo", "Yes/No. promo code when one is applied"],
+      ["payment_method", "JazzCash, Card, or COD"],
+      ["payment_status", "Successful"],
+      ["transaction_id", "publicId when present"],
+      ["timestamp", "M/D/YYYY H:mm"]
+    ],
+    pii: true,
+    code: "LabTestAnalytics.logBookingConfirmed",
+    notes: "Not sent on API fail, card fail, or a pending payment."
+  },
+  {
+    mod: "Consultation",
+    name: "af_purchase_consultation",
+    summary: "Doctor consultation payment succeeds.",
+    scenarios: [
+      ["Visit booked", "Consultation checkout", "Payment succeeds", "content_type and af_content_type = Consultancy. Booking, doctor, slot, payment. wellness_order empty.", "Firebase doctor_consultation_booked"]
+    ],
+    params: [
+      ["content_type / af_content_type", "Consultancy"],
+      ["booking_id", "Order id"],
+      ["user_name / msisdn / user_type", "Name, phone, free"],
+      ["doctor_id / doctor_name / category / consultation_timeslot", "Booked doctor and slot"],
+      ["booking_timestamp", "M/D/YYYY H:mm"],
+      ["payment_method", "JC or Card"],
+      ["payment_status", "successful"],
+      ["transaction_id", "publicId when present"],
+      ["promo_applied / promo", "Yes/No. promo code when one is applied"],
+      ["wellness_order", "Empty string"]
+    ],
+    pii: true,
+    code: "ConsultationAnalytics.logConsultationBooked",
+    notes: "Not sent when payment fails or a pending blocking order stops checkout."
+  },
+  {
+    mod: "Surgery",
+    name: "af_lead_surgery",
+    summary: "Confirm Booking creates a surgery lead, before payment.",
+    scenarios: [
+      ["Lead created", "Surgery patient details", "Confirm Booking succeeds", "content_type and af_content_type = Surgery. Booking, user, doctor, surgery, amount.", "Firebase surgery_lead_generated"]
+    ],
+    params: [
+      ["content_type / af_content_type", "Surgery"],
+      ["booking_id", "Lead booking id"],
+      ["user_name / msisdn", "Name and phone"],
+      ["doctor_id / doctor_name / surgery_name", "Selected doctor and procedure"],
+      ["amount", "Quoted amount"],
+      ["timestamp", "M/D/YYYY H:mm"]
+    ],
+    pii: true,
+    code: "SurgeryAnalytics.logLeadGenerated"
+  },
+  {
+    mod: "Surgery",
+    name: "af_purchase_surgery",
+    summary: "Surgery payment succeeds.",
+    scenarios: [
+      ["Surgery paid", "Surgery payment", "Book-surgery payment succeeds", "content_type and af_content_type = Surgery. Booking, doctor, surgery, amount, payment.", "Firebase surgery_booked"]
+    ],
+    params: [
+      ["content_type / af_content_type", "Surgery"],
+      ["booking_id", "Booking id"],
+      ["user_name / msisdn / user_type", "Name, phone, free"],
+      ["doctor_id / doctor_name / surgery_name", "Doctor and procedure"],
+      ["amount", "Paid amount"],
+      ["payment_method", "JazzCash, Card, or COD"],
+      ["payment_status", "Successful"],
+      ["timestamp", "M/D/YYYY H:mm"]
+    ],
+    pii: true,
+    code: "SurgeryAnalytics.logBooked",
+    notes: "Fail or pending payment does not send this. The earlier lead sends af_lead_surgery instead."
+  },
+  {
+    mod: "Instant Doctor",
+    name: "af_purchase",
+    summary: "Instant Doctor subscribe OTP succeeds. Pharmacy, lab, consultation, and surgery no longer use this name.",
+    scenarios: [
+      ["Subscribe succeeds", "Instant Doctor OTP", "Subscribe OTP succeeds", "source_screen from the earlier module open, partner = provider name.", "Firebase fb_mobile_subscribe"]
+    ],
+    params: [
+      ["source_screen", "Remembered from instant_doctor_module"],
+      ["partner", "Provider name"]
+    ],
+    code: "InstantDoctorCubit verify OTP subscribe"
+  }
+];
+
+const dest = '<span class="tag dest">AppsFlyer</span>';
+
+function esc(value) {
+  return String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;");
+}
+
+function render() {
+  const q = document.getElementById("q").value.trim().toLowerCase();
+  const mod = document.querySelector(".chip.active").dataset.mod;
+  const root = document.getElementById("events");
+  root.innerHTML = "";
+  let n = 0;
+  for (const e of events) {
+    const blob = [
+      e.mod, e.name, e.summary, e.code, e.notes,
+      ...(e.scenarios || []).flat(),
+      ...(e.params || []).flat()
+    ].join(" ").toLowerCase();
+    if (mod === "Shared") {
+      if (!e.shared) continue;
+    } else if (mod !== "all") {
+      const inModule = e.mod === mod || (e.scenarios || []).some((row) =>
+        row.join(" ").toLowerCase().includes(mod.toLowerCase())
+      );
+      if (!inModule) continue;
+    }
+    if (q && !blob.includes(q)) continue;
+    n++;
+    const scenarios = `<table><thead><tr><th>When</th><th>Screen</th><th>Control</th><th>What is filled</th><th>Firebase counterpart</th></tr></thead><tbody>${
+      e.scenarios.map((row) => `<tr>${row.map((cell) => `<td>${esc(cell)}</td>`).join("")}</tr>`).join("")
+    }</tbody></table>`;
+    const params = `<table><thead><tr><th>Parameter</th><th>Values</th></tr></thead><tbody>${
+      e.params.map(([k, v]) => `<tr><td><code>${esc(k)}</code></td><td>${esc(v)}</td></tr>`).join("")
+    }</tbody></table>`;
+    root.insertAdjacentHTML("beforeend", `
+      <article class="event">
+        <div class="top">
+          <div>
+            <div class="name">${esc(e.name)}</div>
+            <div class="meta"><span class="mod">${esc(e.mod)}</span></div>
+          </div>
+          <div>${dest}${e.shared ? '<span class="tag warn">Shared name</span>' : '<span class="tag ok">Single action</span>'}${e.pii ? '<span class="tag warn">PII</span>' : ""}</div>
+        </div>
+        <p class="meta">${esc(e.summary)}</p>
+        ${scenarios}
+        ${params}
+        <p class="meta"><strong>Code:</strong> <span class="path">${esc(e.code)}</span></p>
+        ${e.notes ? `<p class="meta"><strong>Notes:</strong> ${esc(e.notes)}</p>` : ""}
+      </article>`);
+  }
+  if (!n) root.innerHTML = "<p class='meta'>No events match.</p>";
+}
+
+document.getElementById("count").textContent = events.length;
+document.getElementById("shared").textContent = events.filter((e) => e.shared).length;
+document.getElementById("q").addEventListener("input", render);
+document.querySelectorAll(".chip").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".chip").forEach((b) => b.classList.remove("active"));
+    btn.classList.add("active");
+    render();
+  });
+});
+render();
+</script>
+</body>
+</html>
