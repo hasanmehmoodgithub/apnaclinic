@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../core/analytics/analytics_event_keys.dart';
 import '../../../core/analytics/analytics_service.dart';
+import '../../../core/cities/presentation/show_select_city_dialog.dart';
 import '../../../core/di/dependency_injection.dart';
 import '../../../core/l10n/app_localizations.dart';
 import '../../../core/preference/app_pref.dart';
@@ -109,10 +110,10 @@ void openSearchDoctorBooking(
   );
 }
 
-void openSearchLabBooking(
+Future<void> openSearchLabBooking(
   BuildContext context,
   SearchResultEntity item,
-) {
+) async {
   _logSearchResultClicked(AnalyticsSearchResultTypeKeys.lab);
   if (!context.requireLogin(loginSource: AnalyticsAuthSourceKeys.lab)) {
     return;
@@ -131,31 +132,18 @@ void openSearchLabBooking(
   final savedCity =
       (sl<AppPref>().getString(AppPrefKeys.labTestSelectedCity) ?? '')
           .trim();
-  final city = cityFromResult.isNotEmpty ? cityFromResult : savedCity;
+  var city = cityFromResult.isNotEmpty ? cityFromResult : savedCity;
   if (city.isEmpty) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(l10n.labTestPleaseSelectCityFirst)),
-    );
-    context.pushNamed(
-      AppRoutes.labTest,
-      extra: {
-        LabTestRouteExtraKeys.source: AnalyticsLabSourceKeys.search,
-      },
-    );
-    return;
+    final picked = await showSelectCityDialog(context);
+    if (!context.mounted) return;
+    city = picked?.trim() ?? '';
+    if (city.isEmpty) return;
+    await sl<AppPref>().setString(AppPrefKeys.labTestSelectedCity, city);
+    LabTestAnalytics.logCityChange(city);
   }
+  if (!context.mounted) return;
 
   final labId = (item.labId ?? '').trim();
-  if (labId.isEmpty) {
-    context.pushNamed(
-      AppRoutes.labTest,
-      extra: {
-        LabTestRouteExtraKeys.source: AnalyticsLabSourceKeys.search,
-      },
-    );
-    return;
-  }
-
   LabTestAnalytics.logItemSelect(
     testName: item.title,
     labName: item.providerLabel ?? item.subtitle,
@@ -168,7 +156,7 @@ void openSearchLabBooking(
       city: city,
       requirementLines: LabTestCatalogDefaults.requirementLines,
       testTitle: item.title,
-      preferredLabId: labId,
+      preferredLabId: labId.isEmpty ? null : labId,
       preferredLabName: (item.providerLabel ?? '').trim(),
       preferredLabLogoUrl: (item.labLogo ?? '').trim(),
     ),
