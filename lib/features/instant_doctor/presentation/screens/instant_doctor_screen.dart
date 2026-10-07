@@ -281,7 +281,11 @@ class _InstantDoctorScreenState extends State<InstantDoctorScreen> {
 
     if (otpAction == InstantDoctorOtpAction.unsubscribe) {
       _showSnackBar(_l10n.instantDoctorCancelSubscriptionSuccess);
-      unawaited(_cubit.refreshProvidersAfterSubscriptionChange());
+      unawaited(
+        _cubit.refreshProvidersAfterSubscriptionChange(
+          delay: const Duration(seconds: 3),
+        ),
+      );
       return;
     }
 
@@ -334,7 +338,7 @@ class _InstantDoctorScreenState extends State<InstantDoctorScreen> {
       },
     );
 
-    // Delay for partner lag, then shimmer refresh behind the dialog.
+    // Shimmer refresh behind the dialog. Unsubscribe is the only delayed reload.
     await _cubit.refreshProvidersAfterSubscriptionChange();
     if (mounted) {
       actionsEnabled.value = true;

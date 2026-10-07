@@ -124,13 +124,24 @@ class InstantDoctorCubit extends Cubit<InstantDoctorState> {
     );
   }
 
-  /// Waits for partner lag, then reloads providers once with list shimmer.
+  /// Reloads providers once with list shimmer.
+  ///
+  /// When [delay] is set (unsubscribe), shimmer starts immediately and the
+  /// providers request is sent after the delay. Subscribe passes none.
   Future<void> refreshProvidersAfterSubscriptionChange({
-    Duration delay = const Duration(seconds: 3),
+    Duration delay = Duration.zero,
   }) async {
     final token = ++_subscriptionRefreshToken;
-    await Future<void>.delayed(delay);
-    if (isClosed || token != _subscriptionRefreshToken) return;
+    if (delay > Duration.zero) {
+      emit(
+        state.copyWith(
+          loadingStateStatus: StateStatus.refreshing,
+          errorMessage: null,
+        ),
+      );
+      await Future<void>.delayed(delay);
+      if (isClosed || token != _subscriptionRefreshToken) return;
+    }
     await loadContent(refresh: true);
   }
 
