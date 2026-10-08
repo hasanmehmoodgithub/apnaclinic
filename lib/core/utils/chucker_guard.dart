@@ -16,6 +16,6 @@ class ChuckerGuard {
   /// release unless [ChuckerFlutter.showOnRelease] is true.
   static void configureIfEnabled() {
     if (!isEnabled) return;
-    ChuckerFlutter.showOnRelease = true;
+    ChuckerFlutter.showOnRelease = false;
   }
 }
