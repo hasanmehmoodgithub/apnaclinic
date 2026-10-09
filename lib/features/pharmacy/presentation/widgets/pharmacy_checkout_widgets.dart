@@ -5,8 +5,40 @@ import '../../../../core/constants/app_colors.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/utils/no_emoji_text_input_formatter.dart';
+import '../../../pro/presentation/widgets/pro_service_offer_slot.dart';
 import '../../domain/entities/pharmacy_cart_item_entity.dart';
 import 'pharmacy_network_image.dart';
+
+/// Loads Pro membership once for the checkout summary.
+class PharmacyCheckoutProScope extends StatefulWidget {
+  const PharmacyCheckoutProScope({super.key, required this.builder});
+
+  final Widget Function(
+    BuildContext context,
+    bool? isPro,
+    GlobalKey<ProServiceOfferSlotState> offerKey,
+    ValueChanged<bool> onProChanged,
+  ) builder;
+
+  @override
+  State<PharmacyCheckoutProScope> createState() =>
+      _PharmacyCheckoutProScopeState();
+}
+
+class _PharmacyCheckoutProScopeState extends State<PharmacyCheckoutProScope> {
+  final _offerKey = GlobalKey<ProServiceOfferSlotState>();
+  bool? _isPro;
+
+  void _onProChanged(bool isPro) {
+    if (!mounted || _isPro == isPro) return;
+    setState(() => _isPro = isPro);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return widget.builder(context, _isPro, _offerKey, _onProChanged);
+  }
+}
 
 class PharmacySummaryRow extends StatelessWidget {
   const PharmacySummaryRow({
@@ -18,6 +50,8 @@ class PharmacySummaryRow extends StatelessWidget {
     this.padding = EdgeInsets.zero,
     this.titleFontSize,
     this.valueFontSize,
+    this.titleTrailing,
+    this.valueLabel,
   });
 
   final String title;
@@ -27,6 +61,10 @@ class PharmacySummaryRow extends StatelessWidget {
   final EdgeInsetsGeometry padding;
   final double? titleFontSize;
   final double? valueFontSize;
+  final Widget? titleTrailing;
+
+  /// Replaces the numeric amount after the currency prefix, e.g. `Free`.
+  final String? valueLabel;
 
   @override
   Widget build(BuildContext context) {
@@ -44,13 +82,23 @@ class PharmacySummaryRow extends StatelessWidget {
         child: Row(
           children: [
             Expanded(
-              child: Text(
-                title,
-                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  color: AppColors.clr060,
-                  fontWeight: FontWeight.w400,
-                  fontSize: titleFontSize ?? 13.sp,
-                ),
+              child: Row(
+                children: [
+                  Flexible(
+                    child: Text(
+                      title,
+                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                        color: AppColors.clr060,
+                        fontWeight: FontWeight.w400,
+                        fontSize: titleFontSize ?? 13.sp,
+                      ),
+                    ),
+                  ),
+                  if (titleTrailing != null) ...[
+                    SizedBox(width: 6.w),
+                    titleTrailing!,
+                  ],
+                ],
               ),
             ),
             RichText(
@@ -58,13 +106,15 @@ class PharmacySummaryRow extends StatelessWidget {
                 style: style,
                 children: [
                   TextSpan(
-                    text: l10n.pharmacyCurrencyPrefix,
+                    text: valueLabel == null
+                        ? l10n.pharmacyCurrencyPrefix
+                        : l10n.pharmacyCurrencyPrefix.trim(),
                     style: style?.copyWith(
                       color: AppColors.clr5D758F,
                       fontWeight: isBold ? FontWeight.w700 : FontWeight.w500,
                     ),
                   ),
-                  TextSpan(text: value.toStringAsFixed(2)),
+                  TextSpan(text: valueLabel ?? value.toStringAsFixed(2)),
                 ],
               ),
             ),

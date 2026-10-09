@@ -53,6 +53,12 @@ class AppStrings {
       'Unable to load surgery content right now. Please try again in a moment.';
   static const String proCatalogLoadError =
       'Unable to load ApnaClinic Pro right now. Please try again in a moment.';
+  static const String proSubscribeError =
+      'Unable to subscribe to Pro right now. Please try again.';
+  static const String proUnsubscribeError =
+      'Unable to cancel Pro right now. Please try again.';
+  static const String proPhoneRequiredError =
+      'Phone number is required to subscribe to Pro.';
   static const String promoCodeValidateError =
       'Unable to apply promo code right now. Please try again.';
   // Auth

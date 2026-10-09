@@ -16,6 +16,7 @@ class HomeHeaderSection extends StatelessWidget {
     required this.hasUnreadNotifications,
     this.profileImageUrl,
     this.profileImageCacheKey,
+    this.isPro = false,
     this.onMenuTap,
     this.onNotificationTap,
     this.onLoginTap,
@@ -29,6 +30,7 @@ class HomeHeaderSection extends StatelessWidget {
   final bool hasUnreadNotifications;
   final String? profileImageUrl;
   final String? profileImageCacheKey;
+  final bool isPro;
   final VoidCallback? onMenuTap;
   final VoidCallback? onNotificationTap;
   final VoidCallback? onLoginTap;
@@ -88,6 +90,7 @@ class HomeHeaderSection extends StatelessWidget {
                       onProfileTap: onProfileTap,
                       profileImageUrl: profileImageUrl,
                       profileImageCacheKey: profileImageCacheKey,
+                      isPro: isPro,
                     ),
                     Padding(
                       padding: EdgeInsets.symmetric(

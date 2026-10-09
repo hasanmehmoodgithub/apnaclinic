@@ -4,7 +4,7 @@ import 'package:apnaclinic/core/extensions/screen_util_extensions.dart';
 import 'package:apnaclinic/core/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 
-import '../../../../core/widgets/user_profile_avatar.dart';
+import '../../../../core/widgets/pro_user_avatar.dart';
 
 class MenuProfileCard extends StatelessWidget {
   const MenuProfileCard({
@@ -15,6 +15,7 @@ class MenuProfileCard extends StatelessWidget {
     required this.onActionTap,
     this.imageUrl,
     this.imageCacheKey,
+    this.isPro = false,
   });
 
   final bool isLoggedIn;
@@ -22,6 +23,7 @@ class MenuProfileCard extends StatelessWidget {
   final String phone;
   final String? imageUrl;
   final String? imageCacheKey;
+  final bool isPro;
   final VoidCallback onActionTap;
 
   @override
@@ -36,7 +38,7 @@ class MenuProfileCard extends StatelessWidget {
       subtitle: subtitleText.isEmpty ? null : subtitleText,
       onTap: onActionTap,
       onTrailingTap: onActionTap,
-      height: 100.h,
+      height: isPro ? 118.h : 100.h,
       curveOverlayColor: AppColors.clrEBDFFF.withValues(alpha: 0.4),
       trailingOverlayWidth: 124.w,
       contentPadding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 20.h),
@@ -53,11 +55,14 @@ class MenuProfileCard extends StatelessWidget {
         fontSize: 14.sp,
         height: 1.15,
       ),
-      leading: UserProfileAvatar(
-        key: ValueKey(imageCacheKey ?? imageUrl ?? 'menu-avatar'),
+      leading: ProUserAvatar(
+        key: ValueKey(
+          '${imageCacheKey ?? imageUrl ?? 'menu-avatar'}-$isPro',
+        ),
         imageUrl: imageUrl,
         cacheKey: imageCacheKey,
         size: 52,
+        isPro: isPro,
       ),
       trailing: OutlinedButton(
         onPressed: onActionTap,

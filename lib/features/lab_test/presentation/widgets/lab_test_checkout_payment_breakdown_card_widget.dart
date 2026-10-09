@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../generated/assets.dart';
+import '../../../pro/presentation/widgets/pro_service_offer_slot.dart';
 import '../../../promo_code/domain/entities/promo_code_service.dart';
 import '../../../promo_code/presentation/cubit/promo_code_cubit.dart';
 import '../../../promo_code/presentation/cubit/promo_code_state.dart';
@@ -13,14 +15,61 @@ import '../../domain/utils/lab_test_price_formatter.dart';
 import '../lab_test_route_args.dart';
 import 'lab_test_figma_image.dart';
 
+/// Payment details plus the Pro upsell. Active members see Discount (%) and
+/// [Assets.proProBadge] on the discount row.
+class LabTestCheckoutPaymentSection extends StatefulWidget {
+  const LabTestCheckoutPaymentSection({super.key, required this.args});
+
+  final LabTestCheckoutArgs args;
+
+  @override
+  State<LabTestCheckoutPaymentSection> createState() =>
+      _LabTestCheckoutPaymentSectionState();
+}
+
+class _LabTestCheckoutPaymentSectionState
+    extends State<LabTestCheckoutPaymentSection> {
+  final _offerKey = GlobalKey<ProServiceOfferSlotState>();
+  bool? _isPro;
+
+  void _onProChanged(bool isPro) {
+    if (!mounted || _isPro == isPro) return;
+    setState(() => _isPro = isPro);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        ProServiceOfferSlot(
+          key: _offerKey,
+          service: ProServiceOfferKind.lab,
+          upsellOnly: true,
+          onProChanged: _onProChanged,
+        ),
+        LabTestCheckoutPaymentBreakdownCardWidget(
+          args: widget.args,
+          isPro: _isPro == true,
+          onProTap: () => _offerKey.currentState?.openSheet(),
+        ),
+      ],
+    );
+  }
+}
+
 /// Payment Details card: fee, promo, discount, discount code strip and total bar.
 class LabTestCheckoutPaymentBreakdownCardWidget extends StatelessWidget {
   const LabTestCheckoutPaymentBreakdownCardWidget({
     super.key,
     required this.args,
+    this.isPro = false,
+    this.onProTap,
   });
 
   final LabTestCheckoutArgs args;
+  final bool isPro;
+  final VoidCallback? onProTap;
 
   int get _discountedAmount {
     final fromTotal = LabTestPriceFormatter.parseRsAmount(args.totalAmount);
@@ -37,6 +86,20 @@ class LabTestCheckoutPaymentBreakdownCardWidget extends StatelessWidget {
     return BlocBuilder<PromoCodeCubit, PromoCodeState>(
       builder: (context, promo) {
         final hasPromo = promo.isApplied;
+        final discountAmount =
+            LabTestPriceFormatter.parseRsAmount(args.discountAmount);
+        final originalAmount =
+            LabTestPriceFormatter.parseRsAmount(args.originalFee);
+        final discountPercent = args.discountPercent > 0
+            ? args.discountPercent
+            : (originalAmount > 0
+                ? ((discountAmount * 100) / originalAmount).round()
+                : 0);
+        final showProDiscount =
+            isPro && (discountAmount > 0 || discountPercent > 0);
+        final feeAmount = showProDiscount && originalAmount > 0
+            ? originalAmount
+            : _discountedAmount;
         final totalText = LabTestPriceFormatter.formatRs(
           promo.payableTotal(_discountedAmount),
         );
@@ -68,8 +131,17 @@ class LabTestCheckoutPaymentBreakdownCardWidget extends StatelessWidget {
                     _moneyRow(
                       context,
                       l10n.labTestCheckoutFeeLabel,
-                      LabTestPriceFormatter.formatRs(_discountedAmount),
+                      LabTestPriceFormatter.formatRs(feeAmount),
                     ),
+                    if (showProDiscount) ...[
+                      SizedBox(height: 12.h),
+                      _proDiscountRow(
+                        context,
+                        label: l10n.bookingsDiscountLabel('$discountPercent'),
+                        amount: LabTestPriceFormatter.formatRs(discountAmount),
+                        onTap: onProTap,
+                      ),
+                    ],
                     SizedBox(height: 12.h),
                     PromoCodeFieldWidget(
                       status: promo.status,
@@ -149,6 +221,52 @@ class LabTestCheckoutPaymentBreakdownCardWidget extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+
+  Widget _proDiscountRow(
+    BuildContext context, {
+    required String label,
+    required String amount,
+    VoidCallback? onTap,
+  }) {
+    final theme = Theme.of(context);
+    final labelStyle = theme.textTheme.bodyMedium?.copyWith(
+      color: AppColors.clr667B99,
+      fontSize: 14.sp,
+    );
+    return InkWell(
+      onTap: onTap,
+      child: Row(
+      children: [
+        Expanded(
+          child: Row(
+            children: [
+              Flexible(
+                child: Text(
+                  label,
+                  style: labelStyle,
+                ),
+              ),
+              SizedBox(width: 6.w),
+              SvgPicture.asset(
+                Assets.proProBadge,
+                height: 18.h,
+                fit: BoxFit.contain,
+              ),
+            ],
+          ),
+        ),
+        Text(
+          amount,
+          style: theme.textTheme.bodyMedium?.copyWith(
+            color: AppColors.clr061E40,
+            fontSize: 14.sp,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      ],
+      ),
     );
   }
 

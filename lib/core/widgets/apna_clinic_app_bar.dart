@@ -6,6 +6,7 @@ import '../constants/app_colors.dart';
 import '../extensions/screen_util_extensions.dart';
 
 import '../constants/app_system_ui.dart';
+import 'pro_badge_avatar.dart';
 import 'user_profile_avatar.dart';
 
 /// Top bar: menu, brand (logo + wordmark), notification, profile.
@@ -33,6 +34,7 @@ class ApnaClinicAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.filledLoginButton = false,
     this.profileImageUrl,
     this.profileImageCacheKey,
+    this.isPro = false,
     this.bottom,
   });
 
@@ -52,6 +54,7 @@ class ApnaClinicAppBar extends StatelessWidget implements PreferredSizeWidget {
   final bool filledLoginButton;
   final String? profileImageUrl;
   final String? profileImageCacheKey;
+  final bool isPro;
   final PreferredSizeWidget? bottom;
 
 
@@ -230,16 +233,25 @@ class ApnaClinicAppBar extends StatelessWidget implements PreferredSizeWidget {
                             customBorder: const CircleBorder(),
                             child: Padding(
                               padding: EdgeInsets.all(6.sp),
-                              child: UserProfileAvatar(
-                                key: ValueKey(
-                                  profileImageCacheKey ??
-                                      profileImageUrl ??
-                                      'home-avatar',
-                                ),
-                                imageUrl: profileImageUrl,
-                                cacheKey: profileImageCacheKey,
-                                size: 40.r,
-                              ),
+                              child: isPro
+                                  ? ProBadgeAvatar(
+                                      key: ValueKey(
+                                        '${profileImageCacheKey ?? profileImageUrl ?? 'home-avatar'}-pro',
+                                      ),
+                                      imageUrl: profileImageUrl,
+                                      cacheKey: profileImageCacheKey,
+                                      size: 40.r,
+                                    )
+                                  : UserProfileAvatar(
+                                      key: ValueKey(
+                                        profileImageCacheKey ??
+                                            profileImageUrl ??
+                                            'home-avatar',
+                                      ),
+                                      imageUrl: profileImageUrl,
+                                      cacheKey: profileImageCacheKey,
+                                      size: 40.r,
+                                    ),
                             ),
                           ),
                         ),

@@ -11,12 +11,19 @@ class ConsultationCubit extends Cubit<ConsultationState> {
     loadCategories();
   }
 
+  void _safeEmit(ConsultationState newState) {
+    if (isClosed) return;
+    emit(newState);
+  }
+
   Future<void> loadCategories() async {
-    emit(state.copyWith(isLoading: true, errorMessage: null));
+    _safeEmit(state.copyWith(isLoading: true, errorMessage: null));
     final result = await getCategoriesUseCase.call();
+    if (isClosed) return;
     result.fold(
-      (error) => emit(state.copyWith(isLoading: false, errorMessage: error)),
-      (page) => emit(
+      (error) =>
+          _safeEmit(state.copyWith(isLoading: false, errorMessage: error)),
+      (page) => _safeEmit(
         state.copyWith(
           categories: page.categories,
           filteredCategories: page.categories,
@@ -30,9 +37,10 @@ class ConsultationCubit extends Cubit<ConsultationState> {
   }
 
   void onSearchChanged(String value) {
+    if (isClosed) return;
     final query = value.trim().toLowerCase();
     if (query.isEmpty) {
-      emit(
+      _safeEmit(
         state.copyWith(
           searchQuery: value,
           filteredCategories: state.categories,
@@ -49,7 +57,7 @@ class ConsultationCubit extends Cubit<ConsultationState> {
               item.description.toLowerCase().contains(query),
         )
         .toList(growable: false);
-    emit(
+    _safeEmit(
       state.copyWith(
         searchQuery: value,
         filteredCategories: filtered,

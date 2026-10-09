@@ -14,14 +14,10 @@ import '../../../../core/session/auth_session_refresh.dart';
 import '../../../../core/utils/auth_guard.dart';
 import '../../../../core/widgets/app_scaffold_gradient.dart';
 import '../../../../core/widgets/user_profile_avatar.dart';
-// TODO(pro): re-enable
-// import '../../../../core/widgets/pro_user_avatar.dart';
-// import '../../../pro/presentation/widgets/pro_show_info_widget.dart';
 import '../../../profile_setup/presentation/profile_setup_launch_source.dart';
-// TODO(pro): re-enable
-// import '../../../pro/domain/entities/pro_membership_entity.dart';
-// import '../../../pro/domain/use_cases/get_pro_catalog_use_case.dart';
-// import '../../../pro/presentation/show_pro_bottom_sheet.dart';
+import '../../../pro/domain/entities/pro_membership_entity.dart';
+import '../../../pro/domain/use_cases/get_pro_catalog_use_case.dart';
+import '../../../pro/presentation/show_pro_bottom_sheet.dart';
 import '../constants/main_navigation_tabs.dart';
 import '../helpers/menu_logout_handler.dart';
 import '../helpers/menu_profile_mapper.dart';
@@ -42,9 +38,8 @@ class _MenuScreenState extends State<MenuScreen> {
   late final AuthSessionRefresh _sessionRefresh;
   bool _isLoggedIn = false;
   String _appVersion = '';
-  // TODO(pro): re-enable
-  // ProMembershipEntity? _proMembership;
-  // bool _isProMembershipLoading = false;
+  ProMembershipEntity? _proMembership;
+  bool _isProMembershipLoading = false;
 
   @override
   void initState() {
@@ -54,8 +49,7 @@ class _MenuScreenState extends State<MenuScreen> {
     _isLoggedIn = AuthGuard.isLoggedIn(_appPref);
     _sessionRefresh.addListener(_onAuthSessionChanged);
     unawaited(_loadAppVersion());
-    // TODO(pro): re-enable
-    // unawaited(_loadProMembership());
+    unawaited(_loadProMembership());
   }
 
   Future<void> _loadAppVersion() async {
@@ -64,27 +58,26 @@ class _MenuScreenState extends State<MenuScreen> {
     setState(() => _appVersion = version);
   }
 
-  // TODO(pro): re-enable
-  // Future<void> _loadProMembership() async {
-  //   if (!mounted) return;
-  //   setState(() => _isProMembershipLoading = true);
-  //   final result = await sl<GetProCatalogUseCase>()();
-  //   if (!mounted) return;
-  //   result.fold(
-  //     (_) {
-  //       setState(() {
-  //         _proMembership = null;
-  //         _isProMembershipLoading = false;
-  //       });
-  //     },
-  //     (catalog) {
-  //       setState(() {
-  //         _proMembership = catalog.membership;
-  //         _isProMembershipLoading = false;
-  //       });
-  //     },
-  //   );
-  // }
+  Future<void> _loadProMembership() async {
+    if (!mounted) return;
+    setState(() => _isProMembershipLoading = true);
+    final result = await sl<GetProCatalogUseCase>()();
+    if (!mounted) return;
+    result.fold(
+      (_) {
+        setState(() {
+          _proMembership = null;
+          _isProMembershipLoading = false;
+        });
+      },
+      (catalog) {
+        setState(() {
+          _proMembership = catalog.membership;
+          _isProMembershipLoading = false;
+        });
+      },
+    );
+  }
 
   @override
   void dispose() {
@@ -97,8 +90,7 @@ class _MenuScreenState extends State<MenuScreen> {
     setState(() {
       _isLoggedIn = AuthGuard.isLoggedIn(_appPref);
     });
-    // TODO(pro): re-enable
-    // unawaited(_loadProMembership());
+    unawaited(_loadProMembership());
   }
 
   Future<void> _openEditProfile() async {
@@ -134,12 +126,11 @@ class _MenuScreenState extends State<MenuScreen> {
     context.pop();
   }
 
-  // TODO(pro): re-enable
-  // Future<void> _openPro() async {
-  //   await showApnaClinicProSheet(context);
-  //   if (!mounted) return;
-  //   unawaited(_loadProMembership());
-  // }
+  Future<void> _openPro() async {
+    await showApnaClinicProSheet(context);
+    if (!mounted) return;
+    unawaited(_loadProMembership());
+  }
 
   void _onMenuActionTap(MenuActionId actionId) {
     switch (actionId) {
@@ -183,17 +174,6 @@ class _MenuScreenState extends State<MenuScreen> {
           AppScaffoldGradientPanel(
             child: Column(
               children: [
-                // TODO(pro): re-enable temp Pro debug widgets
-                // Padding(
-                //   padding: const EdgeInsets.all(8.0),
-                //   child: ProShowInfoWidget(
-                //     title: "Lab Tests Discount",
-                //     discount: "30%",
-                //     subtitle:
-                //         "Become a pro member to get additional discount",
-                //   ),
-                // ),
-                // ProUserAvatar(imageUrl: "", size: 60, isPro: true),
                 Expanded(
                   child: MenuScreenBody(
                     profile: profile,
@@ -205,10 +185,9 @@ class _MenuScreenState extends State<MenuScreen> {
                     onProfileActionTap: _openEditProfile,
                     onActionTap: _onMenuActionTap,
                     onAboutTap: openMenuWebsite,
-                    // TODO(pro): re-enable
-                    // proMembership: _proMembership,
-                    // onProTap: () => unawaited(_openPro()),
-                    // isProMembershipLoading: _isProMembershipLoading,
+                    proMembership: _proMembership,
+                    onProTap: () => unawaited(_openPro()),
+                    isProMembershipLoading: _isProMembershipLoading,
                   ),
                 ),
                 if (_isLoggedIn) MenuLogoutButton(onPressed: _onLogoutTap),

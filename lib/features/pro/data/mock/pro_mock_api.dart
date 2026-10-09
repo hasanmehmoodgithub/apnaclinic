@@ -7,6 +7,28 @@ class ProMockApi {
   /// Flip to exercise active-member UI (`isPro: true`) vs subscribe UI.
   static bool mockAsActivePro = true;
 
+  Future<Map<String, dynamic>> unsubscribeSuccessResponse() async {
+    await Future<void>.delayed(const Duration(milliseconds: 250));
+    return {
+      'success': true,
+      'message': 'Pro subscription cancelled',
+      'data': {
+        'planCode': 'PRO',
+      },
+    };
+  }
+
+  Future<Map<String, dynamic>> subscribeSuccessResponse() async {
+    await Future<void>.delayed(const Duration(milliseconds: 250));
+    return {
+      'message': 'Pro subscription created',
+      'data': {
+        'planCode': 'PRO',
+        'planPriceCode': 'PRO_30D',
+      },
+    };
+  }
+
   Future<Map<String, dynamic>> getCatalogSuccessResponse() async {
     await Future<void>.delayed(const Duration(milliseconds: 250));
     if (mockAsActivePro) {

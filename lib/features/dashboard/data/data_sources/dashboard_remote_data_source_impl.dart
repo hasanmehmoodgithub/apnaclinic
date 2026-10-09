@@ -46,7 +46,7 @@ class DashboardRemoteDataSourceImpl implements DashboardRemoteDataSource {
         if (token.isNotEmpty && JwtUtils.isExpired(token)) {
           log('getOurServices: access token expired, refresh should run via interceptor');
         }
-        response = await apiService.get(AppUrls.ourServices);
+        response = await apiService.get(AppUrls.home);
         log('getOurServices response: $response');
       }
 
@@ -69,7 +69,7 @@ class DashboardRemoteDataSourceImpl implements DashboardRemoteDataSource {
       log('getOurServices error: $e');
       final message = ErrorHandler.handleExceptions(
         e,
-        endpoint: AppUrls.ourServices,
+        endpoint: AppUrls.home,
       );
       return Future.error(message);
     }

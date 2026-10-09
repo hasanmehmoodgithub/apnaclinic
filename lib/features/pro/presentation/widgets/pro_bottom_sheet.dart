@@ -6,7 +6,14 @@ import '../../../../core/constants/app_colors.dart';
 import '../../../../core/enums/state_status.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
+import '../../../../core/utils/auth_guard.dart';
 import '../../../../core/widgets/app_button_widget.dart';
+import '../../../consultation/presentation/models/doctor_consultation_jazzcash_sheet_result.dart';
+import '../../../consultation/presentation/widgets/doctor_consultation_jazzcash_accounts_sheet_widget.dart';
+import '../../../payment/domain/entities/payment_webview_result.dart';
+import '../../../payment/presentation/widgets/payment_outcome_dialog_widget.dart';
+import 'pro_subscribe_success_dialog.dart';
+import '../pro_user_webview_navigation.dart';
 import '../../domain/entities/pro_catalog_entity.dart';
 import '../cubit/pro_cubit.dart';
 import '../cubit/pro_state.dart';
@@ -15,6 +22,7 @@ import 'pro_benefits_table_widget.dart';
 import 'pro_cancel_subscription_dialog.dart';
 import 'pro_plan_cards_widget.dart';
 import 'pro_sheet_header_widget.dart';
+import 'pro_sheet_shimmer_widget.dart';
 
 class ProBottomSheet extends StatelessWidget {
   const ProBottomSheet({
@@ -22,8 +30,9 @@ class ProBottomSheet extends StatelessWidget {
     this.onSubscribe,
   });
 
-  /// Called with selected [planId] when CTA is tapped (non-Pro only).
-  final ValueChanged<String>? onSubscribe;
+  /// Called with selected [planId] when subscribe succeeds.
+  /// [suppressSuccessDialog] skips the dialog shown after this sheet closes.
+  final void Function(String planId, {bool suppressSuccessDialog})? onSubscribe;
 
   @override
   Widget build(BuildContext context) {
@@ -68,7 +77,7 @@ class ProBottomSheet extends StatelessWidget {
   Widget _body(BuildContext context, ProState state) {
     final status = state.loadingStateStatus;
     if (status == StateStatus.loading || status == StateStatus.idle) {
-      return const _ProSheetLoading();
+      return const ProSheetShimmerWidget();
     }
     if (status == StateStatus.error || state.catalog == null) {
       return _ProSheetError(
@@ -79,9 +88,20 @@ class ProBottomSheet extends StatelessWidget {
 
     final catalog = state.catalog!;
     if (catalog.membership.isActivePro) {
-      return ProActiveMemberContent(
-        catalog: catalog,
-        onCancelSubscription: () => _onCancelSubscription(context),
+      final isCancelling =
+          state.subscribeStateStatus == StateStatus.loading;
+      return Stack(
+        children: [
+          AbsorbPointer(
+            absorbing: isCancelling,
+            child: ProActiveMemberContent(
+              catalog: catalog,
+              onCancelSubscription: () => _onCancelSubscription(context),
+            ),
+          ),
+          if (isCancelling)
+            const Center(child: CircularProgressIndicator()),
+        ],
       );
     }
 
@@ -89,19 +109,129 @@ class ProBottomSheet extends StatelessWidget {
       catalog: catalog,
       selectedPlanId: state.selectedPlanId,
       onPlanSelected: context.read<ProCubit>().selectPlan,
-      onSubscribe: () {
-        final planId = state.selectedPlanId;
-        if (planId == null || planId.isEmpty) return;
-        onSubscribe?.call(planId);
+      onSubscribe: () => _submitSubscribe(context),
+    );
+  }
+
+  Future<void> _submitSubscribe(BuildContext context) async {
+    if (!context.requireLogin()) return;
+    final cubit = context.read<ProCubit>();
+    final planId = cubit.state.selectedPlanId;
+    if (planId == null || planId.isEmpty) return;
+
+    final msisdn = await _pickJazzCashNumber(context);
+    if (!context.mounted || msisdn == null || msisdn.isEmpty) return;
+
+    final subscription = await cubit.subscribe(msisdn: msisdn);
+    if (!context.mounted) return;
+    if (subscription == null) {
+      _showSubscribeMessage(context, cubit.state.subscribeErrorMessage);
+      return;
+    }
+
+    if (subscription.opensJazzCash) {
+      final l10n = AppLocalizations.of(context)!;
+      final payment = await openProUserWebView(
+        context,
+        url: subscription.link!,
+        title: l10n.accountMethodJazzCash,
+      );
+      if (!context.mounted) return;
+      final result = payment ?? PaymentWebViewResult.cancelled();
+      final destination = await _showWebViewOutcomeDialog(context, result);
+      if (!context.mounted || !result.isSuccess) return;
+      final router = GoRouter.of(context);
+      onSubscribe?.call(planId, suppressSuccessDialog: true);
+      if (destination != null) router.push(destination);
+      return;
+    }
+
+    onSubscribe?.call(planId);
+  }
+
+  Future<String?> _showWebViewOutcomeDialog(
+    BuildContext context,
+    PaymentWebViewResult result,
+  ) async {
+    if (!context.mounted) return null;
+    final l10n = AppLocalizations.of(context)!;
+    if (result.isSuccess) {
+      final gatewayMessage = result.message?.trim();
+      return showProSubscribeSuccessDialog(
+        context,
+        message: (gatewayMessage != null && gatewayMessage.isNotEmpty)
+            ? gatewayMessage
+            : null,
+      );
+    }
+
+    final gatewayMessage = result.message?.trim();
+    final title = switch (result.status) {
+      PaymentWebViewStatus.pending => l10n.proPaymentPending,
+      PaymentWebViewStatus.cancelled => l10n.paymentWebViewCancelledTitle,
+      _ => l10n.paymentWebViewFailedTitle,
+    };
+    final message = (gatewayMessage != null && gatewayMessage.isNotEmpty)
+        ? gatewayMessage
+        : switch (result.status) {
+            PaymentWebViewStatus.pending => l10n.proPaymentPending,
+            PaymentWebViewStatus.cancelled =>
+              l10n.paymentWebViewCancelledMessage,
+            _ => l10n.paymentWebViewFailed,
+          };
+    await showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (dialogContext) {
+        return PaymentOutcomeDialogWidget(
+          title: title,
+          message: message,
+          ctaText: l10n.commonOk,
+          isCancelled: result.status != PaymentWebViewStatus.failed,
+          onCta: () => dialogContext.pop(),
+        );
       },
     );
+    return null;
+  }
+
+  Future<String?> _pickJazzCashNumber(BuildContext context) async {
+    final result =
+        await showModalBottomSheet<DoctorConsultationJazzCashSheetResult>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => const DoctorConsultationJazzCashAccountsSheetWidget(),
+    );
+    return result?.msisdn.trim();
+  }
+
+  void _showSubscribeMessage(BuildContext context, String? message) {
+    final text = message?.trim();
+    if (!context.mounted || text == null || text.isEmpty) return;
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(text)));
   }
 
   Future<void> _onCancelSubscription(BuildContext context) async {
     final confirmed = await showProCancelSubscriptionDialog(context);
     if (!confirmed || !context.mounted) return;
-    // Unsubscribe API will be wired next; close sheet after confirm for now.
+    final cubit = context.read<ProCubit>();
+    final cancellation = await cubit.unsubscribe();
+    if (!context.mounted) return;
+    if (cancellation == null) {
+      if (cubit.state.subscribeStateStatus == StateStatus.loading) return;
+      _showSubscribeMessage(context, cubit.state.subscribeErrorMessage);
+      return;
+    }
+
+    final l10n = AppLocalizations.of(context)!;
+    final apiMessage = cancellation.message.trim();
+    final text = apiMessage.isNotEmpty
+        ? apiMessage
+        : l10n.proCancelSubscriptionSuccess;
+    final messenger = ScaffoldMessenger.maybeOf(context);
     context.pop();
+    messenger?.showSnackBar(SnackBar(content: Text(text)));
   }
 }
 
@@ -185,27 +315,19 @@ class _ProSubscribeContent extends StatelessWidget {
             20.w,
             16.h + MediaQuery.paddingOf(context).bottom,
           ),
-          child: AppButtonWidget(
-            title: catalog.ctaLabel,
-            bgClr: AppColors.clr1FAFA3,
-            onTap: onSubscribe,
+          child: BlocSelector<ProCubit, ProState, bool>(
+            selector: (state) =>
+                state.subscribeStateStatus == StateStatus.loading,
+            builder: (context, isSubmitting) {
+              return AppButtonWidget(
+                title: catalog.ctaLabel,
+                bgClr: AppColors.clr1FAFA3,
+                onTap: isSubmitting ? null : onSubscribe,
+              );
+            },
           ),
         ),
       ],
-    );
-  }
-}
-
-class _ProSheetLoading extends StatelessWidget {
-  const _ProSheetLoading();
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: 80.h),
-      child: const Center(
-        child: CircularProgressIndicator(color: AppColors.clr1FAFA3),
-      ),
     );
   }
 }

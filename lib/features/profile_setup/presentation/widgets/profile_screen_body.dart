@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/enums/state_status.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
+import '../../../../core/utils/auth_guard.dart';
+import '../../../pro/domain/use_cases/get_pro_catalog_use_case.dart';
 import '../../../account/domain/entities/account_item_entity.dart';
 import '../cubit/profile_cubit.dart';
 import '../cubit/profile_state.dart';
@@ -70,7 +73,7 @@ class ProfileScreenBody extends StatelessWidget {
   }
 }
 
-class ProfileScreenHeader extends StatelessWidget {
+class ProfileScreenHeader extends StatefulWidget {
   const ProfileScreenHeader({
     super.key,
     required this.imageUrl,
@@ -79,11 +82,41 @@ class ProfileScreenHeader extends StatelessWidget {
   final String? imageUrl;
 
   @override
+  State<ProfileScreenHeader> createState() => _ProfileScreenHeaderState();
+}
+
+class _ProfileScreenHeaderState extends State<ProfileScreenHeader> {
+  bool _isPro = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadProMembership();
+  }
+
+  Future<void> _loadProMembership() async {
+    if (!AuthGuard.isLoggedIn()) return;
+    final result = await sl<GetProCatalogUseCase>()();
+    if (!mounted) return;
+    result.fold(
+      (_) {},
+      (catalog) {
+        final isPro = catalog.membership.isActivePro;
+        if (isPro == _isPro) return;
+        setState(() => _isPro = isPro);
+      },
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Column(
       children: [
         SizedBox(height: 10.h),
-        ProfileAvatarSection(imageUrl: imageUrl),
+        ProfileAvatarSection(
+          imageUrl: widget.imageUrl,
+          isPro: _isPro,
+        ),
         SizedBox(height: 20.h),
       ],
     );

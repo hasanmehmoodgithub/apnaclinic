@@ -550,7 +550,7 @@ class _LabTestCheckoutScreenState extends State<LabTestCheckoutScreen> {
                           ),
                         ],
                         SizedBox(height: 12.h),
-                        LabTestCheckoutPaymentBreakdownCardWidget(args: a),
+                        LabTestCheckoutPaymentSection(args: a),
                         SizedBox(height: 12.h),
                         LabTestCheckoutPatientFormSectionWidget(
                           theme: theme,

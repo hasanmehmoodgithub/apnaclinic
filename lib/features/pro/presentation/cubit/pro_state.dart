@@ -13,6 +13,8 @@ abstract class ProState with _$ProState {
     ProCatalogEntity? catalog,
     String? selectedPlanId,
     String? errorMessage,
+    @Default(StateStatus.idle) StateStatus subscribeStateStatus,
+    String? subscribeErrorMessage,
   }) = _ProState;
 
   const ProState._();

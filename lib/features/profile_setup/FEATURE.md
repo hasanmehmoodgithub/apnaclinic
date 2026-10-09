@@ -29,7 +29,7 @@ Splash/onboarding entry does not send `profile_creation_screen` (source not in s
 - `ProfileSetupMapper` maps API strings to `DateTime?` using ISO `DateTime.tryParse` first, then `dd-MM-yyyy HH:mm:ss`, `dd-MM-yyyy`, and `yyyy-MM-dd` via `intl`. Profile tiles and account-list cache use the same parser so DOB does not show `--` after add-account refresh.
 - GET profile response is read from `data` and supports backend `dob` (for example `02-03-2000 00:00:00`).
 - API gender values are normalized to `male` or `female` before binding to the picker.
-- `data.image` is stored on `UserLocalModel.imageUrl` and shown on home app bar / profile / menu when non-empty (`UserProfileAvatar` + `CachedNetworkImage`).
+- `data.image` is stored on `UserLocalModel.imageUrl` and shown on home app bar / profile / menu when non-empty (`UserProfileAvatar` + `CachedNetworkImage`). Profile screen uses the menu `ProUserAvatar` (laurels + crown) when `membership.isActivePro`.
 - `ProfileSetupScreen` calls `loadProfile()` only when the profile is already completed, so edit/update mode hydrates from API. First-time setup (`userOnboarding: true`) prefills fields from OTP `data.user` stored in `AppPref` (`firstName`, `lastName`, `email`, `gender`, `address`, `dob`, `image`; blank/`[NULL]` names stay empty). `AppPref.isProfileCompleted` is set on **save** only (not on GET).
 - Dismisses any global heart loader overlay on open (home banner loader uses root navigator). Edit avatar shows API/local `imageUrl` via `UserProfileAvatar`; a newly picked file takes priority until save.
 - Tapping the avatar (full circle or camera badge) opens `ProfileImageSourceSheet` with **Use camera** and **Choose from gallery** (same flow for first-time onboarding and profile update).

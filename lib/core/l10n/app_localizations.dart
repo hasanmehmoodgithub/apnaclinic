@@ -728,6 +728,12 @@ abstract class AppLocalizations {
   /// **'Delivery Charges'**
   String get pharmacyCheckoutDeliveryChargesLabel;
 
+  /// No description provided for @pharmacyCheckoutFree.
+  ///
+  /// In en, this message translates to:
+  /// **'Free'**
+  String get pharmacyCheckoutFree;
+
   /// No description provided for @pharmacyCheckoutDiscountLabel.
   ///
   /// In en, this message translates to:
@@ -3706,6 +3712,48 @@ abstract class AppLocalizations {
   /// **'Subscribe Now!'**
   String get proShowInfoSubscribeCta;
 
+  /// No description provided for @proShowInfoSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Become a pro member to get additional discount'**
+  String get proShowInfoSubtitle;
+
+  /// No description provided for @proShowInfoConsultationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Doctor Consultation Discount'**
+  String get proShowInfoConsultationTitle;
+
+  /// No description provided for @proShowInfoConsultationDiscount.
+  ///
+  /// In en, this message translates to:
+  /// **'20% OFF'**
+  String get proShowInfoConsultationDiscount;
+
+  /// No description provided for @proShowInfoLabTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Lab Test Discount'**
+  String get proShowInfoLabTitle;
+
+  /// No description provided for @proShowInfoLabDiscount.
+  ///
+  /// In en, this message translates to:
+  /// **'20% OFF'**
+  String get proShowInfoLabDiscount;
+
+  /// No description provided for @proShowInfoPharmacyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Pharmacy Discount'**
+  String get proShowInfoPharmacyTitle;
+
+  /// No description provided for @proShowInfoPharmacyDiscount.
+  ///
+  /// In en, this message translates to:
+  /// **'Free Delivery'**
+  String get proShowInfoPharmacyDiscount;
+
   /// No description provided for @proSubscribeSuccessTitle.
   ///
   /// In en, this message translates to:
@@ -3715,7 +3763,7 @@ abstract class AppLocalizations {
   /// No description provided for @proSubscribeSuccessMessage.
   ///
   /// In en, this message translates to:
-  /// **'Enjoy discounts on the Pro bundle'**
+  /// **'Enjoy exclusive discounts on pharmacy orders, consultations, labs and surgery'**
   String get proSubscribeSuccessMessage;
 
   /// No description provided for @proSubscribeSuccessOk.
@@ -3723,6 +3771,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'OK'**
   String get proSubscribeSuccessOk;
+
+  /// No description provided for @proSubscribeSuccessConsultation.
+  ///
+  /// In en, this message translates to:
+  /// **'Book Doctor Consultation'**
+  String get proSubscribeSuccessConsultation;
+
+  /// No description provided for @proSubscribeSuccessPharmacy.
+  ///
+  /// In en, this message translates to:
+  /// **'Order Pharmacy'**
+  String get proSubscribeSuccessPharmacy;
+
+  /// No description provided for @proSubscribeSuccessLab.
+  ///
+  /// In en, this message translates to:
+  /// **'Book Lab Test'**
+  String get proSubscribeSuccessLab;
+
+  /// No description provided for @proPaymentPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment is pending.'**
+  String get proPaymentPending;
 
   /// No description provided for @proHomeSectionTitle.
   ///
@@ -3789,6 +3861,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Don\'t Cancel'**
   String get proCancelSubscriptionDiscard;
+
+  /// No description provided for @proAvatarBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'PRO'**
+  String get proAvatarBadge;
+
+  /// No description provided for @proCancelSubscriptionSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Pro subscription has been cancelled.'**
+  String get proCancelSubscriptionSuccess;
 
   /// Title for JazzCash MPIN payment verification bottom sheet
   ///

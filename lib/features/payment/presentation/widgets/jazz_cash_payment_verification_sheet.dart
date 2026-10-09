@@ -118,7 +118,7 @@ class JazzCashPaymentVerificationDialog extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       SvgPicture.asset(
-                        Assets.svgJazzLogo,
+                        Assets.svgIcJazzLogo,
                         width: 36.r,
                         height: 36.r,
                         fit: BoxFit.contain,

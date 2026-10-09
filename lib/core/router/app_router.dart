@@ -76,6 +76,8 @@ import '../../features/instant_doctor/presentation/instant_doctor_consultation_a
 import '../../features/instant_doctor/presentation/screens/instant_doctor_consultation_webview_screen.dart';
 import '../../features/payment/presentation/payment_webview_args.dart';
 import '../../features/payment/presentation/screens/payment_webview_screen.dart';
+import '../../features/pro/presentation/pro_user_webview_args.dart';
+import '../../features/pro/presentation/screens/pro_user_webview_screen.dart';
 import '../../features/profile_setup/presentation/profile_setup_launch_source.dart';
 import '../../features/profile_setup/presentation/cubit/profile_cubit.dart';
 import '../../features/profile_setup/presentation/screens/profile_screen.dart';
@@ -591,6 +593,19 @@ class AppRouter {
             );
           }
           return PaymentWebViewScreen(args: args);
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.path(AppRoutes.proUserWebView),
+        name: AppRoutes.proUserWebView,
+        builder: (context, state) {
+          final args = proUserWebViewArgsFromExtra(state.extra);
+          if (args == null) {
+            return const Scaffold(
+              body: Center(child: Text('Invalid Pro payment link')),
+            );
+          }
+          return ProUserWebViewScreen(args: args);
         },
       ),
     ],

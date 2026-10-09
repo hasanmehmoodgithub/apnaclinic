@@ -59,11 +59,12 @@ class DashboardCubit extends Cubit<DashboardServicesState> {
       ),
       (data) => _safeEmit(
         state.copyWith(
-          ourServicesLoadingStateStatus: data.isEmpty
+          ourServicesLoadingStateStatus: data.services.isEmpty
               ? StateStatus.empty
               : StateStatus.success,
-          servicesList: data.where((e) => e.visibility).toList(),
+          servicesList: data.services.where((e) => e.visibility).toList(),
           servicesErrorMessage: null,
+          proBannerUrl: data.bannerUrl,
         ),
       ),
     );

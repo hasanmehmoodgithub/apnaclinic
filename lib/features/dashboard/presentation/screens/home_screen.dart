@@ -20,11 +20,11 @@ import '../../../../core/services/notification_service.dart';
 import '../../../../core/widgets/heart_loader_widget.dart';
 import '../../domain/entities/our_service_entity.dart';
 import '../../domain/services/promotional_banner_session.dart';
-// import '../../../pro/presentation/show_pro_bottom_sheet.dart';
+import '../../../pro/presentation/show_pro_bottom_sheet.dart';
 import '../cubit/dashboard_services_cubit.dart';
 import '../cubit/dashboard_services_state.dart';
 import '../widgets/app_update_dialog.dart';
-// import '../widgets/apna_clinic_pro_home_banner.dart';
+import '../widgets/apna_clinic_pro_home_banner.dart';
 import '../widgets/fikrfree_health_banner.dart';
 import '../widgets/home_header_section.dart';
 import '../widgets/instant_doctor_home_banner.dart';
@@ -38,10 +38,9 @@ import '../../../surgery/presentation/surgery_analytics.dart';
 import '../../../search/presentation/models/search_launch_args.dart';
 import '../../../notification/presentation/cubit/notification_cubit.dart';
 import '../../../notification/presentation/cubit/notification_state.dart';
-// TODO(pro): re-enable ApnaClinic Pro home banner
-// import '../../../pro/domain/entities/pro_membership_entity.dart';
-// import '../../../pro/presentation/cubit/pro_cubit.dart';
-// import '../../../pro/presentation/cubit/pro_state.dart';
+import '../../../pro/domain/entities/pro_membership_entity.dart';
+import '../../../pro/presentation/cubit/pro_cubit.dart';
+import '../../../pro/presentation/cubit/pro_state.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -57,8 +56,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   bool _updatePromptHandled = false;
   late final DashboardCubit _dashboardCubit;
   late final NotificationCubit _notificationCubit;
-  // TODO(pro): re-enable
-  // late final ProCubit _proCubit;
+  late final ProCubit _proCubit;
   late final PromotionalBannerSession _bannerSession;
   //change
   StreamSubscription<NotificationPayload>? _pushSubscription;
@@ -71,8 +69,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     _bannerSession = sl<PromotionalBannerSession>();
     _dashboardCubit = sl<DashboardCubit>();
     _notificationCubit = sl<NotificationCubit>();
-    // TODO(pro): re-enable
-    // _proCubit = sl<ProCubit>()..loadCatalog();
+    _proCubit = sl<ProCubit>()..loadCatalog();
     _sessionRefresh = sl<AuthSessionRefresh>();
     _sessionRefresh.addListener(_onAuthSessionChanged);
     if (AuthGuard.isLoggedIn()) {
@@ -104,24 +101,21 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     HeartLoaderDialogController.close(_bannerLoaderId);
     WidgetsBinding.instance.removeObserver(this);
     _dashboardCubit.close();
-    // TODO(pro): re-enable
-    // _proCubit.close();
+    _proCubit.close();
     super.dispose();
   }
 
   void _onAuthSessionChanged() {
     if (!mounted) return;
     unawaited(_maybePresentHomeDialogs());
-    // TODO(pro): re-enable
-    // unawaited(_proCubit.loadCatalog(refresh: true));
+    unawaited(_proCubit.loadCatalog(refresh: true));
   }
 
-  // TODO(pro): re-enable
-  // Future<void> _openPro() async {
-  //   await showApnaClinicProSheet(context);
-  //   if (!mounted) return;
-  //   unawaited(_proCubit.loadCatalog(refresh: true));
-  // }
+  Future<void> _openPro() async {
+    await showApnaClinicProSheet(context);
+    if (!mounted) return;
+    unawaited(_proCubit.loadCatalog(refresh: true));
+  }
 
   bool _isHomeRouteActive(BuildContext context) {
     final route = ModalRoute.of(context);
@@ -146,8 +140,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     return MultiBlocProvider(
       providers: [
         BlocProvider.value(value: _dashboardCubit),
-        // TODO(pro): re-enable
-        // BlocProvider.value(value: _proCubit),
+        BlocProvider.value(value: _proCubit),
       ],
       child: ListenableBuilder(
         listenable: _sessionRefresh,
@@ -318,30 +311,37 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                     ? null
                     : '$trimmedImageUrl#$profileRevision';
                 final _ = state.profileSyncNonce;
-                return HomeHeaderSection(
-                  userName: greetingName,
-                  isLoggedIn: isLoggedIn,
-                  hasUnreadNotifications: unreadCount > 0,
-                  profileImageUrl: profileImageUrl,
-                  profileImageCacheKey: profileImageCacheKey,
-                  onMenuTap: () =>
-                      context.push(AppRoutes.path(AppRoutes.dashboardMenu)),
-                  onNotificationTap: () {
-                    if (!context.requireLogin()) return;
-                    unawaited(
-                      sl<AnalyticsService>().logEvent(
-                        AnalyticsEventKeys.notificationsScreenOpen,
-                      ),
+                return BlocSelector<ProCubit, ProState, bool>(
+                  selector: (proState) =>
+                      proState.membership?.isActivePro == true,
+                  builder: (context, isPro) {
+                    return HomeHeaderSection(
+                      userName: greetingName,
+                      isLoggedIn: isLoggedIn,
+                      hasUnreadNotifications: unreadCount > 0,
+                      profileImageUrl: profileImageUrl,
+                      profileImageCacheKey: profileImageCacheKey,
+                      isPro: isPro,
+                      onMenuTap: () =>
+                          context.push(AppRoutes.path(AppRoutes.dashboardMenu)),
+                      onNotificationTap: () {
+                        if (!context.requireLogin()) return;
+                        unawaited(
+                          sl<AnalyticsService>().logEvent(
+                            AnalyticsEventKeys.notificationsScreenOpen,
+                          ),
+                        );
+                        context.push(AppRoutes.path(AppRoutes.notifications));
+                      },
+                      onLoginTap: () => AuthGuard.pushLogin(context),
+                      onProfileTap: () {
+                        if (!context.requireLogin()) return;
+                        context.push(AppRoutes.path(AppRoutes.profile));
+                      },
+                      onSearchTap: () => unawaited(_openSearch(context)),
+                      onVoiceTap: () => unawaited(_openVoiceSearch(context)),
                     );
-                    context.push(AppRoutes.path(AppRoutes.notifications));
                   },
-                  onLoginTap: () => AuthGuard.pushLogin(context),
-                  onProfileTap: () {
-                    if (!context.requireLogin()) return;
-                    context.push(AppRoutes.path(AppRoutes.profile));
-                  },
-                  onSearchTap: () => unawaited(_openSearch(context)),
-                  onVoiceTap: () => unawaited(_openVoiceSearch(context)),
                 );
               },
             ),
@@ -371,28 +371,31 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                         ),
                       ),
                     ),
-                    // TODO(pro): re-enable ApnaClinic Pro home banner
-                    // SliverPadding(
-                    //   padding: EdgeInsets.fromLTRB(20.w, 20.h, 20.w, 0),
-                    //   sliver: SliverToBoxAdapter(
-                    //     child: BlocSelector<
-                    //         ProCubit,
-                    //         ProState,
-                    //         ({ProMembershipEntity? membership, bool isLoading})>(
-                    //       selector: (proState) => (
-                    //         membership: proState.membership,
-                    //         isLoading: proState.isCatalogLoading,
-                    //       ),
-                    //       builder: (context, pro) {
-                    //         return ApnaClinicProHomeBanner(
-                    //           membership: pro.membership,
-                    //           isLoading: pro.isLoading,
-                    //           onTap: () => unawaited(_openPro()),
-                    //         );
-                    //       },
-                    //     ),
-                    //   ),
-                    // ),
+                    SliverPadding(
+                      padding: EdgeInsets.fromLTRB(20.w, 20.h, 20.w, 0),
+                      sliver: SliverToBoxAdapter(
+                        child: BlocSelector<
+                            ProCubit,
+                            ProState,
+                            ({ProMembershipEntity? membership, bool isLoading})>(
+                          selector: (proState) => (
+                            membership: proState.membership,
+                            isLoading: proState.isCatalogLoading,
+                          ),
+                          builder: (context, pro) {
+                            final bannerUrl = state.proBannerUrl?.trim() ?? '';
+                            return ApnaClinicProHomeBanner(
+                              membership: pro.membership,
+                              isLoading: pro.isLoading,
+                              imageUrl: bannerUrl.isEmpty
+                                  ? ApnaClinicProHomeBanner.defaultImageUrl
+                                  : bannerUrl,
+                              onTap: () => unawaited(_openPro()),
+                            );
+                          },
+                        ),
+                      ),
+                    ),
                     SliverPadding(
                       padding: EdgeInsets.fromLTRB(20.w, 20.h, 20.w, 32.h),
                       sliver: SliverToBoxAdapter(

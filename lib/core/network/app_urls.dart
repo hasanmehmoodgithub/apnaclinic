@@ -50,9 +50,10 @@ class AppUrls {
   /// Products list endpoint - full URL
   static String get products => 'https://dummyjson.com/products';
 
-  /// Home services (CMS mobile API).
-  static String get ourServices =>
-      '$_normalizedApiBaseUrl/acs-cmsbe/api/v1/mobile/services';
+  /// Home panel: service tiles and the Pro promo banner (CMS mobile API).
+  static String get home =>
+      '$_normalizedApiBaseUrl/acs-cmsbe/api/v1/mobile/home';
+
 
   /// Doctor consultation categories (aggregator mobile API).
   static String get doctorCategories =>
@@ -162,9 +163,19 @@ class AppUrls {
   static String get instantDoctorSessionLog =>
       '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/doctor-consultation/instant/session-log';
 
-  /// ApnaClinic Pro membership catalog (aggregator mobile API).
-  static String get membershipCatalog =>
-      '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/membership/catalog';
+  /// ApnaClinic Pro plan details (aggregator mobile API).
+  static String get proDetails =>
+      '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/pro/details';
+
+  /// ApnaClinic Pro subscribe.
+  /// Body: `planCode`, `planPriceCode`, `msisdn`, `channel`.
+  static String get proSubscribe =>
+      '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/pro/subscribe';
+
+  /// ApnaClinic Pro unsubscribe.
+  /// Body: `planCode`.
+  static String get proUnsubscribe =>
+      '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/pro/unsubscribe';
 
   /// Promo code validate (aggregator mobile API).
   /// Body: `{ code, service, amount }` where `service` is CONSULTATION | LAB | PHARMACY.

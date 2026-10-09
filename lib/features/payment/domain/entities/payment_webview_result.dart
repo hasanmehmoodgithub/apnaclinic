@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-enum PaymentWebViewStatus { success, failed, cancelled }
+enum PaymentWebViewStatus { success, failed, cancelled, pending }
 
 class PaymentWebViewResult {
   const PaymentWebViewResult({
@@ -34,10 +34,18 @@ class PaymentWebViewResult {
     );
   }
 
+  factory PaymentWebViewResult.pending({String? message}) {
+    return PaymentWebViewResult(
+      status: PaymentWebViewStatus.pending,
+      message: message,
+    );
+  }
+
   /// Parses Rox/JazzCash `AndroidInterface.postMessage` payloads.
   ///
-  /// Accepts plain tokens (`success` / `fail` / `cancel`) or JSON such as:
-  /// `{ "status": "fail", "success": false, "message": "...", "statusCode": 400 }`.
+  /// Accepts plain tokens (`success` / `fail` / `cancel` / `pending`) or JSON:
+  /// `{ "status": "success"|"fail"|"pending", "success": true/false, "message": "...", "statusCode": 200 }`.
+  /// `status` wins over `success` and `statusCode`.
   static PaymentWebViewResult? tryParseBridgeMessage(String raw) {
     final text = raw.trim();
     if (text.isEmpty) return null;
@@ -70,11 +78,13 @@ class PaymentWebViewResult {
       '${map['statusCode'] ?? map['status_code'] ?? map['code'] ?? ''}',
     );
 
+    if (status == 'pending') {
+      return PaymentWebViewResult.pending(message: message);
+    }
+
     final isCancel = _isCancelStatus(status) || _messageLooksCancelled(message);
-    final isFail = successFlag == false ||
-        _isFailStatus(status) ||
-        (statusCode != null && statusCode >= 400);
-    final isSuccess = successFlag == true || _isSuccessStatus(status);
+    final isFail = _isFailStatus(status);
+    final isSuccess = _isSuccessStatus(status);
 
     if (isCancel && !isSuccess) {
       return PaymentWebViewResult.cancelled(message: message);
@@ -82,8 +92,11 @@ class PaymentWebViewResult {
     if (isFail) {
       return PaymentWebViewResult.failed(message: message);
     }
-    if (isSuccess) {
+    if (isSuccess || successFlag == true) {
       return PaymentWebViewResult.success(message: message);
+    }
+    if (successFlag == false || (statusCode != null && statusCode >= 400)) {
+      return PaymentWebViewResult.failed(message: message);
     }
     return null;
   }
@@ -97,6 +110,9 @@ class PaymentWebViewResult {
     }
     if (_failTokens.contains(lower)) {
       return PaymentWebViewResult.failed();
+    }
+    if (lower == 'pending') {
+      return PaymentWebViewResult.pending();
     }
     return null;
   }

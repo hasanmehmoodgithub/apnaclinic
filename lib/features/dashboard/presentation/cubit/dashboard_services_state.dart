@@ -21,6 +21,9 @@ abstract class DashboardServicesState with _$DashboardServicesState {
     // Data
     @Default([]) List<OurServiceEntity> servicesList,
     String? servicesErrorMessage,
+
+    /// Pro promo image from the home panel. Empty when the API omits it.
+    String? proBannerUrl,
     PromotionalBannerEntity? promotionalBanner,
     String? promotionalBannerErrorMessage,
     AppUpdatePromptEntity? appUpdatePrompt,

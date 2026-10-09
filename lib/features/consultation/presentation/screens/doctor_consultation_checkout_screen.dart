@@ -20,6 +20,7 @@ import '../cubit/doctor_consultation_checkout_cubit.dart';
 import '../cubit/doctor_consultation_checkout_state.dart';
 import '../doctor_consultation_checkout_args.dart';
 import '../doctor_consultation_summary_args.dart';
+import '../../../pro/presentation/widgets/pro_service_offer_slot.dart';
 import '../widgets/consultation_screen_header_widget.dart';
 import '../widgets/doctor_consultation_checkout_billing_section_widget.dart';
 import '../widgets/doctor_consultation_checkout_payment_method_tile_widget.dart';
@@ -250,6 +251,9 @@ class _DoctorConsultationCheckoutScreenState
                                     data: data,
                                   ),
                                   SizedBox(height: 18.h),
+                                  const ProServiceOfferSlot(
+                                    service: ProServiceOfferKind.consultation,
+                                  ),
                                   Text(
                                     l10n.consultationPaymentMethodTitle,
                                     style: Theme.of(context)

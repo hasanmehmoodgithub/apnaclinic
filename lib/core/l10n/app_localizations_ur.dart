@@ -335,6 +335,9 @@ class AppLocalizationsUr extends AppLocalizations {
   String get pharmacyCheckoutDeliveryChargesLabel => 'ڈیلیوری چارجز';
 
   @override
+  String get pharmacyCheckoutFree => 'مفت';
+
+  @override
   String get pharmacyCheckoutDiscountLabel => 'رعایت';
 
   @override
@@ -1982,13 +1985,47 @@ class AppLocalizationsUr extends AppLocalizations {
   String get proShowInfoSubscribeCta => 'ابھی سبسکرائب کریں!';
 
   @override
+  String get proShowInfoSubtitle => 'اضافی چھوٹ کے لیے Pro ممبر بنیں';
+
+  @override
+  String get proShowInfoConsultationTitle => 'ڈاکٹر کنسلٹیشن رعایت';
+
+  @override
+  String get proShowInfoConsultationDiscount => '20% OFF';
+
+  @override
+  String get proShowInfoLabTitle => 'لیب ٹیسٹ رعایت';
+
+  @override
+  String get proShowInfoLabDiscount => '20% OFF';
+
+  @override
+  String get proShowInfoPharmacyTitle => 'فارمیسی رعایت';
+
+  @override
+  String get proShowInfoPharmacyDiscount => 'مفت ڈیلیوری';
+
+  @override
   String get proSubscribeSuccessTitle => 'آپ Pro ورژن میں سبسکرائب ہو گئے!';
 
   @override
-  String get proSubscribeSuccessMessage => 'Pro بنڈل پر چھوٹ سے لطف اٹھائیں';
+  String get proSubscribeSuccessMessage =>
+      'فارمیسی آرڈرز، مشاورت، لیبز اور سرجری پر خصوصی رعایت سے لطف اٹھائیں';
 
   @override
   String get proSubscribeSuccessOk => 'ٹھیک ہے';
+
+  @override
+  String get proSubscribeSuccessConsultation => 'ڈاکٹر کنسلٹیشن بک کریں';
+
+  @override
+  String get proSubscribeSuccessPharmacy => 'فارمیسی آرڈر کریں';
+
+  @override
+  String get proSubscribeSuccessLab => 'لیب ٹیسٹ بک کریں';
+
+  @override
+  String get proPaymentPending => 'ادائیگی زیر التوا ہے۔';
 
   @override
   String get proHomeSectionTitle => 'Apna Clinic PRO';
@@ -2029,6 +2066,13 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get proCancelSubscriptionDiscard => 'منسوخ نہ کریں';
+
+  @override
+  String get proAvatarBadge => 'PRO';
+
+  @override
+  String get proCancelSubscriptionSuccess =>
+      'آپ کی Pro سبسکرپشن منسوخ ہو گئی ہے۔';
 
   @override
   String get jazzCashVerificationRequiredTitle => 'تصدیق درکار ہے';

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/cities/presentation/show_select_city_dialog.dart';
@@ -10,6 +11,8 @@ import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/utils/phone_format_utils.dart';
 import '../../../../core/widgets/app_button_widget.dart';
+import '../../../../generated/assets.dart';
+import '../../../pro/presentation/widgets/pro_service_offer_slot.dart';
 import '../../../consultation/data/utils/consultation_booking_utils.dart';
 import '../../../consultation/presentation/models/doctor_consultation_jazzcash_sheet_result.dart';
 import '../../../consultation/presentation/widgets/doctor_consultation_jazzcash_accounts_sheet_widget.dart';
@@ -192,7 +195,9 @@ class PharmacyCheckoutBodyWidget extends StatelessWidget {
         final cities = state.checkoutCities.isNotEmpty
             ? state.checkoutCities
             : <String>[state.selectedCity];
-        return Stack(
+        return PharmacyCheckoutProScope(
+          builder: (context, isPro, offerKey, onProChanged) {
+            return Stack(
           children: [
             ListView(
               padding: EdgeInsets.fromLTRB(23.w, 24.h, 23.w, 126.h),
@@ -251,11 +256,26 @@ class PharmacyCheckoutBodyWidget extends StatelessWidget {
                   isBold: true,
                   padding: EdgeInsets.symmetric(vertical: 2.h),
                 ),
-                PharmacySummaryRow(
-                  title: l10n.pharmacyCheckoutDeliveryChargesLabel,
-                  value: state.deliveryCharges,
-                  isBold: true,
-                  padding: EdgeInsets.symmetric(vertical: 2.h),
+                InkWell(
+                  onTap: isPro == true
+                      ? () => offerKey.currentState?.openSheet()
+                      : null,
+                  child: PharmacySummaryRow(
+                    title: l10n.pharmacyCheckoutDeliveryChargesLabel,
+                    value: state.deliveryCharges,
+                    valueLabel: isPro == true && state.deliveryCharges <= 0
+                        ? l10n.pharmacyCheckoutFree
+                        : null,
+                    titleTrailing: isPro == true
+                        ? SvgPicture.asset(
+                            Assets.proProBadge,
+                            height: 18.h,
+                            fit: BoxFit.contain,
+                          )
+                        : null,
+                    isBold: true,
+                    padding: EdgeInsets.symmetric(vertical: 2.h),
+                  ),
                 ),
                 SizedBox(height: 10.h),
                 BlocBuilder<PromoCodeCubit, PromoCodeState>(
@@ -346,6 +366,12 @@ class PharmacyCheckoutBodyWidget extends StatelessWidget {
                   },
                 ),
                 SizedBox(height: 22.h),
+                ProServiceOfferSlot(
+                  key: offerKey,
+                  service: ProServiceOfferKind.pharmacy,
+                  upsellOnly: true,
+                  onProChanged: onProChanged,
+                ),
                 Text(
                   l10n.pharmacyCheckoutPaymentMethodTitle,
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
@@ -392,6 +418,8 @@ class PharmacyCheckoutBodyWidget extends StatelessWidget {
               ),
             ),
           ],
+            );
+          },
         );
       },
     );

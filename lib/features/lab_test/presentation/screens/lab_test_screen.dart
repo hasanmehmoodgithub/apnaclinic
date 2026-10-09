@@ -102,7 +102,6 @@ class _LabTestScreenState extends State<LabTestScreen> {
                         l10n,
                       ),
                     ),
-                    SizedBox(height: 16.h),
                     Text(
                       l10n.labTestSelectLabHeading,
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(

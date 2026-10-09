@@ -14,10 +14,14 @@ class ProSheetResult {
   const ProSheetResult({
     required this.planId,
     required this.plan,
+    this.suppressSuccessDialog = false,
   });
 
   final String planId;
   final ProPlanEntity? plan;
+
+  /// True when the WebView flow already showed the success dialog.
+  final bool suppressSuccessDialog;
 }
 
 /// Opens the ApnaClinic Pro catalog bottom sheet (content from API).
@@ -42,7 +46,7 @@ Future<ProSheetResult?> showApnaClinicProSheet(
         child: Builder(
           builder: (providerContext) {
             return ProBottomSheet(
-              onSubscribe: (planId) {
+              onSubscribe: (planId, {bool suppressSuccessDialog = false}) {
                 final catalog = providerContext.read<ProCubit>().state.catalog;
                 ProPlanEntity? plan;
                 if (catalog != null) {
@@ -53,7 +57,13 @@ Future<ProSheetResult?> showApnaClinicProSheet(
                     }
                   }
                 }
-                sheetContext.pop(ProSheetResult(planId: planId, plan: plan));
+                sheetContext.pop(
+                  ProSheetResult(
+                    planId: planId,
+                    plan: plan,
+                    suppressSuccessDialog: suppressSuccessDialog,
+                  ),
+                );
               },
             );
           },
@@ -64,8 +74,12 @@ Future<ProSheetResult?> showApnaClinicProSheet(
 
   if (showSuccessDialog &&
       result != null &&
+      !result.suppressSuccessDialog &&
       context.mounted) {
-    await showProSubscribeSuccessDialog(context);
+    final destination = await showProSubscribeSuccessDialog(context);
+    if (destination != null && context.mounted) {
+      context.push(destination);
+    }
   }
 
   return result;

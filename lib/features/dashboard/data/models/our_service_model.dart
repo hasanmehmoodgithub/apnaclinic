@@ -35,7 +35,8 @@ class OurServiceModel {
   }
 
   factory OurServiceModel.fromJson(Map<String, dynamic> json) {
-    final dynamic visibilityRaw = json['visibility'] ??
+    final dynamic visibilityRaw =
+        json['visibility'] ??
         json['isVisible'] ??
         json['visible'] ??
         json['isActive'];
@@ -53,11 +54,9 @@ class OurServiceModel {
       id: (json['id'] as num?)?.toInt() ?? 0,
       title: (json['title'] ?? '').toString(),
       subtitle: (json['subtitle'] ?? '').toString(),
-      offerUpto: (json['discount'] ??
-              json['offerUpto'] ??
-              json['offer_upto'] ??
-              '')
-          .toString(),
+      offerUpto:
+          (json['discount'] ?? json['offerUpto'] ?? json['offer_upto'] ?? '')
+              .toString(),
       thumb: (json['iconPath'] ?? json['thumb'] ?? json['thumbnail'] ?? '')
           .toString(),
       route: mapDeepLinkToRoute(deepLink),
@@ -72,25 +71,44 @@ class OurServicesModel {
     required this.success,
     required this.message,
     required this.services,
+    this.bannerUrl,
   });
 
   final bool success;
   final String message;
   final List<OurServiceModel> services;
 
+  /// Pro promo artwork from the home panel. Null when the API omits it.
+  final String? bannerUrl;
+
   factory OurServicesModel.fromJson(Map<String, dynamic> json) {
-    final dynamic servicesRaw = json['data'] ?? json['services'] ?? [];
-    final list = (servicesRaw is List ? servicesRaw : <dynamic>[])
-        .whereType<Map<String, dynamic>>()
-        .map(OurServiceModel.fromJson)
-        .where((service) => service.visibility)
-        .toList()
-      ..sort((a, b) => a.displayOrder.compareTo(b.displayOrder));
+    final data = json['data'];
+    final panel = data is Map<String, dynamic> ? data : null;
+    final dynamic servicesRaw = panel != null
+        ? (panel['services'] ?? [])
+        : (data is List ? data : json['services'] ?? []);
+    final list =
+        (servicesRaw is List ? servicesRaw : <dynamic>[])
+            .whereType<Map>()
+            .map(
+              (item) =>
+                  OurServiceModel.fromJson(Map<String, dynamic>.from(item)),
+            )
+            .where((service) => service.visibility)
+            .toList()
+          ..sort((a, b) => a.displayOrder.compareTo(b.displayOrder));
 
     return OurServicesModel(
       success: json['success'] == true,
       message: (json['message'] ?? '').toString(),
       services: list,
+      bannerUrl: _nullableUrl(panel?['bannerUrl'] ?? panel?['banner_url']),
     );
+  }
+
+  static String? _nullableUrl(dynamic raw) {
+    final value = raw?.toString().trim() ?? '';
+    if (value.isEmpty || value.toLowerCase() == 'null') return null;
+    return value;
   }
 }

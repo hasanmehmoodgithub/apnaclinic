@@ -23,8 +23,8 @@ class MockConfig {
 
   static bool get enableNotificationMocks => false;
 
-  /// ApnaClinic Pro catalog mocks (keep true until live membership API is ready).
-  static bool get enableProMocks => true;
+  /// ApnaClinic Pro details mocks. Live `GET .../pro/details` is used when false.
+  static bool get enableProMocks => false;
 
   static bool get enablePromoCodeMocks => false;
 

@@ -335,6 +335,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pharmacyCheckoutDeliveryChargesLabel => 'Delivery Charges';
 
   @override
+  String get pharmacyCheckoutFree => 'Free';
+
+  @override
   String get pharmacyCheckoutDiscountLabel => 'Discount';
 
   @override
@@ -1980,14 +1983,49 @@ class AppLocalizationsEn extends AppLocalizations {
   String get proShowInfoSubscribeCta => 'Subscribe Now!';
 
   @override
+  String get proShowInfoSubtitle =>
+      'Become a pro member to get additional discount';
+
+  @override
+  String get proShowInfoConsultationTitle => 'Doctor Consultation Discount';
+
+  @override
+  String get proShowInfoConsultationDiscount => '20% OFF';
+
+  @override
+  String get proShowInfoLabTitle => 'Lab Test Discount';
+
+  @override
+  String get proShowInfoLabDiscount => '20% OFF';
+
+  @override
+  String get proShowInfoPharmacyTitle => 'Pharmacy Discount';
+
+  @override
+  String get proShowInfoPharmacyDiscount => 'Free Delivery';
+
+  @override
   String get proSubscribeSuccessTitle =>
       'You\'re subscribed to the Pro version!';
 
   @override
-  String get proSubscribeSuccessMessage => 'Enjoy discounts on the Pro bundle';
+  String get proSubscribeSuccessMessage =>
+      'Enjoy exclusive discounts on pharmacy orders, consultations, labs and surgery';
 
   @override
   String get proSubscribeSuccessOk => 'OK';
+
+  @override
+  String get proSubscribeSuccessConsultation => 'Book Doctor Consultation';
+
+  @override
+  String get proSubscribeSuccessPharmacy => 'Order Pharmacy';
+
+  @override
+  String get proSubscribeSuccessLab => 'Book Lab Test';
+
+  @override
+  String get proPaymentPending => 'Payment is pending.';
 
   @override
   String get proHomeSectionTitle => 'Apna Clinic PRO';
@@ -2028,6 +2066,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get proCancelSubscriptionDiscard => 'Don\'t Cancel';
+
+  @override
+  String get proAvatarBadge => 'PRO';
+
+  @override
+  String get proCancelSubscriptionSuccess =>
+      'Your Pro subscription has been cancelled.';
 
   @override
   String get jazzCashVerificationRequiredTitle => 'Verification Required';

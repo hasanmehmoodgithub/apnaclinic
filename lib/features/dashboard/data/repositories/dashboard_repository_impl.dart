@@ -2,8 +2,8 @@ import 'dart:developer';
 
 import '../../../../core/functional/functional_export.dart';
 import '../../domain/entities/app_version_info_entity.dart';
+import '../../domain/entities/home_panel_entity.dart';
 import '../../domain/entities/promotional_banner_entity.dart';
-import '../../domain/entities/our_service_entity.dart';
 import '../../domain/repositories/dashboard_repository.dart';
 import '../data_sources/dashboard_remote_data_source.dart';
 import '../mappers/app_version_mapper.dart';
@@ -16,12 +16,12 @@ class DashboardRepositoryImpl implements DashboardRepository {
   final DashboardRemoteDataSource remoteDataSource;
 
   @override
-  Future<Either<ErrorMsg, List<OurServiceEntity>>> getOurServices() async {
+  Future<Either<ErrorMsg, HomePanelEntity>> getOurServices() async {
     try {
       final model = await remoteDataSource.getOurServices();
-      final entities = DashboardServicesMapper.toEntityList(model);
-      log('Mapped dashboard services count: ${entities.length}');
-      return Right(entities);
+      final panel = DashboardServicesMapper.toEntity(model);
+      log('Mapped dashboard services count: ${panel.services.length}');
+      return Right(panel);
     } catch (e) {
       log('getDashboardServices repository error: $e');
       return Left(e.toString());

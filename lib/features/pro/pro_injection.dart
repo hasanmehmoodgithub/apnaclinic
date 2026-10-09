@@ -6,6 +6,8 @@ import 'data/mock/pro_mock_api.dart';
 import 'data/repositories/pro_repository_impl.dart';
 import 'domain/repositories/pro_repository.dart';
 import 'domain/use_cases/get_pro_catalog_use_case.dart';
+import 'domain/use_cases/subscribe_pro_use_case.dart';
+import 'domain/use_cases/unsubscribe_pro_use_case.dart';
 import 'presentation/cubit/pro_cubit.dart';
 
 void initProInjector() {
@@ -26,7 +28,19 @@ void initProInjector() {
     () => GetProCatalogUseCase(repository: sl<ProRepository>()),
   );
 
+  sl.registerLazySingleton<SubscribeProUseCase>(
+    () => SubscribeProUseCase(repository: sl<ProRepository>()),
+  );
+
+  sl.registerLazySingleton<UnsubscribeProUseCase>(
+    () => UnsubscribeProUseCase(repository: sl<ProRepository>()),
+  );
+
   sl.registerFactory<ProCubit>(
-    () => ProCubit(getCatalogUseCase: sl<GetProCatalogUseCase>()),
+    () => ProCubit(
+      getCatalogUseCase: sl<GetProCatalogUseCase>(),
+      subscribeProUseCase: sl<SubscribeProUseCase>(),
+      unsubscribeProUseCase: sl<UnsubscribeProUseCase>(),
+    ),
   );
 }

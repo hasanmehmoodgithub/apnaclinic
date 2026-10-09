@@ -264,6 +264,7 @@ class _PaymentWebViewScreenState extends State<PaymentWebViewScreen> {
       PaymentWebViewStatus.success => 'success',
       PaymentWebViewStatus.failed => 'fail',
       PaymentWebViewStatus.cancelled => 'cancel',
+      PaymentWebViewStatus.pending => 'pending',
       null => 'unknown',
     };
     try {
