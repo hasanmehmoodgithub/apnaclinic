@@ -11,6 +11,7 @@ class PromoCodeState extends Equatable {
     this.displayCode = '',
     this.result,
     this.needsApply = false,
+    this.errorMessage,
   });
 
   final PromoCodeStatus status;
@@ -20,6 +21,9 @@ class PromoCodeState extends Equatable {
 
   /// True when a code was typed but not applied, and checkout was attempted.
   final bool needsApply;
+
+  /// Backend message when validation fails.
+  final String? errorMessage;
 
   bool get isValidating => status == PromoCodeStatus.validating;
   bool get isApplied =>
@@ -40,6 +44,13 @@ class PromoCodeState extends Equatable {
 
   String? get appliedCode => isApplied ? result!.code : null;
 
+  /// API error text, or [fallback] when the response has no message.
+  String invalidMessage(String fallback) {
+    final message = errorMessage?.trim() ?? '';
+    if (message.isEmpty) return fallback;
+    return message;
+  }
+
   PromoCodeState copyWith({
     PromoCodeStatus? status,
     String? draftCode,
@@ -47,6 +58,8 @@ class PromoCodeState extends Equatable {
     PromoCodeValidationEntity? result,
     bool clearResult = false,
     bool? needsApply,
+    String? errorMessage,
+    bool clearErrorMessage = false,
   }) {
     return PromoCodeState(
       status: status ?? this.status,
@@ -54,9 +67,12 @@ class PromoCodeState extends Equatable {
       displayCode: displayCode ?? this.displayCode,
       result: clearResult ? null : (result ?? this.result),
       needsApply: needsApply ?? this.needsApply,
+      errorMessage:
+          clearErrorMessage ? null : (errorMessage ?? this.errorMessage),
     );
   }
 
   @override
-  List<Object?> get props => [status, draftCode, displayCode, result, needsApply];
+  List<Object?> get props =>
+      [status, draftCode, displayCode, result, needsApply, errorMessage];
 }

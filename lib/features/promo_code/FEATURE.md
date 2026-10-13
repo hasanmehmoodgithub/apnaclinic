@@ -8,9 +8,9 @@ Shared **promo code** validate + input for checkout. Users enter a code, the agg
 
 No dedicated route. Hosted inside checkout UIs:
 
-- Doctor consultation checkout (`AppRoutes.consultationCheckout`) via `PromoCodeCubit` + `PromoCodeFieldWidget` (`service=CONSULTATION`).
+- Doctor consultation checkout (`AppRoutes.consultationCheckout`) via `PromoCodeCubit` + `PromoCodeFieldWidget` (`service=CONSULTATION`, `amount` = full consultation fee).
 - Pharmacy checkout (`AppRoutes.pharmacyCheckout`) via the same cubit/widget (`service=PHARMACY`, `amount` = cart subtotal). Applied code is sent as `promo_code` on order checkout.
-- Lab checkout (`AppRoutes.labTestCheckout`) via the same cubit/widget (`service=LAB`, `amount` = original fee). Applied code is sent as `promoCode` on `POST lab/book-test`.
+- Lab checkout (`AppRoutes.labTestCheckout`) via the same cubit/widget (`service=LAB`, `amount` = original `price`, not `finalPrice`). Applied code is sent as `promoCode` on `POST lab/book-test`.
 
 ## Data & APIs
 
@@ -18,13 +18,13 @@ No dedicated route. Hosted inside checkout UIs:
 |--------|--------|-----------|
 | Validate | POST | `promoCodeValidate` → `/acs-aggregator/api/v1/mobile/promo-code/validate` |
 
-Body: `{ "code", "service", "amount" }` where `service` is `CONSULTATION` | `LAB` | `PHARMACY`.
+Body: `{ "code", "service", "amount", "isPro" }` where `service` is `CONSULTATION` | `LAB` | `PHARMACY` and `isPro` is the active membership flag from that checkout.
 
-Success `data`: `code`, `discountType`, `discountValue`, `originalAmount`, `discountAmount`, `payableAmount`.
+Success `data`: `code`, `discountType`, `discountValue`, `originalAmount`, `discountAmount`, `payableAmount`, `note`. A non-empty `note` is shown under the promo field after the code is applied.
 
 ## State
 
-- `PromoCodeCubit` / `PromoCodeState` — draft input, `idle` / `validating` / `applied` / `invalid`. Applied uses API `payableAmount` and `discountAmount`. Invalid keeps a chip + “Invalid Promo Code”; clear (X) returns to the input.
+- `PromoCodeCubit` / `PromoCodeState` — draft input, `idle` / `validating` / `applied` / `invalid`. Applied uses API `payableAmount` and `discountAmount`. Invalid keeps a chip and shows the API `message` (fallback “Invalid Promo Code”); clear (X) returns to the input.
 
 ## DI
 

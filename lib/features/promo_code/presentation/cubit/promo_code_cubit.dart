@@ -12,6 +12,9 @@ class PromoCodeCubit extends Cubit<PromoCodeState> {
 
   final ValidatePromoCodeUseCase _validateUseCase;
 
+  /// Latest known Pro membership, used when a checkout revalidates a code.
+  bool isPro = false;
+
   void onInputChanged(String value) {
     emit(state.copyWith(draftCode: value, needsApply: false));
   }
@@ -27,11 +30,18 @@ class PromoCodeCubit extends Cubit<PromoCodeState> {
     return false;
   }
 
+  void setIsPro(bool value) {
+    isPro = value;
+  }
+
   Future<void> validate({
     required PromoCodeService service,
     required int amount,
+    bool? isPro,
     String? code,
   }) async {
+    final member = isPro ?? this.isPro;
+    this.isPro = member;
     final submitted = (code ?? state.draftCode).trim().toUpperCase();
     if (submitted.isEmpty || state.isValidating) return;
 
@@ -44,6 +54,7 @@ class PromoCodeCubit extends Cubit<PromoCodeState> {
         displayCode: submitted,
         clearResult: true,
         needsApply: false,
+        clearErrorMessage: true,
       ),
     );
 
@@ -52,6 +63,7 @@ class PromoCodeCubit extends Cubit<PromoCodeState> {
         code: submitted,
         service: service,
         amount: amount < 0 ? 0 : amount,
+        isPro: member,
       ),
     );
 
@@ -69,6 +81,7 @@ class PromoCodeCubit extends Cubit<PromoCodeState> {
             displayCode: submitted,
             clearResult: true,
             needsApply: false,
+            errorMessage: error.trim(),
           ),
         );
       },
@@ -81,6 +94,7 @@ class PromoCodeCubit extends Cubit<PromoCodeState> {
             displayCode: entity.code,
             result: entity,
             needsApply: false,
+            clearErrorMessage: true,
           ),
         );
       },

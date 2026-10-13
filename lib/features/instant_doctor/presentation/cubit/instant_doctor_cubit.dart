@@ -124,12 +124,15 @@ class InstantDoctorCubit extends Cubit<InstantDoctorState> {
     );
   }
 
-  /// Reloads providers once with list shimmer.
+  /// Reloads providers so [isSubscribed] matches the server after OTP.
   ///
   /// When [delay] is set (unsubscribe), shimmer starts immediately and the
-  /// providers request is sent after the delay. Subscribe passes none.
+  /// first request waits. If [providerId] is set, the call repeats until that
+  /// provider's subscribed flag matches [expectSubscribed], or retries end.
   Future<void> refreshProvidersAfterSubscriptionChange({
     Duration delay = Duration.zero,
+    int? providerId,
+    bool? expectSubscribed,
   }) async {
     final token = ++_subscriptionRefreshToken;
     if (delay > Duration.zero) {
@@ -143,6 +146,22 @@ class InstantDoctorCubit extends Cubit<InstantDoctorState> {
       if (isClosed || token != _subscriptionRefreshToken) return;
     }
     await loadContent(refresh: true);
+    if (providerId == null || expectSubscribed == null) return;
+
+    for (var attempt = 0; attempt < 3; attempt++) {
+      if (isClosed || token != _subscriptionRefreshToken) return;
+      if (_isProviderSubscribed(providerId) == expectSubscribed) return;
+      await Future<void>.delayed(const Duration(seconds: 2));
+      if (isClosed || token != _subscriptionRefreshToken) return;
+      await loadContent(refresh: true, silent: true);
+    }
+  }
+
+  bool? _isProviderSubscribed(int providerId) {
+    for (final provider in state.providers) {
+      if (provider.providerId == providerId) return provider.isSubscribed;
+    }
+    return null;
   }
 
   Future<InstantDoctorProviderTapOutcome> onProviderPrimaryTap(

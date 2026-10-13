@@ -6,6 +6,7 @@ class PromoCodeValidationModel {
     required this.originalAmount,
     required this.discountAmount,
     required this.payableAmount,
+    this.note = '',
   });
 
   final String code;
@@ -14,6 +15,7 @@ class PromoCodeValidationModel {
   final int originalAmount;
   final int discountAmount;
   final int payableAmount;
+  final String note;
 
   factory PromoCodeValidationModel.fromJson(Map<String, dynamic> json) {
     final data = json['data'];
@@ -29,6 +31,7 @@ class PromoCodeValidationModel {
       originalAmount: _asInt(root['originalAmount'] ?? root['original_amount']),
       discountAmount: _asInt(root['discountAmount'] ?? root['discount_amount']),
       payableAmount: _asInt(root['payableAmount'] ?? root['payable_amount']),
+      note: (root['note'] ?? '').toString().trim(),
     );
   }
 

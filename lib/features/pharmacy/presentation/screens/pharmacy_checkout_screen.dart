@@ -73,6 +73,7 @@ class _PharmacyCheckoutScreenState extends State<PharmacyCheckoutScreen> {
           promoCubit.validate(
             service: PromoCodeService.pharmacy,
             amount: state.subtotal.round(),
+            isPro: promoCubit.isPro,
             code: code,
           );
         },

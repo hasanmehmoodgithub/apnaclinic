@@ -11,6 +11,7 @@ import '../../../promo_code/domain/entities/promo_code_service.dart';
 import '../../../promo_code/presentation/cubit/promo_code_cubit.dart';
 import '../../../promo_code/presentation/cubit/promo_code_state.dart';
 import '../../../promo_code/presentation/widgets/promo_code_field_widget.dart';
+import '../../../promo_code/presentation/widgets/promo_code_note_widget.dart';
 import '../../domain/utils/lab_test_price_formatter.dart';
 import '../lab_test_route_args.dart';
 import 'lab_test_figma_image.dart';
@@ -33,7 +34,9 @@ class _LabTestCheckoutPaymentSectionState
   bool? _isPro;
 
   void _onProChanged(bool isPro) {
-    if (!mounted || _isPro == isPro) return;
+    if (!mounted) return;
+    context.read<PromoCodeCubit>().setIsPro(isPro);
+    if (_isPro == isPro) return;
     setState(() => _isPro = isPro);
   }
 
@@ -151,7 +154,10 @@ class LabTestCheckoutPaymentBreakdownCardWidget extends StatelessWidget {
                       onSubmitted: (code) =>
                           context.read<PromoCodeCubit>().validate(
                                 service: PromoCodeService.lab,
-                                amount: _discountedAmount,
+                                amount: originalAmount > 0
+                                    ? originalAmount
+                                    : _discountedAmount,
+                                isPro: isPro,
                                 code: code,
                               ),
                       onCleared: context.read<PromoCodeCubit>().clear,
@@ -161,7 +167,7 @@ class LabTestCheckoutPaymentBreakdownCardWidget extends StatelessWidget {
                       Text(
                         promo.needsApply
                             ? l10n.promoCodeApplyRequired
-                            : l10n.promoCodeInvalid,
+                            : promo.invalidMessage(l10n.promoCodeInvalid),
                         style: theme.textTheme.bodyMedium?.copyWith(
                           color: AppColors.clrC9252C,
                           fontSize: 13.sp,
@@ -170,6 +176,7 @@ class LabTestCheckoutPaymentBreakdownCardWidget extends StatelessWidget {
                       ),
                     ],
                     if (hasPromo) ...[
+                      PromoCodeNoteWidget(note: promo.result!.note),
                       SizedBox(height: 10.h),
                       Divider(
                         height: 1,

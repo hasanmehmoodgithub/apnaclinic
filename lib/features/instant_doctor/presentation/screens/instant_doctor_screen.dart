@@ -284,6 +284,8 @@ class _InstantDoctorScreenState extends State<InstantDoctorScreen> {
       unawaited(
         _cubit.refreshProvidersAfterSubscriptionChange(
           delay: const Duration(seconds: 3),
+          providerId: provider.providerId,
+          expectSubscribed: false,
         ),
       );
       return;
@@ -338,8 +340,11 @@ class _InstantDoctorScreenState extends State<InstantDoctorScreen> {
       },
     );
 
-    // Shimmer refresh behind the dialog. Unsubscribe is the only delayed reload.
-    await _cubit.refreshProvidersAfterSubscriptionChange();
+    // Refresh until the provider's subscribed status matches the server.
+    await _cubit.refreshProvidersAfterSubscriptionChange(
+      providerId: provider.providerId,
+      expectSubscribed: true,
+    );
     if (mounted) {
       actionsEnabled.value = true;
     }

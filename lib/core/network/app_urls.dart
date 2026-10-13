@@ -180,7 +180,7 @@ class AppUrls {
   /// Promo code validate (aggregator mobile API).
   /// Body: `{ code, service, amount }` where `service` is CONSULTATION | LAB | PHARMACY.
   static String get promoCodeValidate =>
-      '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/promo-code/validate';
+      '$_normalizedApiBaseUrl/acs-aggregator/api/v2/mobile/promo-code/validate';
 
   /// Profile setup details endpoint
   static String userProfileById(String userId) =>

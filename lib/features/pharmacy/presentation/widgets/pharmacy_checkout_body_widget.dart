@@ -22,6 +22,7 @@ import '../../../promo_code/domain/entities/promo_code_service.dart';
 import '../../../promo_code/presentation/cubit/promo_code_cubit.dart';
 import '../../../promo_code/presentation/cubit/promo_code_state.dart';
 import '../../../promo_code/presentation/widgets/promo_code_field_widget.dart';
+import '../../../promo_code/presentation/widgets/promo_code_note_widget.dart';
 import '../cubit/pharmacy_cubit.dart';
 import '../cubit/pharmacy_state.dart';
 import '../pharmacy_navigation.dart';
@@ -293,6 +294,7 @@ class PharmacyCheckoutBodyWidget extends StatelessWidget {
                               context.read<PromoCodeCubit>().validate(
                                     service: PromoCodeService.pharmacy,
                                     amount: state.subtotal.round(),
+                                    isPro: isPro == true,
                                     code: code,
                                   ),
                           onCleared: context.read<PromoCodeCubit>().clear,
@@ -302,7 +304,7 @@ class PharmacyCheckoutBodyWidget extends StatelessWidget {
                           Text(
                             promo.needsApply
                                 ? l10n.promoCodeApplyRequired
-                                : l10n.promoCodeInvalid,
+                                : promo.invalidMessage(l10n.promoCodeInvalid),
                             style:
                                 Theme.of(context).textTheme.bodyMedium?.copyWith(
                                       color: AppColors.clrC9252C,
@@ -311,6 +313,8 @@ class PharmacyCheckoutBodyWidget extends StatelessWidget {
                                     ),
                           ),
                         ],
+                        if (promo.isApplied)
+                          PromoCodeNoteWidget(note: promo.result!.note),
                         SizedBox(height: 10.h),
                         if (promo.isApplied)
                           PharmacySummaryRow(
@@ -370,7 +374,10 @@ class PharmacyCheckoutBodyWidget extends StatelessWidget {
                   key: offerKey,
                   service: ProServiceOfferKind.pharmacy,
                   upsellOnly: true,
-                  onProChanged: onProChanged,
+                  onProChanged: (value) {
+                    context.read<PromoCodeCubit>().setIsPro(value);
+                    onProChanged(value);
+                  },
                 ),
                 Text(
                   l10n.pharmacyCheckoutPaymentMethodTitle,

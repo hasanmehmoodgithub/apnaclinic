@@ -12,6 +12,7 @@ class PromoCodeMapper {
       originalAmount: model.originalAmount,
       discountAmount: model.discountAmount,
       payableAmount: model.payableAmount,
+      note: model.note,
     );
   }
 }

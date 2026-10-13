@@ -9,11 +9,13 @@ class ValidatePromoCodeParams {
     required this.code,
     required this.service,
     required this.amount,
+    required this.isPro,
   });
 
   final String code;
   final PromoCodeService service;
   final int amount;
+  final bool isPro;
 }
 
 class ValidatePromoCodeUseCase

@@ -39,6 +39,7 @@ class PromoCodeRemoteDataSourceImpl implements PromoCodeRemoteDataSource {
             'code': params.code,
             'service': params.service.apiValue,
             'amount': params.amount,
+            'isPro': params.isPro,
           },
         );
         log('validatePromoCode response: $response');

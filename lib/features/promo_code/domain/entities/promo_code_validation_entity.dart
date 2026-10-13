@@ -8,6 +8,7 @@ class PromoCodeValidationEntity extends Equatable {
     required this.originalAmount,
     required this.discountAmount,
     required this.payableAmount,
+    this.note = '',
   });
 
   final String code;
@@ -16,6 +17,7 @@ class PromoCodeValidationEntity extends Equatable {
   final int originalAmount;
   final int discountAmount;
   final int payableAmount;
+  final String note;
 
   @override
   List<Object?> get props => [
@@ -25,5 +27,6 @@ class PromoCodeValidationEntity extends Equatable {
         originalAmount,
         discountAmount,
         payableAmount,
+        note,
       ];
 }

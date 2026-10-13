@@ -1,33 +1,44 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
+import '../../../../generated/assets.dart';
 import '../../../promo_code/domain/entities/promo_code_service.dart';
 import '../../../promo_code/presentation/cubit/promo_code_cubit.dart';
 import '../../../promo_code/presentation/cubit/promo_code_state.dart';
 import '../../../promo_code/presentation/widgets/promo_code_field_widget.dart';
+import '../../../promo_code/presentation/widgets/promo_code_note_widget.dart';
 import '../../data/models/doctor_consultation_checkout_model.dart';
 
 class DoctorConsultationCheckoutBillingSectionWidget extends StatelessWidget {
   const DoctorConsultationCheckoutBillingSectionWidget({
     super.key,
     required this.data,
+    this.isPro = false,
+    this.onProTap,
   });
 
   final DoctorConsultationCheckoutModel data;
+  final bool isPro;
+  final VoidCallback? onProTap;
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final textTheme = Theme.of(context).textTheme;
-    // Show payable (post doctor-discount) as Consultation fee.
-    final discountedFee = data.total;
+    final payable = data.total;
+    final showProDiscount = isPro && data.discount > 0;
+    final fee = showProDiscount ? data.consultationFee : payable;
+    final discountPercent = data.consultationFee > 0
+        ? ((data.discount * 100) / data.consultationFee).round()
+        : 0;
 
     return BlocBuilder<PromoCodeCubit, PromoCodeState>(
       builder: (context, promo) {
-        final total = promo.payableTotal(discountedFee);
+        final total = promo.payableTotal(payable);
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -53,8 +64,34 @@ class DoctorConsultationCheckoutBillingSectionWidget extends StatelessWidget {
             SizedBox(height: 16.h),
             _StackedAmount(
               label: l10n.consultationConsultationFeesLabel,
-              amount: discountedFee,
+              amount: fee,
             ),
+            if (showProDiscount) ...[
+              SizedBox(height: 14.h),
+              InkWell(
+                onTap: onProTap,
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: _StackedAmount(
+                        label: discountPercent > 0
+                            ? l10n.bookingsDiscountLabel('$discountPercent')
+                            : l10n.consultationDiscountLabel,
+                        amount: data.discount,
+                        isNegative: true,
+                        isMuted: true,
+                      ),
+                    ),
+                    SizedBox(width: 8.w),
+                    SvgPicture.asset(
+                      Assets.proProBadge,
+                      height: 18.h,
+                      fit: BoxFit.contain,
+                    ),
+                  ],
+                ),
+              ),
+            ],
             SizedBox(height: 14.h),
             PromoCodeFieldWidget(
               status: promo.status,
@@ -63,7 +100,8 @@ class DoctorConsultationCheckoutBillingSectionWidget extends StatelessWidget {
               onChanged: context.read<PromoCodeCubit>().onInputChanged,
               onSubmitted: (code) => context.read<PromoCodeCubit>().validate(
                     service: PromoCodeService.consultation,
-                    amount: discountedFee,
+                    amount: data.consultationFee,
+                    isPro: isPro,
                     code: code,
                   ),
               onCleared: context.read<PromoCodeCubit>().clear,
@@ -73,7 +111,7 @@ class DoctorConsultationCheckoutBillingSectionWidget extends StatelessWidget {
               Text(
                 promo.needsApply
                     ? l10n.promoCodeApplyRequired
-                    : l10n.promoCodeInvalid,
+                    : promo.invalidMessage(l10n.promoCodeInvalid),
                 style: textTheme.bodyMedium?.copyWith(
                   color: AppColors.clrC9252C,
                   fontSize: 13.sp,
@@ -82,6 +120,7 @@ class DoctorConsultationCheckoutBillingSectionWidget extends StatelessWidget {
               ),
             ],
             if (promo.isApplied) ...[
+              PromoCodeNoteWidget(note: promo.result!.note),
               SizedBox(height: 14.h),
               _StackedAmount(
                 label: l10n.promoCodeDiscountLabel,

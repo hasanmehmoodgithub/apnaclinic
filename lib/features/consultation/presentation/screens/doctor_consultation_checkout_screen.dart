@@ -45,6 +45,16 @@ class DoctorConsultationCheckoutScreen extends StatefulWidget {
 
 class _DoctorConsultationCheckoutScreenState
     extends State<DoctorConsultationCheckoutScreen> {
+  bool _isPro = false;
+  final _proOfferKey = GlobalKey<ProServiceOfferSlotState>();
+
+  void _onProChanged(bool isPro) {
+    if (!mounted) return;
+    context.read<PromoCodeCubit>().setIsPro(isPro);
+    if (_isPro == isPro) return;
+    setState(() => _isPro = isPro);
+  }
+
   @override
   void initState() {
     super.initState();
@@ -249,10 +259,16 @@ class _DoctorConsultationCheckoutScreenState
                                 children: [
                                   DoctorConsultationCheckoutBillingSectionWidget(
                                     data: data,
+                                    isPro: _isPro,
+                                    onProTap: () =>
+                                        _proOfferKey.currentState?.openSheet(),
                                   ),
                                   SizedBox(height: 18.h),
-                                  const ProServiceOfferSlot(
+                                  ProServiceOfferSlot(
+                                    key: _proOfferKey,
                                     service: ProServiceOfferKind.consultation,
+                                    upsellOnly: _isPro,
+                                    onProChanged: _onProChanged,
                                   ),
                                   Text(
                                     l10n.consultationPaymentMethodTitle,
