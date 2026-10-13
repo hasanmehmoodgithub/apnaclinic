@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../core/di/dependency_injection.dart';
 import '../../domain/entities/lab_test_cart_item.dart';
 import '../../domain/repositories/lab_test_cart_repository.dart';
 import '../lab_test_cart_to_checkout_mapper.dart';
@@ -35,6 +36,11 @@ class LabTestCartCubit extends Cubit<LabTestCartState> {
   Future<void> clear() async {
     await _repository.writeCart(const <LabTestCartItem>[]);
     emit(state.copyWith(items: const <LabTestCartItem>[]));
+  }
+
+  /// Clears the persisted lab cart after Pro subscribe or unsubscribe.
+  static Future<void> clearAfterProMembershipChange() {
+    return sl<LabTestCartCubit>().clear();
   }
 
   /// Cart maps to checkout (all test ids booked together); null when empty.

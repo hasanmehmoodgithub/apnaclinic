@@ -8,6 +8,7 @@ import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/utils/auth_guard.dart';
 import '../../../../core/widgets/app_button_widget.dart';
+import '../../../lab_test/presentation/cubit/lab_test_cart_cubit.dart';
 import '../../../consultation/presentation/models/doctor_consultation_jazzcash_sheet_result.dart';
 import '../../../consultation/presentation/widgets/doctor_consultation_jazzcash_accounts_sheet_widget.dart';
 import '../../../payment/domain/entities/payment_webview_result.dart';
@@ -140,12 +141,15 @@ class ProBottomSheet extends StatelessWidget {
       final result = payment ?? PaymentWebViewResult.cancelled();
       final destination = await _showWebViewOutcomeDialog(context, result);
       if (!context.mounted || !result.isSuccess) return;
+      await LabTestCartCubit.clearAfterProMembershipChange();
+      if (!context.mounted) return;
       final router = GoRouter.of(context);
       onSubscribe?.call(planId, suppressSuccessDialog: true);
       if (destination != null) router.push(destination);
       return;
     }
 
+    await LabTestCartCubit.clearAfterProMembershipChange();
     onSubscribe?.call(planId);
   }
 
@@ -224,6 +228,8 @@ class ProBottomSheet extends StatelessWidget {
       return;
     }
 
+    await LabTestCartCubit.clearAfterProMembershipChange();
+    if (!context.mounted) return;
     final l10n = AppLocalizations.of(context)!;
     final apiMessage = cancellation.message.trim();
     final text = apiMessage.isNotEmpty
