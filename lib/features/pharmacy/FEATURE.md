@@ -45,7 +45,7 @@ Cart products: each `products[]` row may nest `product { …Partner product fiel
 
 - `AppRoutes.pharmacyMain` — pharmacy dashboard (medicines home). Extra `source` (`home` / `banner`) for `pharmacy_module`.
 - `AppRoutes.pharmacy` — product description (`PharmacySelectedCard`). Generic name / manufacturer (and indications) are left-aligned even when the copy is short. Extra `selectedMedicine`; `source: search` when opened from global search.
-- `AppRoutes.pharmacyCart`, `AppRoutes.pharmacyCheckout` (active Pro: `proBadge.svg` on Delivery Charges, `Rs.Free` when delivery is 0; otherwise `ProServiceOfferSlot` before payment methods), `AppRoutes.pharmacyBookingDetails` (opens with `orderId` / `publicId` for the detail GET; app bar shows **`unified_order_id`**, not the public UUID).
+- `AppRoutes.pharmacyCart`, `AppRoutes.pharmacyCheckout` (active Pro: `proBadge.svg` on Delivery Charges and always show Free / exclude delivery from total, including right after subscribe; otherwise `ProServiceOfferSlot` before payment methods), `AppRoutes.pharmacyBookingDetails` (opens with `orderId` / `publicId` for the detail GET; app bar shows **`unified_order_id`**, not the public UUID).
 
 ## Analytics
 

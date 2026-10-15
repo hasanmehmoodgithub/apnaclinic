@@ -149,7 +149,11 @@ class PharmacyCheckoutBodyWidget extends StatelessWidget {
           orderId: checkout.displayOrderNo,
           paymentStatus: AnalyticsPaymentStatusKeys.successful,
           promoCode: promoCubit.state.appliedCode,
-          orderValue: _payableTotal(cubit.state, promoCubit.state),
+          orderValue: _payableTotal(
+            cubit.state,
+            promoCubit.state,
+            isPro: promoCubit.isPro,
+          ),
         );
         promoCubit.clear();
         cubit.clearCart();
@@ -265,10 +269,9 @@ class PharmacyCheckoutBodyWidget extends StatelessWidget {
                       : null,
                   child: PharmacySummaryRow(
                     title: l10n.pharmacyCheckoutDeliveryChargesLabel,
-                    value: state.deliveryCharges,
-                    valueLabel: isPro == true && state.deliveryCharges <= 0
-                        ? l10n.pharmacyCheckoutFree
-                        : null,
+                    value: isPro == true ? 0 : state.deliveryCharges,
+                    valueLabel:
+                        isPro == true ? l10n.pharmacyCheckoutFree : null,
                     titleTrailing: isPro == true
                         ? SvgPicture.asset(
                             Assets.proProBadge,
@@ -335,7 +338,11 @@ class PharmacyCheckoutBodyWidget extends StatelessWidget {
                         SizedBox(height: 12.h),
                         PharmacySummaryRow(
                           title: l10n.pharmacyCheckoutTotalLabel,
-                          value: _payableTotal(state, promo),
+                          value: _payableTotal(
+                            state,
+                            promo,
+                            isPro: isPro == true,
+                          ),
                           isBold: true,
                           bgColor: AppColors.clrBBBBBB,
                           padding: const EdgeInsets.all(8),
@@ -492,10 +499,15 @@ class PharmacyCheckoutBodyWidget extends StatelessWidget {
     ];
   }
 
-  double _payableTotal(PharmacyState state, PromoCodeState promo) {
+  double _payableTotal(
+    PharmacyState state,
+    PromoCodeState promo, {
+    bool isPro = false,
+  }) {
+    final delivery = isPro ? 0.0 : state.deliveryCharges;
     if (promo.isApplied) {
-      return promo.result!.payableAmount + state.deliveryCharges;
+      return promo.result!.payableAmount + delivery;
     }
-    return state.total;
+    return (state.subtotal - state.discount) + delivery;
   }
 }
