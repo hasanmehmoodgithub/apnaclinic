@@ -63,20 +63,21 @@ class _PlanCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final duration = plan.durationDisplay.trim();
     return Material(
       color: Colors.transparent,
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(12.r),
+        borderRadius: BorderRadius.circular(16.r),
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 180),
-          padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 14.h),
+          padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 16.h),
           decoration: BoxDecoration(
-            color: isSelected ? AppColors.clrWhite : AppColors.clrF3F4F6,
-            borderRadius: BorderRadius.circular(12.r),
+            color: AppColors.clrEDEDED,
+            borderRadius: BorderRadius.circular(16.r),
             border: Border.all(
-              color: isSelected ? AppColors.clr1FAFA3 : AppColors.clrE3E8EE,
-              width: isSelected ? 1.5 : 1,
+              color: isSelected ? AppColors.clr00A392 : AppColors.clrEDEDED,
+              width: 1.5,
             ),
           ),
           child: Column(
@@ -87,19 +88,21 @@ class _PlanCard extends StatelessWidget {
                 style: TextStyle(
                   color: AppColors.clr111827,
                   fontWeight: FontWeight.w700,
-                  fontSize: 14.sp,
+                  fontSize: 16.sp,
                 ),
               ),
-              SizedBox(height: 2.h),
-              Text(
-                plan.durationDisplay,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: AppColors.clr6B7280,
-                  fontWeight: FontWeight.w500,
-                  fontSize: 11.sp,
+              if (duration.isNotEmpty) ...[
+                SizedBox(height: 4.h),
+                Text(
+                  duration.startsWith('/') ? duration : '/$duration',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: AppColors.clr6B7280,
+                    fontWeight: FontWeight.w500,
+                    fontSize: 13.sp,
+                  ),
                 ),
-              ),
+              ],
             ],
           ),
         ),

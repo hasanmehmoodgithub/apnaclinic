@@ -839,6 +839,9 @@
   "proCancelSubscriptionDiscard": "Don't Cancel",
   "proAvatarBadge": "PRO",
   "proCancelSubscriptionSuccess": "Your Pro subscription has been cancelled.",
+  "proUnsubscribeSuccessTitle": "Subscription Cancelled!",
+  "proUnsubscribeSuccessMessage": "Your PRO subscription has been cancelled.",
+  "proUnsubscribeSuccessOk": "Okay",
   "jazzCashVerificationRequiredTitle": "Verification Required",
   "@jazzCashVerificationRequiredTitle": {
     "description": "Title for JazzCash MPIN payment verification bottom sheet"

@@ -3,18 +3,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/enums/state_status.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
+import '../../../../core/session/auth_session_refresh.dart';
 import '../../../../core/utils/auth_guard.dart';
 import '../../../../core/widgets/app_button_widget.dart';
 import '../../../lab_test/presentation/cubit/lab_test_cart_cubit.dart';
-import '../../../consultation/presentation/models/doctor_consultation_jazzcash_sheet_result.dart';
-import '../../../consultation/presentation/widgets/doctor_consultation_jazzcash_accounts_sheet_widget.dart';
-import '../../../payment/domain/entities/payment_webview_result.dart';
-import '../../../payment/presentation/widgets/payment_outcome_dialog_widget.dart';
-import 'pro_subscribe_success_dialog.dart';
-import '../pro_user_webview_navigation.dart';
 import '../../domain/entities/pro_catalog_entity.dart';
 import '../cubit/pro_cubit.dart';
 import '../cubit/pro_state.dart';
@@ -29,55 +25,65 @@ class ProBottomSheet extends StatelessWidget {
   const ProBottomSheet({
     super.key,
     this.onSubscribe,
+    this.onUnsubscribed,
   });
 
-  /// Called with selected [planId] when subscribe succeeds.
+  /// Closes the sheet with the selected [planId] so checkout can continue.
   /// [suppressSuccessDialog] skips the dialog shown after this sheet closes.
   final void Function(String planId, {bool suppressSuccessDialog})? onSubscribe;
 
+  /// Closes the sheet after unsubscribe succeeds so the cancel dialog can show.
+  final VoidCallback? onUnsubscribed;
+
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<ProCubit, ProState>(
-      builder: (context, state) {
-        final media = MediaQuery.of(context);
-        // [useSafeArea: true] already clears the top inset; fill remaining height.
-        final maxHeight = media.size.height;
-        return SafeArea(
-          top: false,
-          bottom: false,
-          child: ConstrainedBox(
-            constraints: BoxConstraints(maxHeight: maxHeight),
-            child: Container(
-              decoration: BoxDecoration(
-                color: AppColors.clrWhite,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
-              ),
-              clipBehavior: Clip.antiAlias,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  SizedBox(height: 10.h),
-                  Container(
-                    width: 46.w,
-                    height: 5.h,
-                    decoration: BoxDecoration(
-                      color: AppColors.clrDDE1E5,
-                      borderRadius: BorderRadius.circular(99.r),
-                    ),
+    return _ProSheetAuthRefresh(
+      child: BlocBuilder<ProCubit, ProState>(
+        builder: (context, state) {
+          final media = MediaQuery.of(context);
+          // [useSafeArea: true] already clears the top inset; fill remaining height.
+          final maxHeight = media.size.height;
+          return SafeArea(
+            top: false,
+            bottom: false,
+            child: ConstrainedBox(
+              constraints: BoxConstraints(maxHeight: maxHeight),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: AppColors.clrWhite,
+                  borderRadius: BorderRadius.vertical(
+                    top: Radius.circular(24.r),
                   ),
-                  Flexible(child: _body(context, state)),
-                ],
+                ),
+                clipBehavior: Clip.antiAlias,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    SizedBox(height: 10.h),
+                    Container(
+                      width: 46.w,
+                      height: 5.h,
+                      decoration: BoxDecoration(
+                        color: AppColors.clrDDE1E5,
+                        borderRadius: BorderRadius.circular(99.r),
+                      ),
+                    ),
+                    Flexible(child: _body(context, state)),
+                  ],
+                ),
               ),
             ),
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 
   Widget _body(BuildContext context, ProState state) {
     final status = state.loadingStateStatus;
-    if (status == StateStatus.loading || status == StateStatus.idle) {
+    if (status == StateStatus.loading ||
+        status == StateStatus.idle ||
+        (status == StateStatus.refreshing && state.catalog == null)) {
       return const ProSheetShimmerWidget();
     }
     if (status == StateStatus.error || state.catalog == null) {
@@ -89,8 +95,7 @@ class ProBottomSheet extends StatelessWidget {
 
     final catalog = state.catalog!;
     if (catalog.membership.isActivePro) {
-      final isCancelling =
-          state.subscribeStateStatus == StateStatus.loading;
+      final isCancelling = state.subscribeStateStatus == StateStatus.loading;
       return Stack(
         children: [
           AbsorbPointer(
@@ -100,8 +105,7 @@ class ProBottomSheet extends StatelessWidget {
               onCancelSubscription: () => _onCancelSubscription(context),
             ),
           ),
-          if (isCancelling)
-            const Center(child: CircularProgressIndicator()),
+          if (isCancelling) const Center(child: CircularProgressIndicator()),
         ],
       );
     }
@@ -116,98 +120,9 @@ class ProBottomSheet extends StatelessWidget {
 
   Future<void> _submitSubscribe(BuildContext context) async {
     if (!context.requireLogin()) return;
-    final cubit = context.read<ProCubit>();
-    final planId = cubit.state.selectedPlanId;
+    final planId = context.read<ProCubit>().state.selectedPlanId;
     if (planId == null || planId.isEmpty) return;
-
-    final msisdn = await _pickJazzCashNumber(context);
-    if (!context.mounted || msisdn == null || msisdn.isEmpty) return;
-
-    final subscription = await cubit.subscribe(msisdn: msisdn);
-    if (!context.mounted) return;
-    if (subscription == null) {
-      _showSubscribeMessage(context, cubit.state.subscribeErrorMessage);
-      return;
-    }
-
-    if (subscription.opensJazzCash) {
-      final l10n = AppLocalizations.of(context)!;
-      final payment = await openProUserWebView(
-        context,
-        url: subscription.link!,
-        title: l10n.accountMethodJazzCash,
-      );
-      if (!context.mounted) return;
-      final result = payment ?? PaymentWebViewResult.cancelled();
-      final destination = await _showWebViewOutcomeDialog(context, result);
-      if (!context.mounted || !result.isSuccess) return;
-      await LabTestCartCubit.clearAfterProMembershipChange();
-      if (!context.mounted) return;
-      final router = GoRouter.of(context);
-      onSubscribe?.call(planId, suppressSuccessDialog: true);
-      if (destination != null) router.push(destination);
-      return;
-    }
-
-    await LabTestCartCubit.clearAfterProMembershipChange();
-    onSubscribe?.call(planId);
-  }
-
-  Future<String?> _showWebViewOutcomeDialog(
-    BuildContext context,
-    PaymentWebViewResult result,
-  ) async {
-    if (!context.mounted) return null;
-    final l10n = AppLocalizations.of(context)!;
-    if (result.isSuccess) {
-      final gatewayMessage = result.message?.trim();
-      return showProSubscribeSuccessDialog(
-        context,
-        message: (gatewayMessage != null && gatewayMessage.isNotEmpty)
-            ? gatewayMessage
-            : null,
-      );
-    }
-
-    final gatewayMessage = result.message?.trim();
-    final title = switch (result.status) {
-      PaymentWebViewStatus.pending => l10n.proPaymentPending,
-      PaymentWebViewStatus.cancelled => l10n.paymentWebViewCancelledTitle,
-      _ => l10n.paymentWebViewFailedTitle,
-    };
-    final message = (gatewayMessage != null && gatewayMessage.isNotEmpty)
-        ? gatewayMessage
-        : switch (result.status) {
-            PaymentWebViewStatus.pending => l10n.proPaymentPending,
-            PaymentWebViewStatus.cancelled =>
-              l10n.paymentWebViewCancelledMessage,
-            _ => l10n.paymentWebViewFailed,
-          };
-    await showDialog<void>(
-      context: context,
-      barrierDismissible: false,
-      builder: (dialogContext) {
-        return PaymentOutcomeDialogWidget(
-          title: title,
-          message: message,
-          ctaText: l10n.commonOk,
-          isCancelled: result.status != PaymentWebViewStatus.failed,
-          onCta: () => dialogContext.pop(),
-        );
-      },
-    );
-    return null;
-  }
-
-  Future<String?> _pickJazzCashNumber(BuildContext context) async {
-    final result =
-        await showModalBottomSheet<DoctorConsultationJazzCashSheetResult>(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (_) => const DoctorConsultationJazzCashAccountsSheetWidget(),
-    );
-    return result?.msisdn.trim();
+    onSubscribe?.call(planId, suppressSuccessDialog: true);
   }
 
   void _showSubscribeMessage(BuildContext context, String? message) {
@@ -230,15 +145,56 @@ class ProBottomSheet extends StatelessWidget {
 
     await LabTestCartCubit.clearAfterProMembershipChange();
     if (!context.mounted) return;
-    final l10n = AppLocalizations.of(context)!;
-    final apiMessage = cancellation.message.trim();
-    final text = apiMessage.isNotEmpty
-        ? apiMessage
-        : l10n.proCancelSubscriptionSuccess;
-    final messenger = ScaffoldMessenger.maybeOf(context);
-    context.pop();
-    messenger?.showSnackBar(SnackBar(content: Text(text)));
+    sl<AuthSessionRefresh>().notifyProMembershipChanged(isActive: false);
+    if (!context.mounted) return;
+    if (onUnsubscribed != null) {
+      onUnsubscribed!();
+    } else {
+      context.pop();
+    }
   }
+}
+
+/// Reloads Pro details when login or logout happens while the sheet is open.
+///
+/// A guest catalog would otherwise stay on the plan picker after the user
+/// signs back in as an active member.
+class _ProSheetAuthRefresh extends StatefulWidget {
+  const _ProSheetAuthRefresh({required this.child});
+
+  final Widget child;
+
+  @override
+  State<_ProSheetAuthRefresh> createState() => _ProSheetAuthRefreshState();
+}
+
+class _ProSheetAuthRefreshState extends State<_ProSheetAuthRefresh> {
+  late final AuthSessionRefresh _session;
+  late int _epoch;
+
+  @override
+  void initState() {
+    super.initState();
+    _session = sl<AuthSessionRefresh>();
+    _epoch = _session.epoch;
+    _session.addListener(_onSession);
+  }
+
+  @override
+  void dispose() {
+    _session.removeListener(_onSession);
+    super.dispose();
+  }
+
+  void _onSession() {
+    final epoch = _session.epoch;
+    if (epoch == _epoch || !mounted) return;
+    _epoch = epoch;
+    context.read<ProCubit>().loadCatalog(refresh: true);
+  }
+
+  @override
+  Widget build(BuildContext context) => widget.child;
 }
 
 class _ProSubscribeContent extends StatelessWidget {
@@ -301,6 +257,8 @@ class _ProSubscribeContent extends StatelessWidget {
                         benefits: catalog.benefits,
                       ),
                       SizedBox(height: 16.h),
+                      Divider(height: 1.h, color: AppColors.clrE3E8EE),
+                      SizedBox(height: 16.h),
                       ProPlanCardsWidget(
                         sectionTitle: catalog.planSectionTitle,
                         plans: catalog.plans,
@@ -339,10 +297,7 @@ class _ProSubscribeContent extends StatelessWidget {
 }
 
 class _ProSheetError extends StatelessWidget {
-  const _ProSheetError({
-    required this.message,
-    required this.onRetry,
-  });
+  const _ProSheetError({required this.message, required this.onRetry});
 
   final String? message;
   final VoidCallback onRetry;
@@ -360,10 +315,7 @@ class _ProSheetError extends StatelessWidget {
                 ? message!.trim()
                 : l10n.proCatalogLoadError,
             textAlign: TextAlign.center,
-            style: TextStyle(
-              color: AppColors.clr6B7280,
-              fontSize: 14.sp,
-            ),
+            style: TextStyle(color: AppColors.clr6B7280, fontSize: 14.sp),
           ),
           SizedBox(height: 16.h),
           TextButton(

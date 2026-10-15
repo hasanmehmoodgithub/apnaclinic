@@ -5,6 +5,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/enums/state_status.dart';
 import '../../../../core/utils/phone_format_utils.dart';
+import '../../domain/entities/pro_catalog_entity.dart';
+import '../../domain/entities/pro_membership_entity.dart';
 import '../../domain/entities/pro_subscribe_result_entity.dart';
 import '../../domain/entities/pro_unsubscribe_result_entity.dart';
 import '../../domain/use_cases/get_pro_catalog_use_case.dart';
@@ -25,17 +27,75 @@ class ProCubit extends Cubit<ProState> {
   final SubscribeProUseCase subscribeProUseCase;
   final UnsubscribeProUseCase unsubscribeProUseCase;
 
-  Future<void> loadCatalog({bool refresh = false}) async {
+  int _catalogRequest = 0;
+  int _membershipRefresh = 0;
+
+  static const _inactiveMembership = ProMembershipEntity(
+    isPro: false,
+    status: 'none',
+  );
+
+  /// Reloads details until [isActive] matches, so a lagging details response
+  /// does not leave the home Pro banner on the previous membership.
+  Future<void> refreshUntilMembership({required bool isActive}) async {
+    final token = ++_membershipRefresh;
+    if (!isActive) _emitInactiveMembership();
+
+    ProCatalogEntity? latest;
+    for (var attempt = 0; attempt < 4; attempt++) {
+      if (attempt > 0) {
+        await Future<void>.delayed(const Duration(seconds: 2));
+        if (isClosed || token != _membershipRefresh) return;
+      }
+      final result = await getCatalogUseCase();
+      if (isClosed || token != _membershipRefresh) return;
+      final catalog = result.fold<ProCatalogEntity?>(
+        (_) => null,
+        (value) => value,
+      );
+      if (catalog == null) continue;
+      latest = catalog;
+      if (catalog.membership.isActivePro == isActive) {
+        _emitCatalog(catalog);
+        return;
+      }
+    }
+
+    if (latest != null && !isClosed && token == _membershipRefresh) {
+      _emitCatalog(latest);
+    }
+  }
+
+  void _emitInactiveMembership() {
+    final catalog = state.catalog;
+    if (catalog == null || !catalog.membership.isActivePro) return;
+    _emitCatalog(catalog.copyWithMembership(_inactiveMembership));
+  }
+
+  void _emitCatalog(ProCatalogEntity catalog) {
     emit(
       state.copyWith(
-        loadingStateStatus:
-            refresh ? StateStatus.refreshing : StateStatus.loading,
+        loadingStateStatus: StateStatus.success,
+        catalog: catalog,
+        selectedPlanId: state.selectedPlanId ?? catalog.defaultSelectedPlanId,
+        errorMessage: null,
+      ),
+    );
+  }
+
+  Future<void> loadCatalog({bool refresh = false}) async {
+    final request = ++_catalogRequest;
+    emit(
+      state.copyWith(
+        loadingStateStatus: refresh
+            ? StateStatus.refreshing
+            : StateStatus.loading,
         errorMessage: null,
       ),
     );
 
     final result = await getCatalogUseCase();
-    if (isClosed) return;
+    if (isClosed || request != _catalogRequest) return;
     result.fold(
       (error) {
         emit(
@@ -68,9 +128,7 @@ class ProCubit extends Cubit<ProState> {
   ///
   /// A non-null result with [ProSubscribeResultEntity.opensJazzCash] still
   /// needs the JazzCash WebView before the membership is treated as active.
-  Future<ProSubscribeResultEntity?> subscribe({
-    required String msisdn,
-  }) async {
+  Future<ProSubscribeResultEntity?> subscribe({required String msisdn}) async {
     final planPriceCode = state.selectedPlanId?.trim() ?? '';
     if (planPriceCode.isEmpty) return null;
 

@@ -97,7 +97,7 @@ class AppUrls {
 
   /// Doctor consultation booking (aggregator mobile API).
   static String get doctorConsultationBooking =>
-      '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/doctor-consultation/book-consultation';
+      '$_normalizedApiBaseUrl/acs-aggregator/api/v2/mobile/doctor-consultation/book-consultation';
 
   /// Abandon an unpaid doctor consultation booking (aggregator mobile API).
   static String get doctorConsultationBookingAbandon =>
@@ -238,7 +238,7 @@ class AppUrls {
 
   /// Pharmacy order checkout (POST).
   static String get pharmacyOrderCheckout =>
-      '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/partner/pharmacy/order/checkout';
+      '$_normalizedApiBaseUrl/acs-aggregator/api/v2/mobile/partner/pharmacy/order/checkout';
 
   /// Pharmacy order abandon (POST) — unlock cart after unpaid card checkout.
   static String get pharmacyOrderAbandon =>
@@ -397,7 +397,7 @@ class AppUrls {
   /// Body: `{ partnerId, labId, cityId, homeSample, paymentMethod, msisdn,
   /// patient: { name, age, gender, phoneNumber }, tests: [ { testId } ] }`.
   static String get labBookTest =>
-      '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/lab/book-test';
+      '$_normalizedApiBaseUrl/acs-aggregator/api/v2/mobile/lab/book-test';
 
   /// Abandon an unpaid lab booking (aggregator mobile API).
   static String get labBookTestAbandon =>

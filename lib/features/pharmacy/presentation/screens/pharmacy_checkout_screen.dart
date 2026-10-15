@@ -62,7 +62,10 @@ class _PharmacyCheckoutScreenState extends State<PharmacyCheckoutScreen> {
     return BlocProvider(
       create: (_) => sl<PromoCodeCubit>(),
       child: BlocListener<PharmacyCubit, PharmacyState>(
-        listenWhen: (previous, current) => previous.subtotal != current.subtotal,
+        listenWhen: (previous, current) =>
+            previous.subtotal != current.subtotal &&
+            current.cartItems.isNotEmpty &&
+            current.subtotal > 0,
         listener: (context, state) {
           final promoCubit = context.read<PromoCodeCubit>();
           final code = promoCubit.state.displayCode.trim();

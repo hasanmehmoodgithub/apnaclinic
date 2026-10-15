@@ -420,7 +420,7 @@ class SearchResultModel {
       date: json['date']?.toString(),
       time: json['time']?.toString(),
       providerLogo: json['providerLogo']?.toString(),
-      labLogo: json['labLogo']?.toString(),
+      labLogo: json['pharmacyLogo']?.toString(),
     );
   }
 

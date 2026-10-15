@@ -40,6 +40,7 @@ class _MenuScreenState extends State<MenuScreen> {
   String _appVersion = '';
   ProMembershipEntity? _proMembership;
   bool _isProMembershipLoading = false;
+  late int _appliedProRevision;
 
   @override
   void initState() {
@@ -47,6 +48,7 @@ class _MenuScreenState extends State<MenuScreen> {
     _appPref = sl<AppPref>();
     _sessionRefresh = sl<AuthSessionRefresh>();
     _isLoggedIn = AuthGuard.isLoggedIn(_appPref);
+    _appliedProRevision = _sessionRefresh.proMembershipRevision;
     _sessionRefresh.addListener(_onAuthSessionChanged);
     unawaited(_loadAppVersion());
     unawaited(_loadProMembership());
@@ -90,6 +92,15 @@ class _MenuScreenState extends State<MenuScreen> {
     setState(() {
       _isLoggedIn = AuthGuard.isLoggedIn(_appPref);
     });
+    final revision = _sessionRefresh.proMembershipRevision;
+    if (revision != _appliedProRevision) {
+      _appliedProRevision = revision;
+      final expected = _sessionRefresh.expectedProActive;
+      if (expected != null) {
+        unawaited(_loadProMembershipUntil(expected));
+        return;
+      }
+    }
     unawaited(_loadProMembership());
   }
 
@@ -127,9 +138,47 @@ class _MenuScreenState extends State<MenuScreen> {
   }
 
   Future<void> _openPro() async {
-    await showApnaClinicProSheet(context);
+    final revision = _sessionRefresh.proMembershipRevision;
+    await showApnaClinicProSheet(context, showServiceActions: true);
     if (!mounted) return;
+    if (_sessionRefresh.proMembershipRevision != revision) return;
     unawaited(_loadProMembership());
+  }
+
+  Future<void> _loadProMembershipUntil(bool isActive) async {
+    if (mounted && !isActive) {
+      setState(() {
+        _proMembership = const ProMembershipEntity(
+          isPro: false,
+          status: 'none',
+        );
+        _isProMembershipLoading = false;
+      });
+    }
+    ProMembershipEntity? latest;
+    for (var attempt = 0; attempt < 4; attempt++) {
+      if (attempt > 0) {
+        await Future<void>.delayed(const Duration(seconds: 2));
+        if (!mounted) return;
+      }
+      final result = await sl<GetProCatalogUseCase>()();
+      if (!mounted) return;
+      final catalog = result.fold((_) => null, (value) => value);
+      if (catalog == null) continue;
+      latest = catalog.membership;
+      if (latest.isActivePro == isActive) {
+        setState(() {
+          _proMembership = latest;
+          _isProMembershipLoading = false;
+        });
+        return;
+      }
+    }
+    if (!mounted || latest == null) return;
+    setState(() {
+      _proMembership = latest;
+      _isProMembershipLoading = false;
+    });
   }
 
   void _onMenuActionTap(MenuActionId actionId) {

@@ -27,7 +27,8 @@ class MenuProCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isActive = membership?.isActivePro == true;
-    final open = onTap ?? () => showApnaClinicProSheet(context);
+    final open = onTap ??
+        () => showApnaClinicProSheet(context, showServiceActions: true);
 
     if (isActive) {
       return _ProMemberStatusCard(

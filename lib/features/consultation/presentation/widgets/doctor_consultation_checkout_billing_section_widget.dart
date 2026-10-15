@@ -73,13 +73,15 @@ class DoctorConsultationCheckoutBillingSectionWidget extends StatelessWidget {
                 child: Row(
                   children: [
                     Expanded(
-                      child: _StackedAmount(
-                        label: discountPercent > 0
+                      child: Text(
+                        discountPercent > 0
                             ? l10n.bookingsDiscountLabel('$discountPercent')
                             : l10n.consultationDiscountLabel,
-                        amount: data.discount,
-                        isNegative: true,
-                        isMuted: true,
+                        style: textTheme.bodyMedium?.copyWith(
+                          color: AppColors.clr7C8797,
+                          fontSize: 13.sp,
+                          fontWeight: FontWeight.w400,
+                        ),
                       ),
                     ),
                     SizedBox(width: 8.w),

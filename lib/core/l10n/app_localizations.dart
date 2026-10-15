@@ -3874,6 +3874,24 @@ abstract class AppLocalizations {
   /// **'Your Pro subscription has been cancelled.'**
   String get proCancelSubscriptionSuccess;
 
+  /// No description provided for @proUnsubscribeSuccessTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Subscription Cancelled!'**
+  String get proUnsubscribeSuccessTitle;
+
+  /// No description provided for @proUnsubscribeSuccessMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Your PRO subscription has been cancelled.'**
+  String get proUnsubscribeSuccessMessage;
+
+  /// No description provided for @proUnsubscribeSuccessOk.
+  ///
+  /// In en, this message translates to:
+  /// **'Okay'**
+  String get proUnsubscribeSuccessOk;
+
   /// Title for JazzCash MPIN payment verification bottom sheet
   ///
   /// In en, this message translates to:

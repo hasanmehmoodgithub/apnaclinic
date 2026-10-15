@@ -2075,6 +2075,16 @@ class AppLocalizationsEn extends AppLocalizations {
       'Your Pro subscription has been cancelled.';
 
   @override
+  String get proUnsubscribeSuccessTitle => 'Subscription Cancelled!';
+
+  @override
+  String get proUnsubscribeSuccessMessage =>
+      'Your PRO subscription has been cancelled.';
+
+  @override
+  String get proUnsubscribeSuccessOk => 'Okay';
+
+  @override
   String get jazzCashVerificationRequiredTitle => 'Verification Required';
 
   @override

@@ -64,7 +64,8 @@ class ApnaClinicProHomeBanner extends StatelessWidget {
         MenuProCard(
           membership: membership,
           promoImageUrl: imageUrl,
-          onTap: onTap ?? () => showApnaClinicProSheet(context),
+          onTap: onTap ??
+              () => showApnaClinicProSheet(context, showServiceActions: true),
         ),
       ],
     );

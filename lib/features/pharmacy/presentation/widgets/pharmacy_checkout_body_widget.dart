@@ -107,6 +107,7 @@ class PharmacyCheckoutBodyWidget extends StatelessWidget {
         );
 
         if (initiation.hasBlockingOrder) {
+          promoCubit.clear();
           cubit.clearCart();
           if (!context.mounted) return;
           final l10n = AppLocalizations.of(context)!;
@@ -150,6 +151,7 @@ class PharmacyCheckoutBodyWidget extends StatelessWidget {
           promoCode: promoCubit.state.appliedCode,
           orderValue: _payableTotal(cubit.state, promoCubit.state),
         );
+        promoCubit.clear();
         cubit.clearCart();
         await showPharmacyOrderPlacedDialog(
           context,

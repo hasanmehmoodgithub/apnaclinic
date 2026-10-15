@@ -7,7 +7,6 @@ import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../generated/assets.dart';
-import 'pro_brand_mark.dart';
 
 /// Success dialog shown after ApnaClinic Pro subscription.
 class ProSubscribeSuccessDialog extends StatelessWidget {
@@ -15,16 +14,20 @@ class ProSubscribeSuccessDialog extends StatelessWidget {
     super.key,
     this.title,
     this.message,
+    this.showServiceActions = false,
   });
 
   /// Optional override; defaults to l10n.
   final String? title;
   final String? message;
 
+  /// Home and menu show consultation, pharmacy, and lab. Other entry points
+  /// show Continue only.
+  final bool showServiceActions;
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final theme = Theme.of(context);
 
     return Dialog(
       insetPadding: EdgeInsets.symmetric(horizontal: 24.w),
@@ -37,18 +40,24 @@ class ProSubscribeSuccessDialog extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const ProBrandMark(height: 88),
+            Image.asset(
+              Assets.proProUserLogo2,
+              height: 88.h,
+              fit: BoxFit.contain,
+            ),
             SizedBox(height: 22.h),
             Text(
               title?.trim().isNotEmpty == true
                   ? title!.trim()
                   : l10n.proSubscribeSuccessTitle,
               textAlign: TextAlign.center,
-              style: theme.textTheme.titleLarge?.copyWith(
+              style: TextStyle(
+                fontFamily: 'Satoshi',
                 color: AppColors.clr102A56,
-                fontWeight: FontWeight.w700,
+                fontWeight: FontWeight.w500,
                 fontSize: 20.sp,
-                height: 1.3,
+                height: 1,
+                letterSpacing: 0,
               ),
             ),
             SizedBox(height: 10.h),
@@ -57,36 +66,45 @@ class ProSubscribeSuccessDialog extends StatelessWidget {
                   ? message!.trim()
                   : l10n.proSubscribeSuccessMessage,
               textAlign: TextAlign.center,
-              style: theme.textTheme.bodyMedium?.copyWith(
+              style: TextStyle(
+                fontFamily: 'Satoshi',
                 color: AppColors.clr6C7C92,
+                fontWeight: FontWeight.w400,
                 fontSize: 14.sp,
-                height: 1.45,
+                height: 1.5,
+                letterSpacing: 0,
               ),
             ),
             SizedBox(height: 22.h),
-            _SuccessActionButton(
-              label: l10n.proSubscribeSuccessConsultation,
-              iconAsset: Assets.iconsDoctor,
-              onTap: () => context.pop(
-                AppRoutes.path(AppRoutes.consultation),
+            if (showServiceActions) ...[
+              _SuccessActionButton(
+                label: l10n.proSubscribeSuccessConsultation,
+                iconAsset: Assets.proDocLogo,
+                onTap: () => context.pop(
+                  AppRoutes.path(AppRoutes.consultation),
+                ),
               ),
-            ),
-            SizedBox(height: 12.h),
-            _SuccessActionButton(
-              label: l10n.proSubscribeSuccessPharmacy,
-              iconAsset: Assets.iconsPharmacy,
-              onTap: () => context.pop(
-                AppRoutes.path(AppRoutes.pharmacyMain),
+              SizedBox(height: 12.h),
+              _SuccessActionButton(
+                label: l10n.proSubscribeSuccessPharmacy,
+                iconAsset: Assets.proPharmacyLogo,
+                onTap: () => context.pop(
+                  AppRoutes.path(AppRoutes.pharmacyMain),
+                ),
               ),
-            ),
-            SizedBox(height: 12.h),
-            _SuccessActionButton(
-              label: l10n.proSubscribeSuccessLab,
-              iconAsset: Assets.iconsLab,
-              onTap: () => context.pop(
-                AppRoutes.path(AppRoutes.labTest),
+              SizedBox(height: 12.h),
+              _SuccessActionButton(
+                label: l10n.proSubscribeSuccessLab,
+                iconAsset: Assets.proLabLogo,
+                onTap: () => context.pop(
+                  AppRoutes.path(AppRoutes.labTest),
+                ),
               ),
-            ),
+            ] else
+              _SuccessActionButton(
+                label: l10n.commonContinue,
+                onTap: () => context.pop(),
+              ),
           ],
         ),
       ),
@@ -94,15 +112,43 @@ class ProSubscribeSuccessDialog extends StatelessWidget {
   }
 }
 
+class _SuccessButtonIcon extends StatelessWidget {
+  const _SuccessButtonIcon({required this.asset});
+
+  final String asset;
+
+  @override
+  Widget build(BuildContext context) {
+    final size = 22.r;
+    if (asset.endsWith('.svg')) {
+      return SvgPicture.asset(
+        asset,
+        width: size,
+        height: size,
+        colorFilter: const ColorFilter.mode(
+          AppColors.clrWhite,
+          BlendMode.srcIn,
+        ),
+      );
+    }
+    return Image.asset(
+      asset,
+      width: size,
+      height: size,
+      fit: BoxFit.contain,
+    );
+  }
+}
+
 class _SuccessActionButton extends StatelessWidget {
   const _SuccessActionButton({
     required this.label,
-    required this.iconAsset,
     required this.onTap,
+    this.iconAsset,
   });
 
   final String label;
-  final String iconAsset;
+  final String? iconAsset;
   final VoidCallback onTap;
 
   @override
@@ -124,25 +170,22 @@ class _SuccessActionButton extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            SvgPicture.asset(
-              iconAsset,
-              width: 22.r,
-              height: 22.r,
-              colorFilter: const ColorFilter.mode(
-                AppColors.clrWhite,
-                BlendMode.srcIn,
-              ),
-            ),
-            SizedBox(width: 10.w),
+            if (iconAsset != null) ...[
+              _SuccessButtonIcon(asset: iconAsset!),
+              SizedBox(width: 10.w),
+            ],
             Flexible(
               child: Text(
                 label,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
+                  fontFamily: 'Satoshi',
                   color: AppColors.clrWhite,
-                  fontWeight: FontWeight.w700,
+                  fontWeight: FontWeight.w500,
                   fontSize: 16.sp,
+                  height: 1,
+                  letterSpacing: 0,
                 ),
               ),
             ),
@@ -161,6 +204,7 @@ Future<String?> showProSubscribeSuccessDialog(
   BuildContext context, {
   String? title,
   String? message,
+  bool showServiceActions = false,
 }) {
   return showDialog<String>(
     context: context,
@@ -171,6 +215,7 @@ Future<String?> showProSubscribeSuccessDialog(
         child: ProSubscribeSuccessDialog(
           title: title,
           message: message,
+          showServiceActions: showServiceActions,
         ),
       );
     },

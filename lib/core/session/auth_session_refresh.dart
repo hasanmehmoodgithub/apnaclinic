@@ -10,6 +10,8 @@ class AuthSessionRefresh extends ChangeNotifier {
   int? _pendingTabIndex;
   int? _pendingBookingsSubTabIndex;
   String? _pendingInstantDoctorSourceScreen;
+  int _proMembershipRevision = 0;
+  bool? _expectedProActive;
 
   int get epoch => _epoch;
 
@@ -21,14 +23,20 @@ class AuthSessionRefresh extends ChangeNotifier {
   /// Listeners like menu can rebuild without remounting shell tabs.
   int get profileRevision => _profileRevision;
 
+  /// Increments after a successful Pro subscribe or unsubscribe.
+  int get proMembershipRevision => _proMembershipRevision;
+
+  /// Membership listeners should refresh until details match this value.
+  bool? get expectedProActive => _expectedProActive;
+
   /// After OTP login: remount tabs and optionally open the Home tab.
   ///
   /// When [requestTabIndex] was set before login (e.g. Instant Doctor /
   /// Bookings), home is not forced so the pending tab can resume.
   void notifyLoggedIn({bool selectHomeTab = true}) {
-    _selectHomeOnNextRefresh =
-        _pendingTabIndex != null ? false : selectHomeTab;
+    _selectHomeOnNextRefresh = _pendingTabIndex != null ? false : selectHomeTab;
     _reloadPromotionalBannerOnNextRefresh = true;
+    _expectedProActive = null;
     _epoch++;
     notifyListeners();
   }
@@ -40,7 +48,15 @@ class AuthSessionRefresh extends ChangeNotifier {
     _pendingTabIndex = null;
     _pendingBookingsSubTabIndex = null;
     _pendingInstantDoctorSourceScreen = null;
+    _expectedProActive = null;
     _epoch++;
+    notifyListeners();
+  }
+
+  /// Home and menu reload Pro details after subscribe or unsubscribe.
+  void notifyProMembershipChanged({required bool isActive}) {
+    _expectedProActive = isActive;
+    _proMembershipRevision++;
     notifyListeners();
   }
 

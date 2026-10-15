@@ -2075,6 +2075,16 @@ class AppLocalizationsUr extends AppLocalizations {
       'آپ کی Pro سبسکرپشن منسوخ ہو گئی ہے۔';
 
   @override
+  String get proUnsubscribeSuccessTitle => 'سبسکرپشن منسوخ ہو گئی!';
+
+  @override
+  String get proUnsubscribeSuccessMessage =>
+      'آپ کی PRO سبسکرپشن منسوخ کر دی گئی ہے۔';
+
+  @override
+  String get proUnsubscribeSuccessOk => 'ٹھیک ہے';
+
+  @override
   String get jazzCashVerificationRequiredTitle => 'تصدیق درکار ہے';
 
   @override

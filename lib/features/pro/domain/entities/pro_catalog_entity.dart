@@ -36,6 +36,24 @@ class ProCatalogEntity extends Equatable {
   final ProMembershipEntity membership;
   final ProAllowedActionsEntity allowedActions;
 
+  ProCatalogEntity copyWithMembership(ProMembershipEntity membership) {
+    return ProCatalogEntity(
+      title: title,
+      tagline: tagline,
+      logoUrl: logoUrl,
+      bannerUrl: bannerUrl,
+      ctaLabel: ctaLabel,
+      benefitsTitle: benefitsTitle,
+      basicColumnLabel: basicColumnLabel,
+      proColumnLabel: proColumnLabel,
+      planSectionTitle: planSectionTitle,
+      benefits: benefits,
+      plans: plans,
+      membership: membership,
+      allowedActions: allowedActions,
+    );
+  }
+
   String? get defaultSelectedPlanId {
     for (final plan in plans) {
       if (plan.isCurrent) return plan.planId;
@@ -48,18 +66,18 @@ class ProCatalogEntity extends Equatable {
 
   @override
   List<Object?> get props => [
-        title,
-        tagline,
-        logoUrl,
-        bannerUrl,
-        ctaLabel,
-        benefitsTitle,
-        basicColumnLabel,
-        proColumnLabel,
-        planSectionTitle,
-        benefits,
-        plans,
-        membership,
-        allowedActions,
-      ];
+    title,
+    tagline,
+    logoUrl,
+    bannerUrl,
+    ctaLabel,
+    benefitsTitle,
+    basicColumnLabel,
+    proColumnLabel,
+    planSectionTitle,
+    benefits,
+    plans,
+    membership,
+    allowedActions,
+  ];
 }

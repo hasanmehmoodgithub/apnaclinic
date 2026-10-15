@@ -199,7 +199,8 @@ class _InstantDoctorConsultationWebViewScreenState
     final shouldExit = await showInstantDoctorConsultationExitDialog(context);
     _isExitDialogVisible = false;
     if (!shouldExit || !mounted) return;
-    _submitSessionLog();
+    //TODO submitSessionLog
+   //_submitSessionLog();
     context.pop();
   }
 
