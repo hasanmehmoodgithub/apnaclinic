@@ -1977,6 +1977,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get proMenuYouAreMember => 'You are a Pro Member';
 
   @override
+  String get proMemberBannerSubtitle =>
+      'Avail Free Delivery on Pharmacy, Free Instant Doctor service and exclusive discounts on Doctor Consultations and lab tests';
+
+  @override
   String get proShowInfoSectionTitle => 'Subscribe to Pro';
 
   @override

@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/enums/state_status.dart';
+import '../../../../core/session/auth_session_refresh.dart';
 import '../../../../core/utils/phone_format_utils.dart';
 import '../../domain/entities/pro_catalog_entity.dart';
 import '../../domain/entities/pro_membership_entity.dart';
@@ -14,6 +15,7 @@ import '../../domain/use_cases/subscribe_pro_params.dart';
 import '../../domain/use_cases/subscribe_pro_use_case.dart';
 import '../../domain/use_cases/unsubscribe_pro_params.dart';
 import '../../domain/use_cases/unsubscribe_pro_use_case.dart';
+import '../pro_membership_cache.dart';
 import 'pro_state.dart';
 
 class ProCubit extends Cubit<ProState> {
@@ -21,11 +23,15 @@ class ProCubit extends Cubit<ProState> {
     required this.getCatalogUseCase,
     required this.subscribeProUseCase,
     required this.unsubscribeProUseCase,
+    required this.membershipCache,
+    required this.authSessionRefresh,
   }) : super(const ProState());
 
   final GetProCatalogUseCase getCatalogUseCase;
   final SubscribeProUseCase subscribeProUseCase;
   final UnsubscribeProUseCase unsubscribeProUseCase;
+  final ProMembershipCache membershipCache;
+  final AuthSessionRefresh authSessionRefresh;
 
   int _catalogRequest = 0;
   int _membershipRefresh = 0;
@@ -69,10 +75,13 @@ class ProCubit extends Cubit<ProState> {
   void _emitInactiveMembership() {
     final catalog = state.catalog;
     if (catalog == null || !catalog.membership.isActivePro) return;
-    _emitCatalog(catalog.copyWithMembership(_inactiveMembership));
+    _emitCatalog(
+      catalog.copyWithMembership(_inactiveMembership),
+      remember: false,
+    );
   }
 
-  void _emitCatalog(ProCatalogEntity catalog) {
+  void _emitCatalog(ProCatalogEntity catalog, {bool remember = true}) {
     emit(
       state.copyWith(
         loadingStateStatus: StateStatus.success,
@@ -80,6 +89,12 @@ class ProCubit extends Cubit<ProState> {
         selectedPlanId: state.selectedPlanId ?? catalog.defaultSelectedPlanId,
         errorMessage: null,
       ),
+    );
+    if (!remember) return;
+    membershipCache.save(
+      catalog.membership,
+      sessionEpoch: authSessionRefresh.epoch,
+      proRevision: authSessionRefresh.proMembershipRevision,
     );
   }
 

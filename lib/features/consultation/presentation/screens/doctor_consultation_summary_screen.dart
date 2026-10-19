@@ -291,6 +291,7 @@ class DoctorConsultationSummaryScreen extends StatelessWidget {
                               consultationFee: args.consultationFee,
                               discount: args.discount,
                               total: args.total,
+                              isPro: args.isPro,
                               promoCode: args.promoCode,
                               promoDiscount: args.promoDiscount,
                             ),

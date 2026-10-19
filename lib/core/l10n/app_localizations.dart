@@ -3700,6 +3700,12 @@ abstract class AppLocalizations {
   /// **'You are a Pro Member'**
   String get proMenuYouAreMember;
 
+  /// No description provided for @proMemberBannerSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Avail Free Delivery on Pharmacy, Free Instant Doctor service and exclusive discounts on Doctor Consultations and lab tests'**
+  String get proMemberBannerSubtitle;
+
   /// No description provided for @proShowInfoSectionTitle.
   ///
   /// In en, this message translates to:

@@ -11,6 +11,7 @@ class DoctorConsultationSummaryArgs {
     required this.consultationFee,
     required this.discount,
     required this.total,
+    this.isPro = false,
     this.promoCode,
     this.promoDiscount = 0,
   });
@@ -26,6 +27,9 @@ class DoctorConsultationSummaryArgs {
   final int consultationFee;
   final int discount;
   final int total;
+
+  /// True when checkout applied an active Pro membership discount.
+  final bool isPro;
 
   /// Applied promo code from checkout; null/empty when none.
   final String? promoCode;

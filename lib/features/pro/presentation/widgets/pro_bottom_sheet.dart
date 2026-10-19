@@ -28,8 +28,8 @@ class ProBottomSheet extends StatelessWidget {
     this.onUnsubscribed,
   });
 
-  /// Closes the sheet with the selected [planId] so checkout can continue.
-  /// [suppressSuccessDialog] skips the dialog shown after this sheet closes.
+  /// Starts JazzCash checkout for [planId] while this sheet stays open.
+  /// [suppressSuccessDialog] is reserved for callers that already showed success.
   final void Function(String planId, {bool suppressSuccessDialog})? onSubscribe;
 
   /// Closes the sheet after unsubscribe succeeds so the cancel dialog can show.

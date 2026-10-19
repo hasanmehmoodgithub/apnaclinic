@@ -17,6 +17,7 @@ import '../../../../core/widgets/user_profile_avatar.dart';
 import '../../../profile_setup/presentation/profile_setup_launch_source.dart';
 import '../../../pro/domain/entities/pro_membership_entity.dart';
 import '../../../pro/domain/use_cases/get_pro_catalog_use_case.dart';
+import '../../../pro/presentation/pro_membership_cache.dart';
 import '../../../pro/presentation/show_pro_bottom_sheet.dart';
 import '../constants/main_navigation_tabs.dart';
 import '../helpers/menu_logout_handler.dart';
@@ -40,6 +41,7 @@ class _MenuScreenState extends State<MenuScreen> {
   String _appVersion = '';
   ProMembershipEntity? _proMembership;
   bool _isProMembershipLoading = false;
+  late int _appliedEpoch;
   late int _appliedProRevision;
 
   @override
@@ -48,16 +50,52 @@ class _MenuScreenState extends State<MenuScreen> {
     _appPref = sl<AppPref>();
     _sessionRefresh = sl<AuthSessionRefresh>();
     _isLoggedIn = AuthGuard.isLoggedIn(_appPref);
+    _appliedEpoch = _sessionRefresh.epoch;
     _appliedProRevision = _sessionRefresh.proMembershipRevision;
     _sessionRefresh.addListener(_onAuthSessionChanged);
     unawaited(_loadAppVersion());
-    unawaited(_loadProMembership());
+    _restoreOrLoadProMembership();
   }
 
   Future<void> _loadAppVersion() async {
     final version = await loadMenuAppVersion();
     if (!mounted || version.isEmpty) return;
     setState(() => _appVersion = version);
+  }
+
+  void _restoreOrLoadProMembership() {
+    final cache = sl<ProMembershipCache>();
+    final epoch = _sessionRefresh.epoch;
+    final revision = _sessionRefresh.proMembershipRevision;
+    if (cache.matches(sessionEpoch: epoch, proRevision: revision)) {
+      _proMembership = cache.snapshot!.membership;
+      _isProMembershipLoading = false;
+      return;
+    }
+    final expected = _sessionRefresh.expectedProActive;
+    if (expected != null) {
+      if (!expected) {
+        _proMembership = const ProMembershipEntity(
+          isPro: false,
+          status: 'none',
+        );
+        _isProMembershipLoading = false;
+      } else {
+        _isProMembershipLoading = true;
+      }
+      unawaited(_loadProMembershipUntil(expected));
+      return;
+    }
+    _isProMembershipLoading = true;
+    unawaited(_loadProMembership());
+  }
+
+  void _rememberProMembership(ProMembershipEntity membership) {
+    sl<ProMembershipCache>().save(
+      membership,
+      sessionEpoch: _sessionRefresh.epoch,
+      proRevision: _sessionRefresh.proMembershipRevision,
+    );
   }
 
   Future<void> _loadProMembership() async {
@@ -73,6 +111,7 @@ class _MenuScreenState extends State<MenuScreen> {
         });
       },
       (catalog) {
+        _rememberProMembership(catalog.membership);
         setState(() {
           _proMembership = catalog.membership;
           _isProMembershipLoading = false;
@@ -92,14 +131,20 @@ class _MenuScreenState extends State<MenuScreen> {
     setState(() {
       _isLoggedIn = AuthGuard.isLoggedIn(_appPref);
     });
+    final epoch = _sessionRefresh.epoch;
     final revision = _sessionRefresh.proMembershipRevision;
-    if (revision != _appliedProRevision) {
+    if (epoch != _appliedEpoch) {
+      _appliedEpoch = epoch;
       _appliedProRevision = revision;
-      final expected = _sessionRefresh.expectedProActive;
-      if (expected != null) {
-        unawaited(_loadProMembershipUntil(expected));
-        return;
-      }
+      unawaited(_loadProMembership());
+      return;
+    }
+    if (revision == _appliedProRevision) return;
+    _appliedProRevision = revision;
+    final expected = _sessionRefresh.expectedProActive;
+    if (expected != null) {
+      unawaited(_loadProMembershipUntil(expected));
+      return;
     }
     unawaited(_loadProMembership());
   }
@@ -138,11 +183,7 @@ class _MenuScreenState extends State<MenuScreen> {
   }
 
   Future<void> _openPro() async {
-    final revision = _sessionRefresh.proMembershipRevision;
     await showApnaClinicProSheet(context, showServiceActions: true);
-    if (!mounted) return;
-    if (_sessionRefresh.proMembershipRevision != revision) return;
-    unawaited(_loadProMembership());
   }
 
   Future<void> _loadProMembershipUntil(bool isActive) async {
@@ -167,6 +208,7 @@ class _MenuScreenState extends State<MenuScreen> {
       if (catalog == null) continue;
       latest = catalog.membership;
       if (latest.isActivePro == isActive) {
+        _rememberProMembership(latest);
         setState(() {
           _proMembership = latest;
           _isProMembershipLoading = false;
@@ -174,7 +216,13 @@ class _MenuScreenState extends State<MenuScreen> {
         return;
       }
     }
-    if (!mounted || latest == null) return;
+    if (!mounted || latest == null) {
+      if (mounted) {
+        setState(() => _isProMembershipLoading = false);
+      }
+      return;
+    }
+    _rememberProMembership(latest);
     setState(() {
       _proMembership = latest;
       _isProMembershipLoading = false;

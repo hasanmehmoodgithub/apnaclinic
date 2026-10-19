@@ -162,6 +162,16 @@ class _ProMemberStatusCard extends StatelessWidget {
                   ),
                 ],
               ),
+              SizedBox(height: 10.h),
+              Text(
+                l10n.proMemberBannerSubtitle,
+                style: TextStyle(
+                  color: AppColors.clr6B7280,
+                  fontWeight: FontWeight.w400,
+                  fontSize: 13.sp,
+                  height: 1.35,
+                ),
+              ),
               if (expiryLine != null) ...[
                 SizedBox(height: 12.h),
                 Divider(height: 1.h, color: AppColors.clrE3E8EE),

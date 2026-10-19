@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -18,13 +20,12 @@ import 'widgets/pro_bottom_sheet.dart';
 import 'widgets/pro_subscribe_success_dialog.dart';
 import 'widgets/pro_unsubscribe_success_dialog.dart';
 
-/// Result returned when the user taps the Pro CTA.
+/// Result returned when the Pro sheet closes after subscribe or cancel.
 class ProSheetResult {
   const ProSheetResult({
     required this.planId,
     required this.plan,
     this.suppressSuccessDialog = false,
-    this.continueCheckout = false,
     this.subscriptionCancelled = false,
   });
 
@@ -33,9 +34,6 @@ class ProSheetResult {
 
   /// True when the WebView flow already showed the success dialog.
   final bool suppressSuccessDialog;
-
-  /// True when the sheet closed so the JazzCash numbers sheet can open.
-  final bool continueCheckout;
 
   /// True when unsubscribe succeeded and the cancel dialog should show.
   final bool subscriptionCancelled;
@@ -51,6 +49,7 @@ Future<ProSheetResult?> showApnaClinicProSheet(
   bool showServiceActions = false,
 }) async {
   final cubit = sl<ProCubit>()..loadCatalog();
+  var checkoutBusy = false;
   try {
     final result = await showModalBottomSheet<ProSheetResult>(
       context: context,
@@ -67,27 +66,21 @@ Future<ProSheetResult?> showApnaClinicProSheet(
             builder: (providerContext) {
               return ProBottomSheet(
                 onSubscribe: (planId, {bool suppressSuccessDialog = false}) {
-                  final catalog = providerContext
-                      .read<ProCubit>()
-                      .state
-                      .catalog;
-                  ProPlanEntity? plan;
-                  if (catalog != null) {
-                    for (final item in catalog.plans) {
-                      if (item.planId == planId) {
-                        plan = item;
-                        break;
-                      }
+                  if (checkoutBusy) return;
+                  checkoutBusy = true;
+                  unawaited(() async {
+                    try {
+                      await _onProSubscribePressed(
+                        sheetContext: sheetContext,
+                        hostContext: providerContext,
+                        cubit: cubit,
+                        planId: planId,
+                        showServiceActions: showServiceActions,
+                      );
+                    } finally {
+                      checkoutBusy = false;
                     }
-                  }
-                  sheetContext.pop(
-                    ProSheetResult(
-                      planId: planId,
-                      plan: plan,
-                      suppressSuccessDialog: suppressSuccessDialog,
-                      continueCheckout: true,
-                    ),
-                  );
+                  }());
                 },
                 onUnsubscribed: () {
                   sheetContext.pop(
@@ -109,14 +102,6 @@ Future<ProSheetResult?> showApnaClinicProSheet(
         result.subscriptionCancelled &&
         context.mounted) {
       await showProUnsubscribeSuccessDialog(context);
-    } else if (result != null &&
-        result.continueCheckout &&
-        context.mounted) {
-      await _continueProCheckout(
-        context,
-        cubit,
-        showServiceActions: showServiceActions,
-      );
     } else if (showSuccessDialog &&
         result != null &&
         !result.suppressSuccessDialog &&
@@ -136,19 +121,56 @@ Future<ProSheetResult?> showApnaClinicProSheet(
   }
 }
 
-Future<void> _continueProCheckout(
+Future<void> _onProSubscribePressed({
+  required BuildContext sheetContext,
+  required BuildContext hostContext,
+  required ProCubit cubit,
+  required String planId,
+  required bool showServiceActions,
+}) async {
+  final completed = await _continueProCheckout(
+    hostContext,
+    cubit,
+    showServiceActions: showServiceActions,
+    presentSuccessDialog: false,
+  );
+  if (!completed || !sheetContext.mounted) return;
+
+  ProPlanEntity? plan;
+  final catalog = cubit.state.catalog;
+  if (catalog != null) {
+    for (final item in catalog.plans) {
+      if (item.planId == planId) {
+        plan = item;
+        break;
+      }
+    }
+  }
+  sheetContext.pop(
+    ProSheetResult(
+      planId: planId,
+      plan: plan,
+    ),
+  );
+}
+
+/// JazzCash number → subscribe → optional payment WebView.
+///
+/// Returns true when membership activation succeeded so the Pro sheet can close.
+Future<bool> _continueProCheckout(
   BuildContext context,
   ProCubit cubit, {
   required bool showServiceActions,
+  bool presentSuccessDialog = true,
 }) async {
   final msisdn = await _pickJazzCashNumber(context);
-  if (!context.mounted || msisdn == null || msisdn.isEmpty) return;
+  if (!context.mounted || msisdn == null || msisdn.isEmpty) return false;
 
   final subscription = await cubit.subscribe(msisdn: msisdn);
-  if (!context.mounted) return;
+  if (!context.mounted) return false;
   if (subscription == null) {
     _showSubscribeMessage(context, cubit.state.subscribeErrorMessage);
-    return;
+    return false;
   }
 
   if (subscription.opensJazzCash) {
@@ -158,25 +180,29 @@ Future<void> _continueProCheckout(
       url: subscription.link!,
       title: l10n.accountMethodJazzCash,
     );
-    if (!context.mounted) return;
+    if (!context.mounted) return false;
     final result = payment ?? PaymentWebViewResult.cancelled();
     final destination = await _showWebViewOutcomeDialog(
       context,
       result,
       showServiceActions: showServiceActions,
+      presentSuccessDialog: presentSuccessDialog,
     );
-    if (!context.mounted || !result.isSuccess) return;
+    if (!context.mounted || !result.isSuccess) return false;
     await LabTestCartCubit.clearAfterProMembershipChange();
-    if (!context.mounted) return;
+    if (!context.mounted) return false;
     sl<AuthSessionRefresh>().notifyProMembershipChanged(isActive: true);
-    if (destination != null) context.push(destination);
-    return;
+    if (presentSuccessDialog && destination != null) {
+      context.push(destination);
+    }
+    return true;
   }
 
   await LabTestCartCubit.clearAfterProMembershipChange();
-  if (!context.mounted) return;
+  if (!context.mounted) return false;
   sl<AuthSessionRefresh>().notifyProMembershipChanged(isActive: true);
-  if (!context.mounted) return;
+  if (!presentSuccessDialog) return true;
+  if (!context.mounted) return false;
   final destination = await showProSubscribeSuccessDialog(
     context,
     showServiceActions: showServiceActions,
@@ -184,6 +210,7 @@ Future<void> _continueProCheckout(
   if (destination != null && context.mounted) {
     context.push(destination);
   }
+  return true;
 }
 
 Future<String?> _pickJazzCashNumber(BuildContext context) async {
@@ -201,10 +228,12 @@ Future<String?> _showWebViewOutcomeDialog(
   BuildContext context,
   PaymentWebViewResult result, {
   required bool showServiceActions,
+  bool presentSuccessDialog = true,
 }) async {
   if (!context.mounted) return null;
   final l10n = AppLocalizations.of(context)!;
   if (result.isSuccess) {
+    if (!presentSuccessDialog) return null;
     return showProSubscribeSuccessDialog(
       context,
       showServiceActions: showServiceActions,

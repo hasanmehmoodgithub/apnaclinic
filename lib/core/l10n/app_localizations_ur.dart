@@ -1979,6 +1979,10 @@ class AppLocalizationsUr extends AppLocalizations {
   String get proMenuYouAreMember => 'آپ Pro ممبر ہیں';
 
   @override
+  String get proMemberBannerSubtitle =>
+      'فارمیسی پر مفت ڈیلیوری، مفت فوری ڈاکٹر سروس، اور ڈاکٹر کنسلٹیشنز و لیب ٹیسٹس پر خصوصی رعایت حاصل کریں';
+
+  @override
   String get proShowInfoSectionTitle => 'Pro سبسکرائب کریں';
 
   @override

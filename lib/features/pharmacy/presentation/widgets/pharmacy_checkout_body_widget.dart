@@ -354,6 +354,15 @@ class PharmacyCheckoutBodyWidget extends StatelessWidget {
                   },
                 ),
                 SizedBox(height: 24.h),
+                ProServiceOfferSlot(
+                  key: offerKey,
+                  service: ProServiceOfferKind.pharmacy,
+                  upsellOnly: true,
+                  onProChanged: (value) {
+                    context.read<PromoCodeCubit>().setIsPro(value);
+                    onProChanged(value);
+                  },
+                ),
                 PharmacyCheckoutEditableField(
                   label: l10n.pharmacyCheckoutAddressLabel,
                   controller: addressController,
@@ -379,15 +388,6 @@ class PharmacyCheckoutBodyWidget extends StatelessWidget {
                   },
                 ),
                 SizedBox(height: 22.h),
-                ProServiceOfferSlot(
-                  key: offerKey,
-                  service: ProServiceOfferKind.pharmacy,
-                  upsellOnly: true,
-                  onProChanged: (value) {
-                    context.read<PromoCodeCubit>().setIsPro(value);
-                    onProChanged(value);
-                  },
-                ),
                 Text(
                   l10n.pharmacyCheckoutPaymentMethodTitle,
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(

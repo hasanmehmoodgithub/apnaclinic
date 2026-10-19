@@ -165,6 +165,7 @@ class _DoctorConsultationCheckoutScreenState
         consultationFee: checkoutData.consultationFee,
         discount: checkoutData.discount,
         total: promo.payableTotal(checkoutData.total),
+        isPro: _isPro,
         promoCode: promo.appliedCode,
         promoDiscount: promo.isApplied ? promo.result!.discountAmount : 0,
       ),
