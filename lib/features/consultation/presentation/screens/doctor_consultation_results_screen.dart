@@ -6,6 +6,7 @@ import '../../../../core/analytics/analytics_event_keys.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/router/app_routes.dart';
+import '../../../../core/session/auth_session_refresh.dart';
 
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
@@ -68,6 +69,8 @@ class _DoctorConsultationResultsScreenState
   String? _selectedPartnerId;
   late String _selectedCategory;
   late String _mainCategoryId;
+  late final AuthSessionRefresh _sessionRefresh;
+  late int _appliedProRevision;
 
   @override
   void initState() {
@@ -75,6 +78,9 @@ class _DoctorConsultationResultsScreenState
     _selectedCategory = widget.selectedCategory;
     _mainCategoryId = widget.mainCategoryId;
     _categoryOptions = widget.categoryOptions;
+    _sessionRefresh = sl<AuthSessionRefresh>();
+    _appliedProRevision = _sessionRefresh.proMembershipRevision;
+    _sessionRefresh.addListener(_onAuthSessionChanged);
     if (_categoryOptions.isEmpty) {
       _loadCategories();
     }
@@ -84,6 +90,15 @@ class _DoctorConsultationResultsScreenState
       if (!mounted) return;
       ConsultationAnalytics.logListingScreen(_selectedCategory);
     });
+  }
+
+  void _onAuthSessionChanged() {
+    if (!mounted) return;
+    final revision = _sessionRefresh.proMembershipRevision;
+    if (revision == _appliedProRevision) return;
+    _appliedProRevision = revision;
+    // Pro subscribe/cancel — reload list for membership-priced fees.
+    _loadDoctors(refresh: true);
   }
 
   void _onScroll() {
@@ -266,6 +281,7 @@ class _DoctorConsultationResultsScreenState
 
   @override
   void dispose() {
+    _sessionRefresh.removeListener(_onAuthSessionChanged);
     _scrollController
       ..removeListener(_onScroll)
       ..dispose();

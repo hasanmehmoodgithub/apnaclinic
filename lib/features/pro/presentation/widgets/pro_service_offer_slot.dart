@@ -6,6 +6,8 @@ import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../generated/assets.dart';
+import '../../../consultation/presentation/consultation_pro_navigation.dart';
+import '../../../lab_test/presentation/lab_test_pro_navigation.dart';
 import '../../domain/entities/pro_benefit_entity.dart';
 import '../../domain/entities/pro_catalog_entity.dart';
 import '../../domain/use_cases/get_pro_catalog_use_case.dart';
@@ -62,9 +64,23 @@ class ProServiceOfferSlotState extends State<ProServiceOfferSlot> {
   Future<void> openSheet() => _openPro();
 
   Future<void> _openPro() async {
-    await showApnaClinicProSheet(context);
+    final result = await showApnaClinicProSheet(context);
     if (!mounted) return;
     await _load();
+    if (!mounted) return;
+
+    final subscribed = result != null &&
+        !result.subscriptionCancelled &&
+        result.planId.isNotEmpty;
+    if (!subscribed) return;
+    switch (widget.service) {
+      case ProServiceOfferKind.consultation:
+        popToConsultationDoctors(context);
+      case ProServiceOfferKind.lab:
+        popToLabTestSelectTest(context);
+      case ProServiceOfferKind.pharmacy:
+        break;
+    }
   }
 
   @override

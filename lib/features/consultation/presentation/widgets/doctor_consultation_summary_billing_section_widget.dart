@@ -30,7 +30,8 @@ class DoctorConsultationSummaryBillingSectionWidget extends StatelessWidget {
     return code.isNotEmpty || promoDiscount > 0;
   }
 
-  bool get _showProDiscount => isPro && discount > 0;
+  bool get _showProDiscount =>
+      isPro && discount > 0 && !_hasPromoDiscount;
 
   @override
   Widget build(BuildContext context) {

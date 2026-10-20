@@ -9,6 +9,7 @@ import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/preference/app_pref.dart';
 import '../../../../core/router/app_routes.dart';
+import '../../../../core/session/auth_session_refresh.dart';
 import '../../../../core/utils/auth_guard.dart';
 import '../../../../core/widgets/app_scaffold_gradient.dart';
 import '../../domain/entities/lab_test_item_entity.dart';
@@ -34,10 +35,15 @@ class LabTestSelectTestScreen extends StatefulWidget {
 class _LabTestSelectTestScreenState extends State<LabTestSelectTestScreen> {
   final TextEditingController _searchController = TextEditingController();
   final AppPref _appPref = sl<AppPref>();
+  late final AuthSessionRefresh _sessionRefresh;
+  late int _appliedProRevision;
 
   @override
   void initState() {
     super.initState();
+    _sessionRefresh = sl<AuthSessionRefresh>();
+    _appliedProRevision = _sessionRefresh.proMembershipRevision;
+    _sessionRefresh.addListener(_onAuthSessionChanged);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       if (!AuthGuard.isLoggedIn(_appPref)) return;
@@ -45,8 +51,27 @@ class _LabTestSelectTestScreenState extends State<LabTestSelectTestScreen> {
     });
   }
 
+  void _onAuthSessionChanged() {
+    if (!mounted) return;
+    final revision = _sessionRefresh.proMembershipRevision;
+    if (revision == _appliedProRevision) return;
+    _appliedProRevision = revision;
+    final cubit = context.read<LabTestCubit>();
+    final city = cubit.state.selectedCity?.trim() ?? '';
+    if (city.isEmpty) return;
+    cubit.loadCatalog(
+      cityName: city,
+      lab: cubit.state.selectedLab,
+      refresh: true,
+      search: _searchController.text.trim().isEmpty
+          ? null
+          : _searchController.text.trim(),
+    );
+  }
+
   @override
   void dispose() {
+    _sessionRefresh.removeListener(_onAuthSessionChanged);
     _searchController.dispose();
     super.dispose();
   }

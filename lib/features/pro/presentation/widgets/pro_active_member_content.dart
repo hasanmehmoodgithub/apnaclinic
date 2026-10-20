@@ -30,112 +30,113 @@ class ProActiveMemberContent extends StatelessWidget {
       autoRenew: membership.autoRenew,
     );
 
-    return SingleChildScrollView(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          ProSheetHeaderWidget(
-            logoUrl: catalog.logoUrl,
-            bannerUrl: catalog.bannerUrl,
-          ),
-          ColoredBox(
-            color: AppColors.clrF3F4F6,
-            child: Padding(
-              padding: EdgeInsets.fromLTRB(
-                20.w,
-                16.h,
-                20.w,
-                24.h + MediaQuery.paddingOf(context).bottom,
+    // Height is owned by the sheet (`shrinkWrap`); keep this a tight column.
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        ProSheetHeaderWidget(
+          logoUrl: catalog.logoUrl,
+          bannerUrl: catalog.bannerUrl,
+        ),
+        ColoredBox(
+          color: AppColors.clrF3F4F6,
+          child: Padding(
+            padding: EdgeInsets.fromLTRB(
+              20.w,
+              16.h,
+              20.w,
+              24.h + MediaQuery.paddingOf(context).bottom,
+            ),
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                color: AppColors.clrWhite,
+                borderRadius: BorderRadius.circular(16.r),
+                border: Border.all(color: AppColors.clrE3E8EE),
               ),
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  color: AppColors.clrWhite,
-                  borderRadius: BorderRadius.circular(16.r),
-                  border: Border.all(color: AppColors.clrE3E8EE),
-                ),
-                child: Padding(
-                  padding: EdgeInsets.fromLTRB(20.w, 20.h, 20.w, 12.h),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Expanded(
-                            child: Text(
-                              catalog.title,
-                              style: TextStyle(
-                                color: AppColors.clr111827,
-                                fontWeight: FontWeight.w800,
-                                fontSize: 22.sp,
-                              ),
-                            ),
-                          ),
-                          if (catalog.allowedActions.canUnsubscribe)
-                            _CancelMenuButton(onCancel: onCancelSubscription),
-                        ],
-                      ),
-                      SizedBox(height: 6.h),
-                      Text(
-                        catalog.tagline.trim().isNotEmpty
-                            ? catalog.tagline
-                            : l10n.proActiveMemberSubtitle,
-                        style: TextStyle(
-                          color: AppColors.clr6B7280,
-                          fontWeight: FontWeight.w400,
-                          fontSize: 13.sp,
-                          height: 1.35,
-                        ),
-                      ),
-                      if (renewLabel != null) ...[
-                        SizedBox(height: 14.h),
-                        Container(
-                          width: double.infinity,
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 14.w,
-                            vertical: 10.h,
-                          ),
-                          decoration: BoxDecoration(
-                            color: AppColors.clrFCF5E9,
-                            borderRadius: BorderRadius.circular(8.r),
-                          ),
+              child: Padding(
+                padding: EdgeInsets.fromLTRB(20.w, 20.h, 20.w, 12.h),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
                           child: Text(
-                            renewLabel,
+                            catalog.title,
                             style: TextStyle(
                               color: AppColors.clr111827,
-                              fontWeight: FontWeight.w500,
-                              fontSize: 13.sp,
+                              fontWeight: FontWeight.w800,
+                              fontSize: 22.sp,
                             ),
+                          ),
+                        ),
+                        if (catalog.allowedActions.canUnsubscribe)
+                          _CancelMenuButton(onCancel: onCancelSubscription),
+                      ],
+                    ),
+                    SizedBox(height: 6.h),
+                    Text(
+                      catalog.tagline.trim().isNotEmpty
+                          ? catalog.tagline
+                          : l10n.proActiveMemberSubtitle,
+                      style: TextStyle(
+                        color: AppColors.clr6B7280,
+                        fontWeight: FontWeight.w400,
+                        fontSize: 13.sp,
+                        height: 1.35,
+                      ),
+                    ),
+                    if (renewLabel != null) ...[
+                      SizedBox(height: 14.h),
+                      Container(
+                        width: double.infinity,
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 14.w,
+                          vertical: 10.h,
+                        ),
+                        decoration: BoxDecoration(
+                          color: AppColors.clrFCF5E9,
+                          borderRadius: BorderRadius.circular(8.r),
+                        ),
+                        child: Text(
+                          renewLabel,
+                          style: TextStyle(
+                            color: AppColors.clr111827,
+                            fontWeight: FontWeight.w500,
+                            fontSize: 13.sp,
+                          ),
+                        ),
+                      ),
+                    ],
+                    SizedBox(height: 18.h),
+                    Row(
+                      children: [
+                        const ProPillBadge(height: 16),
+                        SizedBox(width: 6.w),
+                        Text(
+                          l10n.proActiveBenefitsSuffix,
+                          style: TextStyle(
+                            color: AppColors.clr111827,
+                            fontWeight: FontWeight.w700,
+                            fontSize: 14.sp,
                           ),
                         ),
                       ],
-                      SizedBox(height: 18.h),
-                      Row(
-                        children: [
-                          const ProPillBadge(height: 16),
-                          SizedBox(width: 6.w),
-                          Text(
-                            l10n.proActiveBenefitsSuffix,
-                            style: TextStyle(
-                              color: AppColors.clr111827,
-                              fontWeight: FontWeight.w700,
-                              fontSize: 14.sp,
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 8.h),
-                      ...catalog.benefits.map(
-                        (benefit) => _ActiveBenefitRow(benefit: benefit),
-                      ),
-                    ],
-                  ),
+                    ),
+                    SizedBox(height: 8.h),
+                    ...catalog.benefits.map(
+                      (benefit) => _ActiveBenefitRow(benefit: benefit),
+                    ),
+                  ],
                 ),
               ),
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 

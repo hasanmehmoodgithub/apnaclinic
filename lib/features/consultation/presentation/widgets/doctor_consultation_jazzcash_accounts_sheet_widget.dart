@@ -168,7 +168,7 @@ class _DoctorConsultationJazzCashAccountsSheetWidgetState
       return;
     }
 
-    context.pop(
+    Navigator.of(context).pop(
       DoctorConsultationJazzCashSheetResult.account(
         msisdn: _accountMsisdns[_selectedIndex],
       ),

@@ -17,6 +17,8 @@ import '../domain/entities/pro_plan_entity.dart';
 import 'cubit/pro_cubit.dart';
 import 'pro_user_webview_navigation.dart';
 import 'widgets/pro_bottom_sheet.dart';
+import 'widgets/pro_jazzcash_payment_method_sheet.dart';
+import 'widgets/pro_nested_sheet_route.dart';
 import 'widgets/pro_subscribe_success_dialog.dart';
 import 'widgets/pro_unsubscribe_success_dialog.dart';
 
@@ -55,39 +57,59 @@ Future<ProSheetResult?> showApnaClinicProSheet(
       context: context,
       isScrollControlled: true,
       useSafeArea: true,
+      enableDrag: true,
+      isDismissible: true,
       backgroundColor: Colors.transparent,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
       ),
       builder: (sheetContext) {
-        return BlocProvider.value(
-          value: cubit,
-          child: Builder(
-            builder: (providerContext) {
-              return ProBottomSheet(
-                onSubscribe: (planId, {bool suppressSuccessDialog = false}) {
-                  if (checkoutBusy) return;
-                  checkoutBusy = true;
-                  unawaited(() async {
-                    try {
-                      await _onProSubscribePressed(
-                        sheetContext: sheetContext,
-                        hostContext: providerContext,
-                        cubit: cubit,
-                        planId: planId,
-                        showServiceActions: showServiceActions,
-                      );
-                    } finally {
-                      checkoutBusy = false;
-                    }
-                  }());
-                },
-                onUnsubscribed: () {
-                  sheetContext.pop(
-                    const ProSheetResult(
-                      planId: '',
-                      plan: null,
-                      subscriptionCancelled: true,
+        void closeSheet([ProSheetResult? value]) {
+          if (!sheetContext.mounted) return;
+          Navigator.of(sheetContext).pop(value);
+        }
+
+        // Nested navigator owns JazzCash / accounts routes so the outer Pro
+        // modal is never dismissed when those sheets open. Align bottom so
+        // shrink-wrapped active-member content does not leave empty space.
+        return Align(
+          alignment: Alignment.bottomCenter,
+          child: Navigator(
+            onGenerateRoute: (_) {
+              return PageRouteBuilder<void>(
+                opaque: false,
+                pageBuilder: (innerContext, animation, secondaryAnimation) {
+                  return BlocProvider.value(
+                    value: cubit,
+                    child: ProBottomSheet(
+                      onRequestClose: closeSheet,
+                      onSubscribe:
+                          (planId, {bool suppressSuccessDialog = false}) {
+                        if (checkoutBusy) return;
+                        checkoutBusy = true;
+                        unawaited(() async {
+                          try {
+                            await _onProSubscribePressed(
+                              sheetContext: sheetContext,
+                              hostContext: innerContext,
+                              cubit: cubit,
+                              planId: planId,
+                              showServiceActions: showServiceActions,
+                            );
+                          } finally {
+                            checkoutBusy = false;
+                          }
+                        }());
+                      },
+                      onUnsubscribed: () {
+                        closeSheet(
+                          const ProSheetResult(
+                            planId: '',
+                            plan: null,
+                            subscriptionCancelled: true,
+                          ),
+                        );
+                      },
                     ),
                   );
                 },
@@ -146,7 +168,7 @@ Future<void> _onProSubscribePressed({
       }
     }
   }
-  sheetContext.pop(
+  Navigator.of(sheetContext).pop(
     ProSheetResult(
       planId: planId,
       plan: plan,
@@ -154,8 +176,9 @@ Future<void> _onProSubscribePressed({
   );
 }
 
-/// JazzCash number → subscribe → optional payment WebView.
+/// Payment method (JazzCash) → number → subscribe → optional payment WebView.
 ///
+/// Sheets open over the Pro catalog sheet; Pro stays open until success.
 /// Returns true when membership activation succeeded so the Pro sheet can close.
 Future<bool> _continueProCheckout(
   BuildContext context,
@@ -163,6 +186,9 @@ Future<bool> _continueProCheckout(
   required bool showServiceActions,
   bool presentSuccessDialog = true,
 }) async {
+  final choseJazzCash = await showProJazzCashPaymentMethodSheet(context);
+  if (!context.mounted || !choseJazzCash) return false;
+
   final msisdn = await _pickJazzCashNumber(context);
   if (!context.mounted || msisdn == null || msisdn.isEmpty) return false;
 
@@ -214,13 +240,10 @@ Future<bool> _continueProCheckout(
 }
 
 Future<String?> _pickJazzCashNumber(BuildContext context) async {
-  final result =
-      await showModalBottomSheet<DoctorConsultationJazzCashSheetResult>(
-        context: context,
-        isScrollControlled: true,
-        backgroundColor: Colors.transparent,
-        builder: (_) => const DoctorConsultationJazzCashAccountsSheetWidget(),
-      );
+  final result = await pushProNestedSheet<DoctorConsultationJazzCashSheetResult>(
+    context: context,
+    builder: (_) => const DoctorConsultationJazzCashAccountsSheetWidget(),
+  );
   return result?.msisdn.trim();
 }
 

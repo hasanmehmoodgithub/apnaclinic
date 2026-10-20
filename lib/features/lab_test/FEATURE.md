@@ -7,8 +7,8 @@ Browse labs in a city, then tests for a selected lab, booking/cart flow, payment
 ## Routes / entry
 
 - `AppRoutes.labTest` — city + **Select Lab** grid (`GET` labs).
-- `AppRoutes.labTestSelectTest` — tests for the chosen lab (`GET` lab/tests?labId=). Extra: `LabTestSelectTestArgs` (`city`, `lab`, `requirementLines`).
-- `AppRoutes.labTestBooking`, `labTestCart`, `labTestCheckout`, `labTestViewDetails`, `labTestReportViewer`.
+- `AppRoutes.labTestSelectTest` — tests for the chosen lab (`GET` lab/tests?labId=). Extra: `LabTestSelectTestArgs` (`city`, `lab`, `requirementLines`). Listens to `AuthSessionRefresh.proMembershipRevision` and reloads the catalog when Pro membership changes (updated fees).
+- `AppRoutes.labTestBooking`, `labTestCart`, `labTestCheckout`, `labTestViewDetails`, `labTestReportViewer`. After a successful Pro subscribe from checkout upsell, navigation pops back to `labTestSelectTest` (`popToLabTestSelectTest`) so the catalog can show updated prices (falls back to `labTest` hub if select-test is not in the stack).
 - Tapping a lab or catalog test requires login (`AuthGuard.requireLogin`); guests are redirected to `AppRoutes.authLogin`.
 - Opening cart (`labTestOpenCart`) also requires login; guests are redirected to `AppRoutes.authLogin`. Cart badge count is hidden for guests.
 

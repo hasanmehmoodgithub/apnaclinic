@@ -26,6 +26,7 @@ class ProBottomSheet extends StatelessWidget {
     super.key,
     this.onSubscribe,
     this.onUnsubscribed,
+    this.onRequestClose,
   });
 
   /// Starts JazzCash checkout for [planId] while this sheet stays open.
@@ -35,46 +36,81 @@ class ProBottomSheet extends StatelessWidget {
   /// Closes the sheet after unsubscribe succeeds so the cancel dialog can show.
   final VoidCallback? onUnsubscribed;
 
+  /// Drag-handle dismiss (pops the outer Pro modal, not the nested navigator).
+  final VoidCallback? onRequestClose;
+
   @override
   Widget build(BuildContext context) {
     return _ProSheetAuthRefresh(
       child: BlocBuilder<ProCubit, ProState>(
         builder: (context, state) {
           final media = MediaQuery.of(context);
-          // [useSafeArea: true] already clears the top inset; fill remaining height.
-          final maxHeight = media.size.height;
-          return SafeArea(
-            top: false,
-            bottom: false,
-            child: ConstrainedBox(
-              constraints: BoxConstraints(maxHeight: maxHeight),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: AppColors.clrWhite,
-                  borderRadius: BorderRadius.vertical(
-                    top: Radius.circular(24.r),
-                  ),
-                ),
-                clipBehavior: Clip.antiAlias,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    SizedBox(height: 10.h),
-                    Container(
-                      width: 46.w,
-                      height: 5.h,
-                      decoration: BoxDecoration(
-                        color: AppColors.clrDDE1E5,
-                        borderRadius: BorderRadius.circular(99.r),
-                      ),
+          // Leave a little headroom so the sheet reads as draggable, not a page.
+          final maxHeight = media.size.height * 0.94;
+          final shrinkWrap = _shouldShrinkWrap(state);
+          return Align(
+            alignment: Alignment.bottomCenter,
+            child: SafeArea(
+              top: false,
+              bottom: false,
+              child: ConstrainedBox(
+                constraints: BoxConstraints(maxHeight: maxHeight),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: AppColors.clrWhite,
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(24.r),
                     ),
-                    Flexible(child: _body(context, state)),
-                  ],
+                  ),
+                  clipBehavior: Clip.antiAlias,
+                  child: shrinkWrap
+                      ? _shrinkWrappedSheet(context, state)
+                      : _expandedSheet(context, state, maxHeight),
                 ),
               ),
             ),
           );
         },
+      ),
+    );
+  }
+
+  /// Active / error: height follows content (no empty white footer).
+  static bool _shouldShrinkWrap(ProState state) {
+    final status = state.loadingStateStatus;
+    if (status == StateStatus.loading ||
+        status == StateStatus.idle ||
+        (status == StateStatus.refreshing && state.catalog == null)) {
+      return false;
+    }
+    if (status == StateStatus.error || state.catalog == null) return true;
+    return state.catalog!.membership.isActivePro;
+  }
+
+  Widget _shrinkWrappedSheet(BuildContext context, ProState state) {
+    return SingleChildScrollView(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          _ProSheetDragHandle(onDismiss: onRequestClose),
+          _body(context, state),
+        ],
+      ),
+    );
+  }
+
+  Widget _expandedSheet(
+    BuildContext context,
+    ProState state,
+    double maxHeight,
+  ) {
+    return SizedBox(
+      height: maxHeight,
+      child: Column(
+        children: [
+          _ProSheetDragHandle(onDismiss: onRequestClose),
+          Expanded(child: _body(context, state)),
+        ],
       ),
     );
   }
@@ -97,6 +133,7 @@ class ProBottomSheet extends StatelessWidget {
     if (catalog.membership.isActivePro) {
       final isCancelling = state.subscribeStateStatus == StateStatus.loading;
       return Stack(
+        alignment: Alignment.center,
         children: [
           AbsorbPointer(
             absorbing: isCancelling,
@@ -105,7 +142,7 @@ class ProBottomSheet extends StatelessWidget {
               onCancelSubscription: () => _onCancelSubscription(context),
             ),
           ),
-          if (isCancelling) const Center(child: CircularProgressIndicator()),
+          if (isCancelling) const CircularProgressIndicator(),
         ],
       );
     }
@@ -152,6 +189,62 @@ class ProBottomSheet extends StatelessWidget {
     } else {
       context.pop();
     }
+  }
+}
+
+/// Large top grab area — nested navigator blocks default modal drag, so this
+/// closes the outer Pro sheet on a short downward swipe.
+class _ProSheetDragHandle extends StatefulWidget {
+  const _ProSheetDragHandle({this.onDismiss});
+
+  final VoidCallback? onDismiss;
+
+  @override
+  State<_ProSheetDragHandle> createState() => _ProSheetDragHandleState();
+}
+
+class _ProSheetDragHandleState extends State<_ProSheetDragHandle> {
+  double _dragDistance = 0;
+
+  void _maybeDismiss({required double velocity}) {
+    if (widget.onDismiss == null) return;
+    if (_dragDistance > 28 || velocity > 400) {
+      widget.onDismiss!();
+    }
+    _dragDistance = 0;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onVerticalDragStart: (_) => _dragDistance = 0,
+      onVerticalDragUpdate: (details) {
+        if (details.delta.dy > 0) {
+          _dragDistance += details.delta.dy;
+        } else {
+          _dragDistance = (_dragDistance + details.delta.dy).clamp(0, 200);
+        }
+      },
+      onVerticalDragEnd: (details) {
+        _maybeDismiss(velocity: details.primaryVelocity ?? 0);
+      },
+      onVerticalDragCancel: () => _dragDistance = 0,
+      child: SizedBox(
+        width: double.infinity,
+        height: 36.h,
+        child: Center(
+          child: Container(
+            width: 46.w,
+            height: 5.h,
+            decoration: BoxDecoration(
+              color: AppColors.clrDDE1E5,
+              borderRadius: BorderRadius.circular(99.r),
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }
 
