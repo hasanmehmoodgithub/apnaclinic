@@ -27,7 +27,7 @@ class ApnaClinicAiConfig {
     // Temporary defaults for local/dev. Prefer --dart-define when available.
     const baseUrl = String.fromEnvironment(
       'APNA_CLINIC_AI_BASE_URL',
-      defaultValue: 'https://cc91-119-160-81-47.ngrok-free.app',
+      defaultValue: 'https://522b-119-160-81-47.ngrok-free.app',
     );
     const sdkKey = String.fromEnvironment(
       'APNA_CLINIC_AI_SDK_KEY',
