@@ -2138,4 +2138,386 @@ class AppLocalizationsUr extends AppLocalizations {
   @override
   String get jazzCashOtherNetworksStep3 =>
       'پھر ادائیگی کی تصدیق کے لیے اپنا ایم پن درج کریں۔';
+
+  @override
+  String get apnaClinicAiMenuTitle => 'اپنا کلینک اے آئی';
+
+  @override
+  String get apnaClinicAiTitle => 'اپنا کلینک اے آئی';
+
+  @override
+  String get apnaClinicAiBrandTag => 'کئیر کمپینین';
+
+  @override
+  String get apnaClinicAiGreeting => 'السلام علیکم';
+
+  @override
+  String get apnaClinicAiGuest => 'مہمان';
+
+  @override
+  String get apnaClinicAiSignedIn => 'سائن ان';
+
+  @override
+  String get apnaClinicAiConnecting => 'رابطہ ہو رہا ہے…';
+
+  @override
+  String get apnaClinicAiOnline => 'آن لائن';
+
+  @override
+  String get apnaClinicAiHeadline => 'آج آپ\nکیسا محسوس کر رہے ہیں؟';
+
+  @override
+  String get apnaClinicAiLiveStats => 'بتائیں کیا تکلیف ہے۔';
+
+  @override
+  String get apnaClinicAiCommonConcerns => 'عام شکایات';
+
+  @override
+  String get apnaClinicAiTapToStart => 'شروع کرنے کے لیے ٹیپ کریں';
+
+  @override
+  String get apnaClinicAiWhatICanDo => 'میں کیا کر سکتا ہوں';
+
+  @override
+  String get apnaClinicAiSosTitle =>
+      'سینے میں درد، سانس لینے میں دشواری، شدید خون بہنا؟';
+
+  @override
+  String get apnaClinicAiSosBody =>
+      'ابھی ریسکیو 1122 پر کال کریں — چیٹ کا انتظار نہ کریں۔';
+
+  @override
+  String get apnaClinicAiFinePrint =>
+      'فیس اور قیمتیں روپے میں۔ میں دوائیں تجویز نہیں کرتا — آپ کے نام کی دوائیں تلاش کرتا ہوں۔';
+
+  @override
+  String get apnaClinicAiVoiceCta => 'آواز میں بتائیں';
+
+  @override
+  String get apnaClinicAiVoiceLangs => 'English · اردو · Roman Urdu';
+
+  @override
+  String get apnaClinicAiContinue => 'جاری رکھیں';
+
+  @override
+  String get apnaClinicAiStartNew => 'کچھ نیا شروع کریں';
+
+  @override
+  String get apnaClinicAiStartTalkingTitle => 'میں بتاتا ہوں مجھے کیا ہے';
+
+  @override
+  String get apnaClinicAiStartTalkingBody =>
+      'انگریزی یا اردو میں بولیں یا لکھیں۔ اپ لوڈ کی ضرورت نہیں۔';
+
+  @override
+  String get apnaClinicAiStartTalkingCta => 'بات شروع کریں';
+
+  @override
+  String get apnaClinicAiPrescriptionTitle => 'میرے پاس نسخہ یا لیب رپورٹ ہے';
+
+  @override
+  String get apnaClinicAiPrescriptionBody =>
+      'رپورٹ میں کیا لکھا ہے بیان کریں۔ اسسٹنٹ آپ کے الفاظ سے مدد کر سکتا ہے۔';
+
+  @override
+  String get apnaClinicAiPrescriptionCta => 'رپورٹ بیان کریں';
+
+  @override
+  String get apnaClinicAiPrescriptionHint =>
+      'رپورٹ اپنے الفاظ میں بیان کریں، یا بتائیں لیب نے کیا نتیجہ دیا۔';
+
+  @override
+  String get apnaClinicAiDisclaimer =>
+      'طبی دستبرداری — یہ ٹول صرف عمومی معلومات دیتا ہے اور تشخیص نہیں ہے۔ ہمیشہ مستند ڈاکٹر سے رجوع کریں۔ ایمرجنسی میں ریسکیو 1122 پر کال کریں۔';
+
+  @override
+  String get apnaClinicAiChatSubtitle => 'آن لائن';
+
+  @override
+  String get apnaClinicAiHeroTitle =>
+      'صحت، رپورٹ، یا تجویز کے بارے میں پوچھیں۔';
+
+  @override
+  String get apnaClinicAiHeroBody =>
+      'انگریزی یا اردو میں بولیں یا لکھیں۔ اگر ماہر کی ضرورت ہو تو اسسٹنٹ بتائے گا۔';
+
+  @override
+  String get apnaClinicAiPrompt => 'اپنے الفاظ میں بتائیں کہ تکلیف کیا ہے۔';
+
+  @override
+  String get apnaClinicAiComposerHint => 'علامت بیان کریں یا دوا کا نام لکھیں…';
+
+  @override
+  String get apnaClinicAiChatComposerHint =>
+      'لکھیں، یا بولنے کے لیے مائیک ٹیپ کریں…';
+
+  @override
+  String get apnaClinicAiEmergencyTitle =>
+      'یہ فوری ہو سکتا ہے — ریسکیو 1122 پر کال کریں';
+
+  @override
+  String get apnaClinicAiEmergencyBody =>
+      'پاکستان میں ریسکیو 1122 ایمبولینس / ایمرجنسی نمبر ہے۔ اگر کوئی فوری خطرے میں ہے تو ابھی کال کریں یا قریبی ایمرجنسی جائیں۔';
+
+  @override
+  String get apnaClinicAiEmergencyStep1 =>
+      '1122 (یا مقامی ایمرجنسی) پر کال کریں اور لائن پر رہیں۔';
+
+  @override
+  String get apnaClinicAiEmergencyStep2 =>
+      'شخص کو ساکن رکھیں، بیٹھے یا لیٹے؛ تنگ کپڑے ڈھیلے کریں۔';
+
+  @override
+  String get apnaClinicAiEmergencyStep3 =>
+      'ڈاکٹر کے کہے بغیر کھانا، پانی یا دوا نہ دیں۔';
+
+  @override
+  String get apnaClinicAiEmergencyCta => '1122 پر کال کریں';
+
+  @override
+  String get apnaClinicAiEmergencyNote =>
+      'پاکستان میں ایمبولینس کے لیے **ریسکیو 1122** پر کال کریں، یا ابھی قریبی ایمرجنسی جائیں۔';
+
+  @override
+  String get apnaClinicAiTapDoctor => 'ڈاکٹر پر ٹیپ کریں';
+
+  @override
+  String get apnaClinicAiViewSlots => 'اوقات دیکھیں';
+
+  @override
+  String get apnaClinicAiAddToCart => 'کارٹ میں ڈالیں';
+
+  @override
+  String get apnaClinicAiDoctors => 'ڈاکٹرز';
+
+  @override
+  String get apnaClinicAiMedicines => 'دوائیں';
+
+  @override
+  String get apnaClinicAiSlots => 'دستیاب اوقات';
+
+  @override
+  String get apnaClinicAiPickADay => 'دن منتخب کریں';
+
+  @override
+  String get apnaClinicAiPayment => 'ادائیگی';
+
+  @override
+  String get apnaClinicAiNotConfigured =>
+      'اپنا کلینک اے آئی ترتیب نہیں دیا گیا۔ APNA_CLINIC_AI_BASE_URL اور APNA_CLINIC_AI_SDK_KEY شامل کریں۔';
+
+  @override
+  String get apnaClinicAiConnectFailed =>
+      'اپنا کلینک اے آئی سے رابطہ نہیں ہو سکا۔ دوبارہ کوشش کریں۔';
+
+  @override
+  String get apnaClinicAiUpstream =>
+      'بکنگ ابھی مکمل نہیں ہوئی۔ ڈاکٹر اور پسندیدہ وقت دوبارہ بتائیں۔ اگر فوری ہے تو ریسکیو 1122 پر کال کریں۔';
+
+  @override
+  String get apnaClinicAiBookingFailed =>
+      'بکنگ سروس پر مسئلہ آیا۔ تھوڑی دیر بعد دوبارہ کوشش کریں۔';
+
+  @override
+  String get apnaClinicAiVoiceUnavailable =>
+      'مائیکروفون دستیاب نہیں۔ اجازت دیں، یا پیغام لکھیں۔';
+
+  @override
+  String get apnaClinicAiEmptyRecording =>
+      'آواز نہیں سنی گئی۔ مائیک تھوڑی دیر دبائے رکھیں، یا پیغام لکھیں۔';
+
+  @override
+  String get apnaClinicAiSignInRequired =>
+      'بکنگ یا کارٹ کے لیے سائن ان کریں۔ علامات کی رہنمائی مہمان کے طور پر چلتی ہے۔';
+
+  @override
+  String get apnaClinicAiSignInCta => 'جاری رکھنے کے لیے سائن ان کریں';
+
+  @override
+  String get apnaClinicAiNewChat => 'نئی چیٹ';
+
+  @override
+  String get apnaClinicAiSpeakReplies => 'جواب سنائیں';
+
+  @override
+  String get apnaClinicAiHoldToTalk => 'بولنے کے لیے ٹیپ کریں';
+
+  @override
+  String get apnaClinicAiTapMicToSend => 'بھیجنے کے لیے مائیک ٹیپ کریں';
+
+  @override
+  String get apnaClinicAiVoiceEnglish => 'EN';
+
+  @override
+  String get apnaClinicAiVoiceUrdu => 'اردو';
+
+  @override
+  String get apnaClinicAiListening => 'سن رہا ہے…';
+
+  @override
+  String get apnaClinicAiSuggestFever => 'مجھے بخار اور جسم میں درد ہے';
+
+  @override
+  String get apnaClinicAiSuggestRash => 'میرے بازو پر خارش ہے';
+
+  @override
+  String get apnaClinicAiSuggestDoctors => 'جنرل فزیشن ڈاکٹر دکھائیں';
+
+  @override
+  String get apnaClinicAiSuggestPanadol => 'کیا پینادول ہے';
+
+  @override
+  String apnaClinicAiMinutesAgo(int count) {
+    return '$count منٹ پہلے';
+  }
+
+  @override
+  String apnaClinicAiHoursAgo(int count) {
+    return '$count گھنٹے پہلے';
+  }
+
+  @override
+  String apnaClinicAiDaysAgo(int count) {
+    return '$count دن پہلے';
+  }
+
+  @override
+  String get apnaClinicAiStageListening => 'آپ کی علامات سن رہا ہے…';
+
+  @override
+  String get apnaClinicAiStageSpecialists => 'ماہرین دیکھ رہا ہے…';
+
+  @override
+  String get apnaClinicAiStageDoctors => 'لائیو ڈاکٹرز تلاش کر رہا ہے…';
+
+  @override
+  String get apnaClinicAiStageClinic => 'صحیح کلینک ملا رہا ہے…';
+
+  @override
+  String get apnaClinicAiStageReady => 'تقریباً تیار…';
+
+  @override
+  String get apnaClinicAiStageTranscribing => 'آواز لکھ رہا ہے…';
+
+  @override
+  String get apnaClinicAiStageRouter => 'آپ کی درخواست سمجھ رہا ہے…';
+
+  @override
+  String get apnaClinicAiStageCapability => 'صحیح راستہ چن رہا ہے…';
+
+  @override
+  String get apnaClinicAiStageDispatch => 'اپنا کلینک سے بات ہو رہی ہے…';
+
+  @override
+  String get apnaClinicAiStageBrowse => 'ڈاکٹرز لوڈ ہو رہے ہیں…';
+
+  @override
+  String get apnaClinicAiStageTriage => 'علامات کا جائزہ لے رہا ہے…';
+
+  @override
+  String get apnaClinicAiStageTool => 'لائیو دستیابی لا رہا ہے…';
+
+  @override
+  String get apnaClinicAiStageWriting => 'جواب لکھ رہا ہے…';
+
+  @override
+  String get apnaClinicBotLabel => 'اپنا کلینک بوٹ';
+
+  @override
+  String get apnaClinicBotBubble => 'مجھ سے پوچھیں';
+
+  @override
+  String get pharmacyScanPrescription => 'نسخہ اسکین کریں';
+
+  @override
+  String get pharmacyScanFabHint => 'تصویر لیں';
+
+  @override
+  String get pharmacyScanPrescriptionHint =>
+      'نسخے کی تصویر لیں یا گیلری سے منتخب کریں';
+
+  @override
+  String get pharmacyScanSourceTitle => 'نسخے کی تصویر';
+
+  @override
+  String get pharmacyScanUseCamera => 'کیمرہ استعمال کریں';
+
+  @override
+  String get pharmacyScanChooseGallery => 'گیلری سے منتخب کریں';
+
+  @override
+  String get pharmacyScanChangePhoto => 'تصویر بدلیں';
+
+  @override
+  String get pharmacyScanExtract => 'نسخہ پڑھیں';
+
+  @override
+  String get pharmacyScanReading => 'نسخہ پڑھا جا رہا ہے…';
+
+  @override
+  String get pharmacyScanFailed =>
+      'یہ نسخہ نہیں پڑھا جا سکا۔ صاف تصویر کے ساتھ دوبارہ کوشش کریں۔';
+
+  @override
+  String get pharmacyScanNotConfigured =>
+      'نسخہ پڑھنے کی سروس ابھی ترتیب نہیں دی گئی۔';
+
+  @override
+  String get pharmacyScanNoMedicines => 'اس نسخے پر کوئی دوا نہیں ملی۔';
+
+  @override
+  String get pharmacyScanTests => 'ٹیسٹ';
+
+  @override
+  String get pharmacyScanMedicines => 'دوائیں';
+
+  @override
+  String get pharmacyScanPatient => 'مریض';
+
+  @override
+  String get pharmacyScanDoctor => 'ڈاکٹر';
+
+  @override
+  String get pharmacyScanDate => 'تاریخ';
+
+  @override
+  String get pharmacyScanInstitute => 'ادارہ';
+
+  @override
+  String get pharmacyScanLocation => 'مقام';
+
+  @override
+  String get pharmacyScanLabReport => 'لیب رپورٹ';
+
+  @override
+  String get pharmacyScanVisit => 'وزٹ';
+
+  @override
+  String get pharmacyScanMatching => 'فارمیسی میں تلاش ہو رہی ہے…';
+
+  @override
+  String get pharmacyScanNotInCatalog => 'فارمیسی میں دستیاب نہیں';
+
+  @override
+  String pharmacyScanPages(int count) {
+    return '$count صفحات';
+  }
+
+  @override
+  String pharmacyScanQuantity(int count) {
+    return 'تعداد $count';
+  }
+
+  @override
+  String get pharmacyScanBannerTitle => 'ادویات جب آپ تیار ہوں';
+
+  @override
+  String get pharmacyScanBannerSubtitle =>
+      'نسخے کی واضح تصویر اسکین کریں، ہم فارمیسی سے مماثل دوائیں تلاش کریں گے۔';
+
+  @override
+  String get pharmacyScanUploadTitle => 'نسخہ اپ لوڈ کریں';
+
+  @override
+  String get pharmacyScanUploadSubtitle => 'کیمرہ یا گیلری · JPEG / PNG';
 }

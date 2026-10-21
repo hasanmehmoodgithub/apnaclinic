@@ -23,6 +23,19 @@ flutter run \
   --dart-define-from-file=hmac.keys.json
 ```
 
+### Apna Clinic AI SDK
+
+Never commit real secrets. Copy `apna_clinic_ai.keys.json.example` → `apna_clinic_ai.keys.json` (gitignored). See `lib/features/apna_clinic_ai/FEATURE.md`.
+
+```bash
+flutter run --dart-define-from-file=apna_clinic_ai.keys.json
+
+flutter run \
+  --dart-define=APP_FLAVOR=development \
+  --dart-define-from-file=hmac.keys.json \
+  --dart-define-from-file=apna_clinic_ai.keys.json
+```
+
 ### Staging
 ```bash
 flutter run --dart-define=APP_FLAVOR=staging

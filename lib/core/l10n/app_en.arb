@@ -901,5 +901,158 @@
   "jazzCashOtherNetworksStep3": "Then enter your MPIN to confirm the payment.",
   "@jazzCashOtherNetworksStep3": {
     "description": "Step 3 for other networks"
-  }
+  },
+  "apnaClinicAiMenuTitle": "Apna Clinic AI",
+  "apnaClinicAiTitle": "Apna Clinic AI",
+  "apnaClinicAiBrandTag": "CARE COMPANION",
+  "apnaClinicAiGreeting": "Assalam-o-Alaikum",
+  "apnaClinicAiGuest": "Guest",
+  "apnaClinicAiSignedIn": "Signed in",
+  "apnaClinicAiConnecting": "Connecting…",
+  "apnaClinicAiOnline": "online",
+  "apnaClinicAiHeadline": "How are you\nfeeling today?",
+  "apnaClinicAiLiveStats": "Tell me what’s bothering you.",
+  "apnaClinicAiCommonConcerns": "Common concerns",
+  "apnaClinicAiTapToStart": "tap to start",
+  "apnaClinicAiWhatICanDo": "What I can do",
+  "apnaClinicAiSosTitle": "Chest pain, trouble breathing, heavy bleeding?",
+  "apnaClinicAiSosBody": "Call Rescue 1122 now — don’t wait for chat.",
+  "apnaClinicAiFinePrint": "Fees and prices in PKR. I don’t recommend medicines — I find the ones you name.",
+  "apnaClinicAiVoiceCta": "Describe it out loud",
+  "apnaClinicAiVoiceLangs": "English · اردو · Roman Urdu",
+  "apnaClinicAiContinue": "Continue",
+  "apnaClinicAiStartNew": "Start something new",
+  "apnaClinicAiStartTalkingTitle": "I’ll describe how I feel",
+  "apnaClinicAiStartTalkingBody": "Speak or type, in English or Urdu. No upload needed.",
+  "apnaClinicAiStartTalkingCta": "Start talking",
+  "apnaClinicAiPrescriptionTitle": "I have a prescription or lab report",
+  "apnaClinicAiPrescriptionBody": "Describe what the report says. The assistant can still help from your words.",
+  "apnaClinicAiPrescriptionCta": "Describe the report",
+  "apnaClinicAiPrescriptionHint": "Describe the report in your own words, or say what the lab found.",
+  "apnaClinicAiDisclaimer": "Medical disclaimer — This tool provides general informational guidance only and is not a medical diagnosis. Always consult a qualified healthcare professional. In an emergency call Rescue 1122.",
+  "apnaClinicAiChatSubtitle": "online",
+  "apnaClinicAiHeroTitle": "Ask about your health, your report, or your recommendation.",
+  "apnaClinicAiHeroBody": "Speak or type in English or Urdu. If it looks like you need a specialist, the assistant will say which one.",
+  "apnaClinicAiPrompt": "Tell me what’s troubling you, in your own words.",
+  "apnaClinicAiComposerHint": "Describe a symptom or name a medicine…",
+  "apnaClinicAiChatComposerHint": "Type, or tap the mic to speak…",
+  "apnaClinicAiEmergencyTitle": "This may be urgent — call Rescue 1122",
+  "apnaClinicAiEmergencyBody": "In Pakistan, Rescue 1122 is the ambulance / emergency number. If someone is in immediate danger, call now or go to the nearest emergency department.",
+  "apnaClinicAiEmergencyStep1": "Call 1122 (or local ER) and stay on the line.",
+  "apnaClinicAiEmergencyStep2": "Keep the person still, seated or lying down; loosen tight clothing.",
+  "apnaClinicAiEmergencyStep3": "Do not give food, drink, or medicines unless a clinician tells you to.",
+  "apnaClinicAiEmergencyCta": "Call 1122",
+  "apnaClinicAiEmergencyNote": "In Pakistan, call **Rescue 1122** for an ambulance, or go to the nearest ER now.",
+  "apnaClinicAiTapDoctor": "Tap a doctor",
+  "apnaClinicAiViewSlots": "View slots",
+  "apnaClinicAiAddToCart": "Add to cart",
+  "apnaClinicAiDoctors": "Doctors",
+  "apnaClinicAiMedicines": "Medicines",
+  "apnaClinicAiSlots": "Available slots",
+  "apnaClinicAiPickADay": "Pick a day",
+  "apnaClinicAiPayment": "Payment",
+  "apnaClinicAiNotConfigured": "Apna Clinic AI is not configured. Add APNA_CLINIC_AI_BASE_URL and APNA_CLINIC_AI_SDK_KEY.",
+  "apnaClinicAiConnectFailed": "Could not connect to Apna Clinic AI. Please try again.",
+  "apnaClinicAiUpstream": "Booking didn’t go through just now. Tell me which doctor and a preferred time again. If this is urgent, call Rescue 1122.",
+  "apnaClinicAiBookingFailed": "Something went wrong on the booking service. Please try again in a moment.",
+  "apnaClinicAiVoiceUnavailable": "Microphone is unavailable. Allow microphone access, or type your message.",
+  "apnaClinicAiEmptyRecording": "No speech heard. Hold the mic a little longer, or type your message.",
+  "apnaClinicAiSignInRequired": "Sign in to book or use the cart. Symptom guidance works as a guest.",
+  "apnaClinicAiSignInCta": "Sign in to continue",
+  "apnaClinicAiNewChat": "New chat",
+  "apnaClinicAiSpeakReplies": "Speak replies",
+  "apnaClinicAiHoldToTalk": "Tap to talk",
+  "apnaClinicAiTapMicToSend": "Tap the mic to send",
+  "@apnaClinicAiTapMicToSend": {
+    "description": "Hint shown while Apna Clinic AI is listening"
+  },
+  "apnaClinicAiVoiceEnglish": "EN",
+  "apnaClinicAiVoiceUrdu": "اردو",
+  "apnaClinicAiListening": "Listening…",
+  "apnaClinicAiSuggestFever": "I have fever and body ache",
+  "apnaClinicAiSuggestRash": "I have a rash on my arm",
+  "apnaClinicAiSuggestDoctors": "show general physician doctors",
+  "apnaClinicAiSuggestPanadol": "do you have Panadol",
+  "apnaClinicAiMinutesAgo": "{count} min ago",
+  "@apnaClinicAiMinutesAgo": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "apnaClinicAiHoursAgo": "{count} hours ago",
+  "@apnaClinicAiHoursAgo": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "apnaClinicAiDaysAgo": "{count} days ago",
+  "@apnaClinicAiDaysAgo": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "apnaClinicAiStageListening": "Listening to your symptoms…",
+  "apnaClinicAiStageSpecialists": "Checking specialists…",
+  "apnaClinicAiStageDoctors": "Looking up live doctors…",
+  "apnaClinicAiStageClinic": "Matching the right clinic…",
+  "apnaClinicAiStageReady": "Almost ready…",
+  "apnaClinicAiStageTranscribing": "Transcribing your voice…",
+  "apnaClinicAiStageRouter": "Understanding your request…",
+  "apnaClinicAiStageCapability": "Choosing the right path…",
+  "apnaClinicAiStageDispatch": "Talking to ApnaClinic…",
+  "apnaClinicAiStageBrowse": "Loading doctors…",
+  "apnaClinicAiStageTriage": "Reviewing your symptoms…",
+  "apnaClinicAiStageTool": "Fetching live availability…",
+  "apnaClinicAiStageWriting": "Writing reply…",
+  "apnaClinicBotLabel": "Apna Clinic Bot",
+  "@apnaClinicBotLabel": {
+    "description": "Name of the floating home bot that opens Apna Clinic AI"
+  },
+  "apnaClinicBotBubble": "Ask me",
+  "@apnaClinicBotBubble": {
+    "description": "Call to action on the floating home bot speech bubble"
+  },
+  "pharmacyScanPrescription": "Scan prescription",
+  "pharmacyScanFabHint": "Snap a photo",
+  "pharmacyScanPrescriptionHint": "Take a photo or choose a prescription image",
+  "pharmacyScanSourceTitle": "Prescription photo",
+  "pharmacyScanUseCamera": "Use camera",
+  "pharmacyScanChooseGallery": "Choose from gallery",
+  "pharmacyScanChangePhoto": "Change photo",
+  "pharmacyScanExtract": "Read prescription",
+  "pharmacyScanReading": "Reading prescription…",
+  "pharmacyScanFailed": "Could not read this prescription. Try a clearer photo.",
+  "pharmacyScanNotConfigured": "Prescription reading is not set up yet.",
+  "pharmacyScanNoMedicines": "No medicines were found on this prescription.",
+  "pharmacyScanTests": "Tests",
+  "pharmacyScanMedicines": "Medicines",
+  "pharmacyScanPatient": "Patient",
+  "pharmacyScanDoctor": "Doctor",
+  "pharmacyScanDate": "Date",
+  "pharmacyScanInstitute": "Institute",
+  "pharmacyScanLocation": "Location",
+  "pharmacyScanLabReport": "Lab report",
+  "pharmacyScanVisit": "Visit",
+  "pharmacyScanMatching": "Finding in pharmacy…",
+  "pharmacyScanNotInCatalog": "Not available in pharmacy",
+  "pharmacyScanPages": "{count} pages",
+  "@pharmacyScanPages": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "pharmacyScanQuantity": "Qty {count}",
+  "@pharmacyScanQuantity": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "pharmacyScanBannerTitle": "Medicines ready when you are",
+  "pharmacyScanBannerSubtitle": "Scan a clear prescription photo and we’ll match medicines from our pharmacy.",
+  "pharmacyScanUploadTitle": "Upload prescription",
+  "pharmacyScanUploadSubtitle": "Camera or gallery · JPEG / PNG"
 }

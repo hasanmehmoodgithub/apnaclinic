@@ -123,7 +123,7 @@ class _PharmacyMainMedicinesBodyWidgetState
 
     return ListView(
       controller: _scrollController,
-      padding: EdgeInsets.fromLTRB(18.w, 0, 18.w, 24.h),
+      padding: EdgeInsets.fromLTRB(18.w, 0, 18.w, 168.h),
       children: [
         PharmacyMainMedicinesGridWidget(
           medicines: state.medicines,

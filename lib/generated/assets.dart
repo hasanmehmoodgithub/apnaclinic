@@ -137,6 +137,7 @@ class Assets {
   static const String proLabLogo = 'assets/img/pro/labLogo.png';
   static const String proLeftLeave = 'assets/img/pro/leftLeave.png';
   static const String proPharmacyLogo = 'assets/img/pro/pharmacyLogo.webp';
+  static const String proPrescriptionBg = 'assets/img/pro/prescriptionBg.webp';
   static const String proProBadge = 'assets/img/pro/proBadge.svg';
   static const String proProBagde2 = 'assets/img/pro/proBagde2.svg';
   static const String proProSuccessBadge = 'assets/img/pro/pro_success_badge.png';

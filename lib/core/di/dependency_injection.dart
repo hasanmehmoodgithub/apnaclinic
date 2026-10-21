@@ -9,6 +9,7 @@ import '../../features/lab_test/lab_test_injection.dart';
 import '../../features/notification/notification_injection.dart';
 import '../../features/pharmacy/pharmacy_injection.dart';
 import '../../features/search/search_injection.dart';
+import '../../features/apna_clinic_ai/apna_clinic_ai_injection.dart';
 import '../../features/surgery/surgery_injection.dart';
 import '../../features/instant_doctor/instant_doctor_injection.dart';
 import '../../features/pro/pro_injection.dart';
@@ -51,6 +52,7 @@ Future<void> initDependencyInjection() async {
   initNotificationInjector();
   initPharmacyInjector();
   initSearchInjector();
+  initApnaClinicAiInjector();
   initSurgeryInjector();
   initLabTestInjector();
 }

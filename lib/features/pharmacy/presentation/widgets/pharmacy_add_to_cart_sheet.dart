@@ -18,6 +18,15 @@ import 'pharmacy_prescription_attached_section.dart';
 import 'pharmacy_prescription_upload_section.dart';
 import 'pharmacy_quantity_stepper.dart';
 
+String _prescriptionFileName(String path) {
+  final normalized = path.replaceAll('\\', '/');
+  final name = normalized.split('/').last.trim();
+  if (name.isEmpty) return 'prescription.jpg';
+  final ext = name.contains('.') ? name.split('.').last.toLowerCase() : '';
+  if (_kAllowedPrescriptionExtensions.contains(ext)) return name;
+  return 'prescription.jpg';
+}
+
 const int _kMaxPrescriptionBytes = 5 * 1024 * 1024;
 const Set<String> _kAllowedPrescriptionExtensions = {
   'png',
@@ -46,6 +55,8 @@ Future<void> showPharmacyAddToCartSheet(
   BuildContext context,
   PharmacyMedicineEntity medicine, {
   required String loaderIdPrefix,
+  int initialQuantity = 1,
+  String? initialPrescriptionPath,
 }) async {
   if (!context.requireLogin(loginSource: AnalyticsAuthSourceKeys.pharmacy)) {
     return;
@@ -53,9 +64,12 @@ Future<void> showPharmacyAddToCartSheet(
 
   final pharmacyCubit = context.read<PharmacyCubit>();
   final hostContext = context;
-  var qty = 1;
-  String? pickedPath;
-  String? pickedName;
+  var qty = initialQuantity < 1 ? 1 : initialQuantity;
+  final seededPath = initialPrescriptionPath?.trim() ?? '';
+  String? pickedPath = seededPath.isEmpty ? null : seededPath;
+  String? pickedName = pickedPath == null
+      ? null
+      : _prescriptionFileName(pickedPath);
   var forceReupload = false;
 
   await showModalBottomSheet<void>(

@@ -199,6 +199,75 @@ class AppPrefImpl implements AppPref {
     }
   }
 
+  // ==================== Apna Clinic AI SDK session ====================
+
+  @override
+  Future<bool> setApnaClinicAiApiKey(String value) =>
+      _setEncrypted(AppPrefKeys.apnaClinicAiApiKey, value);
+
+  @override
+  String getApnaClinicAiApiKey() =>
+      _getDecrypted(AppPrefKeys.apnaClinicAiApiKey, '');
+
+  @override
+  Future<bool> setApnaClinicAiSessionId(String value) =>
+      _setEncrypted(AppPrefKeys.apnaClinicAiSessionId, value);
+
+  @override
+  String getApnaClinicAiSessionId() =>
+      _getDecrypted(AppPrefKeys.apnaClinicAiSessionId, '');
+
+  @override
+  Future<bool> setApnaClinicAiUserId(String value) =>
+      _setEncrypted(AppPrefKeys.apnaClinicAiUserId, value);
+
+  @override
+  String getApnaClinicAiUserId() =>
+      _getDecrypted(AppPrefKeys.apnaClinicAiUserId, '');
+
+  @override
+  Future<bool> setApnaClinicAiAccessToken(String value) =>
+      _setEncrypted(AppPrefKeys.apnaClinicAiAccessToken, value);
+
+  @override
+  String getApnaClinicAiAccessToken() =>
+      _getDecrypted(AppPrefKeys.apnaClinicAiAccessToken, '');
+
+  @override
+  Future<bool> setApnaClinicAiTokenExpiresAt(int millis) =>
+      _instance.setInt(AppPrefKeys.apnaClinicAiTokenExpiresAt, millis);
+
+  @override
+  int getApnaClinicAiTokenExpiresAt() =>
+      _instance.getInt(AppPrefKeys.apnaClinicAiTokenExpiresAt) ?? 0;
+
+  @override
+  Future<bool> setApnaClinicAiAuthMode(String mode) =>
+      _setEncrypted(AppPrefKeys.apnaClinicAiAuthMode, mode);
+
+  @override
+  String getApnaClinicAiAuthMode() =>
+      _getDecrypted(AppPrefKeys.apnaClinicAiAuthMode, '');
+
+  @override
+  Future<bool> setApnaClinicAiConversationId(String value) =>
+      _setEncrypted(AppPrefKeys.apnaClinicAiConversationId, value);
+
+  @override
+  String getApnaClinicAiConversationId() =>
+      _getDecrypted(AppPrefKeys.apnaClinicAiConversationId, '');
+
+  @override
+  Future<void> clearApnaClinicAiSession() async {
+    await remove(AppPrefKeys.apnaClinicAiApiKey);
+    await remove(AppPrefKeys.apnaClinicAiSessionId);
+    await remove(AppPrefKeys.apnaClinicAiUserId);
+    await remove(AppPrefKeys.apnaClinicAiAccessToken);
+    await remove(AppPrefKeys.apnaClinicAiTokenExpiresAt);
+    await remove(AppPrefKeys.apnaClinicAiAuthMode);
+    await remove(AppPrefKeys.apnaClinicAiConversationId);
+  }
+
   // ==================== Generic ====================
 
   @override

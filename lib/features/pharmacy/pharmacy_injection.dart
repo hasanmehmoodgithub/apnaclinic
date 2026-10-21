@@ -7,12 +7,16 @@ import '../../core/services/appsflyer_service.dart';
 import '../consultation/domain/use_cases/get_payment_providers_use_case.dart';
 import 'data/data_sources/pharmacy_remote_data_source.dart';
 import 'data/data_sources/pharmacy_remote_data_source_impl.dart';
+import 'data/data_sources/prescription_extract_remote_data_source.dart';
 import 'data/mock/pharmacy_mock_api.dart';
 import 'data/repositories/pharmacy_repository_impl.dart';
+import 'data/repositories/prescription_extract_repository_impl.dart';
 import 'domain/repositories/pharmacy_repository.dart';
+import 'domain/repositories/prescription_extract_repository.dart';
 import 'domain/use_cases/abandon_pharmacy_order_use_case.dart';
 import 'domain/use_cases/add_pharmacy_profile_address_use_case.dart';
 import 'domain/use_cases/add_to_cart_use_case.dart';
+import 'domain/use_cases/extract_prescription_use_case.dart';
 import 'domain/use_cases/get_pharmacy_booking_detail_use_case.dart';
 import 'domain/use_cases/get_pharmacy_bookings_use_case.dart';
 import 'domain/use_cases/get_pharmacy_cart_use_case.dart';
@@ -23,6 +27,7 @@ import 'domain/use_cases/pharmacy_checkout_use_case.dart';
 import 'domain/use_cases/update_pharmacy_cart_quantity_use_case.dart';
 import 'domain/use_cases/upload_pharmacy_prescription_use_case.dart';
 import 'presentation/cubit/pharmacy_cubit.dart';
+import 'presentation/cubit/prescription_scan_cubit.dart';
 
 void initPharmacyInjector() {
   sl.registerLazySingleton<PharmacyMockApi>(() => PharmacyMockApi());
@@ -97,6 +102,29 @@ void initPharmacyInjector() {
   sl.registerLazySingleton<GetPharmacyBookingDetailUseCase>(
     () => GetPharmacyBookingDetailUseCase(
       repository: sl<PharmacyRepository>(),
+    ),
+  );
+
+  sl.registerLazySingleton<PrescriptionExtractRemoteDataSource>(
+    () => PrescriptionExtractRemoteDataSource(),
+  );
+
+  sl.registerLazySingleton<PrescriptionExtractRepository>(
+    () => PrescriptionExtractRepositoryImpl(
+      remoteDataSource: sl<PrescriptionExtractRemoteDataSource>(),
+    ),
+  );
+
+  sl.registerLazySingleton<ExtractPrescriptionUseCase>(
+    () => ExtractPrescriptionUseCase(
+      repository: sl<PrescriptionExtractRepository>(),
+    ),
+  );
+
+  sl.registerFactory<PrescriptionScanCubit>(
+    () => PrescriptionScanCubit(
+      extractPrescriptionUseCase: sl<ExtractPrescriptionUseCase>(),
+      getPharmacyMedicinesUseCase: sl<GetPharmacyMedicinesUseCase>(),
     ),
   );
 

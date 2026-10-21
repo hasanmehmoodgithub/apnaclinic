@@ -1,4 +1,6 @@
 import 'package:apnaclinic/features/pharmacy/presentation/screens/pharmacy_main_screen.dart';
+import 'package:apnaclinic/features/pharmacy/presentation/screens/prescription_scan_screen.dart';
+import 'package:apnaclinic/features/pharmacy/presentation/cubit/prescription_scan_cubit.dart';
 import 'package:chucker_flutter/chucker_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -12,6 +14,8 @@ import '../../features/consultation/domain/use_cases/get_consultation_booking_us
 import '../../features/consultation/domain/use_cases/submit_consultation_feedback_use_case.dart';
 import '../../features/consultation/presentation/cubit/consultation_cubit.dart';
 import '../../features/consultation/presentation/screens/ai_consultation_screen.dart';
+import '../../features/apna_clinic_ai/presentation/cubit/apna_clinic_ai_cubit.dart';
+import '../../features/apna_clinic_ai/presentation/screens/apna_clinic_ai_screen.dart';
 import '../../features/consultation/presentation/screens/doctor_consultation_book_doctor_screen.dart';
 import '../../features/consultation/presentation/screens/doctor_consultation_checkout_screen.dart';
 import '../../features/consultation/presentation/screens/doctor_consultation_summary_screen.dart';
@@ -201,6 +205,14 @@ class AppRouter {
         },
       ),
       GoRoute(
+        path: AppRoutes.path(AppRoutes.apnaClinicAi),
+        name: AppRoutes.apnaClinicAi,
+        builder: (context, state) => BlocProvider<ApnaClinicAiCubit>(
+          create: (_) => sl<ApnaClinicAiCubit>(),
+          child: const ApnaClinicAiScreen(),
+        ),
+      ),
+      GoRoute(
         path: AppRoutes.path(AppRoutes.consultationDoctors),
         name: AppRoutes.consultationDoctors,
         builder: (context, state) {
@@ -303,6 +315,14 @@ class AppRouter {
         name: AppRoutes.pharmacyMain,
         builder: (context, state) => PharmacyMainScreen(
           source: pharmacyHubSourceFromExtra(state.extra),
+        ),
+      ),
+      GoRoute(
+        path: AppRoutes.path(AppRoutes.pharmacyPrescriptionScan),
+        name: AppRoutes.pharmacyPrescriptionScan,
+        builder: (context, state) => BlocProvider(
+          create: (_) => sl<PrescriptionScanCubit>(),
+          child: const PrescriptionScanScreen(),
         ),
       ),
       GoRoute(

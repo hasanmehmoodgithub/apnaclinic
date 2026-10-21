@@ -12,7 +12,10 @@ enum VoiceSearchFailure {
   failed,
 }
 
-/// Thin wrapper around [SpeechToText] for search voice input.
+/// Search uses short queries. Care Companion uses longer dictation.
+enum SpeechListenStyle { search, dictation }
+
+/// Thin wrapper around [SpeechToText] for search and Care Companion.
 class SpeechToTextService {
   SpeechToTextService({SpeechToText? speech})
     : _speech = speech ?? SpeechToText();
@@ -20,6 +23,8 @@ class SpeechToTextService {
   final SpeechToText _speech;
 
   bool _sessionActive = false;
+  bool _stopping = false;
+  String _lastWords = '';
   String? _localeId;
   void Function(String text, bool isFinal)? _onResult;
   VoidCallback? _onSessionDone;
@@ -28,19 +33,26 @@ class SpeechToTextService {
   static const Duration _defaultPauseFor = Duration(seconds: 3);
   Duration _listenFor = _defaultListenFor;
   Duration _pauseFor = _defaultPauseFor;
+  SpeechListenStyle _style = SpeechListenStyle.search;
 
   bool get isListening => _sessionActive;
+
+  /// Latest non-empty transcript from the active or just-finished session.
+  String get lastRecognized => _lastWords;
 
   Future<VoiceSearchFailure?> startListening({
     required void Function(String text, bool isFinal) onResult,
     VoidCallback? onSessionDone,
     String? localeId,
+    String? languageCode,
+    SpeechListenStyle style = SpeechListenStyle.search,
     Duration listenFor = _defaultListenFor,
     Duration pauseFor = _defaultPauseFor,
   }) async {
-    _localeId = localeId;
+    _lastWords = '';
     _listenFor = listenFor;
     _pauseFor = pauseFor;
+    _style = style;
 
     final initFailure = await _initializeSpeech();
     if (initFailure != null) {
@@ -51,6 +63,9 @@ class SpeechToTextService {
       await stop();
     }
 
+    _localeId = languageCode == null
+        ? localeId
+        : await _matchLocale(languageCode) ?? localeId;
     _onResult = onResult;
     _onSessionDone = onSessionDone;
     _sessionActive = true;
@@ -62,12 +77,16 @@ class SpeechToTextService {
       // [listen] returns void; do not treat the Future value as a bool.
       await _speech.listen(
         onResult: (SpeechRecognitionResult result) {
+          final words = result.recognizedWords.trim();
+          if (words.isNotEmpty) _lastWords = words;
           _onResult?.call(result.recognizedWords, result.finalResult);
         },
         listenOptions: SpeechListenOptions(
           cancelOnError: true,
           partialResults: true,
-          listenMode: ListenMode.search,
+          listenMode: _style == SpeechListenStyle.dictation
+              ? ListenMode.dictation
+              : ListenMode.search,
           localeId: _localeId,
           listenFor: _listenFor,
           pauseFor: _pauseFor,
@@ -112,13 +131,13 @@ class SpeechToTextService {
   }
 
   void _handleStatus(String status) {
-    if (!_sessionActive) return;
+    if (!_sessionActive || _stopping) return;
     if (status != SpeechToText.doneStatus) return;
     _endSession(notify: true);
   }
 
   void _handleError(SpeechRecognitionError error) {
-    if (!_sessionActive) return;
+    if (!_sessionActive || _stopping) return;
 
     switch (error.errorMsg) {
       case 'error_no_match':
@@ -159,17 +178,52 @@ class SpeechToTextService {
   }
 
   Future<void> stop() async {
-    _endSession(notify: false);
+    if (!_sessionActive && !_speech.isListening) return;
+    // Keep the result callback until the recognizer delivers its final words.
+    _stopping = true;
     try {
       if (_speech.isListening) {
         await _speech.stop();
+        await Future<void>.delayed(const Duration(milliseconds: 320));
       }
     } on Object {
       // Native already stopped / destroyed.
     }
+    _stopping = false;
+    _endSession(notify: false);
   }
 
+  /// Picks an installed recognizer locale for [languageCode] (`en` or `ur`).
+  Future<String?> _matchLocale(String languageCode) async {
+    final urdu = languageCode.toLowerCase().startsWith('ur');
+    try {
+      final available = await _speech.locales();
+      final ids = available.map((locale) => locale.localeId).toList();
+      final wanted = languageCode.toLowerCase().startsWith('ur')
+          ? const ['ur_PK', 'ur_IN', 'ur']
+          : const ['en_PK', 'en_US', 'en_GB', 'en'];
+      for (final candidate in wanted) {
+        for (final id in ids) {
+          if (_localeKey(id) == _localeKey(candidate)) return id;
+        }
+      }
+      final prefix = languageCode.toLowerCase().startsWith('ur') ? 'ur' : 'en';
+      for (final id in ids) {
+        if (_localeKey(id).startsWith(prefix)) return id;
+      }
+    } on Object {
+      return urdu ? 'ur_PK' : null;
+    }
+    // Urdu must stay ur-PK so the recognizer returns native script, not Roman.
+    return urdu ? 'ur_PK' : null;
+  }
+
+  String _localeKey(String localeId) =>
+      localeId.toLowerCase().replaceAll('-', '_');
+
   Future<void> cancel() async {
+    _stopping = false;
+    _lastWords = '';
     _endSession(notify: false);
     try {
       if (_speech.isListening) {

@@ -58,6 +58,32 @@ abstract class AppPref {
   Future<bool> setSupportSettings(SupportSettingsLocalModel model);
   SupportSettingsLocalModel? getSupportSettings();
 
+  // ==================== Apna Clinic AI SDK session ====================
+
+  Future<bool> setApnaClinicAiApiKey(String value);
+  String getApnaClinicAiApiKey();
+
+  Future<bool> setApnaClinicAiSessionId(String value);
+  String getApnaClinicAiSessionId();
+
+  Future<bool> setApnaClinicAiUserId(String value);
+  String getApnaClinicAiUserId();
+
+  Future<bool> setApnaClinicAiAccessToken(String value);
+  String getApnaClinicAiAccessToken();
+
+  Future<bool> setApnaClinicAiTokenExpiresAt(int millis);
+  int getApnaClinicAiTokenExpiresAt();
+
+  Future<bool> setApnaClinicAiAuthMode(String mode);
+  String getApnaClinicAiAuthMode();
+
+  Future<bool> setApnaClinicAiConversationId(String value);
+  String getApnaClinicAiConversationId();
+
+  /// Clears Care Companion SDK credentials (guest + signed-in) and conversation id.
+  Future<void> clearApnaClinicAiSession();
+
   // ==================== Generic Methods ====================
 
   Future<bool> setString(String key, String value, {String? defaultValue});

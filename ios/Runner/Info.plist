@@ -51,16 +51,25 @@
 				<key>NSIncludesSubdomains</key>
 				<true/>
 			</dict>
+			<key>142.86.120.73</key>
+			<dict>
+				<key>NSExceptionAllowsInsecureHTTPLoads</key>
+				<true/>
+				<key>NSIncludesSubdomains</key>
+				<false/>
+				<key>NSExceptionRequiresForwardSecrecy</key>
+				<false/>
+			</dict>
 		</dict>
 	</dict>
 	<key>NSCameraUsageDescription</key>
-	<string>Apna Clinic needs camera access for video consultations and to take or attach profile photos.</string>
+	<string>Apna Clinic needs camera access for video consultations, profile photos, and prescription photos.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Apna Clinic may use your location to show nearby clinics and services relevant to your care.</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Apna Clinic needs microphone access for voice search and audio or video consultations with doctors.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Apna Clinic needs photo library access so you can choose a profile picture and attach images from your gallery during consultations.</string>
+	<string>Apna Clinic needs photo library access so you can choose a profile picture, attach consultation images, and upload prescription photos.</string>
 	<key>NSSpeechRecognitionUsageDescription</key>
 	<string>Apna Clinic uses speech recognition so you can search by voice.</string>
 	<key>UIApplicationSceneManifest</key>

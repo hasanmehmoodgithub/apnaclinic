@@ -2139,4 +2139,389 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get jazzCashOtherNetworksStep3 =>
       'Then enter your MPIN to confirm the payment.';
+
+  @override
+  String get apnaClinicAiMenuTitle => 'Apna Clinic AI';
+
+  @override
+  String get apnaClinicAiTitle => 'Apna Clinic AI';
+
+  @override
+  String get apnaClinicAiBrandTag => 'CARE COMPANION';
+
+  @override
+  String get apnaClinicAiGreeting => 'Assalam-o-Alaikum';
+
+  @override
+  String get apnaClinicAiGuest => 'Guest';
+
+  @override
+  String get apnaClinicAiSignedIn => 'Signed in';
+
+  @override
+  String get apnaClinicAiConnecting => 'Connecting…';
+
+  @override
+  String get apnaClinicAiOnline => 'online';
+
+  @override
+  String get apnaClinicAiHeadline => 'How are you\nfeeling today?';
+
+  @override
+  String get apnaClinicAiLiveStats => 'Tell me what’s bothering you.';
+
+  @override
+  String get apnaClinicAiCommonConcerns => 'Common concerns';
+
+  @override
+  String get apnaClinicAiTapToStart => 'tap to start';
+
+  @override
+  String get apnaClinicAiWhatICanDo => 'What I can do';
+
+  @override
+  String get apnaClinicAiSosTitle =>
+      'Chest pain, trouble breathing, heavy bleeding?';
+
+  @override
+  String get apnaClinicAiSosBody =>
+      'Call Rescue 1122 now — don’t wait for chat.';
+
+  @override
+  String get apnaClinicAiFinePrint =>
+      'Fees and prices in PKR. I don’t recommend medicines — I find the ones you name.';
+
+  @override
+  String get apnaClinicAiVoiceCta => 'Describe it out loud';
+
+  @override
+  String get apnaClinicAiVoiceLangs => 'English · اردو · Roman Urdu';
+
+  @override
+  String get apnaClinicAiContinue => 'Continue';
+
+  @override
+  String get apnaClinicAiStartNew => 'Start something new';
+
+  @override
+  String get apnaClinicAiStartTalkingTitle => 'I’ll describe how I feel';
+
+  @override
+  String get apnaClinicAiStartTalkingBody =>
+      'Speak or type, in English or Urdu. No upload needed.';
+
+  @override
+  String get apnaClinicAiStartTalkingCta => 'Start talking';
+
+  @override
+  String get apnaClinicAiPrescriptionTitle =>
+      'I have a prescription or lab report';
+
+  @override
+  String get apnaClinicAiPrescriptionBody =>
+      'Describe what the report says. The assistant can still help from your words.';
+
+  @override
+  String get apnaClinicAiPrescriptionCta => 'Describe the report';
+
+  @override
+  String get apnaClinicAiPrescriptionHint =>
+      'Describe the report in your own words, or say what the lab found.';
+
+  @override
+  String get apnaClinicAiDisclaimer =>
+      'Medical disclaimer — This tool provides general informational guidance only and is not a medical diagnosis. Always consult a qualified healthcare professional. In an emergency call Rescue 1122.';
+
+  @override
+  String get apnaClinicAiChatSubtitle => 'online';
+
+  @override
+  String get apnaClinicAiHeroTitle =>
+      'Ask about your health, your report, or your recommendation.';
+
+  @override
+  String get apnaClinicAiHeroBody =>
+      'Speak or type in English or Urdu. If it looks like you need a specialist, the assistant will say which one.';
+
+  @override
+  String get apnaClinicAiPrompt =>
+      'Tell me what’s troubling you, in your own words.';
+
+  @override
+  String get apnaClinicAiComposerHint =>
+      'Describe a symptom or name a medicine…';
+
+  @override
+  String get apnaClinicAiChatComposerHint => 'Type, or tap the mic to speak…';
+
+  @override
+  String get apnaClinicAiEmergencyTitle =>
+      'This may be urgent — call Rescue 1122';
+
+  @override
+  String get apnaClinicAiEmergencyBody =>
+      'In Pakistan, Rescue 1122 is the ambulance / emergency number. If someone is in immediate danger, call now or go to the nearest emergency department.';
+
+  @override
+  String get apnaClinicAiEmergencyStep1 =>
+      'Call 1122 (or local ER) and stay on the line.';
+
+  @override
+  String get apnaClinicAiEmergencyStep2 =>
+      'Keep the person still, seated or lying down; loosen tight clothing.';
+
+  @override
+  String get apnaClinicAiEmergencyStep3 =>
+      'Do not give food, drink, or medicines unless a clinician tells you to.';
+
+  @override
+  String get apnaClinicAiEmergencyCta => 'Call 1122';
+
+  @override
+  String get apnaClinicAiEmergencyNote =>
+      'In Pakistan, call **Rescue 1122** for an ambulance, or go to the nearest ER now.';
+
+  @override
+  String get apnaClinicAiTapDoctor => 'Tap a doctor';
+
+  @override
+  String get apnaClinicAiViewSlots => 'View slots';
+
+  @override
+  String get apnaClinicAiAddToCart => 'Add to cart';
+
+  @override
+  String get apnaClinicAiDoctors => 'Doctors';
+
+  @override
+  String get apnaClinicAiMedicines => 'Medicines';
+
+  @override
+  String get apnaClinicAiSlots => 'Available slots';
+
+  @override
+  String get apnaClinicAiPickADay => 'Pick a day';
+
+  @override
+  String get apnaClinicAiPayment => 'Payment';
+
+  @override
+  String get apnaClinicAiNotConfigured =>
+      'Apna Clinic AI is not configured. Add APNA_CLINIC_AI_BASE_URL and APNA_CLINIC_AI_SDK_KEY.';
+
+  @override
+  String get apnaClinicAiConnectFailed =>
+      'Could not connect to Apna Clinic AI. Please try again.';
+
+  @override
+  String get apnaClinicAiUpstream =>
+      'Booking didn’t go through just now. Tell me which doctor and a preferred time again. If this is urgent, call Rescue 1122.';
+
+  @override
+  String get apnaClinicAiBookingFailed =>
+      'Something went wrong on the booking service. Please try again in a moment.';
+
+  @override
+  String get apnaClinicAiVoiceUnavailable =>
+      'Microphone is unavailable. Allow microphone access, or type your message.';
+
+  @override
+  String get apnaClinicAiEmptyRecording =>
+      'No speech heard. Hold the mic a little longer, or type your message.';
+
+  @override
+  String get apnaClinicAiSignInRequired =>
+      'Sign in to book or use the cart. Symptom guidance works as a guest.';
+
+  @override
+  String get apnaClinicAiSignInCta => 'Sign in to continue';
+
+  @override
+  String get apnaClinicAiNewChat => 'New chat';
+
+  @override
+  String get apnaClinicAiSpeakReplies => 'Speak replies';
+
+  @override
+  String get apnaClinicAiHoldToTalk => 'Tap to talk';
+
+  @override
+  String get apnaClinicAiTapMicToSend => 'Tap the mic to send';
+
+  @override
+  String get apnaClinicAiVoiceEnglish => 'EN';
+
+  @override
+  String get apnaClinicAiVoiceUrdu => 'اردو';
+
+  @override
+  String get apnaClinicAiListening => 'Listening…';
+
+  @override
+  String get apnaClinicAiSuggestFever => 'I have fever and body ache';
+
+  @override
+  String get apnaClinicAiSuggestRash => 'I have a rash on my arm';
+
+  @override
+  String get apnaClinicAiSuggestDoctors => 'show general physician doctors';
+
+  @override
+  String get apnaClinicAiSuggestPanadol => 'do you have Panadol';
+
+  @override
+  String apnaClinicAiMinutesAgo(int count) {
+    return '$count min ago';
+  }
+
+  @override
+  String apnaClinicAiHoursAgo(int count) {
+    return '$count hours ago';
+  }
+
+  @override
+  String apnaClinicAiDaysAgo(int count) {
+    return '$count days ago';
+  }
+
+  @override
+  String get apnaClinicAiStageListening => 'Listening to your symptoms…';
+
+  @override
+  String get apnaClinicAiStageSpecialists => 'Checking specialists…';
+
+  @override
+  String get apnaClinicAiStageDoctors => 'Looking up live doctors…';
+
+  @override
+  String get apnaClinicAiStageClinic => 'Matching the right clinic…';
+
+  @override
+  String get apnaClinicAiStageReady => 'Almost ready…';
+
+  @override
+  String get apnaClinicAiStageTranscribing => 'Transcribing your voice…';
+
+  @override
+  String get apnaClinicAiStageRouter => 'Understanding your request…';
+
+  @override
+  String get apnaClinicAiStageCapability => 'Choosing the right path…';
+
+  @override
+  String get apnaClinicAiStageDispatch => 'Talking to ApnaClinic…';
+
+  @override
+  String get apnaClinicAiStageBrowse => 'Loading doctors…';
+
+  @override
+  String get apnaClinicAiStageTriage => 'Reviewing your symptoms…';
+
+  @override
+  String get apnaClinicAiStageTool => 'Fetching live availability…';
+
+  @override
+  String get apnaClinicAiStageWriting => 'Writing reply…';
+
+  @override
+  String get apnaClinicBotLabel => 'Apna Clinic Bot';
+
+  @override
+  String get apnaClinicBotBubble => 'Ask me';
+
+  @override
+  String get pharmacyScanPrescription => 'Scan prescription';
+
+  @override
+  String get pharmacyScanFabHint => 'Snap a photo';
+
+  @override
+  String get pharmacyScanPrescriptionHint =>
+      'Take a photo or choose a prescription image';
+
+  @override
+  String get pharmacyScanSourceTitle => 'Prescription photo';
+
+  @override
+  String get pharmacyScanUseCamera => 'Use camera';
+
+  @override
+  String get pharmacyScanChooseGallery => 'Choose from gallery';
+
+  @override
+  String get pharmacyScanChangePhoto => 'Change photo';
+
+  @override
+  String get pharmacyScanExtract => 'Read prescription';
+
+  @override
+  String get pharmacyScanReading => 'Reading prescription…';
+
+  @override
+  String get pharmacyScanFailed =>
+      'Could not read this prescription. Try a clearer photo.';
+
+  @override
+  String get pharmacyScanNotConfigured =>
+      'Prescription reading is not set up yet.';
+
+  @override
+  String get pharmacyScanNoMedicines =>
+      'No medicines were found on this prescription.';
+
+  @override
+  String get pharmacyScanTests => 'Tests';
+
+  @override
+  String get pharmacyScanMedicines => 'Medicines';
+
+  @override
+  String get pharmacyScanPatient => 'Patient';
+
+  @override
+  String get pharmacyScanDoctor => 'Doctor';
+
+  @override
+  String get pharmacyScanDate => 'Date';
+
+  @override
+  String get pharmacyScanInstitute => 'Institute';
+
+  @override
+  String get pharmacyScanLocation => 'Location';
+
+  @override
+  String get pharmacyScanLabReport => 'Lab report';
+
+  @override
+  String get pharmacyScanVisit => 'Visit';
+
+  @override
+  String get pharmacyScanMatching => 'Finding in pharmacy…';
+
+  @override
+  String get pharmacyScanNotInCatalog => 'Not available in pharmacy';
+
+  @override
+  String pharmacyScanPages(int count) {
+    return '$count pages';
+  }
+
+  @override
+  String pharmacyScanQuantity(int count) {
+    return 'Qty $count';
+  }
+
+  @override
+  String get pharmacyScanBannerTitle => 'Medicines ready when you are';
+
+  @override
+  String get pharmacyScanBannerSubtitle =>
+      'Scan a clear prescription photo and we’ll match medicines from our pharmacy.';
+
+  @override
+  String get pharmacyScanUploadTitle => 'Upload prescription';
+
+  @override
+  String get pharmacyScanUploadSubtitle => 'Camera or gallery · JPEG / PNG';
 }

@@ -46,4 +46,20 @@ class AppPrefKeys {
       _encryption.obfuscateKey('surgery_selected_city$_prefVersion');
   static String get supportSettings =>
       _encryption.obfuscateKey('support_settings$_prefVersion');
+
+  /// Apna Clinic AI (Care Companion) SDK session — cleared on logout.
+  static String get apnaClinicAiApiKey =>
+      _encryption.obfuscateKey('apna_clinic_ai_api_key$_prefVersion');
+  static String get apnaClinicAiSessionId =>
+      _encryption.obfuscateKey('apna_clinic_ai_session_id$_prefVersion');
+  static String get apnaClinicAiUserId =>
+      _encryption.obfuscateKey('apna_clinic_ai_user_id$_prefVersion');
+  static String get apnaClinicAiAccessToken =>
+      _encryption.obfuscateKey('apna_clinic_ai_access_token$_prefVersion');
+  static String get apnaClinicAiTokenExpiresAt =>
+      _encryption.obfuscateKey('apna_clinic_ai_token_expires_at$_prefVersion');
+  static String get apnaClinicAiAuthMode =>
+      _encryption.obfuscateKey('apna_clinic_ai_auth_mode$_prefVersion');
+  static String get apnaClinicAiConversationId =>
+      _encryption.obfuscateKey('apna_clinic_ai_conversation_id$_prefVersion');
 }

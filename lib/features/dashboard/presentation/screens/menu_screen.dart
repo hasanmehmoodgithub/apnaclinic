@@ -234,6 +234,9 @@ class _MenuScreenState extends State<MenuScreen> {
       case MenuActionId.myBookings:
         _openMyBookings();
         return;
+      case MenuActionId.apnaClinicAi:
+        context.pushNamed(AppRoutes.apnaClinicAi);
+        return;
       case MenuActionId.customerSupport:
         unawaited(
           sl<AnalyticsService>().logEvent(AnalyticsEventKeys.supportClicked),

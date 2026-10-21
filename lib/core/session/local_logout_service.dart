@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import '../../features/apna_clinic_ai/data/data_sources/apna_clinic_ai_sdk_client.dart';
 import '../di/dependency_injection.dart';
 import '../firebase/crashlytics_service.dart';
 import '../network/api_service.dart';
@@ -45,6 +46,10 @@ class LocalLogoutService {
       sl<AppsFlyerService>().clearCustomerUserId();
     }
     await _appPref.clearUserLocalModel();
+    await _appPref.clearApnaClinicAiSession();
+    if (sl.isRegistered<ApnaClinicAiSdkClient>()) {
+      await sl<ApnaClinicAiSdkClient>().clearSession(clearConversation: true);
+    }
     await _appPref.remove(AppPrefKeys.fcmToken);
     await _appPref.remove(AppPrefKeys.fcmTokenSentToBackend);
     if (sl.isRegistered<NotificationService>()) {

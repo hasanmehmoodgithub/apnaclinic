@@ -3981,6 +3981,696 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Then enter your MPIN to confirm the payment.'**
   String get jazzCashOtherNetworksStep3;
+
+  /// No description provided for @apnaClinicAiMenuTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Apna Clinic AI'**
+  String get apnaClinicAiMenuTitle;
+
+  /// No description provided for @apnaClinicAiTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Apna Clinic AI'**
+  String get apnaClinicAiTitle;
+
+  /// No description provided for @apnaClinicAiBrandTag.
+  ///
+  /// In en, this message translates to:
+  /// **'CARE COMPANION'**
+  String get apnaClinicAiBrandTag;
+
+  /// No description provided for @apnaClinicAiGreeting.
+  ///
+  /// In en, this message translates to:
+  /// **'Assalam-o-Alaikum'**
+  String get apnaClinicAiGreeting;
+
+  /// No description provided for @apnaClinicAiGuest.
+  ///
+  /// In en, this message translates to:
+  /// **'Guest'**
+  String get apnaClinicAiGuest;
+
+  /// No description provided for @apnaClinicAiSignedIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Signed in'**
+  String get apnaClinicAiSignedIn;
+
+  /// No description provided for @apnaClinicAiConnecting.
+  ///
+  /// In en, this message translates to:
+  /// **'Connecting…'**
+  String get apnaClinicAiConnecting;
+
+  /// No description provided for @apnaClinicAiOnline.
+  ///
+  /// In en, this message translates to:
+  /// **'online'**
+  String get apnaClinicAiOnline;
+
+  /// No description provided for @apnaClinicAiHeadline.
+  ///
+  /// In en, this message translates to:
+  /// **'How are you\nfeeling today?'**
+  String get apnaClinicAiHeadline;
+
+  /// No description provided for @apnaClinicAiLiveStats.
+  ///
+  /// In en, this message translates to:
+  /// **'Tell me what’s bothering you.'**
+  String get apnaClinicAiLiveStats;
+
+  /// No description provided for @apnaClinicAiCommonConcerns.
+  ///
+  /// In en, this message translates to:
+  /// **'Common concerns'**
+  String get apnaClinicAiCommonConcerns;
+
+  /// No description provided for @apnaClinicAiTapToStart.
+  ///
+  /// In en, this message translates to:
+  /// **'tap to start'**
+  String get apnaClinicAiTapToStart;
+
+  /// No description provided for @apnaClinicAiWhatICanDo.
+  ///
+  /// In en, this message translates to:
+  /// **'What I can do'**
+  String get apnaClinicAiWhatICanDo;
+
+  /// No description provided for @apnaClinicAiSosTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Chest pain, trouble breathing, heavy bleeding?'**
+  String get apnaClinicAiSosTitle;
+
+  /// No description provided for @apnaClinicAiSosBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Call Rescue 1122 now — don’t wait for chat.'**
+  String get apnaClinicAiSosBody;
+
+  /// No description provided for @apnaClinicAiFinePrint.
+  ///
+  /// In en, this message translates to:
+  /// **'Fees and prices in PKR. I don’t recommend medicines — I find the ones you name.'**
+  String get apnaClinicAiFinePrint;
+
+  /// No description provided for @apnaClinicAiVoiceCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Describe it out loud'**
+  String get apnaClinicAiVoiceCta;
+
+  /// No description provided for @apnaClinicAiVoiceLangs.
+  ///
+  /// In en, this message translates to:
+  /// **'English · اردو · Roman Urdu'**
+  String get apnaClinicAiVoiceLangs;
+
+  /// No description provided for @apnaClinicAiContinue.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue'**
+  String get apnaClinicAiContinue;
+
+  /// No description provided for @apnaClinicAiStartNew.
+  ///
+  /// In en, this message translates to:
+  /// **'Start something new'**
+  String get apnaClinicAiStartNew;
+
+  /// No description provided for @apnaClinicAiStartTalkingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'I’ll describe how I feel'**
+  String get apnaClinicAiStartTalkingTitle;
+
+  /// No description provided for @apnaClinicAiStartTalkingBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Speak or type, in English or Urdu. No upload needed.'**
+  String get apnaClinicAiStartTalkingBody;
+
+  /// No description provided for @apnaClinicAiStartTalkingCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Start talking'**
+  String get apnaClinicAiStartTalkingCta;
+
+  /// No description provided for @apnaClinicAiPrescriptionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'I have a prescription or lab report'**
+  String get apnaClinicAiPrescriptionTitle;
+
+  /// No description provided for @apnaClinicAiPrescriptionBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Describe what the report says. The assistant can still help from your words.'**
+  String get apnaClinicAiPrescriptionBody;
+
+  /// No description provided for @apnaClinicAiPrescriptionCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Describe the report'**
+  String get apnaClinicAiPrescriptionCta;
+
+  /// No description provided for @apnaClinicAiPrescriptionHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Describe the report in your own words, or say what the lab found.'**
+  String get apnaClinicAiPrescriptionHint;
+
+  /// No description provided for @apnaClinicAiDisclaimer.
+  ///
+  /// In en, this message translates to:
+  /// **'Medical disclaimer — This tool provides general informational guidance only and is not a medical diagnosis. Always consult a qualified healthcare professional. In an emergency call Rescue 1122.'**
+  String get apnaClinicAiDisclaimer;
+
+  /// No description provided for @apnaClinicAiChatSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'online'**
+  String get apnaClinicAiChatSubtitle;
+
+  /// No description provided for @apnaClinicAiHeroTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask about your health, your report, or your recommendation.'**
+  String get apnaClinicAiHeroTitle;
+
+  /// No description provided for @apnaClinicAiHeroBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Speak or type in English or Urdu. If it looks like you need a specialist, the assistant will say which one.'**
+  String get apnaClinicAiHeroBody;
+
+  /// No description provided for @apnaClinicAiPrompt.
+  ///
+  /// In en, this message translates to:
+  /// **'Tell me what’s troubling you, in your own words.'**
+  String get apnaClinicAiPrompt;
+
+  /// No description provided for @apnaClinicAiComposerHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Describe a symptom or name a medicine…'**
+  String get apnaClinicAiComposerHint;
+
+  /// No description provided for @apnaClinicAiChatComposerHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Type, or tap the mic to speak…'**
+  String get apnaClinicAiChatComposerHint;
+
+  /// No description provided for @apnaClinicAiEmergencyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'This may be urgent — call Rescue 1122'**
+  String get apnaClinicAiEmergencyTitle;
+
+  /// No description provided for @apnaClinicAiEmergencyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'In Pakistan, Rescue 1122 is the ambulance / emergency number. If someone is in immediate danger, call now or go to the nearest emergency department.'**
+  String get apnaClinicAiEmergencyBody;
+
+  /// No description provided for @apnaClinicAiEmergencyStep1.
+  ///
+  /// In en, this message translates to:
+  /// **'Call 1122 (or local ER) and stay on the line.'**
+  String get apnaClinicAiEmergencyStep1;
+
+  /// No description provided for @apnaClinicAiEmergencyStep2.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep the person still, seated or lying down; loosen tight clothing.'**
+  String get apnaClinicAiEmergencyStep2;
+
+  /// No description provided for @apnaClinicAiEmergencyStep3.
+  ///
+  /// In en, this message translates to:
+  /// **'Do not give food, drink, or medicines unless a clinician tells you to.'**
+  String get apnaClinicAiEmergencyStep3;
+
+  /// No description provided for @apnaClinicAiEmergencyCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Call 1122'**
+  String get apnaClinicAiEmergencyCta;
+
+  /// No description provided for @apnaClinicAiEmergencyNote.
+  ///
+  /// In en, this message translates to:
+  /// **'In Pakistan, call **Rescue 1122** for an ambulance, or go to the nearest ER now.'**
+  String get apnaClinicAiEmergencyNote;
+
+  /// No description provided for @apnaClinicAiTapDoctor.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap a doctor'**
+  String get apnaClinicAiTapDoctor;
+
+  /// No description provided for @apnaClinicAiViewSlots.
+  ///
+  /// In en, this message translates to:
+  /// **'View slots'**
+  String get apnaClinicAiViewSlots;
+
+  /// No description provided for @apnaClinicAiAddToCart.
+  ///
+  /// In en, this message translates to:
+  /// **'Add to cart'**
+  String get apnaClinicAiAddToCart;
+
+  /// No description provided for @apnaClinicAiDoctors.
+  ///
+  /// In en, this message translates to:
+  /// **'Doctors'**
+  String get apnaClinicAiDoctors;
+
+  /// No description provided for @apnaClinicAiMedicines.
+  ///
+  /// In en, this message translates to:
+  /// **'Medicines'**
+  String get apnaClinicAiMedicines;
+
+  /// No description provided for @apnaClinicAiSlots.
+  ///
+  /// In en, this message translates to:
+  /// **'Available slots'**
+  String get apnaClinicAiSlots;
+
+  /// No description provided for @apnaClinicAiPickADay.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick a day'**
+  String get apnaClinicAiPickADay;
+
+  /// No description provided for @apnaClinicAiPayment.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment'**
+  String get apnaClinicAiPayment;
+
+  /// No description provided for @apnaClinicAiNotConfigured.
+  ///
+  /// In en, this message translates to:
+  /// **'Apna Clinic AI is not configured. Add APNA_CLINIC_AI_BASE_URL and APNA_CLINIC_AI_SDK_KEY.'**
+  String get apnaClinicAiNotConfigured;
+
+  /// No description provided for @apnaClinicAiConnectFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not connect to Apna Clinic AI. Please try again.'**
+  String get apnaClinicAiConnectFailed;
+
+  /// No description provided for @apnaClinicAiUpstream.
+  ///
+  /// In en, this message translates to:
+  /// **'Booking didn’t go through just now. Tell me which doctor and a preferred time again. If this is urgent, call Rescue 1122.'**
+  String get apnaClinicAiUpstream;
+
+  /// No description provided for @apnaClinicAiBookingFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong on the booking service. Please try again in a moment.'**
+  String get apnaClinicAiBookingFailed;
+
+  /// No description provided for @apnaClinicAiVoiceUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Microphone is unavailable. Allow microphone access, or type your message.'**
+  String get apnaClinicAiVoiceUnavailable;
+
+  /// No description provided for @apnaClinicAiEmptyRecording.
+  ///
+  /// In en, this message translates to:
+  /// **'No speech heard. Hold the mic a little longer, or type your message.'**
+  String get apnaClinicAiEmptyRecording;
+
+  /// No description provided for @apnaClinicAiSignInRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in to book or use the cart. Symptom guidance works as a guest.'**
+  String get apnaClinicAiSignInRequired;
+
+  /// No description provided for @apnaClinicAiSignInCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in to continue'**
+  String get apnaClinicAiSignInCta;
+
+  /// No description provided for @apnaClinicAiNewChat.
+  ///
+  /// In en, this message translates to:
+  /// **'New chat'**
+  String get apnaClinicAiNewChat;
+
+  /// No description provided for @apnaClinicAiSpeakReplies.
+  ///
+  /// In en, this message translates to:
+  /// **'Speak replies'**
+  String get apnaClinicAiSpeakReplies;
+
+  /// No description provided for @apnaClinicAiHoldToTalk.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to talk'**
+  String get apnaClinicAiHoldToTalk;
+
+  /// Hint shown while Apna Clinic AI is listening
+  ///
+  /// In en, this message translates to:
+  /// **'Tap the mic to send'**
+  String get apnaClinicAiTapMicToSend;
+
+  /// No description provided for @apnaClinicAiVoiceEnglish.
+  ///
+  /// In en, this message translates to:
+  /// **'EN'**
+  String get apnaClinicAiVoiceEnglish;
+
+  /// No description provided for @apnaClinicAiVoiceUrdu.
+  ///
+  /// In en, this message translates to:
+  /// **'اردو'**
+  String get apnaClinicAiVoiceUrdu;
+
+  /// No description provided for @apnaClinicAiListening.
+  ///
+  /// In en, this message translates to:
+  /// **'Listening…'**
+  String get apnaClinicAiListening;
+
+  /// No description provided for @apnaClinicAiSuggestFever.
+  ///
+  /// In en, this message translates to:
+  /// **'I have fever and body ache'**
+  String get apnaClinicAiSuggestFever;
+
+  /// No description provided for @apnaClinicAiSuggestRash.
+  ///
+  /// In en, this message translates to:
+  /// **'I have a rash on my arm'**
+  String get apnaClinicAiSuggestRash;
+
+  /// No description provided for @apnaClinicAiSuggestDoctors.
+  ///
+  /// In en, this message translates to:
+  /// **'show general physician doctors'**
+  String get apnaClinicAiSuggestDoctors;
+
+  /// No description provided for @apnaClinicAiSuggestPanadol.
+  ///
+  /// In en, this message translates to:
+  /// **'do you have Panadol'**
+  String get apnaClinicAiSuggestPanadol;
+
+  /// No description provided for @apnaClinicAiMinutesAgo.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} min ago'**
+  String apnaClinicAiMinutesAgo(int count);
+
+  /// No description provided for @apnaClinicAiHoursAgo.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} hours ago'**
+  String apnaClinicAiHoursAgo(int count);
+
+  /// No description provided for @apnaClinicAiDaysAgo.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} days ago'**
+  String apnaClinicAiDaysAgo(int count);
+
+  /// No description provided for @apnaClinicAiStageListening.
+  ///
+  /// In en, this message translates to:
+  /// **'Listening to your symptoms…'**
+  String get apnaClinicAiStageListening;
+
+  /// No description provided for @apnaClinicAiStageSpecialists.
+  ///
+  /// In en, this message translates to:
+  /// **'Checking specialists…'**
+  String get apnaClinicAiStageSpecialists;
+
+  /// No description provided for @apnaClinicAiStageDoctors.
+  ///
+  /// In en, this message translates to:
+  /// **'Looking up live doctors…'**
+  String get apnaClinicAiStageDoctors;
+
+  /// No description provided for @apnaClinicAiStageClinic.
+  ///
+  /// In en, this message translates to:
+  /// **'Matching the right clinic…'**
+  String get apnaClinicAiStageClinic;
+
+  /// No description provided for @apnaClinicAiStageReady.
+  ///
+  /// In en, this message translates to:
+  /// **'Almost ready…'**
+  String get apnaClinicAiStageReady;
+
+  /// No description provided for @apnaClinicAiStageTranscribing.
+  ///
+  /// In en, this message translates to:
+  /// **'Transcribing your voice…'**
+  String get apnaClinicAiStageTranscribing;
+
+  /// No description provided for @apnaClinicAiStageRouter.
+  ///
+  /// In en, this message translates to:
+  /// **'Understanding your request…'**
+  String get apnaClinicAiStageRouter;
+
+  /// No description provided for @apnaClinicAiStageCapability.
+  ///
+  /// In en, this message translates to:
+  /// **'Choosing the right path…'**
+  String get apnaClinicAiStageCapability;
+
+  /// No description provided for @apnaClinicAiStageDispatch.
+  ///
+  /// In en, this message translates to:
+  /// **'Talking to ApnaClinic…'**
+  String get apnaClinicAiStageDispatch;
+
+  /// No description provided for @apnaClinicAiStageBrowse.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading doctors…'**
+  String get apnaClinicAiStageBrowse;
+
+  /// No description provided for @apnaClinicAiStageTriage.
+  ///
+  /// In en, this message translates to:
+  /// **'Reviewing your symptoms…'**
+  String get apnaClinicAiStageTriage;
+
+  /// No description provided for @apnaClinicAiStageTool.
+  ///
+  /// In en, this message translates to:
+  /// **'Fetching live availability…'**
+  String get apnaClinicAiStageTool;
+
+  /// No description provided for @apnaClinicAiStageWriting.
+  ///
+  /// In en, this message translates to:
+  /// **'Writing reply…'**
+  String get apnaClinicAiStageWriting;
+
+  /// Name of the floating home bot that opens Apna Clinic AI
+  ///
+  /// In en, this message translates to:
+  /// **'Apna Clinic Bot'**
+  String get apnaClinicBotLabel;
+
+  /// Call to action on the floating home bot speech bubble
+  ///
+  /// In en, this message translates to:
+  /// **'Ask me'**
+  String get apnaClinicBotBubble;
+
+  /// No description provided for @pharmacyScanPrescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan prescription'**
+  String get pharmacyScanPrescription;
+
+  /// No description provided for @pharmacyScanFabHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Snap a photo'**
+  String get pharmacyScanFabHint;
+
+  /// No description provided for @pharmacyScanPrescriptionHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Take a photo or choose a prescription image'**
+  String get pharmacyScanPrescriptionHint;
+
+  /// No description provided for @pharmacyScanSourceTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Prescription photo'**
+  String get pharmacyScanSourceTitle;
+
+  /// No description provided for @pharmacyScanUseCamera.
+  ///
+  /// In en, this message translates to:
+  /// **'Use camera'**
+  String get pharmacyScanUseCamera;
+
+  /// No description provided for @pharmacyScanChooseGallery.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose from gallery'**
+  String get pharmacyScanChooseGallery;
+
+  /// No description provided for @pharmacyScanChangePhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Change photo'**
+  String get pharmacyScanChangePhoto;
+
+  /// No description provided for @pharmacyScanExtract.
+  ///
+  /// In en, this message translates to:
+  /// **'Read prescription'**
+  String get pharmacyScanExtract;
+
+  /// No description provided for @pharmacyScanReading.
+  ///
+  /// In en, this message translates to:
+  /// **'Reading prescription…'**
+  String get pharmacyScanReading;
+
+  /// No description provided for @pharmacyScanFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not read this prescription. Try a clearer photo.'**
+  String get pharmacyScanFailed;
+
+  /// No description provided for @pharmacyScanNotConfigured.
+  ///
+  /// In en, this message translates to:
+  /// **'Prescription reading is not set up yet.'**
+  String get pharmacyScanNotConfigured;
+
+  /// No description provided for @pharmacyScanNoMedicines.
+  ///
+  /// In en, this message translates to:
+  /// **'No medicines were found on this prescription.'**
+  String get pharmacyScanNoMedicines;
+
+  /// No description provided for @pharmacyScanTests.
+  ///
+  /// In en, this message translates to:
+  /// **'Tests'**
+  String get pharmacyScanTests;
+
+  /// No description provided for @pharmacyScanMedicines.
+  ///
+  /// In en, this message translates to:
+  /// **'Medicines'**
+  String get pharmacyScanMedicines;
+
+  /// No description provided for @pharmacyScanPatient.
+  ///
+  /// In en, this message translates to:
+  /// **'Patient'**
+  String get pharmacyScanPatient;
+
+  /// No description provided for @pharmacyScanDoctor.
+  ///
+  /// In en, this message translates to:
+  /// **'Doctor'**
+  String get pharmacyScanDoctor;
+
+  /// No description provided for @pharmacyScanDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Date'**
+  String get pharmacyScanDate;
+
+  /// No description provided for @pharmacyScanInstitute.
+  ///
+  /// In en, this message translates to:
+  /// **'Institute'**
+  String get pharmacyScanInstitute;
+
+  /// No description provided for @pharmacyScanLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Location'**
+  String get pharmacyScanLocation;
+
+  /// No description provided for @pharmacyScanLabReport.
+  ///
+  /// In en, this message translates to:
+  /// **'Lab report'**
+  String get pharmacyScanLabReport;
+
+  /// No description provided for @pharmacyScanVisit.
+  ///
+  /// In en, this message translates to:
+  /// **'Visit'**
+  String get pharmacyScanVisit;
+
+  /// No description provided for @pharmacyScanMatching.
+  ///
+  /// In en, this message translates to:
+  /// **'Finding in pharmacy…'**
+  String get pharmacyScanMatching;
+
+  /// No description provided for @pharmacyScanNotInCatalog.
+  ///
+  /// In en, this message translates to:
+  /// **'Not available in pharmacy'**
+  String get pharmacyScanNotInCatalog;
+
+  /// No description provided for @pharmacyScanPages.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} pages'**
+  String pharmacyScanPages(int count);
+
+  /// No description provided for @pharmacyScanQuantity.
+  ///
+  /// In en, this message translates to:
+  /// **'Qty {count}'**
+  String pharmacyScanQuantity(int count);
+
+  /// No description provided for @pharmacyScanBannerTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Medicines ready when you are'**
+  String get pharmacyScanBannerTitle;
+
+  /// No description provided for @pharmacyScanBannerSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan a clear prescription photo and we’ll match medicines from our pharmacy.'**
+  String get pharmacyScanBannerSubtitle;
+
+  /// No description provided for @pharmacyScanUploadTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload prescription'**
+  String get pharmacyScanUploadTitle;
+
+  /// No description provided for @pharmacyScanUploadSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Camera or gallery · JPEG / PNG'**
+  String get pharmacyScanUploadSubtitle;
 }
 
 class _AppLocalizationsDelegate

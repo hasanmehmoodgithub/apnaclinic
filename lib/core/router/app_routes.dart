@@ -27,6 +27,7 @@ class AppRoutes {
   static const String pharmacyCart = 'pharmacyCart';
   static const String pharmacyCheckout = 'pharmacyCheckout';
   static const String pharmacyBookingDetails = 'pharmacy-booking-details';
+  static const String pharmacyPrescriptionScan = 'pharmacy-prescription-scan';
   static const String search = 'search';
   static const String surgery = 'surgery';
   static const String surgeryBooking = 'surgery-booking';
@@ -35,6 +36,7 @@ class AppRoutes {
   static const String addAccount = 'add-account';
   static const String accountDetails = 'account-details';
   static const String aiScreening = 'ai-screening';
+  static const String apnaClinicAi = 'apna-clinic-ai';
 
   /// Instant Doctor bottom-nav tab (not a GoRouter path). CMS may send
   /// `/intantdoctor` (typo) or `/instantdoctor`.

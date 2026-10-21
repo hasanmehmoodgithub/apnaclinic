@@ -23,6 +23,7 @@ import '../../domain/services/promotional_banner_session.dart';
 import '../../../pro/presentation/show_pro_bottom_sheet.dart';
 import '../cubit/dashboard_services_cubit.dart';
 import '../cubit/dashboard_services_state.dart';
+import '../widgets/apna_clinic_bot_fab.dart';
 import '../widgets/app_update_dialog.dart';
 import '../widgets/apna_clinic_pro_home_banner.dart';
 import '../widgets/home_header_section.dart';
@@ -301,125 +302,139 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   ) {
     return Scaffold(
       backgroundColor: AppColors.clrf4f4f4,
-      body: GestureDetector(
-        behavior: HitTestBehavior.translucent,
-        onTap: _dismissKeyboard,
-        child: Column(
-          children: [
-            BlocBuilder<NotificationCubit, NotificationState>(
-              bloc: _notificationCubit,
-              builder: (context, notificationState) {
-                final unreadCount = notificationState.notifications
-                    .where((item) => !item.isRead)
-                    .length;
-                final profileImageUrl = isLoggedIn
-                    ? sl<AppPref>().getUserLocalModel()?.imageUrl
-                    : null;
-                final profileRevision =
-                    sl<AuthSessionRefresh>().profileRevision;
-                final trimmedImageUrl = profileImageUrl?.trim() ?? '';
-                final profileImageCacheKey = trimmedImageUrl.isEmpty
-                    ? null
-                    : '$trimmedImageUrl#$profileRevision';
-                final _ = state.profileSyncNonce;
-                return BlocSelector<ProCubit, ProState, bool>(
-                  selector: (proState) =>
-                      proState.membership?.isActivePro == true,
-                  builder: (context, isPro) {
-                    return HomeHeaderSection(
-                      userName: greetingName,
-                      isLoggedIn: isLoggedIn,
-                      hasUnreadNotifications: unreadCount > 0,
-                      profileImageUrl: profileImageUrl,
-                      profileImageCacheKey: profileImageCacheKey,
-                      isPro: isPro,
-                      onMenuTap: () =>
-                          context.push(AppRoutes.path(AppRoutes.dashboardMenu)),
-                      onNotificationTap: () {
-                        if (!context.requireLogin()) return;
-                        unawaited(
-                          sl<AnalyticsService>().logEvent(
-                            AnalyticsEventKeys.notificationsScreenOpen,
+      body: Stack(
+        children: [
+          GestureDetector(
+            behavior: HitTestBehavior.translucent,
+            onTap: _dismissKeyboard,
+            child: Column(
+              children: [
+                BlocBuilder<NotificationCubit, NotificationState>(
+                  bloc: _notificationCubit,
+                  builder: (context, notificationState) {
+                    final unreadCount = notificationState.notifications
+                        .where((item) => !item.isRead)
+                        .length;
+                    final profileImageUrl = isLoggedIn
+                        ? sl<AppPref>().getUserLocalModel()?.imageUrl
+                        : null;
+                    final profileRevision =
+                        sl<AuthSessionRefresh>().profileRevision;
+                    final trimmedImageUrl = profileImageUrl?.trim() ?? '';
+                    final profileImageCacheKey = trimmedImageUrl.isEmpty
+                        ? null
+                        : '$trimmedImageUrl#$profileRevision';
+                    final _ = state.profileSyncNonce;
+                    return BlocSelector<ProCubit, ProState, bool>(
+                      selector: (proState) =>
+                          proState.membership?.isActivePro == true,
+                      builder: (context, isPro) {
+                        return HomeHeaderSection(
+                          userName: greetingName,
+                          isLoggedIn: isLoggedIn,
+                          hasUnreadNotifications: unreadCount > 0,
+                          profileImageUrl: profileImageUrl,
+                          profileImageCacheKey: profileImageCacheKey,
+                          isPro: isPro,
+                          onMenuTap: () => context.push(
+                            AppRoutes.path(AppRoutes.dashboardMenu),
                           ),
+                          onNotificationTap: () {
+                            if (!context.requireLogin()) return;
+                            unawaited(
+                              sl<AnalyticsService>().logEvent(
+                                AnalyticsEventKeys.notificationsScreenOpen,
+                              ),
+                            );
+                            context.push(
+                              AppRoutes.path(AppRoutes.notifications),
+                            );
+                          },
+                          onLoginTap: () => AuthGuard.pushLogin(context),
+                          onProfileTap: () {
+                            if (!context.requireLogin()) return;
+                            context.push(AppRoutes.path(AppRoutes.profile));
+                          },
+                          onSearchTap: () => unawaited(_openSearch(context)),
+                          onVoiceTap: () =>
+                              unawaited(_openVoiceSearch(context)),
                         );
-                        context.push(AppRoutes.path(AppRoutes.notifications));
                       },
-                      onLoginTap: () => AuthGuard.pushLogin(context),
-                      onProfileTap: () {
-                        if (!context.requireLogin()) return;
-                        context.push(AppRoutes.path(AppRoutes.profile));
-                      },
-                      onSearchTap: () => unawaited(_openSearch(context)),
-                      onVoiceTap: () => unawaited(_openVoiceSearch(context)),
                     );
                   },
-                );
-              },
-            ),
+                ),
 
-            Expanded(
-              child: RefreshIndicator(
-                color: AppColors.clr0FAA9A,
-                onRefresh: _onHomeRefresh,
-                child: CustomScrollView(
-                  key: const ValueKey('dashboard_content'),
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  slivers: [
-                    SliverPadding(padding: EdgeInsets.only(top: 8.h)),
-                    OurServicesWidget(
-                      state: state,
-                      onServiceTap: (service) =>
-                          _onServiceTap(context, service),
-                      onRetry: () => unawaited(_onHomeRefresh()),
-                    ),
-                    SliverPadding(
-                      padding: EdgeInsets.fromLTRB(20.w, 20.h, 20.w, 0),
-                      sliver: SliverToBoxAdapter(
-                        child: Center(
-                          child: InstantDoctorHomeBanner(
-                            onTap: () => openInstantDoctorTab(context),
+                Expanded(
+                  child: RefreshIndicator(
+                    color: AppColors.clr0FAA9A,
+                    onRefresh: _onHomeRefresh,
+                    child: CustomScrollView(
+                      key: const ValueKey('dashboard_content'),
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      slivers: [
+                        SliverPadding(padding: EdgeInsets.only(top: 8.h)),
+                        OurServicesWidget(
+                          state: state,
+                          onServiceTap: (service) =>
+                              _onServiceTap(context, service),
+                          onRetry: () => unawaited(_onHomeRefresh()),
+                        ),
+                        SliverPadding(
+                          padding: EdgeInsets.fromLTRB(20.w, 20.h, 20.w, 0),
+                          sliver: SliverToBoxAdapter(
+                            child: Center(
+                              child: InstantDoctorHomeBanner(
+                                onTap: () => openInstantDoctorTab(context),
+                              ),
+                            ),
                           ),
                         ),
-                      ),
+                        SliverPadding(
+                          padding: EdgeInsets.fromLTRB(20.w, 20.h, 20.w, 0),
+                          sliver: SliverToBoxAdapter(
+                            child:
+                                BlocSelector<
+                                  ProCubit,
+                                  ProState,
+                                  ({
+                                    ProMembershipEntity? membership,
+                                    bool isLoading,
+                                  })
+                                >(
+                                  selector: (proState) => (
+                                    membership: proState.membership,
+                                    isLoading: proState.isCatalogLoading,
+                                  ),
+                                  builder: (context, pro) {
+                                    final bannerUrl =
+                                        state.proBannerUrl?.trim() ?? '';
+                                    return ApnaClinicProHomeBanner(
+                                      membership: pro.membership,
+                                      isLoading: pro.isLoading,
+                                      imageUrl: bannerUrl.isEmpty
+                                          ? ApnaClinicProHomeBanner
+                                                .defaultImageUrl
+                                          : bannerUrl,
+                                      onTap: () => unawaited(_openPro()),
+                                    );
+                                  },
+                                ),
+                          ),
+                        ),
+                        SliverPadding(padding: EdgeInsets.only(bottom: 156.h)),
+                      ],
                     ),
-                    SliverPadding(
-                      padding: EdgeInsets.fromLTRB(20.w, 20.h, 20.w, 0),
-                      sliver: SliverToBoxAdapter(
-                        child:
-                            BlocSelector<
-                              ProCubit,
-                              ProState,
-                              ({
-                                ProMembershipEntity? membership,
-                                bool isLoading,
-                              })
-                            >(
-                              selector: (proState) => (
-                                membership: proState.membership,
-                                isLoading: proState.isCatalogLoading,
-                              ),
-                              builder: (context, pro) {
-                                final bannerUrl =
-                                    state.proBannerUrl?.trim() ?? '';
-                                return ApnaClinicProHomeBanner(
-                                  membership: pro.membership,
-                                  isLoading: pro.isLoading,
-                                  imageUrl: bannerUrl.isEmpty
-                                      ? ApnaClinicProHomeBanner.defaultImageUrl
-                                      : bannerUrl,
-                                  onTap: () => unawaited(_openPro()),
-                                );
-                              },
-                            ),
-                      ),
-                    ),
-                    SliverPadding(padding: EdgeInsets.only(bottom: 32.h)),
-                  ],
+                  ),
                 ),
-              ),
+              ],
             ),
-          ],
-        ),
+          ),
+          Positioned(
+            right: 14.w,
+            bottom: 10.h,
+            child: const ApnaClinicBotFab(),
+          ),
+        ],
       ),
     );
   }
