@@ -199,3 +199,4 @@ Future<void> _initializeAppsFlyer() async {
     );
   }
 }
+

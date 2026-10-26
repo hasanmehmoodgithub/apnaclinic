@@ -40,7 +40,7 @@ static const String token = 'auth_token$prefVersion';
 
 **First install:** `AppPrefKeys.firstTime` — `isFirstTime()` defaults to `true` until first-install analytics runs, then `setFirstTime(false)`. Not cleared on logout.
 
-**Apna Clinic AI SDK:** `AppPrefKeys.apnaClinicAiApiKey` / `SessionId` / `UserId` / `AccessToken` / `TokenExpiresAt` / `AuthMode` — Care Companion session credentials. Cleared on logout via `clearApnaClinicAiSession()`.
+**Apna Clinic AI SDK:** `AppPrefKeys.apnaClinicAiApiKey` / `SessionId` / `UserId` / `AccessToken` / `TokenExpiresAt` / `AuthMode` — Care Companion session credentials. Cleared on logout via `clearApnaClinicAiSession()`. Full `session/init` JSON (greeting + large `audio.base64`) is **not** in prefs — stored as `{appSupport}/apna_clinic_ai_session_init.json` by `ApnaClinicAiSdkClient` and **kept** across session clears (overwritten only on a new successful init).
 
 **Adding New Keys:**
 ```dart

@@ -6,6 +6,7 @@ import '../../domain/entities/apna_clinic_ai_session_entity.dart';
 import '../../domain/entities/apna_clinic_ai_stream_event.dart';
 import '../../domain/repositories/apna_clinic_ai_repository.dart';
 import '../../domain/use_cases/init_apna_clinic_ai_session_params.dart';
+import '../../domain/use_cases/send_apna_clinic_ai_audio_params.dart';
 import '../../domain/use_cases/send_apna_clinic_ai_message_params.dart';
 import '../../domain/utils/apna_clinic_ai_msisdn.dart';
 import '../data_sources/apna_clinic_ai_local_data_source.dart';
@@ -69,16 +70,41 @@ class ApnaClinicAiRepositoryImpl implements ApnaClinicAiRepository {
   Stream<ApnaClinicAiStreamEvent> sendMessage(
     SendApnaClinicAiMessageParams params,
   ) async* {
-    await for (final event in remoteDataSource.sendMessage(
-      message: params.message,
-      speak: params.speak,
-      voiceId: params.voiceId,
-    )) {
+    yield* _mapRemote(
+      remoteDataSource.sendMessage(
+        message: params.message,
+        speak: params.speak,
+        voiceId: params.voiceId,
+      ),
+    );
+  }
+
+  @override
+  Stream<ApnaClinicAiStreamEvent> sendAudio(
+    SendApnaClinicAiAudioParams params,
+  ) async* {
+    yield* _mapRemote(
+      remoteDataSource.sendAudio(
+        audioBytes: params.audioBytes,
+        fallbackMessage: params.fallbackMessage,
+        speak: params.speak,
+        language: params.language,
+        voiceId: params.voiceId,
+      ),
+    );
+  }
+
+  Stream<ApnaClinicAiStreamEvent> _mapRemote(
+    Stream<ApnaClinicAiRemoteEvent> source,
+  ) async* {
+    await for (final event in source) {
       switch (event.kind) {
         case ApnaClinicAiRemoteEventKind.token:
           yield ApnaClinicAiStreamToken(event.text ?? '');
         case ApnaClinicAiRemoteEventKind.stage:
           yield ApnaClinicAiStreamStage(event.stage ?? '');
+        case ApnaClinicAiRemoteEventKind.transcription:
+          yield ApnaClinicAiStreamTranscription(event.text ?? '');
         case ApnaClinicAiRemoteEventKind.failure:
           yield ApnaClinicAiStreamFailure(
             event.code ?? ApnaClinicAiFailureCodes.connectFailed,
@@ -91,6 +117,15 @@ class ApnaClinicAiRepositoryImpl implements ApnaClinicAiRepository {
             );
           } else {
             yield ApnaClinicAiStreamFinal(turn.toEntity());
+          }
+        case ApnaClinicAiRemoteEventKind.audio:
+          final clip = (event.audioBase64 ?? '').trim();
+          if (clip.isNotEmpty) {
+            yield ApnaClinicAiStreamAudio(
+              audioBase64: clip,
+              audioMediaType: event.audioMediaType,
+              turnId: event.turnId,
+            );
           }
       }
     }
@@ -109,4 +144,8 @@ class ApnaClinicAiRepositoryImpl implements ApnaClinicAiRepository {
   @override
   String peekPersistedConversationId() =>
       remoteDataSource.peekPersistedConversationId();
+
+  @override
+  Future<void> rememberCurrentAsHistory() =>
+      remoteDataSource.rememberCurrentAsHistory();
 }

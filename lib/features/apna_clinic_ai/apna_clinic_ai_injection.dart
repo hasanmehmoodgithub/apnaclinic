@@ -7,8 +7,11 @@ import 'data/data_sources/apna_clinic_ai_local_data_source.dart';
 import 'data/data_sources/apna_clinic_ai_remote_data_source.dart';
 import 'data/data_sources/apna_clinic_ai_sdk_client.dart';
 import 'data/repositories/apna_clinic_ai_repository_impl.dart';
+import 'data/services/apna_clinic_ai_audio_player_service.dart';
+import 'data/services/apna_clinic_ai_audio_recorder_service.dart';
 import 'domain/repositories/apna_clinic_ai_repository.dart';
 import 'domain/use_cases/ensure_apna_clinic_ai_session_use_case.dart';
+import 'domain/use_cases/send_apna_clinic_ai_audio_use_case.dart';
 import 'domain/use_cases/send_apna_clinic_ai_message_use_case.dart';
 import 'presentation/cubit/apna_clinic_ai_cubit.dart';
 
@@ -43,13 +46,24 @@ void initApnaClinicAiInjector() {
   sl.registerLazySingleton<SendApnaClinicAiMessageUseCase>(
     () => SendApnaClinicAiMessageUseCase(repository: sl<ApnaClinicAiRepository>()),
   );
+  sl.registerLazySingleton<SendApnaClinicAiAudioUseCase>(
+    () => SendApnaClinicAiAudioUseCase(repository: sl<ApnaClinicAiRepository>()),
+  );
+  sl.registerFactory<ApnaClinicAiAudioRecorderService>(
+    ApnaClinicAiAudioRecorderService.new,
+  );
+  sl.registerFactory<ApnaClinicAiAudioPlayerService>(
+    ApnaClinicAiAudioPlayerService.new,
+  );
   sl.registerFactory<ApnaClinicAiCubit>(
     () => ApnaClinicAiCubit(
       ensureSessionUseCase: sl<EnsureApnaClinicAiSessionUseCase>(),
       sendMessageUseCase: sl<SendApnaClinicAiMessageUseCase>(),
+      sendAudioUseCase: sl<SendApnaClinicAiAudioUseCase>(),
       localDataSource: sl<ApnaClinicAiLocalDataSource>(),
       appPref: sl<AppPref>(),
       speechToText: sl<SpeechToTextService>(),
+      audioRecorder: sl<ApnaClinicAiAudioRecorderService>(),
     ),
   );
 }

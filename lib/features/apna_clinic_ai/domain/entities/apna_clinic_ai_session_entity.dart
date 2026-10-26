@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 
+import 'apna_clinic_ai_home_resume_entity.dart';
 import 'apna_clinic_ai_home_tile_entity.dart';
 
 class ApnaClinicAiSessionEntity extends Equatable {
@@ -10,8 +11,14 @@ class ApnaClinicAiSessionEntity extends Equatable {
     required this.assistantName,
     required this.suggestions,
     this.welcomeMessage = '',
+    this.greetingAudioBase64 = '',
+    this.greetingAudioMediaType = '',
+    this.composerHint = '',
+    this.headerSubtitle = '',
     this.voiceEnabled = false,
+    this.voiceOutputEnabled = false,
     this.homeTiles = const [],
+    this.homeResume,
   });
 
   final String sessionId;
@@ -20,8 +27,14 @@ class ApnaClinicAiSessionEntity extends Equatable {
   final String assistantName;
   final List<String> suggestions;
   final String welcomeMessage;
+  final String greetingAudioBase64;
+  final String greetingAudioMediaType;
+  final String composerHint;
+  final String headerSubtitle;
   final bool voiceEnabled;
+  final bool voiceOutputEnabled;
   final List<ApnaClinicAiHomeTileEntity> homeTiles;
+  final ApnaClinicAiHomeResumeEntity? homeResume;
 
   @override
   List<Object?> get props => [
@@ -31,7 +44,13 @@ class ApnaClinicAiSessionEntity extends Equatable {
     assistantName,
     suggestions,
     welcomeMessage,
+    greetingAudioBase64,
+    greetingAudioMediaType,
+    composerHint,
+    headerSubtitle,
     voiceEnabled,
+    voiceOutputEnabled,
     homeTiles,
+    homeResume,
   ];
 }

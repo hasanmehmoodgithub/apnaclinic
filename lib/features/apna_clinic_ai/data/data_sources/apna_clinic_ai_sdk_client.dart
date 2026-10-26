@@ -1,40 +1,69 @@
+import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
 
+import 'package:chucker_flutter/chucker_flutter.dart';
 import 'package:dio/dio.dart';
+import 'package:http_parser/http_parser.dart';
+import 'package:path_provider/path_provider.dart';
 
 import '../../../../core/preference/app_pref.dart';
+import '../../../../core/utils/chucker_guard.dart';
 import '../../domain/apna_clinic_ai_failure_codes.dart';
 
 class ApnaClinicAiSdkException implements Exception {
-  const ApnaClinicAiSdkException(this.code);
+  const ApnaClinicAiSdkException(
+    this.code, {
+    this.statusCode,
+    this.detail,
+  });
 
   final String code;
+  final int? statusCode;
+  final String? detail;
 }
 
-/// SDK host config. Pass both with `--dart-define`. Do not commit the key.
+/// SDK host config. Prefer `JIMI_*` dart-defines; fall back to `APNA_CLINIC_AI_*`.
 class ApnaClinicAiConfig {
-  const ApnaClinicAiConfig({required this.baseUrl, required this.sdkKey});
+  const ApnaClinicAiConfig({
+    required this.baseUrl,
+    required this.sdkKey,
+    this.tenant = 'apnaclinic',
+  });
 
   final String baseUrl;
   final String sdkKey;
+  final String tenant;
 
   bool get isConfigured =>
       baseUrl.trim().isNotEmpty && sdkKey.trim().isNotEmpty;
 
   factory ApnaClinicAiConfig.fromEnvironment() {
     // Temporary defaults for local/dev. Prefer --dart-define when available.
-    const baseUrl = String.fromEnvironment(
+    const jimiBase = String.fromEnvironment('JIMI_BASE_URL');
+    const apnaBase = String.fromEnvironment(
       'APNA_CLINIC_AI_BASE_URL',
-      defaultValue: 'https://522b-119-160-81-47.ngrok-free.app',
+      defaultValue: 'https://jazzred-msa-stg.jazz.com.pk/ai-services/jimi',
     );
-    const sdkKey = String.fromEnvironment(
+    const jimiKey = String.fromEnvironment('JIMI_SDK_KEY');
+    const apnaKey = String.fromEnvironment(
       'APNA_CLINIC_AI_SDK_KEY',
       defaultValue:
-          'sdk_apnaclinic_h2A7VpAjpEMHMEC_OBC4MlOjHrLiyTEPrXRDoIMWlIo',
+          'sdk_apnaclinic_icZZE-CHR5lm91Pyo8Rnfpe5iqrzBt7UIi_MRzvpTiU',
     );
-    return const ApnaClinicAiConfig(baseUrl: baseUrl, sdkKey: sdkKey);
+    const tenant = String.fromEnvironment(
+      'JIMI_TENANT',
+      defaultValue: 'apnaclinic',
+    );
+    final baseUrl = jimiBase.trim().isNotEmpty ? jimiBase : apnaBase;
+    final sdkKey = jimiKey.trim().isNotEmpty ? jimiKey : apnaKey;
+    return ApnaClinicAiConfig(
+      baseUrl: baseUrl,
+      sdkKey: sdkKey,
+      tenant: tenant.trim().isEmpty ? 'apnaclinic' : tenant.trim(),
+    );
   }
 }
 
@@ -58,7 +87,9 @@ class ApnaClinicAiSdkClient {
                  'ngrok-skip-browser-warning': 'true',
                },
              ),
-           );
+           ) {
+
+  }
 
   final ApnaClinicAiConfig _config;
   final AppPref _appPref;
@@ -70,6 +101,14 @@ class ApnaClinicAiSdkClient {
   DateTime expiresAt = DateTime.fromMillisecondsSinceEpoch(0);
   String? sessionId;
   String conversationId = '';
+
+  /// Last thread that received a user turn. Continue / Resume reads this.
+  String historyConversationId = '';
+
+  /// New window dropped the in-memory thread. [ensureConversationId] must
+  /// mint a new id instead of reusing a stale singleton value.
+  bool detached = true;
+  var _historyGen = 0;
   bool isGuest = true;
   String authMode = 'guest';
 
@@ -82,7 +121,9 @@ class ApnaClinicAiSdkClient {
       accessToken!.isNotEmpty;
 
   /// Creates a new chat thread id (New chat / any non-resume start).
+  /// Does not replace [historyConversationId] — that updates when a turn is sent.
   Future<void> newConversation() async {
+    detached = false;
     conversationId = _newId('ac');
     await _appPref.setApnaClinicAiConversationId(conversationId);
   }
@@ -94,23 +135,57 @@ class ApnaClinicAiSdkClient {
       await newConversation();
       return;
     }
+    detached = false;
     conversationId = trimmed;
     await _appPref.setApnaClinicAiConversationId(conversationId);
   }
 
-  /// Drops the in-memory thread without wiping prefs (needed for Continue).
+  /// Drops the in-memory thread without wiping history (needed for Continue).
   void detachConversation() {
     conversationId = '';
+    detached = true;
   }
 
-  /// Last persisted thread id (for Continue / Resume on a new window).
-  String peekPersistedConversationId() =>
-      _appPref.getApnaClinicAiConversationId().trim();
+  /// Last sent thread id (for Continue / Resume on a new window).
+  String peekPersistedConversationId() {
+    final memory = historyConversationId.trim();
+    if (memory.isNotEmpty) return memory;
+    final stored = _appPref.getApnaClinicAiHistoryConversationId().trim();
+    if (stored.isNotEmpty) {
+      historyConversationId = stored;
+      return stored;
+    }
+    final active = _appPref.getApnaClinicAiConversationId().trim();
+    if (active.isEmpty) return '';
+    historyConversationId = active;
+    unawaited(_writeHistory(active));
+    return active;
+  }
 
-  /// Stable id for the bound chat — creates one only if nothing is bound yet.
+  /// Records the bound thread as history after a real user turn.
+  Future<void> rememberCurrentAsHistory() async {
+    if (detached) return;
+    final id = conversationId.trim();
+    if (id.isEmpty) return;
+    historyConversationId = id;
+    await _writeHistory(id);
+  }
+
+  Future<void> _writeHistory(String id) async {
+    final gen = ++_historyGen;
+    await _appPref.setApnaClinicAiHistoryConversationId(id);
+    if (gen == _historyGen) return;
+    final latest = historyConversationId.trim();
+    if (latest.isNotEmpty && latest != id) {
+      await _writeHistory(latest);
+    }
+  }
+
+  /// Stable id for the bound chat. A detached window always mints a new id.
   Future<String> ensureConversationId() async {
-    if (conversationId.isNotEmpty) return conversationId;
-    await newConversation();
+    if (detached || conversationId.isEmpty) {
+      await newConversation();
+    }
     return conversationId;
   }
 
@@ -140,9 +215,17 @@ class ApnaClinicAiSdkClient {
   /// same thread. If memory was [detachConversation]’d, prefs stay for Continue
   /// but memory stays empty until restore/new.
   Future<void> clearSession({bool clearConversation = false}) async {
-    final boundId = conversationId.trim();
+    final keepMemoryId =
+        (!detached && !clearConversation) ? conversationId.trim() : '';
     final prefsId = _appPref.getApnaClinicAiConversationId().trim();
-    final keepId = boundId.isNotEmpty ? boundId : prefsId;
+    final historyId = clearConversation
+        ? ''
+        : (historyConversationId.trim().isNotEmpty
+              ? historyConversationId.trim()
+              : _appPref.getApnaClinicAiHistoryConversationId().trim());
+    final keepActivePref = clearConversation
+        ? ''
+        : (keepMemoryId.isNotEmpty ? keepMemoryId : prefsId);
     apiKey = null;
     accessToken = null;
     userId = null;
@@ -150,16 +233,28 @@ class ApnaClinicAiSdkClient {
     expiresAt = DateTime.fromMillisecondsSinceEpoch(0);
     isGuest = true;
     authMode = 'guest';
-    await _appPref.clearApnaClinicAiSession();
+    conversationId = '';
     if (clearConversation) {
-      conversationId = '';
+      detached = true;
+      historyConversationId = '';
+    }
+    await _appPref.clearApnaClinicAiSession();
+    // Keep `apna_clinic_ai_session_init.json` — greeting/audio replay on home.
+    if (historyId.isNotEmpty) {
+      historyConversationId = historyId;
+      await _writeHistory(historyId);
+    }
+    if (keepMemoryId.isNotEmpty) {
+      detached = false;
+      conversationId = keepMemoryId;
+      await _appPref.setApnaClinicAiConversationId(keepMemoryId);
       return;
     }
-    if (keepId.isNotEmpty) {
-      await _appPref.setApnaClinicAiConversationId(keepId);
+    // Detached window: prefs keep the previous thread for Continue, memory stays empty.
+    detached = true;
+    if (keepActivePref.isNotEmpty) {
+      await _appPref.setApnaClinicAiConversationId(keepActivePref);
     }
-    // Only keep memory bound when it was already bound before clear.
-    conversationId = boundId;
   }
 
   Future<void> ping() async {
@@ -193,7 +288,38 @@ class ApnaClinicAiSdkClient {
       body: body,
     );
     await _applySessionResponse(data, mode: mode);
+    // Greeting + audio.base64 are large; keep full JSON on disk for cached opens.
+    await saveInitResponse(data);
     return data;
+  }
+
+  /// Full `session/init` JSON (includes greeting audio). Not stored in AppPref.
+  Future<void> saveInitResponse(Map<String, dynamic> data) async {
+    try {
+      final file = await _initResponseFile();
+      await file.writeAsString(jsonEncode(data));
+    } catch (_) {
+      // Best-effort; credentials in AppPref still work without greeting replay.
+    }
+  }
+
+  /// Cached init body from the last successful [initSession], if any.
+  Future<Map<String, dynamic>?> readInitResponse() async {
+    try {
+      final file = await _initResponseFile();
+      if (!await file.exists()) return null;
+      final raw = await file.readAsString();
+      if (raw.trim().isEmpty) return null;
+      final decoded = jsonDecode(raw);
+      if (decoded is Map<String, dynamic>) return decoded;
+      if (decoded is Map) return Map<String, dynamic>.from(decoded);
+    } catch (_) {}
+    return null;
+  }
+
+  Future<File> _initResponseFile() async {
+    final dir = await getApplicationSupportDirectory();
+    return File('${dir.path}/apna_clinic_ai_session_init.json');
   }
 
   Future<void> ensureToken() async {
@@ -258,6 +384,91 @@ class ApnaClinicAiSdkClient {
   Future<Stream<Uint8List>> postTurnStream(Map<String, dynamic> body) async {
     await ensureToken();
     return _openStream('/api/v1/sdk/assistant/turn/stream', body);
+  }
+
+  /// Multipart SSE voice turn. Retries 403 up to 2 times (600ms backoff).
+  Future<Stream<Uint8List>> postAudioTurnStream({
+    required List<int> audioBytes,
+    required String conversationId,
+    String language = 'auto',
+    bool speak = true,
+  }) async {
+    await ensureToken();
+    final isWav = isApnaClinicAiWav(audioBytes);
+
+    DioException? lastError;
+    for (var attempt = 0; attempt < 3; attempt++) {
+      try {
+        if (attempt > 0) {
+          await Future<void>.delayed(const Duration(milliseconds: 600));
+          await ensureToken();
+        }
+        // Rebuild FormData each attempt — Dio consumes the stream once.
+        final formData = FormData.fromMap({
+          'api_key': apiKey,
+          if (sessionId != null && sessionId!.isNotEmpty)
+            'session_id': sessionId,
+          'conversation_id': conversationId,
+          'channel': 'voice',
+          'language': language,
+          'speak': speak ? 'true' : 'false',
+          'client_turn_id':
+              'turn_${DateTime.now().millisecondsSinceEpoch}',
+          'include_trace': 'false',
+          'dry_run': 'false',
+          'audio': MultipartFile.fromBytes(
+            audioBytes,
+            filename: isWav ? 'speech.wav' : 'speech.m4a',
+            contentType: isWav
+                ? MediaType('audio', 'wav')
+                : MediaType('audio', 'mp4'),
+          ),
+        });
+        final response = await _dio.post<ResponseBody>(
+          _url('/api/v1/sdk/assistant/turn/audio/stream'),
+          data: formData,
+          options: Options(
+            // Let Dio set multipart boundary; do not force Content-Type.
+            headers: _headers(json: false, authorize: true, sse: true),
+            responseType: ResponseType.stream,
+            sendTimeout: const Duration(seconds: 90),
+            receiveTimeout: const Duration(seconds: 120),
+          ),
+        );
+        final stream = response.data?.stream;
+        if (stream == null) {
+          throw const ApnaClinicAiSdkException(
+            ApnaClinicAiFailureCodes.connectFailed,
+          );
+        }
+        return stream;
+      } on DioException catch (error) {
+        lastError = error;
+        final status = error.response?.statusCode;
+        final retryable403 = status == 403 && attempt < 2;
+        if (retryable403) continue;
+        throw _mapDio(error, audioTurn: true);
+      }
+    }
+    throw _mapDio(
+      lastError ??
+          DioException(
+            requestOptions: RequestOptions(
+              path: '/api/v1/sdk/assistant/turn/audio/stream',
+            ),
+          ),
+      audioTurn: true,
+    );
+  }
+
+  Future<Map<String, dynamic>> fetchSpeakStatus() async {
+    await ensureToken();
+    return _send('GET', '/api/v1/sdk/voice/speak/status', authorize: true);
+  }
+
+  Future<Map<String, dynamic>> fetchTranscribeStatus() async {
+    await ensureToken();
+    return _send('GET', '/api/v1/sdk/voice/transcribe/status', authorize: true);
   }
 
   Future<void> _applySessionResponse(
@@ -380,21 +591,59 @@ class ApnaClinicAiSdkClient {
     }
   }
 
-  ApnaClinicAiSdkException _mapDio(DioException error) {
+  ApnaClinicAiSdkException _mapDio(
+    DioException error, {
+    bool audioTurn = false,
+  }) {
+    final status = error.response?.statusCode;
     final data = error.response?.data;
     var detail = '';
     if (data is Map) {
       detail = (data['detail'] ?? data['message'] ?? '').toString();
     } else if (data is String) {
       detail = data;
+    } else if (data is ResponseBody) {
+      detail = error.message ?? '';
     }
-    if (RegExp(r'502|504|upstream', caseSensitive: false).hasMatch(detail)) {
-      return const ApnaClinicAiSdkException(ApnaClinicAiFailureCodes.upstream);
+
+    final combined = '$status $detail ${error.message ?? ''}';
+    final noSpeech = RegExp(
+      r'no speech|not detected|too noisy|empty audio',
+      caseSensitive: false,
+    ).hasMatch(combined);
+    if (noSpeech || (audioTurn && status == 400)) {
+      return ApnaClinicAiSdkException(
+        ApnaClinicAiFailureCodes.noSpeech,
+        statusCode: status,
+        detail: detail,
+      );
     }
-    return const ApnaClinicAiSdkException(
+    if (status == 502 ||
+        status == 504 ||
+        error.type == DioExceptionType.connectionTimeout ||
+        error.type == DioExceptionType.receiveTimeout ||
+        error.type == DioExceptionType.sendTimeout ||
+        RegExp(r'502|504|upstream', caseSensitive: false).hasMatch(combined)) {
+      return ApnaClinicAiSdkException(
+        ApnaClinicAiFailureCodes.upstream,
+        statusCode: status,
+        detail: detail,
+      );
+    }
+    return ApnaClinicAiSdkException(
       ApnaClinicAiFailureCodes.connectFailed,
+      statusCode: status,
+      detail: detail,
     );
   }
+}
+
+bool isApnaClinicAiWav(List<int> bytes) {
+  return bytes.length >= 4 &&
+      bytes[0] == 0x52 &&
+      bytes[1] == 0x49 &&
+      bytes[2] == 0x46 &&
+      bytes[3] == 0x46;
 }
 
 Stream<Map<String, dynamic>> parseApnaClinicAiSse(

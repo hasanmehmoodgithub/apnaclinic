@@ -1,4 +1,5 @@
 import '../../domain/entities/apna_clinic_ai_card_entity.dart';
+import '../../domain/entities/apna_clinic_ai_home_resume_entity.dart';
 import '../../domain/entities/apna_clinic_ai_home_tile_entity.dart';
 import '../../domain/entities/apna_clinic_ai_session_entity.dart';
 import '../../domain/entities/apna_clinic_ai_turn_entity.dart';
@@ -14,7 +15,12 @@ extension ApnaClinicAiSessionModelMapper on ApnaClinicAiSessionModel {
       assistantName: assistantName,
       suggestions: suggestions,
       welcomeMessage: welcomeMessage,
+      greetingAudioBase64: greetingAudioBase64,
+      greetingAudioMediaType: greetingAudioMediaType,
+      composerHint: composerHint,
+      headerSubtitle: headerSubtitle,
       voiceEnabled: voiceEnabled,
+      voiceOutputEnabled: voiceOutputEnabled,
       homeTiles: homeTiles
           .map(
             (tile) => ApnaClinicAiHomeTileEntity(
@@ -25,6 +31,15 @@ extension ApnaClinicAiSessionModelMapper on ApnaClinicAiSessionModel {
             ),
           )
           .toList(),
+      homeResume: homeResume == null
+          ? null
+          : ApnaClinicAiHomeResumeEntity(
+              conversationId: homeResume!.conversationId,
+              title: homeResume!.title,
+              subtitle: homeResume!.subtitle,
+              send: homeResume!.send,
+              badge: homeResume!.badge,
+            ),
     );
   }
 }
@@ -88,11 +103,14 @@ extension ApnaClinicAiTurnModelMapper on ApnaClinicAiTurnModel {
               label: item.label,
               send: item.send,
               hint: item.hint,
+              url: item.url,
             ),
           )
           .toList(),
       audioBase64: audioBase64,
       audioMediaType: audioMediaType,
+      audioPending: audioPending,
+      turnId: turnId,
       signInRequired: signInRequired,
       authResumeMessage: authResumeMessage,
       authDeepLink: authDeepLink,

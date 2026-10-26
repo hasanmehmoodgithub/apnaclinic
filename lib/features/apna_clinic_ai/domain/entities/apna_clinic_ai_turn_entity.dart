@@ -15,6 +15,8 @@ class ApnaClinicAiTurnEntity extends Equatable {
     this.failureCode,
     this.audioBase64,
     this.audioMediaType,
+    this.audioPending = false,
+    this.turnId,
     this.signInRequired = false,
     this.authResumeMessage,
     this.authDeepLink,
@@ -31,6 +33,10 @@ class ApnaClinicAiTurnEntity extends Equatable {
   final List<ApnaClinicAiPaymentEntity> payments;
   final String? audioBase64;
   final String? audioMediaType;
+  /// True when SSE `final` arrives before a later `type: audio` event.
+  final bool audioPending;
+  /// Matches delayed SSE `type: audio` via `turn_id`.
+  final String? turnId;
   final bool signInRequired;
   final String? authResumeMessage;
   final String? authDeepLink;
@@ -48,6 +54,8 @@ class ApnaClinicAiTurnEntity extends Equatable {
     payments,
     audioBase64,
     audioMediaType,
+    audioPending,
+    turnId,
     signInRequired,
     authResumeMessage,
     authDeepLink,

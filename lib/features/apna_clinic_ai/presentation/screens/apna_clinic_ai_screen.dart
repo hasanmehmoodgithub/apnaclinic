@@ -1,26 +1,22 @@
 import 'dart:async';
-import 'dart:convert';
-import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:just_audio/just_audio.dart';
-import 'package:path_provider/path_provider.dart';
 
-import '../../../../core/constants/app_colors.dart';
+import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
-import '../../../../core/extensions/string_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/widgets/app_scaffold_gradient.dart';
 import '../../../../generated/assets.dart';
+import '../../data/services/apna_clinic_ai_audio_player_service.dart';
+import '../../domain/entities/apna_clinic_ai_message_entity.dart';
 import '../apna_clinic_ai_copy.dart';
 import '../constants/apna_clinic_ai_ui_config.dart';
 import '../cubit/apna_clinic_ai_cubit.dart';
 import '../cubit/apna_clinic_ai_state.dart';
 import '../widgets/apna_clinic_ai_chat_view.dart';
 import '../widgets/apna_clinic_ai_home_view.dart';
-import '../widgets/apna_clinic_ai_settings_sheet.dart';
 
 class ApnaClinicAiScreen extends StatefulWidget {
   const ApnaClinicAiScreen({super.key});
@@ -30,71 +26,45 @@ class ApnaClinicAiScreen extends StatefulWidget {
 }
 
 class _ApnaClinicAiScreenState extends State<ApnaClinicAiScreen> {
-  final _player = AudioPlayer();
+  late final ApnaClinicAiAudioPlayerService _audioPlayer;
   var _lastTtsNonce = 0;
   var _lastErrorNonce = 0;
 
   @override
+  void initState() {
+    super.initState();
+    _audioPlayer = sl<ApnaClinicAiAudioPlayerService>();
+  }
+
+  @override
   void dispose() {
-    _player.dispose();
+    // Stop TTS + mic as soon as the route leaves (don't wait for cubit close).
+    try {
+      unawaited(context.read<ApnaClinicAiCubit>().stopVoiceOnExit());
+    } catch (_) {}
+    unawaited(() async {
+      await _audioPlayer.stop();
+      await _audioPlayer.dispose();
+    }());
     super.dispose();
   }
 
-  Future<void> _playReply(String base64Audio, String? mediaType) async {
-    try {
-      final bytes = base64Decode(base64Audio);
-      if (bytes.isEmpty) return;
-      final dir = await getTemporaryDirectory();
-      final ext = _audioExtension(bytes, mediaType);
-      final file = File(
-        '${dir.path}/apna_clinic_ai_reply_${DateTime.now().microsecondsSinceEpoch}.$ext',
-      );
-      await file.writeAsBytes(bytes, flush: true);
-      await _player.stop();
-      await _player.setFilePath(file.path);
-      await _player.setVolume(1);
-      await _player.play();
-    } catch (_) {}
+  Future<void> _stopVoice(ApnaClinicAiCubit cubit) async {
+    await cubit.stopVoiceOnExit();
+    await _audioPlayer.stop();
   }
 
-  String _audioExtension(List<int> bytes, String? mediaType) {
-    final type = (mediaType ?? '').toLowerCase();
-    if (type.contains('mpeg') || type.contains('mp3')) return 'mp3';
-    if (type.contains('ogg') || type.contains('opus')) return 'ogg';
-    if (type.contains('wav')) return 'wav';
-    if (type.contains('mp4') || type.contains('m4a') || type.contains('aac')) {
-      return 'm4a';
-    }
-    if (bytes.length >= 4) {
-      final wav =
-          bytes[0] == 0x52 &&
-          bytes[1] == 0x49 &&
-          bytes[2] == 0x46 &&
-          bytes[3] == 0x46;
-      final ogg =
-          bytes[0] == 0x4F &&
-          bytes[1] == 0x67 &&
-          bytes[2] == 0x67 &&
-          bytes[3] == 0x53;
-      if (wav) return 'wav';
-      if (ogg) return 'ogg';
-      if (bytes[0] == 0x49 && bytes[1] == 0x44 && bytes[2] == 0x33) {
-        return 'mp3';
-      }
-      if (bytes[0] == 0xFF && (bytes[1] & 0xE0) == 0xE0) return 'mp3';
-    }
-    return 'm4a';
+  /// Chat → AI home (clears thread UI). Does not leave Care Companion.
+  Future<void> _backToAiHome(ApnaClinicAiCubit cubit) async {
+    await _audioPlayer.stop();
+    await cubit.leaveChatToHome();
   }
 
-  void _openSettings(ApnaClinicAiCubit cubit) {
-    showModalBottomSheet<void>(
-      context: context,
-      backgroundColor: AppColors.clrWhite,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
-      ),
-      builder: (_) => ApnaClinicAiSettingsSheet(cubit: cubit),
-    );
+  /// AI home → main Apna Clinic screen.
+  Future<void> _exitToApp(ApnaClinicAiCubit cubit) async {
+    await _stopVoice(cubit);
+    if (!mounted) return;
+    if (context.canPop()) context.pop();
   }
 
   @override
@@ -107,14 +77,46 @@ class _ApnaClinicAiScreenState extends State<ApnaClinicAiScreen> {
           previous.recording != current.recording ||
           previous.streaming != current.streaming,
       listener: (context, state) {
-        if (state.recording || state.streaming) {
-          if (_player.playing) unawaited(_player.stop());
+        final ttsChanged = state.ttsNonce != _lastTtsNonce;
+        // Stop only when the user starts a new turn — not when a voice
+        // reply finishes and auto-play begins in the same update cycle.
+        if ((state.recording || state.streaming) && !ttsChanged) {
+          if (_audioPlayer.isPlaying) unawaited(_audioPlayer.stop());
         }
-        if (state.ttsNonce != _lastTtsNonce &&
-            state.ttsBase64 != null &&
-            state.ttsBase64!.isNotEmpty) {
+        if (ttsChanged) {
           _lastTtsNonce = state.ttsNonce;
-          _playReply(state.ttsBase64!, state.ttsMediaType);
+          ApnaClinicAiMessageEntity? assistant;
+          for (final message in state.messages.reversed) {
+            if (message.role == ApnaClinicAiMessageRole.assistant &&
+                !message.pending) {
+              assistant = message;
+              break;
+            }
+          }
+          final clip = (state.ttsBase64 ?? '').trim();
+          final spoken = (state.ttsSpeakText ?? '').trim();
+          // Defer so streaming:false settles before speak starts.
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (!mounted) return;
+            if (clip.isNotEmpty) {
+              unawaited(
+                _audioPlayer.playBase64(
+                  clip,
+                  mediaType: state.ttsMediaType,
+                  // Home greeting has no chat message — keep a stable key so
+                  // the speaking bar can show on home.
+                  messageId: assistant?.id ?? 'home_greeting',
+                ),
+              );
+            } else if (spoken.isNotEmpty && assistant != null) {
+              unawaited(
+                _audioPlayer.toggleText(
+                  messageId: assistant.id,
+                  text: spoken,
+                ),
+              );
+            }
+          });
         }
         if (state.showChat &&
             state.errorCode != null &&
@@ -131,114 +133,58 @@ class _ApnaClinicAiScreenState extends State<ApnaClinicAiScreen> {
       },
       builder: (context, state) {
         final cubit = context.read<ApnaClinicAiCubit>();
-        return AppScaffoldGradient(
-          colors: ApnaClinicAiUiConfig.pageGradient,
-          child: Column(
-            children: [
-              if (state.showChat)
-                _ChatHeader(
-                  assistantName: state.assistantName.isEmpty
-                      ? l10n.apnaClinicAiTitle
-                      : state.assistantName,
-                  subtitle: state.streaming
-                      ? apnaClinicAiStageLabel(l10n, state.thinkingStage)
-                      : l10n.apnaClinicAiOnline,
-                  streaming: state.streaming,
-                  onBack: cubit.showHome,
-                  onNewChat: cubit.newChat,
-                  onSettings: () => _openSettings(cubit),
-                )
-              else
-                _HomeHeader(
-                  greeting: l10n.apnaClinicAiGreeting,
-                  displayName: state.userDisplayName.isEmpty
-                      ? l10n.apnaClinicAiGuest.capitalize
-                      : state.userDisplayName.capitalize,
-                  onClose: () {
-                    if (context.canPop()) context.pop();
-                  },
-                  onSettings: () => _openSettings(cubit),
-                ),
-              AppScaffoldGradientPanel(
-                child: state.showChat
-                    ? ApnaClinicAiChatView(state: state, cubit: cubit)
-                    : ApnaClinicAiHomeView(state: state, cubit: cubit),
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-}
-
-class _HomeHeader extends StatelessWidget {
-  const _HomeHeader({
-    required this.greeting,
-    required this.displayName,
-    required this.onClose,
-    required this.onSettings,
-  });
-
-  final String greeting;
-  final String displayName;
-  final VoidCallback onClose;
-  final VoidCallback onSettings;
-
-  @override
-  Widget build(BuildContext context) {
-    final initial = displayName.isNotEmpty ? displayName[0].toUpperCase() : 'A';
-    return Padding(
-      padding: EdgeInsets.fromLTRB(16.w, 10.h, 12.w, 6.h),
-      child: Row(
-        children: [
-          Container(
-            width: 42.r,
-            height: 42.r,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: ApnaClinicAiUiConfig.ctaSoft,
-              border: Border.all(color: ApnaClinicAiUiConfig.border),
-            ),
-            alignment: Alignment.center,
-            child: Text(
-              initial,
-              style: TextStyle(
-                color: ApnaClinicAiUiConfig.ctaDeep,
-                fontWeight: FontWeight.w700,
-                fontSize: 16.sp,
-              ),
-            ),
-          ),
-          SizedBox(width: 12.w),
-          Expanded(
+        // Chat: system back → AI home. AI home: system back → main app.
+        return PopScope(
+          canPop: !state.showChat,
+          onPopInvokedWithResult: (didPop, _) {
+            if (didPop) {
+              unawaited(_stopVoice(cubit));
+              return;
+            }
+            if (state.showChat) {
+              unawaited(_backToAiHome(cubit));
+            }
+          },
+          child: AppScaffoldGradient(
+            colors: ApnaClinicAiUiConfig.pageGradient,
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  greeting,
-                  style: TextStyle(
-                    color: ApnaClinicAiUiConfig.muted,
-                    fontSize: 12.sp,
-                    fontWeight: FontWeight.w500,
+                if (state.showChat)
+                  _ChatHeader(
+                    assistantName: state.assistantName.isEmpty
+                        ? l10n.apnaClinicAiTitle
+                        : state.assistantName,
+                    subtitle: state.streaming
+                        ? l10n.apnaClinicAiJustAMoment
+                        : (state.headerSubtitle.trim().isNotEmpty
+                              ? state.headerSubtitle.trim()
+                              : l10n.apnaClinicAiOnline),
+                    streaming: state.streaming,
+                    onBack: () => unawaited(_backToAiHome(cubit)),
+                    onNewChat: () {
+                      unawaited(_audioPlayer.stop());
+                      cubit.newChat();
+                    },
                   ),
-                ),
-                Text(
-                  displayName,
-                  style: TextStyle(
-                    color: ApnaClinicAiUiConfig.primaryText,
-                    fontWeight: FontWeight.w700,
-                    fontSize: 17.sp,
-                    letterSpacing: -0.2,
-                  ),
+                AppScaffoldGradientPanel(
+                  child: state.showChat
+                      ? ApnaClinicAiChatView(
+                          state: state,
+                          cubit: cubit,
+                          audioPlayer: _audioPlayer,
+                        )
+                      : ApnaClinicAiHomeView(
+                          state: state,
+                          cubit: cubit,
+                          audioPlayer: _audioPlayer,
+                          onClose: () => unawaited(_exitToApp(cubit)),
+                        ),
                 ),
               ],
             ),
           ),
-          _HeaderIconButton(icon: Icons.tune_rounded, onPressed: onSettings),
-          _HeaderIconButton(icon: Icons.close_rounded, onPressed: onClose),
-        ],
-      ),
+        );
+      },
     );
   }
 }
@@ -250,7 +196,6 @@ class _ChatHeader extends StatelessWidget {
     required this.streaming,
     required this.onBack,
     required this.onNewChat,
-    required this.onSettings,
   });
 
   final String assistantName;
@@ -258,7 +203,6 @@ class _ChatHeader extends StatelessWidget {
   final bool streaming;
   final VoidCallback onBack;
   final VoidCallback onNewChat;
-  final VoidCallback onSettings;
 
   @override
   Widget build(BuildContext context) {
@@ -341,7 +285,6 @@ class _ChatHeader extends StatelessWidget {
             onPressed: onNewChat,
             tooltip: AppLocalizations.of(context)!.apnaClinicAiNewChat,
           ),
-          _HeaderIconButton(icon: Icons.tune_rounded, onPressed: onSettings),
         ],
       ),
     );
@@ -354,12 +297,14 @@ class _HeaderIconButton extends StatelessWidget {
     required this.onPressed,
     this.tooltip,
     this.size = 20,
+    this.extent = 36,
   });
 
   final IconData icon;
   final VoidCallback onPressed;
   final String? tooltip;
   final double size;
+  final double extent;
 
   @override
   Widget build(BuildContext context) {
@@ -370,8 +315,8 @@ class _HeaderIconButton extends StatelessWidget {
         onTap: onPressed,
         borderRadius: BorderRadius.circular(10.r),
         child: Container(
-          width: 36.r,
-          height: 36.r,
+          width: extent.r,
+          height: extent.r,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10.r),
             border: Border.all(color: ApnaClinicAiUiConfig.border),

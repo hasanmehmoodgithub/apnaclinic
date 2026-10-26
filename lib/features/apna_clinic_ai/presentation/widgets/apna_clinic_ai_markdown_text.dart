@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/extensions/screen_util_extensions.dart';
+import '../../../payment/presentation/payment_navigation.dart';
 import '../constants/apna_clinic_ai_ui_config.dart';
 
 /// Small markdown subset used by assistant replies: paragraphs, bold, lists.
@@ -16,7 +17,7 @@ class ApnaClinicAiMarkdownText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final blocks = _blocks(text);
+    final blocks = _blocks(text, context);
     if (blocks.isEmpty) return const SizedBox.shrink();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -29,7 +30,7 @@ class ApnaClinicAiMarkdownText extends StatelessWidget {
     );
   }
 
-  List<Widget> _blocks(String source) {
+  List<Widget> _blocks(String source, BuildContext context) {
     final widgets = <Widget>[];
     final paragraph = <String>[];
     var list = <_ListItem>[];
@@ -37,7 +38,10 @@ class ApnaClinicAiMarkdownText extends StatelessWidget {
     void flushParagraph() {
       if (paragraph.isEmpty) return;
       widgets.add(
-        Text.rich(_inline(paragraph.join(' '), style), style: style),
+        Text.rich(
+          _inline(paragraph.join(' '), style, context),
+          style: style,
+        ),
       );
       paragraph.clear();
     }
@@ -56,7 +60,10 @@ class ApnaClinicAiMarkdownText extends StatelessWidget {
                   children: [
                     Text(list[i].ordered ? '${i + 1}. ' : '• ', style: style),
                     Expanded(
-                      child: Text.rich(_inline(list[i].text, style), style: style),
+                      child: Text.rich(
+                        _inline(list[i].text, style, context),
+                        style: style,
+                      ),
                     ),
                   ],
                 ),
@@ -91,8 +98,10 @@ class ApnaClinicAiMarkdownText extends StatelessWidget {
     return widgets;
   }
 
-  TextSpan _inline(String source, TextStyle base) {
-    final pattern = RegExp(r'\*\*[^*]+\*\*|`[^`]+`|\*[^*\s][^*]*\*');
+  TextSpan _inline(String source, TextStyle base, BuildContext context) {
+    final pattern = RegExp(
+      r'\[[^\]]+\]\([^)\s]+\)|\*\*[^*]+\*\*|`[^`]+`|\*[^*\s][^*]*\*',
+    );
     final children = <InlineSpan>[];
     var start = 0;
     for (final match in pattern.allMatches(source)) {
@@ -100,7 +109,38 @@ class ApnaClinicAiMarkdownText extends StatelessWidget {
         children.add(TextSpan(text: source.substring(start, match.start)));
       }
       final token = match.group(0)!;
-      if (token.startsWith('**')) {
+      if (token.startsWith('[')) {
+        final link = RegExp(r'^\[([^\]]+)\]\(([^)\s]+)\)$').firstMatch(token);
+        final label = link?.group(1) ?? token;
+        final url = link?.group(2) ?? '';
+        final linkStyle = base.copyWith(
+          color: ApnaClinicAiUiConfig.ctaDeep,
+          fontWeight: FontWeight.w700,
+          decoration: TextDecoration.underline,
+        );
+        final http = url.startsWith('http://') || url.startsWith('https://');
+        if (http) {
+          children.add(
+            WidgetSpan(
+              alignment: PlaceholderAlignment.baseline,
+              baseline: TextBaseline.alphabetic,
+              child: GestureDetector(
+                onTap: () {
+                  openCardPaymentWebView(
+                    context,
+                    paymentUrl: url,
+                    title: label,
+                    allowClose: true,
+                  );
+                },
+                child: Text(label, style: linkStyle),
+              ),
+            ),
+          );
+        } else {
+          children.add(TextSpan(text: label, style: linkStyle));
+        }
+      } else if (token.startsWith('**')) {
         children.add(
           TextSpan(
             text: token.substring(2, token.length - 2),

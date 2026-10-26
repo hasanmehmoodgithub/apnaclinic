@@ -1,4 +1,7 @@
 {
-  "APNA_CLINIC_AI_BASE_URL": "https://cc91-119-160-81-47.ngrok-free.app",
-  "APNA_CLINIC_AI_SDK_KEY": "sdk_apnaclinic_h2A7VpAjpEMHMEC_OBC4MlOjHrLiyTEPrXRDoIMWlIo"
+  "JIMI_BASE_URL": "https://jazzred-msa-stg.jazz.com.pk/ai-services/jimi",
+  "JIMI_SDK_KEY": "sdk_apnaclinic_…",
+  "JIMI_TENANT": "apnaclinic",
+  "APNA_CLINIC_AI_BASE_URL": "https://jazzred-msa-stg.jazz.com.pk/ai-services/jimi",
+  "APNA_CLINIC_AI_SDK_KEY": "sdk_apnaclinic_…"
 }

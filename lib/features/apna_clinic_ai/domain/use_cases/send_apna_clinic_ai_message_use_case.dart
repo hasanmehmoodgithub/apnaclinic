@@ -21,4 +21,7 @@ class SendApnaClinicAiMessageUseCase {
 
   String peekPersistedConversationId() =>
       repository.peekPersistedConversationId();
+
+  Future<void> rememberCurrentAsHistory() =>
+      repository.rememberCurrentAsHistory();
 }

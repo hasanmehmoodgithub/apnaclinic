@@ -11,6 +11,11 @@ class ApnaClinicAiMessageEntity extends Equatable {
     this.pending = false,
     this.showEmergencyNote = false,
     this.failureCode,
+    this.audioBase64,
+    this.audioMediaType,
+    this.audioPending = false,
+    this.turnId,
+    this.sentAt,
   });
 
   final String id;
@@ -20,6 +25,15 @@ class ApnaClinicAiMessageEntity extends Equatable {
   final bool pending;
   final bool showEmergencyNote;
   final String? failureCode;
+  final String? audioBase64;
+  final String? audioMediaType;
+  /// True after `final` with `audio_pending` until delayed `type: audio` attaches.
+  final bool audioPending;
+  /// Server `turn_id` used to attach delayed `type: audio` clips.
+  final String? turnId;
+  final DateTime? sentAt;
+
+  bool get hasAudio => (audioBase64 ?? '').isNotEmpty;
 
   ApnaClinicAiMessageEntity copyWith({
     String? text,
@@ -28,6 +42,11 @@ class ApnaClinicAiMessageEntity extends Equatable {
     bool? showEmergencyNote,
     String? failureCode,
     bool clearFailureCode = false,
+    String? audioBase64,
+    String? audioMediaType,
+    bool clearAudio = false,
+    bool? audioPending,
+    String? turnId,
   }) {
     return ApnaClinicAiMessageEntity(
       id: id,
@@ -37,6 +56,13 @@ class ApnaClinicAiMessageEntity extends Equatable {
       pending: pending ?? this.pending,
       showEmergencyNote: showEmergencyNote ?? this.showEmergencyNote,
       failureCode: clearFailureCode ? null : (failureCode ?? this.failureCode),
+      audioBase64: clearAudio ? null : (audioBase64 ?? this.audioBase64),
+      audioMediaType: clearAudio
+          ? null
+          : (audioMediaType ?? this.audioMediaType),
+      audioPending: audioPending ?? this.audioPending,
+      turnId: turnId ?? this.turnId,
+      sentAt: sentAt,
     );
   }
 
@@ -49,5 +75,9 @@ class ApnaClinicAiMessageEntity extends Equatable {
     pending,
     showEmergencyNote,
     failureCode,
+    hasAudio,
+    audioPending,
+    turnId,
+    sentAt,
   ];
 }

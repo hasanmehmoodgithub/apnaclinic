@@ -1,28 +1,34 @@
 import 'package:equatable/equatable.dart';
 
 import '../../domain/entities/apna_clinic_ai_card_entity.dart';
+import '../../domain/entities/apna_clinic_ai_home_resume_entity.dart';
 import '../../domain/entities/apna_clinic_ai_home_tile_entity.dart';
 import '../../domain/entities/apna_clinic_ai_message_entity.dart';
+import '../apna_clinic_ai_copy.dart';
 
 class ApnaClinicAiState extends Equatable {
   const ApnaClinicAiState({
     this.showChat = false,
     this.streaming = false,
     this.recording = false,
-    this.connecting = false,
-    this.speakReplies = false,
+    this.connecting = true,
     this.signInRequired = false,
     this.emergencyVisible = false,
     this.voiceEnabled = false,
+    this.voiceOutputEnabled = false,
     this.voiceLanguageCode = 'en',
     this.isGuest = true,
     this.thinkingStage = 'listening',
     this.liveCaption = '',
-    this.assistantName = 'ApnaClinic',
+    this.assistantName = apnaClinicAiDisplayName,
     this.userDisplayName = '',
+    this.userImageUrl = '',
     this.welcomeMessage = '',
+    this.composerHint = '',
+    this.headerSubtitle = '',
     this.suggestions = const [],
     this.homeTiles = const [],
+    this.homeResume,
     this.lastComplaint,
     this.lastComplaintAtMillis,
     this.errorCode,
@@ -37,6 +43,7 @@ class ApnaClinicAiState extends Equatable {
     this.authDeepLink,
     this.ttsBase64,
     this.ttsMediaType,
+    this.ttsSpeakText,
     this.ttsNonce = 0,
   });
 
@@ -44,19 +51,23 @@ class ApnaClinicAiState extends Equatable {
   final bool streaming;
   final bool recording;
   final bool connecting;
-  final bool speakReplies;
   final bool signInRequired;
   final bool emergencyVisible;
   final bool voiceEnabled;
+  final bool voiceOutputEnabled;
   final String voiceLanguageCode;
   final bool isGuest;
   final String thinkingStage;
   final String liveCaption;
   final String assistantName;
   final String userDisplayName;
+  final String userImageUrl;
   final String welcomeMessage;
+  final String composerHint;
+  final String headerSubtitle;
   final List<String> suggestions;
   final List<ApnaClinicAiHomeTileEntity> homeTiles;
+  final ApnaClinicAiHomeResumeEntity? homeResume;
   final String? lastComplaint;
   final int? lastComplaintAtMillis;
   final String? errorCode;
@@ -71,6 +82,7 @@ class ApnaClinicAiState extends Equatable {
   final String? authDeepLink;
   final String? ttsBase64;
   final String? ttsMediaType;
+  final String? ttsSpeakText;
   final int ttsNonce;
 
   bool get hasThread => messages.isNotEmpty;
@@ -80,19 +92,24 @@ class ApnaClinicAiState extends Equatable {
     bool? streaming,
     bool? recording,
     bool? connecting,
-    bool? speakReplies,
     bool? signInRequired,
     bool? emergencyVisible,
     bool? voiceEnabled,
+    bool? voiceOutputEnabled,
     String? voiceLanguageCode,
     bool? isGuest,
     String? thinkingStage,
     String? liveCaption,
     String? assistantName,
     String? userDisplayName,
+    String? userImageUrl,
     String? welcomeMessage,
+    String? composerHint,
+    String? headerSubtitle,
     List<String>? suggestions,
     List<ApnaClinicAiHomeTileEntity>? homeTiles,
+    ApnaClinicAiHomeResumeEntity? homeResume,
+    bool setHomeResume = false,
     String? lastComplaint,
     int? lastComplaintAtMillis,
     String? errorCode,
@@ -107,6 +124,7 @@ class ApnaClinicAiState extends Equatable {
     String? authDeepLink,
     String? ttsBase64,
     String? ttsMediaType,
+    String? ttsSpeakText,
     int? ttsNonce,
     bool clearError = false,
     bool clearComplaint = false,
@@ -118,19 +136,23 @@ class ApnaClinicAiState extends Equatable {
       streaming: streaming ?? this.streaming,
       recording: recording ?? this.recording,
       connecting: connecting ?? this.connecting,
-      speakReplies: speakReplies ?? this.speakReplies,
       signInRequired: signInRequired ?? this.signInRequired,
       emergencyVisible: emergencyVisible ?? this.emergencyVisible,
       voiceEnabled: voiceEnabled ?? this.voiceEnabled,
+      voiceOutputEnabled: voiceOutputEnabled ?? this.voiceOutputEnabled,
       voiceLanguageCode: voiceLanguageCode ?? this.voiceLanguageCode,
       isGuest: isGuest ?? this.isGuest,
       thinkingStage: thinkingStage ?? this.thinkingStage,
       liveCaption: liveCaption ?? this.liveCaption,
       assistantName: assistantName ?? this.assistantName,
       userDisplayName: userDisplayName ?? this.userDisplayName,
+      userImageUrl: userImageUrl ?? this.userImageUrl,
       welcomeMessage: welcomeMessage ?? this.welcomeMessage,
+      composerHint: composerHint ?? this.composerHint,
+      headerSubtitle: headerSubtitle ?? this.headerSubtitle,
       suggestions: suggestions ?? this.suggestions,
       homeTiles: homeTiles ?? this.homeTiles,
+      homeResume: setHomeResume ? homeResume : this.homeResume,
       lastComplaint: clearComplaint
           ? null
           : (lastComplaint ?? this.lastComplaint),
@@ -151,8 +173,13 @@ class ApnaClinicAiState extends Equatable {
       authDeepLink: clearAuthResume
           ? null
           : (authDeepLink ?? this.authDeepLink),
-      ttsBase64: clearTts ? null : (ttsBase64 ?? this.ttsBase64),
-      ttsMediaType: clearTts ? null : (ttsMediaType ?? this.ttsMediaType),
+      ttsBase64: clearTts ? ttsBase64 : (ttsBase64 ?? this.ttsBase64),
+      ttsMediaType: clearTts
+          ? ttsMediaType
+          : (ttsMediaType ?? this.ttsMediaType),
+      ttsSpeakText: clearTts
+          ? ttsSpeakText
+          : (ttsSpeakText ?? this.ttsSpeakText),
       ttsNonce: ttsNonce ?? this.ttsNonce,
     );
   }
@@ -163,19 +190,23 @@ class ApnaClinicAiState extends Equatable {
     streaming,
     recording,
     connecting,
-    speakReplies,
     signInRequired,
     emergencyVisible,
     voiceEnabled,
+    voiceOutputEnabled,
     voiceLanguageCode,
     isGuest,
     thinkingStage,
     liveCaption,
     assistantName,
     userDisplayName,
+    userImageUrl,
     welcomeMessage,
+    composerHint,
+    headerSubtitle,
     suggestions,
     homeTiles,
+    homeResume,
     lastComplaint,
     lastComplaintAtMillis,
     errorCode,
@@ -190,6 +221,7 @@ class ApnaClinicAiState extends Equatable {
     authDeepLink,
     ttsBase64,
     ttsMediaType,
+    ttsSpeakText,
     ttsNonce,
   ];
 }

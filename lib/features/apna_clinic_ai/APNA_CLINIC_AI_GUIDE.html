@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Apna Clinic AI — Screen & API Guide</title>
+  <style>
+    :root {
+      --cta: #0FAA9A;
+      --cta-deep: #00897B;
+      --ink: #1a2e2b;
+      --muted: #5a6f6b;
+      --panel: #ffffff;
+      --page: #f0f7f5;
+      --border: #d5e8e4;
+      --user: #0FAA9A;
+      --bot: #f7fbfa;
+      --warn: #b45309;
+      --danger: #b91c1c;
+      --code-bg: #13201e;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: linear-gradient(180deg, #e8f5UZyoWTmzVwu_Yr4ayDBiEZ3VIYf-_CBnKKO_ZNecjIY
+ f2 0%, var(--page) 40%, #eef2f1 100%);
+      color: var(--ink);
+      line-height: 1.55;
+      padding: 24px 16px 64px;
+    }
+    .wrap { max-width: 980px; margin: 0 auto; }
+    header.hero {
+      background: linear-gradient(135deg, var(--cta-deep), var(--cta));
+      color: #fff;
+      border-radius: 20px;
+      padding: 32px 28px;
+      margin-bottom: 24px;
+      box-shadow: 0 12px 32px rgba(0, 137, 123, 0.25);
+    }
+    header.hero h1 { font-size: 1.85rem; font-weight: 700; letter-spacing: -0.02em; }
+    header.hero p { margin-top: 10px; opacity: 0.92; max-width: 62ch; }
+    .badge {
+      display: inline-block;
+      background: rgba(255,255,255,0.18);
+      border: 1px solid rgba(255,255,255,0.35);
+      border-radius: 999px;
+      padding: 4px 12px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+    nav.toc {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 18px 22px;
+      margin-bottom: 24px;
+    }
+    nav.toc h2 { font-size: 0.95rem; color: var(--cta-deep); margin-bottom: 10px; }
+    nav.toc ol { margin-left: 1.2rem; columns: 2; gap: 24px; }
+    nav.toc a { color: var(--ink); text-decoration: none; }
+    nav.toc a:hover { color: var(--cta); }
+    @media (max-width: 640px) { nav.toc ol { columns: 1; } }
+
+    section.card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 26px 28px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 10px rgba(15, 61, 50, 0.04);
+    }
+    section.card h2 {
+      font-size: 1.35rem;
+      color: var(--cta-deep);
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid var(--border);
+    }
+    section.card h3 {
+      font-size: 1.05rem;
+      margin: 20px 0 8px;
+      color: var(--ink);
+    }
+    p, li { color: var(--muted); }
+    p { margin-bottom: 10px; }
+    ul, ol { margin: 8px 0 14px 1.25rem; }
+    li { margin-bottom: 6px; }
+    strong { color: var(--ink); }
+    code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 0.86em;
+      background: #eef7f5;
+      color: var(--cta-deep);
+      padding: 1px 6px;
+      border-radius: 4px;
+    }
+    pre {
+      background: var(--code-bg);
+      color: #e8f5f2;
+      padding: 16px 18px;
+      border-radius: 12px;
+      overflow-x: auto;
+      font-size: 0.82rem;
+      line-height: 1.45;
+      margin: 12px 0 16px;
+    }
+    pre .c { color: #7a9e98; }
+    pre .k { color: #5eead4; }
+    pre .s { color: #fde68a; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 12px 0 16px;
+      font-size: 0.92rem;
+    }
+    th, td {
+      border: 1px solid var(--border);
+      padding: 10px 12px;
+      text-align: left;
+      vertical-align: top;
+    }
+    th { background: #e8f5f2; color: var(--cta-deep); font-weight: 600; }
+    .note {
+      background: #fffbeb;
+      border-left: 4px solid var(--warn);
+      padding: 12px 14px;
+      border-radius: 0 10px 10px 0;
+      margin: 14px 0;
+      color: #78350f;
+      font-size: 0.92rem;
+    }
+    .danger {
+      background: #fef2f2;
+      border-left: 4px solid var(--danger);
+      padding: 12px 14px;
+      border-radius: 0 10px 10px 0;
+      margin: 14px 0;
+      color: #7f1d1d;
+      font-size: 0.92rem;
+    }
+
+    /* Flow diagrams */
+    .flow {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      margin: 14px 0 18px;
+    }
+    .flow .box {
+      background: #e8f5f2;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--ink);
+      max-width: 180px;
+    }
+    .flow .box.api { background: #13201e; color: #5eead4; border-color: #1f3330; }
+    .flow .box.ui { background: var(--cta); color: #fff; border-color: var(--cta-deep); }
+    .flow .arrow { color: var(--cta-deep); font-weight: 700; }
+
+    .phone {
+      max-width: 320px;
+      margin: 16px auto;
+      border: 3px solid #1a2e2b;
+      border-radius: 28px;
+      padding: 12px 10px 16px;
+      background: linear-gradient(180deg, #e8f5f2, #fff);
+    }
+    .phone .bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 8px 12px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--cta-deep);
+    }
+    .phone .bubble {
+      margin: 6px 8px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      font-size: 0.8rem;
+      max-width: 85%;
+    }
+    .phone .bubble.bot {
+      background: var(--bot);
+      border: 1px solid var(--border);
+      border-bottom-left-radius: 4px;
+    }
+    .phone .bubble.user {
+      background: var(--user);
+      color: #fff;
+      margin-left: auto;
+      border-bottom-right-radius: 4px;
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+    .phone .composer {
+      margin-top: 12px;
+      display: flex;
+      gap: 8px;
+      padding: 0 6px;
+    }
+    .phone .composer .field {
+      flex: 1;
+      height: 36px;
+      border-radius: 18px;
+      border: 1px solid var(--border);
+      background: #fff;
+    }
+    .phone .composer .mic {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: var(--cta); color: #fff;
+      display: grid; place-items: center; font-size: 0.85rem;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin: 14px 0;
+    }
+    @media (max-width: 720px) { .grid-2 { grid-template-columns: 1fr; } }
+    .mini {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px;
+      background: #fafcfb;
+    }
+    .mini h4 { color: var(--cta-deep); margin-bottom: 8px; font-size: 0.95rem; }
+    footer {
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.82rem;
+      margin-top: 28px;
+    }
+    a.ext { color: var(--cta-deep); }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="hero">
+      <div class="badge">Care Companion · Tenant <code style="background:transparent;color:#fff;border:1px solid rgba(255,255,255,.4)">apnaclinic</code></div>
+      <h1>Apna Clinic AI — Screen &amp; API Guide</h1>
+      <p>
+        How the in-app Care Companion works: screens, session auth, text/voice turn APIs,
+        SSE events, cards, and exit/voice cleanup. Separate from consultation
+        <code style="background:rgba(0,0,0,.15);color:#fff">AppRoutes.aiScreening</code> WebView.
+      </p>
+    </header>
+
+    <nav class="toc">
+      <h2>Contents</h2>
+      <ol>
+        <li><a href="#overview">Overview</a></li>
+        <li><a href="#entry">Entry &amp; routes</a></li>
+        <li><a href="#screens">Screens</a></li>
+        <li><a href="#architecture">Architecture</a></li>
+        <li><a href="#config">Config &amp; headers</a></li>
+        <li><a href="#session">Session init</a></li>
+        <li><a href="#conversation">Conversation ID</a></li>
+        <li><a href="#text">Text turn flow</a></li>
+        <li><a href="#voice">Voice / audio stream</a></li>
+        <li><a href="#sse">SSE event contract</a></li>
+        <li><a href="#cards">Cards &amp; rails</a></li>
+        <li><a href="#errors">Errors &amp; fallbacks</a></li>
+        <li><a href="#exit">Exit / stop voice</a></li>
+        <li><a href="#files">Code map</a></li>
+      </ol>
+    </nav>
+
+    <section class="card" id="overview">
+      <h2>1. Overview</h2>
+      <p>
+        <strong>Apna Clinic AI</strong> is a guest-capable health assistant embedded in the Flutter app.
+        Users describe symptoms (type or voice), get streamed replies, doctor/medicine cards,
+        slot calendars, and payment chips. Critical symptoms surface <strong>Rescue 1122</strong>.
+      </p>
+      <p>
+        Networking uses a dedicated <code>ApnaClinicAiSdkClient</code> (own Dio). It does
+        <strong>not</strong> go through clinic <code>ApiService</code> HMAC / JWT interceptors.
+      </p>
+      <div class="flow">
+        <div class="box ui">Dashboard / Bot</div>
+        <span class="arrow">→</span>
+        <div class="box ui">AI Home</div>
+        <span class="arrow">→</span>
+        <div class="box ui">Chat</div>
+        <span class="arrow">→</span>
+        <div class="box api">Jimi SDK APIs</div>
+      </div>
+    </section>
+
+    <section class="card" id="entry">
+      <h2>2. Entry &amp; routes</h2>
+      <table>
+        <thead>
+          <tr><th>Item</th><th>Value</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Route</td>
+            <td><code>AppRoutes.apnaClinicAi</code> (<code>apna-clinic-ai</code>)</td>
+          </tr>
+          <tr>
+            <td>Open from</td>
+            <td>Dashboard menu <strong>Apna Clinic AI</strong>; home floating <strong>Apna Clinic Bot</strong></td>
+          </tr>
+          <tr>
+            <td>Login required?</td>
+            <td>No — guest works. Sign-in required only for booking/cart actions from the assistant.</td>
+          </tr>
+          <tr>
+            <td>DI</td>
+            <td><code>BlocProvider(create: () =&gt; sl&lt;ApnaClinicAiCubit&gt;())</code> in <code>app_router.dart</code></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="card" id="screens">
+      <h2>3. Screens</h2>
+      <div class="grid-2">
+        <div class="mini">
+          <h4>Home</h4>
+          <ul>
+            <li>Greeting + guest / first name</li>
+            <li>Welcome message from SDK</li>
+            <li>Concern suggestion chips</li>
+            <li>Capability tiles (<code>/home</code> cards)</li>
+            <li>Continue last complaint card</li>
+            <li>SOS / Rescue 1122</li>
+            <li>Composer + mic (voice note)</li>
+          </ul>
+        </div>
+        <div class="mini">
+          <h4>Chat</h4>
+          <ul>
+            <li>User text or voice bubble (transcript from <code>transcription.text</code>)</li>
+            <li>Streaming assistant reply (markdown)</li>
+            <li>Doctor / medicine cards</li>
+            <li>Slot day calendar + time chips</li>
+            <li>Payment / quick-action chips</li>
+            <li>Sign-in CTA when <code>sign_in_required</code></li>
+            <li>New chat from chat header refresh</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="phone" aria-hidden="true">
+        <div class="bar"><span>apna clinic · SMART DOCTOR</span><span>⚙</span></div>
+        <div class="bubble bot">Which specialist do you need?</div>
+        <div class="bubble user"><span>🎤</span> Voice note</div>
+        <div class="bubble bot">Transcribing… → streamed reply + cards</div>
+        <div class="composer">
+          <div class="field"></div>
+          <div class="mic">🎙️</div>
+        </div>
+      </div>
+
+      <p>
+        Widgets live under <code>presentation/widgets/</code>. Screen file:
+        <code>apna_clinic_ai_screen.dart</code> (thin: TTS player + home/chat switch).
+      </p>
+    </section>
+
+    <section class="card" id="architecture">
+      <h2>4. Architecture (clean layers)</h2>
+<pre><span class="c">// Presentation</span>
+ApnaClinicAiScreen → Cubit → UI widgets
+<span class="c">// Domain</span>
+EnsureSession / SendMessage / SendAudio use-cases
+<span class="c">// Data</span>
+Repository → RemoteDataSource → SdkClient (Dio)
+                 ↘ LocalDataSource (device id, last complaint)
+AudioRecorderService · AudioPlayerService · SpeechToText (fallback only)
+</pre>
+      <ul>
+        <li><strong>Cubit</strong> — connect, send text, record/send audio, emergency, sign-in resume</li>
+        <li><strong>SdkClient</strong> — ping, session, token, app/home, text stream, audio stream, speak statuses</li>
+        <li><strong>Turn parser</strong> — maps SSE/JSON <code>blocks</code> into doctors, slots, payments, quick actions, TTS audio</li>
+      </ul>
+    </section>
+
+    <section class="card" id="config">
+      <h2>5. Config &amp; headers</h2>
+      <h3>Dart defines (priority)</h3>
+      <ol>
+        <li><code>JIMI_BASE_URL</code>, <code>JIMI_SDK_KEY</code>, <code>JIMI_TENANT</code> (default <code>apnaclinic</code>)</li>
+        <li>Fallback: <code>APNA_CLINIC_AI_BASE_URL</code>, <code>APNA_CLINIC_AI_SDK_KEY</code></li>
+      </ol>
+<pre>flutter run --dart-define-from-file=apna_clinic_ai.keys.json</pre>
+
+      <h3>Common headers</h3>
+      <table>
+        <thead><tr><th>Header</th><th>When</th></tr></thead>
+        <tbody>
+          <tr><td><code>X-SDK-Key</code></td><td>Always (tenant SDK key)</td></tr>
+          <tr><td><code>Authorization: Bearer &lt;access_token&gt;</code></td><td>After session; refreshed ~30s before expiry</td></tr>
+          <tr><td><code>X-User-Token: Bearer &lt;clinic JWT&gt;</code></td><td>Only if app user is logged in</td></tr>
+          <tr><td><code>Accept: text/event-stream</code></td><td>SSE turns (text + audio stream)</td></tr>
+          <tr><td><code>Content-Type</code></td><td>JSON for text; <em>omit</em> for multipart (Dio sets boundary)</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="card" id="session">
+      <h2>6. Session init</h2>
+      <div class="flow">
+        <div class="box ui">connect()</div>
+        <span class="arrow">→</span>
+        <div class="box api">GET /ping</div>
+        <span class="arrow">→</span>
+        <div class="box api">POST /session/init</div>
+        <span class="arrow">→</span>
+        <div class="box api">GET /app + POST /home</div>
+      </div>
+
+      <h3>Guest</h3>
+<pre>{
+  <span class="k">"mode"</span>: <span class="s">"guest"</span>,
+  <span class="k">"device_id"</span>: <span class="s">"ac-…"</span>
+}</pre>
+
+      <h3>Signed-in</h3>
+<pre>{
+  <span class="k">"mode"</span>: <span class="s">"signed_in"</span>,
+  <span class="k">"device_id"</span>: <span class="s">"ac-…"</span>,
+  <span class="k">"msisdn"</span>: <span class="s">"923001234567"</span>,
+  <span class="k">"name"</span>: <span class="s">"Ayesha Khan"</span>,
+  <span class="k">"email"</span>: <span class="s">"user@example.com"</span>
+}</pre>
+      <p>MSISDN normalized: <code>0300…</code> / <code>300…</code> → <code>92300…</code>.</p>
+
+      <h3>Persisted in AppPref</h3>
+      <table>
+        <thead><tr><th>Key</th><th>Purpose</th></tr></thead>
+        <tbody>
+          <tr><td><code>apnaClinicAiApiKey</code></td><td>SDK api_key</td></tr>
+          <tr><td><code>apnaClinicAiSessionId</code></td><td>session_id</td></tr>
+          <tr><td><code>apnaClinicAiAccessToken</code></td><td>JWT</td></tr>
+          <tr><td><code>apnaClinicAiTokenExpiresAt</code></td><td>epoch ms</td></tr>
+          <tr><td><code>apnaClinicAiAuthMode</code></td><td><code>guest</code> | <code>signed_in</code></td></tr>
+          <tr><td><code>apnaClinicAiConversationId</code></td><td>active thread id</td></tr>
+          <tr><td><code>apnaClinicAiHistoryConversationId</code></td><td>last sent thread — Continue / Resume only</td></tr>
+        </tbody>
+      </table>
+      <p>Cleared on logout. Mode mismatch forces session re-init without rotating a bound conversation mid-chat.</p>
+      <p>Details: <a class="ext" href="SESSION_INIT.md">SESSION_INIT.md</a></p>
+    </section>
+
+    <section class="card" id="conversation">
+      <h2>7. Conversation ID rules</h2>
+      <ol>
+        <li><strong>Common concerns</strong> and <strong>What I can do</strong> → always a <strong>new</strong> id. The <code>resume_open_request</code> card is not a tile.</li>
+        <li><strong>Continue</strong> from <code>home.resume</code> → restore <code>resume.conversation_id</code> and send <code>__resume__</code>. Hidden once <code>expires_at</code> has passed. Otherwise Continue and home voice restore <code>apnaClinicAiHistoryConversationId</code>.</li>
+        <li>Home text field → <strong>new</strong> id.</li>
+        <li>History updates only after a turn is sent. Later turns in that chat keep the same id (including sign-in resume).</li>
+        <li><strong>New chat</strong> mints another id.</li>
+      </ol>
+      <div class="note">
+        Rotating <code>conversation_id</code> mid-chat breaks triage, cart confirmations, and
+        <code>auth.resume.message</code> after login.
+      </div>
+    </section>
+
+    <section class="card" id="text">
+      <h2>8. Text turn flow</h2>
+      <div class="flow">
+        <div class="box ui">sendText</div>
+        <span class="arrow">→</span>
+        <div class="box">ensureToken</div>
+        <span class="arrow">→</span>
+        <div class="box api">speak? JSON /turn : SSE /turn/stream</div>
+        <span class="arrow">→</span>
+        <div class="box ui">tokens + final cards</div>
+      </div>
+
+      <table>
+        <thead><tr><th>Mode</th><th>Endpoint</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>Speak off</td>
+            <td><code>POST /api/v1/sdk/assistant/turn/stream</code></td>
+            <td>SSE tokens; no TTS audio</td>
+          </tr>
+          <tr>
+            <td>Speak on when voice.output.enabled (voice-originated text)</td>
+            <td><code>POST /api/v1/sdk/assistant/turn</code></td>
+            <td>JSON body <code>speak: true</code>; may return <code>audio.base64</code></td>
+          </tr>
+        </tbody>
+      </table>
+
+<pre>{
+  <span class="k">"api_key"</span>: <span class="s">"…"</span>,
+  <span class="k">"session_id"</span>: <span class="s">"…"</span>,
+  <span class="k">"conversation_id"</span>: <span class="s">"ac-…"</span>,
+  <span class="k">"message"</span>: <span class="s">"I have fever"</span>,
+  <span class="k">"channel"</span>: <span class="s">"app"</span>,
+  <span class="k">"language"</span>: <span class="s">"auto"</span>,
+  <span class="k">"include_trace"</span>: <span class="k">false</span>,
+  <span class="k">"dry_run"</span>: <span class="k">false</span>
+}</pre>
+    </section>
+
+    <section class="card" id="voice">
+      <h2>9. Voice / audio stream</h2>
+      <div class="flow">
+        <div class="box ui">Mic tap</div>
+        <span class="arrow">→</span>
+        <div class="box">Record WAV/M4A</div>
+        <span class="arrow">→</span>
+        <div class="box api">POST …/turn/audio/stream</div>
+        <span class="arrow">→</span>
+        <div class="box ui">Voice note + reply + TTS</div>
+      </div>
+
+      <ol>
+        <li>Mic starts <code>ApnaClinicAiAudioRecorderService</code> (WAV 16&nbsp;kHz mono preferred, else AAC/M4A).</li>
+        <li>Local STT runs in parallel for <strong>fallback text only</strong> — not shown in UI.</li>
+        <li>Stop: ignore clips &lt; <strong>0.6s</strong>. RIFF magic → <code>speech.wav</code>, else <code>speech.m4a</code>.</li>
+        <li>User bubble shows the server transcript (<code>transcription.text</code>) with a mic icon. Until that event arrives it says <strong>Voice note</strong>.</li>
+        <li>Every assistant reply shows <strong>Play</strong> / <strong>Pause</strong>. Prefer server <code>audio.base64</code>; if missing, speak the reply text on-device. Voice input auto-plays; typed input does not.</li>
+        <li>While audio plays, a bar above the composer also offers pause and play.</li>
+        <li>Exit screen / back / new chat → stop mic, STT, and TTS.</li>
+      </ol>
+
+      <h3>Multipart fields</h3>
+      <table>
+        <thead><tr><th>Field</th><th>Value</th></tr></thead>
+        <tbody>
+          <tr><td><code>api_key</code></td><td>from session</td></tr>
+          <tr><td><code>session_id</code></td><td>from session</td></tr>
+          <tr><td><code>conversation_id</code></td><td>bound thread</td></tr>
+          <tr><td><code>channel</code></td><td><code>voice</code></td></tr>
+          <tr><td><code>language</code></td><td><code>auto</code> or <code>ur</code></td></tr>
+          <tr><td><code>speak</code></td><td><code>true</code></td></tr>
+          <tr><td><code>client_turn_id</code></td><td><code>turn_&lt;epochMs&gt;</code></td></tr>
+          <tr><td><code>audio</code></td><td>file bytes</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Resiliency</h3>
+      <ul>
+        <li><strong>403</strong> — retry up to 2× with 600&nbsp;ms delay + token refresh</li>
+        <li><strong>400 / no speech</strong> — graceful reply: <em>“I couldn’t hear any speech clearly…”</em></li>
+        <li><strong>502 / timeout</strong> — fall back to text stream using local STT <code>fallbackMessage</code> when available</li>
+      </ul>
+    </section>
+
+    <section class="card" id="sse">
+      <h2>10. SSE event contract</h2>
+      <p>Response: <code>text/event-stream</code>. Frames are <code>data: {json}</code> separated by blank lines.</p>
+      <table>
+        <thead><tr><th>type</th><th>Meaning</th><th>UI</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><code>stage</code></td>
+            <td>Pipeline step (<code>transcribing</code>, tools, …)</td>
+            <td>Header / thinking label</td>
+          </tr>
+          <tr>
+            <td><code>token</code> / <code>delta</code> / <code>chunk</code></td>
+            <td>Partial reply text</td>
+            <td>Stream into assistant bubble</td>
+          </tr>
+          <tr>
+            <td><code>final</code> / <code>done</code></td>
+            <td>Complete turn + blocks / chips / audio</td>
+            <td>Cards, TTS, stop streaming</td>
+          </tr>
+          <tr>
+            <td><code>error</code></td>
+            <td>Turn failed</td>
+            <td>Failure copy / no-speech reply</td>
+          </tr>
+        </tbody>
+      </table>
+<pre><span class="c">// example chunk</span>
+{ <span class="k">"type"</span>: <span class="s">"chunk"</span>, <span class="k">"delta"</span>: <span class="s">"Apna Clinic mein…"</span> }
+
+<span class="c">// example final (abridged)</span>
+{
+  <span class="k">"type"</span>: <span class="s">"final"</span>,
+  <span class="k">"reply"</span>: <span class="s">"…"</span>,
+  <span class="k">"status"</span>: <span class="s">"completed"</span>,
+  <span class="k">"blocks"</span>: [ <span class="c">/* doctors, medicines, chips */</span> ],
+  <span class="k">"audio"</span>: { <span class="k">"base64"</span>: <span class="s">"…"</span>, <span class="k">"media_type"</span>: <span class="s">"audio/wav"</span> }
+}</pre>
+    </section>
+
+    <section class="card" id="cards">
+      <h2>11. Cards &amp; reply rail</h2>
+      <ul>
+        <li><strong>Doctors / medicines</strong> — from <code>blocks</code>; images via <code>CachedNetworkImage</code></li>
+        <li><strong>Slots</strong> — grouped by day into calendar chips (<code>21</code> / <code>OCT</code>)</li>
+        <li><strong>Payments / quick actions</strong> — method chips send another chat message. A <code>payment_handoff</code> with <code>paymentLink</code> shows <strong>Pay now</strong> and opens that URL in the card payment web view.</li>
+        <li>When a slot calendar is shown, duplicate doctor cards / ISO bullets in prose are suppressed</li>
+      </ul>
+      <div class="danger">
+        Emergency phrases (<code>ApnaClinicAiEmergency</code>) show Rescue <strong>1122</strong> UI.
+        Informational only — not a diagnosis.
+      </div>
+    </section>
+
+    <section class="card" id="errors">
+      <h2>12. Errors &amp; failure codes</h2>
+      <table>
+        <thead><tr><th>Code</th><th>Meaning</th></tr></thead>
+        <tbody>
+          <tr><td><code>not_configured</code></td><td>Missing base URL / SDK key</td></tr>
+          <tr><td><code>connect_failed</code></td><td>Session / network failure</td></tr>
+          <tr><td><code>upstream</code></td><td>502 / gateway / timeout</td></tr>
+          <tr><td><code>booking</code></td><td>Booking service JSON / request_id errors</td></tr>
+          <tr><td><code>voice_unavailable</code></td><td>Mic permission / recorder failure</td></tr>
+          <tr><td><code>empty_recording</code> / <code>no_speech</code></td><td>Too short or no audible speech</td></tr>
+        </tbody>
+      </table>
+      <p>Mapped to l10n in <code>apna_clinic_ai_copy.dart</code>.</p>
+    </section>
+
+    <section class="card" id="exit">
+      <h2>13. Exit / stop voice</h2>
+      <p><code>stopVoiceOnExit()</code> cancels:</p>
+      <ul>
+        <li>In-flight SSE subscription</li>
+        <li>Local STT (singleton — must cancel on leave)</li>
+        <li>Audio recorder</li>
+        <li>TTS playback (<code>ApnaClinicAiAudioPlayerService.stop</code>)</li>
+      </ul>
+      <p>Triggered on: route dispose, home close, chat → home, New chat.</p>
+    </section>
+
+    <section class="card" id="files">
+      <h2>14. Code map</h2>
+      <table>
+        <thead><tr><th>Area</th><th>Path</th></tr></thead>
+        <tbody>
+          <tr><td>Feature index</td><td><code>FEATURE.md</code></td></tr>
+          <tr><td>Session detail</td><td><code>SESSION_INIT.md</code></td></tr>
+          <tr><td>DI</td><td><code>apna_clinic_ai_injection.dart</code></td></tr>
+          <tr><td>SDK client</td><td><code>data/data_sources/apna_clinic_ai_sdk_client.dart</code></td></tr>
+          <tr><td>Remote / SSE</td><td><code>data/data_sources/apna_clinic_ai_remote_data_source.dart</code></td></tr>
+          <tr><td>Turn parser</td><td><code>data/mappers/apna_clinic_ai_turn_parser.dart</code></td></tr>
+          <tr><td>Recorder / player</td><td><code>data/services/apna_clinic_ai_audio_*.dart</code></td></tr>
+          <tr><td>Cubit</td><td><code>presentation/cubit/apna_clinic_ai_cubit.dart</code></td></tr>
+          <tr><td>Screen</td><td><code>presentation/screens/apna_clinic_ai_screen.dart</code></td></tr>
+        </tbody>
+      </table>
+
+      <h3>API cheat sheet</h3>
+      <table>
+        <thead><tr><th>Method</th><th>Path</th></tr></thead>
+        <tbody>
+          <tr><td>GET</td><td><code>/api/v1/sdk/ping</code></td></tr>
+          <tr><td>POST</td><td><code>/api/v1/sdk/session/init</code></td></tr>
+          <tr><td>POST</td><td><code>/api/v1/sdk/auth/token</code></td></tr>
+          <tr><td>GET</td><td><code>/api/v1/sdk/app</code></td></tr>
+          <tr><td>POST</td><td><code>/api/v1/sdk/home</code></td></tr>
+          <tr><td>POST</td><td><code>/api/v1/sdk/assistant/turn/stream</code></td></tr>
+          <tr><td>POST</td><td><code>/api/v1/sdk/assistant/turn</code></td></tr>
+          <tr><td>POST</td><td><code>/api/v1/sdk/assistant/turn/audio/stream</code></td></tr>
+          <tr><td>GET</td><td><code>/api/v1/sdk/voice/speak/status</code></td></tr>
+          <tr><td>GET</td><td><code>/api/v1/sdk/voice/transcribe/status</code></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <footer>
+      Apna Clinic · Care Companion guide · open this file in a browser ·
+      living index also in <code>FEATURE.md</code>
+    </footer>
+  </div>
+</body>
+</html>

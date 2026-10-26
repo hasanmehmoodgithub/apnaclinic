@@ -6,6 +6,7 @@ import '../../../../core/constants/app_colors.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/widgets/app_button_widget.dart';
+import 'prescription_scan_overlay.dart';
 
 class PrescriptionScanPicker extends StatelessWidget {
   const PrescriptionScanPicker({
@@ -61,20 +62,7 @@ class PrescriptionScanPicker extends StatelessWidget {
                       fit: StackFit.expand,
                       children: [
                         Image.file(File(path), fit: BoxFit.cover),
-                        if (extracting)
-                          ColoredBox(
-                            color: AppColors.clr0B2239.withValues(alpha: 0.35),
-                            child: Center(
-                              child: SizedBox(
-                                width: 36.r,
-                                height: 36.r,
-                                child: const CircularProgressIndicator(
-                                  strokeWidth: 3,
-                                  color: AppColors.clrWhite,
-                                ),
-                              ),
-                            ),
-                          ),
+                        if (extracting) const PrescriptionScanOverlay(),
                         Positioned(
                           right: 10.w,
                           bottom: 10.h,

@@ -2143,7 +2143,7 @@ class AppLocalizationsUr extends AppLocalizations {
   String get apnaClinicAiMenuTitle => 'اپنا کلینک اے آئی';
 
   @override
-  String get apnaClinicAiTitle => 'اپنا کلینک اے آئی';
+  String get apnaClinicAiTitle => 'اپنا کلینک اے آئی نور';
 
   @override
   String get apnaClinicAiBrandTag => 'کئیر کمپینین';
@@ -2158,13 +2158,16 @@ class AppLocalizationsUr extends AppLocalizations {
   String get apnaClinicAiSignedIn => 'سائن ان';
 
   @override
-  String get apnaClinicAiConnecting => 'رابطہ ہو رہا ہے…';
+  String get apnaClinicAiConnecting => 'آپ کے لیے تیار ہو رہا ہے…';
 
   @override
-  String get apnaClinicAiOnline => 'آن لائن';
+  String get apnaClinicAiOnline => '۲۴/۷ دستیاب';
 
   @override
-  String get apnaClinicAiHeadline => 'آج آپ\nکیسا محسوس کر رہے ہیں؟';
+  String get apnaClinicAiUnavailable => 'دستیاب نہیں';
+
+  @override
+  String get apnaClinicAiHeadline => 'آج آپ کیسا محسوس کر رہے ہیں؟';
 
   @override
   String get apnaClinicAiLiveStats => 'بتائیں کیا تکلیف ہے۔';
@@ -2228,7 +2231,7 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get apnaClinicAiDisclaimer =>
-      'طبی دستبرداری — یہ ٹول صرف عمومی معلومات دیتا ہے اور تشخیص نہیں ہے۔ ہمیشہ مستند ڈاکٹر سے رجوع کریں۔ ایمرجنسی میں ریسکیو 1122 پر کال کریں۔';
+      'اپنا کلینک اے آئی اسسٹنٹ صرف عمومی معلومات کے لیے ہے۔ یہ پیشہ ورانہ طبی مشورے، تشخیص یا علاج کا متبادل نہیں۔ کسی بھی طبی حالت کے بارے میں ہمیشہ اپنے ڈاکٹر یا مستند صحت فراہم کنندہ سے رجوع کریں۔';
 
   @override
   String get apnaClinicAiChatSubtitle => 'آن لائن';
@@ -2246,6 +2249,14 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get apnaClinicAiComposerHint => 'علامت بیان کریں یا دوا کا نام لکھیں…';
+
+  @override
+  String get apnaClinicAiComposerHintHelpEn =>
+      'I\'m Apna Clinic Ai Noor, how can I help you?';
+
+  @override
+  String get apnaClinicAiComposerHintHelpUr =>
+      'میں اپنا کلینک اے آئی نور ہوں، آپ کی کیسے مدد کر سکتی ہوں؟';
 
   @override
   String get apnaClinicAiChatComposerHint =>
@@ -2303,8 +2314,11 @@ class AppLocalizationsUr extends AppLocalizations {
   String get apnaClinicAiPayment => 'ادائیگی';
 
   @override
+  String get apnaClinicAiPayNow => 'ابھی ادا کریں';
+
+  @override
   String get apnaClinicAiNotConfigured =>
-      'اپنا کلینک اے آئی ترتیب نہیں دیا گیا۔ APNA_CLINIC_AI_BASE_URL اور APNA_CLINIC_AI_SDK_KEY شامل کریں۔';
+      'اپنا کلینک اے آئی ترتیب نہیں دیا گیا۔ JIMI_BASE_URL / JIMI_SDK_KEY (یا APNA_CLINIC_AI_*) شامل کریں۔';
 
   @override
   String get apnaClinicAiConnectFailed =>
@@ -2324,7 +2338,7 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get apnaClinicAiEmptyRecording =>
-      'آواز نہیں سنی گئی۔ مائیک تھوڑی دیر دبائے رکھیں، یا پیغام لکھیں۔';
+      'آواز صاف نہیں سنی گئی۔ مائیک دوبارہ ٹیپ کر کے بولیں۔';
 
   @override
   String get apnaClinicAiSignInRequired =>
@@ -2337,9 +2351,6 @@ class AppLocalizationsUr extends AppLocalizations {
   String get apnaClinicAiNewChat => 'نئی چیٹ';
 
   @override
-  String get apnaClinicAiSpeakReplies => 'جواب سنائیں';
-
-  @override
   String get apnaClinicAiHoldToTalk => 'بولنے کے لیے ٹیپ کریں';
 
   @override
@@ -2350,6 +2361,24 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get apnaClinicAiVoiceUrdu => 'اردو';
+
+  @override
+  String get apnaClinicAiVoiceNote => 'وائس نوٹ';
+
+  @override
+  String get apnaClinicAiTranscribing => 'لکھا جا رہا ہے…';
+
+  @override
+  String get apnaClinicAiAgentSpeaking => 'اپنا کلینک اے آئی نور بول رہی ہے…';
+
+  @override
+  String get apnaClinicAiPause => 'روکیں';
+
+  @override
+  String get apnaClinicAiPlay => 'چلائیں';
+
+  @override
+  String get apnaClinicAiCopied => 'کاپی ہو گیا';
 
   @override
   String get apnaClinicAiListening => 'سن رہا ہے…';
@@ -2380,6 +2409,15 @@ class AppLocalizationsUr extends AppLocalizations {
   String apnaClinicAiDaysAgo(int count) {
     return '$count دن پہلے';
   }
+
+  @override
+  String get apnaClinicAiJustAMoment => 'ایک لمحہ…';
+
+  @override
+  String get apnaClinicAiJustAMoment2 => 'اس پر نظر ڈال رہی ہوں…';
+
+  @override
+  String get apnaClinicAiJustAMoment3 => 'تقریباً تیار…';
 
   @override
   String get apnaClinicAiStageListening => 'آپ کی علامات سن رہا ہے…';

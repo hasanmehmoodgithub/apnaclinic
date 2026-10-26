@@ -81,6 +81,10 @@ abstract class AppPref {
   Future<bool> setApnaClinicAiConversationId(String value);
   String getApnaClinicAiConversationId();
 
+  /// Thread id for Continue / Resume. Not replaced until a turn is sent.
+  Future<bool> setApnaClinicAiHistoryConversationId(String value);
+  String getApnaClinicAiHistoryConversationId();
+
   /// Clears Care Companion SDK credentials (guest + signed-in) and conversation id.
   Future<void> clearApnaClinicAiSession();
 

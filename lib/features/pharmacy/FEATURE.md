@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Browse medicines, cart, checkout, and view pharmacy order details. Pharmacy home has a **Scan prescription** button that reads a photo and lets matching catalog medicines be added to the cart.
+Browse medicines, cart, checkout, and view pharmacy order details. Pharmacy home has a **Scan prescription** button that reads a photo and lets matching catalog medicines be added to the cart. While reading, the photo shows a scan-line overlay (`PrescriptionScanOverlay`) instead of a spinner.
 
 Mini-cart badge shows `99+` when total quantity is greater than 99.
 

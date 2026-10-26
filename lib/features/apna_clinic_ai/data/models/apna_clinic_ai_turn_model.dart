@@ -57,11 +57,15 @@ class ApnaClinicAiPaymentModel {
     required this.label,
     required this.send,
     this.hint,
+    this.url,
   });
 
   final String label;
   final String send;
   final String? hint;
+
+  /// Card checkout URL. When set, the row opens the payment web view.
+  final String? url;
 }
 
 class ApnaClinicAiTurnModel {
@@ -77,6 +81,8 @@ class ApnaClinicAiTurnModel {
     this.failureCode,
     this.audioBase64,
     this.audioMediaType,
+    this.audioPending = false,
+    this.turnId,
     this.signInRequired = false,
     this.authResumeMessage,
     this.authDeepLink,
@@ -93,6 +99,9 @@ class ApnaClinicAiTurnModel {
   final List<ApnaClinicAiPaymentModel> payments;
   final String? audioBase64;
   final String? audioMediaType;
+  final bool audioPending;
+  /// Server turn id from SSE `final` / delayed `type: audio` (`turn_id`).
+  final String? turnId;
   final bool signInRequired;
   final String? authResumeMessage;
   final String? authDeepLink;

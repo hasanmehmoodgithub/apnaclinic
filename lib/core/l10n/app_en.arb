@@ -903,14 +903,18 @@
     "description": "Step 3 for other networks"
   },
   "apnaClinicAiMenuTitle": "Apna Clinic AI",
-  "apnaClinicAiTitle": "Apna Clinic AI",
+  "apnaClinicAiTitle": "Apna Clinic Ai Noor",
   "apnaClinicAiBrandTag": "CARE COMPANION",
   "apnaClinicAiGreeting": "Assalam-o-Alaikum",
   "apnaClinicAiGuest": "Guest",
   "apnaClinicAiSignedIn": "Signed in",
-  "apnaClinicAiConnecting": "Connecting…",
-  "apnaClinicAiOnline": "online",
-  "apnaClinicAiHeadline": "How are you\nfeeling today?",
+  "apnaClinicAiConnecting": "Getting ready for you…",
+  "apnaClinicAiOnline": "Available 24/7",
+  "apnaClinicAiUnavailable": "Unavailable",
+  "@apnaClinicAiUnavailable": {
+    "description": "Hero status badge when AI home failed to connect"
+  },
+  "apnaClinicAiHeadline": "How are you feeling today?",
   "apnaClinicAiLiveStats": "Tell me what’s bothering you.",
   "apnaClinicAiCommonConcerns": "Common concerns",
   "apnaClinicAiTapToStart": "tap to start",
@@ -929,12 +933,23 @@
   "apnaClinicAiPrescriptionBody": "Describe what the report says. The assistant can still help from your words.",
   "apnaClinicAiPrescriptionCta": "Describe the report",
   "apnaClinicAiPrescriptionHint": "Describe the report in your own words, or say what the lab found.",
-  "apnaClinicAiDisclaimer": "Medical disclaimer — This tool provides general informational guidance only and is not a medical diagnosis. Always consult a qualified healthcare professional. In an emergency call Rescue 1122.",
+  "apnaClinicAiDisclaimer": "The Apnaclinic AI assistant is for general informational purposes only. It is not a substitute for professional medical advice, diagnosis, or treatment. Always seek the advice of your physician or qualified health provider with any questions you may have regarding a medical condition.",
+  "@apnaClinicAiDisclaimer": {
+    "description": "Home screen medical disclaimer above the composer"
+  },
   "apnaClinicAiChatSubtitle": "online",
   "apnaClinicAiHeroTitle": "Ask about your health, your report, or your recommendation.",
   "apnaClinicAiHeroBody": "Speak or type in English or Urdu. If it looks like you need a specialist, the assistant will say which one.",
   "apnaClinicAiPrompt": "Tell me what’s troubling you, in your own words.",
   "apnaClinicAiComposerHint": "Describe a symptom or name a medicine…",
+  "apnaClinicAiComposerHintHelpEn": "I'm Apna Clinic Ai Noor, how can I help you?",
+  "apnaClinicAiComposerHintHelpUr": "میں نور ہوں، آپ کی کیسے مدد کر سکتی ہوں؟",
+  "@apnaClinicAiComposerHintHelpEn": {
+    "description": "Home composer rotating hint (English)"
+  },
+  "@apnaClinicAiComposerHintHelpUr": {
+    "description": "Home composer rotating hint (Urdu)"
+  },
   "apnaClinicAiChatComposerHint": "Type, or tap the mic to speak…",
   "apnaClinicAiEmergencyTitle": "This may be urgent — call Rescue 1122",
   "apnaClinicAiEmergencyBody": "In Pakistan, Rescue 1122 is the ambulance / emergency number. If someone is in immediate danger, call now or go to the nearest emergency department.",
@@ -951,16 +966,16 @@
   "apnaClinicAiSlots": "Available slots",
   "apnaClinicAiPickADay": "Pick a day",
   "apnaClinicAiPayment": "Payment",
-  "apnaClinicAiNotConfigured": "Apna Clinic AI is not configured. Add APNA_CLINIC_AI_BASE_URL and APNA_CLINIC_AI_SDK_KEY.",
+  "apnaClinicAiPayNow": "Pay now",
+  "apnaClinicAiNotConfigured": "Apna Clinic AI is not configured. Add JIMI_BASE_URL / JIMI_SDK_KEY (or APNA_CLINIC_AI_*).",
   "apnaClinicAiConnectFailed": "Could not connect to Apna Clinic AI. Please try again.",
   "apnaClinicAiUpstream": "Booking didn’t go through just now. Tell me which doctor and a preferred time again. If this is urgent, call Rescue 1122.",
   "apnaClinicAiBookingFailed": "Something went wrong on the booking service. Please try again in a moment.",
   "apnaClinicAiVoiceUnavailable": "Microphone is unavailable. Allow microphone access, or type your message.",
-  "apnaClinicAiEmptyRecording": "No speech heard. Hold the mic a little longer, or type your message.",
+  "apnaClinicAiEmptyRecording": "I couldn’t hear any speech clearly. Please tap the mic and try speaking again.",
   "apnaClinicAiSignInRequired": "Sign in to book or use the cart. Symptom guidance works as a guest.",
   "apnaClinicAiSignInCta": "Sign in to continue",
   "apnaClinicAiNewChat": "New chat",
-  "apnaClinicAiSpeakReplies": "Speak replies",
   "apnaClinicAiHoldToTalk": "Tap to talk",
   "apnaClinicAiTapMicToSend": "Tap the mic to send",
   "@apnaClinicAiTapMicToSend": {
@@ -968,6 +983,18 @@
   },
   "apnaClinicAiVoiceEnglish": "EN",
   "apnaClinicAiVoiceUrdu": "اردو",
+  "apnaClinicAiVoiceNote": "Voice note",
+  "apnaClinicAiTranscribing": "Transcribing…",
+  "@apnaClinicAiTranscribing": {
+    "description": "Shown on a voice bubble while waiting for speech-to-text"
+  },
+  "apnaClinicAiAgentSpeaking": "Apna Clinic Ai Noor is speaking...",
+  "apnaClinicAiPause": "Pause",
+  "apnaClinicAiPlay": "Play",
+  "apnaClinicAiCopied": "Copied",
+  "@apnaClinicAiVoiceNote": {
+    "description": "Label on a user voice message bubble (no transcript shown)"
+  },
   "apnaClinicAiListening": "Listening…",
   "apnaClinicAiSuggestFever": "I have fever and body ache",
   "apnaClinicAiSuggestRash": "I have a rash on my arm",
@@ -990,6 +1017,18 @@
     "placeholders": {
       "count": { "type": "int" }
     }
+  },
+  "apnaClinicAiJustAMoment": "Just a moment…",
+  "@apnaClinicAiJustAMoment": {
+    "description": "Waiting line 1/3 while Care Companion reply loads"
+  },
+  "apnaClinicAiJustAMoment2": "Looking into that…",
+  "@apnaClinicAiJustAMoment2": {
+    "description": "Waiting line 2/3 while Care Companion reply loads"
+  },
+  "apnaClinicAiJustAMoment3": "Almost ready…",
+  "@apnaClinicAiJustAMoment3": {
+    "description": "Waiting line 3/3 while Care Companion reply loads"
   },
   "apnaClinicAiStageListening": "Listening to your symptoms…",
   "apnaClinicAiStageSpecialists": "Checking specialists…",

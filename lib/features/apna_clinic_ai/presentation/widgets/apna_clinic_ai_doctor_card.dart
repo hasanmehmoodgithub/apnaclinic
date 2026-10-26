@@ -17,7 +17,31 @@ class ApnaClinicAiDoctorCard extends StatelessWidget {
   final VoidCallback onTap;
 
   /// Fixed card size used by the horizontal rail.
-  static double railHeight(BuildContext context) => 268.h;
+  static double railHeight(BuildContext context) => 224.h;
+
+  /// Shorter rail for payment methods (image, label, pay button).
+  static double paymentRailHeight(BuildContext context) => 168.h;
+
+  /// Experience and price, each at most once, even if the source line repeats them.
+  static String _onceEach(String? years, String? fee) {
+    final combined = [years, fee]
+        .map((part) => (part ?? '').trim())
+        .where((part) => part.isNotEmpty)
+        .join(' • ');
+    if (combined.isEmpty) return '';
+    final experience = RegExp(
+      r'\d+\s*yrs?',
+      caseSensitive: false,
+    ).firstMatch(combined)?.group(0)?.trim();
+    final price = RegExp(
+      r'PKR\s*[\d,.]+',
+      caseSensitive: false,
+    ).firstMatch(combined)?.group(0)?.trim();
+    return [
+      if (experience != null && experience.isNotEmpty) experience,
+      if (price != null && price.isNotEmpty) price,
+    ].join(' • ');
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,28 +50,24 @@ class ApnaClinicAiDoctorCard extends StatelessWidget {
     final badge = (doctor.badge ?? doctor.specialty ?? '').trim();
     final description = (doctor.description ?? '').trim();
     final rating = (doctor.rating ?? '').trim();
-    final years = (doctor.years ?? '').trim();
-    final fee = (doctor.fee ?? '').trim();
-    final footer = [
-      if (years.isNotEmpty) years,
-      if (fee.isNotEmpty) fee,
-    ].join(' • ');
+    final footer = _onceEach(doctor.years, doctor.fee);
     final cta = (doctor.cta ?? '').trim().isNotEmpty
         ? doctor.cta!.trim()
         : (isMedicine ? l10n.apnaClinicAiAddToCart : l10n.apnaClinicAiViewSlots);
+    final compact = doctor.isPayment;
 
     return Material(
       color: ApnaClinicAiUiConfig.panel,
-      borderRadius: BorderRadius.circular(16.r),
+      borderRadius: BorderRadius.circular(compact ? 14.r : 16.r),
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(16.r),
+        borderRadius: BorderRadius.circular(compact ? 14.r : 16.r),
         child: Container(
-          width: 200.w,
-          height: railHeight(context),
-          padding: EdgeInsets.all(12.r),
+          width: compact ? 142.w : 164.w,
+          height: compact ? paymentRailHeight(context) : railHeight(context),
+          padding: EdgeInsets.all(compact ? 7.r : 8.r),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(16.r),
+            borderRadius: BorderRadius.circular(compact ? 14.r : 16.r),
             border: Border.all(color: ApnaClinicAiUiConfig.borderStrong),
             boxShadow: ApnaClinicAiUiConfig.cardShadow,
           ),
@@ -57,9 +77,9 @@ class ApnaClinicAiDoctorCard extends StatelessWidget {
               _Thumb(
                 name: doctor.name,
                 imageUrl: doctor.imageUrl,
-                medicine: isMedicine,
+                height: compact ? 58.h : 72.h,
               ),
-              SizedBox(height: 8.h),
+              SizedBox(height: compact ? 6.h : 8.h),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -76,43 +96,46 @@ class ApnaClinicAiDoctorCard extends StatelessWidget {
                           color: ApnaClinicAiUiConfig.ctaDeep,
                         ),
                       ),
-                    if (badge.isNotEmpty) SizedBox(height: 4.h),
+                    if (badge.isNotEmpty) SizedBox(height: 2.h),
                     Text(
                       doctor.name,
-                      maxLines: 2,
+                      maxLines: compact ? 1 : 2,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         color: ApnaClinicAiUiConfig.primaryText,
                         fontWeight: FontWeight.w700,
                         fontSize: 13.sp,
-                        height: 1.2,
+                        height: 1.15,
                         letterSpacing: -0.1,
                       ),
                     ),
-                    if (description.isNotEmpty) ...[
-                      SizedBox(height: 4.h),
-                      Text(
-                        description,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          color: ApnaClinicAiUiConfig.secondaryText,
-                          fontSize: 11.sp,
-                          height: 1.25,
+                    if (description.isNotEmpty)
+                      Padding(
+                        padding: EdgeInsets.only(top: 2.h),
+                        child: Text(
+                          description,
+                          maxLines: compact ? 1 : 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            color: ApnaClinicAiUiConfig.secondaryText,
+                            fontSize: 11.sp,
+                            height: 1.2,
+                          ),
+                        ),
+                      )
+                    else if (rating.isNotEmpty)
+                      Padding(
+                        padding: EdgeInsets.only(top: 2.h),
+                        child: Text(
+                          rating,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            color: ApnaClinicAiUiConfig.muted,
+                            fontSize: 11.sp,
+                          ),
                         ),
                       ),
-                    ] else if (rating.isNotEmpty) ...[
-                      SizedBox(height: 4.h),
-                      Text(
-                        rating,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          color: ApnaClinicAiUiConfig.muted,
-                          fontSize: 11.sp,
-                        ),
-                      ),
-                    ],
                     const Spacer(),
                     if (footer.isNotEmpty)
                       Text(
@@ -128,10 +151,10 @@ class ApnaClinicAiDoctorCard extends StatelessWidget {
                   ],
                 ),
               ),
-              SizedBox(height: 8.h),
+              SizedBox(height: 6.h),
               SizedBox(
                 width: double.infinity,
-                height: 34.h,
+                height: compact ? 28.h : 30.h,
                 child: ElevatedButton(
                   onPressed: onTap,
                   style: ElevatedButton.styleFrom(
@@ -161,23 +184,19 @@ class ApnaClinicAiDoctorCard extends StatelessWidget {
 }
 
 class _Thumb extends StatelessWidget {
-  const _Thumb({
-    required this.name,
-    required this.medicine,
-    this.imageUrl,
-  });
+  const _Thumb({required this.name, this.imageUrl, this.height = 72});
 
   final String name;
   final String? imageUrl;
-  final bool medicine;
+  final double height;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: medicine ? 80.h : 96.h,
+      height: height,
       width: double.infinity,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12.r),
+        borderRadius: BorderRadius.circular(10.r),
         color: ApnaClinicAiUiConfig.mint,
         border: Border.all(color: ApnaClinicAiUiConfig.border),
       ),
@@ -189,11 +208,13 @@ class _Thumb extends StatelessWidget {
   Widget _imageOrFallback() {
     final url = imageUrl?.trim() ?? '';
     if (url.isNotEmpty && _isNetwork(url)) {
-      return CachedNetworkImage(
-        imageUrl: url,
-        fit: medicine ? BoxFit.contain : BoxFit.cover,
-        placeholder: (_, _) => _fallback(),
-        errorWidget: (_, _, _) => _fallback(),
+      return SizedBox.expand(
+        child: CachedNetworkImage(
+          imageUrl: url,
+          fit: BoxFit.cover,
+          placeholder: (_, _) => _fallback(),
+          errorWidget: (_, _, _) => _fallback(),
+        ),
       );
     }
     return _fallback();

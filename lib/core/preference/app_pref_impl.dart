@@ -258,6 +258,14 @@ class AppPrefImpl implements AppPref {
       _getDecrypted(AppPrefKeys.apnaClinicAiConversationId, '');
 
   @override
+  Future<bool> setApnaClinicAiHistoryConversationId(String value) =>
+      _setEncrypted(AppPrefKeys.apnaClinicAiHistoryConversationId, value);
+
+  @override
+  String getApnaClinicAiHistoryConversationId() =>
+      _getDecrypted(AppPrefKeys.apnaClinicAiHistoryConversationId, '');
+
+  @override
   Future<void> clearApnaClinicAiSession() async {
     await remove(AppPrefKeys.apnaClinicAiApiKey);
     await remove(AppPrefKeys.apnaClinicAiSessionId);
@@ -266,6 +274,7 @@ class AppPrefImpl implements AppPref {
     await remove(AppPrefKeys.apnaClinicAiTokenExpiresAt);
     await remove(AppPrefKeys.apnaClinicAiAuthMode);
     await remove(AppPrefKeys.apnaClinicAiConversationId);
+    await remove(AppPrefKeys.apnaClinicAiHistoryConversationId);
   }
 
   // ==================== Generic ====================

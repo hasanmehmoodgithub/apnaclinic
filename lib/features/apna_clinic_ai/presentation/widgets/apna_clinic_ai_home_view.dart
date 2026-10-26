@@ -1,24 +1,31 @@
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
+import '../../../../core/widgets/apna_clinic_bot_animation.dart';
+import '../../data/services/apna_clinic_ai_audio_player_service.dart';
 import '../../domain/entities/apna_clinic_ai_home_tile_entity.dart';
 import '../apna_clinic_ai_copy.dart';
 import '../constants/apna_clinic_ai_ui_config.dart';
 import '../cubit/apna_clinic_ai_cubit.dart';
 import '../cubit/apna_clinic_ai_state.dart';
 import 'apna_clinic_ai_composer.dart';
+import 'apna_clinic_ai_home_speaking_panel.dart';
+import 'apna_clinic_ai_listening_bar.dart';
 
 class ApnaClinicAiHomeView extends StatefulWidget {
   const ApnaClinicAiHomeView({
     super.key,
     required this.state,
     required this.cubit,
+    required this.audioPlayer,
+    required this.onClose,
   });
 
   final ApnaClinicAiState state;
   final ApnaClinicAiCubit cubit;
+  final ApnaClinicAiAudioPlayerService audioPlayer;
+  final VoidCallback onClose;
 
   @override
   State<ApnaClinicAiHomeView> createState() => _ApnaClinicAiHomeViewState();
@@ -33,187 +40,307 @@ class _ApnaClinicAiHomeViewState extends State<ApnaClinicAiHomeView> {
     super.dispose();
   }
 
-  void _send({String? raw, bool resumeThread = false}) {
+  void _send({
+    String? raw,
+    bool resumeThread = false,
+    bool forceNewThread = false,
+  }) {
     final text = (raw ?? _controller.text).trim();
     if (text.isEmpty) return;
     _controller.clear();
-    widget.cubit.sendText(text, resumeThread: resumeThread);
-  }
-
-  bool _isResumeTile(ApnaClinicAiHomeTileEntity tile) {
-    final key = '${tile.id} ${tile.title}'.toLowerCase();
-    return key.contains('resume') || key.contains('continue');
+    widget.cubit.sendText(
+      text,
+      resumeThread: resumeThread,
+      forceNewThread: forceNewThread,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final state = widget.state;
-    final welcome = state.welcomeMessage.trim().isNotEmpty
-        ? state.welcomeMessage.trim()
-        : l10n.apnaClinicAiLiveStats;
-    final concerns = state.suggestions.isNotEmpty
-        ? state.suggestions
-        : <String>[
-            l10n.apnaClinicAiSuggestFever,
-            l10n.apnaClinicAiSuggestRash,
-            l10n.apnaClinicAiSuggestDoctors,
-            l10n.apnaClinicAiSuggestPanadol,
-          ];
-    final tiles = state.homeTiles.isNotEmpty
-        ? state.homeTiles
-        : _fallbackTiles(l10n);
+    final connecting = state.connecting;
+
+    final concerns = state.suggestions;
+    final headline = state.assistantName.trim().isNotEmpty
+        ? state.assistantName.trim()
+        : l10n.apnaClinicAiHeadline;
+    // Home cards are hidden for now (TODO below) — don't treat empty tiles as error.
+    final hasError = !connecting && state.errorCode != null;
+    final showComposer = !connecting && !hasError;
+    final errorMessage = state.errorCode != null
+        ? apnaClinicAiFailureText(l10n, state.errorCode)
+        : l10n.apnaClinicAiConnectFailed;
 
     return Column(
       children: [
         Expanded(
-          child: ListView(
-            padding: EdgeInsets.fromLTRB(16.w, 4.h, 16.w, 12.h),
-            children: [
-              _HeroCard(
-                connecting: state.connecting,
-                connected: !state.connecting && state.errorCode == null,
-                headline: l10n.apnaClinicAiHeadline,
-                welcome: welcome,
-                voiceEnabled: state.voiceEnabled,
-                voiceTitle: l10n.apnaClinicAiVoiceCta,
-                voiceLangs: l10n.apnaClinicAiVoiceLangs,
-                connectingLabel: l10n.apnaClinicAiConnecting,
-                onlineLabel: l10n.apnaClinicAiOnline,
-                onVoice: () {
-                  widget.cubit.toggleListening(
-                    languageCode: Localizations.localeOf(context).languageCode,
-                  );
-                },
-              ),
-              if (state.lastComplaint != null &&
-                  state.lastComplaint!.isNotEmpty) ...[
-                SizedBox(height: 14.h),
-                _ContinueCard(
-                  title: l10n.apnaClinicAiContinue,
-                  complaint: state.lastComplaint!,
-                  relative: state.lastComplaintAtMillis == null
-                      ? null
-                      : apnaClinicAiRelativeTime(
-                          l10n,
-                          state.lastComplaintAtMillis!,
+          child: connecting
+              ? Padding(
+                  padding: EdgeInsets.fromLTRB(16.w, 4.h, 16.w, 12.h),
+                  child: Column(
+                    children: [
+                      _HeroCard(
+                        connecting: true,
+                        connected: false,
+                        headline: headline,
+                        welcome: '',
+                        connectingLabel: l10n.apnaClinicAiConnecting,
+                        onlineLabel: l10n.apnaClinicAiOnline,
+                        onClose: widget.onClose,
+                      ),
+                      SizedBox(height: 14.h),
+                      const _DisclaimerText(),
+                      const Expanded(
+                        child: Center(
+                          child: ApnaClinicBotAnimation(
+                            headSize: 72,
+                            style: ApnaClinicBotStyle.femaleAi,
+                          ),
                         ),
-                  onTap: widget.cubit.resumeLastComplaint,
-                ),
-              ],
-              SizedBox(height: 18.h),
-              _LabelRow(
-                title: l10n.apnaClinicAiCommonConcerns,
-                trailing: l10n.apnaClinicAiTapToStart,
-              ),
-              SizedBox(height: 10.h),
-              Wrap(
-                spacing: 8.w,
-                runSpacing: 8.h,
-                children: [
-                  for (final concern in concerns)
-                    _ConcernChip(
-                      label: concern,
-                      onTap: () => _send(raw: concern),
-                    ),
-                ],
-              ),
-              SizedBox(height: 18.h),
-              _LabelRow(title: l10n.apnaClinicAiWhatICanDo),
-              SizedBox(height: 10.h),
-              GridView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: tiles.length,
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 10.w,
-                  mainAxisSpacing: 10.h,
-                  childAspectRatio: 1.15,
-                ),
-                itemBuilder: (context, index) {
-                  final tile = tiles[index];
-                  return _HomeTile(
-                    tile: tile,
-                    colorIndex: index,
-                    onTap: () => _send(
-                      raw: tile.send,
-                      resumeThread: _isResumeTile(tile),
-                    ),
-                  );
-                },
-              ),
-              SizedBox(height: 16.h),
-              const _SosBanner(),
-              SizedBox(height: 12.h),
-              Text(
-                l10n.apnaClinicAiFinePrint,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: ApnaClinicAiUiConfig.muted,
-                  fontSize: 11.sp,
-                  height: 1.35,
-                ),
-              ),
-              if (state.errorCode != null) ...[
-                SizedBox(height: 10.h),
-                Text(
-                  apnaClinicAiFailureText(l10n, state.errorCode),
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: ApnaClinicAiUiConfig.emergencyText,
-                    fontSize: 12.sp,
+                      ),
+                    ],
                   ),
+                )
+              : hasError
+              ? Padding(
+                  padding: EdgeInsets.fromLTRB(16.w, 4.h, 16.w, 12.h),
+                  child: Column(
+                    children: [
+                      _HeroCard(
+                        connecting: false,
+                        connected: false,
+                        headline: headline,
+                        welcome: '',
+                        connectingLabel: l10n.apnaClinicAiUnavailable,
+                        onlineLabel: l10n.apnaClinicAiOnline,
+                        onClose: widget.onClose,
+                      ),
+                      SizedBox(height: 14.h),
+                      const _DisclaimerText(),
+                      Expanded(
+                        child: Center(
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 12.w),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  errorMessage,
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    color:
+                                        ApnaClinicAiUiConfig.emergencyText,
+                                    fontSize: 14.sp,
+                                    fontWeight: FontWeight.w500,
+                                    height: 1.4,
+                                  ),
+                                ),
+                                SizedBox(height: 16.h),
+                                Material(
+                                  color: ApnaClinicAiUiConfig.cta,
+                                  borderRadius: BorderRadius.circular(14.r),
+                                  child: InkWell(
+                                    onTap: () => widget.cubit
+                                        .connect(forceRefresh: true),
+                                    borderRadius: BorderRadius.circular(14.r),
+                                    child: Padding(
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: 22.w,
+                                        vertical: 12.h,
+                                      ),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Icon(
+                                            Icons.refresh_rounded,
+                                            size: 18.r,
+                                            color: ApnaClinicAiUiConfig.panel,
+                                          ),
+                                          SizedBox(width: 8.w),
+                                          Text(
+                                            l10n.commonRetry,
+                                            style: TextStyle(
+                                              color:
+                                                  ApnaClinicAiUiConfig.panel,
+                                              fontSize: 14.sp,
+                                              fontWeight: FontWeight.w700,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                )
+              : ListView(
+                  padding: EdgeInsets.fromLTRB(16.w, 4.h, 16.w, 12.h),
+                  children: [
+                    _HeroCard(
+                      connecting: false,
+                      connected: true,
+                      headline: headline,
+                      // Greeting text shows on the speaking bar while audio plays.
+                      welcome: '',
+                      connectingLabel: l10n.apnaClinicAiConnecting,
+                      onlineLabel: l10n.apnaClinicAiOnline,
+                      onClose: widget.onClose,
+                    ),
+                    SizedBox(height: 14.h),
+                    const _DisclaimerText(),
+                    // TODO(apna-clinic-ai): re-enable Continue card
+                    // (`homeResume` / last complaint) when resume UX returns.
+                    if (concerns.isNotEmpty) ...[
+                      SizedBox(height: 18.h),
+                      _LabelRow(
+                        title: l10n.apnaClinicAiCommonConcerns,
+                        trailing: l10n.apnaClinicAiTapToStart,
+                      ),
+                      SizedBox(height: 10.h),
+                      Wrap(
+                        spacing: 8.w,
+                        runSpacing: 8.h,
+                        children: [
+                          for (final concern in concerns)
+                            _ConcernChip(
+                              label: concern,
+                              onTap: () =>
+                                  _send(raw: concern, forceNewThread: true),
+                            ),
+                        ],
+                      ),
+                    ],
+                    // TODO(apna-clinic-ai): re-enable `/sdk/home` `cards` as
+                    // home tiles (Find a doctor, Browse doctors, medicine, cart).
+                    // API still populates `state.homeTiles` — UI hidden for now.
+                    // if (state.homeTiles.isNotEmpty) ...[
+                    //   SizedBox(height: 18.h),
+                    //   for (var i = 0; i < state.homeTiles.length; i++) ...[
+                    //     if (i > 0) SizedBox(height: 6.h),
+                    //     _HomeTile(
+                    //       tile: state.homeTiles[i],
+                    //       colorIndex: i,
+                    //       onTap: () => _send(
+                    //         raw: state.homeTiles[i].send,
+                    //         forceNewThread: true,
+                    //       ),
+                    //     ),
+                    //   ],
+                    // ],
+                  ],
                 ),
-              ],
-            ],
-          ),
         ),
-        SafeArea(
-          top: false,
-          child: ApnaClinicAiComposer(
-            controller: _controller,
-            hintText: l10n.apnaClinicAiComposerHint,
-            enabled: !state.streaming && !state.connecting && !state.recording,
-            recording: state.recording,
-            showMic: true,
-            onSend: state.recording ? widget.cubit.stopListeningAndSend : _send,
-            onMicTap: () => widget.cubit.toggleListening(
-              languageCode: Localizations.localeOf(context).languageCode,
+        if (showComposer)
+          SafeArea(
+            top: false,
+            child: StreamBuilder<ApnaClinicAiPlaybackSnapshot>(
+              stream: widget.audioPlayer.snapshots,
+              initialData: widget.audioPlayer.snapshot,
+              builder: (context, snap) {
+                final playback =
+                    snap.data ?? const ApnaClinicAiPlaybackSnapshot();
+                final greeting = state.welcomeMessage.trim().isNotEmpty
+                    ? state.welcomeMessage.trim()
+                    : l10n.apnaClinicAiAgentSpeaking;
+                return Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 280),
+                      switchInCurve: Curves.easeOut,
+                      switchOutCurve: Curves.easeIn,
+                      transitionBuilder: (child, animation) {
+                        return FadeTransition(
+                          opacity: animation,
+                          child: SizeTransition(
+                            sizeFactor: animation,
+                            alignment: Alignment.topCenter,
+                            child: child,
+                          ),
+                        );
+                      },
+                      child: playback.active
+                          ? ApnaClinicAiHomeSpeakingPanel(
+                              key: const ValueKey('home_speaking'),
+                              playing: playback.playing,
+                              text: greeting,
+                              onToggle: () {
+                                if (playback.playing) {
+                                  widget.audioPlayer.pause();
+                                } else {
+                                  widget.audioPlayer.resume();
+                                }
+                              },
+                            )
+                          : const SizedBox.shrink(
+                              key: ValueKey('home_speaking_gone'),
+                            ),
+                    ),
+                    state.recording
+                        ? ApnaClinicAiListeningBar(
+                            onCancel: widget.cubit.cancelListening,
+                            onSend: widget.cubit.stopListeningAndSend,
+                          )
+                        : ApnaClinicAiComposer(
+                            controller: _controller,
+                            hintText: l10n.apnaClinicAiChatComposerHint,
+                            enabled: !state.streaming,
+                            recording: false,
+                            showMic: true,
+                            prominent: true,
+                            onSend: () => _send(forceNewThread: true),
+                            onMicTap: () => widget.cubit.toggleListening(
+                              languageCode: Localizations.localeOf(
+                                context,
+                              ).languageCode,
+                              forceNewThread: true,
+                            ),
+                          ),
+                  ],
+                );
+              },
             ),
           ),
-        ),
       ],
     );
   }
+}
 
-  List<ApnaClinicAiHomeTileEntity> _fallbackTiles(AppLocalizations l10n) {
-    return [
-      ApnaClinicAiHomeTileEntity(
-        id: 'symptoms',
-        title: l10n.apnaClinicAiStartTalkingTitle,
-        subtitle: l10n.apnaClinicAiStartTalkingBody,
-        send: l10n.apnaClinicAiSuggestFever,
+class _DisclaimerText extends StatelessWidget {
+  const _DisclaimerText();
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    return Container(
+      width: double.infinity,
+      margin: EdgeInsets.all(8.r),
+      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
+      decoration: BoxDecoration(
+        color: ApnaClinicAiUiConfig.caution.withValues(alpha: 0.07),
+        borderRadius: BorderRadius.circular(14.r),
+        border: Border.all(
+          color: ApnaClinicAiUiConfig.caution.withValues(alpha: 0.22),
+        ),
       ),
-      ApnaClinicAiHomeTileEntity(
-        id: 'doctors',
-        title: l10n.apnaClinicAiDoctors,
-        subtitle: l10n.apnaClinicAiLiveStats,
-        send: l10n.apnaClinicAiSuggestDoctors,
+      child: Text(
+        l10n.apnaClinicAiDisclaimer,
+        textAlign: TextAlign.left,
+        style: TextStyle(
+          color: ApnaClinicAiUiConfig.cautionText,
+          fontSize: 12.sp,
+          height: 1.4,
+          fontWeight: FontWeight.w400,
+        ),
       ),
-      ApnaClinicAiHomeTileEntity(
-        id: 'medicine',
-        title: l10n.apnaClinicAiMedicines,
-        subtitle: l10n.apnaClinicAiFinePrint,
-        send: l10n.apnaClinicAiSuggestPanadol,
-      ),
-      ApnaClinicAiHomeTileEntity(
-        id: 'report',
-        title: l10n.apnaClinicAiPrescriptionTitle,
-        subtitle: l10n.apnaClinicAiPrescriptionBody,
-        send: l10n.apnaClinicAiPrescriptionHint,
-      ),
-    ];
+    );
   }
 }
 
@@ -223,24 +350,18 @@ class _HeroCard extends StatelessWidget {
     required this.connected,
     required this.headline,
     required this.welcome,
-    required this.voiceEnabled,
-    required this.voiceTitle,
-    required this.voiceLangs,
     required this.connectingLabel,
     required this.onlineLabel,
-    required this.onVoice,
+    required this.onClose,
   });
 
   final bool connecting;
   final bool connected;
   final String headline;
   final String welcome;
-  final bool voiceEnabled;
-  final String voiceTitle;
-  final String voiceLangs;
   final String connectingLabel;
   final String onlineLabel;
-  final VoidCallback onVoice;
+  final VoidCallback onClose;
 
   @override
   Widget build(BuildContext context) {
@@ -257,137 +378,174 @@ class _HeroCard extends StatelessWidget {
 
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.fromLTRB(20.w, 18.h, 20.w, 18.h),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20.r),
+        borderRadius: BorderRadius.circular(22.r),
         gradient: const LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: ApnaClinicAiUiConfig.heroGradient,
+          colors: [
+            Color(0xFF1AC4B2),
+            Color(0xFF12B5A4),
+            ApnaClinicAiUiConfig.cta,
+            ApnaClinicAiUiConfig.ctaDeep,
+          ],
+          stops: [0.0, 0.35, 0.72, 1.0],
         ),
-        boxShadow: const [
+        boxShadow: [
           BoxShadow(
-            color: Color(0x2800897B),
-            blurRadius: 18,
-            offset: Offset(0, 8),
+            color: ApnaClinicAiUiConfig.ctaDeep.withValues(alpha: 0.28),
+            blurRadius: 24,
+            offset: Offset(0, 10.h),
           ),
         ],
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      clipBehavior: Clip.antiAlias,
+      child: Stack(
         children: [
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 5.h),
-            decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.14),
-              borderRadius: BorderRadius.circular(8.r),
+          Positioned(
+            right: -28.w,
+            top: -36.h,
+            child: Container(
+              width: 120.r,
+              height: 120.r,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.white.withValues(alpha: 0.08),
+              ),
             ),
-            child: Row(
+          ),
+          Positioned(
+            right: 40.w,
+            bottom: -48.h,
+            child: Container(
+              width: 100.r,
+              height: 100.r,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.white.withValues(alpha: 0.06),
+              ),
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.fromLTRB(16.w, 10.h, 10.w, 18.h),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                Container(
-                  width: 7.r,
-                  height: 7.r,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: statusColor,
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 10.w,
+                            vertical: 5.h,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withValues(alpha: 0.16),
+                            borderRadius: BorderRadius.circular(20.r),
+                            border: Border.all(
+                              color: Colors.white.withValues(alpha: 0.18),
+                            ),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Container(
+                                width: 7.r,
+                                height: 7.r,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: statusColor,
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: statusColor.withValues(
+                                        alpha: 0.55,
+                                      ),
+                                      blurRadius: 6,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              SizedBox(width: 7.w),
+                              Flexible(
+                                child: Text(
+                                  statusLabel,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    color: Colors.white.withValues(
+                                      alpha: 0.96,
+                                    ),
+                                    fontSize: 11.sp,
+                                    fontWeight: FontWeight.w600,
+                                    letterSpacing: 0.15,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: 8.w),
+                    Material(
+                      color: Colors.white.withValues(alpha: 0.92),
+                      borderRadius: BorderRadius.circular(8.r),
+                      child: InkWell(
+                        onTap: onClose,
+                        borderRadius: BorderRadius.circular(8.r),
+                        child: SizedBox(
+                          width: 24.r,
+                          height: 24.r,
+                          child: Icon(
+                            Icons.close_rounded,
+                            size: 14.r,
+                            color: ApnaClinicAiUiConfig.primaryText,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 8.h),
+                Padding(
+                  padding: EdgeInsets.only(right: 6.w),
+                  child: Text(
+                    headline.replaceAll('\n', ' '),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20.sp,
+                      height: 1.2,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: -0.35,
+                    ),
                   ),
                 ),
-                SizedBox(width: 7.w),
-                Text(
-                  statusLabel,
-                  style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.92),
-                    fontSize: 11.sp,
-                    fontWeight: FontWeight.w600,
-                    letterSpacing: 0.2,
+                if (welcome.trim().isNotEmpty) ...[
+                  SizedBox(height: 6.h),
+                  Padding(
+                    padding: EdgeInsets.only(right: 6.w),
+                    child: Text(
+                      welcome,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: Colors.white.withValues(alpha: 0.88),
+                        fontSize: 13.sp,
+                        height: 1.35,
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
                   ),
-                ),
+                ],
               ],
             ),
           ),
-          SizedBox(height: 14.h),
-          Text(
-            headline,
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 26.sp,
-              height: 1.15,
-              fontWeight: FontWeight.w700,
-              letterSpacing: -0.4,
-            ),
-          ),
-          SizedBox(height: 8.h),
-          Text(
-            welcome,
-            style: TextStyle(
-              color: Colors.white.withValues(alpha: 0.82),
-              fontSize: 13.sp,
-              height: 1.4,
-              fontWeight: FontWeight.w400,
-            ),
-          ),
-          if (voiceEnabled) ...[
-            SizedBox(height: 16.h),
-            Material(
-              color: Colors.white.withValues(alpha: 0.12),
-              borderRadius: BorderRadius.circular(14.r),
-              child: InkWell(
-                onTap: onVoice,
-                borderRadius: BorderRadius.circular(14.r),
-                child: Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 12.w,
-                    vertical: 11.h,
-                  ),
-                  child: Row(
-                    children: [
-                      Container(
-                        width: 38.r,
-                        height: 38.r,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(10.r),
-                        ),
-                        child: Icon(
-                          Icons.mic_none_rounded,
-                          color: ApnaClinicAiUiConfig.ctaDeep,
-                          size: 20.r,
-                        ),
-                      ),
-                      SizedBox(width: 12.w),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              voiceTitle,
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.w600,
-                                fontSize: 14.sp,
-                              ),
-                            ),
-                            Text(
-                              voiceLangs,
-                              style: TextStyle(
-                                color: Colors.white.withValues(alpha: 0.72),
-                                fontSize: 11.sp,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Icon(
-                        Icons.chevron_right_rounded,
-                        color: Colors.white.withValues(alpha: 0.7),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ],
         ],
       ),
     );
@@ -400,11 +558,13 @@ class _ContinueCard extends StatelessWidget {
     required this.complaint,
     required this.onTap,
     this.relative,
+    this.badge,
   });
 
   final String title;
   final String complaint;
   final String? relative;
+  final String? badge;
   final VoidCallback onTap;
 
   @override
@@ -441,13 +601,42 @@ class _ContinueCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      title,
-                      style: TextStyle(
-                        fontWeight: FontWeight.w700,
-                        fontSize: 12.sp,
-                        color: ApnaClinicAiUiConfig.secondaryText,
-                      ),
+                    Row(
+                      children: [
+                        Flexible(
+                          child: Text(
+                            title,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontWeight: FontWeight.w700,
+                              fontSize: 12.sp,
+                              color: ApnaClinicAiUiConfig.secondaryText,
+                            ),
+                          ),
+                        ),
+                        if ((badge ?? '').trim().isNotEmpty) ...[
+                          SizedBox(width: 6.w),
+                          Container(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 6.w,
+                              vertical: 2.h,
+                            ),
+                            decoration: BoxDecoration(
+                              color: ApnaClinicAiUiConfig.ctaSoft,
+                              borderRadius: BorderRadius.circular(6.r),
+                            ),
+                            child: Text(
+                              badge!.trim(),
+                              style: TextStyle(
+                                fontSize: 10.sp,
+                                fontWeight: FontWeight.w700,
+                                color: ApnaClinicAiUiConfig.ctaDeep,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ],
                     ),
                     Text(
                       complaint,
@@ -572,62 +761,74 @@ class _HomeTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final icon = _tileIcon(tile.id, colorIndex);
+    final subtitle = (tile.subtitle ?? '').trim();
     return Material(
       color: ApnaClinicAiUiConfig.panel,
-      borderRadius: BorderRadius.circular(16.r),
+      borderRadius: BorderRadius.circular(12.r),
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(16.r),
+        borderRadius: BorderRadius.circular(12.r),
         child: Container(
-          padding: EdgeInsets.all(14.r),
+          padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 8.h),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(16.r),
+            borderRadius: BorderRadius.circular(12.r),
             border: Border.all(color: ApnaClinicAiUiConfig.borderStrong),
-            boxShadow: ApnaClinicAiUiConfig.cardShadow,
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          child: Row(
             children: [
               Container(
-                width: 36.r,
-                height: 36.r,
+                width: 28.r,
+                height: 28.r,
                 decoration: BoxDecoration(
                   color: ApnaClinicAiUiConfig.ctaSoft,
-                  borderRadius: BorderRadius.circular(10.r),
+                  borderRadius: BorderRadius.circular(8.r),
                 ),
                 child: Icon(
                   icon,
                   color: ApnaClinicAiUiConfig.ctaDeep,
-                  size: 18.r,
+                  size: 15.r,
                 ),
               ),
-              SizedBox(height: 10.h),
-              Text(
-                tile.title,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  fontWeight: FontWeight.w700,
-                  fontSize: 13.sp,
-                  color: ApnaClinicAiUiConfig.primaryText,
-                  height: 1.25,
-                  letterSpacing: -0.1,
+              SizedBox(width: 10.w),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      tile.title,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontWeight: FontWeight.w700,
+                        fontSize: 12.sp,
+                        color: ApnaClinicAiUiConfig.primaryText,
+                        height: 1.2,
+                        letterSpacing: -0.1,
+                      ),
+                    ),
+                    if (subtitle.isNotEmpty) ...[
+                      SizedBox(height: 1.h),
+                      Text(
+                        subtitle,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontSize: 10.sp,
+                          color: ApnaClinicAiUiConfig.muted,
+                          height: 1.2,
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                    ],
+                  ],
                 ),
               ),
-              if ((tile.subtitle ?? '').trim().isNotEmpty) ...[
-                SizedBox(height: 4.h),
-                Text(
-                  tile.subtitle!.trim(),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    fontSize: 11.sp,
-                    color: ApnaClinicAiUiConfig.muted,
-                    height: 1.3,
-                    fontWeight: FontWeight.w400,
-                  ),
-                ),
-              ],
+              Icon(
+                Icons.chevron_right_rounded,
+                size: 18.r,
+                color: ApnaClinicAiUiConfig.muted,
+              ),
             ],
           ),
         ),
@@ -649,81 +850,9 @@ class _HomeTile extends StatelessWidget {
     if (key.contains('symptom') || key.contains('triage')) {
       return Icons.favorite_outline_rounded;
     }
+    if (key.contains('browse')) return Icons.medical_services_outlined;
+    if (key.contains('cart')) return Icons.shopping_bag_outlined;
     return _icons[index % _icons.length];
   }
 }
 
-class _SosBanner extends StatelessWidget {
-  const _SosBanner();
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-    return Material(
-      color: ApnaClinicAiUiConfig.emergencyBg,
-      borderRadius: BorderRadius.circular(14.r),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(14.r),
-        onTap: () => launchUrl(Uri.parse('tel:1122')),
-        child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(14.r),
-            border: Border.all(color: ApnaClinicAiUiConfig.emergencyBorder),
-          ),
-          child: Row(
-            children: [
-              Container(
-                width: 34.r,
-                height: 34.r,
-                decoration: BoxDecoration(
-                  color: ApnaClinicAiUiConfig.emergencyText.withValues(
-                    alpha: 0.12,
-                  ),
-                  borderRadius: BorderRadius.circular(10.r),
-                ),
-                alignment: Alignment.center,
-                child: Icon(
-                  Icons.emergency_outlined,
-                  color: ApnaClinicAiUiConfig.emergencyText,
-                  size: 18.r,
-                ),
-              ),
-              SizedBox(width: 12.w),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      l10n.apnaClinicAiSosTitle,
-                      style: TextStyle(
-                        fontWeight: FontWeight.w700,
-                        fontSize: 12.sp,
-                        color: ApnaClinicAiUiConfig.primaryText,
-                        height: 1.3,
-                      ),
-                    ),
-                    SizedBox(height: 2.h),
-                    Text(
-                      l10n.apnaClinicAiSosBody,
-                      style: TextStyle(
-                        fontSize: 11.sp,
-                        color: ApnaClinicAiUiConfig.emergencyText,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Icon(
-                Icons.phone_in_talk_outlined,
-                color: ApnaClinicAiUiConfig.emergencyText,
-                size: 18.r,
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}

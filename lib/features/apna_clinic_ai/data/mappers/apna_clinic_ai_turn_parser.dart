@@ -123,14 +123,35 @@ class ApnaClinicAiTurnParser {
           .toList();
     }
 
-    final payments = <ApnaClinicAiPaymentModel>[
-      ...blocks.payments,
-      ...enriched.payments.where(
-        (p) => blocks.payments.every(
-          (existing) => existing.label.toLowerCase() != p.label.toLowerCase(),
-        ),
-      ),
-    ];
+    final hasPaymentCards = doctors.any(
+      (card) => card.kind.toLowerCase() == 'payment',
+    );
+    final hasPayLink = blocks.payments.any(
+      (payment) => _httpUrl(payment.url) != null,
+    );
+    // Image cards or a checkout link already cover payment. Skip guessed methods.
+    final payments = (hasPaymentCards || hasPayLink)
+        ? blocks.payments
+            .map(
+              (payment) => _httpUrl(payment.url) == null
+                  ? payment
+                  : ApnaClinicAiPaymentModel(
+                      label: _markdownLinkLabel(reply, payment.url!) ?? '',
+                      hint: payment.hint,
+                      send: payment.send,
+                      url: payment.url,
+                    ),
+            )
+            .toList()
+        : <ApnaClinicAiPaymentModel>[
+            ...blocks.payments,
+            ...enriched.payments.where(
+              (p) => blocks.payments.every(
+                (existing) =>
+                    existing.label.toLowerCase() != p.label.toLowerCase(),
+              ),
+            ),
+          ];
 
     final audio = json['audio'];
     String? audioBase64;
@@ -142,6 +163,8 @@ class ApnaClinicAiTurnParser {
           audio['media_type']?.toString() ??
           (format == 'opus' ? 'audio/ogg' : 'audio/wav');
     }
+    final audioPending = json['audio_pending'] == true;
+    final turnId = (json['turn_id'] ?? '').toString().trim();
 
     final auth = json['auth'];
     String? resumeMessage;
@@ -173,6 +196,8 @@ class ApnaClinicAiTurnParser {
       payments: payments,
       audioBase64: (audioBase64 == null || audioBase64.isEmpty) ? null : audioBase64,
       audioMediaType: audioMediaType,
+      audioPending: audioPending,
+      turnId: turnId.isEmpty ? null : turnId,
       signInRequired: signInRequired,
       authResumeMessage:
           (resumeMessage == null || resumeMessage.isEmpty) ? null : resumeMessage,
@@ -318,13 +343,14 @@ class ApnaClinicAiTurnParser {
           String? fee;
           String? rating;
           String? years;
+          final pricePattern = RegExp(
+            r'PKR\s*[\d,.]+',
+            caseSensitive: false,
+          );
+          final yearsPattern = RegExp(r'\d+\s*yrs?', caseSensitive: false);
           for (final item in meta) {
-            if (fee == null && item.toLowerCase().contains('pkr')) {
-              fee = item;
-            } else if (years == null &&
-                RegExp(r'\d+\s*yrs?', caseSensitive: false).hasMatch(item)) {
-              years = item;
-            }
+            fee ??= pricePattern.firstMatch(item)?.group(0)?.trim();
+            years ??= yearsPattern.firstMatch(item)?.group(0)?.trim();
             if (rating == null &&
                 RegExp(r'★|rating', caseSensitive: false).hasMatch(item)) {
               rating = item;
@@ -337,18 +363,24 @@ class ApnaClinicAiTurnParser {
               fee = 'PKR ${n.toStringAsFixed(n.truncateToDouble() == n ? 0 : 2)}';
             }
           }
+          final cardKind = (card['kind'] ?? 'doctor').toString();
+          final isPayment = cardKind.toLowerCase() == 'payment';
+          final subtitle = card['subtitle']?.toString();
+          final description = card['description']?.toString();
           doctors.add(
             ApnaClinicAiDoctorCardModel(
               id: card['id']?.toString(),
-              kind: (card['kind'] ?? 'doctor').toString(),
+              kind: cardKind,
               name: name,
-              specialty: card['subtitle']?.toString(),
-              years: years ?? (meta.isEmpty ? null : meta.first),
-              fee: fee,
-              rating: rating,
+              specialty: isPayment ? null : subtitle,
+              years: isPayment ? null : years,
+              fee: isPayment ? null : fee,
+              rating: isPayment ? null : rating,
               imageUrl: _cardImageUrl(card),
               badge: card['badge']?.toString(),
-              description: card['description']?.toString(),
+              description: isPayment
+                  ? _firstText(subtitle, description)
+                  : description,
               cta: card['cta']?.toString(),
               send: (card['send'] ?? card['title'] ?? '').toString(),
             ),
@@ -380,19 +412,36 @@ class ApnaClinicAiTurnParser {
       }
       if (kind == 'payment_handoff' && block['handoff'] is Map) {
         final handoff = block['handoff'] as Map;
-        final method = (handoff['method'] ?? handoff['name'] ?? 'Pay').toString();
-        final hint = [
-          handoff['amount'],
-          handoff['currency'],
-          handoff['description'],
-        ].where((part) => part != null && part.toString().trim().isNotEmpty).join(' · ');
-        payments.add(
-          ApnaClinicAiPaymentModel(
-            label: method,
-            hint: hint.isEmpty ? null : hint,
-            send: method,
-          ),
+        final payUrl = _httpUrl(
+          handoff['paymentLink'] ??
+              handoff['payment_url'] ??
+              handoff['payment_link'],
         );
+        if (payUrl != null) {
+          payments.add(
+            ApnaClinicAiPaymentModel(
+              label: '',
+              hint: null,
+              send: payUrl,
+              url: payUrl,
+            ),
+          );
+        } else {
+          final method = (handoff['method'] ?? handoff['name'] ?? 'Pay')
+              .toString();
+          final hint = [
+            handoff['amount'],
+            handoff['currency'],
+            handoff['description'],
+          ].where((part) => part != null && part.toString().trim().isNotEmpty).join(' · ');
+          payments.add(
+            ApnaClinicAiPaymentModel(
+              label: method,
+              hint: hint.isEmpty ? null : hint,
+              send: method,
+            ),
+          );
+        }
       }
     }
     return _BlockCards(doctors, payments, slotChips);
@@ -527,6 +576,32 @@ class ApnaClinicAiTurnParser {
     }
 
     return _Enriched(doctors, slots, payments);
+  }
+
+  static String? _httpUrl(Object? raw) {
+    final value = raw?.toString().trim() ?? '';
+    if (value.startsWith('http://') || value.startsWith('https://')) {
+      return value;
+    }
+    return null;
+  }
+
+  static String? _markdownLinkLabel(String reply, String url) {
+    final pattern = RegExp(r'\[([^\]]+)\]\(([^)\s]+)\)');
+    for (final match in pattern.allMatches(reply)) {
+      if (match.group(2)?.trim() == url) {
+        final label = match.group(1)?.trim() ?? '';
+        if (label.isNotEmpty) return label;
+      }
+    }
+    return null;
+  }
+
+  static String? _firstText(String? primary, String? fallback) {
+    final first = primary?.trim() ?? '';
+    if (first.isNotEmpty) return first;
+    final second = fallback?.trim() ?? '';
+    return second.isEmpty ? null : second;
   }
 
   static String? _cardImageUrl(Map card) {

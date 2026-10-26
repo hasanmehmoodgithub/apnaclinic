@@ -3991,7 +3991,7 @@ abstract class AppLocalizations {
   /// No description provided for @apnaClinicAiTitle.
   ///
   /// In en, this message translates to:
-  /// **'Apna Clinic AI'**
+  /// **'Apna Clinic Ai Noor'**
   String get apnaClinicAiTitle;
 
   /// No description provided for @apnaClinicAiBrandTag.
@@ -4021,19 +4021,25 @@ abstract class AppLocalizations {
   /// No description provided for @apnaClinicAiConnecting.
   ///
   /// In en, this message translates to:
-  /// **'Connecting…'**
+  /// **'Getting ready for you…'**
   String get apnaClinicAiConnecting;
 
   /// No description provided for @apnaClinicAiOnline.
   ///
   /// In en, this message translates to:
-  /// **'online'**
+  /// **'Available 24/7'**
   String get apnaClinicAiOnline;
+
+  /// Hero status badge when AI home failed to connect
+  ///
+  /// In en, this message translates to:
+  /// **'Unavailable'**
+  String get apnaClinicAiUnavailable;
 
   /// No description provided for @apnaClinicAiHeadline.
   ///
   /// In en, this message translates to:
-  /// **'How are you\nfeeling today?'**
+  /// **'How are you feeling today?'**
   String get apnaClinicAiHeadline;
 
   /// No description provided for @apnaClinicAiLiveStats.
@@ -4144,10 +4150,10 @@ abstract class AppLocalizations {
   /// **'Describe the report in your own words, or say what the lab found.'**
   String get apnaClinicAiPrescriptionHint;
 
-  /// No description provided for @apnaClinicAiDisclaimer.
+  /// Home screen medical disclaimer above the composer
   ///
   /// In en, this message translates to:
-  /// **'Medical disclaimer — This tool provides general informational guidance only and is not a medical diagnosis. Always consult a qualified healthcare professional. In an emergency call Rescue 1122.'**
+  /// **'The Apnaclinic AI assistant is for general informational purposes only. It is not a substitute for professional medical advice, diagnosis, or treatment. Always seek the advice of your physician or qualified health provider with any questions you may have regarding a medical condition.'**
   String get apnaClinicAiDisclaimer;
 
   /// No description provided for @apnaClinicAiChatSubtitle.
@@ -4179,6 +4185,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Describe a symptom or name a medicine…'**
   String get apnaClinicAiComposerHint;
+
+  /// Home composer rotating hint (English)
+  ///
+  /// In en, this message translates to:
+  /// **'I\'m Apna Clinic Ai Noor, how can I help you?'**
+  String get apnaClinicAiComposerHintHelpEn;
+
+  /// Home composer rotating hint (Urdu)
+  ///
+  /// In en, this message translates to:
+  /// **'میں نور ہوں، آپ کی کیسے مدد کر سکتی ہوں؟'**
+  String get apnaClinicAiComposerHintHelpUr;
 
   /// No description provided for @apnaClinicAiChatComposerHint.
   ///
@@ -4276,10 +4294,16 @@ abstract class AppLocalizations {
   /// **'Payment'**
   String get apnaClinicAiPayment;
 
+  /// No description provided for @apnaClinicAiPayNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay now'**
+  String get apnaClinicAiPayNow;
+
   /// No description provided for @apnaClinicAiNotConfigured.
   ///
   /// In en, this message translates to:
-  /// **'Apna Clinic AI is not configured. Add APNA_CLINIC_AI_BASE_URL and APNA_CLINIC_AI_SDK_KEY.'**
+  /// **'Apna Clinic AI is not configured. Add JIMI_BASE_URL / JIMI_SDK_KEY (or APNA_CLINIC_AI_*).'**
   String get apnaClinicAiNotConfigured;
 
   /// No description provided for @apnaClinicAiConnectFailed.
@@ -4309,7 +4333,7 @@ abstract class AppLocalizations {
   /// No description provided for @apnaClinicAiEmptyRecording.
   ///
   /// In en, this message translates to:
-  /// **'No speech heard. Hold the mic a little longer, or type your message.'**
+  /// **'I couldn’t hear any speech clearly. Please tap the mic and try speaking again.'**
   String get apnaClinicAiEmptyRecording;
 
   /// No description provided for @apnaClinicAiSignInRequired.
@@ -4329,12 +4353,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'New chat'**
   String get apnaClinicAiNewChat;
-
-  /// No description provided for @apnaClinicAiSpeakReplies.
-  ///
-  /// In en, this message translates to:
-  /// **'Speak replies'**
-  String get apnaClinicAiSpeakReplies;
 
   /// No description provided for @apnaClinicAiHoldToTalk.
   ///
@@ -4359,6 +4377,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'اردو'**
   String get apnaClinicAiVoiceUrdu;
+
+  /// Label on a user voice message bubble (no transcript shown)
+  ///
+  /// In en, this message translates to:
+  /// **'Voice note'**
+  String get apnaClinicAiVoiceNote;
+
+  /// Shown on a voice bubble while waiting for speech-to-text
+  ///
+  /// In en, this message translates to:
+  /// **'Transcribing…'**
+  String get apnaClinicAiTranscribing;
+
+  /// No description provided for @apnaClinicAiAgentSpeaking.
+  ///
+  /// In en, this message translates to:
+  /// **'Apna Clinic Ai Noor is speaking...'**
+  String get apnaClinicAiAgentSpeaking;
+
+  /// No description provided for @apnaClinicAiPause.
+  ///
+  /// In en, this message translates to:
+  /// **'Pause'**
+  String get apnaClinicAiPause;
+
+  /// No description provided for @apnaClinicAiPlay.
+  ///
+  /// In en, this message translates to:
+  /// **'Play'**
+  String get apnaClinicAiPlay;
+
+  /// No description provided for @apnaClinicAiCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'Copied'**
+  String get apnaClinicAiCopied;
 
   /// No description provided for @apnaClinicAiListening.
   ///
@@ -4407,6 +4461,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{count} days ago'**
   String apnaClinicAiDaysAgo(int count);
+
+  /// Waiting line 1/3 while Care Companion reply loads
+  ///
+  /// In en, this message translates to:
+  /// **'Just a moment…'**
+  String get apnaClinicAiJustAMoment;
+
+  /// Waiting line 2/3 while Care Companion reply loads
+  ///
+  /// In en, this message translates to:
+  /// **'Looking into that…'**
+  String get apnaClinicAiJustAMoment2;
+
+  /// Waiting line 3/3 while Care Companion reply loads
+  ///
+  /// In en, this message translates to:
+  /// **'Almost ready…'**
+  String get apnaClinicAiJustAMoment3;
 
   /// No description provided for @apnaClinicAiStageListening.
   ///

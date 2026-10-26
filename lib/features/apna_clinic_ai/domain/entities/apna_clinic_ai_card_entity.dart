@@ -41,6 +41,8 @@ class ApnaClinicAiDoctorCardEntity extends Equatable {
 
   bool get isMedicine => kind.toLowerCase() == 'medicine';
 
+  bool get isPayment => kind.toLowerCase() == 'payment';
+
   @override
   List<Object?> get props => [
     id,
@@ -86,12 +88,21 @@ class ApnaClinicAiPaymentEntity extends Equatable {
     required this.label,
     required this.send,
     this.hint,
+    this.url,
   });
 
   final String label;
   final String send;
   final String? hint;
 
+  /// Card checkout URL. When set, the row opens the payment web view.
+  final String? url;
+
+  bool get opensPaymentWebView {
+    final link = url?.trim() ?? '';
+    return link.startsWith('http://') || link.startsWith('https://');
+  }
+
   @override
-  List<Object?> get props => [label, send, hint];
+  List<Object?> get props => [label, send, hint, url];
 }

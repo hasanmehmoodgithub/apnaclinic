@@ -1,8 +1,10 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
+import '../../../payment/presentation/payment_navigation.dart';
 import '../../domain/entities/apna_clinic_ai_card_entity.dart';
 import '../constants/apna_clinic_ai_ui_config.dart';
 import '../cubit/apna_clinic_ai_state.dart';
@@ -27,13 +29,17 @@ class ApnaClinicAiReplyRail extends StatelessWidget {
     final hasSlots =
         state.slotDays.isNotEmpty || state.slots.isNotEmpty;
     // Slot calendar replaces doctor cards for this turn (avoids duplicate UI).
+    final paymentCards = state.doctors.where((d) => d.isPayment).toList();
     final doctors = hasSlots
         ? const <ApnaClinicAiDoctorCardEntity>[]
-        : state.doctors.where((d) => !d.isMedicine).toList();
+        : state.doctors
+              .where((d) => !d.isMedicine && !d.isPayment)
+              .toList();
     final medicines = state.doctors.where((d) => d.isMedicine).toList();
 
     if (!state.emergencyVisible &&
         doctors.isEmpty &&
+        paymentCards.isEmpty &&
         medicines.isEmpty &&
         state.slots.isEmpty &&
         state.slotDays.isEmpty &&
@@ -99,6 +105,12 @@ class ApnaClinicAiReplyRail extends StatelessWidget {
               cards: medicines,
               onSend: onSend,
             ),
+          if (paymentCards.isNotEmpty)
+            _PaymentList(
+              title: l10n.apnaClinicAiPayment,
+              cards: paymentCards,
+              onSend: onSend,
+            ),
           if (state.slotDays.isNotEmpty)
             ApnaClinicAiSlotCalendar(
               days: state.slotDays,
@@ -106,16 +118,20 @@ class ApnaClinicAiReplyRail extends StatelessWidget {
             )
           else if (state.slots.isNotEmpty)
             _FlatSlots(slots: state.slots, onSend: onSend),
-          if (state.payments.isNotEmpty)
+          if (paymentCards.isEmpty && state.payments.isNotEmpty)
             _Section(
               title: l10n.apnaClinicAiPayment,
               children: [
                 for (final payment in state.payments)
                   _ChoiceTile(
-                    icon: _paymentIcon(payment.label),
-                    label: payment.label,
+                    icon: payment.opensPaymentWebView
+                        ? Icons.credit_card_rounded
+                        : _paymentIcon(payment.label),
+                    label: payment.label.trim().isNotEmpty
+                        ? payment.label.trim()
+                        : l10n.apnaClinicAiPayNow,
                     hint: payment.hint,
-                    onTap: () => onSend(payment.send),
+                    onTap: () => _onPaymentTap(context, payment),
                   ),
               ],
             ),
@@ -131,6 +147,22 @@ class ApnaClinicAiReplyRail extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  void _onPaymentTap(BuildContext context, ApnaClinicAiPaymentEntity payment) {
+    final url = payment.url?.trim() ?? '';
+    if (payment.opensPaymentWebView) {
+      openCardPaymentWebView(
+        context,
+        paymentUrl: url,
+        title: payment.label.trim().isNotEmpty
+            ? payment.label.trim()
+            : AppLocalizations.of(context)!.apnaClinicAiPayNow,
+        allowClose: true,
+      );
+      return;
+    }
+    onSend(payment.send);
   }
 
   IconData _paymentIcon(String label) {
@@ -171,7 +203,9 @@ class _CardRail extends StatelessWidget {
           ),
           SizedBox(height: 8.h),
           SizedBox(
-            height: ApnaClinicAiDoctorCard.railHeight(context),
+            height: cards.isNotEmpty && cards.first.isPayment
+                ? ApnaClinicAiDoctorCard.paymentRailHeight(context)
+                : ApnaClinicAiDoctorCard.railHeight(context),
             child: ListView.separated(
               scrollDirection: Axis.horizontal,
               itemCount: cards.length,
@@ -210,6 +244,155 @@ class _FlatSlots extends StatelessWidget {
             onTap: () => onSend(slot.send),
           ),
       ],
+    );
+  }
+}
+
+class _PaymentList extends StatelessWidget {
+  const _PaymentList({
+    required this.title,
+    required this.cards,
+    required this.onSend,
+  });
+
+  final String title;
+  final List<ApnaClinicAiDoctorCardEntity> cards;
+  final ValueChanged<String> onSend;
+
+  @override
+  Widget build(BuildContext context) {
+    return _Section(
+      title: title,
+      children: [
+        for (final card in cards)
+          _PaymentRow(card: card, onTap: () => onSend(card.send)),
+      ],
+    );
+  }
+}
+
+class _PaymentRow extends StatelessWidget {
+  const _PaymentRow({required this.card, required this.onTap});
+
+  final ApnaClinicAiDoctorCardEntity card;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final badge = (card.badge ?? '').trim();
+    final detail = (card.description ?? '').trim();
+    return Padding(
+      padding: EdgeInsets.only(bottom: 8.h),
+      child: Material(
+        color: ApnaClinicAiUiConfig.panel,
+        borderRadius: BorderRadius.circular(12.r),
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(12.r),
+          child: Container(
+            padding: EdgeInsets.all(8.r),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12.r),
+              border: Border.all(color: ApnaClinicAiUiConfig.border),
+            ),
+            child: Row(
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(8.r),
+                  child: SizedBox(
+                    width: 52.r,
+                    height: 52.r,
+                    child: _PaymentThumb(name: card.name, imageUrl: card.imageUrl),
+                  ),
+                ),
+                SizedBox(width: 10.w),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      if (badge.isNotEmpty)
+                        Text(
+                          badge.toUpperCase(),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            color: ApnaClinicAiUiConfig.ctaDeep,
+                            fontSize: 10.sp,
+                            fontWeight: FontWeight.w700,
+                            letterSpacing: 0.3,
+                          ),
+                        ),
+                      Text(
+                        card.name,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          color: ApnaClinicAiUiConfig.primaryText,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 14.sp,
+                        ),
+                      ),
+                      if (detail.isNotEmpty)
+                        Text(
+                          detail,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            color: ApnaClinicAiUiConfig.secondaryText,
+                            fontSize: 12.sp,
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+                Icon(
+                  Icons.chevron_right_rounded,
+                  color: ApnaClinicAiUiConfig.secondaryText,
+                  size: 20.r,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _PaymentThumb extends StatelessWidget {
+  const _PaymentThumb({required this.name, this.imageUrl});
+
+  final String name;
+  final String? imageUrl;
+
+  @override
+  Widget build(BuildContext context) {
+    final url = imageUrl?.trim() ?? '';
+    final network =
+        url.startsWith('http://') || url.startsWith('https://');
+    if (!network) {
+      return const ColoredBox(color: ApnaClinicAiUiConfig.ctaSoft);
+    }
+    return CachedNetworkImage(
+      imageUrl: url,
+      fit: BoxFit.cover,
+      width: 52.r,
+      height: 52.r,
+      placeholder: (_, _) =>
+          const ColoredBox(color: ApnaClinicAiUiConfig.mint),
+      errorWidget: (_, _, _) => ColoredBox(
+        color: ApnaClinicAiUiConfig.ctaSoft,
+        child: Center(
+          child: Text(
+            name.isEmpty ? 'P' : name[0].toUpperCase(),
+            style: TextStyle(
+              color: ApnaClinicAiUiConfig.ctaDeep,
+              fontWeight: FontWeight.w700,
+              fontSize: 16.sp,
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

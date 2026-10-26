@@ -2144,7 +2144,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get apnaClinicAiMenuTitle => 'Apna Clinic AI';
 
   @override
-  String get apnaClinicAiTitle => 'Apna Clinic AI';
+  String get apnaClinicAiTitle => 'Apna Clinic Ai Noor';
 
   @override
   String get apnaClinicAiBrandTag => 'CARE COMPANION';
@@ -2159,13 +2159,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get apnaClinicAiSignedIn => 'Signed in';
 
   @override
-  String get apnaClinicAiConnecting => 'Connecting…';
+  String get apnaClinicAiConnecting => 'Getting ready for you…';
 
   @override
-  String get apnaClinicAiOnline => 'online';
+  String get apnaClinicAiOnline => 'Available 24/7';
 
   @override
-  String get apnaClinicAiHeadline => 'How are you\nfeeling today?';
+  String get apnaClinicAiUnavailable => 'Unavailable';
+
+  @override
+  String get apnaClinicAiHeadline => 'How are you feeling today?';
 
   @override
   String get apnaClinicAiLiveStats => 'Tell me what’s bothering you.';
@@ -2230,7 +2233,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get apnaClinicAiDisclaimer =>
-      'Medical disclaimer — This tool provides general informational guidance only and is not a medical diagnosis. Always consult a qualified healthcare professional. In an emergency call Rescue 1122.';
+      'The Apnaclinic AI assistant is for general informational purposes only. It is not a substitute for professional medical advice, diagnosis, or treatment. Always seek the advice of your physician or qualified health provider with any questions you may have regarding a medical condition.';
 
   @override
   String get apnaClinicAiChatSubtitle => 'online';
@@ -2250,6 +2253,14 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get apnaClinicAiComposerHint =>
       'Describe a symptom or name a medicine…';
+
+  @override
+  String get apnaClinicAiComposerHintHelpEn =>
+      'I\'m Apna Clinic Ai Noor, how can I help you?';
+
+  @override
+  String get apnaClinicAiComposerHintHelpUr =>
+      'میں نور ہوں، آپ کی کیسے مدد کر سکتی ہوں؟';
 
   @override
   String get apnaClinicAiChatComposerHint => 'Type, or tap the mic to speak…';
@@ -2306,8 +2317,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get apnaClinicAiPayment => 'Payment';
 
   @override
+  String get apnaClinicAiPayNow => 'Pay now';
+
+  @override
   String get apnaClinicAiNotConfigured =>
-      'Apna Clinic AI is not configured. Add APNA_CLINIC_AI_BASE_URL and APNA_CLINIC_AI_SDK_KEY.';
+      'Apna Clinic AI is not configured. Add JIMI_BASE_URL / JIMI_SDK_KEY (or APNA_CLINIC_AI_*).';
 
   @override
   String get apnaClinicAiConnectFailed =>
@@ -2327,7 +2341,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get apnaClinicAiEmptyRecording =>
-      'No speech heard. Hold the mic a little longer, or type your message.';
+      'I couldn’t hear any speech clearly. Please tap the mic and try speaking again.';
 
   @override
   String get apnaClinicAiSignInRequired =>
@@ -2340,9 +2354,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get apnaClinicAiNewChat => 'New chat';
 
   @override
-  String get apnaClinicAiSpeakReplies => 'Speak replies';
-
-  @override
   String get apnaClinicAiHoldToTalk => 'Tap to talk';
 
   @override
@@ -2353,6 +2364,24 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get apnaClinicAiVoiceUrdu => 'اردو';
+
+  @override
+  String get apnaClinicAiVoiceNote => 'Voice note';
+
+  @override
+  String get apnaClinicAiTranscribing => 'Transcribing…';
+
+  @override
+  String get apnaClinicAiAgentSpeaking => 'Apna Clinic Ai Noor is speaking...';
+
+  @override
+  String get apnaClinicAiPause => 'Pause';
+
+  @override
+  String get apnaClinicAiPlay => 'Play';
+
+  @override
+  String get apnaClinicAiCopied => 'Copied';
 
   @override
   String get apnaClinicAiListening => 'Listening…';
@@ -2383,6 +2412,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String apnaClinicAiDaysAgo(int count) {
     return '$count days ago';
   }
+
+  @override
+  String get apnaClinicAiJustAMoment => 'Just a moment…';
+
+  @override
+  String get apnaClinicAiJustAMoment2 => 'Looking into that…';
+
+  @override
+  String get apnaClinicAiJustAMoment3 => 'Almost ready…';
 
   @override
   String get apnaClinicAiStageListening => 'Listening to your symptoms…';

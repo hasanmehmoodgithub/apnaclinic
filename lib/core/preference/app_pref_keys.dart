@@ -62,4 +62,11 @@ class AppPrefKeys {
       _encryption.obfuscateKey('apna_clinic_ai_auth_mode$_prefVersion');
   static String get apnaClinicAiConversationId =>
       _encryption.obfuscateKey('apna_clinic_ai_conversation_id$_prefVersion');
+
+  /// Last thread the user actually sent on. Continue / Resume reads this.
+  /// A new window's unused id must not overwrite it.
+  static String get apnaClinicAiHistoryConversationId =>
+      _encryption.obfuscateKey(
+        'apna_clinic_ai_history_conversation_id$_prefVersion',
+      );
 }
