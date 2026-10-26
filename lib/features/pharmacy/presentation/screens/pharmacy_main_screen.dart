@@ -10,7 +10,6 @@ import '../cubit/pharmacy_state.dart';
 import '../pharmacy_navigation.dart';
 import '../widgets/pharmacy_main_medicines_body_widget.dart';
 import '../widgets/pharmacy_main_top_header_widget.dart';
-import '../widgets/pharmacy_scan_prescription_fab.dart';
 
 /// Pharmacy hub: banner header, then medicines list / search in the white panel.
 class PharmacyMainScreen extends StatefulWidget {
@@ -44,50 +43,41 @@ class _PharmacyMainScreenState extends State<PharmacyMainScreen> {
     final l10n = AppLocalizations.of(context)!;
     final bannerHeight = MediaQuery.sizeOf(context).height * _topBannerFraction;
     return Scaffold(
-      body: Stack(
-        children: [
-          ColoredBox(
-            color: AppColors.clrF4F6F8,
-            child: Column(
-              children: [
-                SizedBox(
-                  height: bannerHeight,
-                  child: BlocSelector<PharmacyCubit, PharmacyState, int>(
-                    selector: (state) => state.cartCount,
-                    builder: (context, cartCount) {
-                      return PharmacyMainTopHeaderWidget(
-                        title: l10n.pharmacyScreenTitle,
-                        cartCount: cartCount,
-                        onBackTap: () => pharmacyPopOrGoHome(context),
-                        onCartTap: () => pharmacyOpenCart(context),
-                      );
-                    },
-                  ),
-                ),
-                Expanded(
-                  child: SafeArea(
-                    top: false,
-                    child: Container(
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        color: AppColors.clrWhite,
-                        borderRadius: BorderRadius.vertical(
-                          top: Radius.circular(42.r),
-                        ),
-                      ),
-                      child: const PharmacyMainMedicinesBodyWidget(),
+      body: ColoredBox(
+        color: AppColors.clrF4F6F8,
+        child: Column(
+          children: [
+            SizedBox(
+              height: bannerHeight,
+              child: BlocSelector<PharmacyCubit, PharmacyState, int>(
+                selector: (state) => state.cartCount,
+                builder: (context, cartCount) {
+                  return PharmacyMainTopHeaderWidget(
+                    title: l10n.pharmacyScreenTitle,
+                    cartCount: cartCount,
+                    onBackTap: () => pharmacyPopOrGoHome(context),
+                    onCartTap: () => pharmacyOpenCart(context),
+                  );
+                },
+              ),
+            ),
+            Expanded(
+              child: SafeArea(
+                top: false,
+                child: Container(
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: AppColors.clrWhite,
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(42.r),
                     ),
                   ),
+                  child: const PharmacyMainMedicinesBodyWidget(),
                 ),
-              ],
+              ),
             ),
-          ),
-          Positioned(
-            right: 10.w,
-            bottom: MediaQuery.paddingOf(context).bottom + 6.h,
-            child: const PharmacyScanPrescriptionFab(),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

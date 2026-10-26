@@ -17,6 +17,7 @@ import 'pharmacy_add_to_cart_sheet.dart';
 import 'pharmacy_main_medicines_grid_widget.dart';
 import 'pharmacy_main_search_field_widget.dart';
 import 'pharmacy_main_section_title_widget.dart';
+import 'pharmacy_scan_prescription_search_button.dart';
 import 'pharmacy_screen_state_view.dart';
 
 /// Hub white panel: load / error / empty / search + grid. Rebuilds when medicines or search change, not on cart-only updates.
@@ -78,15 +79,24 @@ class _PharmacyMainMedicinesBodyWidgetState
                     title: l10n.pharmacyMainChooseMedicineTitle,
                   ),
                   SizedBox(height: 10.h),
-                  PharmacyMainSearchFieldWidget(
-                    searchQuery: state.searchQuery,
-                    searchHint: l10n.pharmacyMainSearchHint,
-                    onSearchTapped: () =>
-                        context.read<PharmacyCubit>().logSearchClicked(),
-                    onSearchSubmitted: (value) =>
-                        context.read<PharmacyCubit>().submitSearch(value),
-                    onSearchCleared: () =>
-                        context.read<PharmacyCubit>().submitSearch(''),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Expanded(
+                        child: PharmacyMainSearchFieldWidget(
+                          searchQuery: state.searchQuery,
+                          searchHint: l10n.pharmacyMainSearchHint,
+                          onSearchTapped: () =>
+                              context.read<PharmacyCubit>().logSearchClicked(),
+                          onSearchSubmitted: (value) =>
+                              context.read<PharmacyCubit>().submitSearch(value),
+                          onSearchCleared: () =>
+                              context.read<PharmacyCubit>().submitSearch(''),
+                        ),
+                      ),
+                      SizedBox(width: 10.w),
+                      const PharmacyScanPrescriptionSearchButton(),
+                    ],
                   ),
                 ],
               ),
@@ -123,7 +133,7 @@ class _PharmacyMainMedicinesBodyWidgetState
 
     return ListView(
       controller: _scrollController,
-      padding: EdgeInsets.fromLTRB(18.w, 0, 18.w, 168.h),
+      padding: EdgeInsets.fromLTRB(18.w, 0, 18.w, 24.h),
       children: [
         PharmacyMainMedicinesGridWidget(
           medicines: state.medicines,
