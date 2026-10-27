@@ -82,7 +82,7 @@ class ApnaClinicAiComposer extends StatelessWidget {
     }
 
     return Padding(
-      padding: EdgeInsets.fromLTRB(12.w, 6.h, 12.w, 14.h),
+      padding: EdgeInsets.fromLTRB(16.w, 6.h, 16.w, 24.h),
       child: ApnaClinicAiMovingStroke(
         borderRadius: radius,
         strokeWidth: 1.2,

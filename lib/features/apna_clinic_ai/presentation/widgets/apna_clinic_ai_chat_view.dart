@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
@@ -16,16 +17,14 @@ import 'apna_clinic_ai_message_bubble.dart';
 import 'apna_clinic_ai_reply_rail.dart';
 import 'apna_clinic_ai_speaking_bar.dart';
 
+/// Chat thread + composer. Scroll / focus / text buffer stay local;
+/// turn / recording / cards come from [ApnaClinicAiCubit].
 class ApnaClinicAiChatView extends StatefulWidget {
   const ApnaClinicAiChatView({
     super.key,
-    required this.state,
-    required this.cubit,
     required this.audioPlayer,
   });
 
-  final ApnaClinicAiState state;
-  final ApnaClinicAiCubit cubit;
   final ApnaClinicAiAudioPlayerService audioPlayer;
 
   @override
@@ -38,6 +37,10 @@ class _ApnaClinicAiChatViewState extends State<ApnaClinicAiChatView> {
   final _composerFocus = FocusNode();
   var _keyboardInset = 0.0;
   Timer? _scrollDelay;
+  var _lastMessageCount = 0;
+  String? _lastThinkingStage;
+  Object? _lastDoctors;
+  Object? _lastSlotDays;
 
   @override
   void initState() {
@@ -52,17 +55,6 @@ class _ApnaClinicAiChatViewState extends State<ApnaClinicAiChatView> {
     final keyboardGrew = inset > _keyboardInset + 1;
     _keyboardInset = inset;
     if (keyboardGrew && _composerFocus.hasFocus) _pinToLatest();
-  }
-
-  @override
-  void didUpdateWidget(covariant ApnaClinicAiChatView oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (oldWidget.state.messages.length != widget.state.messages.length ||
-        oldWidget.state.thinkingStage != widget.state.thinkingStage ||
-        oldWidget.state.doctors != widget.state.doctors ||
-        oldWidget.state.slotDays != widget.state.slotDays) {
-      _scrollToEnd();
-    }
   }
 
   void _onComposerFocus() {
@@ -98,6 +90,19 @@ class _ApnaClinicAiChatViewState extends State<ApnaClinicAiChatView> {
     );
   }
 
+  void _maybeScrollForState(ApnaClinicAiState state) {
+    final shouldScroll =
+        state.messages.length != _lastMessageCount ||
+        state.thinkingStage != _lastThinkingStage ||
+        !identical(state.doctors, _lastDoctors) ||
+        !identical(state.slotDays, _lastSlotDays);
+    _lastMessageCount = state.messages.length;
+    _lastThinkingStage = state.thinkingStage;
+    _lastDoctors = state.doctors;
+    _lastSlotDays = state.slotDays;
+    if (shouldScroll) _scrollToEnd();
+  }
+
   @override
   void dispose() {
     _scrollDelay?.cancel();
@@ -119,7 +124,6 @@ class _ApnaClinicAiChatViewState extends State<ApnaClinicAiChatView> {
       );
     }
     if (message.role != ApnaClinicAiMessageRole.assistant) return null;
-    // Play only for server clips — never fall back to on-device TTS.
     if (!message.hasAudio) return null;
     return () => widget.audioPlayer.toggleMessage(
       messageId: message.id,
@@ -128,163 +132,239 @@ class _ApnaClinicAiChatViewState extends State<ApnaClinicAiChatView> {
     );
   }
 
-  void _send() {
-    if (widget.state.recording) {
-      widget.cubit.stopListeningAndSend();
+  void _send(ApnaClinicAiCubit cubit, ApnaClinicAiState state) {
+    if (state.recording) {
+      cubit.stopListeningAndSend();
       return;
     }
     final text = _controller.text;
     _controller.clear();
-    widget.cubit.sendText(text);
+    cubit.sendText(text);
   }
 
-  void _toggleMic() {
-    widget.cubit.toggleListening(
+  void _toggleMic(ApnaClinicAiCubit cubit) {
+    cubit.toggleListening(
       languageCode: Localizations.localeOf(context).languageCode,
     );
   }
 
-  Future<void> _openSignIn(BuildContext context) async {
+  Future<void> _openSignIn(
+    BuildContext context,
+    ApnaClinicAiCubit cubit,
+  ) async {
     if (AuthGuard.isLoggedIn()) {
-      await widget.cubit.resumeAfterSignIn();
+      await cubit.resumeAfterSignIn();
       return;
     }
     await AuthGuard.pushLogin(context);
     if (!context.mounted) return;
     if (AuthGuard.isLoggedIn()) {
-      await widget.cubit.resumeAfterSignIn();
+      await cubit.resumeAfterSignIn();
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-    final state = widget.state;
+    final cubit = context.read<ApnaClinicAiCubit>();
     return StreamBuilder<ApnaClinicAiPlaybackSnapshot>(
       stream: widget.audioPlayer.snapshots,
       initialData: widget.audioPlayer.snapshot,
       builder: (context, snap) {
         final playback = snap.data ?? const ApnaClinicAiPlaybackSnapshot();
-        return _buildChat(context, l10n, state, playback);
+        return BlocConsumer<ApnaClinicAiCubit, ApnaClinicAiState>(
+          listenWhen: (prev, next) =>
+              prev.messages.length != next.messages.length ||
+              prev.thinkingStage != next.thinkingStage ||
+              prev.doctors != next.doctors ||
+              prev.slotDays != next.slotDays,
+          listener: (context, state) => _maybeScrollForState(state),
+          builder: (context, state) {
+            return Column(
+              children: [
+                Expanded(
+                  child: _ChatThread(
+                    state: state,
+                    scroll: _scroll,
+                    playback: playback,
+                    playHandler: _playHandler,
+                    onSend: cubit.sendText,
+                    onSignIn: () => _openSignIn(context, cubit),
+                  ),
+                ),
+                _ChatComposerDock(
+                  state: state,
+                  playback: playback,
+                  controller: _controller,
+                  composerFocus: _composerFocus,
+                  audioPlayer: widget.audioPlayer,
+                  onSend: () => _send(cubit, state),
+                  onMicTap: () => _toggleMic(cubit),
+                  onComposerTap: _scrollToEnd,
+                  onCancelListening: cubit.cancelListening,
+                  onStopListening: cubit.stopListeningAndSend,
+                ),
+              ],
+            );
+          },
+        );
       },
     );
   }
+}
 
-  Widget _buildChat(
-    BuildContext context,
-    AppLocalizations l10n,
-    ApnaClinicAiState state,
-    ApnaClinicAiPlaybackSnapshot playback,
-  ) {
-    return Column(
+class _ChatThread extends StatelessWidget {
+  const _ChatThread({
+    required this.state,
+    required this.scroll,
+    required this.playback,
+    required this.playHandler,
+    required this.onSend,
+    required this.onSignIn,
+  });
+
+  final ApnaClinicAiState state;
+  final ScrollController scroll;
+  final ApnaClinicAiPlaybackSnapshot playback;
+  final VoidCallback? Function(ApnaClinicAiMessageEntity) playHandler;
+  final ValueChanged<String> onSend;
+  final VoidCallback onSignIn;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    return ListView(
+      controller: scroll,
+      padding: EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 8.h),
       children: [
-        Expanded(
-          child: ListView(
-            controller: _scroll,
-            padding: EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 8.h),
-            children: [
-              if (!state.hasThread) ...[
-                Text(
-                  l10n.apnaClinicAiHeroTitle,
-                  style: TextStyle(
-                    fontSize: 17.sp,
-                    fontWeight: FontWeight.w800,
-                    color: ApnaClinicAiUiConfig.primaryText,
-                    height: 1.25,
-                  ),
-                ),
-                SizedBox(height: 8.h),
-                Text(
-                  l10n.apnaClinicAiHeroBody,
-                  style: TextStyle(
-                    color: ApnaClinicAiUiConfig.secondaryText,
-                    fontSize: 13.sp,
-                    height: 1.35,
-                  ),
-                ),
-                SizedBox(height: 12.h),
-              ],
-              for (final message in state.messages)
-                ApnaClinicAiMessageBubble(
-                  message: message,
-                  audioPlaying:
-                      playback.messageId == message.id && playback.playing,
-                  onPlayAudio: _playHandler(message),
-                ),
-              ApnaClinicAiReplyRail(
-                state: state,
-                onSend: widget.cubit.sendText,
-                onSignIn: () => _openSignIn(context),
-              ),
-            ],
+        if (!state.hasThread) ...[
+          Text(
+            l10n.apnaClinicAiHeroTitle,
+            style: TextStyle(
+              fontSize: 17.sp,
+              fontWeight: FontWeight.w800,
+              color: ApnaClinicAiUiConfig.primaryText,
+              height: 1.25,
+            ),
           ),
+          SizedBox(height: 8.h),
+          Text(
+            l10n.apnaClinicAiHeroBody,
+            style: TextStyle(
+              color: ApnaClinicAiUiConfig.secondaryText,
+              fontSize: 13.sp,
+              height: 1.35,
+            ),
+          ),
+          SizedBox(height: 12.h),
+        ],
+        for (final message in state.messages)
+          ApnaClinicAiMessageBubble(
+            message: message,
+            audioPlaying:
+                playback.messageId == message.id && playback.playing,
+            onPlayAudio: playHandler(message),
+          ),
+        ApnaClinicAiReplyRail(
+          state: state,
+          onSend: onSend,
+          onSignIn: onSignIn,
         ),
-        SafeArea(
-          top: false,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              AnimatedSwitcher(
-                duration: const Duration(milliseconds: 240),
-                switchInCurve: Curves.easeOut,
-                switchOutCurve: Curves.easeIn,
-                transitionBuilder: (child, animation) {
-                  return FadeTransition(
-                    opacity: animation,
-                    child: SizeTransition(
-                      sizeFactor: animation,
-                      alignment: Alignment.topCenter,
-                      child: child,
-                    ),
-                  );
-                },
-                child: playback.active
-                    ? ApnaClinicAiSpeakingBar(
-                        key: const ValueKey('chat_speaking'),
-                        playing: playback.playing,
-                        statusLabel: () {
-                          for (final message in state.messages) {
-                            if (message.id != playback.messageId) continue;
-                            if (message.isVoice &&
-                                message.role ==
-                                    ApnaClinicAiMessageRole.user) {
-                              return l10n.apnaClinicAiVoiceNote;
-                            }
-                            break;
-                          }
-                          return l10n.apnaClinicAiAgentSpeaking;
-                        }(),
-                        onToggle: () {
-                          if (playback.playing) {
-                            widget.audioPlayer.pause();
-                          } else {
-                            widget.audioPlayer.resume();
-                          }
-                        },
-                      )
-                    : const SizedBox.shrink(
-                        key: ValueKey('chat_speaking_gone'),
-                      ),
-              ),
-              state.recording
+      ],
+    );
+  }
+}
+
+class _ChatComposerDock extends StatelessWidget {
+  const _ChatComposerDock({
+    required this.state,
+    required this.playback,
+    required this.controller,
+    required this.composerFocus,
+    required this.audioPlayer,
+    required this.onSend,
+    required this.onMicTap,
+    required this.onComposerTap,
+    required this.onCancelListening,
+    required this.onStopListening,
+  });
+
+  final ApnaClinicAiState state;
+  final ApnaClinicAiPlaybackSnapshot playback;
+  final TextEditingController controller;
+  final FocusNode composerFocus;
+  final ApnaClinicAiAudioPlayerService audioPlayer;
+  final VoidCallback onSend;
+  final VoidCallback onMicTap;
+  final VoidCallback onComposerTap;
+  final VoidCallback onCancelListening;
+  final VoidCallback onStopListening;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    return SafeArea(
+      top: false,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          AnimatedSwitcher(
+            duration: const Duration(milliseconds: 240),
+            switchInCurve: Curves.easeOut,
+            switchOutCurve: Curves.easeIn,
+            transitionBuilder: (child, animation) {
+              return FadeTransition(
+                opacity: animation,
+                child: SizeTransition(
+                  sizeFactor: animation,
+                  alignment: Alignment.topCenter,
+                  child: child,
+                ),
+              );
+            },
+            child: playback.active
+                ? ApnaClinicAiSpeakingBar(
+                    key: const ValueKey('chat_speaking'),
+                    playing: playback.playing,
+                    statusLabel: () {
+                      for (final message in state.messages) {
+                        if (message.id != playback.messageId) continue;
+                        if (message.isVoice &&
+                            message.role == ApnaClinicAiMessageRole.user) {
+                          return l10n.apnaClinicAiVoiceNote;
+                        }
+                        break;
+                      }
+                      return l10n.apnaClinicAiAgentSpeaking;
+                    }(),
+                    onToggle: () {
+                      if (playback.playing) {
+                        audioPlayer.pause();
+                      } else {
+                        audioPlayer.resume();
+                      }
+                    },
+                  )
+                : const SizedBox.shrink(
+                    key: ValueKey('chat_speaking_gone'),
+                  ),
+          ),
+          state.recording
               ? ApnaClinicAiListeningBar(
-                  onCancel: widget.cubit.cancelListening,
-                  onSend: widget.cubit.stopListeningAndSend,
+                  onCancel: onCancelListening,
+                  onSend: onStopListening,
                 )
               : ApnaClinicAiComposer(
-                  controller: _controller,
+                  controller: controller,
                   hintText: l10n.apnaClinicAiChatComposerHint,
                   enabled: !state.streaming,
                   recording: false,
-                  onSend: _send,
-                  onMicTap: _toggleMic,
-                  focusNode: _composerFocus,
-                  onTap: _scrollToEnd,
+                  onSend: onSend,
+                  onMicTap: onMicTap,
+                  focusNode: composerFocus,
+                  onTap: onComposerTap,
                 ),
-            ],
-          ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

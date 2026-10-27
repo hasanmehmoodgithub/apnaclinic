@@ -6,11 +6,13 @@
 
 ## Purpose
 
-Care Companion: guest health assistant with a home (greeting, concerns, capability tiles, composer) and chat (streamed reply, doctor/medicine cards, slot calendar, payment chips). Display brand is **Apna Clinic Ai Noor** (`apnaClinicAiDisplayName` / `apnaClinicAiBrandName` rewrites API names like “ApnaClinic Assistant”). Home content comes from `GET /sdk/home` (+ `/sdk/app` branding). While home loads: close (X) sits inside the teal hero card (top-right), hero badge **Getting ready for you…**, disclaimer + bot — no composer. On connect failure or empty home tiles: hero badge **Unavailable**, disclaimer + error + **Retry** (`connect(forceRefresh: true)`) — no composer. Critical symptoms still surface Rescue 1122 in chat. Separate from consultation AI screening (`AppRoutes.aiScreening` WebView).
+Care Companion: guest health assistant with a home (greeting, concerns, composer) and chat (streamed reply, doctor/medicine cards, slot calendar, payment chips). Display brand is **Apna Clinic Ai Noor** (`apnaClinicAiDisplayName` / `apnaClinicAiBrandName` rewrites API names like “ApnaClinic Assistant”). Home branding comes from `GET /sdk/app`. While connecting: close (X) sits inside the teal hero card (top-right), hero badge **Getting ready for you…**, disclaimer + bot — no composer. On connect failure: hero badge **Unavailable**, disclaimer + error + **Retry** (`connect(forceRefresh: true)`) — no composer. Critical symptoms still surface Rescue 1122 in chat. Separate from consultation AI screening (`AppRoutes.aiScreening` WebView).
 
 ## UI
 
-Care Companion flow from the demo, themed with Apna Clinic tokens via `ApnaClinicAiUiConfig`: calm mint page gradient, CTA `clr0FAA9A` / deep `clr00897B`, hairline borders, soft card shadows, clinical headers (teal avatar / health badge). White rounded panel (`AppScaffoldGradient` + `AppScaffoldGradientPanel`). Home composer hint matches chat: “Type, or tap the mic to speak…” (`apnaClinicAiChatComposerHint`). Home composer uses the same thin teal moving stroke as the thinking bubble (1.2, no white flash). Medical disclaimer (`12.sp`, left-aligned) sits in a rounded caution-yellow box (10% fill / soft stroke / caution text) under the hero on loading, error, and success. `/sdk/home` `cards` still load into `homeTiles` but are **not shown** yet (TODO in `apna_clinic_ai_home_view.dart`). Tapping the chat composer scrolls the thread to the latest message (again after the keyboard opens).
+Care Companion flow from the demo, themed with Apna Clinic tokens via `ApnaClinicAiUiConfig`: calm mint page gradient, CTA `clr0FAA9A` / deep `clr00897B`, hairline borders, soft card shadows, clinical headers (teal avatar / health badge). White rounded panel (`AppScaffoldGradient` + `AppScaffoldGradientPanel`). Home composer hint matches chat: “Type, or tap the mic to speak…” (`apnaClinicAiChatComposerHint`). Home composer uses the same thin teal moving stroke as the thinking bubble (1.2, no white flash). Medical disclaimer (`12.sp`, left-aligned) sits in a rounded caution-yellow box (10% fill / soft stroke / caution text) under the hero on loading, error, and success. Tapping the chat composer scrolls the thread to the latest message (again after the keyboard opens).
+
+**Presentation layout:** thin screen (`ApnaClinicAiScreen`) + feature widgets under `presentation/widgets/` (`home_hero_card`, `home_disclaimer`, `home_error_body`, `concern_chip`, `chat_header`, composer docks). Views read `ApnaClinicAiCubit` via `BlocBuilder` / `BlocSelector` (scoped rebuilds). Slot day selection is cubit state (`selectedSlotDayIndex` / `selectSlotDay`). Local `StatefulWidget` only for text/scroll/focus controllers and animation tickers — not business state.
 
 ## Routes / entry
 
@@ -21,9 +23,9 @@ Care Companion flow from the demo, themed with Apna Clinic tokens via `ApnaClini
 
 Dedicated `ApnaClinicAiSdkClient` (own Dio). Do not use `ApiService` (clinic JWT / HMAC). Adds `ChuckerDioInterceptor` when `ChuckerGuard.isEnabled`.
 
-**Session:** guest vs signed-in from `AuthGuard.isLoggedIn` — see `SESSION_INIT.md`. Tokens live in `AppPref` (`apnaClinicAi*`); cleared on logout. Signed-in clinic JWT is sent as `X-User-Token` on SDK calls. **`conversation_id`:** Every home start (common concerns, What I can do, home text, **home voice**) clears the prior chat UI and mints a new id when the turn starts. Cancelled home voice / back from chat → AI home with an empty detached thread. Close / back from AI home leaves the feature. In-chat turns keep the bound id. **`GET /sdk/home` `resume`** drives Continue when shown: restore `resume.conversation_id` and send `resume.card.send` (`__resume__`). **UI:** Continue card is hidden for now (TODO in `apna_clinic_ai_home_view.dart`); resume/history data still loads. If `resume` is missing or past `expires_at`, last-complaint Continue was the fallback. `prompt` is the composer hint.
+**Session:** guest vs signed-in from `AuthGuard.isLoggedIn` — see `SESSION_INIT.md`. Tokens live in `AppPref` (`apnaClinicAi*`); cleared on logout. Signed-in clinic JWT is sent as `X-User-Token` on SDK calls. **`conversation_id`:** Every home start (common concerns, home text, **home voice**) clears the prior chat UI and mints a new id when the turn starts. Cancelled home voice / back from chat → AI home with an empty detached thread. Close / back from AI home leaves the feature. In-chat turns keep the bound id. Continue / resume last complaint uses `AppPref.apnaClinicAiHistoryConversationId` (written after a turn is sent). Composer hint comes from `/sdk/app` theme placeholder.
 
-**Config:** `ApnaClinicAiConfig.fromEnvironment()` reads (in order) `JIMI_BASE_URL` / `JIMI_SDK_KEY` / `JIMI_TENANT` (`apnaclinic`), then `APNA_CLINIC_AI_*`. Temporary defaults exist for local/dev — move them out before production.
+**Config:** `ApnaClinicAiConfig.fromEnvironment()` reads (in order) `AI_BASE_URL` / `AI_SDK_KEY` / `AI_TENANT` (`apnaclinic`), then `APNA_CLINIC_AI_*`. Temporary defaults exist for local/dev — move them out before production.
 
 Optional override:
 
@@ -31,15 +33,14 @@ Optional override:
 # copy apna_clinic_ai.keys.json.example → apna_clinic_ai.keys.json (gitignored)
 flutter run --dart-define-from-file=apna_clinic_ai.keys.json
 # or:
-flutter run --dart-define=JIMI_BASE_URL=https://jazzred-msa-stg.jazz.com.pk/ai-services/jimi --dart-define=JIMI_SDK_KEY=sdk_…
+flutter run --dart-define=AI_BASE_URL=https://jazzred-msa-stg.jazz.com.pk/ai-services/jimi --dart-define=AI_SDK_KEY=sdk_…
 ```
 
 | Call | Path |
 |---|---|
-| Ping | `GET /api/v1/sdk/ping` with `X-SDK-Key` |
 | Session | `POST /api/v1/sdk/session/init` guest `{ mode, device_id }`, signed_in `{ msisdn, name, email }`. Response may include `greeting` + `audio.base64` → home hero welcome + auto-play **once** when opening Care Companion from the app (not again on back-to-home / reconnect). Full init JSON kept in app-support file (not cleared with session); home always reads greeting/audio from that cache when present |
 | Token | `POST /api/v1/sdk/auth/token` `{ api_key }`, refreshed ~30s before expiry |
-| Branding / home | `GET /api/v1/sdk/app` (welcome, theme subtitle, voice flags); `GET /api/v1/sdk/home` drives the home screen (`assistant_name`, `prompt`, `cards`, `resume`, optional suggestions) |
+| Branding | `GET /api/v1/sdk/app` (assistant name, welcome, theme subtitle / placeholder, suggestions, voice flags) |
 | Text (speak off) | `POST /api/v1/sdk/assistant/turn/stream` SSE |
 | Text (speak on) | `POST /api/v1/sdk/assistant/turn` JSON with `speak: true` |
 | **Audio stream** | `POST /api/v1/sdk/assistant/turn/audio/stream` multipart + SSE (`channel=voice`, `speak=true`) |
@@ -61,11 +62,11 @@ Device id and last complaint (continue card) are in `SharedPreferences`.
 
 ## State
 
-`ApnaClinicAiCubit`: connect (welcome, tiles, voice, guest), send text, tap-to-talk via **audio stream** (local STT is not started during capture, so the mic stays with the recorder). While a reply is loading, the header and bubble show “Just a moment…” (moving teal stroke). Reply text then **types out slowly** (ChatGPT-style character reveal); chips/cards land when the typewriter catches the final. While the mic is open, the composer becomes a recording bar: delete, a teal sound wave, an elapsed timer, and send. User voice bubbles keep the recorded clip for play / pause, show **Transcribing…** until the audio-stream transcript (`transcription.text`) arrives, then the transcript. Each message shows the time it was sent. Assistant replies sit beside the clinic mark, with copy and a Play control **only when a server `audio.base64` clip is attached** (no on-device TTS for text or voice). Voice notes show a wave, the transcript, and the time. اردو forces `ur` on the audio turn. Tap the mic again to send. `GET /sdk/app` `voice.output.enabled` gates server speak (`speak: true` → delayed `type: audio` by `turn_id`). Neither text nor voice turns auto-play; user taps Play. Session/init greeting audio plays once when entering from the app. Playback uses `ApnaClinicAiAudioPlayerService`. Emits `doctors`, `slotDays` / `slots`, `payments`, `quickActions`. Emergency phrases use `ApnaClinicAiEmergency`.
+`ApnaClinicAiCubit`: connect (welcome, tiles, voice, guest), send text, tap-to-talk via **audio stream** (local STT is not started during capture, so the mic stays with the recorder), `selectSlotDay` for calendar UI. While a reply is loading, the header and bubble show “Just a moment…” (moving teal stroke). Reply text then **types out slowly** (ChatGPT-style character reveal); chips/cards land when the typewriter catches the final. While the mic is open, the composer becomes a recording bar: delete, a teal sound wave, an elapsed timer, and send. User voice bubbles keep the recorded clip for play / pause, show **Transcribing…** until the audio-stream transcript (`transcription.text`) arrives, then the transcript. Each message shows the time it was sent. Assistant replies sit beside the clinic mark, with copy and a Play control **only when a server `audio.base64` clip is attached** (no on-device TTS for text or voice). Voice notes show a wave, the transcript, and the time. اردو forces `ur` on the audio turn. Tap the mic again to send. `GET /sdk/app` `voice.output.enabled` gates server speak (`speak: true` → delayed `type: audio` by `turn_id`). Neither text nor voice turns auto-play; user taps Play. Session/init greeting audio plays once when entering from the app. Playback uses `ApnaClinicAiAudioPlayerService`. Emits `doctors`, `slotDays` / `slots`, `payments`, `quickActions`. Emergency phrases use `ApnaClinicAiEmergency`.
 
 ## DI
 
-`apna_clinic_ai_injection.dart` — `initApnaClinicAiInjector()` from `initDependencyInjection()`. Cubit is a factory; SDK client and repository are singletons. Also registers `SendApnaClinicAiAudioUseCase`, `ApnaClinicAiAudioRecorderService`, `ApnaClinicAiAudioPlayerService`.
+`apna_clinic_ai_injection.dart` — `initApnaClinicAiInjector()` from `initDependencyInjection()`. Cubit is a factory; SDK client, `ApnaClinicAiSdkAuthResolver`, `ApnaClinicAiSdkInitializer`, and repository are singletons. Also registers `SendApnaClinicAiAudioUseCase`, `ApnaClinicAiAudioRecorderService`, `ApnaClinicAiAudioPlayerService`. Session boot is split under `data/sdk_init/` — how to call + steps in `SESSION_INIT.md`.
 
 ## Mocks
 

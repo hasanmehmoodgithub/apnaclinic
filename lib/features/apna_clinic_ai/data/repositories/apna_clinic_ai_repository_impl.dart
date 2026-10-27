@@ -1,6 +1,4 @@
 import '../../../../core/functional/functional_export.dart';
-import '../../../../core/preference/app_pref.dart';
-import '../../../../core/utils/auth_guard.dart';
 import '../../domain/apna_clinic_ai_failure_codes.dart';
 import '../../domain/entities/apna_clinic_ai_session_entity.dart';
 import '../../domain/entities/apna_clinic_ai_stream_event.dart';
@@ -8,54 +6,27 @@ import '../../domain/repositories/apna_clinic_ai_repository.dart';
 import '../../domain/use_cases/init_apna_clinic_ai_session_params.dart';
 import '../../domain/use_cases/send_apna_clinic_ai_audio_params.dart';
 import '../../domain/use_cases/send_apna_clinic_ai_message_params.dart';
-import '../../domain/utils/apna_clinic_ai_msisdn.dart';
-import '../data_sources/apna_clinic_ai_local_data_source.dart';
 import '../data_sources/apna_clinic_ai_remote_data_source.dart';
 import '../data_sources/apna_clinic_ai_sdk_client.dart';
 import '../mappers/apna_clinic_ai_mapper.dart';
 import '../models/apna_clinic_ai_remote_event.dart';
+import '../sdk_init/apna_clinic_ai_sdk_initializer.dart';
 
 class ApnaClinicAiRepositoryImpl implements ApnaClinicAiRepository {
   ApnaClinicAiRepositoryImpl({
+    required this.sdkInitializer,
     required this.remoteDataSource,
-    required this.localDataSource,
-    required this.appPref,
   });
 
+  final ApnaClinicAiSdkInitializer sdkInitializer;
   final ApnaClinicAiRemoteDataSource remoteDataSource;
-  final ApnaClinicAiLocalDataSource localDataSource;
-  final AppPref appPref;
 
   @override
   Future<Either<ErrorMsg, ApnaClinicAiSessionEntity>> ensureSession(
     InitApnaClinicAiSessionParams params,
   ) async {
     try {
-      final signedIn = AuthGuard.isLoggedIn(appPref);
-      final mode = signedIn ? 'signed_in' : 'guest';
-      final deviceId = await localDataSource.deviceId();
-      final user = appPref.getUserLocalModel();
-
-      String? name;
-      String? email;
-      String? msisdn;
-      if (signedIn) {
-        final fullName = [
-          user?.firstName.trim() ?? '',
-          user?.lastName.trim() ?? '',
-        ].where((part) => part.isNotEmpty).join(' ');
-        name = fullName.isEmpty ? null : fullName;
-        final rawEmail = user?.email.trim() ?? '';
-        email = rawEmail.isEmpty ? null : rawEmail;
-        msisdn = normalizeApnaClinicAiMsisdn(user?.phone);
-      }
-
-      final model = await remoteDataSource.ensureSession(
-        mode: mode,
-        deviceId: deviceId,
-        msisdn: msisdn,
-        name: name,
-        email: email,
+      final model = await sdkInitializer.initialize(
         forceRefresh: params.forceRefresh,
       );
       return Right(model.toEntity());

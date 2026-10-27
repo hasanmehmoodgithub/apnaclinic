@@ -7,7 +7,7 @@ import 'package:record/record.dart';
 
 import '../../../../core/utils/microphone_permission_utils.dart';
 
-/// Captures mic audio for the Jimi audio-stream turn (WAV preferred, M4A fallback).
+/// Captures mic audio for the AI audio-stream turn (WAV preferred, M4A fallback).
 class ApnaClinicAiAudioRecorderService {
   ApnaClinicAiAudioRecorderService({AudioRecorder? recorder})
     : _recorder = recorder ?? AudioRecorder();

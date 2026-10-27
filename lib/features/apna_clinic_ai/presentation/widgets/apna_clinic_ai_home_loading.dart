@@ -5,7 +5,8 @@ import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/widgets/apna_clinic_bot_animation.dart';
 import '../constants/apna_clinic_ai_ui_config.dart';
 
-/// Centered loading / error body while `/sdk/home` is fetching (header + composer stay).
+/// Centered loading / error body while the AI session is connecting
+/// (header + composer stay).
 class ApnaClinicAiHomeLoading extends StatelessWidget {
   const ApnaClinicAiHomeLoading({
     super.key,

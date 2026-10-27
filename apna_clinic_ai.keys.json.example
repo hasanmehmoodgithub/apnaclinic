@@ -1,7 +1,7 @@
 {
-  "JIMI_BASE_URL": "https://jazzred-msa-stg.jazz.com.pk/ai-services/jimi",
-  "JIMI_SDK_KEY": "sdk_apnaclinic_…",
-  "JIMI_TENANT": "apnaclinic",
+  "AI_BASE_URL": "https://jazzred-msa-stg.jazz.com.pk/ai-services/jimi",
+  "AI_SDK_KEY": "sdk_apnaclinic_…",
+  "AI_TENANT": "apnaclinic",
   "APNA_CLINIC_AI_BASE_URL": "https://jazzred-msa-stg.jazz.com.pk/ai-services/jimi",
   "APNA_CLINIC_AI_SDK_KEY": "sdk_apnaclinic_…"
 }

@@ -1,8 +1,6 @@
 import 'package:equatable/equatable.dart';
 
 import '../../domain/entities/apna_clinic_ai_card_entity.dart';
-import '../../domain/entities/apna_clinic_ai_home_resume_entity.dart';
-import '../../domain/entities/apna_clinic_ai_home_tile_entity.dart';
 import '../../domain/entities/apna_clinic_ai_message_entity.dart';
 import '../apna_clinic_ai_copy.dart';
 
@@ -27,8 +25,6 @@ class ApnaClinicAiState extends Equatable {
     this.composerHint = '',
     this.headerSubtitle = '',
     this.suggestions = const [],
-    this.homeTiles = const [],
-    this.homeResume,
     this.lastComplaint,
     this.lastComplaintAtMillis,
     this.errorCode,
@@ -37,6 +33,7 @@ class ApnaClinicAiState extends Equatable {
     this.doctors = const [],
     this.slots = const [],
     this.slotDays = const [],
+    this.selectedSlotDayIndex = 0,
     this.payments = const [],
     this.quickActions = const [],
     this.authResumeMessage,
@@ -66,8 +63,6 @@ class ApnaClinicAiState extends Equatable {
   final String composerHint;
   final String headerSubtitle;
   final List<String> suggestions;
-  final List<ApnaClinicAiHomeTileEntity> homeTiles;
-  final ApnaClinicAiHomeResumeEntity? homeResume;
   final String? lastComplaint;
   final int? lastComplaintAtMillis;
   final String? errorCode;
@@ -76,6 +71,7 @@ class ApnaClinicAiState extends Equatable {
   final List<ApnaClinicAiDoctorCardEntity> doctors;
   final List<ApnaClinicAiSlotEntity> slots;
   final List<ApnaClinicAiSlotDayEntity> slotDays;
+  final int selectedSlotDayIndex;
   final List<ApnaClinicAiPaymentEntity> payments;
   final List<ApnaClinicAiQuickActionEntity> quickActions;
   final String? authResumeMessage;
@@ -107,9 +103,6 @@ class ApnaClinicAiState extends Equatable {
     String? composerHint,
     String? headerSubtitle,
     List<String>? suggestions,
-    List<ApnaClinicAiHomeTileEntity>? homeTiles,
-    ApnaClinicAiHomeResumeEntity? homeResume,
-    bool setHomeResume = false,
     String? lastComplaint,
     int? lastComplaintAtMillis,
     String? errorCode,
@@ -118,6 +111,7 @@ class ApnaClinicAiState extends Equatable {
     List<ApnaClinicAiDoctorCardEntity>? doctors,
     List<ApnaClinicAiSlotEntity>? slots,
     List<ApnaClinicAiSlotDayEntity>? slotDays,
+    int? selectedSlotDayIndex,
     List<ApnaClinicAiPaymentEntity>? payments,
     List<ApnaClinicAiQuickActionEntity>? quickActions,
     String? authResumeMessage,
@@ -151,8 +145,6 @@ class ApnaClinicAiState extends Equatable {
       composerHint: composerHint ?? this.composerHint,
       headerSubtitle: headerSubtitle ?? this.headerSubtitle,
       suggestions: suggestions ?? this.suggestions,
-      homeTiles: homeTiles ?? this.homeTiles,
-      homeResume: setHomeResume ? homeResume : this.homeResume,
       lastComplaint: clearComplaint
           ? null
           : (lastComplaint ?? this.lastComplaint),
@@ -165,6 +157,8 @@ class ApnaClinicAiState extends Equatable {
       doctors: doctors ?? this.doctors,
       slots: slots ?? this.slots,
       slotDays: slotDays ?? this.slotDays,
+      selectedSlotDayIndex:
+          selectedSlotDayIndex ?? this.selectedSlotDayIndex,
       payments: payments ?? this.payments,
       quickActions: quickActions ?? this.quickActions,
       authResumeMessage: clearAuthResume
@@ -205,8 +199,6 @@ class ApnaClinicAiState extends Equatable {
     composerHint,
     headerSubtitle,
     suggestions,
-    homeTiles,
-    homeResume,
     lastComplaint,
     lastComplaintAtMillis,
     errorCode,
@@ -215,6 +207,7 @@ class ApnaClinicAiState extends Equatable {
     doctors,
     slots,
     slotDays,
+    selectedSlotDayIndex,
     payments,
     quickActions,
     authResumeMessage,

@@ -292,7 +292,7 @@
         <span class="arrow">→</span>
         <div class="box ui">Chat</div>
         <span class="arrow">→</span>
-        <div class="box api">Jimi SDK APIs</div>
+        <div class="box api">AI SDK APIs</div>
       </div>
     </section>
 
@@ -382,7 +382,7 @@ AudioRecorderService · AudioPlayerService · SpeechToText (fallback only)
 </pre>
       <ul>
         <li><strong>Cubit</strong> — connect, send text, record/send audio, emergency, sign-in resume</li>
-        <li><strong>SdkClient</strong> — ping, session, token, app/home, text stream, audio stream, speak statuses</li>
+        <li><strong>SdkClient</strong> — session, token, app, text stream, audio stream, speak statuses</li>
         <li><strong>Turn parser</strong> — maps SSE/JSON <code>blocks</code> into doctors, slots, payments, quick actions, TTS audio</li>
       </ul>
     </section>
@@ -391,7 +391,7 @@ AudioRecorderService · AudioPlayerService · SpeechToText (fallback only)
       <h2>5. Config &amp; headers</h2>
       <h3>Dart defines (priority)</h3>
       <ol>
-        <li><code>JIMI_BASE_URL</code>, <code>JIMI_SDK_KEY</code>, <code>JIMI_TENANT</code> (default <code>apnaclinic</code>)</li>
+        <li><code>AI_BASE_URL</code>, <code>AI_SDK_KEY</code>, <code>AI_TENANT</code> (default <code>apnaclinic</code>)</li>
         <li>Fallback: <code>APNA_CLINIC_AI_BASE_URL</code>, <code>APNA_CLINIC_AI_SDK_KEY</code></li>
       </ol>
 <pre>flutter run --dart-define-from-file=apna_clinic_ai.keys.json</pre>
@@ -414,7 +414,6 @@ AudioRecorderService · AudioPlayerService · SpeechToText (fallback only)
       <div class="flow">
         <div class="box ui">connect()</div>
         <span class="arrow">→</span>
-        <div class="box api">GET /ping</div>
         <span class="arrow">→</span>
         <div class="box api">POST /session/init</div>
         <span class="arrow">→</span>
@@ -658,11 +657,9 @@ AudioRecorderService · AudioPlayerService · SpeechToText (fallback only)
       <table>
         <thead><tr><th>Method</th><th>Path</th></tr></thead>
         <tbody>
-          <tr><td>GET</td><td><code>/api/v1/sdk/ping</code></td></tr>
           <tr><td>POST</td><td><code>/api/v1/sdk/session/init</code></td></tr>
           <tr><td>POST</td><td><code>/api/v1/sdk/auth/token</code></td></tr>
           <tr><td>GET</td><td><code>/api/v1/sdk/app</code></td></tr>
-          <tr><td>POST</td><td><code>/api/v1/sdk/home</code></td></tr>
           <tr><td>POST</td><td><code>/api/v1/sdk/assistant/turn/stream</code></td></tr>
           <tr><td>POST</td><td><code>/api/v1/sdk/assistant/turn</code></td></tr>
           <tr><td>POST</td><td><code>/api/v1/sdk/assistant/turn/audio/stream</code></td></tr>

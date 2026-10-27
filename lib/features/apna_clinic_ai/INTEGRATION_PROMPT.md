@@ -1,4 +1,4 @@
-# Care Companion / JIMI SDK — Integration Prompt (copy into a new app)
+# Care Companion / Apna Clinic AI SDK — Integration Prompt (copy into a new app)
 
 Paste the block below into Cursor (or another agent) in the **target app**. Fill the `{{PLACEHOLDERS}}`. Keep product rules as written unless the product owner changes them.
 
@@ -6,26 +6,26 @@ Paste the block below into Cursor (or another agent) in the **target app**. Fill
 
 ## PROMPT START
 
-You are integrating a **health Care Companion** (JIMI / ApnaClinic AI SDK) into this app.
+You are integrating a **health Care Companion** (ApnaClinic AI SDK) into this app.
 
 ### Product identity (fill in)
 
 - Assistant display name: `{{ASSISTANT_NAME}}` (e.g. Noor)
 - Brand / tenant: `{{TENANT}}` (e.g. apnaclinic)
-- Base URL: `{{JIMI_BASE_URL}}`
-- SDK key: `{{JIMI_SDK_KEY}}`
+- Base URL: `{{AI_BASE_URL}}`
+- SDK key: `{{AI_SDK_KEY}}`
 - App auth: guest allowed; when user is logged in, send clinic JWT as `X-User-Token: Bearer <app_token>`
 - UI language: support EN + `{{SECONDARY_LOCALE}}` (e.g. Urdu)
 - Theme: reuse this app’s design system; do not invent a new purple theme
 
 ### Config
 
-Read from dart-defines / env (order: `JIMI_*` then app-specific aliases):
+Read from dart-defines / env (order: `AI_*` then `APNA_CLINIC_AI_*` aliases):
 
 ```
-JIMI_BASE_URL
-JIMI_SDK_KEY
-JIMI_TENANT={{TENANT}}
+AI_BASE_URL
+AI_SDK_KEY
+AI_TENANT={{TENANT}}
 ```
 
 Dedicated Dio client for this SDK only — **do not** mix with the app’s main HMAC/JWT clinic API client.
@@ -83,10 +83,6 @@ After session is ready (authorized):
 GET /api/v1/sdk/app
   → branding.assistant_name, welcome_message, theme.header_subtitle,
     theme.input_placeholder, suggestions, voice.input.enabled, voice.output.enabled
-
-GET /api/v1/sdk/home
-  → assistant_name, welcome / welcome_message, prompt (composer hint),
-    suggestions / concerns / chips, cards[], resume{ conversation_id, expires_at, card }
 ```
 
 **Home UI (simple):**
@@ -95,8 +91,6 @@ GET /api/v1/sdk/home
 - Medical disclaimer under hero
 - Common concern chips from suggestions
 - Composer: “Type, or tap the mic to speak…”
-- Optional: capability cards from `home.cards` (can hide behind TODO)
-- Optional: Continue/resume card from `home.resume` (restore that `conversation_id`, send `resume.card.send`)
 
 While connecting: hero “Getting ready…”, disclaimer, loading — **no composer**.
 On error: “Unavailable” + Retry (`forceRefresh: true`) — **no composer**.
@@ -187,11 +181,9 @@ audio → match turn_id → attach base64 → show Play (no autoplay)
 ## 6) API checklist (only these for core integrate)
 
 ```
-GET  /api/v1/sdk/ping
 POST /api/v1/sdk/session/init
 POST /api/v1/sdk/auth/token
 GET  /api/v1/sdk/app
-GET  /api/v1/sdk/home
 POST /api/v1/sdk/assistant/turn/stream          # text SSE
 POST /api/v1/sdk/assistant/turn                # text JSON + speak (optional)
 POST /api/v1/sdk/assistant/turn/audio/stream   # voice multipart SSE
@@ -215,7 +207,7 @@ Suggested connect pipeline:
 ```
 open feature
   → ensureSession (init + token)
-  → fetchApp + fetchHome
+  → fetchApp
   → render home + play greeting once
 user text/voice from home
   → mint conversation_id → open chat → stream turn

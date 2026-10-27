@@ -8,6 +8,7 @@ import '../../data/services/apna_clinic_ai_audio_recorder_service.dart';
 import '../constants/apna_clinic_ai_ui_config.dart';
 
 /// Recording composer: delete, sound wave, elapsed time, and send.
+/// Elapsed clock uses a stream (no [setState]); wave uses [AnimationController].
 class ApnaClinicAiListeningBar extends StatefulWidget {
   const ApnaClinicAiListeningBar({
     super.key,
@@ -27,7 +28,7 @@ class _ApnaClinicAiListeningBarState extends State<ApnaClinicAiListeningBar>
     with SingleTickerProviderStateMixin {
   late final AnimationController _motion;
   late final DateTime _started;
-  Timer? _clock;
+  late final Stream<Duration> _elapsed;
 
   @override
   void initState() {
@@ -37,22 +38,24 @@ class _ApnaClinicAiListeningBarState extends State<ApnaClinicAiListeningBar>
       vsync: this,
       duration: const Duration(milliseconds: 900),
     )..repeat();
-    _clock = Timer.periodic(const Duration(seconds: 1), (_) {
-      if (mounted) setState(() {});
-    });
+    _elapsed = Stream<Duration>.periodic(
+      const Duration(seconds: 1),
+      (_) {
+        final max = ApnaClinicAiAudioRecorderService.maxDuration;
+        final passed = DateTime.now().difference(_started);
+        return passed > max ? max : passed;
+      },
+    );
   }
 
   @override
   void dispose() {
-    _clock?.cancel();
     _motion.dispose();
     super.dispose();
   }
 
-  String get _elapsed {
+  String _format(Duration capped) {
     final max = ApnaClinicAiAudioRecorderService.maxDuration;
-    final passed = DateTime.now().difference(_started);
-    final capped = passed > max ? max : passed;
     final minutes = capped.inMinutes.remainder(60).toString().padLeft(2, '0');
     final seconds = capped.inSeconds.remainder(60).toString().padLeft(2, '0');
     final maxSeconds = max.inSeconds.remainder(60).toString().padLeft(2, '0');
@@ -86,21 +89,27 @@ class _ApnaClinicAiListeningBarState extends State<ApnaClinicAiListeningBar>
             SizedBox(width: 8.w),
             Expanded(child: _VoiceWave(animation: _motion)),
             SizedBox(width: 8.w),
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
-              decoration: BoxDecoration(
-                color: ApnaClinicAiUiConfig.mint,
-                borderRadius: BorderRadius.circular(10.r),
-              ),
-              child: Text(
-                _elapsed,
-                style: TextStyle(
-                  color: ApnaClinicAiUiConfig.primaryText,
-                  fontSize: 12.sp,
-                  fontWeight: FontWeight.w700,
-                  fontFeatures: const [FontFeature.tabularFigures()],
-                ),
-              ),
+            StreamBuilder<Duration>(
+              stream: _elapsed,
+              initialData: Duration.zero,
+              builder: (context, snap) {
+                return Container(
+                  padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+                  decoration: BoxDecoration(
+                    color: ApnaClinicAiUiConfig.mint,
+                    borderRadius: BorderRadius.circular(10.r),
+                  ),
+                  child: Text(
+                    _format(snap.data ?? Duration.zero),
+                    style: TextStyle(
+                      color: ApnaClinicAiUiConfig.primaryText,
+                      fontSize: 12.sp,
+                      fontWeight: FontWeight.w700,
+                      fontFeatures: const [FontFeature.tabularFigures()],
+                    ),
+                  ),
+                );
+              },
             ),
             SizedBox(width: 8.w),
             _RoundButton(

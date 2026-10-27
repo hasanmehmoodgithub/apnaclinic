@@ -2230,6 +2230,9 @@ class AppLocalizationsUr extends AppLocalizations {
       'رپورٹ اپنے الفاظ میں بیان کریں، یا بتائیں لیب نے کیا نتیجہ دیا۔';
 
   @override
+  String get apnaClinicAiDisclaimerTitle => 'طبی انتباہ';
+
+  @override
   String get apnaClinicAiDisclaimer =>
       'اپنا کلینک اے آئی اسسٹنٹ صرف عمومی معلومات کے لیے ہے۔ یہ پیشہ ورانہ طبی مشورے، تشخیص یا علاج کا متبادل نہیں۔ کسی بھی طبی حالت کے بارے میں ہمیشہ اپنے ڈاکٹر یا مستند صحت فراہم کنندہ سے رجوع کریں۔';
 
@@ -2318,7 +2321,7 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get apnaClinicAiNotConfigured =>
-      'اپنا کلینک اے آئی ترتیب نہیں دیا گیا۔ JIMI_BASE_URL / JIMI_SDK_KEY (یا APNA_CLINIC_AI_*) شامل کریں۔';
+      'اپنا کلینک اے آئی ترتیب نہیں دیا گیا۔ AI_BASE_URL / AI_SDK_KEY (یا APNA_CLINIC_AI_*) شامل کریں۔';
 
   @override
   String get apnaClinicAiConnectFailed =>

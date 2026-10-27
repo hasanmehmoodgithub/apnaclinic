@@ -933,7 +933,11 @@
   "apnaClinicAiPrescriptionBody": "Describe what the report says. The assistant can still help from your words.",
   "apnaClinicAiPrescriptionCta": "Describe the report",
   "apnaClinicAiPrescriptionHint": "Describe the report in your own words, or say what the lab found.",
-  "apnaClinicAiDisclaimer": "The Apnaclinic AI assistant is for general informational purposes only. It is not a substitute for professional medical advice, diagnosis, or treatment. Always seek the advice of your physician or qualified health provider with any questions you may have regarding a medical condition.",
+  "apnaClinicAiDisclaimerTitle": "MEDICAL DISCLAIMER",
+  "@apnaClinicAiDisclaimerTitle": {
+    "description": "Home screen medical disclaimer title"
+  },
+  "apnaClinicAiDisclaimer": "The Apna Clinic AI assistant is for general informational purposes only. It is not a substitute for professional medical advice, diagnosis, or treatment. Always seek the advice of your physician or qualified health provider with any questions you may have regarding a medical condition.",
   "@apnaClinicAiDisclaimer": {
     "description": "Home screen medical disclaimer above the composer"
   },
@@ -967,7 +971,7 @@
   "apnaClinicAiPickADay": "Pick a day",
   "apnaClinicAiPayment": "Payment",
   "apnaClinicAiPayNow": "Pay now",
-  "apnaClinicAiNotConfigured": "Apna Clinic AI is not configured. Add JIMI_BASE_URL / JIMI_SDK_KEY (or APNA_CLINIC_AI_*).",
+  "apnaClinicAiNotConfigured": "Apna Clinic AI is not configured. Add AI_BASE_URL / AI_SDK_KEY (or APNA_CLINIC_AI_*).",
   "apnaClinicAiConnectFailed": "Could not connect to Apna Clinic AI. Please try again.",
   "apnaClinicAiUpstream": "Booking didn’t go through just now. Tell me which doctor and a preferred time again. If this is urgent, call Rescue 1122.",
   "apnaClinicAiBookingFailed": "Something went wrong on the booking service. Please try again in a moment.",

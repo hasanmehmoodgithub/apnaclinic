@@ -2232,8 +2232,11 @@ class AppLocalizationsEn extends AppLocalizations {
       'Describe the report in your own words, or say what the lab found.';
 
   @override
+  String get apnaClinicAiDisclaimerTitle => 'MEDICAL DISCLAIMER';
+
+  @override
   String get apnaClinicAiDisclaimer =>
-      'The Apnaclinic AI assistant is for general informational purposes only. It is not a substitute for professional medical advice, diagnosis, or treatment. Always seek the advice of your physician or qualified health provider with any questions you may have regarding a medical condition.';
+      'The Apna Clinic AI assistant is for general informational purposes only. It is not a substitute for professional medical advice, diagnosis, or treatment. Always seek the advice of your physician or qualified health provider with any questions you may have regarding a medical condition.';
 
   @override
   String get apnaClinicAiChatSubtitle => 'online';
@@ -2321,7 +2324,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get apnaClinicAiNotConfigured =>
-      'Apna Clinic AI is not configured. Add JIMI_BASE_URL / JIMI_SDK_KEY (or APNA_CLINIC_AI_*).';
+      'Apna Clinic AI is not configured. Add AI_BASE_URL / AI_SDK_KEY (or APNA_CLINIC_AI_*).';
 
   @override
   String get apnaClinicAiConnectFailed =>

@@ -4150,10 +4150,16 @@ abstract class AppLocalizations {
   /// **'Describe the report in your own words, or say what the lab found.'**
   String get apnaClinicAiPrescriptionHint;
 
+  /// Home screen medical disclaimer title
+  ///
+  /// In en, this message translates to:
+  /// **'MEDICAL DISCLAIMER'**
+  String get apnaClinicAiDisclaimerTitle;
+
   /// Home screen medical disclaimer above the composer
   ///
   /// In en, this message translates to:
-  /// **'The Apnaclinic AI assistant is for general informational purposes only. It is not a substitute for professional medical advice, diagnosis, or treatment. Always seek the advice of your physician or qualified health provider with any questions you may have regarding a medical condition.'**
+  /// **'The Apna Clinic AI assistant is for general informational purposes only. It is not a substitute for professional medical advice, diagnosis, or treatment. Always seek the advice of your physician or qualified health provider with any questions you may have regarding a medical condition.'**
   String get apnaClinicAiDisclaimer;
 
   /// No description provided for @apnaClinicAiChatSubtitle.
@@ -4303,7 +4309,7 @@ abstract class AppLocalizations {
   /// No description provided for @apnaClinicAiNotConfigured.
   ///
   /// In en, this message translates to:
-  /// **'Apna Clinic AI is not configured. Add JIMI_BASE_URL / JIMI_SDK_KEY (or APNA_CLINIC_AI_*).'**
+  /// **'Apna Clinic AI is not configured. Add AI_BASE_URL / AI_SDK_KEY (or APNA_CLINIC_AI_*).'**
   String get apnaClinicAiNotConfigured;
 
   /// No description provided for @apnaClinicAiConnectFailed.

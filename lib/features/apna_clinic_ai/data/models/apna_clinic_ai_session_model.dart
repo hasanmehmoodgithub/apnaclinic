@@ -1,9 +1,3 @@
-import 'apna_clinic_ai_home_resume_model.dart';
-import 'apna_clinic_ai_home_tile_model.dart';
-
-export 'apna_clinic_ai_home_resume_model.dart';
-export 'apna_clinic_ai_home_tile_model.dart';
-
 class ApnaClinicAiSessionModel {
   const ApnaClinicAiSessionModel({
     required this.sessionId,
@@ -18,8 +12,6 @@ class ApnaClinicAiSessionModel {
     this.headerSubtitle = '',
     this.voiceEnabled = false,
     this.voiceOutputEnabled = false,
-    this.homeTiles = const [],
-    this.homeResume,
   });
 
   final String sessionId;
@@ -38,6 +30,4 @@ class ApnaClinicAiSessionModel {
 
   /// Server Piper / speak is available (`voice.output.enabled`).
   final bool voiceOutputEnabled;
-  final List<ApnaClinicAiHomeTileModel> homeTiles;
-  final ApnaClinicAiHomeResumeModel? homeResume;
 }

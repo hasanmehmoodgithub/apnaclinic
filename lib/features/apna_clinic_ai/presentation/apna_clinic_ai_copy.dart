@@ -11,11 +11,14 @@ bool _isApnaClinicAiBrandAlias(String raw) {
       .toLowerCase();
   final collapsed = compact.replaceAll(' ', '');
   return compact == 'noor' ||
+      compact == 'apna clinic' ||
+      compact == 'apnaclinic' ||
       compact == 'apnaclinic assistant' ||
       compact == 'apna clinic assistant' ||
       compact == 'apna clinic al noor' ||
       compact == 'apnaclinic al noor' ||
       compact == 'apna clinic ai noor' ||
+      collapsed == 'apnaclinic' ||
       collapsed == 'apnaclinicassistant' ||
       collapsed == 'apnaclinicalnoor' ||
       collapsed == 'apnaclinicainoor';

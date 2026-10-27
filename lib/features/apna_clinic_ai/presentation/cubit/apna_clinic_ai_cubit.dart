@@ -8,7 +8,7 @@ import '../../../../core/services/speech_to_text_service.dart';
 import '../../../../core/utils/auth_guard.dart';
 import '../../../../core/utils/microphone_permission_utils.dart';
 import '../../data/data_sources/apna_clinic_ai_local_data_source.dart';
-import '../../data/data_sources/apna_clinic_ai_sdk_client.dart';
+import '../../data/apna_clinic_ai_sse.dart';
 import '../../data/services/apna_clinic_ai_audio_recorder_service.dart';
 import '../../domain/entities/apna_clinic_ai_message_entity.dart';
 import '../../domain/entities/apna_clinic_ai_stream_event.dart';
@@ -61,7 +61,9 @@ class ApnaClinicAiCubit extends Cubit<ApnaClinicAiState> {
     sendMessageUseCase.detachConversation();
     _conversationBound = false;
     if (isClosed) return;
-    await connect();
+    // Always re-run session/init on feature open: app reopen, guest,
+    // signed-in, or after logout. Mid-chat turns still reuse the session.
+    await connect(forceRefresh: true);
   }
 
   final EnsureApnaClinicAiSessionUseCase ensureSessionUseCase;
@@ -140,7 +142,7 @@ class ApnaClinicAiCubit extends Cubit<ApnaClinicAiState> {
       user?.lastName.trim() ?? '',
     ].where((part) => part.isNotEmpty).join(' ');
     final imageUrl = (user?.imageUrl ?? '').trim();
-    // Show signed-in name/photo immediately — don't wait for /sdk/home.
+    // Show signed-in name/photo immediately — don't wait for session/app.
     emit(
       state.copyWith(
         connecting: true,
@@ -162,7 +164,6 @@ class ApnaClinicAiCubit extends Cubit<ApnaClinicAiState> {
             connecting: false,
             userDisplayName: displayName,
             userImageUrl: imageUrl,
-            homeTiles: const [],
             suggestions: const [],
             errorCode: error,
             errorNonce: state.errorNonce + 1,
@@ -184,9 +185,6 @@ class ApnaClinicAiCubit extends Cubit<ApnaClinicAiState> {
             headerSubtitle: session.headerSubtitle,
             voiceEnabled: session.voiceEnabled,
             voiceOutputEnabled: session.voiceOutputEnabled,
-            homeTiles: session.homeTiles,
-            homeResume: session.homeResume,
-            setHomeResume: true,
             isGuest: session.isGuest,
             userDisplayName: displayName,
             userImageUrl: imageUrl,
@@ -251,6 +249,7 @@ class ApnaClinicAiCubit extends Cubit<ApnaClinicAiState> {
         doctors: const [],
         slots: const [],
         slotDays: const [],
+        selectedSlotDayIndex: 0,
         payments: const [],
         quickActions: const [],
         clearAuthResume: true,
@@ -297,6 +296,13 @@ class ApnaClinicAiCubit extends Cubit<ApnaClinicAiState> {
     );
   }
 
+  /// Slot calendar day chip selection (presentation-only UI index).
+  void selectSlotDay(int index) {
+    if (index == state.selectedSlotDayIndex) return;
+    if (index < 0 || index >= state.slotDays.length) return;
+    emit(state.copyWith(selectedSlotDayIndex: index));
+  }
+
   /// Clears the transcript and starts a new [conversation_id].
   void newChat() {
     _turnSub?.cancel();
@@ -325,58 +331,13 @@ class ApnaClinicAiCubit extends Cubit<ApnaClinicAiState> {
         doctors: const [],
         slots: const [],
         slotDays: const [],
+        selectedSlotDayIndex: 0,
         payments: const [],
         quickActions: const [],
         clearAuthResume: true,
         clearTts: true,
         clearError: true,
       ),
-    );
-  }
-
-  /// Open booking from `GET /sdk/home` `resume`. Restores that conversation
-  /// and sends `__resume__` so the server continues the workflow.
-  Future<void> resumeOpenRequest() async {
-    final resume = state.homeResume;
-    if (resume == null) {
-      await resumeLastComplaint();
-      return;
-    }
-    await _turnSub?.cancel();
-    _turnSub = null;
-    unawaited(speechToText.cancel());
-    unawaited(audioRecorder.cancel());
-    _resumeConversationId = resume.conversationId;
-    _conversationBound = false;
-    if (isClosed) return;
-    emit(
-      state.copyWith(
-        showChat: true,
-        streaming: false,
-        recording: false,
-        signInRequired: false,
-        emergencyVisible: false,
-        thinkingStage: 'listening',
-        liveCaption: '',
-        messages: const [],
-        doctors: const [],
-        slots: const [],
-        slotDays: const [],
-        payments: const [],
-        quickActions: const [],
-        clearAuthResume: true,
-        clearTts: true,
-        clearError: true,
-      ),
-    );
-    final shown = resume.subtitle.trim().isNotEmpty
-        ? resume.subtitle.trim()
-        : resume.title.trim();
-    await sendText(
-      resume.send.trim().isEmpty ? '__resume__' : resume.send.trim(),
-      resumeThread: true,
-      displayText: shown,
-      persistComplaint: false,
     );
   }
 
@@ -410,6 +371,7 @@ class ApnaClinicAiCubit extends Cubit<ApnaClinicAiState> {
         doctors: const [],
         slots: const [],
         slotDays: const [],
+        selectedSlotDayIndex: 0,
         payments: const [],
         quickActions: const [],
         clearAuthResume: true,
@@ -448,6 +410,7 @@ class ApnaClinicAiCubit extends Cubit<ApnaClinicAiState> {
         doctors: const [],
         slots: const [],
         slotDays: const [],
+        selectedSlotDayIndex: 0,
         payments: const [],
         quickActions: const [],
         clearAuthResume: true,
@@ -505,6 +468,7 @@ class ApnaClinicAiCubit extends Cubit<ApnaClinicAiState> {
         doctors: const [],
         slots: const [],
         slotDays: const [],
+        selectedSlotDayIndex: 0,
         payments: const [],
         quickActions: const [],
         clearAuthResume: true,
@@ -801,6 +765,7 @@ class ApnaClinicAiCubit extends Cubit<ApnaClinicAiState> {
         doctors: const [],
         slots: const [],
         slotDays: const [],
+        selectedSlotDayIndex: 0,
         payments: const [],
         quickActions: const [],
         clearAuthResume: true,
@@ -914,7 +879,7 @@ class ApnaClinicAiCubit extends Cubit<ApnaClinicAiState> {
   void _ensureRevealTimer() {
     if (_revealTimer != null) return;
     _revealTimer = Timer.periodic(
-      const Duration(milliseconds: 24),
+      const Duration(milliseconds: 42),
       (_) => _tickReveal(),
     );
   }
@@ -939,18 +904,16 @@ class ApnaClinicAiCubit extends Cubit<ApnaClinicAiState> {
       return;
     }
 
-    // Slow while streaming; speed up a bit after final so we don't lag forever.
+    // Slow while streaming; mild catch-up after final so we don't lag forever.
     final step = _revealFinalized
         ? (behind > 100
-              ? 10
-              : behind > 40
               ? 5
+              : behind > 40
+              ? 3
               : behind > 12
-              ? 3
-              : 2)
-        : (behind > 48
-              ? 3
-              : behind > 18
+              ? 2
+              : 1)
+        : (behind > 60
               ? 2
               : 1);
     final nextLen = (_revealShown.length + step).clamp(0, _revealTarget.length);
@@ -1041,6 +1004,7 @@ class ApnaClinicAiCubit extends Cubit<ApnaClinicAiState> {
         doctors: turn.doctors,
         slots: turn.slots,
         slotDays: turn.slotDays,
+        selectedSlotDayIndex: 0,
         payments: turn.payments,
         quickActions: keepChips ? state.quickActions : turn.quickActions,
         signInRequired: turn.signInRequired,
@@ -1249,6 +1213,7 @@ class ApnaClinicAiCubit extends Cubit<ApnaClinicAiState> {
         doctors: const [],
         slots: const [],
         slotDays: const [],
+        selectedSlotDayIndex: 0,
         payments: const [],
         quickActions: const [],
         clearAuthResume: true,

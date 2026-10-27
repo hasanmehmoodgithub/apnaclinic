@@ -1,6 +1,4 @@
 import '../../domain/entities/apna_clinic_ai_card_entity.dart';
-import '../../domain/entities/apna_clinic_ai_home_resume_entity.dart';
-import '../../domain/entities/apna_clinic_ai_home_tile_entity.dart';
 import '../../domain/entities/apna_clinic_ai_session_entity.dart';
 import '../../domain/entities/apna_clinic_ai_turn_entity.dart';
 import '../models/apna_clinic_ai_session_model.dart';
@@ -21,25 +19,6 @@ extension ApnaClinicAiSessionModelMapper on ApnaClinicAiSessionModel {
       headerSubtitle: headerSubtitle,
       voiceEnabled: voiceEnabled,
       voiceOutputEnabled: voiceOutputEnabled,
-      homeTiles: homeTiles
-          .map(
-            (tile) => ApnaClinicAiHomeTileEntity(
-              id: tile.id,
-              title: tile.title,
-              send: tile.send,
-              subtitle: tile.subtitle,
-            ),
-          )
-          .toList(),
-      homeResume: homeResume == null
-          ? null
-          : ApnaClinicAiHomeResumeEntity(
-              conversationId: homeResume!.conversationId,
-              title: homeResume!.title,
-              subtitle: homeResume!.subtitle,
-              send: homeResume!.send,
-              badge: homeResume!.badge,
-            ),
     );
   }
 }

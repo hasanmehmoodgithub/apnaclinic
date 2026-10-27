@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
@@ -6,8 +5,8 @@ import 'package:flutter/material.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../constants/apna_clinic_ai_ui_config.dart';
 
-/// Home-only speaking UI: centered wave animation + typewriter greeting.
-/// Parent should remove this widget when playback completes.
+/// Home-only speaking UI: centered wave + typewriter greeting.
+/// Typewriter driven by [AnimationController] (no [setState]).
 class ApnaClinicAiHomeSpeakingPanel extends StatefulWidget {
   const ApnaClinicAiHomeSpeakingPanel({
     super.key,
@@ -27,10 +26,9 @@ class ApnaClinicAiHomeSpeakingPanel extends StatefulWidget {
 
 class _ApnaClinicAiHomeSpeakingPanelState
     extends State<ApnaClinicAiHomeSpeakingPanel>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   late final AnimationController _wave;
-  Timer? _typeTimer;
-  var _visibleChars = 0;
+  late AnimationController _type;
 
   String get _full => widget.text.trim();
 
@@ -41,8 +39,9 @@ class _ApnaClinicAiHomeSpeakingPanelState
       vsync: this,
       duration: const Duration(milliseconds: 900),
     );
+    _type = AnimationController(vsync: this, duration: Duration.zero);
     _syncWave(widget.playing);
-    _startTyping();
+    _restartTyping();
   }
 
   @override
@@ -52,7 +51,7 @@ class _ApnaClinicAiHomeSpeakingPanelState
       _syncWave(widget.playing);
     }
     if (oldWidget.text != widget.text) {
-      _startTyping();
+      _restartTyping();
     }
   }
 
@@ -64,31 +63,22 @@ class _ApnaClinicAiHomeSpeakingPanelState
     }
   }
 
-  void _startTyping() {
-    _typeTimer?.cancel();
-    _visibleChars = 0;
+  void _restartTyping() {
     final full = _full;
+    _type.stop();
     if (full.isEmpty) {
-      setState(() {});
+      _type.duration = Duration.zero;
+      _type.value = 1;
       return;
     }
     final stepMs = (full.length > 80 ? 22 : 28).clamp(18, 40);
-    _typeTimer = Timer.periodic(Duration(milliseconds: stepMs), (timer) {
-      if (!mounted) {
-        timer.cancel();
-        return;
-      }
-      if (_visibleChars >= full.length) {
-        timer.cancel();
-        return;
-      }
-      setState(() => _visibleChars += 1);
-    });
+    _type.duration = Duration(milliseconds: stepMs * full.length);
+    _type.forward(from: 0);
   }
 
   @override
   void dispose() {
-    _typeTimer?.cancel();
+    _type.dispose();
     _wave.dispose();
     super.dispose();
   }
@@ -96,10 +86,6 @@ class _ApnaClinicAiHomeSpeakingPanelState
   @override
   Widget build(BuildContext context) {
     final full = _full;
-    final shown = full.isEmpty
-        ? ''
-        : full.substring(0, _visibleChars.clamp(0, full.length));
-
     return Padding(
       padding: EdgeInsets.fromLTRB(16.w, 0, 16.w, 10.h),
       child: Material(
@@ -127,15 +113,36 @@ class _ApnaClinicAiHomeSpeakingPanelState
               children: [
                 _SpeakingWave(animation: _wave, active: widget.playing),
                 SizedBox(height: 12.h),
-                Text(
-                  shown.isEmpty ? ' ' : shown,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: ApnaClinicAiUiConfig.panel,
-                    fontSize: 13.sp,
-                    height: 1.35,
-                    fontWeight: FontWeight.w600,
-                  ),
+                AnimatedBuilder(
+                  animation: _type,
+                  builder: (context, _) {
+                    if (full.isEmpty) {
+                      return Text(
+                        ' ',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: ApnaClinicAiUiConfig.panel,
+                          fontSize: 13.sp,
+                          height: 1.35,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      );
+                    }
+                    final visible = (full.length * _type.value)
+                        .floor()
+                        .clamp(0, full.length);
+                    final shown = full.substring(0, visible);
+                    return Text(
+                      shown.isEmpty ? ' ' : shown,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: ApnaClinicAiUiConfig.panel,
+                        fontSize: 13.sp,
+                        height: 1.35,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    );
+                  },
                 ),
               ],
             ),

@@ -4,14 +4,14 @@ import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
 
-import 'package:chucker_flutter/chucker_flutter.dart';
 import 'package:dio/dio.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:path_provider/path_provider.dart';
 
 import '../../../../core/preference/app_pref.dart';
-import '../../../../core/utils/chucker_guard.dart';
 import '../../domain/apna_clinic_ai_failure_codes.dart';
+import '../apna_clinic_ai_sse.dart';
+import '../apna_clinic_ai_urls.dart';
 
 class ApnaClinicAiSdkException implements Exception {
   const ApnaClinicAiSdkException(
@@ -25,49 +25,8 @@ class ApnaClinicAiSdkException implements Exception {
   final String? detail;
 }
 
-/// SDK host config. Prefer `JIMI_*` dart-defines; fall back to `APNA_CLINIC_AI_*`.
-class ApnaClinicAiConfig {
-  const ApnaClinicAiConfig({
-    required this.baseUrl,
-    required this.sdkKey,
-    this.tenant = 'apnaclinic',
-  });
-
-  final String baseUrl;
-  final String sdkKey;
-  final String tenant;
-
-  bool get isConfigured =>
-      baseUrl.trim().isNotEmpty && sdkKey.trim().isNotEmpty;
-
-  factory ApnaClinicAiConfig.fromEnvironment() {
-    // Temporary defaults for local/dev. Prefer --dart-define when available.
-    const jimiBase = String.fromEnvironment('JIMI_BASE_URL');
-    const apnaBase = String.fromEnvironment(
-      'APNA_CLINIC_AI_BASE_URL',
-      defaultValue: 'https://jazzred-msa-stg.jazz.com.pk/ai-services/jimi',
-    );
-    const jimiKey = String.fromEnvironment('JIMI_SDK_KEY');
-    const apnaKey = String.fromEnvironment(
-      'APNA_CLINIC_AI_SDK_KEY',
-      defaultValue:
-          'sdk_apnaclinic_icZZE-CHR5lm91Pyo8Rnfpe5iqrzBt7UIi_MRzvpTiU',
-    );
-    const tenant = String.fromEnvironment(
-      'JIMI_TENANT',
-      defaultValue: 'apnaclinic',
-    );
-    final baseUrl = jimiBase.trim().isNotEmpty ? jimiBase : apnaBase;
-    final sdkKey = jimiKey.trim().isNotEmpty ? jimiKey : apnaKey;
-    return ApnaClinicAiConfig(
-      baseUrl: baseUrl,
-      sdkKey: sdkKey,
-      tenant: tenant.trim().isEmpty ? 'apnaclinic' : tenant.trim(),
-    );
-  }
-}
-
-/// Dedicated Dio client. Clinic [ApiService] auth and HMAC must not apply here.
+/// Dedicated Dio client for the AI SDK.
+/// Clinic [ApiService] auth and HMAC must not apply here.
 class ApnaClinicAiSdkClient {
   ApnaClinicAiSdkClient({
     required ApnaClinicAiConfig config,
@@ -87,9 +46,7 @@ class ApnaClinicAiSdkClient {
                  'ngrok-skip-browser-warning': 'true',
                },
              ),
-           ) {
-
-  }
+           );
 
   final ApnaClinicAiConfig _config;
   final AppPref _appPref;
@@ -120,8 +77,11 @@ class ApnaClinicAiSdkClient {
       accessToken != null &&
       accessToken!.isNotEmpty;
 
+  // ---------------------------------------------------------------------------
+  // Conversation lifecycle
+  // ---------------------------------------------------------------------------
+
   /// Creates a new chat thread id (New chat / any non-resume start).
-  /// Does not replace [historyConversationId] — that updates when a turn is sent.
   Future<void> newConversation() async {
     detached = false;
     conversationId = _newId('ac');
@@ -211,9 +171,7 @@ class ApnaClinicAiSdkClient {
   }
 
   /// Clears SDK auth tokens only. Keeps a bound [conversationId] so a
-  /// guest→signed-in re-init mid-chat (cart confirm / resume) stays on the
-  /// same thread. If memory was [detachConversation]’d, prefs stay for Continue
-  /// but memory stays empty until restore/new.
+  /// guest→signed-in re-init mid-chat stays on the same thread.
   Future<void> clearSession({bool clearConversation = false}) async {
     final keepMemoryId =
         (!detached && !clearConversation) ? conversationId.trim() : '';
@@ -250,17 +208,15 @@ class ApnaClinicAiSdkClient {
       await _appPref.setApnaClinicAiConversationId(keepMemoryId);
       return;
     }
-    // Detached window: prefs keep the previous thread for Continue, memory stays empty.
     detached = true;
     if (keepActivePref.isNotEmpty) {
       await _appPref.setApnaClinicAiConversationId(keepActivePref);
     }
   }
 
-  Future<void> ping() async {
-    _requireConfig();
-    await _send('GET', '/api/v1/sdk/ping');
-  }
+  // ---------------------------------------------------------------------------
+  // API calls (paths from [ApnaClinicAiUrls])
+  // ---------------------------------------------------------------------------
 
   /// Guest: `{ mode, device_id }` only.
   /// Signed-in: `{ mode, device_id, msisdn, name?, email? }`.
@@ -282,28 +238,19 @@ class ApnaClinicAiSdkClient {
       if (email != null && email.isNotEmpty) body['email'] = email;
     }
 
-    final data = await _send(
-      'POST',
-      '/api/v1/sdk/session/init',
-      body: body,
-    );
+    final data = await _post(ApnaClinicAiUrls.sessionInit, body: body);
     await _applySessionResponse(data, mode: mode);
-    // Greeting + audio.base64 are large; keep full JSON on disk for cached opens.
     await saveInitResponse(data);
     return data;
   }
 
-  /// Full `session/init` JSON (includes greeting audio). Not stored in AppPref.
   Future<void> saveInitResponse(Map<String, dynamic> data) async {
     try {
       final file = await _initResponseFile();
       await file.writeAsString(jsonEncode(data));
-    } catch (_) {
-      // Best-effort; credentials in AppPref still work without greeting replay.
-    }
+    } catch (_) {}
   }
 
-  /// Cached init body from the last successful [initSession], if any.
   Future<Map<String, dynamic>?> readInitResponse() async {
     try {
       final file = await _initResponseFile();
@@ -335,9 +282,8 @@ class ApnaClinicAiSdkClient {
         ApnaClinicAiFailureCodes.connectFailed,
       );
     }
-    final data = await _send(
-      'POST',
-      '/api/v1/sdk/auth/token',
+    final data = await _post(
+      ApnaClinicAiUrls.authToken,
       body: {'api_key': apiKey},
     );
     final token = data['access_token']?.toString();
@@ -358,24 +304,13 @@ class ApnaClinicAiSdkClient {
 
   Future<Map<String, dynamic>?> fetchApp() async {
     await ensureToken();
-    return _send('GET', '/api/v1/sdk/app', authorize: true);
-  }
-
-  Future<Map<String, dynamic>> fetchHome() async {
-    await ensureToken();
-    return _send(
-      'POST',
-      '/api/v1/sdk/home',
-      body: {'api_key': apiKey},
-      authorize: true,
-    );
+    return _get(ApnaClinicAiUrls.app, authorize: true);
   }
 
   Future<Map<String, dynamic>> postTurn(Map<String, dynamic> body) async {
     await ensureToken();
-    return _send(
-      'POST',
-      '/api/v1/sdk/assistant/turn',
+    return _post(
+      ApnaClinicAiUrls.assistantTurn,
       body: body,
       authorize: true,
     );
@@ -383,7 +318,7 @@ class ApnaClinicAiSdkClient {
 
   Future<Stream<Uint8List>> postTurnStream(Map<String, dynamic> body) async {
     await ensureToken();
-    return _openStream('/api/v1/sdk/assistant/turn/stream', body);
+    return _postStream(ApnaClinicAiUrls.assistantTurnStream, body);
   }
 
   /// Multipart SSE voice turn. Retries 403 up to 2 times (600ms backoff).
@@ -403,7 +338,6 @@ class ApnaClinicAiSdkClient {
           await Future<void>.delayed(const Duration(milliseconds: 600));
           await ensureToken();
         }
-        // Rebuild FormData each attempt — Dio consumes the stream once.
         final formData = FormData.fromMap({
           'api_key': apiKey,
           if (sessionId != null && sessionId!.isNotEmpty)
@@ -425,10 +359,9 @@ class ApnaClinicAiSdkClient {
           ),
         });
         final response = await _dio.post<ResponseBody>(
-          _url('/api/v1/sdk/assistant/turn/audio/stream'),
+          _config.url(ApnaClinicAiUrls.assistantAudioStream),
           data: formData,
           options: Options(
-            // Let Dio set multipart boundary; do not force Content-Type.
             headers: _headers(json: false, authorize: true, sse: true),
             responseType: ResponseType.stream,
             sendTimeout: const Duration(seconds: 90),
@@ -445,8 +378,7 @@ class ApnaClinicAiSdkClient {
       } on DioException catch (error) {
         lastError = error;
         final status = error.response?.statusCode;
-        final retryable403 = status == 403 && attempt < 2;
-        if (retryable403) continue;
+        if (status == 403 && attempt < 2) continue;
         throw _mapDio(error, audioTurn: true);
       }
     }
@@ -454,22 +386,16 @@ class ApnaClinicAiSdkClient {
       lastError ??
           DioException(
             requestOptions: RequestOptions(
-              path: '/api/v1/sdk/assistant/turn/audio/stream',
+              path: ApnaClinicAiUrls.assistantAudioStream,
             ),
           ),
       audioTurn: true,
     );
   }
 
-  Future<Map<String, dynamic>> fetchSpeakStatus() async {
-    await ensureToken();
-    return _send('GET', '/api/v1/sdk/voice/speak/status', authorize: true);
-  }
-
-  Future<Map<String, dynamic>> fetchTranscribeStatus() async {
-    await ensureToken();
-    return _send('GET', '/api/v1/sdk/voice/transcribe/status', authorize: true);
-  }
+  // ---------------------------------------------------------------------------
+  // Session persistence
+  // ---------------------------------------------------------------------------
 
   Future<void> _applySessionResponse(
     Map<String, dynamic> data, {
@@ -507,7 +433,26 @@ class ApnaClinicAiSdkClient {
     await _appPref.setApnaClinicAiAuthMode(authMode);
   }
 
-  Future<Map<String, dynamic>> _send(
+  // ---------------------------------------------------------------------------
+  // HTTP helpers
+  // ---------------------------------------------------------------------------
+
+  Future<Map<String, dynamic>> _get(
+    String path, {
+    bool authorize = false,
+  }) {
+    return _request('GET', path, authorize: authorize);
+  }
+
+  Future<Map<String, dynamic>> _post(
+    String path, {
+    Map<String, dynamic>? body,
+    bool authorize = false,
+  }) {
+    return _request('POST', path, body: body, authorize: authorize);
+  }
+
+  Future<Map<String, dynamic>> _request(
     String method,
     String path, {
     Map<String, dynamic>? body,
@@ -515,7 +460,7 @@ class ApnaClinicAiSdkClient {
   }) async {
     try {
       final response = await _dio.request<dynamic>(
-        _url(path),
+        _config.url(path),
         data: body,
         options: Options(
           method: method,
@@ -532,13 +477,13 @@ class ApnaClinicAiSdkClient {
     }
   }
 
-  Future<Stream<Uint8List>> _openStream(
+  Future<Stream<Uint8List>> _postStream(
     String path,
     Map<String, dynamic> body,
   ) async {
     try {
       final response = await _dio.post<ResponseBody>(
-        _url(path),
+        _config.url(path),
         data: body,
         options: Options(
           headers: _headers(json: true, authorize: true, sse: true),
@@ -570,17 +515,11 @@ class ApnaClinicAiSdkClient {
       'Accept': sse ? 'text/event-stream' : 'application/json',
       if (authorize && accessToken != null)
         'Authorization': 'Bearer $accessToken',
-      // Apna Clinic app JWT (signed-in); omitted for guests.
       if (loginToken.isNotEmpty)
         'X-User-Token': loginToken.toLowerCase().startsWith('bearer ')
             ? loginToken
             : 'Bearer $loginToken',
     };
-  }
-
-  String _url(String path) {
-    final base = _config.baseUrl.trim().replaceAll(RegExp(r'/+$'), '');
-    return '$base$path';
   }
 
   void _requireConfig() {
@@ -635,49 +574,6 @@ class ApnaClinicAiSdkClient {
       statusCode: status,
       detail: detail,
     );
-  }
-}
-
-bool isApnaClinicAiWav(List<int> bytes) {
-  return bytes.length >= 4 &&
-      bytes[0] == 0x52 &&
-      bytes[1] == 0x49 &&
-      bytes[2] == 0x46 &&
-      bytes[3] == 0x46;
-}
-
-Stream<Map<String, dynamic>> parseApnaClinicAiSse(
-  Stream<Uint8List> bytes,
-) async* {
-  final pending = StringBuffer();
-  await for (final chunk in bytes) {
-    pending.write(utf8.decode(chunk, allowMalformed: true));
-    var text = pending.toString();
-    while (true) {
-      final split = text.indexOf('\n\n');
-      if (split < 0) break;
-      final frame = text.substring(0, split);
-      text = text.substring(split + 2);
-      String? dataLine;
-      for (final line in frame.split('\n')) {
-        if (line.startsWith('data: ')) {
-          dataLine = line.substring(6);
-          break;
-        }
-      }
-      if (dataLine == null || dataLine.isEmpty) continue;
-      try {
-        final decoded = jsonDecode(dataLine);
-        if (decoded is Map<String, dynamic>) {
-          yield decoded;
-        } else if (decoded is Map) {
-          yield Map<String, dynamic>.from(decoded);
-        }
-      } catch (_) {}
-    }
-    pending
-      ..clear()
-      ..write(text);
   }
 }
 

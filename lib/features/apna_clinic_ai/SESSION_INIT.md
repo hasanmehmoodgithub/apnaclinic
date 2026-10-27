@@ -2,10 +2,43 @@
 
 How Care Companion initializes the SDK session, how **signed_in** vs **guest** differ, and how tokens are cached in `AppPref`.
 
+## How to call
+
+**Preferred (UI / feature):**
+
+```dart
+await cubit.connect(forceRefresh: true);
+```
+
+Call chain:
+
+`ApnaClinicAiCubit.connect` → `EnsureApnaClinicAiSessionUseCase` → `ApnaClinicAiRepository.ensureSession` → `ApnaClinicAiSdkInitializer.initialize`
+
+**Direct (DI / tests / another host app):**
+
+```dart
+final initializer = sl<ApnaClinicAiSdkInitializer>();
+if (!initializer.isConfigured) { /* AI_BASE_URL / AI_SDK_KEY missing */ }
+final session = await initializer.initialize(forceRefresh: false);
+```
+
+Do **not** call `ApnaClinicAiSdkClient.initSession` from UI — use the initializer.
+
+### Steps inside `initialize`
+
+| Step | Method | What |
+|---|---|---|
+| 1 | `ensureConfigured()` | `AI_*` / `APNA_CLINIC_AI_*` dart-defines |
+| 2 | `resolveAuth()` | guest vs signed-in (`ApnaClinicAiSdkAuthResolver`) |
+| 3 | `ensureSdkSession()` | `POST /sdk/session/init` or token refresh |
+| 4 | `loadGreeting()` | `{appSupport}/apna_clinic_ai_session_init.json` |
+| 5 | `loadBranding()` | `GET /sdk/app` |
+| 6 | assemble | `ApnaClinicAiSessionModel` |
+
 ## High-level flow
 
-1. Cubit `connect()` → `EnsureApnaClinicAiSessionUseCase`
-2. Repository reads `AuthGuard.isLoggedIn(appPref)`:
+1. Cubit `connect()` → use case → repository → `ApnaClinicAiSdkInitializer`
+2. Auth resolver reads `AuthGuard.isLoggedIn(appPref)`:
    - `true` → `mode: signed_in` + normalized `msisdn` (`923…`), `name`, `email`
    - `false` → `mode: guest` + `device_id` only
 3. `POST /api/v1/sdk/session/init` with `X-SDK-Key` (when no cached session)
@@ -17,7 +50,7 @@ How Care Companion initializes the SDK session, how **signed_in** vs **guest** d
 
 ## Conversation id (critical)
 
-On open, the in-memory id is detached so a leftover singleton id cannot be reused. **Every home start** — common concerns, What I can do, home text, and home voice — always mints a new `conversation_id`, even if this window already had a thread. **`GET /sdk/home` `resume`** (when present and before `expires_at`) is the Continue card (UI may be hidden): restore `resume.conversation_id` and send `resume.card.send` (`__resume__`). That card is omitted from What I can do. If `resume` is absent or expired, Continue falls back to `AppPref.apnaClinicAiHistoryConversationId`. History id is written only after a turn is sent. Follow-up turns in the open chat stay on the bound id (typed, cards, in-chat voice, “yes”, sign-in resume). **New chat** mints a new id. Session token refresh / guest↔signed-in re-init must **not** rotate a bound conversation mid-chat, or pending confirmations (`awaiting_confirmation`), triage, and sign-in resume break.
+On open, the in-memory id is detached so a leftover singleton id cannot be reused. **`POST /session/init` always runs** when Care Companion opens (app reopen, guest, signed-in, after logout) and again after in-feature login (`resumeAfterSignIn`). Mid-chat turns only refresh the token — they do not re-init. **Every home start** — common concerns, home text, and home voice — always mints a new `conversation_id`, even if this window already had a thread. Continue / resume last complaint uses `AppPref.apnaClinicAiHistoryConversationId`. History id is written only after a turn is sent. Follow-up turns in the open chat stay on the bound id (typed, cards, in-chat voice, “yes”, sign-in resume). **New chat** mints a new id. Session token refresh / guest↔signed-in re-init must **not** rotate a bound conversation mid-chat, or pending confirmations (`awaiting_confirmation`), triage, and sign-in resume break.
 
 `sign_in_required`: open app login (do not send “Sign in to continue” as a chat message). After login, send `auth.resume.message` in the **same** conversation with `X-User-Token`.
 
@@ -65,10 +98,17 @@ Cleared on logout via `LocalLogoutService` → `clearApnaClinicAiSession()`. Gue
 |---|---|
 | `{appSupport}/apna_clinic_ai_session_init.json` | Full last `POST /sdk/session/init` body — home greeting text + audio (audio plays once per app entry) |
 
-Written by `ApnaClinicAiSdkClient.saveInitResponse` after a successful init; always read by `readInitResponse` in `ensureSession` for greeting/audio.
+Written by `ApnaClinicAiSdkClient.saveInitResponse` after a successful init; always read by `loadGreeting` → `readInitResponse`.
 
 ## Code map
 
-- Repository: `ApnaClinicAiRepositoryImpl.ensureSession`
-- Remote: `ApnaClinicAiRemoteDataSourceImpl.ensureSession`
-- Client: `ApnaClinicAiSdkClient.initSession` / `saveInitResponse` / `readInitResponse` / `ensureToken` / `hydrateFromPrefs`
+| Piece | Path |
+|---|---|
+| Orchestrator | `data/sdk_init/apna_clinic_ai_sdk_initializer.dart` |
+| Auth context | `data/sdk_init/apna_clinic_ai_sdk_auth_context.dart` |
+| Auth resolver | `data/sdk_init/apna_clinic_ai_sdk_auth_resolver.dart` |
+| Greeting parse | `data/sdk_init/apna_clinic_ai_sdk_greeting.dart` |
+| Branding parse | `data/sdk_init/apna_clinic_ai_sdk_branding.dart` |
+| Repository | `ApnaClinicAiRepositoryImpl.ensureSession` → initializer |
+| Client | `ApnaClinicAiSdkClient.initSession` / `saveInitResponse` / `readInitResponse` / `ensureToken` |
+| DI | `initApnaClinicAiInjector()` → `ApnaClinicAiSdkAuthResolver` + `ApnaClinicAiSdkInitializer` |
