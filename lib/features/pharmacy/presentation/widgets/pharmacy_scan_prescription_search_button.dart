@@ -4,12 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/constants/app_text_styles.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/router/app_routes.dart';
 
-/// Animated scan control beside the medicine search field (same motion as the
-/// old floating scanner, sized for the search row).
+/// Floating scan control at the bottom of the medicine panel.
 class PharmacyScanPrescriptionSearchButton extends StatefulWidget {
   const PharmacyScanPrescriptionSearchButton({super.key});
 
@@ -65,7 +65,7 @@ class _PharmacyScanPrescriptionSearchButtonState
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final animate = ModalRoute.of(context)?.isCurrent ?? true;
-    final size = 45.r;
+    final size = 52.r;
 
     return TickerMode(
       enabled: animate,
@@ -78,21 +78,37 @@ class _PharmacyScanPrescriptionSearchButtonState
           onTapDown: (_) => setState(() => _pressed = true),
           onTapUp: (_) => setState(() => _pressed = false),
           onTapCancel: () => setState(() => _pressed = false),
-          child: SizedBox(
-            width: size,
-            height: size,
-            child: AnimatedBuilder(
-              animation: Listenable.merge([_float, _pulse, _scan, _enter]),
-              builder: (context, _) {
-                final lift = Curves.easeInOut.transform(_float.value);
-                final enter = Curves.easeOutBack.transform(_enter.value);
-                final scale =
-                    (enter * (_pressed ? 0.92 : 1)).clamp(0.0, 1.12);
-                return Transform.translate(
-                  offset: Offset(0, -3.h * lift),
-                  child: Transform.rotate(
-                    angle: (lift - 0.5) * 0.04,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              AnimatedBuilder(
+                animation: _float,
+                builder: (context, child) {
+                  final lift = Curves.easeInOut.transform(_float.value);
+                  return Transform.translate(
+                    offset: Offset(-26.r, -6.h * lift),
                     child: Transform.scale(
+                      scale: 0.96 + (0.08 * lift),
+                      alignment: Alignment.centerRight,
+                      child: child,
+                    ),
+                  );
+                },
+                child: _ScanLabelBubble(text: l10n.pharmacyScanPrescription),
+              ),
+              SizedBox(height: 2.h),
+              SizedBox(
+                width: size,
+                height: size,
+                child: AnimatedBuilder(
+                  animation: Listenable.merge([_pulse, _scan, _enter]),
+                  builder: (context, _) {
+                    final enter = Curves.easeOutBack.transform(_enter.value);
+                    final scale = (enter * (_pressed ? 0.92 : 1)).clamp(
+                      0.0,
+                      1.12,
+                    );
+                    return Transform.scale(
                       scale: scale,
                       child: Stack(
                         alignment: Alignment.center,
@@ -111,12 +127,47 @@ class _PharmacyScanPrescriptionSearchButtonState
                           ),
                         ],
                       ),
-                    ),
-                  ),
-                );
-              },
-            ),
+                    );
+                  },
+                ),
+              ),
+            ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class _ScanLabelBubble extends StatelessWidget {
+  const _ScanLabelBubble({required this.text});
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+      decoration: BoxDecoration(
+        color: AppColors.clrWhite,
+        borderRadius: BorderRadius.circular(12.r),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.clr061E40.withValues(alpha: 0.08),
+            blurRadius: 12.r,
+            offset: Offset(0, 4.h),
+          ),
+        ],
+      ),
+      child: Text(
+        text,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+        style: AppTextStyles.caption.copyWith(
+          color: AppColors.clr061E40,
+          fontWeight: FontWeight.w700,
+          fontSize: 10.sp,
+          height: 1.1,
         ),
       ),
     );

@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:dio/dio.dart';
+import 'package:http_parser/http_parser.dart';
 
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/network/api_service.dart';
@@ -11,7 +12,10 @@ import '../../domain/use_cases/pharmacy_checkout_use_case.dart';
 import '../mock/pharmacy_mock_api.dart';
 import '../models/pharmacy_booking_detail_model.dart';
 import '../models/pharmacy_booking_model.dart';
+import '../../domain/entities/prescription_extract_entity.dart';
+import '../../domain/prescription_scan_error_codes.dart';
 import '../models/pharmacy_medicine_model.dart';
+import '../models/prescription_extract_model.dart';
 import '../pharmacy_cart_api_failure.dart';
 import 'pharmacy_remote_data_source.dart';
 
@@ -521,5 +525,57 @@ class PharmacyRemoteDataSourceImpl implements PharmacyRemoteDataSource {
       );
       return Future.error(message);
     }
+  }
+
+  @override
+  Future<PrescriptionExtractEntity> extractPrescription({
+    required String filePath,
+  }) async {
+    final endpoint = AppUrls.pharmacyPrescriptionExtract;
+    final apiKey = AppUrls.prescriptionExtractApiKey.trim();
+    if (apiKey.isEmpty || endpoint.trim().isEmpty) {
+      return Future.error(PrescriptionScanErrorCodes.notConfigured);
+    }
+
+    try {
+      final fileName = _prescriptionFileName(filePath);
+      final formData = FormData.fromMap(<String, dynamic>{
+        'file': await MultipartFile.fromFile(
+          filePath,
+          filename: fileName,
+          contentType: _prescriptionMediaType(fileName),
+        ),
+      });
+      final response = await apiService.post(
+        endpoint,
+        data: formData,
+        headers: {'X-API-Key': apiKey},
+        timeout: const Duration(seconds: 90),
+      );
+      return PrescriptionExtractModel.fromJson(response);
+    } catch (e) {
+      final message = ErrorHandler.handleExceptions(e, endpoint: endpoint);
+      if (message.trim().isEmpty || message == 'Request failed') {
+        return Future.error(PrescriptionScanErrorCodes.extractFailed);
+      }
+      return Future.error(message);
+    }
+  }
+
+  static String _prescriptionFileName(String path) {
+    final name = path.replaceAll('\\', '/').split('/').last.trim();
+    if (name.isEmpty) return 'prescription.jpg';
+    final ext = name.contains('.') ? name.split('.').last.toLowerCase() : '';
+    if (ext == 'png' || ext == 'jpg' || ext == 'jpeg' || ext == 'webp') {
+      return name;
+    }
+    return 'prescription.jpg';
+  }
+
+  static MediaType _prescriptionMediaType(String fileName) {
+    final ext = fileName.split('.').last.toLowerCase();
+    if (ext == 'png') return MediaType('image', 'png');
+    if (ext == 'webp') return MediaType('image', 'webp');
+    return MediaType('image', 'jpeg');
   }
 }

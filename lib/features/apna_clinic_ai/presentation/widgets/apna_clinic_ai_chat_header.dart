@@ -3,10 +3,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
-import '../../../../generated/assets.dart';
+import '../apna_clinic_ai_copy.dart';
 import '../constants/apna_clinic_ai_ui_config.dart';
 import '../cubit/apna_clinic_ai_cubit.dart';
 import '../cubit/apna_clinic_ai_state.dart';
+import 'apna_clinic_ai_bot_avatar.dart';
+import 'apna_clinic_ai_home_disclaimer.dart';
 
 class ApnaClinicAiChatHeader extends StatelessWidget {
   const ApnaClinicAiChatHeader({
@@ -23,15 +25,14 @@ class ApnaClinicAiChatHeader extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
     return BlocSelector<ApnaClinicAiCubit, ApnaClinicAiState, _HeaderVm>(
       selector: (state) => _HeaderVm(
-        name: state.assistantName.isEmpty
-            ? l10n.apnaClinicAiTitle
-            : state.assistantName,
-        subtitle: state.streaming
-            ? l10n.apnaClinicAiJustAMoment
-            : (state.headerSubtitle.trim().isNotEmpty
-                  ? state.headerSubtitle.trim()
-                  : l10n.apnaClinicAiOnline),
-        streaming: state.streaming,
+        name: l10n.apnaClinicAiTitle,
+        subtitle: apnaClinicAiHeaderStatus(
+          l10n,
+          connecting: state.connecting,
+          recording: state.recording,
+          streaming: state.streaming,
+          thinkingStage: state.thinkingStage,
+        ),
       ),
       builder: (context, vm) {
         return Container(
@@ -49,21 +50,7 @@ class ApnaClinicAiChatHeader extends StatelessWidget {
                 size: 18,
               ),
               SizedBox(width: 4.w),
-              Container(
-                width: 40.r,
-                height: 40.r,
-                padding: EdgeInsets.all(6.r),
-                decoration: BoxDecoration(
-                  color: ApnaClinicAiUiConfig.panel,
-                  borderRadius: BorderRadius.circular(12.r),
-                  border: Border.all(color: ApnaClinicAiUiConfig.border),
-                ),
-                alignment: Alignment.center,
-                child: Image.asset(
-                  Assets.iconsApnaClinicLogoSource,
-                  fit: BoxFit.contain,
-                ),
-              ),
+              const ApnaClinicAiBotAvatar(size: 40, animate: true),
               SizedBox(width: 10.w),
               Expanded(
                 child: Column(
@@ -80,35 +67,23 @@ class ApnaClinicAiChatHeader extends StatelessWidget {
                         letterSpacing: -0.2,
                       ),
                     ),
-                    Row(
-                      children: [
-                        Container(
-                          width: 6.r,
-                          height: 6.r,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: vm.streaming
-                                ? ApnaClinicAiUiConfig.cta
-                                : ApnaClinicAiUiConfig.online,
-                          ),
-                        ),
-                        SizedBox(width: 6.w),
-                        Expanded(
-                          child: Text(
-                            vm.subtitle,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              color: ApnaClinicAiUiConfig.muted,
-                              fontSize: 12.sp,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ),
-                      ],
+                    Text(
+                      vm.subtitle,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: ApnaClinicAiUiConfig.ctaDeep,
+                        fontSize: 12.sp,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
                   ],
                 ),
+              ),
+              _HeaderIconButton(
+                icon: Icons.info_outline_rounded,
+                onPressed: () => _showDisclaimer(context),
+                tooltip: l10n.apnaClinicAiDisclaimerTitle,
               ),
               _HeaderIconButton(
                 icon: Icons.refresh_rounded,
@@ -124,26 +99,34 @@ class ApnaClinicAiChatHeader extends StatelessWidget {
 }
 
 class _HeaderVm {
-  const _HeaderVm({
-    required this.name,
-    required this.subtitle,
-    required this.streaming,
-  });
+  const _HeaderVm({required this.name, required this.subtitle});
 
   final String name;
   final String subtitle;
-  final bool streaming;
 
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is _HeaderVm &&
-          name == other.name &&
-          subtitle == other.subtitle &&
-          streaming == other.streaming;
+      other is _HeaderVm && name == other.name && subtitle == other.subtitle;
 
   @override
-  int get hashCode => Object.hash(name, subtitle, streaming);
+  int get hashCode => Object.hash(name, subtitle);
+}
+
+void _showDisclaimer(BuildContext context) {
+  showDialog<void>(
+    context: context,
+    builder: (_) {
+      return Dialog(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        insetPadding: EdgeInsets.symmetric(horizontal: 22.w, vertical: 24.h),
+        child: const SingleChildScrollView(
+          child: ApnaClinicAiHomeDisclaimer(margin: EdgeInsets.zero),
+        ),
+      );
+    },
+  );
 }
 
 class _HeaderIconButton extends StatelessWidget {
@@ -164,15 +147,15 @@ class _HeaderIconButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final button = Material(
       color: ApnaClinicAiUiConfig.panel,
-      borderRadius: BorderRadius.circular(10.r),
+      shape: const CircleBorder(),
       child: InkWell(
         onTap: onPressed,
-        borderRadius: BorderRadius.circular(10.r),
+        customBorder: const CircleBorder(),
         child: Container(
           width: _extent.r,
           height: _extent.r,
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10.r),
+            shape: BoxShape.circle,
             border: Border.all(color: ApnaClinicAiUiConfig.border),
           ),
           child: Icon(

@@ -2144,7 +2144,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get apnaClinicAiMenuTitle => 'Apna Clinic AI';
 
   @override
-  String get apnaClinicAiTitle => 'Apna Clinic Ai Noor';
+  String get apnaClinicAiTitle => 'Noor (Apna Clinic AI)';
 
   @override
   String get apnaClinicAiBrandTag => 'CARE COMPANION';
@@ -2162,7 +2162,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get apnaClinicAiConnecting => 'Getting ready for you…';
 
   @override
-  String get apnaClinicAiOnline => 'Available 24/7';
+  String get apnaClinicAiOnline => 'Online';
+
+  @override
+  String get apnaClinicAiStatusReading => 'Getting ready…';
 
   @override
   String get apnaClinicAiUnavailable => 'Unavailable';
@@ -2172,6 +2175,24 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get apnaClinicAiLiveStats => 'Tell me what’s bothering you.';
+
+  @override
+  String get apnaClinicAiChipFindDoctor => 'Find a doctor...';
+
+  @override
+  String get apnaClinicAiChipFindMedicines => 'Find medicines...';
+
+  @override
+  String get apnaClinicAiChipFindLab => 'Find a lab test...';
+
+  @override
+  String get apnaClinicAiChipDoctor => 'Doctor';
+
+  @override
+  String get apnaClinicAiChipPharmacy => 'Pharmacy';
+
+  @override
+  String get apnaClinicAiChipLab => 'Lab';
 
   @override
   String get apnaClinicAiCommonConcerns => 'Common concerns';
@@ -2266,7 +2287,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'میں نور ہوں، آپ کی کیسے مدد کر سکتی ہوں؟';
 
   @override
-  String get apnaClinicAiChatComposerHint => 'Type, or tap the mic to speak…';
+  String get apnaClinicAiChatComposerHint => 'Ask me anything...';
 
   @override
   String get apnaClinicAiEmergencyTitle =>
@@ -2468,6 +2489,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get apnaClinicBotLabel => 'Apna Clinic Bot';
 
   @override
+  String get apnaClinicAiAskAnything => 'Ask me anything';
+
+  @override
   String get apnaClinicBotBubble => 'Ask me';
 
   @override
@@ -2554,7 +2578,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get pharmacyScanBannerTitle => 'Medicines ready when you are';
+  String get pharmacyScanBannerTitle => 'Scan and Fill Your Cart';
 
   @override
   String get pharmacyScanBannerSubtitle =>

@@ -4,14 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 
+import '../../../../components/shimmer/app_shimmer.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
-import '../../../../generated/assets.dart';
 import '../../domain/entities/apna_clinic_ai_message_entity.dart';
 import '../apna_clinic_ai_copy.dart';
 import '../constants/apna_clinic_ai_ui_config.dart';
+import 'apna_clinic_ai_bot_avatar.dart';
 import 'apna_clinic_ai_markdown_text.dart';
-import 'apna_clinic_ai_moving_stroke.dart';
 
 class ApnaClinicAiMessageBubble extends StatelessWidget {
   const ApnaClinicAiMessageBubble({
@@ -48,7 +48,7 @@ class ApnaClinicAiMessageBubble extends StatelessWidget {
     );
 
     final bubbleBody = message.pending
-        ? const _ThinkingLabel()
+        ? const _ThinkingLoader()
         : _Body(
             message: message,
             style: style ?? const TextStyle(),
@@ -61,16 +61,13 @@ class ApnaClinicAiMessageBubble extends StatelessWidget {
         ? Container(
             constraints: BoxConstraints(maxWidth: 270.w),
             margin: EdgeInsets.only(bottom: 12.h),
-            child: ApnaClinicAiMovingStroke(
-              borderRadius: 18.r,
-              strokeWidth: 1.2,
-              showShadow: false,
-              includeWhite: false,
-              child: Padding(
-                padding: EdgeInsets.fromLTRB(14.w, 12.h, 14.w, 10.h),
-                child: bubbleBody,
-              ),
+            padding: EdgeInsets.fromLTRB(14.w, 12.h, 14.w, 12.h),
+            decoration: BoxDecoration(
+              color: color,
+              borderRadius: BorderRadius.circular(18.r),
+              border: Border.all(color: ApnaClinicAiUiConfig.border),
             ),
+            child: bubbleBody,
           )
         : Container(
             constraints: BoxConstraints(maxWidth: isUser ? 260.w : 270.w),
@@ -98,33 +95,13 @@ class ApnaClinicAiMessageBubble extends StatelessWidget {
     return Align(
       alignment: align,
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.end,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const _AssistantAvatar(),
+          const ApnaClinicAiBotAvatar(size: 32),
           SizedBox(width: 8.w),
           Flexible(child: bubble),
         ],
       ),
-    );
-  }
-}
-
-class _AssistantAvatar extends StatelessWidget {
-  const _AssistantAvatar();
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 32.r,
-      height: 32.r,
-      margin: EdgeInsets.only(bottom: 12.h),
-      padding: EdgeInsets.all(5.r),
-      decoration: BoxDecoration(
-        color: ApnaClinicAiUiConfig.panel,
-        shape: BoxShape.circle,
-        border: Border.all(color: ApnaClinicAiUiConfig.border),
-      ),
-      child: Image.asset(Assets.iconsApnaClinicLogoSource, fit: BoxFit.contain),
     );
   }
 }
@@ -185,7 +162,7 @@ class _Body extends StatelessWidget {
         if (!isUserVoice &&
             (time != null ||
                 onPlayAudio != null ||
-                (message.isVoice && message.audioPending))) ...[
+                message.audioPending)) ...[
           SizedBox(height: 8.h),
           Row(
             children: [
@@ -199,15 +176,12 @@ class _Body extends StatelessWidget {
                   ),
                 ),
               const Spacer(),
-              // 3-dot wave only while waiting for delayed audio on voice turns.
+              // Speaker on text and voice replies, including while audio is still pending.
               if (!isUser &&
-                  (onPlayAudio != null ||
-                      (message.isVoice && message.audioPending))) ...[
+                  (onPlayAudio != null || message.audioPending)) ...[
                 _PlayControl(
                   playing: audioPlaying,
-                  loading: message.isVoice &&
-                      message.audioPending &&
-                      !message.hasAudio,
+                  loading: message.audioPending && !message.hasAudio,
                   onTap: onPlayAudio,
                 ),
                 SizedBox(width: 6.w),
@@ -384,17 +358,18 @@ class _PlayControl extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final diameter = 32.r;
     return Material(
       color: playing
           ? ApnaClinicAiUiConfig.cta
           : ApnaClinicAiUiConfig.ctaSoft,
-      borderRadius: BorderRadius.circular(14.r),
+      shape: const CircleBorder(),
       child: InkWell(
         onTap: loading ? null : onTap,
-        borderRadius: BorderRadius.circular(14.r),
+        customBorder: const CircleBorder(),
         child: SizedBox(
-          width: 28.r,
-          height: 28.r,
+          width: diameter,
+          height: diameter,
           child: loading
               ? const _WaveThreeDots(compact: true)
               : Icon(
@@ -523,53 +498,39 @@ class _CopyButton extends StatelessWidget {
   }
 }
 
-class _ThinkingLabel extends StatefulWidget {
-  const _ThinkingLabel();
-
-  @override
-  State<_ThinkingLabel> createState() => _ThinkingLabelState();
-}
-
-class _ThinkingLabelState extends State<_ThinkingLabel>
-    with SingleTickerProviderStateMixin {
-  late final AnimationController _fade;
-
-  @override
-  void initState() {
-    super.initState();
-    _fade = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 1200),
-    )..repeat();
-  }
-
-  @override
-  void dispose() {
-    _fade.dispose();
-    super.dispose();
-  }
+class _ThinkingLoader extends StatelessWidget {
+  const _ThinkingLoader();
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-    // Text loading: label only (no 3-dot wave — that is voice/audio-pending).
-    return AnimatedBuilder(
-      animation: _fade,
-      builder: (context, _) {
-        final wave = math.sin(_fade.value * math.pi * 2);
-        final fade = 0.55 + (0.45 * ((wave + 1) / 2));
-        return Text(
-          l10n.apnaClinicAiJustAMoment,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          style: TextStyle(
-            color: ApnaClinicAiUiConfig.ctaDeep.withValues(alpha: fade),
-            fontSize: 13.5.sp,
-            fontWeight: FontWeight.w600,
-            letterSpacing: -0.15,
-          ),
-        );
-      },
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        AppShimmer(
+          width: 180.w,
+          height: 12.h,
+          borderRadius: 6.r,
+          baseColor: ApnaClinicAiUiConfig.border,
+          highlightColor: ApnaClinicAiUiConfig.panel,
+        ),
+        SizedBox(height: 8.h),
+        AppShimmer(
+          width: 140.w,
+          height: 12.h,
+          borderRadius: 6.r,
+          baseColor: ApnaClinicAiUiConfig.border,
+          highlightColor: ApnaClinicAiUiConfig.panel,
+        ),
+        SizedBox(height: 8.h),
+        AppShimmer(
+          width: 88.w,
+          height: 12.h,
+          borderRadius: 6.r,
+          baseColor: ApnaClinicAiUiConfig.border,
+          highlightColor: ApnaClinicAiUiConfig.panel,
+        ),
+      ],
     );
   }
 }
+

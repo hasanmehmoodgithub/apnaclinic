@@ -23,6 +23,23 @@ class ApnaClinicAiTurnParser {
   );
 
   static ApnaClinicAiTurnModel parse(Map<String, dynamic> json) {
+    final wrapped = json['data'];
+    if (wrapped is Map &&
+        json['reply'] == null &&
+        json['text'] == null &&
+        json['audio'] == null &&
+        (wrapped['reply'] != null ||
+            wrapped['text'] != null ||
+            wrapped['audio'] != null ||
+            wrapped['audio_pending'] != null)) {
+      json = {
+        ...Map<String, dynamic>.from(wrapped),
+        if (json['type'] != null) 'type': json['type'],
+        if (json['turn_id'] != null) 'turn_id': json['turn_id'],
+        if (json['audio_pending'] != null)
+          'audio_pending': json['audio_pending'],
+      };
+    }
     var reply = (json['reply'] ?? json['text'] ?? '').toString();
     final status = json['status']?.toString();
     String? failureCode;
@@ -122,6 +139,14 @@ class ApnaClinicAiTurnParser {
           .where((action) => _slotDate(action.send) == null)
           .toList();
     }
+    // Block chips (kind + title) win over option_items with the same send.
+    if (blocks.actionChips.isNotEmpty) {
+      final seen = <String>{};
+      quickActions = [
+        for (final action in [...blocks.actionChips, ...quickActions])
+          if (seen.add(action.send.trim().toLowerCase())) action,
+      ];
+    }
 
     final hasPaymentCards = doctors.any(
       (card) => card.kind.toLowerCase() == 'payment',
@@ -153,17 +178,31 @@ class ApnaClinicAiTurnParser {
             ),
           ];
 
-    final audio = json['audio'];
+    final audio = json['audio'] ?? json['tts'] ?? json['speech'];
     String? audioBase64;
     String? audioMediaType;
     if (audio is Map) {
-      audioBase64 = audio['base64']?.toString();
+      final raw = audio['base64'] ?? audio['audio_base64'] ?? audio['data'];
+      if (raw is String && raw.trim().isNotEmpty) audioBase64 = raw.trim();
       final format = audio['format']?.toString();
       audioMediaType =
           audio['media_type']?.toString() ??
           (format == 'opus' ? 'audio/ogg' : 'audio/wav');
+    } else if (audio is String && audio.trim().isNotEmpty) {
+      audioBase64 = audio.trim();
+      audioMediaType = 'audio/wav';
     }
-    final audioPending = json['audio_pending'] == true;
+    if ((audioBase64 ?? '').isEmpty) {
+      final top = json['audio_base64'];
+      if (top is String && top.trim().isNotEmpty) {
+        audioBase64 = top.trim();
+        audioMediaType ??= 'audio/wav';
+      }
+    }
+    // A clip on this payload is playable even if the server also set the flag.
+    final audioPending =
+        (json['audio_pending'] == true || json['audio_pending'] == 'true') &&
+        (audioBase64 ?? '').isEmpty;
     final turnId = (json['turn_id'] ?? '').toString().trim();
 
     final auth = json['auth'];
@@ -194,6 +233,7 @@ class ApnaClinicAiTurnParser {
       slots: slots,
       slotDays: slotDays,
       payments: payments,
+      sectionTitles: blocks.sectionTitles,
       audioBase64: (audioBase64 == null || audioBase64.isEmpty) ? null : audioBase64,
       audioMediaType: audioMediaType,
       audioPending: audioPending,
@@ -329,11 +369,21 @@ class ApnaClinicAiTurnParser {
     final doctors = <ApnaClinicAiDoctorCardModel>[];
     final payments = <ApnaClinicAiPaymentModel>[];
     final slotChips = <ApnaClinicAiSlotModel>[];
-    if (raw is! List) return _BlockCards(doctors, payments, slotChips);
+    final actionChips = <ApnaClinicAiQuickActionModel>[];
+    final sectionTitles = <String, String>{};
+    if (raw is! List) {
+      return _BlockCards(
+        doctors: doctors,
+        payments: payments,
+        slotChips: slotChips,
+      );
+    }
     for (final block in raw) {
       if (block is! Map) continue;
       final kind = block['kind']?.toString();
+      final blockTitle = (block['title'] ?? '').toString().trim();
       if (kind == 'cards' && block['cards'] is List) {
+        final before = doctors.length;
         for (final card in block['cards'] as List) {
           if (card is! Map) continue;
           final meta = (card['meta'] is List)
@@ -386,13 +436,20 @@ class ApnaClinicAiTurnParser {
             ),
           );
         }
+        _titleForCards(
+          sectionTitles,
+          blockTitle,
+          doctors.sublist(before),
+        );
       }
       if (kind == 'chips' && block['chips'] is List) {
         final chips = <ApnaClinicAiSlotModel>[];
+        var sawAction = false;
         for (final chip in block['chips'] as List) {
           if (chip is Map) {
             final send = (chip['send'] ?? chip['label'] ?? '').toString();
             final label = (chip['label'] ?? send).toString().trim();
+            if (send.trim().isEmpty) continue;
             if (_slotDate(send) != null) {
               chips.add(
                 ApnaClinicAiSlotModel(
@@ -400,15 +457,31 @@ class ApnaClinicAiTurnParser {
                   send: send,
                 ),
               );
+            } else {
+              sawAction = true;
+              actionChips.add(
+                ApnaClinicAiQuickActionModel(
+                  label: label.isEmpty ? send : label,
+                  send: send,
+                ),
+              );
             }
-          } else if (chip is String && _slotDate(chip) != null) {
-            chips.add(ApnaClinicAiSlotModel(label: chip, send: chip));
+          } else if (chip is String && chip.trim().isNotEmpty) {
+            if (_slotDate(chip) != null) {
+              chips.add(ApnaClinicAiSlotModel(label: chip, send: chip));
+            } else {
+              sawAction = true;
+              actionChips.add(
+                ApnaClinicAiQuickActionModel(label: chip, send: chip),
+              );
+            }
           }
         }
-        // Prefer a full chip block of bookable slots; still accept partial.
         if (chips.isNotEmpty) {
           slotChips.addAll(chips);
+          _rememberTitle(sectionTitles, 'slots', blockTitle);
         }
+        if (sawAction) _rememberTitle(sectionTitles, 'chips', blockTitle);
       }
       if (kind == 'payment_handoff' && block['handoff'] is Map) {
         final handoff = block['handoff'] as Map;
@@ -444,7 +517,36 @@ class ApnaClinicAiTurnParser {
         }
       }
     }
-    return _BlockCards(doctors, payments, slotChips);
+    return _BlockCards(
+      doctors: doctors,
+      payments: payments,
+      slotChips: slotChips,
+      actionChips: actionChips,
+      sectionTitles: sectionTitles,
+    );
+  }
+
+  static void _titleForCards(
+    Map<String, String> titles,
+    String blockTitle,
+    List<ApnaClinicAiDoctorCardModel> added,
+  ) {
+    if (blockTitle.isEmpty || added.isEmpty) return;
+    final kinds = added.map((card) => card.kind.toLowerCase()).toSet();
+    if (kinds.contains('payment')) {
+      _rememberTitle(titles, 'payment', blockTitle);
+    }
+    if (kinds.contains('medicine')) {
+      _rememberTitle(titles, 'medicine', blockTitle);
+    }
+    if (kinds.any((kind) => kind != 'payment' && kind != 'medicine')) {
+      _rememberTitle(titles, 'doctor', blockTitle);
+    }
+  }
+
+  static void _rememberTitle(Map<String, String> titles, String key, String title) {
+    if (title.isEmpty || titles.containsKey(key)) return;
+    titles[key] = title;
   }
 
   static _Enriched _enrich(String reply) {
@@ -677,11 +779,20 @@ class _ParsedDoctor {
 }
 
 class _BlockCards {
-  const _BlockCards(this.doctors, this.payments, this.slotChips);
+  const _BlockCards({
+    required this.doctors,
+    required this.payments,
+    required this.slotChips,
+    this.actionChips = const [],
+    this.sectionTitles = const {},
+  });
 
   final List<ApnaClinicAiDoctorCardModel> doctors;
   final List<ApnaClinicAiPaymentModel> payments;
   final List<ApnaClinicAiSlotModel> slotChips;
+  final List<ApnaClinicAiQuickActionModel> actionChips;
+  /// Headings from `blocks[].title`, keyed by section (`payment`, `chips`, …).
+  final Map<String, String> sectionTitles;
 }
 
 class _Enriched {

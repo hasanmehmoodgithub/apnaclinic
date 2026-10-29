@@ -23,7 +23,11 @@ import '../../../consultation/data/utils/consultation_booking_utils.dart';
 import '../../../consultation/domain/entities/payment_provider_entity.dart';
 import '../../../consultation/domain/use_cases/get_payment_providers_use_case.dart';
 import '../../../promo_code/presentation/promo_code_analytics.dart';
+import '../../domain/entities/prescription_extract_entity.dart';
 import '../../domain/use_cases/abandon_pharmacy_order_use_case.dart';
+import '../../domain/use_cases/extract_prescription_params.dart';
+import '../../domain/use_cases/extract_prescription_use_case.dart';
+import '../../domain/utils/prescription_catalog_query.dart';
 import '../../domain/use_cases/add_pharmacy_profile_address_use_case.dart';
 import '../../domain/use_cases/add_to_cart_use_case.dart';
 import '../../domain/use_cases/get_pharmacy_cart_use_case.dart';
@@ -34,9 +38,11 @@ import '../../domain/use_cases/pharmacy_checkout_use_case.dart';
 import '../../domain/use_cases/update_pharmacy_cart_quantity_use_case.dart';
 import '../../domain/use_cases/upload_pharmacy_prescription_use_case.dart';
 import 'pharmacy_state.dart';
+import 'prescription_scan_state.dart';
 
 class PharmacyCubit extends Cubit<PharmacyState> {
   PharmacyCubit({
+    required this.extractPrescriptionUseCase,
     required this.getPharmacyMedicinesUseCase,
     required this.getPharmacyProductDetailUseCase,
     required this.getPharmacyCartUseCase,
@@ -58,6 +64,7 @@ class PharmacyCubit extends Cubit<PharmacyState> {
     loadMedicines();
   }
 
+  final ExtractPrescriptionUseCase extractPrescriptionUseCase;
   final GetPharmacyMedicinesUseCase getPharmacyMedicinesUseCase;
   final GetPharmacyProductDetailUseCase getPharmacyProductDetailUseCase;
   final GetPharmacyCartUseCase getPharmacyCartUseCase;
@@ -1137,6 +1144,95 @@ class PharmacyCubit extends Cubit<PharmacyState> {
       return AnalyticsPharmacyPaymentMethodKeys.jazzCash;
     }
     return AnalyticsPharmacyPaymentMethodKeys.card;
+  }
+
+  void clearPrescriptionScan() {
+    if (state.prescriptionScan == const PrescriptionScanState()) return;
+    emit(state.copyWith(prescriptionScan: const PrescriptionScanState()));
+  }
+
+  void setPrescriptionImage(String path) {
+    final trimmed = path.trim();
+    if (trimmed.isEmpty) return;
+    emit(
+      state.copyWith(
+        prescriptionScan: state.prescriptionScan.copyWith(
+          imagePath: trimmed,
+          extracting: false,
+          clearError: true,
+          clearResult: true,
+          matches: const [],
+        ),
+      ),
+    );
+  }
+
+  Future<void> extractPrescription() async {
+    final scan = state.prescriptionScan;
+    final path = scan.imagePath?.trim() ?? '';
+    if (path.isEmpty || scan.extracting) return;
+
+    emit(
+      state.copyWith(
+        prescriptionScan: scan.copyWith(extracting: true, clearError: true),
+      ),
+    );
+    final result = await extractPrescriptionUseCase(
+      ExtractPrescriptionParams(filePath: path),
+    );
+    if (isClosed) return;
+
+    await result.fold(
+      (error) async {
+        emit(
+          state.copyWith(
+            prescriptionScan: state.prescriptionScan.copyWith(
+              extracting: false,
+              errorCode: error,
+            ),
+          ),
+        );
+      },
+      (entity) async {
+        emit(
+          state.copyWith(
+            prescriptionScan: state.prescriptionScan.copyWith(
+              extracting: false,
+              result: entity,
+              matches: List<PrescriptionMedicineMatch>.generate(
+                entity.medicines.length,
+                (_) => const PrescriptionMedicineMatch(loading: true),
+              ),
+              clearError: true,
+            ),
+          ),
+        );
+        final matches = await Future.wait(entity.medicines.map(_searchPrescription));
+        if (isClosed) return;
+        emit(
+          state.copyWith(
+            prescriptionScan: state.prescriptionScan.copyWith(matches: matches),
+          ),
+        );
+      },
+    );
+  }
+
+  Future<PrescriptionMedicineMatch> _searchPrescription(
+    PrescriptionMedicineEntity medicine,
+  ) async {
+    final query = prescriptionCatalogQuery(medicine.name);
+    if (query.isEmpty) return const PrescriptionMedicineMatch();
+
+    final result = await getPharmacyMedicinesUseCase(
+      GetPharmacyMedicinesParams(page: 1, displayName: query),
+    );
+    return result.fold(
+      (_) => const PrescriptionMedicineMatch(),
+      (page) => PrescriptionMedicineMatch(
+        products: page.items.take(3).toList(growable: false),
+      ),
+    );
   }
 
   String _analyticsMsisdn(String phone) {

@@ -36,6 +36,7 @@ class ApnaClinicAiState extends Equatable {
     this.selectedSlotDayIndex = 0,
     this.payments = const [],
     this.quickActions = const [],
+    this.sectionTitles = const {},
     this.authResumeMessage,
     this.authDeepLink,
     this.ttsBase64,
@@ -74,6 +75,8 @@ class ApnaClinicAiState extends Equatable {
   final int selectedSlotDayIndex;
   final List<ApnaClinicAiPaymentEntity> payments;
   final List<ApnaClinicAiQuickActionEntity> quickActions;
+  /// Section headings from the latest turn's `blocks[].title`.
+  final Map<String, String> sectionTitles;
   final String? authResumeMessage;
   final String? authDeepLink;
   final String? ttsBase64;
@@ -114,6 +117,7 @@ class ApnaClinicAiState extends Equatable {
     int? selectedSlotDayIndex,
     List<ApnaClinicAiPaymentEntity>? payments,
     List<ApnaClinicAiQuickActionEntity>? quickActions,
+    Map<String, String>? sectionTitles,
     String? authResumeMessage,
     String? authDeepLink,
     String? ttsBase64,
@@ -161,6 +165,7 @@ class ApnaClinicAiState extends Equatable {
           selectedSlotDayIndex ?? this.selectedSlotDayIndex,
       payments: payments ?? this.payments,
       quickActions: quickActions ?? this.quickActions,
+      sectionTitles: sectionTitles ?? this.sectionTitles,
       authResumeMessage: clearAuthResume
           ? null
           : (authResumeMessage ?? this.authResumeMessage),
@@ -210,6 +215,7 @@ class ApnaClinicAiState extends Equatable {
     selectedSlotDayIndex,
     payments,
     quickActions,
+    sectionTitles,
     authResumeMessage,
     authDeepLink,
     ttsBase64,

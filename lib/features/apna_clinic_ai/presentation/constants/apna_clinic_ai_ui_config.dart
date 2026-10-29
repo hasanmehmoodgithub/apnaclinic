@@ -27,6 +27,9 @@ class ApnaClinicAiUiConfig {
   static const Color avatarWarm = AppColors.clrFFE9C3;
   static const Color caution = AppColors.clrF5A623;
   static const Color cautionText = Color(0xFFA67C1A);
+  static const Color disclaimerBg = AppColors.clrFFF8EC;
+  static const Color disclaimerBorder = AppColors.clrE7D08A;
+  static const Color disclaimerInk = AppColors.clr8F6A1E;
   static const Color online = Color(0xFF2BB673);
 
   static const List<Color> pageGradient = [

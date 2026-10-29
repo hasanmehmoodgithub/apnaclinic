@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
@@ -15,7 +16,6 @@ import '../cubit/apna_clinic_ai_cubit.dart';
 import '../cubit/apna_clinic_ai_state.dart';
 import '../widgets/apna_clinic_ai_chat_header.dart';
 import '../widgets/apna_clinic_ai_chat_view.dart';
-import '../widgets/apna_clinic_ai_home_view.dart';
 
 class ApnaClinicAiScreen extends StatefulWidget {
   const ApnaClinicAiScreen({super.key});
@@ -52,15 +52,14 @@ class _ApnaClinicAiScreenState extends State<ApnaClinicAiScreen> {
     await _audioPlayer.stop();
   }
 
-  Future<void> _backToAiHome(ApnaClinicAiCubit cubit) async {
-    await _audioPlayer.stop();
-    await cubit.leaveChatToHome();
-  }
-
-  Future<void> _exitToApp(ApnaClinicAiCubit cubit) async {
+  Future<void> _leave(ApnaClinicAiCubit cubit) async {
     await _stopVoice(cubit);
     if (!mounted) return;
-    if (context.canPop()) context.pop();
+    if (context.canPop()) {
+      context.pop();
+      return;
+    }
+    await SystemNavigator.pop();
   }
 
   @override
@@ -109,7 +108,7 @@ class _ApnaClinicAiScreenState extends State<ApnaClinicAiScreen> {
             }
           });
         }
-        if (state.showChat &&
+        if (state.messages.isNotEmpty &&
             state.errorCode != null &&
             state.errorNonce != _lastErrorNonce) {
           _lastErrorNonce = state.errorNonce;
@@ -122,39 +121,28 @@ class _ApnaClinicAiScreenState extends State<ApnaClinicAiScreen> {
             );
         }
       },
-      buildWhen: (previous, current) => previous.showChat != current.showChat,
-      builder: (context, state) {
+      builder: (context, _) {
         final cubit = context.read<ApnaClinicAiCubit>();
         return PopScope(
-          canPop: !state.showChat,
+          canPop: false,
           onPopInvokedWithResult: (didPop, _) {
-            if (didPop) {
-              unawaited(_stopVoice(cubit));
-              return;
-            }
-            if (state.showChat) {
-              unawaited(_backToAiHome(cubit));
-            }
+            if (didPop) return;
+            unawaited(_leave(cubit));
           },
           child: AppScaffoldGradient(
             colors: ApnaClinicAiUiConfig.pageGradient,
             child: Column(
               children: [
-                if (state.showChat)
-                  ApnaClinicAiChatHeader(
-                    onBack: () => unawaited(_backToAiHome(cubit)),
-                    onNewChat: () {
-                      unawaited(_audioPlayer.stop());
-                      cubit.newChat();
-                    },
-                  ),
+                ApnaClinicAiChatHeader(
+                  onBack: () => unawaited(_leave(cubit)),
+                  onNewChat: () {
+                    unawaited(_audioPlayer.stop());
+                    cubit.newChat();
+                  },
+                ),
                 AppScaffoldGradientPanel(
-                  child: state.showChat
-                      ? ApnaClinicAiChatView(audioPlayer: _audioPlayer)
-                      : ApnaClinicAiHomeView(
-                          audioPlayer: _audioPlayer,
-                          onClose: () => unawaited(_exitToApp(cubit)),
-                        ),
+                  topBorderRadius: 0,
+                  child: ApnaClinicAiChatView(audioPlayer: _audioPlayer),
                 ),
               ],
             ),

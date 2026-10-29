@@ -903,19 +903,47 @@
     "description": "Step 3 for other networks"
   },
   "apnaClinicAiMenuTitle": "Apna Clinic AI",
-  "apnaClinicAiTitle": "Apna Clinic Ai Noor",
+  "apnaClinicAiTitle": "Noor (Apna Clinic AI)",
   "apnaClinicAiBrandTag": "CARE COMPANION",
   "apnaClinicAiGreeting": "Assalam-o-Alaikum",
   "apnaClinicAiGuest": "Guest",
   "apnaClinicAiSignedIn": "Signed in",
   "apnaClinicAiConnecting": "Getting ready for you…",
-  "apnaClinicAiOnline": "Available 24/7",
+  "apnaClinicAiOnline": "Online",
+  "apnaClinicAiStatusReading": "Getting ready…",
+  "@apnaClinicAiStatusReading": {
+    "description": "Header status while Apna Clinic AI is connecting or waiting on a reply"
+  },
   "apnaClinicAiUnavailable": "Unavailable",
   "@apnaClinicAiUnavailable": {
     "description": "Hero status badge when AI home failed to connect"
   },
   "apnaClinicAiHeadline": "How are you feeling today?",
   "apnaClinicAiLiveStats": "Tell me what’s bothering you.",
+  "apnaClinicAiChipFindDoctor": "Find a doctor...",
+  "@apnaClinicAiChipFindDoctor": {
+    "description": "Starter chip on the AI chat that asks to find a doctor"
+  },
+  "apnaClinicAiChipFindMedicines": "Find medicines...",
+  "@apnaClinicAiChipFindMedicines": {
+    "description": "Starter chip on the AI chat that asks to find medicines"
+  },
+  "apnaClinicAiChipFindLab": "Find a lab test...",
+  "@apnaClinicAiChipFindLab": {
+    "description": "Starter chip on the AI chat that asks to find a lab test"
+  },
+  "apnaClinicAiChipDoctor": "Doctor",
+  "@apnaClinicAiChipDoctor": {
+    "description": "Short label on the doctor starter icon in AI chat"
+  },
+  "apnaClinicAiChipPharmacy": "Pharmacy",
+  "@apnaClinicAiChipPharmacy": {
+    "description": "Short label on the pharmacy starter icon in AI chat"
+  },
+  "apnaClinicAiChipLab": "Lab",
+  "@apnaClinicAiChipLab": {
+    "description": "Short label on the lab starter icon in AI chat"
+  },
   "apnaClinicAiCommonConcerns": "Common concerns",
   "apnaClinicAiTapToStart": "tap to start",
   "apnaClinicAiWhatICanDo": "What I can do",
@@ -954,7 +982,7 @@
   "@apnaClinicAiComposerHintHelpUr": {
     "description": "Home composer rotating hint (Urdu)"
   },
-  "apnaClinicAiChatComposerHint": "Type, or tap the mic to speak…",
+  "apnaClinicAiChatComposerHint": "Ask me anything...",
   "apnaClinicAiEmergencyTitle": "This may be urgent — call Rescue 1122",
   "apnaClinicAiEmergencyBody": "In Pakistan, Rescue 1122 is the ambulance / emergency number. If someone is in immediate danger, call now or go to the nearest emergency department.",
   "apnaClinicAiEmergencyStep1": "Call 1122 (or local ER) and stay on the line.",
@@ -1051,6 +1079,10 @@
   "@apnaClinicBotLabel": {
     "description": "Name of the floating home bot that opens Apna Clinic AI"
   },
+  "apnaClinicAiAskAnything": "Ask me anything",
+  "@apnaClinicAiAskAnything": {
+    "description": "Speech bubble beside the doctor bot on the AI chat before the user sends a message"
+  },
   "apnaClinicBotBubble": "Ask me",
   "@apnaClinicBotBubble": {
     "description": "Call to action on the floating home bot speech bubble"
@@ -1094,7 +1126,7 @@
       }
     }
   },
-  "pharmacyScanBannerTitle": "Medicines ready when you are",
+  "pharmacyScanBannerTitle": "Scan and Fill Your Cart",
   "pharmacyScanBannerSubtitle": "Scan a clear prescription photo and we’ll match medicines from our pharmacy.",
   "pharmacyScanUploadTitle": "Upload prescription",
   "pharmacyScanUploadSubtitle": "Camera or gallery · JPEG / PNG"

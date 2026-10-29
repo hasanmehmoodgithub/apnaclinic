@@ -32,7 +32,7 @@ Thin **Dio** facade used across features for JSON REST calls. Lives in `lib/core
 - `hmac/` — HMAC v1 signing (`HMAC.md`, `HMAC.html`).
 - `device_headers_provider.dart` / `header_interceptor.dart` — app/device metadata headers.
 - `DEVICE_HEADERS_CONTRACT.md` — backend-facing contract for app/device headers.
-- `api_error_message_utils.dart` — nested `message` / validation arrays from APIs.
+- `api_error_message_utils.dart` — nested `message` / string `detail` / validation arrays from APIs.
 - `api_exceptions.dart` — exception hierarchy for `ErrorHandler` and callers.
 - `../cities/` — `CitiesRepository` caches `AppUrls.cities` in-session; shared UI is `showSelectCityDialog` (Lab / Surgery / Pharmacy).
 - `API_INTEGRATION_STATUS.html` — visual matrix of integrated vs remaining APIs (open in browser).

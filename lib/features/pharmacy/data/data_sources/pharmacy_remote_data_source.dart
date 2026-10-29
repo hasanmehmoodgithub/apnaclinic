@@ -1,3 +1,4 @@
+import '../../domain/entities/prescription_extract_entity.dart';
 import '../../domain/use_cases/abandon_pharmacy_order_use_case.dart';
 import '../../domain/use_cases/pharmacy_checkout_use_case.dart';
 import '../models/pharmacy_booking_detail_model.dart';
@@ -52,5 +53,9 @@ abstract class PharmacyRemoteDataSource {
 
   Future<PharmacyBookingDetailModel> getPharmacyBookingDetail({
     required String orderId,
+  });
+
+  Future<PrescriptionExtractEntity> extractPrescription({
+    required String filePath,
   });
 }

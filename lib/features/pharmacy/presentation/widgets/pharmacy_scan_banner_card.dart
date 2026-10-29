@@ -16,6 +16,7 @@ class PharmacyScanBannerCard extends StatelessWidget {
 
     return Container(
       width: double.infinity,
+      height: 135.h,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20.r),
         gradient: const LinearGradient(
@@ -37,23 +38,22 @@ class PharmacyScanBannerCard extends StatelessWidget {
         ],
       ),
       clipBehavior: Clip.antiAlias,
-      child: IntrinsicHeight(
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Expanded(
-              flex: 11,
-              child: Padding(
-                padding: EdgeInsets.fromLTRB(16.w, 16.h, 8.w, 16.h),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 10.w,
-                        vertical: 4.h,
-                      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Expanded(
+            flex: 11,
+            child: Padding(
+              padding: EdgeInsets.fromLTRB(14.w, 10.h, 6.w, 10.h),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 4.w,
+                      vertical: 2.h,
+                    ),
                       decoration: BoxDecoration(
                         color: AppColors.clrE0F7F6,
                         borderRadius: BorderRadius.circular(99.r),
@@ -67,52 +67,49 @@ class PharmacyScanBannerCard extends StatelessWidget {
                         ),
                       ),
                     ),
-                    SizedBox(height: 10.h),
-                    Text(
-                      l10n.pharmacyScanBannerTitle,
-                      style: theme.textTheme.titleMedium?.copyWith(
-                        color: AppColors.clr0B2239,
-                        fontWeight: FontWeight.w800,
-                        fontSize: 17.sp,
-                        height: 1.2,
-                      ),
+                  SizedBox(height: 6.h),
+                  Text(
+                    l10n.pharmacyScanBannerTitle,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      color: AppColors.clr0B2239,
+                      fontWeight: FontWeight.w800,
+                      fontSize: 15.sp,
+                      height: 1.15,
                     ),
-                    SizedBox(height: 6.h),
-                    Text(
-                      l10n.pharmacyScanBannerSubtitle,
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: AppColors.clr4A4A4A,
-                        fontWeight: FontWeight.w500,
-                        fontSize: 12.sp,
-                        height: 1.35,
-                      ),
+                  ),
+                  SizedBox(height: 6.h),
+                  Text(
+                    l10n.pharmacyScanBannerSubtitle,
+                    maxLines: 3,
+                    overflow: TextOverflow.ellipsis,
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: AppColors.clr4A4A4A,
+                      fontWeight: FontWeight.w500,
+                      fontSize: 11.sp,
+                      height: 1.25,
                     ),
-                  ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+          Expanded(
+            flex: 8,
+            child: Padding(
+              padding: EdgeInsets.fromLTRB(0, 8.h, 8.w, 8.h),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(14.r),
+                child: Image.asset(
+                  Assets.imgPharmacyScanBanner,
+                  fit: BoxFit.cover,
+                  alignment: Alignment.center,
                 ),
               ),
             ),
-            Expanded(
-              flex: 9,
-              child: Padding(
-                padding: EdgeInsets.fromLTRB(0, 10.h, 10.w, 10.h),
-                child: DecoratedBox(
-                  decoration: BoxDecoration(
-                    color: AppColors.clr0B2239,
-                    borderRadius: BorderRadius.circular(14.r),
-                  ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(14.r),
-                    child: Image.asset(
-                      Assets.imgPharmacyBanner,
-                      fit: BoxFit.cover,
-                      alignment: Alignment.center,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

@@ -13,10 +13,12 @@ class ApnaClinicAiSlotCalendar extends StatelessWidget {
     super.key,
     required this.days,
     required this.onSend,
+    this.title,
   });
 
   final List<ApnaClinicAiSlotDayEntity> days;
   final ValueChanged<String> onSend;
+  final String? title;
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +49,9 @@ class ApnaClinicAiSlotCalendar extends StatelessWidget {
                 children: [
                   Expanded(
                     child: Text(
-                      l10n.apnaClinicAiSlots,
+                      (title ?? '').trim().isNotEmpty
+                          ? title!.trim()
+                          : l10n.apnaClinicAiSlots,
                       style: TextStyle(
                         fontWeight: FontWeight.w700,
                         fontSize: 14.sp,

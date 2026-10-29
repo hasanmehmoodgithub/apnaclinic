@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:webview_flutter_android/webview_flutter_android.dart';
 import 'package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart';
@@ -43,6 +44,10 @@ class _InstantDoctorConsultationWebViewScreenState
   var _isExitDialogVisible = false;
   var _didSubmitSessionLog = false;
   String _instantDocLog = '';
+  String? _lastExternalUrl;
+  DateTime? _lastExternalAt;
+
+  static const _externalSchemes = {'tel', 'mailto', 'sms'};
 
   @override
   void initState() {
@@ -86,12 +91,25 @@ class _InstantDoctorConsultationWebViewScreenState
             if (!mounted) return;
             setState(() => _isLoading = false);
           },
-          onWebResourceError: (_) {
+          onWebResourceError: (error) {
             if (!mounted) return;
+            final uri = Uri.tryParse(error.url ?? '');
+            if (_isExternalScheme(uri)) {
+              unawaited(_openExternalUri(uri!));
+              return;
+            }
             setState(() {
               _isLoading = false;
               _hasError = true;
             });
+          },
+          onNavigationRequest: (request) {
+            final uri = Uri.tryParse(request.url);
+            if (_isExternalScheme(uri)) {
+              unawaited(_openExternalUri(uri!));
+              return NavigationDecision.prevent;
+            }
+            return NavigationDecision.navigate;
           },
         ),
       );
@@ -149,6 +167,34 @@ class _InstantDoctorConsultationWebViewScreenState
       );
     }
     return WebViewWidget(controller: _controller);
+  }
+
+  bool _isExternalScheme(Uri? uri) {
+    if (uri == null) return false;
+    return _externalSchemes.contains(uri.scheme.toLowerCase());
+  }
+
+  /// `tel:` / `mailto:` / `sms:` are not WebView documents. Loading them shows
+  /// Chromium's `ERR_UNKNOWN_URL_SCHEME` page and hides the consultation.
+  Future<void> _openExternalUri(Uri uri) async {
+    final url = uri.toString();
+    final now = DateTime.now();
+    if (_lastExternalUrl == url &&
+        _lastExternalAt != null &&
+        now.difference(_lastExternalAt!) < const Duration(seconds: 2)) {
+      return;
+    }
+    _lastExternalUrl = url;
+    _lastExternalAt = now;
+    try {
+      if (await canLaunchUrl(uri)) {
+        final launched = await launchUrl(uri);
+        if (launched) return;
+      }
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } catch (error, stackTrace) {
+      log('external scheme launch failed: $error', stackTrace: stackTrace);
+    }
   }
 
   void _onInstantDocLogMessage(JavaScriptMessage message) {

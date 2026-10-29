@@ -95,19 +95,19 @@ class ApnaClinicAiReplyRail extends StatelessWidget {
           ],
           if (doctors.isNotEmpty)
             _CardRail(
-              title: l10n.apnaClinicAiTapDoctor,
+              title: _sectionTitle('doctor', l10n.apnaClinicAiTapDoctor),
               cards: doctors,
               onSend: onSend,
             ),
           if (medicines.isNotEmpty)
             _CardRail(
-              title: l10n.apnaClinicAiMedicines,
+              title: _sectionTitle('medicine', l10n.apnaClinicAiMedicines),
               cards: medicines,
               onSend: onSend,
             ),
           if (paymentCards.isNotEmpty)
             _PaymentList(
-              title: l10n.apnaClinicAiPayment,
+              title: _sectionTitle('payment', l10n.apnaClinicAiPayment),
               cards: paymentCards,
               onSend: onSend,
             ),
@@ -115,12 +115,17 @@ class ApnaClinicAiReplyRail extends StatelessWidget {
             ApnaClinicAiSlotCalendar(
               days: state.slotDays,
               onSend: onSend,
+              title: _sectionTitle('slots', l10n.apnaClinicAiSlots),
             )
           else if (state.slots.isNotEmpty)
-            _FlatSlots(slots: state.slots, onSend: onSend),
+            _FlatSlots(
+              slots: state.slots,
+              onSend: onSend,
+              title: _sectionTitle('slots', l10n.apnaClinicAiSlots),
+            ),
           if (paymentCards.isEmpty && state.payments.isNotEmpty)
             _Section(
-              title: l10n.apnaClinicAiPayment,
+              title: _sectionTitle('payment', l10n.apnaClinicAiPayment),
               children: [
                 for (final payment in state.payments)
                   _ChoiceTile(
@@ -135,7 +140,19 @@ class ApnaClinicAiReplyRail extends StatelessWidget {
                   ),
               ],
             ),
-          if (state.quickActions.isNotEmpty)
+          if (state.quickActions.isNotEmpty) ...[
+            if (_sectionTitle('chips', '').isNotEmpty)
+              Padding(
+                padding: EdgeInsets.only(bottom: 8.h),
+                child: Text(
+                  _sectionTitle('chips', ''),
+                  style: TextStyle(
+                    fontWeight: FontWeight.w700,
+                    fontSize: 14.sp,
+                    color: ApnaClinicAiUiConfig.primaryText,
+                  ),
+                ),
+              ),
             Wrap(
               spacing: 8.w,
               runSpacing: 8.h,
@@ -144,9 +161,15 @@ class ApnaClinicAiReplyRail extends StatelessWidget {
                   _Chip(label: action.label, onTap: () => onSend(action.send)),
               ],
             ),
+          ],
         ],
       ),
     );
+  }
+
+  String _sectionTitle(String key, String fallback) {
+    final fromBlock = (state.sectionTitles[key] ?? '').trim();
+    return fromBlock.isNotEmpty ? fromBlock : fallback;
   }
 
   void _onPaymentTap(BuildContext context, ApnaClinicAiPaymentEntity payment) {
@@ -226,16 +249,20 @@ class _CardRail extends StatelessWidget {
 }
 
 class _FlatSlots extends StatelessWidget {
-  const _FlatSlots({required this.slots, required this.onSend});
+  const _FlatSlots({
+    required this.slots,
+    required this.onSend,
+    required this.title,
+  });
 
   final List<ApnaClinicAiSlotEntity> slots;
   final ValueChanged<String> onSend;
+  final String title;
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
     return _Section(
-      title: l10n.apnaClinicAiSlots,
+      title: title,
       children: [
         for (final slot in slots)
           _ChoiceTile(

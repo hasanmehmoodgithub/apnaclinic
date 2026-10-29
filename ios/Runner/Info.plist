@@ -30,6 +30,9 @@
 	<array>
 		<string>fikrfree</string>
 		<string>com.fikrfree.ios</string>
+		<string>tel</string>
+		<string>mailto</string>
+		<string>sms</string>
 	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>

@@ -2143,7 +2143,7 @@ class AppLocalizationsUr extends AppLocalizations {
   String get apnaClinicAiMenuTitle => 'اپنا کلینک اے آئی';
 
   @override
-  String get apnaClinicAiTitle => 'اپنا کلینک اے آئی نور';
+  String get apnaClinicAiTitle => 'نور (اپنا کلینک اے آئی)';
 
   @override
   String get apnaClinicAiBrandTag => 'کئیر کمپینین';
@@ -2161,7 +2161,10 @@ class AppLocalizationsUr extends AppLocalizations {
   String get apnaClinicAiConnecting => 'آپ کے لیے تیار ہو رہا ہے…';
 
   @override
-  String get apnaClinicAiOnline => '۲۴/۷ دستیاب';
+  String get apnaClinicAiOnline => 'آن لائن';
+
+  @override
+  String get apnaClinicAiStatusReading => 'تیار ہو رہی ہوں…';
 
   @override
   String get apnaClinicAiUnavailable => 'دستیاب نہیں';
@@ -2171,6 +2174,24 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get apnaClinicAiLiveStats => 'بتائیں کیا تکلیف ہے۔';
+
+  @override
+  String get apnaClinicAiChipFindDoctor => 'ڈاکٹر تلاش کریں...';
+
+  @override
+  String get apnaClinicAiChipFindMedicines => 'دوائیں تلاش کریں...';
+
+  @override
+  String get apnaClinicAiChipFindLab => 'لیب ٹیسٹ تلاش کریں...';
+
+  @override
+  String get apnaClinicAiChipDoctor => 'ڈاکٹر';
+
+  @override
+  String get apnaClinicAiChipPharmacy => 'فارمیسی';
+
+  @override
+  String get apnaClinicAiChipLab => 'لیب';
 
   @override
   String get apnaClinicAiCommonConcerns => 'عام شکایات';
@@ -2262,8 +2283,7 @@ class AppLocalizationsUr extends AppLocalizations {
       'میں اپنا کلینک اے آئی نور ہوں، آپ کی کیسے مدد کر سکتی ہوں؟';
 
   @override
-  String get apnaClinicAiChatComposerHint =>
-      'لکھیں، یا بولنے کے لیے مائیک ٹیپ کریں…';
+  String get apnaClinicAiChatComposerHint => 'مجھ سے کچھ بھی پوچھیں...';
 
   @override
   String get apnaClinicAiEmergencyTitle =>
@@ -2465,6 +2485,9 @@ class AppLocalizationsUr extends AppLocalizations {
   String get apnaClinicBotLabel => 'اپنا کلینک بوٹ';
 
   @override
+  String get apnaClinicAiAskAnything => 'مجھ سے کچھ بھی پوچھیں';
+
+  @override
   String get apnaClinicBotBubble => 'مجھ سے پوچھیں';
 
   @override
@@ -2550,7 +2573,7 @@ class AppLocalizationsUr extends AppLocalizations {
   }
 
   @override
-  String get pharmacyScanBannerTitle => 'ادویات جب آپ تیار ہوں';
+  String get pharmacyScanBannerTitle => 'اسکین کریں اور اپنی ٹوکری بھریں';
 
   @override
   String get pharmacyScanBannerSubtitle =>

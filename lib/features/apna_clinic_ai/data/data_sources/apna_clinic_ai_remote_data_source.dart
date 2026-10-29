@@ -71,13 +71,10 @@ class ApnaClinicAiRemoteDataSourceImpl implements ApnaClinicAiRemoteDataSource {
       if (speak) {
         body['speak'] = true;
         if (voiceId != null && voiceId.isNotEmpty) body['voice'] = voiceId;
-        final data = await _client.postTurn(body);
-        yield ApnaClinicAiRemoteEvent.finalTurn(
-          ApnaClinicAiTurnParser.parse(data),
-        );
-        return;
       }
 
+      // Same SSE listen as voice: `final` may set `audio_pending`, then
+      // `type: audio` arrives with the clip.
       yield* _consumeSse(await _client.postTurnStream(body));
     } on ApnaClinicAiSdkException catch (error) {
       yield ApnaClinicAiRemoteEvent.failure(error.code);
@@ -182,22 +179,25 @@ class ApnaClinicAiRemoteDataSourceImpl implements ApnaClinicAiRemoteDataSource {
           parsed.reply.trim().isEmpty ? accumulated : parsed.reply,
         );
         yield ApnaClinicAiRemoteEvent.finalTurn(_withReply(parsed, reply));
-      } else if (type == 'audio') {
-        final audio = event['audio'];
-        if (audio is Map) {
-          final base64 = (audio['base64'] ?? '').toString().trim();
-          if (base64.isNotEmpty) {
-            final format = (audio['format'] ?? '').toString().toLowerCase();
-            final mediaType = (audio['media_type'] ?? '').toString().trim();
-            final turnId = (event['turn_id'] ?? '').toString().trim();
-            yield ApnaClinicAiRemoteEvent.audio(
-              base64: base64,
-              mediaType: mediaType.isNotEmpty
-                  ? mediaType
-                  : (format == 'opus' ? 'audio/ogg' : 'audio/wav'),
-              turnId: turnId.isEmpty ? null : turnId,
-            );
-          }
+      } else if (type == 'audio' || type == 'tts' || type == 'speech') {
+        final audio = event['audio'] ?? event['tts'] ?? event['speech'];
+        final base64 =
+            _clipBase64(audio) ?? _clipBase64(event, clipKeysOnly: true);
+        if (base64 != null) {
+          final format = audio is Map
+              ? (audio['format'] ?? '').toString().toLowerCase()
+              : '';
+          final mediaType = audio is Map
+              ? (audio['media_type'] ?? '').toString().trim()
+              : '';
+          final turnId = (event['turn_id'] ?? '').toString().trim();
+          yield ApnaClinicAiRemoteEvent.audio(
+            base64: base64,
+            mediaType: mediaType.isNotEmpty
+                ? mediaType
+                : (format == 'opus' ? 'audio/ogg' : 'audio/wav'),
+            turnId: turnId.isEmpty ? null : turnId,
+          );
         }
       } else if (type == 'error') {
         // After `final` + delayed `audio`, stream teardown errors must not
@@ -240,6 +240,24 @@ class ApnaClinicAiRemoteDataSourceImpl implements ApnaClinicAiRemoteDataSource {
         ApnaClinicAiTurnParser.parse({'reply': _heardReply(accumulated)}),
       );
     }
+  }
+
+  /// Pulls a spoken clip out of a turn/audio payload.
+  String? _clipBase64(dynamic audio, {bool clipKeysOnly = false}) {
+    if (audio is String) {
+      final value = audio.trim();
+      return value.isEmpty ? null : value;
+    }
+    if (audio is Map) {
+      final keys = clipKeysOnly
+          ? const ['base64', 'audio_base64']
+          : const ['base64', 'audio_base64', 'data', 'content'];
+      for (final key in keys) {
+        final value = audio[key];
+        if (value is String && value.trim().isNotEmpty) return value.trim();
+      }
+    }
+    return null;
   }
 
   bool _isNoSpeech(String text) {
@@ -286,6 +304,7 @@ class ApnaClinicAiRemoteDataSourceImpl implements ApnaClinicAiRemoteDataSource {
       slots: source.slots,
       slotDays: source.slotDays,
       payments: source.payments,
+      sectionTitles: source.sectionTitles,
       audioBase64: source.audioBase64,
       audioMediaType: source.audioMediaType,
       audioPending: source.audioPending,

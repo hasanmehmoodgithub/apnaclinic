@@ -86,6 +86,7 @@ extension ApnaClinicAiTurnModelMapper on ApnaClinicAiTurnModel {
             ),
           )
           .toList(),
+      sectionTitles: sectionTitles,
       audioBase64: audioBase64,
       audioMediaType: audioMediaType,
       audioPending: audioPending,

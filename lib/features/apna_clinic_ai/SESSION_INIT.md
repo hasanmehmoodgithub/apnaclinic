@@ -7,12 +7,24 @@ How Care Companion initializes the SDK session, how **signed_in** vs **guest** d
 **Preferred (UI / feature):**
 
 ```dart
-await cubit.connect(forceRefresh: true);
+await cubit.connect();                 // reopen feature → token refresh only
+await cubit.connect(forceRefresh: true); // cold start / login / Retry
 ```
 
 Call chain:
 
 `ApnaClinicAiCubit.connect` → `EnsureApnaClinicAiSessionUseCase` → `ApnaClinicAiRepository.ensureSession` → `ApnaClinicAiSdkInitializer.initialize`
+
+**When `POST /sdk/session/init` runs**
+
+| Trigger | Init? |
+|---|---|
+| Cold app start (first AI open this process) | yes |
+| Open AI again while app stays alive | no (reuse prefs + token refresh) |
+| Logout (`clearApnaClinicAiSession`) then open AI | yes (no cached session) |
+| Login / guest↔signed-in mismatch | yes |
+| Retry on home error | yes (`forceRefresh: true`) |
+| Mid-chat turns | no |
 
 **Direct (DI / tests / another host app):**
 
@@ -41,7 +53,7 @@ Do **not** call `ApnaClinicAiSdkClient.initSession` from UI — use the initiali
 2. Auth resolver reads `AuthGuard.isLoggedIn(appPref)`:
    - `true` → `mode: signed_in` + normalized `msisdn` (`923…`), `name`, `email`
    - `false` → `mode: guest` + `device_id` only
-3. `POST /api/v1/sdk/session/init` with `X-SDK-Key` (when no cached session)
+3. `POST /api/v1/sdk/session/init` with `X-SDK-Key` **only** when cold start / no cached session / mode mismatch / `forceRefresh` — otherwise refresh token only
 4. Persist in `AppPref`: api key, session id, user id, access token, expires-at, auth mode
 5. Persist full init JSON (including `greeting` + `audio.base64`) to app-support file `apna_clinic_ai_session_init.json` — too large for SharedPreferences. **Not** cleared with `clearSession` / logout — overwritten only on a successful new init
 6. Init may return `greeting` + `audio` (`base64`, `media_type`). Home always loads greeting/audio from that saved file when present; `audio.base64` auto-plays via `playHomeGreeting` **once** when Care Companion is opened from the app (not on back-from-chat or reconnect)
@@ -50,7 +62,7 @@ Do **not** call `ApnaClinicAiSdkClient.initSession` from UI — use the initiali
 
 ## Conversation id (critical)
 
-On open, the in-memory id is detached so a leftover singleton id cannot be reused. **`POST /session/init` always runs** when Care Companion opens (app reopen, guest, signed-in, after logout) and again after in-feature login (`resumeAfterSignIn`). Mid-chat turns only refresh the token — they do not re-init. **Every home start** — common concerns, home text, and home voice — always mints a new `conversation_id`, even if this window already had a thread. Continue / resume last complaint uses `AppPref.apnaClinicAiHistoryConversationId`. History id is written only after a turn is sent. Follow-up turns in the open chat stay on the bound id (typed, cards, in-chat voice, “yes”, sign-in resume). **New chat** mints a new id. Session token refresh / guest↔signed-in re-init must **not** rotate a bound conversation mid-chat, or pending confirmations (`awaiting_confirmation`), triage, and sign-in resume break.
+On open, the in-memory id is detached so a leftover singleton id cannot be reused. **`POST /session/init`** runs on cold app start, after logout, on login/mode change, or Retry — **not** every Care Companion open (then token refresh only). In-feature login still uses `resumeAfterSignIn` (`forceRefresh: true`). Mid-chat turns only refresh the token — they do not re-init. **Every home start** — common concerns, home text, and home voice — always mints a new `conversation_id`, even if this window already had a thread. Continue / resume last complaint uses `AppPref.apnaClinicAiHistoryConversationId`. History id is written only after a turn is sent. Follow-up turns in the open chat stay on the bound id (typed, cards, in-chat voice, “yes”, sign-in resume). **New chat** mints a new id. Session token refresh / guest↔signed-in re-init must **not** rotate a bound conversation mid-chat, or pending confirmations (`awaiting_confirmation`), triage, and sign-in resume break.
 
 `sign_in_required`: open app login (do not send “Sign in to continue” as a chat message). After login, send `auth.resume.message` in the **same** conversation with `X-User-Token`.
 

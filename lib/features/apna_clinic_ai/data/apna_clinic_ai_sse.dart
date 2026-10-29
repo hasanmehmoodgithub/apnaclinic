@@ -23,20 +23,32 @@ Stream<Map<String, dynamic>> parseApnaClinicAiSse(
       final frame = text.substring(0, split);
       text = text.substring(split + 2);
       String? dataLine;
-      for (final line in frame.split('\n')) {
-        if (line.startsWith('data: ')) {
-          dataLine = line.substring(6);
-          break;
+      String? eventName;
+      for (final rawLine in frame.split('\n')) {
+        final line = rawLine.trim();
+        if (line.startsWith('data:')) {
+          dataLine ??= line.substring(5).trim();
+        } else if (line.startsWith('event:')) {
+          eventName = line.substring(6).trim();
         }
       }
       if (dataLine == null || dataLine.isEmpty) continue;
       try {
         final decoded = jsonDecode(dataLine);
+        Map<String, dynamic>? event;
         if (decoded is Map<String, dynamic>) {
-          yield decoded;
+          event = decoded;
         } else if (decoded is Map) {
-          yield Map<String, dynamic>.from(decoded);
+          event = Map<String, dynamic>.from(decoded);
         }
+        if (event == null) continue;
+        // `event: audio` is enough when the JSON body omits `type`.
+        if ((event['type'] == null || event['type'].toString().isEmpty) &&
+            eventName != null &&
+            eventName.isNotEmpty) {
+          event['type'] = eventName;
+        }
+        yield event;
       } catch (_) {}
     }
     pending

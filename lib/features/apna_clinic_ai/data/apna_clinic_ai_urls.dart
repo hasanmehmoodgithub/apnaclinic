@@ -46,7 +46,7 @@ class ApnaClinicAiUrls {
   static const sessionInit = '/api/v1/sdk/session/init';
   static const authToken = '/api/v1/sdk/auth/token';
   static const app = '/api/v1/sdk/app';
-  static const assistantTurn = '/api/v1/sdk/assistant/turn';
+  static const assistantTurn = '/api/v1/sdk/assistant/turn/stream';
   static const assistantTurnStream = '/api/v1/sdk/assistant/turn/stream';
   static const assistantAudioStream = '/api/v1/sdk/assistant/turn/audio/stream';
 

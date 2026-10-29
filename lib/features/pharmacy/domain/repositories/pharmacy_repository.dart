@@ -10,6 +10,8 @@ import '../entities/pharmacy_add_to_cart_result_entity.dart';
 import '../entities/pharmacy_checkout_result_entity.dart';
 import '../entities/pharmacy_products_page_entity.dart';
 import '../entities/pharmacy_product_detail_entity.dart';
+import '../entities/prescription_extract_entity.dart';
+import '../use_cases/extract_prescription_params.dart';
 
 abstract class PharmacyRepository {
   Future<Either<ErrorMsg, PharmacyProductsPageEntity>> getPharmacyProducts({
@@ -68,4 +70,8 @@ abstract class PharmacyRepository {
   Future<Either<ErrorMsg, PharmacyBookingDetailEntity>> getPharmacyBookingDetail({
     required String orderId,
   });
+
+  Future<Either<ErrorMsg, PrescriptionExtractEntity>> extractPrescription(
+    ExtractPrescriptionParams params,
+  );
 }

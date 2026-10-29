@@ -76,6 +76,9 @@ class Assets {
   static const String imagesDashboardLoader = 'assets/images/dashboard_loader.json';
   static const String imagesPlaceholder = 'assets/images/placeholder.txt';
   static const String imagesVoiceSearchRecord = 'assets/images/voice_search_record.json';
+  static const String imgApnaClinicAiBot = 'assets/img/apna_clinic_ai_bot.png';
+  static const String imgApnaClinicAiChipDoctor = 'assets/img/apna_clinic_ai_chip_doctor.png';
+  static const String imgApnaClinicAiChipMedicine = 'assets/img/apna_clinic_ai_chip_medicine.png';
   static const String imgBanner = 'assets/img/banner.png';
   static const String imgBrandAlfahealth = 'assets/img/brand_alfahealth.png';
   static const String imgBrandApnaclinicHome = 'assets/img/brand_apnaclinic_home.png';
@@ -88,6 +91,7 @@ class Assets {
   static const String imgInstantDocBanner = 'assets/img/instantDocBanner.png';
   static const String imgPartner = 'assets/img/partner.png';
   static const String imgPharmacyBanner = 'assets/img/pharmacyBanner.webp';
+  static const String imgPharmacyScanBanner = 'assets/img/pharmacy_scan_banner.png';
   static const String imgPlaceHolderPerson = 'assets/img/placeHolderPerson.webp';
   static const String imgProfileAvatar = 'assets/img/profile_avatar.png';
   static const String imgSplashBgHd = 'assets/img/splash_bg_hd.webp';

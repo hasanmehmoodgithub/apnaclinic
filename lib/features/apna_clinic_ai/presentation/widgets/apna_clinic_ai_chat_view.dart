@@ -8,14 +8,17 @@ import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/utils/auth_guard.dart';
 import '../../data/services/apna_clinic_ai_audio_player_service.dart';
 import '../../domain/entities/apna_clinic_ai_message_entity.dart';
-import '../constants/apna_clinic_ai_ui_config.dart';
 import '../cubit/apna_clinic_ai_cubit.dart';
 import '../cubit/apna_clinic_ai_state.dart';
+import '../apna_clinic_ai_copy.dart';
 import 'apna_clinic_ai_composer.dart';
+import 'apna_clinic_ai_home_error_body.dart';
 import 'apna_clinic_ai_listening_bar.dart';
+import 'apna_clinic_ai_loading_shimmer.dart';
 import 'apna_clinic_ai_message_bubble.dart';
 import 'apna_clinic_ai_reply_rail.dart';
 import 'apna_clinic_ai_speaking_bar.dart';
+import 'apna_clinic_ai_suggestion_row.dart';
 
 /// Chat thread + composer. Scroll / focus / text buffer stay local;
 /// turn / recording / cards come from [ApnaClinicAiCubit].
@@ -179,19 +182,61 @@ class _ApnaClinicAiChatViewState extends State<ApnaClinicAiChatView> {
               prev.slotDays != next.slotDays,
           listener: (context, state) => _maybeScrollForState(state),
           builder: (context, state) {
+            final l10n = AppLocalizations.of(context)!;
+            final starterChips = [
+              l10n.apnaClinicAiChipFindDoctor,
+              l10n.apnaClinicAiChipFindMedicines,
+            ];
+            final seen = starterChips.map((item) => item.toLowerCase()).toSet();
+            final chips = [
+              ...starterChips,
+              for (final item in state.suggestions)
+                if (item.trim().isNotEmpty &&
+                    seen.add(item.trim().toLowerCase()))
+                  item.trim(),
+            ];
+            final showStarterSuggestions =
+                !state.streaming &&
+                !state.recording &&
+                !state.connecting &&
+                state.errorCode == null &&
+                !state.messages.any(
+                  (message) => message.role == ApnaClinicAiMessageRole.user,
+                );
             return Column(
               children: [
                 Expanded(
-                  child: _ChatThread(
-                    state: state,
-                    scroll: _scroll,
-                    playback: playback,
-                    playHandler: _playHandler,
-                    onSend: cubit.sendText,
-                    onSignIn: () => _openSignIn(context, cubit),
-                  ),
+                  child: state.connecting && !state.hasThread
+                      ? const ApnaClinicAiTopMessageShimmer()
+                      : state.errorCode != null && !state.hasThread
+                      ? ApnaClinicAiHomeErrorBody(
+                          message: apnaClinicAiFailureText(
+                            AppLocalizations.of(context)!,
+                            state.errorCode,
+                          ),
+                          onRetry: () => cubit.connect(forceRefresh: true),
+                        )
+                      : _ChatThread(
+                          state: state,
+                          scroll: _scroll,
+                          playback: playback,
+                          playHandler: _playHandler,
+                          onSend: cubit.sendText,
+                          onSignIn: () => _openSignIn(context, cubit),
+                        ),
                 ),
-                _ChatComposerDock(
+                if (state.connecting && !state.hasThread) ...[
+                  const ApnaClinicAiChipShimmer(),
+                  const ApnaClinicAiFieldShimmer(),
+                ],
+                if (showStarterSuggestions)
+                  ApnaClinicAiSuggestionRow(
+                    suggestions: chips,
+                    onTap: cubit.sendText,
+                  ),
+                if (state.hasThread ||
+                    (!state.connecting && state.errorCode == null))
+                  _ChatComposerDock(
                   state: state,
                   playback: playback,
                   controller: _controller,
@@ -231,32 +276,10 @@ class _ChatThread extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
     return ListView(
       controller: scroll,
       padding: EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 8.h),
       children: [
-        if (!state.hasThread) ...[
-          Text(
-            l10n.apnaClinicAiHeroTitle,
-            style: TextStyle(
-              fontSize: 17.sp,
-              fontWeight: FontWeight.w800,
-              color: ApnaClinicAiUiConfig.primaryText,
-              height: 1.25,
-            ),
-          ),
-          SizedBox(height: 8.h),
-          Text(
-            l10n.apnaClinicAiHeroBody,
-            style: TextStyle(
-              color: ApnaClinicAiUiConfig.secondaryText,
-              fontSize: 13.sp,
-              height: 1.35,
-            ),
-          ),
-          SizedBox(height: 12.h),
-        ],
         for (final message in state.messages)
           ApnaClinicAiMessageBubble(
             message: message,
@@ -357,6 +380,7 @@ class _ChatComposerDock extends StatelessWidget {
                   controller: controller,
                   hintText: l10n.apnaClinicAiChatComposerHint,
                   enabled: !state.streaming,
+                  micEnabled: true,
                   recording: false,
                   onSend: onSend,
                   onMicTap: onMicTap,

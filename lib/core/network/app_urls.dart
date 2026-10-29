@@ -232,6 +232,25 @@ class AppUrls {
   static String get pharmacyPrescriptionUpload =>
       '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/partner/pharmacy/prescription/upload/cart';
 
+  /// Prescription OCR (POST multipart). Override with
+  /// `--dart-define=PRESCRIPTION_EXTRACT_BASE_URL` and
+  /// `--dart-define=PRESCRIPTION_EXTRACT_API_KEY`.
+  static const prescriptionExtractApiKey = String.fromEnvironment(
+    'PRESCRIPTION_EXTRACT_API_KEY',
+    defaultValue: 'UZyoWTmzVwu_Yr4ayDBiEZ3VIYf-_CBnKKO_ZNecjIY',
+  );
+
+  static String get pharmacyPrescriptionExtract {
+    const base = String.fromEnvironment(
+      'PRESCRIPTION_EXTRACT_BASE_URL',
+      defaultValue: 'http://142.86.120.73:8001',
+    );
+    final normalized = base.endsWith('/')
+        ? base.substring(0, base.length - 1)
+        : base;
+    return '$normalized/extract';
+  }
+
   /// Pharmacy cart quantity update (POST).
   static String get pharmacyUpdateCartQuantity =>
       '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/partner/pharmacy/cart/quantity/update';

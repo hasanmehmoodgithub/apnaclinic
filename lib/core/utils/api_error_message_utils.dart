@@ -23,6 +23,11 @@ class ApiErrorMessageUtils {
       return fromMessage;
     }
 
+    final detail = map['detail'];
+    if (detail is String && detail.trim().isNotEmpty) {
+      return detail.trim();
+    }
+
     final errorField = map['error'];
     if (errorField is String && errorField.trim().isNotEmpty) {
       return errorField.trim();

@@ -274,6 +274,7 @@ class _HomeComposerDock extends StatelessWidget {
                       controller: controller,
                       hintText: l10n.apnaClinicAiChatComposerHint,
                       enabled: !state.streaming,
+                      micEnabled: true,
                       recording: false,
                       showMic: true,
                       prominent: true,

@@ -421,7 +421,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                                 ),
                           ),
                         ),
-                        SliverPadding(padding: EdgeInsets.only(bottom: 156.h)),
+                        SliverPadding(padding: EdgeInsets.only(bottom: 196.h)),
                       ],
                     ),
                   ),

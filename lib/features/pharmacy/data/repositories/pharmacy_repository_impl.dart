@@ -11,6 +11,9 @@ import '../../domain/entities/pharmacy_cart_entity.dart';
 import '../../domain/entities/pharmacy_checkout_result_entity.dart';
 import '../../domain/entities/pharmacy_products_page_entity.dart';
 import '../../domain/entities/pharmacy_product_detail_entity.dart';
+import '../../domain/entities/prescription_extract_entity.dart';
+import '../../domain/prescription_scan_error_codes.dart';
+import '../../domain/use_cases/extract_prescription_params.dart';
 import '../../domain/repositories/pharmacy_repository.dart';
 import '../../domain/use_cases/abandon_pharmacy_order_use_case.dart';
 import '../../domain/use_cases/pharmacy_checkout_use_case.dart';
@@ -257,6 +260,24 @@ class PharmacyRepositoryImpl implements PharmacyRepository {
       return Right(entity);
     } catch (e) {
       return Left(e.toString());
+    }
+  }
+
+  @override
+  Future<Either<ErrorMsg, PrescriptionExtractEntity>> extractPrescription(
+    ExtractPrescriptionParams params,
+  ) async {
+    try {
+      final entity = await remoteDataSource.extractPrescription(
+        filePath: params.filePath,
+      );
+      return Right(entity);
+    } catch (e) {
+      final message = e.toString().trim();
+      if (message.isEmpty) {
+        return const Left(PrescriptionScanErrorCodes.extractFailed);
+      }
+      return Left(message);
     }
   }
 }

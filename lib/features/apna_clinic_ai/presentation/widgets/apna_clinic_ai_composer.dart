@@ -29,6 +29,7 @@ class ApnaClinicAiComposer extends StatelessWidget {
     required this.recording,
     required this.onSend,
     required this.onMicTap,
+    this.micEnabled,
     this.showMic = true,
     this.prominent = false,
     this.focusNode,
@@ -39,6 +40,8 @@ class ApnaClinicAiComposer extends StatelessWidget {
   final String hintText;
   final bool enabled;
   final bool recording;
+  /// Mic stays tappable while a reply is still streaming.
+  final bool? micEnabled;
   final bool showMic;
   /// Larger home input with a moving teal stroke.
   final bool prominent;
@@ -49,9 +52,9 @@ class ApnaClinicAiComposer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final actionSize = prominent ? 52.r : 40.r;
-    final radius = prominent ? 28.r : 22.r;
-    final actionRadius = prominent ? 15.r : 12.r;
+    final actionSize = prominent ? 44.r : 36.r;
+    final radius = 28.r;
+    final actionRadius = actionSize / 2;
     final field = _ComposerField(
       controller: controller,
       hintText: hintText,
@@ -63,6 +66,7 @@ class ApnaClinicAiComposer extends StatelessWidget {
       onTap: onTap,
       onSend: onSend,
       onMicTap: onMicTap,
+      micEnabled: micEnabled ?? enabled,
       actionSize: actionSize,
       actionRadius: actionRadius,
     );
@@ -70,12 +74,11 @@ class ApnaClinicAiComposer extends StatelessWidget {
     if (!prominent) {
       return Container(
         margin: EdgeInsets.fromLTRB(16.w, 0, 16.w, 10.h),
-        padding: EdgeInsets.fromLTRB(14.w, 8.h, 8.w, 8.h),
+        padding: EdgeInsets.fromLTRB(16.w, 6.h, 6.w, 6.h),
         decoration: BoxDecoration(
           color: ApnaClinicAiUiConfig.panel,
           borderRadius: BorderRadius.circular(radius),
-          border: Border.all(color: ApnaClinicAiUiConfig.borderStrong),
-          boxShadow: ApnaClinicAiUiConfig.softShadow,
+          border: Border.all(color: ApnaClinicAiUiConfig.cta, width: 1.4),
         ),
         child: field,
       );
@@ -106,6 +109,7 @@ class _ComposerField extends StatelessWidget {
     required this.prominent,
     required this.onSend,
     required this.onMicTap,
+    required this.micEnabled,
     required this.actionSize,
     required this.actionRadius,
     this.focusNode,
@@ -120,6 +124,7 @@ class _ComposerField extends StatelessWidget {
   final bool prominent;
   final VoidCallback onSend;
   final VoidCallback onMicTap;
+  final bool micEnabled;
   final double actionSize;
   final double actionRadius;
   final FocusNode? focusNode;
@@ -139,7 +144,7 @@ class _ComposerField extends StatelessWidget {
         Expanded(
           child: SizedBox(
             height: prominent ? _prominentFieldHeight : null,
-            child: Align(
+              child: Align(
               alignment: Alignment.centerLeft,
               child: TextField(
                 controller: controller,
@@ -187,7 +192,7 @@ class _ComposerField extends StatelessWidget {
         if (showMic) ...[
           _MicButton(
             recording: recording,
-            enabled: enabled || recording,
+            enabled: micEnabled || recording,
             onTap: onMicTap,
             size: actionSize,
             borderRadius: actionRadius,
@@ -280,7 +285,7 @@ class _MicButtonState extends State<_MicButton>
       child: Material(
         color: recording
             ? ApnaClinicAiUiConfig.emergencyText
-            : ApnaClinicAiUiConfig.mint,
+            : ApnaClinicAiUiConfig.ctaSoft,
         borderRadius: BorderRadius.circular(widget.borderRadius),
         child: InkWell(
           borderRadius: BorderRadius.circular(widget.borderRadius),

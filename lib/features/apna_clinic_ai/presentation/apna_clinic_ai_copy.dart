@@ -10,6 +10,11 @@ bool _isApnaClinicAiBrandAlias(String raw) {
       .trim()
       .toLowerCase();
   final collapsed = compact.replaceAll(' ', '');
+  if (RegExp(
+    r'^noor\s*\(\s*apna\s*clinic(?:\s+(?:ai|al))?\s*\)$',
+  ).hasMatch(compact)) {
+    return true;
+  }
   return compact == 'noor' ||
       compact == 'apna clinic' ||
       compact == 'apnaclinic' ||
@@ -64,6 +69,32 @@ String apnaClinicAiFailureText(AppLocalizations l10n, String? code) {
     default:
       return l10n.apnaClinicAiConnectFailed;
   }
+}
+
+/// Status under the assistant name: Getting ready… while connecting or waiting,
+/// Listening while the mic is open, the live stage when one is known,
+/// otherwise Online.
+String apnaClinicAiHeaderStatus(
+  AppLocalizations l10n, {
+  required bool connecting,
+  required bool recording,
+  required bool streaming,
+  required String thinkingStage,
+}) {
+  if (connecting) return l10n.apnaClinicAiStatusReading;
+  if (recording) return l10n.apnaClinicAiListening;
+  if (streaming) {
+    final stage = thinkingStage.trim().toLowerCase();
+    if (stage.isEmpty || stage == 'listening') {
+      return l10n.apnaClinicAiStatusReading;
+    }
+    final label = apnaClinicAiStageLabel(l10n, stage);
+    if (label == l10n.apnaClinicAiJustAMoment) {
+      return l10n.apnaClinicAiStatusReading;
+    }
+    return label;
+  }
+  return l10n.apnaClinicAiOnline;
 }
 
 /// Rotating waiting lines for reply loading (bubble + header).

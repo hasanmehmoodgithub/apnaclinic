@@ -10,6 +10,7 @@ class ApnaClinicAiTurnEntity extends Equatable {
     required this.slots,
     required this.slotDays,
     required this.payments,
+    this.sectionTitles = const {},
     this.status,
     this.intent,
     this.failureCode,
@@ -31,6 +32,8 @@ class ApnaClinicAiTurnEntity extends Equatable {
   final List<ApnaClinicAiSlotEntity> slots;
   final List<ApnaClinicAiSlotDayEntity> slotDays;
   final List<ApnaClinicAiPaymentEntity> payments;
+  /// Headings from each block `kind`'s `title`.
+  final Map<String, String> sectionTitles;
   final String? audioBase64;
   final String? audioMediaType;
   /// True when SSE `final` arrives before a later `type: audio` event.
@@ -52,6 +55,7 @@ class ApnaClinicAiTurnEntity extends Equatable {
     slots,
     slotDays,
     payments,
+    sectionTitles,
     audioBase64,
     audioMediaType,
     audioPending,

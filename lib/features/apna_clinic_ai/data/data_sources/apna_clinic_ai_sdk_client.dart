@@ -488,6 +488,9 @@ class ApnaClinicAiSdkClient {
         options: Options(
           headers: _headers(json: true, authorize: true, sse: true),
           responseType: ResponseType.stream,
+          // Stay open for delayed `type: audio` after `final`, same as voice.
+          sendTimeout: const Duration(seconds: 90),
+          receiveTimeout: const Duration(seconds: 120),
         ),
       );
       final stream = response.data?.stream;

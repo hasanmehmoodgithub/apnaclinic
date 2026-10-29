@@ -50,7 +50,7 @@ class PrescriptionScanPicker extends StatelessWidget {
             borderRadius: BorderRadius.circular(20.r),
             child: Container(
               width: double.infinity,
-              height: hasImage ? 240.h : 200.h,
+              height: hasImage ? 240.h : 185.h,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(20.r),
                 border: hasImage
@@ -102,20 +102,22 @@ class PrescriptionScanPicker extends StatelessWidget {
                         ),
                       ],
                     )
-                  : CustomPaint(
+                  : Padding(
+                      padding: EdgeInsets.all(12.r),
+                      child: CustomPaint(
                       painter: _DashedBorderPainter(
                         color: AppColors.clr27B3A6.withValues(alpha: 0.35),
                         radius: 20.r,
                       ),
                       child: Center(
                         child: Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 28.w),
+                          padding: EdgeInsets.symmetric(horizontal: 12.w),
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Container(
-                                width: 64.r,
-                                height: 64.r,
+                                width: 55.r,
+                                height:55.r,
                                 decoration: const BoxDecoration(
                                   color: AppColors.clrE0F7F6,
                                   shape: BoxShape.circle,
@@ -123,7 +125,7 @@ class PrescriptionScanPicker extends StatelessWidget {
                                 child: Icon(
                                   Icons.document_scanner_outlined,
                                   color: AppColors.clr27B3A6,
-                                  size: 30.r,
+                                  size: 24.r,
                                 ),
                               ),
                               SizedBox(height: 14.h),
@@ -133,7 +135,7 @@ class PrescriptionScanPicker extends StatelessWidget {
                                 style: theme.textTheme.titleSmall?.copyWith(
                                   color: AppColors.clr0B2239,
                                   fontWeight: FontWeight.w700,
-                                  fontSize: 14.sp,
+                                  fontSize: 12.sp,
                                   height: 1.3,
                                 ),
                               ),
@@ -144,7 +146,7 @@ class PrescriptionScanPicker extends StatelessWidget {
                                 style: theme.textTheme.bodySmall?.copyWith(
                                   color: AppColors.clr8A9AAE,
                                   fontWeight: FontWeight.w500,
-                                  fontSize: 12.sp,
+                                  fontSize: 11.sp,
                                   height: 1.35,
                                 ),
                               ),
@@ -153,6 +155,7 @@ class PrescriptionScanPicker extends StatelessWidget {
                         ),
                       ),
                     ),
+                  ),
             ),
           ),
         ),

@@ -3991,7 +3991,7 @@ abstract class AppLocalizations {
   /// No description provided for @apnaClinicAiTitle.
   ///
   /// In en, this message translates to:
-  /// **'Apna Clinic Ai Noor'**
+  /// **'Noor (Apna Clinic AI)'**
   String get apnaClinicAiTitle;
 
   /// No description provided for @apnaClinicAiBrandTag.
@@ -4027,8 +4027,14 @@ abstract class AppLocalizations {
   /// No description provided for @apnaClinicAiOnline.
   ///
   /// In en, this message translates to:
-  /// **'Available 24/7'**
+  /// **'Online'**
   String get apnaClinicAiOnline;
+
+  /// Header status while Apna Clinic AI is connecting or waiting on a reply
+  ///
+  /// In en, this message translates to:
+  /// **'Getting ready…'**
+  String get apnaClinicAiStatusReading;
 
   /// Hero status badge when AI home failed to connect
   ///
@@ -4047,6 +4053,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Tell me what’s bothering you.'**
   String get apnaClinicAiLiveStats;
+
+  /// Starter chip on the AI chat that asks to find a doctor
+  ///
+  /// In en, this message translates to:
+  /// **'Find a doctor...'**
+  String get apnaClinicAiChipFindDoctor;
+
+  /// Starter chip on the AI chat that asks to find medicines
+  ///
+  /// In en, this message translates to:
+  /// **'Find medicines...'**
+  String get apnaClinicAiChipFindMedicines;
+
+  /// Starter chip on the AI chat that asks to find a lab test
+  ///
+  /// In en, this message translates to:
+  /// **'Find a lab test...'**
+  String get apnaClinicAiChipFindLab;
+
+  /// Short label on the doctor starter icon in AI chat
+  ///
+  /// In en, this message translates to:
+  /// **'Doctor'**
+  String get apnaClinicAiChipDoctor;
+
+  /// Short label on the pharmacy starter icon in AI chat
+  ///
+  /// In en, this message translates to:
+  /// **'Pharmacy'**
+  String get apnaClinicAiChipPharmacy;
+
+  /// Short label on the lab starter icon in AI chat
+  ///
+  /// In en, this message translates to:
+  /// **'Lab'**
+  String get apnaClinicAiChipLab;
 
   /// No description provided for @apnaClinicAiCommonConcerns.
   ///
@@ -4207,7 +4249,7 @@ abstract class AppLocalizations {
   /// No description provided for @apnaClinicAiChatComposerHint.
   ///
   /// In en, this message translates to:
-  /// **'Type, or tap the mic to speak…'**
+  /// **'Ask me anything...'**
   String get apnaClinicAiChatComposerHint;
 
   /// No description provided for @apnaClinicAiEmergencyTitle.
@@ -4570,6 +4612,12 @@ abstract class AppLocalizations {
   /// **'Apna Clinic Bot'**
   String get apnaClinicBotLabel;
 
+  /// Speech bubble beside the doctor bot on the AI chat before the user sends a message
+  ///
+  /// In en, this message translates to:
+  /// **'Ask me anything'**
+  String get apnaClinicAiAskAnything;
+
   /// Call to action on the floating home bot speech bubble
   ///
   /// In en, this message translates to:
@@ -4729,7 +4777,7 @@ abstract class AppLocalizations {
   /// No description provided for @pharmacyScanBannerTitle.
   ///
   /// In en, this message translates to:
-  /// **'Medicines ready when you are'**
+  /// **'Scan and Fill Your Cart'**
   String get pharmacyScanBannerTitle;
 
   /// No description provided for @pharmacyScanBannerSubtitle.

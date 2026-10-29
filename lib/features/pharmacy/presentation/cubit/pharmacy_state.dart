@@ -7,6 +7,7 @@ import '../../domain/entities/pharmacy_cart_item_entity.dart';
 import '../../domain/entities/pharmacy_medicine_entity.dart';
 import '../../domain/entities/pharmacy_cart_messages_entity.dart';
 import '../../domain/entities/pharmacy_payment_breakdown_entity.dart';
+import 'prescription_scan_state.dart';
 
 part 'pharmacy_state.freezed.dart';
 
@@ -36,6 +37,7 @@ abstract class PharmacyState with _$PharmacyState {
     String? paymentProvidersErrorMessage,
     String? selectedPaymentProviderCode,
     PharmacyCartMessagesEntity? cartMessages,
+    @Default(PrescriptionScanState()) PrescriptionScanState prescriptionScan,
   }) = _PharmacyState;
 }
 

@@ -76,6 +76,7 @@ class ApnaClinicAiTurnModel {
     required this.slots,
     required this.slotDays,
     required this.payments,
+    this.sectionTitles = const {},
     this.status,
     this.intent,
     this.failureCode,
@@ -97,6 +98,8 @@ class ApnaClinicAiTurnModel {
   final List<ApnaClinicAiSlotModel> slots;
   final List<ApnaClinicAiSlotDayModel> slotDays;
   final List<ApnaClinicAiPaymentModel> payments;
+  /// `blocks[].title` by section key (`payment`, `doctor`, `chips`, `slots`).
+  final Map<String, String> sectionTitles;
   final String? audioBase64;
   final String? audioMediaType;
   final bool audioPending;

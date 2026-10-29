@@ -55,6 +55,10 @@ class AppColors {
   static const Color clr0B2239 = Color(0xFF0B2239);
   static const Color clr0E2D55 = Color(0xFF0E2D55);
   static const Color clr0FAA9A = Color(0xFF0FAA9A);
+  /// Doctor-bot badge disc from the chatbot theme.
+  static const Color clr00A08F = Color(0xFF00A08F);
+  /// Pale sparkle on the doctor-bot badge.
+  static const Color clrCCFFF7 = Color(0xFFCCFFF7);
   static const Color clr111827 = Color(0xFF111827);
   static const Color clr1FAFA3 = Color(0xFF1FAFA3);
   static const Color clr27B3A6 = Color(0xFF27B3A6);
@@ -201,4 +205,7 @@ static const Color clrf4f4f4  = Color(0xFFF4F4F4);
   static const Color clrEAEAEA = Color(0xFFEAEAEA);
   static const Color clrF8F8F8 = Color(0xFFF8F8F8);
   static const Color clrFDE8E4 = Color(0xFFFDE8E4);
+  static const Color clrFFF8EC = Color(0xFFFFF8EC);
+  static const Color clrE7D08A = Color(0xFFE7D08A);
+  static const Color clr8F6A1E = Color(0xFF8F6A1E);
 }

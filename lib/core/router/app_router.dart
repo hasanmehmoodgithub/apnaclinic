@@ -1,6 +1,5 @@
 import 'package:apnaclinic/features/pharmacy/presentation/screens/pharmacy_main_screen.dart';
 import 'package:apnaclinic/features/pharmacy/presentation/screens/prescription_scan_screen.dart';
-import 'package:apnaclinic/features/pharmacy/presentation/cubit/prescription_scan_cubit.dart';
 import 'package:chucker_flutter/chucker_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -320,10 +319,7 @@ class AppRouter {
       GoRoute(
         path: AppRoutes.path(AppRoutes.pharmacyPrescriptionScan),
         name: AppRoutes.pharmacyPrescriptionScan,
-        builder: (context, state) => BlocProvider(
-          create: (_) => sl<PrescriptionScanCubit>(),
-          child: const PrescriptionScanScreen(),
-        ),
+        builder: (context, state) => const PrescriptionScanScreen(),
       ),
       GoRoute(
         path: AppRoutes.path(AppRoutes.pharmacyCart),

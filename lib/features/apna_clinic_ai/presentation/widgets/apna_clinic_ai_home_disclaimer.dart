@@ -5,66 +5,60 @@ import '../../../../core/l10n/app_localizations.dart';
 import '../constants/apna_clinic_ai_ui_config.dart';
 
 class ApnaClinicAiHomeDisclaimer extends StatelessWidget {
-  const ApnaClinicAiHomeDisclaimer({super.key});
+  const ApnaClinicAiHomeDisclaimer({super.key, this.margin});
+
+  final EdgeInsetsGeometry? margin;
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final ink = ApnaClinicAiUiConfig.cautionText;
+    final ink = ApnaClinicAiUiConfig.disclaimerInk;
     return Container(
       width: double.infinity,
-      margin: EdgeInsets.all(6.h),
-      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
+      margin: margin ?? EdgeInsets.all(6.h),
+      padding: EdgeInsets.fromLTRB(18.w, 18.h, 18.w, 18.h),
       decoration: BoxDecoration(
-        color: const Color(0xFFFCF6E8),
-        borderRadius: BorderRadius.circular(14.r),
-        border: Border.all(
-          color: ApnaClinicAiUiConfig.caution.withValues(alpha: 0.35),
-        ),
+        color: ApnaClinicAiUiConfig.disclaimerBg,
+        borderRadius: BorderRadius.circular(22.r),
+        border: Border.all(color: ApnaClinicAiUiConfig.disclaimerBorder),
       ),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Container(
-                width: 32.r,
-                height: 32.r,
-                decoration: BoxDecoration(
-                  color: ApnaClinicAiUiConfig.caution.withValues(alpha: 0.22),
-                  borderRadius: BorderRadius.circular(8.r),
-                ),
-                alignment: Alignment.center,
-                child: Icon(
-                  Icons.error_outline_rounded,
-                  size: 18.r,
-                  color: ink,
-                ),
+              Icon(
+                Icons.error_outline_rounded,
+                size: 18.r,
+                color: ink,
               ),
               SizedBox(width: 8.w),
               Expanded(
                 child: Text(
                   l10n.apnaClinicAiDisclaimerTitle,
-                  maxLines: 1,
+                  maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
                     color: ink,
-                    fontSize: 14.sp,
-                    fontWeight: FontWeight.w800,
-                    letterSpacing: 0.6,
+                    fontSize: 15.sp,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 0.4,
+                    height: 1.2,
                   ),
                 ),
               ),
             ],
           ),
-          SizedBox(height: 14.h),
+          SizedBox(height: 12.h),
           Text(
             l10n.apnaClinicAiDisclaimer,
-            textAlign: TextAlign.left,
+            textAlign: TextAlign.start,
             style: TextStyle(
-              color: ink.withValues(alpha: 0.92),
-              fontSize: 15.sp,
-              height: 1.55,
+              color: ink,
+              fontSize: 14.sp,
+              height: 1.45,
               fontWeight: FontWeight.w400,
             ),
           ),

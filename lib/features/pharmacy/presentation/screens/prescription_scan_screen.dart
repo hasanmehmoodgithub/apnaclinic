@@ -8,8 +8,6 @@ import '../../../../core/l10n/app_localizations.dart';
 import '../../domain/prescription_scan_error_codes.dart';
 import '../cubit/pharmacy_cubit.dart';
 import '../cubit/pharmacy_state.dart';
-import '../cubit/prescription_scan_cubit.dart';
-import '../cubit/prescription_scan_state.dart';
 import '../pharmacy_navigation.dart';
 import '../widgets/pharmacy_scan_banner_card.dart';
 import '../widgets/pharmacy_screen_header_widget.dart';
@@ -38,7 +36,7 @@ class _PrescriptionScanScreenState extends State<PrescriptionScanScreen> {
         maxWidth: 1600,
       );
       if (picked == null || !mounted) return;
-      context.read<PrescriptionScanCubit>().setImage(picked.path);
+      context.read<PharmacyCubit>().setPrescriptionImage(picked.path);
     } catch (_) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -59,6 +57,12 @@ class _PrescriptionScanScreenState extends State<PrescriptionScanScreen> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    context.read<PharmacyCubit>().clearPrescriptionScan();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     return Scaffold(
@@ -72,16 +76,21 @@ class _PrescriptionScanScreenState extends State<PrescriptionScanScreen> {
                 return PharmacyScreenHeaderWidget(
                   title: l10n.pharmacyScanPrescription,
                   cartCount: cartCount,
+                  cartContainerSize: 22.r,
+                  cartIconSize: 11.r,
                   onBackTap: () => pharmacyPopOrGoHome(context),
                   onCartTap: () => pharmacyOpenCart(context),
                 );
               },
             ),
             Expanded(
-              child: BlocBuilder<PrescriptionScanCubit, PrescriptionScanState>(
+              child: BlocBuilder<PharmacyCubit, PharmacyState>(
+                buildWhen: (previous, next) =>
+                    previous.prescriptionScan != next.prescriptionScan,
                 builder: (context, state) {
-                  final errorText = _errorText(l10n, state.errorCode);
-                  final showBanner = state.result == null;
+                  final scan = state.prescriptionScan;
+                  final errorText = _errorText(l10n, scan.errorCode);
+                  final showBanner = scan.result == null;
                   return ListView(
                     padding: EdgeInsets.fromLTRB(18.w, 2.h, 18.w, 28.h),
                     children: [
@@ -90,11 +99,11 @@ class _PrescriptionScanScreenState extends State<PrescriptionScanScreen> {
                         SizedBox(height: 18.h),
                       ],
                       PrescriptionScanPicker(
-                        imagePath: state.imagePath,
-                        extracting: state.extracting,
+                        imagePath: scan.imagePath,
+                        extracting: scan.extracting,
                         onPick: _pickImage,
                         onExtract: () =>
-                            context.read<PrescriptionScanCubit>().extract(),
+                            context.read<PharmacyCubit>().extractPrescription(),
                       ),
                       if (errorText != null) ...[
                         SizedBox(height: 12.h),
@@ -122,12 +131,12 @@ class _PrescriptionScanScreenState extends State<PrescriptionScanScreen> {
                           ),
                         ),
                       ],
-                      if (state.result != null) ...[
+                      if (scan.result != null) ...[
                         SizedBox(height: 18.h),
                         PrescriptionScanResult(
-                          result: state.result!,
-                          matches: state.matches,
-                          prescriptionPath: state.imagePath,
+                          result: scan.result!,
+                          matches: scan.matches,
+                          prescriptionPath: scan.imagePath,
                         ),
                       ],
                     ],

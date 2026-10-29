@@ -40,6 +40,11 @@ class ApnaClinicAiCubit extends Cubit<ApnaClinicAiState> {
     unawaited(_openWindow());
   }
 
+  /// One `session/init` per app process. Cleared only by process death.
+  /// Logout clears prefs → next connect inits even if this is still true.
+  /// Login / guest↔signed-in mismatch still forces refresh in [connect].
+  static var _sessionInitDoneThisProcess = false;
+
   /// Prefill header from prefs so loading never flashes “Guest” for signed-in users.
   static ApnaClinicAiState _bootState(AppPref appPref) {
     final user = appPref.getUserLocalModel();
@@ -48,6 +53,7 @@ class ApnaClinicAiCubit extends Cubit<ApnaClinicAiState> {
       user?.lastName.trim() ?? '',
     ].where((part) => part.isNotEmpty).join(' ');
     return ApnaClinicAiState(
+      showChat: true,
       connecting: true,
       isGuest: !AuthGuard.isLoggedIn(appPref),
       userDisplayName: displayName,
@@ -61,9 +67,11 @@ class ApnaClinicAiCubit extends Cubit<ApnaClinicAiState> {
     sendMessageUseCase.detachConversation();
     _conversationBound = false;
     if (isClosed) return;
-    // Always re-run session/init on feature open: app reopen, guest,
-    // signed-in, or after logout. Mid-chat turns still reuse the session.
-    await connect(forceRefresh: true);
+    // session/init only on cold app start, logout (empty prefs), or
+    // login/mode change — not every time the user opens Care Companion.
+    final coldStart = !_sessionInitDoneThisProcess;
+    final ready = await connect(forceRefresh: coldStart);
+    if (ready) _sessionInitDoneThisProcess = true;
   }
 
   final EnsureApnaClinicAiSessionUseCase ensureSessionUseCase;
@@ -74,7 +82,10 @@ class ApnaClinicAiCubit extends Cubit<ApnaClinicAiState> {
   final SpeechToTextService speechToText;
   final ApnaClinicAiAudioRecorderService audioRecorder;
 
-  StreamSubscription<ApnaClinicAiStreamEvent>? _turnSub;
+  /// One SSE listen per in-flight turn. A newer voice note must not cancel
+  /// the previous turn before its delayed `type: audio` arrives.
+  final Map<String, StreamSubscription<ApnaClinicAiStreamEvent>> _turnSubs =
+      {};
   Future<bool>? _connectInFlight;
   var _messageSeq = 0;
   var _connected = false;
@@ -91,10 +102,11 @@ class ApnaClinicAiCubit extends Cubit<ApnaClinicAiState> {
   var _voiceResumesThread = false;
   var _voiceForceNewThread = false;
   Timer? _maxVoiceTimer;
-  /// Last session/init greeting clip — played once when entering from the app.
+  /// Last session/init greeting clip — played once on the first empty chat.
   var _greetingAudioBase64 = '';
   var _greetingAudioMediaType = '';
   var _greetingAudioPlayed = false;
+  static const _greetingMessageId = 'sdk_greeting';
 
   /// ChatGPT-style slow text: SSE fills [_revealTarget], ticker grows [_revealShown].
   Timer? _revealTimer;
@@ -180,7 +192,7 @@ class ApnaClinicAiCubit extends Cubit<ApnaClinicAiState> {
             connecting: false,
             assistantName: apnaClinicAiBrandName(session.assistantName),
             suggestions: session.suggestions,
-            welcomeMessage: apnaClinicAiBrandGreeting(session.welcomeMessage),
+            welcomeMessage: session.welcomeMessage.trim(),
             composerHint: session.composerHint,
             headerSubtitle: session.headerSubtitle,
             voiceEnabled: session.voiceEnabled,
@@ -189,17 +201,61 @@ class ApnaClinicAiCubit extends Cubit<ApnaClinicAiState> {
             userDisplayName: displayName,
             userImageUrl: imageUrl,
             clearError: true,
+            showChat: true,
           ),
         );
-        // Play greeting once per app entry (not on reconnect / back-to-home).
-        playHomeGreeting();
+        _seedSdkGreeting();
         return true;
       },
     );
   }
 
-  /// Plays session/init greeting audio at most once for this cubit lifetime
-  /// (first successful connect after opening Care Companion from the app).
+  /// Puts the session/init greeting in the thread the first time it is empty,
+  /// and plays its clip once for this cubit.
+  void _seedSdkGreeting({bool playAudio = true}) {
+    if (isClosed) return;
+    final text = state.welcomeMessage.trim();
+    final clip = _greetingAudioBase64.trim();
+    final media = _greetingAudioMediaType.trim();
+    if (state.messages.isEmpty && text.isNotEmpty) {
+      emit(
+        state.copyWith(
+          showChat: true,
+          messages: [
+            ApnaClinicAiMessageEntity(
+              id: _greetingMessageId,
+              role: ApnaClinicAiMessageRole.assistant,
+              text: text,
+              audioBase64: clip.isEmpty ? null : clip,
+              audioMediaType: clip.isEmpty || media.isEmpty ? null : media,
+              audioPending: false,
+              sentAt: DateTime.now(),
+            ),
+          ],
+        ),
+      );
+    } else if (state.messages.any((m) => m.id == _greetingMessageId)) {
+      final messages = [
+        for (final message in state.messages)
+          if (message.id != _greetingMessageId)
+            message
+          else if (clip.isEmpty)
+            message.copyWith(audioPending: false)
+          else
+            message.copyWith(
+              audioBase64: message.hasAudio ? message.audioBase64 : clip,
+              audioMediaType: message.hasAudio
+                  ? message.audioMediaType
+                  : (media.isEmpty ? null : media),
+              audioPending: false,
+            ),
+      ];
+      emit(state.copyWith(messages: messages));
+    }
+    if (playAudio) playHomeGreeting();
+  }
+
+  /// Plays session/init greeting audio at most once for this cubit lifetime.
   void playHomeGreeting() {
     if (isClosed || _greetingAudioPlayed) return;
     final clip = _greetingAudioBase64.trim();
@@ -233,8 +289,7 @@ class ApnaClinicAiCubit extends Cubit<ApnaClinicAiState> {
     _resetReveal();
     _liveCaption = '';
     _conversationBound = false;
-    await _turnSub?.cancel();
-    _turnSub = null;
+    _cancelTurnSubs();
     await speechToText.cancel();
     await audioRecorder.cancel();
     sendMessageUseCase.detachConversation();
@@ -247,6 +302,7 @@ class ApnaClinicAiCubit extends Cubit<ApnaClinicAiState> {
         liveCaption: '',
         messages: const [],
         doctors: const [],
+        sectionTitles: const {},
         slots: const [],
         slotDays: const [],
         selectedSlotDayIndex: 0,
@@ -305,7 +361,7 @@ class ApnaClinicAiCubit extends Cubit<ApnaClinicAiState> {
 
   /// Clears the transcript and starts a new [conversation_id].
   void newChat() {
-    _turnSub?.cancel();
+    _cancelTurnSubs();
     _resetReveal();
     unawaited(speechToText.cancel());
     unawaited(audioRecorder.cancel());
@@ -329,6 +385,7 @@ class ApnaClinicAiCubit extends Cubit<ApnaClinicAiState> {
         liveCaption: '',
         messages: const [],
         doctors: const [],
+        sectionTitles: const {},
         slots: const [],
         slotDays: const [],
         selectedSlotDayIndex: 0,
@@ -339,6 +396,7 @@ class ApnaClinicAiCubit extends Cubit<ApnaClinicAiState> {
         clearError: true,
       ),
     );
+    _seedSdkGreeting(playAudio: false);
   }
 
   /// Continue previous — reuses the stashed history thread, even if this
@@ -349,8 +407,7 @@ class ApnaClinicAiCubit extends Cubit<ApnaClinicAiState> {
       showChat();
       return;
     }
-    await _turnSub?.cancel();
-    _turnSub = null;
+    _cancelTurnSubs();
     unawaited(speechToText.cancel());
     unawaited(audioRecorder.cancel());
     if (_resumeConversationId.isEmpty) {
@@ -369,6 +426,7 @@ class ApnaClinicAiCubit extends Cubit<ApnaClinicAiState> {
         liveCaption: '',
         messages: const [],
         doctors: const [],
+        sectionTitles: const {},
         slots: const [],
         slotDays: const [],
         selectedSlotDayIndex: 0,
@@ -395,8 +453,7 @@ class ApnaClinicAiCubit extends Cubit<ApnaClinicAiState> {
 
   /// Common concerns and What I can do always leave the previous thread.
   Future<void> _beginNewThread() async {
-    await _turnSub?.cancel();
-    _turnSub = null;
+    _cancelTurnSubs();
     _conversationBound = false;
     if (isClosed) return;
     emit(
@@ -408,6 +465,7 @@ class ApnaClinicAiCubit extends Cubit<ApnaClinicAiState> {
         liveCaption: '',
         messages: const [],
         doctors: const [],
+        sectionTitles: const {},
         slots: const [],
         slotDays: const [],
         selectedSlotDayIndex: 0,
@@ -466,6 +524,7 @@ class ApnaClinicAiCubit extends Cubit<ApnaClinicAiState> {
         emergencyVisible: state.emergencyVisible || critical,
         signInRequired: false,
         doctors: const [],
+        sectionTitles: const {},
         slots: const [],
         slotDays: const [],
         selectedSlotDayIndex: 0,
@@ -497,8 +556,8 @@ class ApnaClinicAiCubit extends Cubit<ApnaClinicAiState> {
     );
 
     // Request server TTS only when voice.output.enabled; Play shows after clip.
-    _turnSub?.cancel();
-    _turnSub = sendMessageUseCase
+    // Keep earlier turns listening so their delayed audio can still attach.
+    _turnSubs[assistantId] = sendMessageUseCase
         .call(
           SendApnaClinicAiMessageParams(
             message: text,
@@ -527,6 +586,7 @@ class ApnaClinicAiCubit extends Cubit<ApnaClinicAiState> {
             }
           },
           onError: (_) {
+            _turnSubs.remove(assistantId);
             if (isClosed) return;
             _finishAssistant(
               assistantId,
@@ -534,13 +594,7 @@ class ApnaClinicAiCubit extends Cubit<ApnaClinicAiState> {
               failureCode: ApnaClinicAiFailureCodes.connectFailed,
             );
           },
-          onDone: () {
-            if (isClosed) return;
-            // Keep streaming while typewriter still catching the final.
-            if (state.streaming && _revealTimer == null && !_revealFinalized) {
-              emit(state.copyWith(streaming: false));
-            }
-          },
+          onDone: () => _onTurnClosed(assistantId),
         );
   }
 
@@ -627,7 +681,7 @@ class ApnaClinicAiCubit extends Cubit<ApnaClinicAiState> {
   }
 
   Future<void> startListening() async {
-    if (state.streaming || state.recording || _startingVoice) return;
+    if (state.recording || _startingVoice) return;
     final generation = ++_voiceGeneration;
     _startingVoice = true;
     final granted = await ensureMicrophonePermission();
@@ -729,7 +783,7 @@ class ApnaClinicAiCubit extends Cubit<ApnaClinicAiState> {
     List<int> audioBytes, {
     String? fallbackMessage,
   }) async {
-    if (audioBytes.isEmpty || state.streaming) return;
+    if (audioBytes.isEmpty) return;
     final ready = await connect();
     if (!ready || isClosed) return;
     final forceNew = _voiceForceNewThread;
@@ -763,6 +817,7 @@ class ApnaClinicAiCubit extends Cubit<ApnaClinicAiState> {
         emergencyVisible: state.emergencyVisible || critical,
         signInRequired: false,
         doctors: const [],
+        sectionTitles: const {},
         slots: const [],
         slotDays: const [],
         selectedSlotDayIndex: 0,
@@ -797,8 +852,7 @@ class ApnaClinicAiCubit extends Cubit<ApnaClinicAiState> {
     _beginReveal(assistantId);
 
     final language = state.voiceLanguageCode == 'ur' ? 'ur' : 'auto';
-    _turnSub?.cancel();
-    _turnSub = sendAudioUseCase
+    _turnSubs[assistantId] = sendAudioUseCase
         .call(
           SendApnaClinicAiAudioParams(
             audioBytes: audioBytes,
@@ -838,6 +892,7 @@ class ApnaClinicAiCubit extends Cubit<ApnaClinicAiState> {
             }
           },
           onError: (_) {
+            _turnSubs.remove(assistantId);
             if (isClosed) return;
             _finishAssistant(
               assistantId,
@@ -845,12 +900,7 @@ class ApnaClinicAiCubit extends Cubit<ApnaClinicAiState> {
               failureCode: ApnaClinicAiFailureCodes.connectFailed,
             );
           },
-          onDone: () {
-            if (isClosed) return;
-            if (state.streaming && _revealTimer == null && !_revealFinalized) {
-              emit(state.copyWith(streaming: false));
-            }
-          },
+          onDone: () => _onTurnClosed(assistantId),
         );
   }
 
@@ -860,8 +910,56 @@ class ApnaClinicAiCubit extends Cubit<ApnaClinicAiState> {
     return RomanUrdu.toNative(words);
   }
 
+  void _cancelTurnSubs() {
+    for (final sub in _turnSubs.values) {
+      unawaited(sub.cancel());
+    }
+    _turnSubs.clear();
+  }
+
+  /// Drops a finished listen. Does not clear [streaming] while a newer turn
+  /// is still open — that was wiping the second voice and the first clip.
+  void _onTurnClosed(String assistantId) {
+    _turnSubs.remove(assistantId);
+    if (isClosed) return;
+    if (_newerTurnOpen(assistantId)) return;
+    if (state.streaming && _revealTimer == null && !_revealFinalized) {
+      emit(state.copyWith(streaming: false));
+    }
+  }
+
+  bool _newerTurnOpen(String assistantId) {
+    final mine = _messageOrder(assistantId);
+    for (final id in _turnSubs.keys) {
+      if (id != assistantId && _messageOrder(id) > mine) return true;
+    }
+    return false;
+  }
+
+  int _messageOrder(String id) {
+    if (!id.startsWith('m')) return 0;
+    return int.tryParse(id.substring(1)) ?? 0;
+  }
+
+  /// True when [assistantId] is an earlier bubble than the one now revealing.
+  bool _isOlderThanActive(String assistantId) {
+    if (_revealAssistantId.isEmpty || _revealAssistantId == assistantId) {
+      return false;
+    }
+    return _messageOrder(assistantId) < _messageOrder(_revealAssistantId);
+  }
+
   void _beginReveal(String assistantId) {
-    _resetReveal();
+    if (_revealAssistantId.isNotEmpty && _revealAssistantId != assistantId) {
+      final previous = _revealAssistantId;
+      final pending = _revealPendingTurn;
+      final text = _revealTarget.isNotEmpty ? _revealTarget : _revealShown;
+      _resetReveal();
+      if (text.trim().isNotEmpty) _snapAssistantText(previous, text);
+      if (pending != null) _applySettledTurn(previous, pending);
+    } else {
+      _resetReveal();
+    }
     _revealAssistantId = assistantId;
   }
 
@@ -885,6 +983,10 @@ class ApnaClinicAiCubit extends Cubit<ApnaClinicAiState> {
   }
 
   void _onToken(String assistantId, String accumulated) {
+    if (_isOlderThanActive(assistantId)) {
+      _snapAssistantText(assistantId, accumulated);
+      return;
+    }
     if (_revealAssistantId != assistantId) _beginReveal(assistantId);
     _revealTarget = accumulated;
     _ensureRevealTimer();
@@ -1007,6 +1109,14 @@ class ApnaClinicAiCubit extends Cubit<ApnaClinicAiState> {
         selectedSlotDayIndex: 0,
         payments: turn.payments,
         quickActions: keepChips ? state.quickActions : turn.quickActions,
+        sectionTitles: keepChips
+            ? {
+                ...turn.sectionTitles,
+                if ((turn.sectionTitles['chips'] ?? '').isEmpty &&
+                    (state.sectionTitles['chips'] ?? '').isNotEmpty)
+                  'chips': state.sectionTitles['chips']!,
+              }
+            : turn.sectionTitles,
         signInRequired: turn.signInRequired,
         authResumeMessage: turn.authResumeMessage,
         authDeepLink: turn.authDeepLink,
@@ -1033,6 +1143,10 @@ class ApnaClinicAiCubit extends Cubit<ApnaClinicAiState> {
     required String assistantId,
     required ApnaClinicAiTurnEntity turn,
   }) {
+    if (_isOlderThanActive(assistantId)) {
+      _applySettledTurn(assistantId, turn);
+      return;
+    }
     final reply = turn.reply.trim();
     final keepChips =
         reply.isEmpty &&
@@ -1137,7 +1251,52 @@ class ApnaClinicAiCubit extends Cubit<ApnaClinicAiState> {
               turnId: tid.isEmpty ? message.turnId : tid,
             );
           }).toList();
-    emit(state.copyWith(messages: resolved, clearTts: true));
+    emit(state.copyWith(messages: resolved));
+  }
+
+  void _snapAssistantText(String assistantId, String text) {
+    final shown = text.trim();
+    if (shown.isEmpty || isClosed) return;
+    var changed = false;
+    final messages = state.messages.map((message) {
+      if (message.id != assistantId) return message;
+      if (message.text == shown && !message.pending) return message;
+      changed = true;
+      return message.copyWith(text: shown, pending: false);
+    }).toList();
+    if (changed) emit(state.copyWith(messages: messages));
+  }
+
+  /// Writes a finished turn onto its own bubble without touching a newer
+  /// turn's cards or the streaming flag.
+  void _applySettledTurn(String assistantId, ApnaClinicAiTurnEntity turn) {
+    if (isClosed) return;
+    final clip = (turn.audioBase64 ?? '').trim();
+    final reply = turn.reply.trim();
+    final turnId = (turn.turnId ?? '').trim();
+    final waitingForAudio = turn.audioPending && clip.isEmpty;
+    final messages = state.messages.map((message) {
+      if (message.id != assistantId) return message;
+      final keepText = reply.isEmpty && message.text.trim().isNotEmpty;
+      final keepAudio = clip.isEmpty && message.hasAudio;
+      return message.copyWith(
+        text: keepText ? message.text : (reply.isNotEmpty ? reply : message.text),
+        pending: false,
+        failureCode: keepText ? message.failureCode : turn.failureCode,
+        clearFailureCode: !keepText && turn.failureCode == null,
+        audioBase64: keepAudio
+            ? message.audioBase64
+            : (clip.isEmpty ? null : clip),
+        audioMediaType:
+            keepAudio ? message.audioMediaType : turn.audioMediaType,
+        clearAudio: !keepAudio && clip.isEmpty,
+        audioPending: keepAudio
+            ? false
+            : (waitingForAudio || (clip.isEmpty && message.audioPending)),
+        turnId: turnId.isEmpty ? message.turnId : turnId,
+      );
+    }).toList();
+    emit(state.copyWith(messages: messages));
   }
 
   void _finishAssistant(
@@ -1147,8 +1306,8 @@ class ApnaClinicAiCubit extends Cubit<ApnaClinicAiState> {
     String? audioBase64,
     String? audioMediaType,
   }) {
-    // Failures / stream errors: snap text (no typewriter).
-    _resetReveal();
+    // Failures / stream errors: snap text (no typewriter) on this bubble only.
+    if (_revealAssistantId == assistantId) _resetReveal();
     final clip = (audioBase64 ?? '').trim();
     final incoming = text.trim();
     final messages = state.messages.map((message) {
@@ -1173,7 +1332,12 @@ class ApnaClinicAiCubit extends Cubit<ApnaClinicAiState> {
             : (clip.isNotEmpty ? false : (keepText && message.audioPending)),
       );
     }).toList();
-    emit(state.copyWith(streaming: false, messages: messages));
+    emit(
+      state.copyWith(
+        streaming: _newerTurnOpen(assistantId) ? state.streaming : false,
+        messages: messages,
+      ),
+    );
   }
 
   void _setError(String code) {
@@ -1197,8 +1361,7 @@ class ApnaClinicAiCubit extends Cubit<ApnaClinicAiState> {
     _resetReveal();
     _liveCaption = '';
     _conversationBound = false;
-    await _turnSub?.cancel();
-    _turnSub = null;
+    _cancelTurnSubs();
     await speechToText.cancel();
     await audioRecorder.cancel();
     sendMessageUseCase.detachConversation();
@@ -1211,6 +1374,7 @@ class ApnaClinicAiCubit extends Cubit<ApnaClinicAiState> {
         liveCaption: '',
         messages: const [],
         doctors: const [],
+        sectionTitles: const {},
         slots: const [],
         slotDays: const [],
         selectedSlotDayIndex: 0,

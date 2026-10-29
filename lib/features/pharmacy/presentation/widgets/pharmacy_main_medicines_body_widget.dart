@@ -67,42 +67,43 @@ class _PharmacyMainMedicinesBodyWidgetState
           previous.searchQuery != current.searchQuery ||
           previous.isLoadingMore != current.isLoadingMore,
       builder: (context, state) {
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+        return Stack(
+          clipBehavior: Clip.none,
           children: [
-            Padding(
-              padding: EdgeInsets.fromLTRB(18.w, 16.h, 18.w, 0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  PharmacyMainSectionTitleWidget(
-                    title: l10n.pharmacyMainChooseMedicineTitle,
-                  ),
-                  SizedBox(height: 10.h),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Padding(
+                  padding: EdgeInsets.fromLTRB(18.w, 16.h, 18.w, 0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      Expanded(
-                        child: PharmacyMainSearchFieldWidget(
-                          searchQuery: state.searchQuery,
-                          searchHint: l10n.pharmacyMainSearchHint,
-                          onSearchTapped: () =>
-                              context.read<PharmacyCubit>().logSearchClicked(),
-                          onSearchSubmitted: (value) =>
-                              context.read<PharmacyCubit>().submitSearch(value),
-                          onSearchCleared: () =>
-                              context.read<PharmacyCubit>().submitSearch(''),
-                        ),
+                      PharmacyMainSectionTitleWidget(
+                        title: l10n.pharmacyMainChooseMedicineTitle,
                       ),
-                      SizedBox(width: 10.w),
-                      const PharmacyScanPrescriptionSearchButton(),
+                      SizedBox(height: 10.h),
+                      PharmacyMainSearchFieldWidget(
+                        searchQuery: state.searchQuery,
+                        searchHint: l10n.pharmacyMainSearchHint,
+                        onSearchTapped: () =>
+                            context.read<PharmacyCubit>().logSearchClicked(),
+                        onSearchSubmitted: (value) =>
+                            context.read<PharmacyCubit>().submitSearch(value),
+                        onSearchCleared: () =>
+                            context.read<PharmacyCubit>().submitSearch(''),
+                      ),
                     ],
                   ),
-                ],
-              ),
+                ),
+                SizedBox(height: 8.h),
+                Expanded(child: _buildResults(context, l10n, state)),
+              ],
             ),
-            SizedBox(height: 8.h),
-            Expanded(child: _buildResults(context, l10n, state)),
+            Positioned(
+              right: 14.w,
+              bottom: 12.h,
+              child: const PharmacyScanPrescriptionSearchButton(),
+            ),
           ],
         );
       },
@@ -133,7 +134,7 @@ class _PharmacyMainMedicinesBodyWidgetState
 
     return ListView(
       controller: _scrollController,
-      padding: EdgeInsets.fromLTRB(18.w, 0, 18.w, 24.h),
+      padding: EdgeInsets.fromLTRB(18.w, 0, 18.w, 96.h),
       children: [
         PharmacyMainMedicinesGridWidget(
           medicines: state.medicines,

@@ -49,8 +49,12 @@ On feature open → `connect()`:
 1. Determine mode from app login:
    - signed_in → { mode, device_id, msisdn (923…), name, email }
    - guest     → { mode, device_id }
-2. If no cached SDK session (or forceRefresh / guest↔signed_in mismatch):
-   POST /api/v1/sdk/session/init   (header X-SDK-Key)
+2. POST /api/v1/sdk/session/init ONLY when:
+   - cold app start (first AI open this process), OR
+   - no cached SDK session (e.g. after logout), OR
+   - forceRefresh / guest↔signed_in mismatch (login), OR
+   - user taps Retry
+   Otherwise hydrate prefs and refresh token only — do NOT init every open.
 3. Persist: api_key, session_id, user_id, access_token, expires_at, auth_mode
 4. Save full init JSON to app-support file (greeting + audio.base64 are large)
 5. Ensure token: POST /api/v1/sdk/auth/token { api_key } (~30s before expiry)

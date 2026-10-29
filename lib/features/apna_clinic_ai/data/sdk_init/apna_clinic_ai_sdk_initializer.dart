@@ -18,11 +18,16 @@ export 'apna_clinic_ai_sdk_greeting.dart';
 ///
 /// **In this app (preferred):** do not call this from UI. Use the cubit:
 /// ```dart
-/// await cubit.connect(forceRefresh: true);
+/// await cubit.connect(); // reuse prefs session; token refresh only
+/// await cubit.connect(forceRefresh: true); // cold start / login / Retry
 /// // → EnsureApnaClinicAiSessionUseCase
 /// // → ApnaClinicAiRepository.ensureSession
 /// // → ApnaClinicAiSdkInitializer.initialize
 /// ```
+///
+/// **When `POST /sdk/session/init` runs:** cold app start, logout (no prefs),
+/// login / guest↔signed-in mismatch, or explicit [forceRefresh]. Opening the
+/// feature again in the same process reuses the cached session.
 ///
 /// **Direct / DI (integration / tests):**
 /// ```dart
@@ -35,7 +40,7 @@ export 'apna_clinic_ai_sdk_greeting.dart';
 /// **Steps inside [initialize]:**
 /// 1. [ensureConfigured] — `AI_*` / `APNA_CLINIC_AI_*` dart-defines
 /// 2. [resolveAuth] — guest vs signed-in ([ApnaClinicAiSdkAuthResolver])
-/// 3. [ensureSdkSession] — `POST /sdk/session/init` or token refresh
+/// 3. [ensureSdkSession] — `POST /sdk/session/init` **or** token refresh only
 /// 4. [loadGreeting] — cached `apna_clinic_ai_session_init.json` (or fresh init)
 /// 5. [loadBranding] — `GET /sdk/app`
 /// 6. Assemble [ApnaClinicAiSessionModel]

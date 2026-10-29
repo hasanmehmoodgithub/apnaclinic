@@ -12,12 +12,16 @@ class PharmacyScreenHeaderWidget extends StatelessWidget {
     required this.cartCount,
     required this.onBackTap,
     required this.onCartTap,
+    this.cartContainerSize,
+    this.cartIconSize,
   });
 
   final String title;
   final int cartCount;
   final VoidCallback onBackTap;
   final VoidCallback onCartTap;
+  final double? cartContainerSize;
+  final double? cartIconSize;
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +48,12 @@ class PharmacyScreenHeaderWidget extends StatelessWidget {
               ),
             ),
           ),
-          PharmacyCartIconWithCount(cartCount: cartCount, onTap: onCartTap),
+          PharmacyCartIconWithCount(
+            cartCount: cartCount,
+            onTap: onCartTap,
+            iconContainerSize: cartContainerSize,
+            iconSize: cartIconSize,
+          ),
         ],
       ),
     );

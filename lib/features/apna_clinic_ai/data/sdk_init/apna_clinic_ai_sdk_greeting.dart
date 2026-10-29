@@ -15,14 +15,36 @@ class ApnaClinicAiSdkGreeting {
   /// Parses `greeting` + `audio` from init response / cached init file.
   factory ApnaClinicAiSdkGreeting.fromInitMap(Map<String, dynamic>? source) {
     if (source == null) return const ApnaClinicAiSdkGreeting();
-    final message = (source['greeting'] ?? '').toString().trim();
+    final nested = source['data'];
+    final nestedMap = nested is Map
+        ? Map<String, dynamic>.from(nested)
+        : const <String, dynamic>{};
+    final message = (source['greeting'] ?? nestedMap['greeting'] ?? '')
+        .toString()
+        .trim();
     var audioBase64 = '';
     var audioMediaType = '';
-    final audio = source['audio'];
+    final audio =
+        source['audio'] ??
+        source['tts'] ??
+        source['speech'] ??
+        nestedMap['audio'] ??
+        nestedMap['tts'] ??
+        nestedMap['speech'];
     if (audio is Map) {
-      audioBase64 = (audio['base64'] ?? '').toString().trim();
+      final raw = audio['base64'] ?? audio['audio_base64'] ?? audio['data'];
+      if (raw is String) audioBase64 = raw.trim();
       audioMediaType =
           (audio['media_type'] ?? audio['format'] ?? '').toString().trim();
+    } else if (audio is String) {
+      audioBase64 = audio.trim();
+    }
+    if (audioBase64.isEmpty) {
+      final top = source['audio_base64'] ?? nestedMap['audio_base64'];
+      if (top is String) audioBase64 = top.trim();
+    }
+    if (audioBase64.isNotEmpty && audioMediaType.isEmpty) {
+      audioMediaType = 'audio/wav';
     }
     return ApnaClinicAiSdkGreeting(
       message: message,
