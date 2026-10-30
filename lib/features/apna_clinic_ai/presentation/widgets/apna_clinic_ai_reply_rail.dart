@@ -5,6 +5,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../payment/presentation/payment_navigation.dart';
+import '../../../pharmacy/presentation/pharmacy_navigation.dart';
 import '../../domain/entities/apna_clinic_ai_card_entity.dart';
 import '../constants/apna_clinic_ai_ui_config.dart';
 import '../cubit/apna_clinic_ai_state.dart';
@@ -183,6 +184,10 @@ class ApnaClinicAiReplyRail extends StatelessWidget {
             : AppLocalizations.of(context)!.apnaClinicAiPayNow,
         allowClose: true,
       );
+      return;
+    }
+    if (payment.opensPharmacyCart) {
+      pharmacyOpenCart(context);
       return;
     }
     onSend(payment.send);

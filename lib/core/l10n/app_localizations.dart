@@ -4402,6 +4402,66 @@ abstract class AppLocalizations {
   /// **'New chat'**
   String get apnaClinicAiNewChat;
 
+  /// Title for the runtime AI base URL / SDK key dialog
+  ///
+  /// In en, this message translates to:
+  /// **'AI SDK endpoint (testing)'**
+  String get apnaClinicAiSdkEndpointTitle;
+
+  /// No description provided for @apnaClinicAiSdkEndpointHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Change the live SDK host and key without rebuilding. Applies AI_BASE_URL / AI_SDK_KEY (or APNA_CLINIC_AI_*). Session restarts after Apply.'**
+  String get apnaClinicAiSdkEndpointHint;
+
+  /// No description provided for @apnaClinicAiSdkBaseUrlLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Base URL'**
+  String get apnaClinicAiSdkBaseUrlLabel;
+
+  /// No description provided for @apnaClinicAiSdkBaseUrlKeys.
+  ///
+  /// In en, this message translates to:
+  /// **'AI_BASE_URL · APNA_CLINIC_AI_BASE_URL'**
+  String get apnaClinicAiSdkBaseUrlKeys;
+
+  /// No description provided for @apnaClinicAiSdkKeyLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'SDK key'**
+  String get apnaClinicAiSdkKeyLabel;
+
+  /// No description provided for @apnaClinicAiSdkKeyKeys.
+  ///
+  /// In en, this message translates to:
+  /// **'AI_SDK_KEY · APNA_CLINIC_AI_SDK_KEY'**
+  String get apnaClinicAiSdkKeyKeys;
+
+  /// No description provided for @apnaClinicAiSdkEndpointDefaults.
+  ///
+  /// In en, this message translates to:
+  /// **'Compile-time default: {url}'**
+  String apnaClinicAiSdkEndpointDefaults(String url);
+
+  /// No description provided for @apnaClinicAiSdkEndpointApply.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply & reconnect'**
+  String get apnaClinicAiSdkEndpointApply;
+
+  /// No description provided for @apnaClinicAiSdkEndpointReset.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset to defaults'**
+  String get apnaClinicAiSdkEndpointReset;
+
+  /// No description provided for @apnaClinicAiSdkEndpointTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'SDK endpoint (testing)'**
+  String get apnaClinicAiSdkEndpointTooltip;
+
   /// No description provided for @apnaClinicAiHoldToTalk.
   ///
   /// In en, this message translates to:

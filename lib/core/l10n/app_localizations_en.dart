@@ -2378,6 +2378,40 @@ class AppLocalizationsEn extends AppLocalizations {
   String get apnaClinicAiNewChat => 'New chat';
 
   @override
+  String get apnaClinicAiSdkEndpointTitle => 'AI SDK endpoint (testing)';
+
+  @override
+  String get apnaClinicAiSdkEndpointHint =>
+      'Change the live SDK host and key without rebuilding. Applies AI_BASE_URL / AI_SDK_KEY (or APNA_CLINIC_AI_*). Session restarts after Apply.';
+
+  @override
+  String get apnaClinicAiSdkBaseUrlLabel => 'Base URL';
+
+  @override
+  String get apnaClinicAiSdkBaseUrlKeys =>
+      'AI_BASE_URL · APNA_CLINIC_AI_BASE_URL';
+
+  @override
+  String get apnaClinicAiSdkKeyLabel => 'SDK key';
+
+  @override
+  String get apnaClinicAiSdkKeyKeys => 'AI_SDK_KEY · APNA_CLINIC_AI_SDK_KEY';
+
+  @override
+  String apnaClinicAiSdkEndpointDefaults(String url) {
+    return 'Compile-time default: $url';
+  }
+
+  @override
+  String get apnaClinicAiSdkEndpointApply => 'Apply & reconnect';
+
+  @override
+  String get apnaClinicAiSdkEndpointReset => 'Reset to defaults';
+
+  @override
+  String get apnaClinicAiSdkEndpointTooltip => 'SDK endpoint (testing)';
+
+  @override
   String get apnaClinicAiHoldToTalk => 'Tap to talk';
 
   @override

@@ -1008,6 +1008,24 @@
   "apnaClinicAiSignInRequired": "Sign in to book or use the cart. Symptom guidance works as a guest.",
   "apnaClinicAiSignInCta": "Sign in to continue",
   "apnaClinicAiNewChat": "New chat",
+  "apnaClinicAiSdkEndpointTitle": "AI SDK endpoint (testing)",
+  "@apnaClinicAiSdkEndpointTitle": {
+    "description": "Title for the runtime AI base URL / SDK key dialog"
+  },
+  "apnaClinicAiSdkEndpointHint": "Change the live SDK host and key without rebuilding. Applies AI_BASE_URL / AI_SDK_KEY (or APNA_CLINIC_AI_*). Session restarts after Apply.",
+  "apnaClinicAiSdkBaseUrlLabel": "Base URL",
+  "apnaClinicAiSdkBaseUrlKeys": "AI_BASE_URL · APNA_CLINIC_AI_BASE_URL",
+  "apnaClinicAiSdkKeyLabel": "SDK key",
+  "apnaClinicAiSdkKeyKeys": "AI_SDK_KEY · APNA_CLINIC_AI_SDK_KEY",
+  "apnaClinicAiSdkEndpointDefaults": "Compile-time default: {url}",
+  "@apnaClinicAiSdkEndpointDefaults": {
+    "placeholders": {
+      "url": { "type": "String" }
+    }
+  },
+  "apnaClinicAiSdkEndpointApply": "Apply & reconnect",
+  "apnaClinicAiSdkEndpointReset": "Reset to defaults",
+  "apnaClinicAiSdkEndpointTooltip": "SDK endpoint (testing)",
   "apnaClinicAiHoldToTalk": "Tap to talk",
   "apnaClinicAiTapMicToSend": "Tap the mic to send",
   "@apnaClinicAiTapMicToSend": {

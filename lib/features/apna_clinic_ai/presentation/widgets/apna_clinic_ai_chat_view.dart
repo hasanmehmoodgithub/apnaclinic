@@ -225,17 +225,12 @@ class _ApnaClinicAiChatViewState extends State<ApnaClinicAiChatView> {
                           onSignIn: () => _openSignIn(context, cubit),
                         ),
                 ),
-                if (state.connecting && !state.hasThread) ...[
-                  const ApnaClinicAiChipShimmer(),
-                  const ApnaClinicAiFieldShimmer(),
-                ],
                 if (showStarterSuggestions)
                   ApnaClinicAiSuggestionRow(
                     suggestions: chips,
                     onTap: cubit.sendText,
                   ),
-                if (state.hasThread ||
-                    (!state.connecting && state.errorCode == null))
+                if (state.hasThread || state.errorCode == null)
                   _ChatComposerDock(
                   state: state,
                   playback: playback,
@@ -379,8 +374,8 @@ class _ChatComposerDock extends StatelessWidget {
               : ApnaClinicAiComposer(
                   controller: controller,
                   hintText: l10n.apnaClinicAiChatComposerHint,
-                  enabled: !state.streaming,
-                  micEnabled: true,
+                  enabled: !state.streaming && !state.connecting,
+                  micEnabled: !state.connecting,
                   recording: false,
                   onSend: onSend,
                   onMicTap: onMicTap,

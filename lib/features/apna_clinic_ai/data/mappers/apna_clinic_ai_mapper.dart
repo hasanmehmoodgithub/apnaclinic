@@ -35,6 +35,7 @@ extension ApnaClinicAiTurnModelMapper on ApnaClinicAiTurnModel {
             (item) => ApnaClinicAiQuickActionEntity(
               label: item.label,
               send: item.send,
+              url: item.url,
             ),
           )
           .toList(),

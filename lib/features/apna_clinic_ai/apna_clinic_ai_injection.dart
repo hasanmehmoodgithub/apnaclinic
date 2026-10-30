@@ -19,7 +19,9 @@ import 'presentation/cubit/apna_clinic_ai_cubit.dart';
 
 void initApnaClinicAiInjector() {
   sl.registerLazySingleton<ApnaClinicAiConfig>(
-    ApnaClinicAiConfig.fromEnvironment,
+    () => ApnaClinicAiConfig.fromEnvironment(
+      preferences: sl<SharedPreferences>(),
+    ),
   );
   sl.registerLazySingleton<ApnaClinicAiSdkClient>(
     () => ApnaClinicAiSdkClient(
@@ -75,6 +77,8 @@ void initApnaClinicAiInjector() {
       sendMessageUseCase: sl<SendApnaClinicAiMessageUseCase>(),
       sendAudioUseCase: sl<SendApnaClinicAiAudioUseCase>(),
       localDataSource: sl<ApnaClinicAiLocalDataSource>(),
+      config: sl<ApnaClinicAiConfig>(),
+      preferences: sl<SharedPreferences>(),
       appPref: sl<AppPref>(),
       speechToText: sl<SpeechToTextService>(),
       audioRecorder: sl<ApnaClinicAiAudioRecorderService>(),

@@ -1,6 +1,9 @@
+import 'package:shared_preferences/shared_preferences.dart';
+
 /// All Apna Clinic AI SDK base config + relative paths.
 ///
 /// Override with dart-defines (`AI_*` preferred, else `APNA_CLINIC_AI_*`).
+/// Runtime testing can also override via [ApnaClinicAiConfig.applyOverrides].
 class ApnaClinicAiUrls {
   ApnaClinicAiUrls._();
 
@@ -39,6 +42,18 @@ class ApnaClinicAiUrls {
     return tenant.isEmpty ? 'apnaclinic' : tenant;
   }
 
+  /// Compile-time `AI_BASE_URL` (may be empty).
+  static String get aiBaseDefine => _aiBase.trim();
+
+  /// Compile-time `APNA_CLINIC_AI_BASE_URL` (has default).
+  static String get apnaBaseDefine => _apnaBase.trim();
+
+  /// Compile-time `AI_SDK_KEY` (may be empty).
+  static String get aiKeyDefine => _aiKey.trim();
+
+  /// Compile-time `APNA_CLINIC_AI_SDK_KEY` (has default).
+  static String get apnaKeyDefine => _apnaKey.trim();
+
   // ---------------------------------------------------------------------------
   // SDK paths (relative to base URL)
   // ---------------------------------------------------------------------------
@@ -59,27 +74,73 @@ class ApnaClinicAiUrls {
 }
 
 /// Injectable host + credentials for the AI SDK Dio client.
+///
+/// Mutable so a testing dialog can swap base URL / SDK key without a rebuild.
 class ApnaClinicAiConfig {
-  const ApnaClinicAiConfig({
-    required this.baseUrl,
-    required this.sdkKey,
+  ApnaClinicAiConfig({
+    required String baseUrl,
+    required String sdkKey,
     this.tenant = 'apnaclinic',
-  });
+  }) : _baseUrl = baseUrl.trim(),
+       _sdkKey = sdkKey.trim();
 
-  final String baseUrl;
-  final String sdkKey;
+  static const overrideBaseUrlKey = 'apna_clinic_ai.override_base_url';
+  static const overrideSdkKeyKey = 'apna_clinic_ai.override_sdk_key';
+
+  String _baseUrl;
+  String _sdkKey;
   final String tenant;
+
+  String get baseUrl => _baseUrl;
+  String get sdkKey => _sdkKey;
 
   bool get isConfigured =>
       baseUrl.trim().isNotEmpty && sdkKey.trim().isNotEmpty;
 
+  bool get hasRuntimeOverride =>
+      _baseUrl != ApnaClinicAiUrls.defaultBaseUrl ||
+      _sdkKey != ApnaClinicAiUrls.defaultSdkKey;
+
   String url(String path) => ApnaClinicAiUrls.resolve(baseUrl, path);
 
-  factory ApnaClinicAiConfig.fromEnvironment() {
-    return ApnaClinicAiConfig(
+  void applyOverrides({required String baseUrl, required String sdkKey}) {
+    _baseUrl = baseUrl.trim();
+    _sdkKey = sdkKey.trim();
+  }
+
+  void resetToEnvironment() {
+    _baseUrl = ApnaClinicAiUrls.defaultBaseUrl;
+    _sdkKey = ApnaClinicAiUrls.defaultSdkKey;
+  }
+
+  Future<void> persistOverrides(SharedPreferences preferences) async {
+    await preferences.setString(overrideBaseUrlKey, _baseUrl);
+    await preferences.setString(overrideSdkKeyKey, _sdkKey);
+  }
+
+  Future<void> clearPersistedOverrides(SharedPreferences preferences) async {
+    await preferences.remove(overrideBaseUrlKey);
+    await preferences.remove(overrideSdkKeyKey);
+  }
+
+  void loadPersistedOverrides(SharedPreferences preferences) {
+    final base = preferences.getString(overrideBaseUrlKey)?.trim() ?? '';
+    final key = preferences.getString(overrideSdkKeyKey)?.trim() ?? '';
+    if (base.isNotEmpty) _baseUrl = base;
+    if (key.isNotEmpty) _sdkKey = key;
+  }
+
+  factory ApnaClinicAiConfig.fromEnvironment({
+    SharedPreferences? preferences,
+  }) {
+    final config = ApnaClinicAiConfig(
       baseUrl: ApnaClinicAiUrls.defaultBaseUrl,
       sdkKey: ApnaClinicAiUrls.defaultSdkKey,
       tenant: ApnaClinicAiUrls.defaultTenant,
     );
+    if (preferences != null) {
+      config.loadPersistedOverrides(preferences);
+    }
+    return config;
   }
 }

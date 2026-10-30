@@ -1,13 +1,19 @@
 import 'package:equatable/equatable.dart';
 
 class ApnaClinicAiQuickActionEntity extends Equatable {
-  const ApnaClinicAiQuickActionEntity({required this.label, required this.send});
+  const ApnaClinicAiQuickActionEntity({
+    required this.label,
+    required this.send,
+    this.url,
+  });
 
   final String label;
   final String send;
+  /// App deep link for native navigation (e.g. pharmacy cart).
+  final String? url;
 
   @override
-  List<Object?> get props => [label, send];
+  List<Object?> get props => [label, send, url];
 }
 
 class ApnaClinicAiDoctorCardEntity extends Equatable {
@@ -95,12 +101,21 @@ class ApnaClinicAiPaymentEntity extends Equatable {
   final String send;
   final String? hint;
 
-  /// Card checkout URL. When set, the row opens the payment web view.
+  /// HTTP → payment web view; `apnaclinic://pharmacy/cart…` → native cart.
   final String? url;
 
   bool get opensPaymentWebView {
     final link = url?.trim() ?? '';
     return link.startsWith('http://') || link.startsWith('https://');
+  }
+
+  bool get opensPharmacyCart {
+    final link = url?.trim().toLowerCase() ?? '';
+    if (link.isEmpty) return false;
+    return link.contains('pharmacy/cart') ||
+        link.contains('step=checkout') ||
+        link.contains('intent=pharmacy_checkout') ||
+        (link.startsWith('apnaclinic://') && link.contains('cart'));
   }
 
   @override

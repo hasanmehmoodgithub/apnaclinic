@@ -2374,6 +2374,41 @@ class AppLocalizationsUr extends AppLocalizations {
   String get apnaClinicAiNewChat => 'نئی چیٹ';
 
   @override
+  String get apnaClinicAiSdkEndpointTitle =>
+      'اے آئی ایس ڈی کے اینڈ پوائنٹ (ٹیسٹنگ)';
+
+  @override
+  String get apnaClinicAiSdkEndpointHint =>
+      'بغیر ری بلڈ کے لائیو ایس ڈی کے ہوسٹ اور کلید بدلیں۔ AI_BASE_URL / AI_SDK_KEY (یا APNA_CLINIC_AI_*)۔ Apply کے بعد سیشن دوبارہ شروع ہوتا ہے۔';
+
+  @override
+  String get apnaClinicAiSdkBaseUrlLabel => 'بیس یو آر ایل';
+
+  @override
+  String get apnaClinicAiSdkBaseUrlKeys =>
+      'AI_BASE_URL · APNA_CLINIC_AI_BASE_URL';
+
+  @override
+  String get apnaClinicAiSdkKeyLabel => 'ایس ڈی کے کلید';
+
+  @override
+  String get apnaClinicAiSdkKeyKeys => 'AI_SDK_KEY · APNA_CLINIC_AI_SDK_KEY';
+
+  @override
+  String apnaClinicAiSdkEndpointDefaults(String url) {
+    return 'کمپائل وقت ڈیفالٹ: $url';
+  }
+
+  @override
+  String get apnaClinicAiSdkEndpointApply => 'لگائیں اور دوبارہ جوڑیں';
+
+  @override
+  String get apnaClinicAiSdkEndpointReset => 'ڈیفالٹ پر واپس';
+
+  @override
+  String get apnaClinicAiSdkEndpointTooltip => 'ایس ڈی کے اینڈ پوائنٹ (ٹیسٹنگ)';
+
+  @override
   String get apnaClinicAiHoldToTalk => 'بولنے کے لیے ٹیپ کریں';
 
   @override

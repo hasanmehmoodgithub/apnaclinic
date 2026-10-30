@@ -1,7 +1,9 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/extensions/screen_util_extensions.dart';
+import '../../../../core/flavor/flavor_config.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../apna_clinic_ai_copy.dart';
 import '../constants/apna_clinic_ai_ui_config.dart';
@@ -9,6 +11,7 @@ import '../cubit/apna_clinic_ai_cubit.dart';
 import '../cubit/apna_clinic_ai_state.dart';
 import 'apna_clinic_ai_bot_avatar.dart';
 import 'apna_clinic_ai_home_disclaimer.dart';
+import 'apna_clinic_ai_sdk_endpoint_dialog.dart';
 
 class ApnaClinicAiChatHeader extends StatelessWidget {
   const ApnaClinicAiChatHeader({
@@ -85,6 +88,12 @@ class ApnaClinicAiChatHeader extends StatelessWidget {
                 onPressed: () => _showDisclaimer(context),
                 tooltip: l10n.apnaClinicAiDisclaimerTitle,
               ),
+              if (_showSdkEndpointTool)
+                _HeaderIconButton(
+                  icon: Icons.tune_rounded,
+                  onPressed: () => showApnaClinicAiSdkEndpointDialog(context),
+                  tooltip: l10n.apnaClinicAiSdkEndpointTooltip,
+                ),
               _HeaderIconButton(
                 icon: Icons.refresh_rounded,
                 onPressed: onNewChat,
@@ -97,6 +106,11 @@ class ApnaClinicAiChatHeader extends StatelessWidget {
     );
   }
 }
+
+bool get _showSdkEndpointTool =>
+    kDebugMode ||
+    FlavorConfig.enableDebugFeatures ||
+    !FlavorConfig.isProduction;
 
 class _HeaderVm {
   const _HeaderVm({required this.name, required this.subtitle});

@@ -1,8 +1,14 @@
 class ApnaClinicAiQuickActionModel {
-  const ApnaClinicAiQuickActionModel({required this.label, required this.send});
+  const ApnaClinicAiQuickActionModel({
+    required this.label,
+    required this.send,
+    this.url,
+  });
 
   final String label;
   final String send;
+  /// App deep link (e.g. `apnaclinic://medicine/…?step=cart`) for native nav.
+  final String? url;
 }
 
 class ApnaClinicAiDoctorCardModel {

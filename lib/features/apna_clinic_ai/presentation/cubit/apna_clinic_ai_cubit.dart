@@ -2,11 +2,13 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../core/preference/app_pref.dart';
 import '../../../../core/services/speech_to_text_service.dart';
 import '../../../../core/utils/auth_guard.dart';
 import '../../../../core/utils/microphone_permission_utils.dart';
+import '../../data/apna_clinic_ai_urls.dart';
 import '../../data/data_sources/apna_clinic_ai_local_data_source.dart';
 import '../../data/apna_clinic_ai_sse.dart';
 import '../../data/services/apna_clinic_ai_audio_recorder_service.dart';
@@ -31,6 +33,8 @@ class ApnaClinicAiCubit extends Cubit<ApnaClinicAiState> {
     required this.sendMessageUseCase,
     required this.sendAudioUseCase,
     required this.localDataSource,
+    required this.config,
+    required this.preferences,
     required this.appPref,
     required this.speechToText,
     required this.audioRecorder,
@@ -78,6 +82,8 @@ class ApnaClinicAiCubit extends Cubit<ApnaClinicAiState> {
   final SendApnaClinicAiMessageUseCase sendMessageUseCase;
   final SendApnaClinicAiAudioUseCase sendAudioUseCase;
   final ApnaClinicAiLocalDataSource localDataSource;
+  final ApnaClinicAiConfig config;
+  final SharedPreferences preferences;
   final AppPref appPref;
   final SpeechToTextService speechToText;
   final ApnaClinicAiAudioRecorderService audioRecorder;
@@ -368,6 +374,59 @@ class ApnaClinicAiCubit extends Cubit<ApnaClinicAiState> {
     _liveCaption = '';
     _startingVoice = false;
     unawaited(_resetConversation());
+  }
+
+  /// Testing: swap SDK host / key, clear the session, and reconnect.
+  Future<void> applySdkEndpoint({
+    required String baseUrl,
+    required String sdkKey,
+  }) async {
+    final nextBase = baseUrl.trim();
+    final nextKey = sdkKey.trim();
+    if (nextBase.isEmpty || nextKey.isEmpty) return;
+
+    config.applyOverrides(baseUrl: nextBase, sdkKey: nextKey);
+    await config.persistOverrides(preferences);
+
+    _connected = false;
+    _sessionInitDoneThisProcess = false;
+    _greetingAudioPlayed = false;
+    _greetingAudioBase64 = '';
+    _greetingAudioMediaType = '';
+    _cancelTurnSubs();
+    _resetReveal();
+    unawaited(speechToText.cancel());
+    unawaited(audioRecorder.cancel());
+    _liveCaption = '';
+    _startingVoice = false;
+
+    final ready = await connect(forceRefresh: true);
+    if (ready) _sessionInitDoneThisProcess = true;
+    if (isClosed) return;
+    await _resetConversation();
+  }
+
+  /// Testing: clear runtime overrides and reconnect with dart-define defaults.
+  Future<void> resetSdkEndpointToEnvironment() async {
+    config.resetToEnvironment();
+    await config.clearPersistedOverrides(preferences);
+
+    _connected = false;
+    _sessionInitDoneThisProcess = false;
+    _greetingAudioPlayed = false;
+    _greetingAudioBase64 = '';
+    _greetingAudioMediaType = '';
+    _cancelTurnSubs();
+    _resetReveal();
+    unawaited(speechToText.cancel());
+    unawaited(audioRecorder.cancel());
+    _liveCaption = '';
+    _startingVoice = false;
+
+    final ready = await connect(forceRefresh: true);
+    if (ready) _sessionInitDoneThisProcess = true;
+    if (isClosed) return;
+    await _resetConversation();
   }
 
   Future<void> _resetConversation() async {

@@ -152,7 +152,9 @@ class ApnaClinicAiTurnParser {
       (card) => card.kind.toLowerCase() == 'payment',
     );
     final hasPayLink = blocks.payments.any(
-      (payment) => _httpUrl(payment.url) != null,
+      (payment) =>
+          _httpUrl(payment.url) != null ||
+          _deepLinkUrl(payment.url) != null,
     );
     // Image cards or a checkout link already cover payment. Skip guessed methods.
     final payments = (hasPaymentCards || hasPayLink)
@@ -310,22 +312,38 @@ class ApnaClinicAiTurnParser {
     if (raw is Map) {
       final label = (raw['label'] ?? raw['send'] ?? raw['id'] ?? '').toString();
       final explicit = (raw['send'] ?? raw['message'] ?? '').toString();
+      final url = _deepLinkUrl(raw['url']);
       if (explicit.isNotEmpty) {
-        return ApnaClinicAiQuickActionModel(label: label, send: explicit);
+        return ApnaClinicAiQuickActionModel(
+          label: label,
+          send: explicit,
+          url: url,
+        );
       }
       final id = raw['id']?.toString() ?? '';
       if (_doctorId.hasMatch(id)) {
-        return ApnaClinicAiQuickActionModel(label: label, send: id);
+        return ApnaClinicAiQuickActionModel(label: label, send: id, url: url);
       }
       if (RegExp(r'^\d+$').hasMatch(id) && label.isNotEmpty) {
         return ApnaClinicAiQuickActionModel(
           label: label,
           send: 'doctorId $id — show slots for $label',
+          url: url,
         );
       }
-      return ApnaClinicAiQuickActionModel(label: label, send: label);
+      return ApnaClinicAiQuickActionModel(label: label, send: label, url: url);
     }
     return const ApnaClinicAiQuickActionModel(label: '', send: '');
+  }
+
+  static String? _deepLinkUrl(Object? raw) {
+    final value = raw?.toString().trim() ?? '';
+    if (value.startsWith('apnaclinic://') ||
+        value.startsWith('http://') ||
+        value.startsWith('https://')) {
+      return value;
+    }
+    return null;
   }
 
   static _ParsedDoctor _parseDoctorSend(String send, String label) {
@@ -463,6 +481,7 @@ class ApnaClinicAiTurnParser {
                 ApnaClinicAiQuickActionModel(
                   label: label.isEmpty ? send : label,
                   send: send,
+                  url: _deepLinkUrl(chip['url']),
                 ),
               );
             }
@@ -485,36 +504,33 @@ class ApnaClinicAiTurnParser {
       }
       if (kind == 'payment_handoff' && block['handoff'] is Map) {
         final handoff = block['handoff'] as Map;
-        final payUrl = _httpUrl(
-          handoff['paymentLink'] ??
-              handoff['payment_url'] ??
-              handoff['payment_link'],
+        final rawUrl = handoff['url'] ??
+            handoff['paymentLink'] ??
+            handoff['payment_url'] ??
+            handoff['payment_link'];
+        // HTTP → card web view; apnaclinic://pharmacy/cart → native cart.
+        final payUrl = _httpUrl(rawUrl) ?? _deepLinkUrl(rawUrl);
+        final method = (handoff['method'] ?? handoff['name'] ?? 'Pay')
+            .toString()
+            .trim();
+        final hint = [
+          handoff['amount'],
+          handoff['currency'],
+          handoff['description'],
+        ]
+            .where((part) => part != null && part.toString().trim().isNotEmpty)
+            .join(' · ');
+        final isHttp = payUrl != null && _httpUrl(payUrl) != null;
+        payments.add(
+          ApnaClinicAiPaymentModel(
+            // HTTP Pay-now rows keep an empty label (l10n Pay now in UI).
+            label: isHttp ? '' : (method.isEmpty ? 'Pay' : method),
+            hint: hint.isEmpty ? null : hint,
+            send: payUrl ?? (method.isEmpty ? 'Pay' : method),
+            url: payUrl,
+          ),
         );
-        if (payUrl != null) {
-          payments.add(
-            ApnaClinicAiPaymentModel(
-              label: '',
-              hint: null,
-              send: payUrl,
-              url: payUrl,
-            ),
-          );
-        } else {
-          final method = (handoff['method'] ?? handoff['name'] ?? 'Pay')
-              .toString();
-          final hint = [
-            handoff['amount'],
-            handoff['currency'],
-            handoff['description'],
-          ].where((part) => part != null && part.toString().trim().isNotEmpty).join(' · ');
-          payments.add(
-            ApnaClinicAiPaymentModel(
-              label: method,
-              hint: hint.isEmpty ? null : hint,
-              send: method,
-            ),
-          );
-        }
+        _rememberTitle(sectionTitles, 'payment', blockTitle);
       }
     }
     return _BlockCards(
