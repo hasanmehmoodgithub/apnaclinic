@@ -5,6 +5,7 @@ import '../../domain/use_cases/submit_consultation_booking_use_case.dart';
 import '../../domain/use_cases/submit_consultation_feedback_use_case.dart';
 import '../models/consultation_booking_list_model.dart';
 import '../models/consultation_category_model.dart';
+import '../models/consultation_doctor_detail_model.dart';
 import '../models/consultation_doctor_model.dart';
 import '../models/consultation_doctor_slots_model.dart';
 import '../models/payment_provider_model.dart';
@@ -21,6 +22,10 @@ abstract class ConsultationRemoteDataSource {
   Future<ConsultationDoctorSlotsModel> getDoctorSlots({
     required String doctorId,
     String? hospitalId,
+  });
+  /// Care Companion only — `GET …/web/doctor-consultation/doctor/{id}`.
+  Future<ConsultationDoctorDetailModel> getDoctorDetail({
+    required String doctorId,
   });
   Future<List<PaymentProviderModel>> getPaymentProviders({
     required String module,

@@ -95,6 +95,11 @@ class AppUrls {
     return '$base?hospitalId=${Uri.encodeComponent(hospitalId.trim())}';
   }
 
+  /// Doctor profile for Care Companion deep-link hydration (aggregator web API).
+  /// `GET /acs-aggregator/api/v1/web/doctor-consultation/doctor/{doctorId}`
+  static String doctorConsultationDoctorDetail(String doctorId) =>
+      '$_normalizedApiBaseUrl/acs-aggregator/api/v1/web/doctor-consultation/doctor/${Uri.encodeComponent(doctorId)}';
+
   /// Doctor consultation booking (aggregator mobile API).
   static String get doctorConsultationBooking =>
       '$_normalizedApiBaseUrl/acs-aggregator/api/v2/mobile/doctor-consultation/book-consultation';

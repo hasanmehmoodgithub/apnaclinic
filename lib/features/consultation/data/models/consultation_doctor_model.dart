@@ -92,7 +92,7 @@ class ConsultationDoctorModel {
       isFree: json['isFree'] == true,
       ratingScore: _readDouble(json['ratingScore'] ?? json['rating']),
       qualifications: (qualificationsRaw is List ? qualificationsRaw : const [])
-          .map((item) => item.toString().trim())
+          .map(_qualificationLabel)
           .where((item) => item.isNotEmpty)
           .toList(growable: false),
       education: _nullableText(json['education']),
@@ -194,6 +194,16 @@ class ConsultationDoctorModel {
               ?.toString(),
         ) ??
         '';
+  }
+
+  static String _qualificationLabel(dynamic item) {
+    if (item is Map) {
+      final name = (item['name'] ?? item['title'] ?? item['label'] ?? '')
+          .toString()
+          .trim();
+      if (name.isNotEmpty) return name;
+    }
+    return item?.toString().trim() ?? '';
   }
 
   static String _nullableText(dynamic value) {

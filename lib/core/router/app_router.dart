@@ -237,6 +237,8 @@ class AppRouter {
           return DoctorConsultationBookDoctorScreen(
             doctor: extra.doctor,
             moduleSource: extra.moduleSource,
+            initialSelectedSlot: extra.initialSelectedSlot,
+            hydrateDoctorFromDetailApi: extra.hydrateDoctorFromDetailApi,
           );
         },
       ),

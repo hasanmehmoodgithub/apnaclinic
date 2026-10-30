@@ -16,6 +16,7 @@ import '../mock/consultation_doctors_mock_api.dart';
 import '../models/consultation_booking_form_data.dart';
 import '../models/consultation_booking_list_model.dart';
 import '../models/consultation_category_model.dart';
+import '../models/consultation_doctor_detail_model.dart';
 import '../models/consultation_doctor_model.dart';
 import '../models/consultation_doctor_slots_model.dart';
 import '../models/payment_provider_model.dart';
@@ -189,6 +190,36 @@ class ConsultationRemoteDataSourceImpl implements ConsultationRemoteDataSource {
           hospitalId: hospitalId,
         ),
       );
+      return Future.error(message);
+    }
+  }
+
+  @override
+  Future<ConsultationDoctorDetailModel> getDoctorDetail({
+    required String doctorId,
+  }) async {
+    final endpoint = AppUrls.doctorConsultationDoctorDetail(doctorId);
+    try {
+      final Map<String, dynamic> response;
+      if (ConsultationDoctorSlotsMockApi.useMockResponses) {
+        response = await slotsMockApi.getDoctorSlotsSuccessResponse(
+          doctorId: doctorId,
+        );
+      } else {
+        response = await apiService.get(endpoint);
+        log('getDoctorDetail response: $response');
+      }
+
+      if (_isSuccessResponse(response)) {
+        return ConsultationDoctorDetailModel.fromJson(response);
+      }
+
+      final message = (response['message'] ?? AppStrings.genericErrorMessage)
+          .toString();
+      return Future.error(message);
+    } catch (e) {
+      log('getDoctorDetail error: $e');
+      final message = ErrorHandler.handleExceptions(e, endpoint: endpoint);
       return Future.error(message);
     }
   }

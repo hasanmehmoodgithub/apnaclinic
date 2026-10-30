@@ -17,6 +17,7 @@ class AvailabilitySection extends StatefulWidget {
     required this.isLoading,
     this.errorMessage,
     this.onSlotChanged,
+    this.initialSelectedSlot,
   });
 
   final TextTheme textTheme;
@@ -24,6 +25,7 @@ class AvailabilitySection extends StatefulWidget {
   final bool isLoading;
   final String? errorMessage;
   final ValueChanged<ConsultationSelectedSlotEntity?>? onSlotChanged;
+  final ConsultationSelectedSlotEntity? initialSelectedSlot;
 
   @override
   State<AvailabilitySection> createState() => _AvailabilitySectionState();
@@ -32,25 +34,69 @@ class AvailabilitySection extends StatefulWidget {
 class _AvailabilitySectionState extends State<AvailabilitySection> {
   int? _selectedDateIndex;
   int? _selectedTimeSlotIndex;
+  bool _appliedInitialSlot = false;
 
   @override
   void initState() {
     super.initState();
-    _selectFirstAvailableDate(widget.days, notifySlotChanged: false);
+    _applyDays(widget.days, notifyClearedSlot: false);
   }
 
   @override
   void didUpdateWidget(covariant AvailabilitySection oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.days != widget.days) {
-      _selectFirstAvailableDate(widget.days);
+      _appliedInitialSlot = false;
+      _applyDays(widget.days, notifyClearedSlot: true);
     }
   }
 
-  void _selectFirstAvailableDate(
+  static String _normTime(String value) =>
+      value.toLowerCase().replaceAll(RegExp(r'\s+'), '');
+
+  void _applyDays(
     List<ConsultationAvailabilityDayEntity> days, {
-    bool notifySlotChanged = true,
+    required bool notifyClearedSlot,
   }) {
+    final initial = widget.initialSelectedSlot;
+    if (initial != null && !_appliedInitialSlot && days.isNotEmpty) {
+      final dateIdx = days.indexWhere((day) => day.date == initial.date);
+      if (dateIdx >= 0) {
+        final slotIdx = days[dateIdx].slots.indexWhere(
+          (slot) =>
+              _normTime(slot.startTime) == _normTime(initial.startTime) &&
+              _normTime(slot.endTime) == _normTime(initial.endTime),
+        );
+        if (slotIdx >= 0) {
+          final matched = days[dateIdx].slots[slotIdx];
+          setState(() {
+            _selectedDateIndex = dateIdx;
+            _selectedTimeSlotIndex = slotIdx;
+            _appliedInitialSlot = true;
+          });
+          final selected = ConsultationSelectedSlotEntity(
+            date: days[dateIdx].date,
+            startTime: matched.startTime,
+            endTime: matched.endTime,
+            label: matched.label,
+          );
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (!mounted) return;
+            widget.onSlotChanged?.call(selected);
+          });
+          return;
+        }
+        // Date found but time missing in API list — still show that day.
+        setState(() {
+          _selectedDateIndex = dateIdx;
+          _selectedTimeSlotIndex = null;
+          _appliedInitialSlot = true;
+        });
+        return;
+      }
+      _appliedInitialSlot = true;
+    }
+
     final firstAvailableIndex =
         days.indexWhere((day) => day.slots.isNotEmpty);
     setState(() {
@@ -59,7 +105,8 @@ class _AvailabilitySectionState extends State<AvailabilitySection> {
       _selectedTimeSlotIndex = null;
     });
 
-    if (!notifySlotChanged) return;
+    // Do not clear a deep-link prefill when availability reloads.
+    if (!notifyClearedSlot || widget.initialSelectedSlot != null) return;
 
     final callback = widget.onSlotChanged;
     if (callback == null) return;

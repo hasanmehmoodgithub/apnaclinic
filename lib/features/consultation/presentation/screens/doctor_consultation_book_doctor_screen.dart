@@ -18,6 +18,7 @@ import '../../data/models/doctor_consultation_checkout_model.dart';
 import '../../domain/entities/consultation_booking_attachment_entity.dart';
 import '../../domain/entities/consultation_doctor_slots_entity.dart';
 import '../../domain/entities/consultation_selected_slot_entity.dart';
+import '../../domain/use_cases/get_consultation_doctor_detail_use_case.dart';
 import '../../domain/use_cases/get_consultation_doctor_slots_use_case.dart';
 import '../../domain/use_cases/get_payment_providers_use_case.dart';
 import '../consultation_analytics.dart';
@@ -25,6 +26,7 @@ import '../constants/consultation_booking_attachment_config.dart';
 import '../constants/consultation_system_ui.dart';
 import '../constants/consultation_ui_config.dart';
 import '../doctor_consultation_checkout_args.dart';
+import '../mappers/consultation_doctor_detail_mapper.dart';
 import '../widgets/consultation_hero_banner_widget.dart';
 import '../widgets/consultation_screen_header_widget.dart';
 import '../widgets/consultation_upload_document_sheet_widget.dart';
@@ -34,11 +36,15 @@ import '../widgets/results_doctor_item.dart';
 class DoctorConsultationBookDoctorScreen extends StatefulWidget {
   final ResultsDoctorItem doctor;
   final String? moduleSource;
+  final ConsultationSelectedSlotEntity? initialSelectedSlot;
+  final bool hydrateDoctorFromDetailApi;
 
   const DoctorConsultationBookDoctorScreen({
     super.key,
     required this.doctor,
     this.moduleSource,
+    this.initialSelectedSlot,
+    this.hydrateDoctorFromDetailApi = false,
   });
 
   @override
@@ -51,7 +57,9 @@ class _DoctorConsultationBookDoctorScreenState
   final ImagePicker _imagePicker = ImagePicker();
   final TextEditingController _issueController = TextEditingController();
   final List<ConsultationBookingAttachmentEntity> _attachments = [];
-  ConsultationSelectedSlotEntity? _selectedSlot;
+  late ConsultationSelectedSlotEntity? _selectedSlot =
+      widget.initialSelectedSlot;
+  late ResultsDoctorItem _doctor = widget.doctor;
   String? _validationErrorMessage;
   bool _isAvailabilityLoading = true;
   String? _availabilityErrorMessage;
@@ -66,7 +74,7 @@ class _DoctorConsultationBookDoctorScreenState
       if (widget.moduleSource == AnalyticsConsultancySourceKeys.search) {
         ConsultationAnalytics.logModule(widget.moduleSource!);
       }
-      ConsultationAnalytics.logProfileScreen(widget.doctor);
+      ConsultationAnalytics.logProfileScreen(_doctor);
       _loadDoctorSlots();
     });
   }
@@ -77,12 +85,19 @@ class _DoctorConsultationBookDoctorScreenState
       _availabilityErrorMessage = null;
     });
 
-    final doctor = widget.doctor;
+    final doctor = _doctor;
     final doctorId = doctor.partnerDoctorId.trim().isNotEmpty
         ? doctor.partnerDoctorId
         : (doctor.apiDoctorId.trim().isNotEmpty ? doctor.apiDoctorId : doctor.id);
     final hospitalId =
         doctor.hospitalId.trim().isNotEmpty ? doctor.hospitalId : null;
+
+    // AI deep link only — dedicated web detail API for missing profile fields.
+    final detailFuture = widget.hydrateDoctorFromDetailApi
+        ? sl<GetConsultationDoctorDetailUseCase>()(
+            GetConsultationDoctorDetailParams(doctorId: doctorId),
+          )
+        : null;
 
     final result = await sl<GetConsultationDoctorSlotsUseCase>()(
       GetConsultationDoctorSlotsParams(
@@ -107,6 +122,16 @@ class _DoctorConsultationBookDoctorScreenState
         _slotsDoctorInfo = schedule.doctorInfo;
       }),
     );
+
+    if (detailFuture == null || !mounted) return;
+    final detailResult = await detailFuture;
+    if (!mounted) return;
+    detailResult.fold(
+      (_) {},
+      (profile) => setState(() {
+        _doctor = profile.toResultsDoctorItem();
+      }),
+    );
   }
 
   @override
@@ -122,7 +147,7 @@ class _DoctorConsultationBookDoctorScreenState
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final textTheme = Theme.of(context).textTheme;
-    final doctor = widget.doctor;
+    final doctor = _doctor;
     final qualification = doctor.qualification.trim();
     final experience = doctor.experience.trim();
     final description = doctor.description.trim();
@@ -204,6 +229,7 @@ class _DoctorConsultationBookDoctorScreenState
                         availabilityDays: _availabilityDays,
                         isAvailabilityLoading: _isAvailabilityLoading,
                         availabilityErrorMessage: _availabilityErrorMessage,
+                        initialSelectedSlot: widget.initialSelectedSlot,
                       ),
                       if (_validationErrorMessage != null)
                         Container(

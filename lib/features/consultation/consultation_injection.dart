@@ -14,6 +14,7 @@ import 'domain/use_cases/abandon_consultation_booking_use_case.dart';
 import 'domain/use_cases/get_consultation_booking_use_case.dart';
 import 'domain/use_cases/get_consultation_bookings_use_case.dart';
 import 'domain/use_cases/get_consultation_categories_use_case.dart';
+import 'domain/use_cases/get_consultation_doctor_detail_use_case.dart';
 import 'domain/use_cases/get_consultation_doctor_slots_use_case.dart';
 import 'domain/use_cases/get_consultation_doctors_use_case.dart';
 import 'domain/use_cases/get_payment_providers_use_case.dart';
@@ -74,6 +75,12 @@ void initConsultationInjector() {
 
   sl.registerLazySingleton<GetConsultationDoctorSlotsUseCase>(
     () => GetConsultationDoctorSlotsUseCase(
+      repository: sl<ConsultationRepository>(),
+    ),
+  );
+
+  sl.registerLazySingleton<GetConsultationDoctorDetailUseCase>(
+    () => GetConsultationDoctorDetailUseCase(
       repository: sl<ConsultationRepository>(),
     ),
   );

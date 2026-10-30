@@ -13,6 +13,27 @@ class ConsultationDoctorSlotsMockApi {
       'message': 'Doctor details retrieved',
       'code': 200,
       'data': {
+        'id': int.tryParse(doctorId) ?? 123,
+        'publicId': 'doc_$doctorId',
+        'displayName': 'Dr. Example',
+        'yearsOfExperience': 10,
+        'gender': 'male',
+        'profileImageUrl': '',
+        'consultationFee': '1500.00',
+        'discountPercent': '20',
+        'isFree': false,
+        'bio': 'Mock doctor profile for consultation slots.',
+        'education': 'MBBS',
+        'specialtyId': 5,
+        'specialtyName': 'Cardiology',
+        'ratingScore': '4.70',
+        'qualifications': [
+          {'type': 'degree', 'name': 'MBBS'},
+        ],
+        'partner': {
+          'tenantId': 1,
+          'logoUrl': '',
+        },
         'doctorInfo': {
           'ratings': 5,
           'pmdcVerified': true,

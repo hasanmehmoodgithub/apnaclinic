@@ -35,9 +35,10 @@ class DoctorConsultationBookingBodyWidget extends StatelessWidget {
     required this.issueController,
     required this.onSlotChanged,
     required this.availabilityDays,
-    required     this.isAvailabilityLoading,
+    required this.isAvailabilityLoading,
     this.availabilityErrorMessage,
     this.patientReviews,
+    this.initialSelectedSlot,
   });
 
   final String doctorName;
@@ -62,6 +63,7 @@ class DoctorConsultationBookingBodyWidget extends StatelessWidget {
   final bool isAvailabilityLoading;
   final String? availabilityErrorMessage;
   final ConsultationPatientReviewsEntity? patientReviews;
+  final ConsultationSelectedSlotEntity? initialSelectedSlot;
 
   @override
   Widget build(BuildContext context) {
@@ -118,6 +120,7 @@ class DoctorConsultationBookingBodyWidget extends StatelessWidget {
               isLoading: isAvailabilityLoading,
               errorMessage: availabilityErrorMessage,
               onSlotChanged: onSlotChanged,
+              initialSelectedSlot: initialSelectedSlot,
             ),
             SizedBox(height: 20.h),
             IssueSection(

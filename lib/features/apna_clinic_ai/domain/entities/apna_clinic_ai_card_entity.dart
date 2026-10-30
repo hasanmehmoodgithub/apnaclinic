@@ -101,7 +101,7 @@ class ApnaClinicAiPaymentEntity extends Equatable {
   final String send;
   final String? hint;
 
-  /// HTTP → payment web view; `apnaclinic://pharmacy/cart…` → native cart.
+  /// HTTP → payment web view; `apnaclinic://…` → native pharmacy/consultation.
   final String? url;
 
   bool get opensPaymentWebView {
@@ -113,9 +113,15 @@ class ApnaClinicAiPaymentEntity extends Equatable {
     final link = url?.trim().toLowerCase() ?? '';
     if (link.isEmpty) return false;
     return link.contains('pharmacy/cart') ||
-        link.contains('step=checkout') ||
         link.contains('intent=pharmacy_checkout') ||
-        (link.startsWith('apnaclinic://') && link.contains('cart'));
+        link.startsWith('apnaclinic://pharmacy');
+  }
+
+  bool get opensConsultationCheckout {
+    final link = url?.trim().toLowerCase() ?? '';
+    if (link.isEmpty) return false;
+    return link.contains('apnaclinic://doctor/') ||
+        link.contains('intent=book_consultation');
   }
 
   @override

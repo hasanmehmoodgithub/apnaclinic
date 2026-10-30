@@ -3,6 +3,7 @@ import '../../../payment/domain/entities/payment_initiation_result.dart';
 import '../entities/consultation_doctors_page_entity.dart';
 import '../entities/consultation_booking_list_entity.dart';
 import '../entities/consultation_categories_page_entity.dart';
+import '../entities/consultation_doctor_detail_entity.dart';
 import '../entities/consultation_doctor_slots_entity.dart';
 import '../entities/payment_provider_entity.dart';
 import '../use_cases/abandon_consultation_booking_use_case.dart';
@@ -22,6 +23,9 @@ abstract class ConsultationRepository {
   Future<Either<ErrorMsg, ConsultationDoctorSlotsEntity>> getDoctorSlots({
     required String doctorId,
     String? hospitalId,
+  });
+  Future<Either<ErrorMsg, ConsultationDoctorDetailEntity>> getDoctorDetail({
+    required String doctorId,
   });
   Future<Either<ErrorMsg, List<PaymentProviderEntity>>> getPaymentProviders({
     required String module,

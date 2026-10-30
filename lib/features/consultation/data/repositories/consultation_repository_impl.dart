@@ -2,6 +2,7 @@ import '../../../../core/functional/functional_export.dart';
 import '../../../payment/domain/entities/payment_initiation_result.dart';
 import '../../domain/entities/consultation_booking_list_entity.dart';
 import '../../domain/entities/consultation_categories_page_entity.dart';
+import '../../domain/entities/consultation_doctor_detail_entity.dart';
 import '../../domain/entities/consultation_doctor_slots_entity.dart';
 import '../../domain/repositories/consultation_repository.dart';
 import '../../domain/entities/payment_provider_entity.dart';
@@ -77,6 +78,26 @@ class ConsultationRepositoryImpl implements ConsultationRepository {
           ? e.trim()
           : 'Unable to load availability right now.';
       return Left(ConsultationSlotsErrorUtils.toUserMessage(raw));
+    }
+  }
+
+  @override
+  Future<Either<ErrorMsg, ConsultationDoctorDetailEntity>> getDoctorDetail({
+    required String doctorId,
+  }) async {
+    try {
+      if (doctorId.trim().isEmpty) {
+        return const Left('Doctor not found. Please try again.');
+      }
+      final model = await remoteDataSource.getDoctorDetail(
+        doctorId: doctorId,
+      );
+      return Right(model.toEntity());
+    } catch (e) {
+      if (e is String && e.trim().isNotEmpty) {
+        return Left(e.trim());
+      }
+      return const Left('Unable to load doctor details right now.');
     }
   }
 

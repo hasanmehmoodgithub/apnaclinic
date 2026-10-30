@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -8,6 +10,7 @@ import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/widgets/apna_clinic_ai_bot_lottie.dart';
+import '../../../../generated/assets.dart';
 import '../constants/main_navigation_tabs.dart';
 import '../cubit/main_navigation_cubit.dart';
 
@@ -23,7 +26,13 @@ class _ApnaClinicBotFabState extends State<ApnaClinicBotFab>
     with TickerProviderStateMixin {
   late final AnimationController _enter;
   late final AnimationController _float;
+  late final AnimationController _orbit;
   bool _pressed = false;
+
+  static const _orbitLogos = [
+    Assets.imgApnaClinicAiChipDoctor,
+    Assets.imgApnaClinicAiChipMedicine,
+  ];
 
   @override
   void initState() {
@@ -36,20 +45,27 @@ class _ApnaClinicBotFabState extends State<ApnaClinicBotFab>
       vsync: this,
       duration: const Duration(milliseconds: 2000),
     )..repeat(reverse: true);
+    _orbit = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 8000),
+    )..repeat();
   }
 
   @override
   void dispose() {
     _enter.dispose();
     _float.dispose();
+    _orbit.dispose();
     super.dispose();
   }
 
   void _syncFloat(bool enabled) {
     if (enabled) {
       if (!_float.isAnimating) _float.repeat(reverse: true);
-    } else if (_float.isAnimating) {
-      _float.stop();
+      if (!_orbit.isAnimating) _orbit.repeat();
+    } else {
+      if (_float.isAnimating) _float.stop();
+      if (_orbit.isAnimating) _orbit.stop();
     }
   }
 
@@ -101,11 +117,102 @@ class _ApnaClinicBotFabState extends State<ApnaClinicBotFab>
                 child: _AskBubble(text: l10n.apnaClinicAiAskAnything),
               ),
               SizedBox(height: 2.h),
-              ApnaClinicAiBotLottie(size: 50, animate: animate),
+              _OrbitingBot(
+                orbit: _orbit,
+                animate: animate,
+                logos: _orbitLogos,
+              ),
             ],
           ),
         ),
       ),
+    );
+  }
+}
+
+/// Stethoscope and pharmacy logos orbit under the face, inside the bot.
+class _OrbitingBot extends StatelessWidget {
+  const _OrbitingBot({
+    required this.orbit,
+    required this.animate,
+    required this.logos,
+  });
+
+  final Animation<double> orbit;
+  final bool animate;
+  final List<String> logos;
+
+  @override
+  Widget build(BuildContext context) {
+    final bot = 50.r;
+    final chip = 12.r;
+    // Ellipse sits on the lower half so the path stays under the face.
+    final centerY = bot * 0.22;
+    final radiusX = bot * 0.22;
+    final radiusY = bot * 0.07;
+    return SizedBox(
+      width: bot,
+      height: bot,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          ApnaClinicAiBotLottie(size: 50, animate: animate),
+          ClipOval(
+            child: SizedBox(
+              width: bot,
+              height: bot,
+              child: AnimatedBuilder(
+                animation: orbit,
+                builder: (context, _) {
+                  final turn = orbit.value * math.pi * 2;
+                  return Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      for (var i = 0; i < logos.length; i++)
+                        Transform.translate(
+                          offset: Offset(
+                            math.cos(turn + (i * math.pi)) * radiusX,
+                            centerY +
+                                math.sin(turn + (i * math.pi)) * radiusY,
+                          ),
+                          child: _OrbitLogo(asset: logos[i], size: chip),
+                        ),
+                    ],
+                  );
+                },
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _OrbitLogo extends StatelessWidget {
+  const _OrbitLogo({required this.asset, required this.size});
+
+  final String asset;
+  final double size;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: size,
+      height: size,
+      padding: EdgeInsets.all(3.r),
+      decoration: BoxDecoration(
+        color: AppColors.clrWhite,
+        shape: BoxShape.circle,
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.clr061E40.withValues(alpha: 0.12),
+            blurRadius: 6.r,
+            offset: Offset(0, 2.h),
+          ),
+        ],
+      ),
+      child: Image.asset(asset, fit: BoxFit.contain),
     );
   }
 }

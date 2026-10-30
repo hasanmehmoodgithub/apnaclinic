@@ -4,6 +4,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
+import '../../../consultation/presentation/consultation_navigation.dart';
 import '../../../payment/presentation/payment_navigation.dart';
 import '../../../pharmacy/presentation/pharmacy_navigation.dart';
 import '../../domain/entities/apna_clinic_ai_card_entity.dart';
@@ -130,7 +131,9 @@ class ApnaClinicAiReplyRail extends StatelessWidget {
               children: [
                 for (final payment in state.payments)
                   _ChoiceTile(
-                    icon: payment.opensPaymentWebView
+                    icon: payment.opensPaymentWebView ||
+                            payment.opensConsultationCheckout ||
+                            payment.opensPharmacyCart
                         ? Icons.credit_card_rounded
                         : _paymentIcon(payment.label),
                     label: payment.label.trim().isNotEmpty
@@ -188,6 +191,15 @@ class ApnaClinicAiReplyRail extends StatelessWidget {
     }
     if (payment.opensPharmacyCart) {
       pharmacyOpenCart(context);
+      return;
+    }
+    if (payment.opensConsultationCheckout) {
+      consultationOpenBookFromDeepLink(
+        context,
+        url: url,
+        doctorName: payment.label,
+        feeHint: payment.hint,
+      );
       return;
     }
     onSend(payment.send);
