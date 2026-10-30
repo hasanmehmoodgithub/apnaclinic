@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -36,7 +38,7 @@ class ProBottomSheet extends StatelessWidget {
   /// Closes the sheet after unsubscribe succeeds so the cancel dialog can show.
   final VoidCallback? onUnsubscribed;
 
-  /// Drag-handle dismiss (pops the outer Pro modal, not the nested navigator).
+  /// Finger-follow dismiss (pops the outer Pro modal, not the nested navigator).
   final VoidCallback? onRequestClose;
 
   @override
@@ -55,17 +57,22 @@ class ProBottomSheet extends StatelessWidget {
               bottom: false,
               child: ConstrainedBox(
                 constraints: BoxConstraints(maxHeight: maxHeight),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: AppColors.clrWhite,
-                    borderRadius: BorderRadius.vertical(
-                      top: Radius.circular(24.r),
-                    ),
-                  ),
-                  clipBehavior: Clip.antiAlias,
-                  child: shrinkWrap
-                      ? _shrinkWrappedSheet(context, state)
-                      : _expandedSheet(context, state, maxHeight),
+                child: _ProSheetMotion(
+                  onDismiss: onRequestClose,
+                  builder: (context, physics) {
+                    return Container(
+                      decoration: BoxDecoration(
+                        color: AppColors.clrWhite,
+                        borderRadius: BorderRadius.vertical(
+                          top: Radius.circular(24.r),
+                        ),
+                      ),
+                      clipBehavior: Clip.antiAlias,
+                      child: shrinkWrap
+                          ? _shrinkWrappedSheet(context, state, physics)
+                          : _expandedSheet(context, state, maxHeight),
+                    );
+                  },
                 ),
               ),
             ),
@@ -87,12 +94,17 @@ class ProBottomSheet extends StatelessWidget {
     return state.catalog!.membership.isActivePro;
   }
 
-  Widget _shrinkWrappedSheet(BuildContext context, ProState state) {
+  Widget _shrinkWrappedSheet(
+    BuildContext context,
+    ProState state,
+    ScrollPhysics physics,
+  ) {
     return SingleChildScrollView(
+      physics: physics,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          _ProSheetDragHandle(onDismiss: onRequestClose),
+          const _ProSheetDragHandle(trackDrag: false),
           _body(context, state),
         ],
       ),
@@ -108,7 +120,7 @@ class ProBottomSheet extends StatelessWidget {
       height: maxHeight,
       child: Column(
         children: [
-          _ProSheetDragHandle(onDismiss: onRequestClose),
+          const _ProSheetDragHandle(),
           Expanded(child: _body(context, state)),
         ],
       ),
@@ -150,6 +162,7 @@ class ProBottomSheet extends StatelessWidget {
     return _ProSubscribeContent(
       catalog: catalog,
       selectedPlanId: state.selectedPlanId,
+      scrollPhysics: _ProSheetMotion.physicsOf(context),
       onPlanSelected: context.read<ProCubit>().selectPlan,
       onSubscribe: () => _submitSubscribe(context),
     );
@@ -192,44 +205,27 @@ class ProBottomSheet extends StatelessWidget {
   }
 }
 
-/// Large top grab area — nested navigator blocks default modal drag, so this
-/// closes the outer Pro sheet on a short downward swipe.
-class _ProSheetDragHandle extends StatefulWidget {
-  const _ProSheetDragHandle({this.onDismiss});
+/// Large top grab area. The nested navigator blocks the modal's own drag,
+/// so this moves the sheet with the finger and eases it closed.
+class _ProSheetDragHandle extends StatelessWidget {
+  const _ProSheetDragHandle({this.trackDrag = true});
 
-  final VoidCallback? onDismiss;
-
-  @override
-  State<_ProSheetDragHandle> createState() => _ProSheetDragHandleState();
-}
-
-class _ProSheetDragHandleState extends State<_ProSheetDragHandle> {
-  double _dragDistance = 0;
-
-  void _maybeDismiss({required double velocity}) {
-    if (widget.onDismiss == null) return;
-    if (_dragDistance > 28 || velocity > 400) {
-      widget.onDismiss!();
-    }
-    _dragDistance = 0;
-  }
+  /// False when the handle sits inside the sheet scroll view, which already
+  /// forwards a downward pull into [_ProSheetMotion].
+  final bool trackDrag;
 
   @override
   Widget build(BuildContext context) {
+    final motion = _ProSheetMotion.maybeOf(context);
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
-      onVerticalDragStart: (_) => _dragDistance = 0,
-      onVerticalDragUpdate: (details) {
-        if (details.delta.dy > 0) {
-          _dragDistance += details.delta.dy;
-        } else {
-          _dragDistance = (_dragDistance + details.delta.dy).clamp(0, 200);
-        }
-      },
-      onVerticalDragEnd: (details) {
-        _maybeDismiss(velocity: details.primaryVelocity ?? 0);
-      },
-      onVerticalDragCancel: () => _dragDistance = 0,
+      onVerticalDragUpdate: trackDrag
+          ? (details) => motion?.addDelta(details.delta.dy)
+          : null,
+      onVerticalDragEnd: trackDrag
+          ? (details) => motion?.endDrag(details.primaryVelocity ?? 0)
+          : null,
+      onVerticalDragCancel: trackDrag ? () => motion?.endDrag(0) : null,
       child: SizedBox(
         width: double.infinity,
         height: 36.h,
@@ -296,12 +292,14 @@ class _ProSubscribeContent extends StatelessWidget {
     required this.selectedPlanId,
     required this.onPlanSelected,
     required this.onSubscribe,
+    this.scrollPhysics,
   });
 
   final ProCatalogEntity catalog;
   final String? selectedPlanId;
   final ValueChanged<String> onPlanSelected;
   final VoidCallback onSubscribe;
+  final ScrollPhysics? scrollPhysics;
 
   @override
   Widget build(BuildContext context) {
@@ -309,6 +307,7 @@ class _ProSubscribeContent extends StatelessWidget {
       children: [
         Expanded(
           child: SingleChildScrollView(
+            physics: scrollPhysics,
             child: Column(
               children: [
                 ProSheetHeaderWidget(
@@ -386,6 +385,203 @@ class _ProSubscribeContent extends StatelessWidget {
         ),
       ],
     );
+  }
+}
+
+/// Slides the Pro sheet with the finger, then eases it off-screen or back.
+///
+/// The nested navigator inside the modal blocks [ModalBottomSheetRoute] drag,
+/// so the sheet translates itself and only then asks to be popped.
+class _ProSheetMotion extends StatefulWidget {
+  const _ProSheetMotion({required this.builder, required this.onDismiss});
+
+  final Widget Function(BuildContext context, ScrollPhysics physics) builder;
+  final VoidCallback? onDismiss;
+
+  static _ProSheetMotionState? maybeOf(BuildContext context) {
+    return context
+        .dependOnInheritedWidgetOfExactType<_SheetDragScope>()
+        ?.motion;
+  }
+
+  static ScrollPhysics physicsOf(BuildContext context) {
+    return maybeOf(context)?.physics ?? const ClampingScrollPhysics();
+  }
+
+  @override
+  State<_ProSheetMotion> createState() => _ProSheetMotionState();
+}
+
+class _ProSheetMotionState extends State<_ProSheetMotion>
+    with SingleTickerProviderStateMixin {
+  final ValueNotifier<double> _offset = ValueNotifier<double>(0);
+  late final AnimationController _settle;
+  late final ScrollPhysics physics;
+  Animation<double>? _anim;
+  int _generation = 0;
+  bool _closing = false;
+  bool _settling = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _settle = AnimationController(vsync: this);
+    physics = _PullToClosePhysics(
+      motion: this,
+      parent: const AlwaysScrollableScrollPhysics(
+        parent: ClampingScrollPhysics(),
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _clearAnim();
+    _settle.dispose();
+    _offset.dispose();
+    super.dispose();
+  }
+
+  double get _limit => MediaQuery.sizeOf(context).height;
+
+  void addDelta(double dy) {
+    if (!mounted || _closing) return;
+    _generation++;
+    _settling = false;
+    if (_settle.isAnimating) {
+      _settle.stop();
+      _clearAnim();
+    }
+    final next = (_offset.value + dy).clamp(0.0, _limit);
+    if (next == _offset.value) return;
+    _offset.value = next;
+  }
+
+  void endDrag(double velocity) {
+    if (!mounted || _closing || _settling) return;
+    final current = _offset.value;
+    if (current <= 0) return;
+    final flungClosed = velocity > 1000;
+    final flungOpen = velocity < -300;
+    final dismiss = !flungOpen && (flungClosed || current > 120);
+    if (dismiss) {
+      _animateTo(
+        _limit,
+        const Duration(milliseconds: 280),
+        Curves.easeInCubic,
+        _finishDismiss,
+      );
+    } else {
+      _animateTo(0, const Duration(milliseconds: 320), Curves.easeOutCubic, null);
+    }
+  }
+
+  void _finishDismiss() {
+    if (!mounted || _closing) return;
+    _closing = true;
+    widget.onDismiss?.call();
+  }
+
+  void _animateTo(
+    double target,
+    Duration duration,
+    Curve curve,
+    VoidCallback? done,
+  ) {
+    final generation = ++_generation;
+    _settling = true;
+    final tween = Tween<double>(begin: _offset.value, end: target);
+    _settle.duration = duration;
+    _clearAnim();
+    final anim = tween.animate(CurvedAnimation(parent: _settle, curve: curve));
+    _anim = anim;
+    anim.addListener(_tick);
+    _settle.forward(from: 0).whenComplete(() {
+      if (!mounted || generation != _generation) return;
+      _settling = false;
+      _clearAnim();
+      done?.call();
+    });
+  }
+
+  void _tick() {
+    final anim = _anim;
+    if (anim == null) return;
+    _offset.value = anim.value;
+  }
+
+  void _clearAnim() {
+    _anim?.removeListener(_tick);
+    _anim = null;
+  }
+
+  bool _onScroll(ScrollNotification notification) {
+    if (notification is! ScrollEndNotification) return false;
+    if (notification.metrics.axis != Axis.vertical) return false;
+    endDrag(notification.dragDetails?.primaryVelocity ?? 0);
+    return false;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return NotificationListener<ScrollNotification>(
+      onNotification: _onScroll,
+      child: _SheetDragScope(
+        motion: this,
+        child: ValueListenableBuilder<double>(
+          valueListenable: _offset,
+          builder: (context, value, child) {
+            return Transform.translate(
+              offset: Offset(0, value),
+              child: child,
+            );
+          },
+          child: Builder(
+            builder: (context) => widget.builder(context, physics),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _SheetDragScope extends InheritedWidget {
+  const _SheetDragScope({required this.motion, required super.child});
+
+  final _ProSheetMotionState motion;
+
+  @override
+  bool updateShouldNotify(_SheetDragScope oldWidget) =>
+      oldWidget.motion != motion;
+}
+
+class _PullToClosePhysics extends ScrollPhysics {
+  const _PullToClosePhysics({required this.motion, super.parent});
+
+  final _ProSheetMotionState motion;
+
+  @override
+  _PullToClosePhysics applyTo(ScrollPhysics? ancestor) {
+    return _PullToClosePhysics(motion: motion, parent: buildParent(ancestor));
+  }
+
+  @override
+  double applyBoundaryConditions(ScrollMetrics position, double value) {
+    if (motion._closing) {
+      return super.applyBoundaryConditions(position, value);
+    }
+    if (motion._offset.value > 0 && value > position.pixels) {
+      final delta = value - position.pixels;
+      final consume = math.min(delta, motion._offset.value);
+      motion.addDelta(-consume);
+      return consume;
+    }
+    final atTop = position.pixels <= position.minScrollExtent;
+    if (atTop && value < position.pixels) {
+      motion.addDelta(position.pixels - value);
+      return value - position.pixels;
+    }
+    return super.applyBoundaryConditions(position, value);
   }
 }
 

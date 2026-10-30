@@ -3,12 +3,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/analytics/analytics_event_keys.dart';
+import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/enums/state_status.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/utils/auth_guard.dart';
+import '../../../dashboard/domain/services/home_ai_enabled_session.dart';
 import '../../domain/entities/pharmacy_medicine_entity.dart';
 import '../cubit/pharmacy_cubit.dart';
 import '../cubit/pharmacy_state.dart';
@@ -99,10 +101,18 @@ class _PharmacyMainMedicinesBodyWidgetState
                 Expanded(child: _buildResults(context, l10n, state)),
               ],
             ),
-            Positioned(
-              right: 14.w,
-              bottom: 12.h,
-              child: const PharmacyScanPrescriptionSearchButton(),
+            ListenableBuilder(
+              listenable: sl<HomeAiEnabledSession>(),
+              builder: (context, _) {
+                if (!sl<HomeAiEnabledSession>().isEnabled) {
+                  return const SizedBox.shrink();
+                }
+                return Positioned(
+                  right: 14.w,
+                  bottom: 12.h,
+                  child: const PharmacyScanPrescriptionSearchButton(),
+                );
+              },
             ),
           ],
         );

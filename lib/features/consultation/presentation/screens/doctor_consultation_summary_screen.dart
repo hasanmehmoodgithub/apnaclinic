@@ -299,84 +299,88 @@ class DoctorConsultationSummaryScreen extends StatelessWidget {
                         ),
                       ),
                     ),
-                    Padding(
-                      padding: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 14.h),
-                      child: BlocBuilder<DoctorConsultationCheckoutCubit,
-                          DoctorConsultationCheckoutState>(
-                        builder: (context, state) {
-                          return Column(
-                            children: [
-                              SizedBox(
-                                width: double.infinity,
-                                height: 54.h,
-                                child: FilledButton(
-                                  onPressed: state.isSubmitting
-                                      ? null
-                                      : () => _submitBooking(context),
-                                  style: FilledButton.styleFrom(
-                                    backgroundColor: const Color(0xFF1FAFA3),
-                                    foregroundColor: Colors.white,
-                                    elevation: 0,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(14.r),
+                    SafeArea(
+                      top: false,
+                      bottom: true,
+                      child: Padding(
+                        padding: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 14.h),
+                        child: BlocBuilder<DoctorConsultationCheckoutCubit,
+                            DoctorConsultationCheckoutState>(
+                          builder: (context, state) {
+                            return Column(
+                              children: [
+                                SizedBox(
+                                  width: double.infinity,
+                                  height: 54.h,
+                                  child: FilledButton(
+                                    onPressed: state.isSubmitting
+                                        ? null
+                                        : () => _submitBooking(context),
+                                    style: FilledButton.styleFrom(
+                                      backgroundColor: const Color(0xFF1FAFA3),
+                                      foregroundColor: Colors.white,
+                                      elevation: 0,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(14.r),
+                                      ),
                                     ),
-                                  ),
-                                  child: state.isSubmitting
-                                      ? SizedBox(
-                                          width: 22.r,
-                                          height: 22.r,
-                                          child: const CircularProgressIndicator(
-                                            strokeWidth: 2,
-                                            color: Colors.white,
+                                    child: state.isSubmitting
+                                        ? SizedBox(
+                                            width: 22.r,
+                                            height: 22.r,
+                                            child: const CircularProgressIndicator(
+                                              strokeWidth: 2,
+                                              color: Colors.white,
+                                            ),
+                                          )
+                                        : Text(
+                                            l10n.commonProceed,
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .titleMedium
+                                                ?.copyWith(
+                                                  color: Colors.white,
+                                                  fontWeight: FontWeight.w600,
+                                                  fontSize: 16.sp,
+                                                ),
                                           ),
-                                        )
-                                      : Text(
-                                          l10n.commonProceed,
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .titleMedium
-                                              ?.copyWith(
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.w600,
-                                                fontSize: 16.sp,
-                                              ),
-                                        ),
-                                ),
-                              ),
-                              SizedBox(height: 10.h),
-                              SizedBox(
-                                width: double.infinity,
-                                height: 54.h,
-                                child: OutlinedButton(
-                                  onPressed: state.isSubmitting
-                                      ? null
-                                      : () => context.pop(),
-                                  style: OutlinedButton.styleFrom(
-                                    backgroundColor: Colors.white,
-                                    side: const BorderSide(
-                                      color: Color(0xFFD1D6DD),
-                                      width: 0.8,
-                                    ),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(14.r),
-                                    ),
-                                  ),
-                                  child: Text(
-                                    l10n.profileCancelCta,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .titleMedium
-                                        ?.copyWith(
-                                          color: const Color(0xFF667B99),
-                                          fontWeight: FontWeight.w500,
-                                          fontSize: 16.sp,
-                                        ),
                                   ),
                                 ),
-                              ),
-                            ],
-                          );
-                        },
+                                SizedBox(height: 10.h),
+                                SizedBox(
+                                  width: double.infinity,
+                                  height: 54.h,
+                                  child: OutlinedButton(
+                                    onPressed: state.isSubmitting
+                                        ? null
+                                        : () => context.pop(),
+                                    style: OutlinedButton.styleFrom(
+                                      backgroundColor: Colors.white,
+                                      side: const BorderSide(
+                                        color: Color(0xFFD1D6DD),
+                                        width: 0.8,
+                                      ),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(14.r),
+                                      ),
+                                    ),
+                                    child: Text(
+                                      l10n.profileCancelCta,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleMedium
+                                          ?.copyWith(
+                                            color: const Color(0xFF667B99),
+                                            fontWeight: FontWeight.w500,
+                                            fontSize: 16.sp,
+                                          ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            );
+                          },
+                        ),
                       ),
                     ),
                   ],

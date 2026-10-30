@@ -24,6 +24,9 @@ abstract class DashboardServicesState with _$DashboardServicesState {
 
     /// Pro promo image from the home panel. Empty when the API omits it.
     String? proBannerUrl,
+
+    /// Home `data.aiEnabled`. The floating bot is shown only when this is true.
+    @Default(false) bool aiEnabled,
     PromotionalBannerEntity? promotionalBanner,
     String? promotionalBannerErrorMessage,
     AppUpdatePromptEntity? appUpdatePrompt,

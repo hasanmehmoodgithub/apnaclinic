@@ -7,6 +7,7 @@ import '../../../../core/session/auth_session_refresh.dart';
 import '../../../../core/session/profile_session_sync.dart';
 import '../../../../core/utils/auth_guard.dart';
 import '../../../profile_setup/domain/use_cases/get_profile_setup_content_use_case.dart';
+import '../../domain/services/home_ai_enabled_session.dart';
 import '../../domain/services/promotional_banner_session.dart';
 import '../../domain/use_cases/check_app_update_use_case.dart';
 import '../../domain/use_cases/get_dashboard_services_use_case.dart';
@@ -19,8 +20,11 @@ class DashboardCubit extends Cubit<DashboardServicesState> {
     required this.checkAppUpdateUseCase,
     required this.getProfileSetupContentUseCase,
     required this.appPref,
+    HomeAiEnabledSession? homeAiEnabledSession,
     ProfileSessionSync? profileSessionSync,
-  })  : _profileSessionSync = profileSessionSync ?? sl<ProfileSessionSync>(),
+  })  : _homeAiEnabledSession =
+            homeAiEnabledSession ?? sl<HomeAiEnabledSession>(),
+        _profileSessionSync = profileSessionSync ?? sl<ProfileSessionSync>(),
         super(const DashboardServicesState()) {
     loadOurServices();
     checkAppUpdate();
@@ -33,6 +37,7 @@ class DashboardCubit extends Cubit<DashboardServicesState> {
   final CheckAppUpdateUseCase checkAppUpdateUseCase;
   final GetProfileSetupContentUseCase getProfileSetupContentUseCase;
   final AppPref appPref;
+  final HomeAiEnabledSession _homeAiEnabledSession;
   final ProfileSessionSync _profileSessionSync;
 
   void _safeEmit(DashboardServicesState newState) {
@@ -57,16 +62,20 @@ class DashboardCubit extends Cubit<DashboardServicesState> {
           servicesErrorMessage: error,
         ),
       ),
-      (data) => _safeEmit(
-        state.copyWith(
-          ourServicesLoadingStateStatus: data.services.isEmpty
-              ? StateStatus.empty
-              : StateStatus.success,
-          servicesList: data.services.where((e) => e.visibility).toList(),
-          servicesErrorMessage: null,
-          proBannerUrl: data.bannerUrl,
-        ),
-      ),
+      (data) {
+        _homeAiEnabledSession.setEnabled(data.aiEnabled);
+        _safeEmit(
+          state.copyWith(
+            ourServicesLoadingStateStatus: data.services.isEmpty
+                ? StateStatus.empty
+                : StateStatus.success,
+            servicesList: data.services.where((e) => e.visibility).toList(),
+            servicesErrorMessage: null,
+            proBannerUrl: data.bannerUrl,
+            aiEnabled: data.aiEnabled,
+          ),
+        );
+      },
     );
   }
 

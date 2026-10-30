@@ -8,9 +8,11 @@ import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_text_styles.dart';
 import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
+import '../../../../core/analytics/apna_clinic_ai_analytics_event_keys.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/widgets/apna_clinic_ai_bot_lottie.dart';
 import '../../../../generated/assets.dart';
+import '../../../apna_clinic_ai/presentation/apna_clinic_ai_analytics.dart';
 import '../constants/main_navigation_tabs.dart';
 import '../cubit/main_navigation_cubit.dart';
 
@@ -70,7 +72,13 @@ class _ApnaClinicBotFabState extends State<ApnaClinicBotFab>
   }
 
   void _openAi() {
-    context.pushNamed(AppRoutes.apnaClinicAi);
+    context.pushNamed(
+      AppRoutes.apnaClinicAi,
+      extra: {
+        ApnaClinicAiRouteExtraKeys.source:
+            ApnaClinicAiAnalyticsSourceKeys.homeFab,
+      },
+    );
   }
 
   @override

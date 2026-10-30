@@ -37,6 +37,7 @@ class PromoCodeMockApi {
         'originalAmount': amount,
         'discountAmount': discountAmount,
         'payableAmount': payableAmount < 0 ? 0 : payableAmount,
+        'freeDelivery': code == 'JC50OFF',
         'note': 'Discount applies to this order only.',
         'service': params.service.apiValue,
       },

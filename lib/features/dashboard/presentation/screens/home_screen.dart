@@ -421,7 +421,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                                 ),
                           ),
                         ),
-                        SliverPadding(padding: EdgeInsets.only(bottom: 196.h)),
+                        SliverPadding(padding: EdgeInsets.only(bottom: 80.h)),
                       ],
                     ),
                   ),
@@ -429,11 +429,12 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
               ],
             ),
           ),
-          Positioned(
-            right: 14.w,
-            bottom: 10.h,
-            child: const ApnaClinicBotFab(),
-          ),
+          if (state.aiEnabled)
+            Positioned(
+              right: 14.w,
+              bottom: 10.h,
+              child: const ApnaClinicBotFab(),
+            ),
         ],
       ),
     );

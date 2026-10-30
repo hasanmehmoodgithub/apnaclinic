@@ -8,6 +8,7 @@ class PromoCodeValidationEntity extends Equatable {
     required this.originalAmount,
     required this.discountAmount,
     required this.payableAmount,
+    this.freeDelivery = false,
     this.note = '',
   });
 
@@ -17,6 +18,9 @@ class PromoCodeValidationEntity extends Equatable {
   final int originalAmount;
   final int discountAmount;
   final int payableAmount;
+
+  /// Pharmacy: when true, delivery is free for this applied promo.
+  final bool freeDelivery;
   final String note;
 
   @override
@@ -27,6 +31,7 @@ class PromoCodeValidationEntity extends Equatable {
         originalAmount,
         discountAmount,
         payableAmount,
+        freeDelivery,
         note,
       ];
 }

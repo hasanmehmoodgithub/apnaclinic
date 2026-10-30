@@ -12,6 +12,7 @@ import '../../../../core/widgets/heart_loader_widget.dart';
 import '../../../../core/utils/auth_guard.dart';
 import '../../domain/entities/pharmacy_medicine_entity.dart';
 import '../cubit/pharmacy_cubit.dart';
+import '../pharmacy_prescription_scan_analytics.dart';
 import 'pharmacy_error_dialog.dart';
 import 'pharmacy_network_image.dart';
 import 'pharmacy_prescription_attached_section.dart';
@@ -361,6 +362,12 @@ Future<void> showPharmacyAddToCartSheet(
                             HeartLoaderDialogController.close(loaderId);
                           }
                           if (addError == null && sheetContext.mounted) {
+                            if (loaderIdPrefix.startsWith('prescription_scan')) {
+                              PharmacyPrescriptionScanAnalytics.logMedicineAdded(
+                                productId: medicine.id,
+                                productName: medicine.name,
+                              );
+                            }
                             sheetContext.pop();
                           } else if (addError != null &&
                               sheetContext.mounted) {

@@ -12,7 +12,6 @@ import '../widgets/menu_about_card.dart';
 
 enum MenuActionId {
   myBookings,
-  apnaClinicAi,
   customerSupport,
   faq,
 }
@@ -38,12 +37,6 @@ List<MenuActionItem> buildMenuActionItems(AppLocalizations l10n) {
       title: l10n.bookingsDashboardTitle,
       icon: Icons.event_note_outlined,
       curveOverlayColor: AppColors.clr9EC7E8.withValues(alpha: 0.20),
-    ),
-    MenuActionItem(
-      id: MenuActionId.apnaClinicAi,
-      title: l10n.apnaClinicAiMenuTitle,
-      icon: Icons.medical_services_outlined,
-      curveOverlayColor: AppColors.clr0FAA9A.withValues(alpha: 0.16),
     ),
     MenuActionItem(
       id: MenuActionId.customerSupport,

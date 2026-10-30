@@ -15,6 +15,7 @@ class DashboardServicesMockApi {
       'code': 200,
       'data': {
         'bannerUrl': 'https://iili.io/nf5hpJj.png',
+        'aiEnabled': true,
         'services': [
           {
             'id': 1,

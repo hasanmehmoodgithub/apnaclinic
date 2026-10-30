@@ -9,6 +9,7 @@ import '../../domain/prescription_scan_error_codes.dart';
 import '../cubit/pharmacy_cubit.dart';
 import '../cubit/pharmacy_state.dart';
 import '../pharmacy_navigation.dart';
+import '../pharmacy_prescription_scan_analytics.dart';
 import '../widgets/pharmacy_scan_banner_card.dart';
 import '../widgets/pharmacy_screen_header_widget.dart';
 import '../widgets/prescription_scan_picker.dart';
@@ -24,10 +25,12 @@ class PrescriptionScanScreen extends StatefulWidget {
 
 class _PrescriptionScanScreenState extends State<PrescriptionScanScreen> {
   final ImagePicker _imagePicker = ImagePicker();
+  var _closedLogged = false;
 
   Future<void> _pickImage() async {
     final source = await showPrescriptionScanSourceSheet(context);
     if (source == null || !mounted) return;
+    PharmacyPrescriptionScanAnalytics.logSourceSelected(source);
     final l10n = AppLocalizations.of(context)!;
     try {
       final picked = await _imagePicker.pickImage(
@@ -36,6 +39,7 @@ class _PrescriptionScanScreenState extends State<PrescriptionScanScreen> {
         maxWidth: 1600,
       );
       if (picked == null || !mounted) return;
+      PharmacyPrescriptionScanAnalytics.logPicked(source);
       context.read<PharmacyCubit>().setPrescriptionImage(picked.path);
     } catch (_) {
       if (!mounted) return;
@@ -43,6 +47,12 @@ class _PrescriptionScanScreenState extends State<PrescriptionScanScreen> {
         SnackBar(content: Text(l10n.profileImagePickerFailedMessage)),
       );
     }
+  }
+
+  void _logClosed() {
+    if (_closedLogged) return;
+    _closedLogged = true;
+    PharmacyPrescriptionScanAnalytics.logClosed();
   }
 
   String? _errorText(AppLocalizations l10n, String? code) {
@@ -60,12 +70,23 @@ class _PrescriptionScanScreenState extends State<PrescriptionScanScreen> {
   void initState() {
     super.initState();
     context.read<PharmacyCubit>().clearPrescriptionScan();
+    PharmacyPrescriptionScanAnalytics.logOpened();
+  }
+
+  @override
+  void dispose() {
+    _logClosed();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    return Scaffold(
+    return PopScope(
+      onPopInvokedWithResult: (didPop, _) {
+        if (didPop) _logClosed();
+      },
+      child: Scaffold(
       backgroundColor: AppColors.clrF4F6F8,
       body: SafeArea(
         child: Column(
@@ -78,7 +99,10 @@ class _PrescriptionScanScreenState extends State<PrescriptionScanScreen> {
                   cartCount: cartCount,
                   cartContainerSize: 22.r,
                   cartIconSize: 11.r,
-                  onBackTap: () => pharmacyPopOrGoHome(context),
+                  onBackTap: () {
+                    _logClosed();
+                    pharmacyPopOrGoHome(context);
+                  },
                   onCartTap: () => pharmacyOpenCart(context),
                 );
               },
@@ -147,6 +171,7 @@ class _PrescriptionScanScreenState extends State<PrescriptionScanScreen> {
           ],
         ),
       ),
+    ),
     );
   }
 }

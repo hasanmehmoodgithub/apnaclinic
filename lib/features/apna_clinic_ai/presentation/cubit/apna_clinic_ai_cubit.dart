@@ -24,7 +24,9 @@ import '../../domain/use_cases/send_apna_clinic_ai_message_params.dart';
 import '../../domain/use_cases/send_apna_clinic_ai_message_use_case.dart';
 import '../../domain/utils/apna_clinic_ai_emergency.dart';
 import '../../domain/utils/roman_urdu.dart';
+import '../apna_clinic_ai_analytics.dart';
 import '../apna_clinic_ai_copy.dart';
+import '../../../../core/analytics/apna_clinic_ai_analytics_event_keys.dart';
 import 'apna_clinic_ai_state.dart';
 
 class ApnaClinicAiCubit extends Cubit<ApnaClinicAiState> {
@@ -122,6 +124,8 @@ class ApnaClinicAiCubit extends Cubit<ApnaClinicAiState> {
   var _revealFinalized = false;
   ApnaClinicAiTurnEntity? _revealPendingTurn;
   var _revealKeepChips = false;
+  /// Last outbound channel for pairing with [ApnaClinicAiAnalytics.logMessageReceived].
+  var _lastSendChannel = ApnaClinicAiAnalyticsChannelKeys.text;
 
   void _loadComplaint() {
     final saved = localDataSource.readComplaint();
@@ -567,6 +571,15 @@ class ApnaClinicAiCubit extends Cubit<ApnaClinicAiState> {
     if (isClosed) return;
     await _rememberThread();
 
+    _lastSendChannel = isVoice
+        ? ApnaClinicAiAnalyticsChannelKeys.voice
+        : ApnaClinicAiAnalyticsChannelKeys.text;
+    ApnaClinicAiAnalytics.logMessageSent(
+      channel: _lastSendChannel,
+      isGuest: state.isGuest,
+      conversationId: sendMessageUseCase.peekPersistedConversationId(),
+    );
+
     final critical = ApnaClinicAiEmergency.isCritical(shown);
     if (persistComplaint) {
       await localDataSource.saveComplaint(shown);
@@ -723,6 +736,7 @@ class ApnaClinicAiCubit extends Cubit<ApnaClinicAiState> {
     _cancelMaxVoiceTimer();
     final leaveEmptyChat = _voiceForceNewThread || state.messages.isEmpty;
     _voiceForceNewThread = false;
+    ApnaClinicAiAnalytics.logVoiceCancelled(isGuest: state.isGuest);
     await speechToText.cancel();
     await audioRecorder.cancel();
     if (isClosed) return;
@@ -778,6 +792,7 @@ class ApnaClinicAiCubit extends Cubit<ApnaClinicAiState> {
         clearError: true,
       ),
     );
+    ApnaClinicAiAnalytics.logVoiceStarted(isGuest: state.isGuest);
     _armMaxVoiceTimer(generation);
 
     if (isClosed || generation != _voiceGeneration) {
@@ -856,6 +871,14 @@ class ApnaClinicAiCubit extends Cubit<ApnaClinicAiState> {
     await _ensureThread(resume: forceNew ? false : resumeVoice);
     if (isClosed) return;
     await _rememberThread();
+
+    _lastSendChannel = ApnaClinicAiAnalyticsChannelKeys.voice;
+    ApnaClinicAiAnalytics.logVoiceSent(isGuest: state.isGuest);
+    ApnaClinicAiAnalytics.logMessageSent(
+      channel: ApnaClinicAiAnalyticsChannelKeys.voice,
+      isGuest: state.isGuest,
+      conversationId: sendMessageUseCase.peekPersistedConversationId(),
+    );
 
     final spoken = fallbackMessage?.trim() ?? '';
     final critical = spoken.isNotEmpty && ApnaClinicAiEmergency.isCritical(spoken);
@@ -1207,6 +1230,13 @@ class ApnaClinicAiCubit extends Cubit<ApnaClinicAiState> {
       return;
     }
     final reply = turn.reply.trim();
+    ApnaClinicAiAnalytics.logMessageReceived(
+      channel: _lastSendChannel,
+      isGuest: state.isGuest,
+      intent: turn.intent,
+      turnId: turn.turnId,
+      conversationId: sendMessageUseCase.peekPersistedConversationId(),
+    );
     final keepChips =
         reply.isEmpty &&
         turn.quickActions.isEmpty &&

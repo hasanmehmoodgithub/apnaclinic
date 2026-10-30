@@ -309,61 +309,65 @@ class _DoctorConsultationCheckoutScreenState
                               ),
                             ),
                             SizedBox(height: 12.h),
-                            BlocBuilder<PromoCodeCubit, PromoCodeState>(
-                              buildWhen: (previous, current) =>
-                                  previous.isValidating != current.isValidating,
-                              builder: (context, promo) {
-                                final isBusy =
-                                    state.isSubmitting || promo.isValidating;
-                                final canContinue =
-                                    state.selectedPaymentMethodId != null &&
-                                    !isBusy;
-                                return SizedBox(
-                                  width: double.infinity,
-                                  height: 56.h,
-                                  child: Listener(
-                                    behavior: HitTestBehavior.opaque,
-                                    onPointerDown: (_) {
-                                      if (canContinue) {
-                                        PromoCodeFieldWidget.ignoreNextSubmit();
-                                      }
-                                    },
-                                    child: FilledButton(
-                                    onPressed: canContinue
-                                        ? () => _onContinuePressed(state)
-                                        : null,
-                                    style: FilledButton.styleFrom(
-                                      backgroundColor: AppColors.clr1FAFA3,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(16.r),
+                            SafeArea(
+                              top: false,
+                              bottom: true,
+                              child: BlocBuilder<PromoCodeCubit, PromoCodeState>(
+                                buildWhen: (previous, current) =>
+                                    previous.isValidating != current.isValidating,
+                                builder: (context, promo) {
+                                  final isBusy =
+                                      state.isSubmitting || promo.isValidating;
+                                  final canContinue =
+                                      state.selectedPaymentMethodId != null &&
+                                      !isBusy;
+                                  return SizedBox(
+                                    width: double.infinity,
+                                    height: 56.h,
+                                    child: Listener(
+                                      behavior: HitTestBehavior.opaque,
+                                      onPointerDown: (_) {
+                                        if (canContinue) {
+                                          PromoCodeFieldWidget.ignoreNextSubmit();
+                                        }
+                                      },
+                                      child: FilledButton(
+                                      onPressed: canContinue
+                                          ? () => _onContinuePressed(state)
+                                          : null,
+                                      style: FilledButton.styleFrom(
+                                        backgroundColor: AppColors.clr1FAFA3,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(16.r),
+                                        ),
+                                      ),
+                                      child: state.isSubmitting
+                                          ? SizedBox(
+                                              width: 22.r,
+                                              height: 22.r,
+                                              child:
+                                                  const CircularProgressIndicator(
+                                                strokeWidth: 2,
+                                                color: Colors.white,
+                                              ),
+                                            )
+                                          : Text(
+                                              l10n.commonContinue,
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .titleMedium
+                                                  ?.copyWith(
+                                                    color: AppColors.clrWhite,
+                                                    fontWeight: FontWeight.w700,
+                                                    fontSize: 17.sp,
+                                                  ),
+                                            ),
                                       ),
                                     ),
-                                    child: state.isSubmitting
-                                        ? SizedBox(
-                                            width: 22.r,
-                                            height: 22.r,
-                                            child:
-                                                const CircularProgressIndicator(
-                                              strokeWidth: 2,
-                                              color: Colors.white,
-                                            ),
-                                          )
-                                        : Text(
-                                            l10n.commonContinue,
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .titleMedium
-                                                ?.copyWith(
-                                                  color: AppColors.clrWhite,
-                                                  fontWeight: FontWeight.w700,
-                                                  fontSize: 17.sp,
-                                                ),
-                                          ),
-                                    ),
-                                  ),
-                                );
-                              },
+                                  );
+                                },
+                              ),
                             ),
                           ],
                         ),

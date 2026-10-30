@@ -263,39 +263,44 @@ class _DoctorConsultationBookDoctorScreenState
                             ],
                           ),
                         ),
-                      Padding(
-                        padding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 12.h),
-                        child: SizedBox(
-                          width: double.infinity,
-                          height: 58.h,
-                          child: ElevatedButton(
-                            onPressed: _hasAvailableSlots
-                                ? () => _onGetAppointmentPressed(
-                                      context: context,
-                                      l10n: l10n,
-                                      doctor: doctor,
-                                    )
-                                : null,
-                            style: ElevatedButton.styleFrom(
-                              elevation: 0,
-                              backgroundColor: ConsultationUiConfig.ctaColor,
-                              disabledBackgroundColor: ConsultationUiConfig
-                                  .ctaColor
-                                  .withValues(alpha: 0.28),
-                              disabledForegroundColor:
-                                  AppColors.clrWhite.withValues(alpha: 0.35),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(18.r),
-                              ),
-                            ),
-                            child: Text(
-                              l10n.consultationGetAppointmentCta,
-                              style: textTheme.titleMedium?.copyWith(
-                                color: AppColors.clrWhite.withValues(
-                                  alpha: _hasAvailableSlots ? 1 : 0.35,
+                      SafeArea(
+                        top: false,
+                        bottom: true,
+
+                        child: Padding(
+                          padding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 12.h),
+                          child: SizedBox(
+                            width: double.infinity,
+                            height: 58.h,
+                            child: ElevatedButton(
+                              onPressed: _hasAvailableSlots
+                                  ? () => _onGetAppointmentPressed(
+                                        context: context,
+                                        l10n: l10n,
+                                        doctor: doctor,
+                                      )
+                                  : null,
+                              style: ElevatedButton.styleFrom(
+                                elevation: 0,
+                                backgroundColor: ConsultationUiConfig.ctaColor,
+                                disabledBackgroundColor: ConsultationUiConfig
+                                    .ctaColor
+                                    .withValues(alpha: 0.28),
+                                disabledForegroundColor:
+                                    AppColors.clrWhite.withValues(alpha: 0.35),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(18.r),
                                 ),
-                                fontSize: 18.sp,
-                                fontWeight: FontWeight.w700,
+                              ),
+                              child: Text(
+                                l10n.consultationGetAppointmentCta,
+                                style: textTheme.titleMedium?.copyWith(
+                                  color: AppColors.clrWhite.withValues(
+                                    alpha: _hasAvailableSlots ? 1 : 0.35,
+                                  ),
+                                  fontSize: 18.sp,
+                                  fontWeight: FontWeight.w700,
+                                ),
                               ),
                             ),
                           ),

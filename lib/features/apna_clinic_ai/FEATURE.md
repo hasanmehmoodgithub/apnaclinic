@@ -16,7 +16,7 @@ Care Companion flow from the demo, themed with Apna Clinic tokens via `ApnaClini
 
 ## Routes / entry
 
-- `AppRoutes.apnaClinicAi` — chat only. Opened from the dashboard menu (**Apna Clinic AI**) and the home-screen floating **Apna Clinic Bot**. No login required. Back returns to the dashboard. Refresh starts a new chat and shows the SDK greeting again (audio stays once per open).
+- `AppRoutes.apnaClinicAi` — chat only. Opened from the home-screen floating **Apna Clinic Bot** and consultation **Start now!** when home `data.aiEnabled` is true. No login required. Back returns to the dashboard. Refresh starts a new chat and shows the SDK greeting again (audio stays once per open).
 - Concern chips, home tiles, doctor/medicine cards, slots, and payment taps send another chat message. They do not open native booking. Exceptions: pharmacy `payment_handoff` (`apnaclinic://pharmacy/cart?step=checkout…`) → `pharmacyOpenCart`; consultation `payment_handoff` (`apnaclinic://doctor/{id}?step=checkout&date=&start=&end=`, `BOOK_CONSULTATION`) → doctor book screen with slot prefill via `consultationOpenBookFromDeepLink`, then hydrates missing doctor fields from **`GET …/web/doctor-consultation/doctor/{id}`** (AI-only; browse does not call it). **View cart** after `ADD_TO_CART` stays a chat chip.
 
 ## Data & APIs
@@ -58,6 +58,10 @@ flutter run --dart-define=AI_BASE_URL=https://jazzred-msa-stg.jazz.com.pk/ai-ser
 SSE: `token` / `delta` / `chunk`, `stage`, `final` / `done`, delayed `audio` (matched by `turn_id`), `error`. Cards from `blocks` and reply text. Section headings come from each block's `title` (`kind: cards` → payment/doctor/medicine, `kind: chips` → chip row or slot calendar). Non-slot chips such as Cancel stay under that title. When `audio_pending` is true, cubit keeps reply/chips and shows Play only after `StreamAudio` attaches the clip for that `turn_id` (no autoplay, no on-device TTS for text or voice turns). Doctor/medicine cards use `image` / `imageUrl` / `photo` / `avatar` via `CachedNetworkImage`. The card footer shows experience and price once each (`3 yrs • PKR 1000`). Payment methods from `blocks.cards` (`kind: payment`) render once as a vertical list (cover image, badge, subtitle), not again as a second Payment list. A `payment_handoff` with an HTTP `paymentLink` / `payment_url` / `url` adds **Pay now**, which opens that URL in the card payment web view (`allowClose`). An `apnaclinic://pharmacy/cart?step=checkout…` handoff (e.g. `intent: PHARMACY_CHECKOUT`) shows **Pharmacy checkout** and opens `AppRoutes.pharmacyCart`. An `apnaclinic://doctor/{id}?step=checkout&date=&start=&end=` handoff (`BOOK_CONSULTATION`) opens `AppRoutes.consultationBookDoctor` with that doctor + slot prefill. The same HTTP link in the reply (`[Pay now](url)`) is tappable and does not show the raw URL. Other card images use `BoxFit.cover`. Slot days group into a calendar UI from `blocks.chips` / `option_items` / reply bullets (`YYYY-MM-DD · time`); day chips show calendar day + month (e.g. `21` / `OCT`), not the year prefix. When a slot calendar is shown, doctor cards and ISO slot bullets in the reply are suppressed so the UI is not duplicated.
 
 Device id and last complaint (continue card) are in `SharedPreferences`.
+
+## Analytics
+
+Separate keys: `lib/core/analytics/apna_clinic_ai_analytics_event_keys.dart` (not `ai_chat_*` screening). Helper: `ApnaClinicAiAnalytics`. Events: `apna_clinic_ai_opened` / `_closed` (param `source`: `home_fab` / …, `guest`), `apna_clinic_ai_message_sent` / `_received` (`channel` text|voice, optional `intent` / `turn_id` / `conversation_id`), `apna_clinic_ai_voice_started` / `_sent` / `_cancelled`.
 
 ## State
 

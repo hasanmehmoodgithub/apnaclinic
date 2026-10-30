@@ -72,6 +72,7 @@ class OurServicesModel {
     required this.message,
     required this.services,
     this.bannerUrl,
+    this.aiEnabled = false,
   });
 
   final bool success;
@@ -80,6 +81,9 @@ class OurServicesModel {
 
   /// Pro promo artwork from the home panel. Null when the API omits it.
   final String? bannerUrl;
+
+  /// Home panel flag. The floating bot is shown only when this is true.
+  final bool aiEnabled;
 
   factory OurServicesModel.fromJson(Map<String, dynamic> json) {
     final data = json['data'];
@@ -103,7 +107,17 @@ class OurServicesModel {
       message: (json['message'] ?? '').toString(),
       services: list,
       bannerUrl: _nullableUrl(panel?['bannerUrl'] ?? panel?['banner_url']),
+      aiEnabled: _asBool(panel?['aiEnabled'] ?? panel?['ai_enabled']),
     );
+  }
+
+  static bool _asBool(dynamic raw) {
+    return switch (raw) {
+      bool value => value,
+      int value => value == 1,
+      String value => value.toLowerCase() == 'true' || value == '1',
+      _ => false,
+    };
   }
 
   static String? _nullableUrl(dynamic raw) {

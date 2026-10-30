@@ -37,6 +37,7 @@ import '../../domain/use_cases/get_pharmacy_profile_addresses_use_case.dart';
 import '../../domain/use_cases/pharmacy_checkout_use_case.dart';
 import '../../domain/use_cases/update_pharmacy_cart_quantity_use_case.dart';
 import '../../domain/use_cases/upload_pharmacy_prescription_use_case.dart';
+import '../pharmacy_prescription_scan_analytics.dart';
 import 'pharmacy_state.dart';
 import 'prescription_scan_state.dart';
 
@@ -1172,6 +1173,7 @@ class PharmacyCubit extends Cubit<PharmacyState> {
     final path = scan.imagePath?.trim() ?? '';
     if (path.isEmpty || scan.extracting) return;
 
+    PharmacyPrescriptionScanAnalytics.logStarted();
     emit(
       state.copyWith(
         prescriptionScan: scan.copyWith(extracting: true, clearError: true),
@@ -1184,6 +1186,7 @@ class PharmacyCubit extends Cubit<PharmacyState> {
 
     await result.fold(
       (error) async {
+        PharmacyPrescriptionScanAnalytics.logFailed(errorCode: error);
         emit(
           state.copyWith(
             prescriptionScan: state.prescriptionScan.copyWith(
@@ -1194,6 +1197,9 @@ class PharmacyCubit extends Cubit<PharmacyState> {
         );
       },
       (entity) async {
+        PharmacyPrescriptionScanAnalytics.logSuccess(
+          medicineCount: entity.medicines.length,
+        );
         emit(
           state.copyWith(
             prescriptionScan: state.prescriptionScan.copyWith(

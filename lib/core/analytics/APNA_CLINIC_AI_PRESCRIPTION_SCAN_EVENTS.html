@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Apna Clinic — Care Companion AI &amp; Prescription Scan Events</title>
+  <style>
+    :root {
+      --navy: #061e40;
+      --teal: #00897b;
+      --bg: #f4f7f8;
+      --card: #fff;
+      --line: #e2e8ee;
+      --muted: #5b6b7c;
+      --code: #0f172a;
+      --ok-bg: #ecfdf5;
+      --warn-bg: #fff7ed;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--navy);
+      line-height: 1.45;
+    }
+    header {
+      background: var(--navy);
+      color: #fff;
+      padding: 22px 24px 18px;
+    }
+    header h1 { margin: 0 0 6px; font-size: 22px; font-weight: 700; }
+    header p { margin: 0; color: #c5d0dc; font-size: 13px; max-width: 720px; }
+    main { max-width: 980px; margin: 0 auto; padding: 20px 16px 64px; }
+    .note {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 16px 18px;
+      margin-bottom: 18px;
+    }
+    .note h2 { margin: 0 0 8px; font-size: 16px; }
+    .note ul { margin: 8px 0 0; padding-left: 18px; color: var(--muted); font-size: 13px; }
+    section {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 18px;
+      margin-bottom: 18px;
+    }
+    section h2 {
+      margin: 0 0 4px;
+      font-size: 18px;
+      color: var(--teal);
+    }
+    section .sub {
+      margin: 0 0 14px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    th, td {
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      padding: 10px 8px;
+      vertical-align: top;
+    }
+    th {
+      font-size: 11px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--muted);
+      background: #f8fafb;
+    }
+    code, .key {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 12px;
+      color: var(--code);
+      background: #f1f5f9;
+      padding: 2px 6px;
+      border-radius: 6px;
+      word-break: break-all;
+    }
+    .pill {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: var(--ok-bg);
+      color: #047857;
+    }
+    .pill.warn {
+      background: var(--warn-bg);
+      color: #b45309;
+    }
+    h3 {
+      margin: 18px 0 8px;
+      font-size: 14px;
+    }
+    footer {
+      color: var(--muted);
+      font-size: 12px;
+      text-align: center;
+      padding: 8px 16px 24px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Firebase / GA4 event keys</h1>
+    <p>
+      Product reference for <strong>Care Companion AI</strong> (Noor chat) and
+      <strong>Pharmacy prescription scan</strong>. Event names are snake_case,
+      ≤40 characters. Production builds send to Firebase; non-prod logs locally.
+    </p>
+  </header>
+
+  <main>
+    <div class="note">
+      <h2>Notes for product</h2>
+      <ul>
+        <li>
+          Care Companion AI keys are <strong>separate</strong> from consultation
+          AI screening events <code>ai_chat_started</code> /
+          <code>ai_chat_ended</code> (WebView).
+        </li>
+        <li>
+          Guest values use <code>Yes</code> / <code>No</code> (same as other app events).
+        </li>
+        <li>
+          Date: 30 Oct 2026 · App module: Flutter Apna Clinic
+        </li>
+      </ul>
+    </div>
+
+    <!-- ========== AI ========== -->
+    <section id="ai">
+      <h2>1. Care Companion AI</h2>
+      <p class="sub">
+        Screen: Apna Clinic AI chat (<code>ApnaClinicAiScreen</code>).
+        Entry today: home floating bot (source <code>home_fab</code>).
+      </p>
+
+      <h3>Events</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Event name</th>
+            <th>When it fires</th>
+            <th>Parameters</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="key">apna_clinic_ai_opened</span></td>
+            <td>User opens Care Companion chat</td>
+            <td>
+              <code>source</code>, <code>guest</code>
+            </td>
+          </tr>
+          <tr>
+            <td><span class="key">apna_clinic_ai_closed</span></td>
+            <td>User leaves chat (back / dispose)</td>
+            <td>
+              <code>source</code>, <code>guest</code>
+            </td>
+          </tr>
+          <tr>
+            <td><span class="key">apna_clinic_ai_message_sent</span></td>
+            <td>User sends a text message or a voice turn is submitted</td>
+            <td>
+              <code>channel</code>, <code>guest</code>,
+              optional <code>conversation_id</code>
+            </td>
+          </tr>
+          <tr>
+            <td><span class="key">apna_clinic_ai_message_received</span></td>
+            <td>Assistant final reply arrives for that turn</td>
+            <td>
+              <code>channel</code>, <code>guest</code>,
+              optional <code>intent</code>, <code>turn_id</code>,
+              <code>conversation_id</code>
+            </td>
+          </tr>
+          <tr>
+            <td><span class="key">apna_clinic_ai_voice_started</span></td>
+            <td>Mic recording starts successfully</td>
+            <td><code>guest</code></td>
+          </tr>
+          <tr>
+            <td><span class="key">apna_clinic_ai_voice_sent</span></td>
+            <td>Voice note is sent to the AI (after stop/send)</td>
+            <td><code>guest</code></td>
+          </tr>
+          <tr>
+            <td><span class="key">apna_clinic_ai_voice_cancelled</span></td>
+            <td>User cancels / deletes in-progress voice recording</td>
+            <td><code>guest</code></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>Parameter values</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Param</th>
+            <th>Allowed values</th>
+            <th>Meaning</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>source</code></td>
+            <td>
+              <code>home_fab</code>,
+              <code>dashboard_menu</code>,
+              <code>unknown</code>
+            </td>
+            <td>Where the chat was opened from</td>
+          </tr>
+          <tr>
+            <td><code>channel</code></td>
+            <td><code>text</code>, <code>voice</code></td>
+            <td>How the user sent the turn</td>
+          </tr>
+          <tr>
+            <td><code>guest</code></td>
+            <td><code>Yes</code>, <code>No</code></td>
+            <td>Whether the user is a guest</td>
+          </tr>
+          <tr>
+            <td><code>intent</code></td>
+            <td>e.g. <code>ADD_TO_CART</code>, <code>BOOK_CONSULTATION</code>, <code>PHARMACY_CHECKOUT</code></td>
+            <td>Server intent on the final reply (when present)</td>
+          </tr>
+          <tr>
+            <td><code>conversation_id</code></td>
+            <td>string</td>
+            <td>AI conversation id when known</td>
+          </tr>
+          <tr>
+            <td><code>turn_id</code></td>
+            <td>string</td>
+            <td>AI turn id on received final (when present)</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>Typical funnel</h3>
+      <p class="sub" style="margin-bottom:0">
+        <span class="pill">opened</span>
+        → <span class="pill">message_sent</span> / <span class="pill">voice_started</span> → <span class="pill">voice_sent</span>
+        → <span class="pill">message_received</span>
+        → <span class="pill">closed</span>
+      </p>
+    </section>
+
+    <!-- ========== Prescription scan ========== -->
+    <section id="rx-scan">
+      <h2>2. Pharmacy prescription scan</h2>
+      <p class="sub">
+        Screen: Scan prescription (<code>PrescriptionScanScreen</code>).
+        Keys follow the same app snake_case style as other pharmacy events.
+      </p>
+
+      <h3>Events</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Event name</th>
+            <th>When it fires</th>
+            <th>Parameters</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="key">pharmacy_prescription_scan_opened</span></td>
+            <td>User opens the scan screen</td>
+            <td><code>source</code> (default <code>home</code>)</td>
+          </tr>
+          <tr>
+            <td><span class="key">pharmacy_prescription_scan_closed</span></td>
+            <td>User leaves the scan screen</td>
+            <td><code>source</code></td>
+          </tr>
+          <tr>
+            <td><span class="key">pharmacy_prescription_scan_source_selected</span></td>
+            <td>User chooses Camera or Gallery</td>
+            <td><code>pick_source</code></td>
+          </tr>
+          <tr>
+            <td><span class="key">pharmacy_prescription_scan_picked</span></td>
+            <td>User successfully picks an image</td>
+            <td><code>pick_source</code></td>
+          </tr>
+          <tr>
+            <td><span class="key">pharmacy_prescription_scan_started</span></td>
+            <td>Extract / OCR API call starts</td>
+            <td>—</td>
+          </tr>
+          <tr>
+            <td><span class="key">pharmacy_prescription_scan_success</span></td>
+            <td>Extract succeeds</td>
+            <td><code>medicine_count</code></td>
+          </tr>
+          <tr>
+            <td><span class="key">pharmacy_prescription_scan_failed</span></td>
+            <td>Extract fails</td>
+            <td>optional <code>error_code</code></td>
+          </tr>
+          <tr>
+            <td><span class="key">pharmacy_prescription_scan_medicine_added</span></td>
+            <td>Matched medicine added to cart from scan results</td>
+            <td>
+              <code>product_id</code>, <code>product_name</code>,
+              <code>source</code>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>Parameter values</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Param</th>
+            <th>Allowed values</th>
+            <th>Meaning</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>source</code></td>
+            <td><code>home</code>, <code>search</code>, <code>banner</code> (pharmacy source set)</td>
+            <td>Pharmacy entry context (scan currently logs <code>home</code>)</td>
+          </tr>
+          <tr>
+            <td><code>pick_source</code></td>
+            <td><code>camera</code>, <code>gallery</code></td>
+            <td>How the prescription image was chosen</td>
+          </tr>
+          <tr>
+            <td><code>medicine_count</code></td>
+            <td>number</td>
+            <td>Medicines returned by extract</td>
+          </tr>
+          <tr>
+            <td><code>error_code</code></td>
+            <td>string</td>
+            <td>App/server failure code when extract fails</td>
+          </tr>
+          <tr>
+            <td><code>product_id</code> / <code>product_name</code></td>
+            <td>string</td>
+            <td>Catalog medicine added from scan</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>Typical funnel</h3>
+      <p class="sub" style="margin-bottom:0">
+        <span class="pill">opened</span>
+        → <span class="pill">source_selected</span>
+        → <span class="pill">picked</span>
+        → <span class="pill">started</span>
+        → <span class="pill">success</span> / <span class="pill warn">failed</span>
+        → <span class="pill">medicine_added</span>
+        → <span class="pill">closed</span>
+      </p>
+    </section>
+
+    <div class="note">
+      <h2>Out of scope on this sheet</h2>
+      <ul>
+        <li>Full pharmacy / consultancy / lab / surgery event catalogue (see existing app analytics HTML if needed).</li>
+        <li>AppsFlyer-only events.</li>
+        <li>Consultation AI screening WebView (<code>ai_chat_started</code> / <code>ai_chat_ended</code>).</li>
+      </ul>
+    </div>
+  </main>
+
+  <footer>
+    Apna Clinic · Care Companion AI &amp; Prescription Scan · Firebase event keys for product
+  </footer>
+</body>
+</html>

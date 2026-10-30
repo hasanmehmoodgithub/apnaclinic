@@ -13,6 +13,7 @@ import '../../features/consultation/domain/use_cases/get_consultation_booking_us
 import '../../features/consultation/domain/use_cases/submit_consultation_feedback_use_case.dart';
 import '../../features/consultation/presentation/cubit/consultation_cubit.dart';
 import '../../features/consultation/presentation/screens/ai_consultation_screen.dart';
+import '../../features/apna_clinic_ai/presentation/apna_clinic_ai_analytics.dart';
 import '../../features/apna_clinic_ai/presentation/cubit/apna_clinic_ai_cubit.dart';
 import '../../features/apna_clinic_ai/presentation/screens/apna_clinic_ai_screen.dart';
 import '../../features/consultation/presentation/screens/doctor_consultation_book_doctor_screen.dart';
@@ -208,7 +209,9 @@ class AppRouter {
         name: AppRoutes.apnaClinicAi,
         builder: (context, state) => BlocProvider<ApnaClinicAiCubit>(
           create: (_) => sl<ApnaClinicAiCubit>(),
-          child: const ApnaClinicAiScreen(),
+          child: ApnaClinicAiScreen(
+            source: apnaClinicAiSourceFromExtra(state.extra),
+          ),
         ),
       ),
       GoRoute(

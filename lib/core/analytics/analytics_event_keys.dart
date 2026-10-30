@@ -32,6 +32,22 @@ class AnalyticsEventKeys {
   static const pharmacyCheckout = 'pharmacy_checkout';
   static const pharmacyConfirmPayment = 'pharmacy_confirm_payment';
   static const pharmacyOrderConfirmed = 'pharmacy_order_confirmed';
+  static const pharmacyPrescriptionScanOpened =
+      'pharmacy_prescription_scan_opened';
+  static const pharmacyPrescriptionScanClosed =
+      'pharmacy_prescription_scan_closed';
+  static const pharmacyPrescriptionScanSourceSelected =
+      'pharmacy_prescription_scan_source_selected';
+  static const pharmacyPrescriptionScanPicked =
+      'pharmacy_prescription_scan_picked';
+  static const pharmacyPrescriptionScanStarted =
+      'pharmacy_prescription_scan_started';
+  static const pharmacyPrescriptionScanSuccess =
+      'pharmacy_prescription_scan_success';
+  static const pharmacyPrescriptionScanFailed =
+      'pharmacy_prescription_scan_failed';
+  static const pharmacyPrescriptionScanMedicineAdded =
+      'pharmacy_prescription_scan_medicine_added';
 
   static const authenticationScreenViewed = 'authentication_screen_viewed';
   static const otpSent = 'otp_sent';
@@ -177,6 +193,16 @@ class AnalyticsParamKeys {
   static const changedBy = 'changed_by';
   static const notificationId = 'notification_id';
   static const contentUrl = 'content_url';
+  static const pickSource = 'pick_source';
+  static const medicineCount = 'medicine_count';
+  static const errorCode = 'error_code';
+}
+
+class AnalyticsPrescriptionScanPickSourceKeys {
+  AnalyticsPrescriptionScanPickSourceKeys._();
+
+  static const camera = 'camera';
+  static const gallery = 'gallery';
 }
 
 class AnalyticsSearchMediumKeys {

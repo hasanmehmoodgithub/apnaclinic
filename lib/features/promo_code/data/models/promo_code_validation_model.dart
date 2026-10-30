@@ -6,6 +6,7 @@ class PromoCodeValidationModel {
     required this.originalAmount,
     required this.discountAmount,
     required this.payableAmount,
+    this.freeDelivery = false,
     this.note = '',
   });
 
@@ -15,6 +16,9 @@ class PromoCodeValidationModel {
   final int originalAmount;
   final int discountAmount;
   final int payableAmount;
+
+  /// Pharmacy: when true, delivery is free for this applied promo.
+  final bool freeDelivery;
   final String note;
 
   factory PromoCodeValidationModel.fromJson(Map<String, dynamic> json) {
@@ -31,8 +35,18 @@ class PromoCodeValidationModel {
       originalAmount: _asInt(root['originalAmount'] ?? root['original_amount']),
       discountAmount: _asInt(root['discountAmount'] ?? root['discount_amount']),
       payableAmount: _asInt(root['payableAmount'] ?? root['payable_amount']),
+      freeDelivery: _asBool(root['freeDelivery'] ?? root['free_delivery']),
       note: (root['note'] ?? '').toString().trim(),
     );
+  }
+
+  static bool _asBool(dynamic value) {
+    return switch (value) {
+      bool v => v,
+      int v => v == 1,
+      String v => v.toLowerCase() == 'true' || v == '1',
+      _ => false,
+    };
   }
 
   static int _asInt(dynamic value) {

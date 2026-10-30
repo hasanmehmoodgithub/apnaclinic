@@ -16,11 +16,11 @@ No dedicated route. Hosted inside checkout UIs:
 
 | Action | Method | `AppUrls` |
 |--------|--------|-----------|
-| Validate | POST | `promoCodeValidate` → `/acs-aggregator/api/v1/mobile/promo-code/validate` |
+| Validate | POST | `promoCodeValidate` → `/acs-aggregator/api/v2/mobile/promo-code/validate` |
 
 Body: `{ "code", "service", "amount", "isPro" }` where `service` is `CONSULTATION` | `LAB` | `PHARMACY` and `isPro` is the active membership flag from that checkout.
 
-Success `data`: `code`, `discountType`, `discountValue`, `originalAmount`, `discountAmount`, `payableAmount`, `note`. A non-empty `note` is shown under the promo field after the code is applied.
+Success `data`: `code`, `discountType`, `discountValue`, `originalAmount`, `discountAmount`, `payableAmount`, `freeDelivery`, `note`. A non-empty `note` is shown under the promo field after the code is applied. Pharmacy checkout: when `freeDelivery` is true, Delivery Charges show as Free and are excluded from total; when false/omitted, cart delivery charges stay as-is (Pro members still get free delivery).
 
 ## State
 

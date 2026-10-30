@@ -57,7 +57,9 @@ Future<ProSheetResult?> showApnaClinicProSheet(
       context: context,
       isScrollControlled: true,
       useSafeArea: true,
-      enableDrag: true,
+      // The nested navigator swallows the modal drag. The sheet follows the
+      // finger itself and pops once that motion finishes.
+      enableDrag: false,
       isDismissible: true,
       backgroundColor: Colors.transparent,
       shape: RoundedRectangleBorder(

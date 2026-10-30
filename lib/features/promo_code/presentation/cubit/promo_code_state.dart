@@ -44,6 +44,9 @@ class PromoCodeState extends Equatable {
 
   String? get appliedCode => isApplied ? result!.code : null;
 
+  /// Pharmacy checkout: promo waived delivery when validate returns freeDelivery.
+  bool get grantsFreeDelivery => isApplied && result!.freeDelivery;
+
   /// API error text, or [fallback] when the response has no message.
   String invalidMessage(String fallback) {
     final message = errorMessage?.trim() ?? '';

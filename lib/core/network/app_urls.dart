@@ -477,6 +477,4 @@ class AppUrls {
   static const String apnaClinicAppStoreIos =
       'https://apps.apple.com/pk/search?term=Apna%20Clinic';
 
-  /// Apna Doctor AI screening (MedIQ Huda).
-  static const String apnaDoctorAi = 'https://medai.mediq.com.pk/hudav2/';
 }

@@ -7,6 +7,7 @@ class DashboardServicesMapper {
     return HomePanelEntity(
       services: model.services.map(_toServiceEntity).toList(),
       bannerUrl: model.bannerUrl,
+      aiEnabled: model.aiEnabled,
     );
   }
 

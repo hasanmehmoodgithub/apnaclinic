@@ -263,32 +263,35 @@ class PharmacyCheckoutBodyWidget extends StatelessWidget {
                   isBold: true,
                   padding: EdgeInsets.symmetric(vertical: 2.h),
                 ),
-                InkWell(
-                  onTap: isPro == true
-                      ? () => offerKey.currentState?.openSheet()
-                      : null,
-                  child: PharmacySummaryRow(
-                    title: l10n.pharmacyCheckoutDeliveryChargesLabel,
-                    value: isPro == true ? 0 : state.deliveryCharges,
-                    valueLabel:
-                        isPro == true ? l10n.pharmacyCheckoutFree : null,
-                    titleTrailing: isPro == true
-                        ? SvgPicture.asset(
-                            Assets.proProBadge,
-                            height: 18.h,
-                            fit: BoxFit.contain,
-                          )
-                        : null,
-                    isBold: true,
-                    padding: EdgeInsets.symmetric(vertical: 2.h),
-                  ),
-                ),
-                SizedBox(height: 10.h),
                 BlocBuilder<PromoCodeCubit, PromoCodeState>(
                   builder: (context, promo) {
+                    final freeDelivery =
+                        isPro == true || promo.grantsFreeDelivery;
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        InkWell(
+                          onTap: isPro == true
+                              ? () => offerKey.currentState?.openSheet()
+                              : null,
+                          child: PharmacySummaryRow(
+                            title: l10n.pharmacyCheckoutDeliveryChargesLabel,
+                            value: freeDelivery ? 0 : state.deliveryCharges,
+                            valueLabel: freeDelivery
+                                ? l10n.pharmacyCheckoutFree
+                                : null,
+                            titleTrailing: isPro == true
+                                ? SvgPicture.asset(
+                                    Assets.proProBadge,
+                                    height: 18.h,
+                                    fit: BoxFit.contain,
+                                  )
+                                : null,
+                            isBold: true,
+                            padding: EdgeInsets.symmetric(vertical: 2.h),
+                          ),
+                        ),
+                        SizedBox(height: 10.h),
                         PromoCodeFieldWidget(
                           status: promo.status,
                           displayCode: promo.displayCode,
@@ -504,7 +507,8 @@ class PharmacyCheckoutBodyWidget extends StatelessWidget {
     PromoCodeState promo, {
     bool isPro = false,
   }) {
-    final delivery = isPro ? 0.0 : state.deliveryCharges;
+    final freeDelivery = isPro || promo.grantsFreeDelivery;
+    final delivery = freeDelivery ? 0.0 : state.deliveryCharges;
     if (promo.isApplied) {
       return promo.result!.payableAmount + delivery;
     }

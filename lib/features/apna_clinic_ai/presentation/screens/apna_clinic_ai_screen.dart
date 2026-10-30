@@ -5,11 +5,13 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/analytics/apna_clinic_ai_analytics_event_keys.dart';
 import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/widgets/app_scaffold_gradient.dart';
 import '../../data/services/apna_clinic_ai_audio_player_service.dart';
 import '../../domain/entities/apna_clinic_ai_message_entity.dart';
+import '../apna_clinic_ai_analytics.dart';
 import '../apna_clinic_ai_copy.dart';
 import '../constants/apna_clinic_ai_ui_config.dart';
 import '../cubit/apna_clinic_ai_cubit.dart';
@@ -18,7 +20,12 @@ import '../widgets/apna_clinic_ai_chat_header.dart';
 import '../widgets/apna_clinic_ai_chat_view.dart';
 
 class ApnaClinicAiScreen extends StatefulWidget {
-  const ApnaClinicAiScreen({super.key});
+  const ApnaClinicAiScreen({
+    super.key,
+    this.source = ApnaClinicAiAnalyticsSourceKeys.unknown,
+  });
+
+  final String source;
 
   @override
   State<ApnaClinicAiScreen> createState() => _ApnaClinicAiScreenState();
@@ -28,17 +35,37 @@ class _ApnaClinicAiScreenState extends State<ApnaClinicAiScreen> {
   late final ApnaClinicAiAudioPlayerService _audioPlayer;
   var _lastTtsNonce = 0;
   var _lastErrorNonce = 0;
+  var _closedLogged = false;
 
   @override
   void initState() {
     super.initState();
     _audioPlayer = sl<ApnaClinicAiAudioPlayerService>();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      final state = context.read<ApnaClinicAiCubit>().state;
+      ApnaClinicAiAnalytics.logOpened(
+        source: widget.source,
+        isGuest: state.isGuest,
+      );
+    });
+  }
+
+  void _logClosed(ApnaClinicAiCubit cubit) {
+    if (_closedLogged) return;
+    _closedLogged = true;
+    ApnaClinicAiAnalytics.logClosed(
+      source: widget.source,
+      isGuest: cubit.state.isGuest,
+    );
   }
 
   @override
   void dispose() {
     try {
-      unawaited(context.read<ApnaClinicAiCubit>().stopVoiceOnExit());
+      final cubit = context.read<ApnaClinicAiCubit>();
+      _logClosed(cubit);
+      unawaited(cubit.stopVoiceOnExit());
     } catch (_) {}
     unawaited(() async {
       await _audioPlayer.stop();
@@ -53,6 +80,7 @@ class _ApnaClinicAiScreenState extends State<ApnaClinicAiScreen> {
   }
 
   Future<void> _leave(ApnaClinicAiCubit cubit) async {
+    _logClosed(cubit);
     await _stopVoice(cubit);
     if (!mounted) return;
     if (context.canPop()) {
