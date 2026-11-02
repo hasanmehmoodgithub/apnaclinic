@@ -86,7 +86,11 @@ class PromoCodeCubit extends Cubit<PromoCodeState> {
         );
       },
       (entity) {
-        PromoCodeAnalytics.logApplied(result: entity, service: service);
+        PromoCodeAnalytics.logApplied(
+          result: entity,
+          service: service,
+          isPro: member,
+        );
         emit(
           state.copyWith(
             status: PromoCodeStatus.applied,

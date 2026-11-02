@@ -3,6 +3,8 @@ import 'dart:async';
 import '../../../core/analytics/analytics_event_keys.dart';
 import '../../../core/analytics/analytics_service.dart';
 import '../../../core/di/dependency_injection.dart';
+import '../../pro/domain/use_cases/get_pro_catalog_use_case.dart';
+import '../../pro/presentation/pro_membership_cache.dart';
 import '../domain/entities/promo_code_service.dart';
 import '../domain/entities/promo_code_validation_entity.dart';
 
@@ -28,9 +30,10 @@ abstract final class PromoCodeAnalytics {
   static void logApplied({
     required PromoCodeValidationEntity result,
     required PromoCodeService service,
+    bool? isPro,
   }) {
     unawaited(() async {
-      final userType = await resolveUserType();
+      final userType = await resolveUserType(isPro: isPro);
       await _analytics.logEvent(AnalyticsEventKeys.promoCodeApplied, {
         AnalyticsParamKeys.code: result.code.trim(),
         AnalyticsParamKeys.service: service.apiValue,
@@ -92,19 +95,43 @@ abstract final class PromoCodeAnalytics {
     return AnalyticsPromoRejectReasonKeys.invalidCode;
   }
 
-  /// Always `free` until Pro membership should be reported again.
-  static Future<String> resolveUserType() async {
-    return AnalyticsUserTypeKeys.free;
+  /// `pro` for an active Pro member, otherwise `free`.
+  ///
+  /// Prefer [isPro] when the host already knows membership (checkout). Else
+  /// use [ProMembershipCache], then a catalog fetch.
+  static Future<String> resolveUserType({bool? isPro}) async {
+    if (isPro != null) {
+      return isPro ? AnalyticsUserTypeKeys.pro : AnalyticsUserTypeKeys.free;
+    }
+
+    final cached = sl<ProMembershipCache>().snapshot?.membership;
+    if (cached != null) {
+      return cached.isActivePro
+          ? AnalyticsUserTypeKeys.pro
+          : AnalyticsUserTypeKeys.free;
+    }
+
+    try {
+      final result = await sl<GetProCatalogUseCase>()();
+      final active = result.fold(
+        (_) => false,
+        (catalog) => catalog.membership.isActivePro,
+      );
+      return active ? AnalyticsUserTypeKeys.pro : AnalyticsUserTypeKeys.free;
+    } catch (_) {
+      return AnalyticsUserTypeKeys.free;
+    }
   }
 
   /// Shared confirm-event promo params (`promo_code_used`, `promo_code`, `user_type`).
   static Future<Map<String, Object>> confirmPromoParams({
     required String? promoCode,
     bool? promoUsedOverride,
+    bool? isPro,
   }) async {
     final code = promoCode?.trim() ?? '';
     final used = promoUsedOverride ?? code.isNotEmpty;
-    final userType = await resolveUserType();
+    final userType = await resolveUserType(isPro: isPro);
     return {
       AnalyticsParamKeys.promoCodeUsed: used
           ? AnalyticsYesNoKeys.yes

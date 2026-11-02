@@ -88,12 +88,12 @@ class ApnaClinicAiChatHeader extends StatelessWidget {
                 onPressed: () => _showDisclaimer(context),
                 tooltip: l10n.apnaClinicAiDisclaimerTitle,
               ),
-              // if (_showSdkEndpointTool)
-              //   _HeaderIconButton(
-              //     icon: Icons.tune_rounded,
-              //     onPressed: () => showApnaClinicAiSdkEndpointDialog(context),
-              //     tooltip: l10n.apnaClinicAiSdkEndpointTooltip,
-              //   ),
+              if (_showSdkEndpointTool)
+                _HeaderIconButton(
+                  icon: Icons.tune_rounded,
+                  onPressed: () => showApnaClinicAiSdkEndpointDialog(context),
+                  tooltip: l10n.apnaClinicAiSdkEndpointTooltip,
+                ),
               _HeaderIconButton(
                 icon: Icons.refresh_rounded,
                 onPressed: onNewChat,

@@ -41,10 +41,10 @@ Firebase via `PromoCodeAnalytics` / `AnalyticsService` (mobile app only). CRM ad
 | Event | When | Params |
 |---|---|---|
 | `promo_code_entered` | User submits a code to validate | `code`, `service` (`CONSULTATION` / `LAB` / `PHARMACY`) |
-| `promo_code_applied` | Validate succeeds | `code`, `service`, `discount_type`, `discount_value`, `user_type` (`free` for now; Pro membership is not sent) |
+| `promo_code_applied` | Validate succeeds | `code`, `service`, `discount_type`, `discount_value`, `user_type` (`pro` when active Pro, else `free`) |
 | `promo_code_rejected` | Validate fails | `code`, `service`, `reason` (`expired` / `not_started` / `ineligible_service` / `ineligible_user_type` / `invalid_code`) |
 
-Order-confirmed events also include `promo_code_used` (Yes/No), `promo_code` (when used), and `user_type` (`free`):
+Order-confirmed / AppsFlyer purchase events also include `promo_code_used` (Yes/No), `promo_code` (when used), and `user_type` (`pro` / `free`):
 
 - `pharmacy_order_confirmed`
 - `doctor_consultation_booked`
