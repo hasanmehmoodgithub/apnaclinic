@@ -248,7 +248,7 @@ class AppUrls {
   static String get pharmacyPrescriptionExtract {
     const base = String.fromEnvironment(
       'PRESCRIPTION_EXTRACT_BASE_URL',
-      defaultValue: 'http://142.86.120.73:8001',
+      defaultValue: 'https://app.apnaclinic.com.pk',
     );
     final normalized = base.endsWith('/')
         ? base.substring(0, base.length - 1)

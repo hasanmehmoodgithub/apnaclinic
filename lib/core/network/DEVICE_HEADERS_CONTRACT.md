@@ -16,6 +16,7 @@ This document defines the request headers automatically added by the app for API
 - `x-app-build-number` - Build number (example: `1`)
 - `x-app-package` - Application package/bundle id (example: `com.mobileapp.simhealth`)
 - `x-device-platform` - Client platform (`android`, `ios`, `macos`, `web`, etc.)
+- `x-appsflyer-id` - AppsFlyer install UID (`AppsFlyerService.appsFlyerUid` / SDK `getAppsFlyerUID`). Omitted until the SDK has started and the UID is available.
 
 ### CMS / aggregator mobile APIs (guest + logged-in)
 
@@ -54,6 +55,7 @@ x-app-version: 1.0.0
 x-app-build-number: 1
 x-app-package: com.mobileapp.simhealth
 x-device-platform: android
+x-appsflyer-id: 1234567890-abcdefgh
 x-device-id: abcdef123456
 x-device-model: SM-A546E
 x-device-manufacturer: samsung

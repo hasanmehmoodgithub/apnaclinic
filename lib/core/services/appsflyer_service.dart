@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:developer' as developer;
 import 'dart:io';
 
@@ -16,6 +17,7 @@ import '../flavor/flavor_config.dart';
 class AppsFlyerService {
   AppsflyerSdk? _sdk;
   bool _initialized = false;
+  String _appsFlyerUid = '';
 
   bool get isConfigured {
     if (FlavorConfig.appsFlyerDevKey.trim().isEmpty) return false;
@@ -26,6 +28,9 @@ class AppsFlyerService {
   }
 
   bool get isInitialized => _initialized;
+
+  /// AppsFlyer install UID for API header `x-appsflyer-id`. Empty until ready.
+  String get appsFlyerUid => _appsFlyerUid;
 
   /// Starts the SDK when Dev Key (and iOS App ID on iOS) are present.
   Future<void> initialize() async {
@@ -63,6 +68,7 @@ class AppsFlyerService {
       _sdk!.startSDK(
         onSuccess: () {
           developer.log('AppsFlyer SDK started', name: 'AppsFlyerService');
+          unawaited(_refreshAppsFlyerUid());
         },
         onError: (int code, String message) {
           developer.log(
@@ -72,10 +78,32 @@ class AppsFlyerService {
         },
       );
       _initialized = true;
+      await _refreshAppsFlyerUid();
       developer.log('AppsFlyer initialized', name: 'AppsFlyerService');
     } catch (e, st) {
       developer.log(
         'AppsFlyer init failed: $e',
+        name: 'AppsFlyerService',
+        error: e,
+        stackTrace: st,
+      );
+    }
+  }
+
+  Future<void> _refreshAppsFlyerUid() async {
+    final sdk = _sdk;
+    if (sdk == null) return;
+    try {
+      final uid = (await sdk.getAppsFlyerUID())?.trim() ?? '';
+      if (uid.isEmpty) return;
+      _appsFlyerUid = uid;
+      developer.log(
+        'AppsFlyer UID ready',
+        name: 'AppsFlyerService',
+      );
+    } catch (e, st) {
+      developer.log(
+        'AppsFlyer getAppsFlyerUID failed: $e',
         name: 'AppsFlyerService',
         error: e,
         stackTrace: st,

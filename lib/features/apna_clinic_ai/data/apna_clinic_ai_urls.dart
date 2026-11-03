@@ -1,8 +1,11 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../../core/flavor/flavor_config.dart';
+
 /// All Apna Clinic AI SDK base config + relative paths.
 ///
 /// Override with dart-defines (`AI_*` preferred, else `APNA_CLINIC_AI_*`).
+/// When those are empty, [FlavorConfig] picks staging vs production hosts.
 /// Runtime testing can also override via [ApnaClinicAiConfig.applyOverrides].
 class ApnaClinicAiUrls {
   ApnaClinicAiUrls._();
@@ -11,30 +14,45 @@ class ApnaClinicAiUrls {
   // Environment (read once via [ApnaClinicAiConfig.fromEnvironment])
   // ---------------------------------------------------------------------------
 
+  static const stagingBaseUrl =
+      'https://jazzred-msa-stg.jazz.com.pk/ai-services/jimi';
+  static const productionBaseUrl =
+      'https://app.apnaclinic.com.pk/ai-services/jimi';
+
+  static const stagingSdkKey =
+      'sdk_apnaclinic_icZZE-CHR5lm91Pyo8Rnfpe5iqrzBt7UIi_MRzvpTiU';
+  static const productionSdkKey =
+      'sdk_apnaclinic_T7sF1-C-aGs641ccPg_vEdqJQibZWVxIGVS0MM4BEe8';
+
   static const _aiBase = String.fromEnvironment('AI_BASE_URL');
-  static const _apnaBase = String.fromEnvironment(
-    'APNA_CLINIC_AI_BASE_URL',
-    defaultValue: 'https://jazzred-msa-stg.jazz.com.pk/ai-services/jimi',
-  );
+  static const _apnaBase = String.fromEnvironment('APNA_CLINIC_AI_BASE_URL');
   static const _aiKey = String.fromEnvironment('AI_SDK_KEY');
-  static const _apnaKey = String.fromEnvironment(
-    'APNA_CLINIC_AI_SDK_KEY',
-    defaultValue:
-        'sdk_apnaclinic_icZZE-CHR5lm91Pyo8Rnfpe5iqrzBt7UIi_MRzvpTiU',
-  );
+  static const _apnaKey = String.fromEnvironment('APNA_CLINIC_AI_SDK_KEY');
   static const _tenantDefine = String.fromEnvironment(
     'AI_TENANT',
     defaultValue: 'apnaclinic',
   );
 
+  static String get _flavorBaseUrl =>
+      FlavorConfig.isProduction ? productionBaseUrl : stagingBaseUrl;
+
+  static String get _flavorSdkKey =>
+      FlavorConfig.isProduction ? productionSdkKey : stagingSdkKey;
+
   static String get defaultBaseUrl {
     final ai = _aiBase.trim();
-    return ai.isNotEmpty ? ai : _apnaBase;
+    if (ai.isNotEmpty) return ai;
+    final apna = _apnaBase.trim();
+    if (apna.isNotEmpty) return apna;
+    return _flavorBaseUrl;
   }
 
   static String get defaultSdkKey {
     final ai = _aiKey.trim();
-    return ai.isNotEmpty ? ai : _apnaKey;
+    if (ai.isNotEmpty) return ai;
+    final apna = _apnaKey.trim();
+    if (apna.isNotEmpty) return apna;
+    return _flavorSdkKey;
   }
 
   static String get defaultTenant {
@@ -45,13 +63,13 @@ class ApnaClinicAiUrls {
   /// Compile-time `AI_BASE_URL` (may be empty).
   static String get aiBaseDefine => _aiBase.trim();
 
-  /// Compile-time `APNA_CLINIC_AI_BASE_URL` (has default).
+  /// Compile-time `APNA_CLINIC_AI_BASE_URL` (may be empty).
   static String get apnaBaseDefine => _apnaBase.trim();
 
   /// Compile-time `AI_SDK_KEY` (may be empty).
   static String get aiKeyDefine => _aiKey.trim();
 
-  /// Compile-time `APNA_CLINIC_AI_SDK_KEY` (has default).
+  /// Compile-time `APNA_CLINIC_AI_SDK_KEY` (may be empty).
   static String get apnaKeyDefine => _apnaKey.trim();
 
   // ---------------------------------------------------------------------------

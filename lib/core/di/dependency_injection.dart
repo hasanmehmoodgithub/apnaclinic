@@ -67,8 +67,11 @@ Future<void> _initCore() async {
   sl.registerLazySingleton<AppPref>(
     () => AppPrefImpl(encryptionService: sl<EncryptionService>(), sharedPref),
   );
+  sl.registerLazySingleton<AppsFlyerService>(() => AppsFlyerService());
   sl.registerLazySingleton<DeviceHeadersProvider>(
-    () => DeviceHeadersProvider(),
+    () => DeviceHeadersProvider(
+      appsFlyerUidProvider: () => sl<AppsFlyerService>().appsFlyerUid,
+    ),
   );
   final hmacSecretStore = HmacSecretStore();
   await hmacSecretStore.initialize();
@@ -100,6 +103,5 @@ Future<void> _initCore() async {
   sl.registerLazySingleton<AnalyticsService>(
     () => AnalyticsServiceImpl([FirebaseAnalyticsProvider()]),
   );
-  sl.registerLazySingleton<AppsFlyerService>(() => AppsFlyerService());
   initCitiesInjector();
 }

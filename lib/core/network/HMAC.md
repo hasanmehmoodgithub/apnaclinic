@@ -50,7 +50,7 @@ Startup (`initDependencyInjection`):
 
 Each `ApiService` call, interceptors in order:
 
-1. **HeaderInterceptor** — `x-app-*`, `x-device-*`, `x-api-key`, `x-tenant-id`
+1. **HeaderInterceptor** — `x-app-*`, `x-device-*`, `x-appsflyer-id` (when ready), `x-api-key`, `x-tenant-id`
 2. **AuthInterceptor** — `Authorization` if a token exists
 3. **HmacSigningInterceptor** — five HMAC headers; JSON body frozen to a string
 4. **ApiLoggerInterceptor** / **Chucker** — you see the signed request

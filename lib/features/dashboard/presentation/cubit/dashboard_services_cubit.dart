@@ -63,7 +63,10 @@ class DashboardCubit extends Cubit<DashboardServicesState> {
         ),
       ),
       (data) {
-        _homeAiEnabledSession.setEnabled(data.aiEnabled);
+        _homeAiEnabledSession.update(
+          aiEnabled: data.aiEnabled,
+          aiPrescriptionEnabled: data.aiPrescriptionEnabled,
+        );
         _safeEmit(
           state.copyWith(
             ourServicesLoadingStateStatus: data.services.isEmpty
@@ -73,6 +76,7 @@ class DashboardCubit extends Cubit<DashboardServicesState> {
             servicesErrorMessage: null,
             proBannerUrl: data.bannerUrl,
             aiEnabled: data.aiEnabled,
+            aiPrescriptionEnabled: data.aiPrescriptionEnabled,
           ),
         );
       },

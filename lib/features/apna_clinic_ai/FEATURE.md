@@ -25,7 +25,7 @@ Dedicated `ApnaClinicAiSdkClient` (own Dio). Do not use `ApiService` (clinic JWT
 
 **Session:** guest vs signed-in from `AuthGuard.isLoggedIn` — see `SESSION_INIT.md`. Tokens live in `AppPref` (`apnaClinicAi*`); cleared on logout. Signed-in clinic JWT is sent as `X-User-Token` on SDK calls. **`POST /sdk/session/init`:** once per cold app start, after logout, or on login/mode change — not every time Care Companion opens (then only token refresh). **`conversation_id`:** Every home start (common concerns, home text, **home voice**) clears the prior chat UI and mints a new id when the turn starts. Cancelled home voice / back from chat → AI home with an empty detached thread. Close / back from AI home leaves the feature. In-chat turns keep the bound id. Continue / resume last complaint uses `AppPref.apnaClinicAiHistoryConversationId` (written after a turn is sent). Composer hint comes from `/sdk/app` theme placeholder.
 
-**Config:** `ApnaClinicAiConfig.fromEnvironment()` reads (in order) `AI_BASE_URL` / `AI_SDK_KEY` / `AI_TENANT` (`apnaclinic`), then `APNA_CLINIC_AI_*`. Temporary defaults exist for local/dev — move them out before production. Non-production / debug builds show a **tune** control on the chat header that opens a testing dialog to override base URL + SDK key at runtime (persisted in SharedPreferences; Apply clears the SDK session and reconnects; Reset restores dart-define defaults).
+**Config:** `ApnaClinicAiConfig.fromEnvironment()` reads (in order) `AI_BASE_URL` / `AI_SDK_KEY` / `AI_TENANT` (`apnaclinic`), then `APNA_CLINIC_AI_*`. When those are empty, flavor picks the host/key: **production** → `https://app.apnaclinic.com.pk/ai-services/jimi` + prod SDK key; **staging/dev** → `https://jazzred-msa-stg.jazz.com.pk/ai-services/jimi` + staging SDK key (`APP_FLAVOR`). Non-production / debug builds show a **tune** control on the chat header that opens a testing dialog to override base URL + SDK key at runtime (persisted in SharedPreferences; Apply clears the SDK session and reconnects; Reset restores flavor/dart-define defaults).
 
 Optional override:
 
@@ -33,7 +33,9 @@ Optional override:
 # copy apna_clinic_ai.keys.json.example → apna_clinic_ai.keys.json (gitignored)
 flutter run --dart-define-from-file=apna_clinic_ai.keys.json
 # or:
-flutter run --dart-define=AI_BASE_URL=https://jazzred-msa-stg.jazz.com.pk/ai-services/jimi --dart-define=AI_SDK_KEY=sdk_…
+flutter run --dart-define=APP_FLAVOR=Staging
+flutter run --dart-define=APP_FLAVOR=Production
+flutter run --dart-define=AI_BASE_URL=https://app.apnaclinic.com.pk/ai-services/jimi --dart-define=AI_SDK_KEY=sdk_…
 ```
 
 | Call | Path |

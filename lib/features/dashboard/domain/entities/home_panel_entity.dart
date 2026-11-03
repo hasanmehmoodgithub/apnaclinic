@@ -8,6 +8,7 @@ class HomePanelEntity extends Equatable {
     required this.services,
     this.bannerUrl,
     this.aiEnabled = false,
+    this.aiPrescriptionEnabled = false,
   });
 
   final List<OurServiceEntity> services;
@@ -16,6 +17,10 @@ class HomePanelEntity extends Equatable {
   /// `data.aiEnabled` from the home API.
   final bool aiEnabled;
 
+  /// `data.aiPrescriptionEnabled` from the home API.
+  final bool aiPrescriptionEnabled;
+
   @override
-  List<Object?> get props => [services, bannerUrl, aiEnabled];
+  List<Object?> get props =>
+      [services, bannerUrl, aiEnabled, aiPrescriptionEnabled];
 }

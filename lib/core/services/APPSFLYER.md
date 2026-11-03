@@ -160,12 +160,23 @@ class AppsFlyerService {
 }
 ```
 
+### AppsFlyer UID → API header
+
+After init, call `getAppsFlyerUID()` and cache on `AppsFlyerService.appsFlyerUid`.
+`DeviceHeadersProvider` merges `x-appsflyer-id` on every request once the UID is non-empty
+(see `DEVICE_HEADERS_CONTRACT.md`). Early requests before SDK start omit the header.
+
 ### DI
 
 In `lib/core/di/dependency_injection.dart` `_initCore`:
 
 ```dart
 sl.registerLazySingleton<AppsFlyerService>(() => AppsFlyerService());
+sl.registerLazySingleton<DeviceHeadersProvider>(
+  () => DeviceHeadersProvider(
+    appsFlyerUidProvider: () => sl<AppsFlyerService>().appsFlyerUid,
+  ),
+);
 ```
 
 Do **not** add AppsFlyer to `AnalyticsServiceImpl` providers unless product asks to fan out Firebase events to AppsFlyer. Previous setup: Firebase only.

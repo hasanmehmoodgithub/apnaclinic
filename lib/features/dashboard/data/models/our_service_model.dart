@@ -73,6 +73,7 @@ class OurServicesModel {
     required this.services,
     this.bannerUrl,
     this.aiEnabled = false,
+    this.aiPrescriptionEnabled = false,
   });
 
   final bool success;
@@ -84,6 +85,9 @@ class OurServicesModel {
 
   /// Home panel flag. The floating bot is shown only when this is true.
   final bool aiEnabled;
+
+  /// Home panel flag. Pharmacy prescription scan shows only when this is true.
+  final bool aiPrescriptionEnabled;
 
   factory OurServicesModel.fromJson(Map<String, dynamic> json) {
     final data = json['data'];
@@ -108,6 +112,9 @@ class OurServicesModel {
       services: list,
       bannerUrl: _nullableUrl(panel?['bannerUrl'] ?? panel?['banner_url']),
       aiEnabled: _asBool(panel?['aiEnabled'] ?? panel?['ai_enabled']),
+      aiPrescriptionEnabled: _asBool(
+        panel?['aiPrescriptionEnabled'] ?? panel?['ai_prescription_enabled'],
+      ),
     );
   }
 

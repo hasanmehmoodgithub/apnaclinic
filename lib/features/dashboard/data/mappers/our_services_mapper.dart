@@ -8,6 +8,7 @@ class DashboardServicesMapper {
       services: model.services.map(_toServiceEntity).toList(),
       bannerUrl: model.bannerUrl,
       aiEnabled: model.aiEnabled,
+      aiPrescriptionEnabled: model.aiPrescriptionEnabled,
     );
   }
 

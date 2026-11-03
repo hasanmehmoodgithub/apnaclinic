@@ -27,6 +27,9 @@ abstract class DashboardServicesState with _$DashboardServicesState {
 
     /// Home `data.aiEnabled`. The floating bot is shown only when this is true.
     @Default(false) bool aiEnabled,
+
+    /// Home `data.aiPrescriptionEnabled`. Pharmacy scan FAB when true.
+    @Default(false) bool aiPrescriptionEnabled,
     PromotionalBannerEntity? promotionalBanner,
     String? promotionalBannerErrorMessage,
     AppUpdatePromptEntity? appUpdatePrompt,

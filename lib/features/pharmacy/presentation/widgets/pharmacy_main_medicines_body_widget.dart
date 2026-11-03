@@ -104,7 +104,7 @@ class _PharmacyMainMedicinesBodyWidgetState
             ListenableBuilder(
               listenable: sl<HomeAiEnabledSession>(),
               builder: (context, _) {
-                if (!sl<HomeAiEnabledSession>().isEnabled) {
+                if (!sl<HomeAiEnabledSession>().isPrescriptionEnabled) {
                   return const SizedBox.shrink();
                 }
                 return Positioned(

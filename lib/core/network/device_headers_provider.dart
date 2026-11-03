@@ -8,15 +8,25 @@ class DeviceHeadersProvider {
   DeviceHeadersProvider({
     DeviceInfoPlugin? deviceInfoPlugin,
     Future<PackageInfo> Function()? packageInfoLoader,
+    String Function()? appsFlyerUidProvider,
   }) : _deviceInfoPlugin = deviceInfoPlugin ?? DeviceInfoPlugin(),
-       _packageInfoLoader = packageInfoLoader ?? PackageInfo.fromPlatform;
+       _packageInfoLoader = packageInfoLoader ?? PackageInfo.fromPlatform,
+       _appsFlyerUidProvider = appsFlyerUidProvider;
 
   final DeviceInfoPlugin _deviceInfoPlugin;
   final Future<PackageInfo> Function() _packageInfoLoader;
+  final String Function()? _appsFlyerUidProvider;
   Future<Map<String, String>>? _cachedHeadersFuture;
 
-  Future<Map<String, String>> headers() {
-    return _cachedHeadersFuture ??= _loadHeaders();
+  /// Static device/app headers plus live `x-appsflyer-id` when AppsFlyer is ready.
+  Future<Map<String, String>> headers() async {
+    final base = await (_cachedHeadersFuture ??= _loadHeaders());
+    final uid = _appsFlyerUidProvider?.call().trim() ?? '';
+    if (uid.isEmpty) return base;
+    return Map.unmodifiable({
+      ...base,
+      'x-appsflyer-id': uid,
+    });
   }
 
   Future<Map<String, String>> _loadHeaders() async {
