@@ -68,9 +68,9 @@ Firebase via `BookingsAnalytics` / `AnalyticsService`. `my_bookings_tab` fires w
 | `my_booking_lab` | Lab Test bookings tab opened or selected | — |
 | `my_booking_surgery` | Surgery bookings tab opened or selected | — |
 | `booking_viewed` | Booking details load | `type` (`consultancy` / `pharmacy` / `lab` / `surgery` / `instant_doctor`) |
-| `instant_doc_booking_opened` | Instant Doctor View Details / prescription sheet opens | `booking_id` |
-| `instant_doc_prescription_view` | Instant Doctor sheet has prescription text or PDF | `booking_id` |
-| `instant_doc_prescription_download` | Instant Doctor prescription PDF download / open | `booking_id`, `user_name`, `msisdn` |
+| `instant_doc_booking_opened` | Instant Doctor View Details / prescription sheet opens | `booking_id`, `partner_name`, `msisdn` |
+| `instant_doc_prescription_view` | Instant Doctor sheet has prescription text or PDF | `booking_id`, `partner_name`, `msisdn` |
+| `instant_doc_prescription_download` | Instant Doctor prescription PDF download / open | `booking_id`, `partner_name`, `user_name`, `msisdn` |
 | `prescription_available` | Consultation details have prescriptions, or prescription push | `booking_id`, `service` |
 | `prescription_downloaded` | User taps a consultation prescription | `booking_id`, `service`, `user_name`, `msisdn` |
 | `pharmacy_status_changed` | Pharmacy status push / inbox | `booking_id`, `status`, `changed_by` |

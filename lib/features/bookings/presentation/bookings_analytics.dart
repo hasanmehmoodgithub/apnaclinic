@@ -66,37 +66,56 @@ abstract final class BookingsAnalytics {
   }
 
   /// My Bookings → Instant Doctor → View Details / card open.
-  static void logInstantDocBookingOpened({required String bookingId}) {
+  static void logInstantDocBookingOpened({
+    required String bookingId,
+    required String partnerName,
+  }) {
     final id = bookingId.trim();
+    final partner = partnerName.trim();
+    final msisdn = _currentUserMsisdn();
     unawaited(
       _analytics.logEvent(AnalyticsEventKeys.instantDocBookingOpened, {
         if (id.isNotEmpty) AnalyticsParamKeys.bookingId: id,
+        if (partner.isNotEmpty) AnalyticsParamKeys.partnerName: partner,
+        if (msisdn.isNotEmpty) AnalyticsParamKeys.msisdn: msisdn,
       }),
     );
   }
 
   /// Instant Doctor prescription sheet shows prescription text and/or PDF.
-  static void logInstantDocPrescriptionView({required String bookingId}) {
+  static void logInstantDocPrescriptionView({
+    required String bookingId,
+    required String partnerName,
+  }) {
     final id = bookingId.trim();
     if (id.isEmpty) return;
+    final partner = partnerName.trim();
+    final msisdn = _currentUserMsisdn();
     unawaited(
       _analytics.logEvent(AnalyticsEventKeys.instantDocPrescriptionView, {
         AnalyticsParamKeys.bookingId: id,
+        if (partner.isNotEmpty) AnalyticsParamKeys.partnerName: partner,
+        if (msisdn.isNotEmpty) AnalyticsParamKeys.msisdn: msisdn,
       }),
     );
   }
 
   /// Instant Doctor prescription PDF download / open.
-  static void logInstantDocPrescriptionDownload({required String bookingId}) {
+  static void logInstantDocPrescriptionDownload({
+    required String bookingId,
+    required String partnerName,
+  }) {
     final id = bookingId.trim();
     if (id.isEmpty) return;
     final user = sl<AppPref>().getUserLocalModel();
     final userName =
         '${user?.firstName.trim() ?? ''} ${user?.lastName.trim() ?? ''}'.trim();
+    final partner = partnerName.trim();
     final msisdn = _analyticsMsisdn(user?.phone ?? '');
     unawaited(
       _analytics.logEvent(AnalyticsEventKeys.instantDocPrescriptionDownload, {
         AnalyticsParamKeys.bookingId: id,
+        if (partner.isNotEmpty) AnalyticsParamKeys.partnerName: partner,
         if (userName.isNotEmpty) AnalyticsParamKeys.userName: userName,
         if (msisdn.isNotEmpty) AnalyticsParamKeys.msisdn: msisdn,
       }),
@@ -247,6 +266,11 @@ abstract final class BookingsAnalytics {
     return type.contains('STATUS') ||
         type.contains('DELIVER') ||
         type.contains('DISPATCH');
+  }
+
+  static String _currentUserMsisdn() {
+    final user = sl<AppPref>().getUserLocalModel();
+    return _analyticsMsisdn(user?.phone ?? '');
   }
 
   static String _analyticsMsisdn(String phone) {

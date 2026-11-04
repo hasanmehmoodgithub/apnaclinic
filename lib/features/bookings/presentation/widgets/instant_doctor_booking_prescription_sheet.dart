@@ -29,11 +29,15 @@ class InstantDoctorBookingPrescriptionSheet extends StatelessWidget {
     BuildContext context, {
     required InstantDoctorBookingEntity booking,
   }) {
-    BookingsAnalytics.logInstantDocBookingOpened(bookingId: booking.orderId);
+    BookingsAnalytics.logInstantDocBookingOpened(
+      bookingId: booking.orderId,
+      partnerName: booking.partnerName,
+    );
     BookingsAnalytics.logBookingViewed(AnalyticsBookingTypeKeys.instantDoctor);
     if (booking.hasPrescription) {
       BookingsAnalytics.logInstantDocPrescriptionView(
         bookingId: booking.orderId,
+        partnerName: booking.partnerName,
       );
     }
     return showModalBottomSheet<void>(
@@ -141,6 +145,7 @@ class InstantDoctorBookingPrescriptionSheet extends StatelessWidget {
 
     BookingsAnalytics.logInstantDocPrescriptionDownload(
       bookingId: booking.orderId,
+      partnerName: booking.partnerName,
     );
 
     showHeartLoaderDialog(context, id: _pdfLoaderId, size: 120);
