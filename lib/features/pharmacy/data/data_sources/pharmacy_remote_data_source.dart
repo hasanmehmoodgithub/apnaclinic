@@ -3,9 +3,12 @@ import '../../domain/use_cases/abandon_pharmacy_order_use_case.dart';
 import '../../domain/use_cases/pharmacy_checkout_use_case.dart';
 import '../models/pharmacy_booking_detail_model.dart';
 import '../models/pharmacy_booking_model.dart';
+import '../models/pharmacy_city_model.dart';
 import '../models/pharmacy_medicine_model.dart';
 
 abstract class PharmacyRemoteDataSource {
+  Future<List<PharmacyCityModel>> getPharmacyCities();
+
   Future<PharmacyProductsPageModel> getPharmacyProducts({
     required int page,
     String displayName = '',

@@ -23,21 +23,25 @@ class ApiTimeoutException extends ApiException {
 }
 
 class ApiUnauthorizedException extends ApiException {
-  ApiUnauthorizedException({required super.message}) : super(statusCode: 401);
+  ApiUnauthorizedException({required super.message, super.data})
+      : super(statusCode: 401);
 }
 
 class ApiForbiddenException extends ApiException {
-  ApiForbiddenException({required super.message}) : super(statusCode: 403);
+  ApiForbiddenException({required super.message, super.data})
+      : super(statusCode: 403);
 }
 
 class ApiNotFoundException extends ApiException {
-  ApiNotFoundException({required super.message}) : super(statusCode: 404);
+  ApiNotFoundException({required super.message, super.data})
+      : super(statusCode: 404);
 }
 
 class ApiServerException extends ApiException {
   ApiServerException({
     required super.message,
     required super.statusCode,
+    super.data,
   });
 }
 

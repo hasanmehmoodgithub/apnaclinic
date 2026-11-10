@@ -1,4 +1,5 @@
 import '../../../../core/functional/functional_export.dart';
+import '../entities/pharmacy_api_failure_snapshot.dart';
 import '../entities/pharmacy_booking_detail_entity.dart';
 import '../use_cases/abandon_pharmacy_order_use_case.dart';
 import '../use_cases/pharmacy_checkout_use_case.dart';
@@ -8,12 +9,15 @@ import '../entities/pharmacy_cart_address_entity.dart';
 import '../entities/pharmacy_cart_entity.dart';
 import '../entities/pharmacy_add_to_cart_result_entity.dart';
 import '../entities/pharmacy_checkout_result_entity.dart';
+import '../entities/pharmacy_city_entity.dart';
 import '../entities/pharmacy_products_page_entity.dart';
 import '../entities/pharmacy_product_detail_entity.dart';
 import '../entities/prescription_extract_entity.dart';
 import '../use_cases/extract_prescription_params.dart';
 
 abstract class PharmacyRepository {
+  Future<Either<ErrorMsg, List<PharmacyCityEntity>>> getPharmacyCities();
+
   Future<Either<ErrorMsg, PharmacyProductsPageEntity>> getPharmacyProducts({
     required int page,
     String displayName = '',
@@ -27,6 +31,9 @@ abstract class PharmacyRepository {
 
   /// Last `failed_payment.unified_order_id` parsed from a cart API error body.
   int? consumeFailedPaymentUnifiedOrderId();
+
+  /// Last structured pharmacy API failure (`data.code` / `failedItems`).
+  PharmacyApiFailureSnapshot? consumeLastApiFailure();
 
   Future<Either<ErrorMsg, PharmacyAddToCartResultEntity>> addToCart({
     required String medicineId,

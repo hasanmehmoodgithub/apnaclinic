@@ -214,6 +214,10 @@ class AppUrls {
       '$_normalizedApiBaseUrl/acs-auth/api/v1/notifications/'
       '${Uri.encodeComponent(publicId)}/read';
 
+  /// Cities served by a pharmacy partner (city picker).
+  static String get pharmacyCities =>
+      '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/partner/pharmacy/cities';
+
   /// Pharmacy partner products list (POST, paginated).
   static String get pharmacyProducts =>
       '$_normalizedApiBaseUrl/acs-aggregator/api/v1/mobile/partner/pharmacy/products';

@@ -267,6 +267,49 @@ class AppLocalizationsUr extends AppLocalizations {
   String get pharmacyScreenTitle => 'فارمیسی';
 
   @override
+  String get pharmacySelectCityTitle => 'براہ کرم اپنا شہر منتخب کریں';
+
+  @override
+  String get pharmacySelectCityHint => 'شہر منتخب کریں';
+
+  @override
+  String get pharmacyConfirmCityCta => 'شہر کی تصدیق کریں';
+
+  @override
+  String pharmacyDeliveringTo(String city) {
+    return 'ڈیلیوری: $city';
+  }
+
+  @override
+  String pharmacyCityCartSwitchHint(String oldCity) {
+    return 'دوائیں اور قیمتیں شہر کے مطابق مختلف ہو سکتی ہیں۔ $oldCity کی کارٹ محفوظ رہے گی جب آپ واپس سوئچ کریں گے۔';
+  }
+
+  @override
+  String pharmacyProductNotAvailableInCity(String city) {
+    return '$city میں دستیاب نہیں';
+  }
+
+  @override
+  String get pharmacyChangeCityCta => 'شہر تبدیل کریں';
+
+  @override
+  String get pharmacyCartItemPriceChanged => 'قیمت تبدیل ہو گئی';
+
+  @override
+  String get pharmacyCartItemOutOfStock => 'اسٹاک ختم';
+
+  @override
+  String get pharmacyCartItemsInvalidTitle => 'اشیاء دستیاب نہیں';
+
+  @override
+  String get pharmacyCartItemsInvalidAction => 'کارٹ اپ ڈیٹ کریں';
+
+  @override
+  String get pharmacyCitiesLoadError =>
+      'فارمیسی شہر لوڈ نہیں ہو سکے۔ براہ کرم دوبارہ کوشش کریں۔';
+
+  @override
   String get pharmacyLoadError =>
       'ابھی دوائیں لوڈ نہیں ہو سکتیں۔ براہ کرم تھوڑی دیر بعد دوبارہ کوشش کریں۔';
 

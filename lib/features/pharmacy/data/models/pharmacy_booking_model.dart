@@ -38,10 +38,22 @@ class PharmacyBookingItemModel {
       unitPrice: _asDouble(json['unitPrice'] ?? json['unit_price']) ?? 0,
       total: _asDouble(json['total']) ?? 0,
       currency: (json['currency'] ?? 'PKR').toString().trim(),
-      status: (json['status'] ?? '').toString().trim(),
+      status: _readStatus(json),
       createdAt:
           (json['createdAt'] ?? json['created_at'] ?? '').toString().trim(),
     );
+  }
+
+  /// List cards use `statusV2` when the API sends it; `status` is the fallback.
+  static String _readStatus(Map<String, dynamic> json) {
+    for (final key in const ['statusV2', 'status_v2', 'status']) {
+      final raw = json[key];
+      if (raw == null) continue;
+      final value = raw.toString().trim();
+      if (value.isEmpty || value.toLowerCase() == 'null') continue;
+      return value;
+    }
+    return '';
   }
 
   static int? _asInt(Object? value) {

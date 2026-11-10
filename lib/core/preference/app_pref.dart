@@ -1,3 +1,4 @@
+import 'pharmacy_city_local_model.dart';
 import 'support_settings_local_model.dart';
 import 'user_local_model.dart';
 
@@ -57,6 +58,14 @@ abstract class AppPref {
 
   Future<bool> setSupportSettings(SupportSettingsLocalModel model);
   SupportSettingsLocalModel? getSupportSettings();
+
+  // ==================== Pharmacy city (location preference) ====================
+
+  /// Persists across restarts and logout. Used for `x-pharmacy-city-id`.
+  Future<bool> setPharmacyCity(PharmacyCityLocalModel model);
+  PharmacyCityLocalModel? getPharmacyCity();
+  Future<bool> clearPharmacyCity();
+  int? getPharmacyCityId();
 
   // ==================== Apna Clinic AI SDK session ====================
 

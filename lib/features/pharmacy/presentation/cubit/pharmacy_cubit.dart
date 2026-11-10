@@ -13,10 +13,13 @@ import '../../../../core/preference/app_pref.dart';
 import '../../../../core/services/appsflyer_event_keys.dart';
 import '../../../../core/services/appsflyer_service.dart';
 import '../../../../core/utils/auth_guard.dart';
+import '../../../../core/preference/pharmacy_city_local_model.dart';
 import '../../domain/entities/pharmacy_cart_item_entity.dart';
 import '../../domain/entities/pharmacy_cart_address_entity.dart';
+import '../../domain/entities/pharmacy_cart_invalid_item_entity.dart';
 import '../../domain/entities/pharmacy_cart_messages_entity.dart';
 import '../../domain/entities/pharmacy_checkout_result_entity.dart';
+import '../../domain/entities/pharmacy_city_entity.dart';
 import '../../domain/entities/pharmacy_medicine_entity.dart';
 import '../../domain/entities/pharmacy_payment_breakdown_entity.dart';
 import '../../../consultation/data/utils/consultation_booking_utils.dart';
@@ -24,6 +27,8 @@ import '../../../consultation/domain/entities/payment_provider_entity.dart';
 import '../../../consultation/domain/use_cases/get_payment_providers_use_case.dart';
 import '../../../promo_code/presentation/promo_code_analytics.dart';
 import '../../domain/entities/prescription_extract_entity.dart';
+import '../../domain/pharmacy_api_error_codes.dart';
+import '../../domain/repositories/pharmacy_repository.dart';
 import '../../domain/use_cases/abandon_pharmacy_order_use_case.dart';
 import '../../domain/use_cases/extract_prescription_params.dart';
 import '../../domain/use_cases/extract_prescription_use_case.dart';
@@ -31,6 +36,7 @@ import '../../domain/utils/prescription_catalog_query.dart';
 import '../../domain/use_cases/add_pharmacy_profile_address_use_case.dart';
 import '../../domain/use_cases/add_to_cart_use_case.dart';
 import '../../domain/use_cases/get_pharmacy_cart_use_case.dart';
+import '../../domain/use_cases/get_pharmacy_cities_use_case.dart';
 import '../../domain/use_cases/get_pharmacy_medicines_use_case.dart';
 import '../../domain/use_cases/get_pharmacy_product_detail_use_case.dart';
 import '../../domain/use_cases/get_pharmacy_profile_addresses_use_case.dart';
@@ -44,6 +50,7 @@ import 'prescription_scan_state.dart';
 class PharmacyCubit extends Cubit<PharmacyState> {
   PharmacyCubit({
     required this.extractPrescriptionUseCase,
+    required this.getPharmacyCitiesUseCase,
     required this.getPharmacyMedicinesUseCase,
     required this.getPharmacyProductDetailUseCase,
     required this.getPharmacyCartUseCase,
@@ -57,15 +64,18 @@ class PharmacyCubit extends Cubit<PharmacyState> {
     required this.getPaymentProvidersUseCase,
     required this.citiesRepository,
     required this.appPref,
+    required PharmacyRepository pharmacyRepository,
     required AnalyticsService analytics,
     required AppsFlyerService appsFlyer,
-  }) : _analytics = analytics,
+  }) : _pharmacyRepository = pharmacyRepository,
+       _analytics = analytics,
        _appsFlyer = appsFlyer,
        super(const PharmacyState()) {
-    loadMedicines();
+    _hydratePharmacyCityFromPref();
   }
 
   final ExtractPrescriptionUseCase extractPrescriptionUseCase;
+  final GetPharmacyCitiesUseCase getPharmacyCitiesUseCase;
   final GetPharmacyMedicinesUseCase getPharmacyMedicinesUseCase;
   final GetPharmacyProductDetailUseCase getPharmacyProductDetailUseCase;
   final GetPharmacyCartUseCase getPharmacyCartUseCase;
@@ -79,6 +89,7 @@ class PharmacyCubit extends Cubit<PharmacyState> {
   final GetPaymentProvidersUseCase getPaymentProvidersUseCase;
   final CitiesRepository citiesRepository;
   final AppPref appPref;
+  final PharmacyRepository _pharmacyRepository;
   final AnalyticsService _analytics;
   final AppsFlyerService _appsFlyer;
 
@@ -99,7 +110,199 @@ class PharmacyCubit extends Cubit<PharmacyState> {
             normalized.contains('modifying your cart'));
   }
 
+  bool get hasPharmacyCity =>
+      (state.pharmacyCityId ?? 0) > 0 && state.selectedCity.trim().isNotEmpty;
+
+  void _hydratePharmacyCityFromPref() {
+    final stored = appPref.getPharmacyCity();
+    if (stored == null) return;
+    emit(
+      state.copyWith(
+        selectedCity: stored.name,
+        pharmacyCityId: stored.id,
+        pharmacyPartner: stored.partner,
+        checkoutCities: [stored.name],
+        needsPharmacyCitySelection: false,
+      ),
+    );
+  }
+
+  Future<Either<ErrorMsg, List<PharmacyCityEntity>>> fetchPharmacyCities() {
+    return getPharmacyCitiesUseCase();
+  }
+
+  /// Syncs stored city against the live pharmacy cities list.
+  ///
+  /// Returns `true` when a city is ready and products may load.
+  /// Returns `false` when the picker must be shown (no city / unserved).
+  Future<bool> syncPharmacyCityOnOpen() async {
+    final result = await getPharmacyCitiesUseCase();
+    if (isClosed) return hasPharmacyCity;
+
+    if (result.isLeft) {
+      // Keep picker open with retry when first entry has no city yet.
+      if (!hasPharmacyCity) {
+        emit(state.copyWith(needsPharmacyCitySelection: true));
+        return false;
+      }
+      // Soft-fail when a city is already stored — products can still load.
+      return true;
+    }
+
+    final cities = result.right;
+    emit(state.copyWith(pharmacyCities: cities));
+    final stored = appPref.getPharmacyCity();
+    if (stored == null) {
+      emit(state.copyWith(needsPharmacyCitySelection: true));
+      return false;
+    }
+
+    PharmacyCityEntity? match;
+    for (final city in cities) {
+      if (city.id == stored.id) {
+        match = city;
+        break;
+      }
+    }
+
+    if (match == null) {
+      await clearPharmacyCity(promptSelection: true);
+      return false;
+    }
+
+    if (match.partner != stored.partner || match.name != stored.name) {
+      await _persistPharmacyCity(match, logSelection: false);
+    } else {
+      emit(
+        state.copyWith(
+          selectedCity: match.name,
+          pharmacyCityId: match.id,
+          pharmacyPartner: match.partner,
+          checkoutCities: [match.name],
+          needsPharmacyCitySelection: false,
+        ),
+      );
+    }
+    return true;
+  }
+
+  Future<void> confirmPharmacyCity(
+    PharmacyCityEntity city, {
+    bool reloadCatalog = true,
+  }) async {
+    final previousName = state.selectedCity.trim();
+    final switched = previousName.isNotEmpty && previousName != city.name;
+    await _persistPharmacyCity(city, logSelection: true);
+    if (isClosed) return;
+
+    emit(
+      state.copyWith(
+        searchQuery: '',
+        selectedProduct: null,
+        relatedProducts: const [],
+        productDetailErrorMessage: null,
+        productDetailLoadingStateStatus: StateStatus.idle,
+        checkoutInvalidItems: const [],
+        needsPharmacyCitySelection: false,
+      ),
+    );
+
+    if (!reloadCatalog) return;
+    await Future.wait([
+      loadMedicines(refresh: switched || previousName.isEmpty),
+      loadCart(),
+    ]);
+  }
+
+  Future<void> clearPharmacyCity({bool promptSelection = true}) async {
+    await appPref.clearPharmacyCity();
+    if (isClosed) return;
+    emit(
+      state.copyWith(
+        selectedCity: '',
+        pharmacyCityId: null,
+        pharmacyPartner: '',
+        checkoutCities: const [],
+        medicines: const [],
+        medicinesLoadingStateStatus: StateStatus.idle,
+        medicinesErrorMessage: null,
+        searchQuery: '',
+        selectedProduct: null,
+        relatedProducts: const [],
+        cartItems: const [],
+        cartBookingId: null,
+        paymentBreakdown: null,
+        cartAddresses: const [],
+        checkoutInvalidItems: const [],
+        needsPharmacyCitySelection: promptSelection,
+      ),
+    );
+  }
+
+  Future<void> _persistPharmacyCity(
+    PharmacyCityEntity city, {
+    required bool logSelection,
+  }) async {
+    await appPref.setPharmacyCity(
+      PharmacyCityLocalModel(
+        id: city.id,
+        name: city.name,
+        partner: city.partner,
+      ),
+    );
+    if (isClosed) return;
+    emit(
+      state.copyWith(
+        selectedCity: city.name,
+        pharmacyCityId: city.id,
+        pharmacyPartner: city.partner,
+        checkoutCities: [city.name],
+        needsPharmacyCitySelection: false,
+      ),
+    );
+    if (logSelection) {
+      logCitySelected(city.name);
+    }
+  }
+
+  /// Handles structured API side-effects. Returns `true` when city was cleared.
+  bool _handleApiFailureSideEffects() {
+    final failure = _pharmacyRepository.consumeLastApiFailure();
+    if (failure == null) return false;
+    if (PharmacyApiErrorCodes.isCitySelectionError(failure.code)) {
+      unawaited(clearPharmacyCity(promptSelection: true));
+      return true;
+    }
+    if (failure.code == PharmacyApiErrorCodes.cartItemsInvalid ||
+        failure.failedItems.isNotEmpty) {
+      emit(state.copyWith(checkoutInvalidItems: failure.failedItems));
+    }
+    return false;
+  }
+
+  List<PharmacyCartInvalidItemEntity> takeCheckoutInvalidItems() {
+    final items = List<PharmacyCartInvalidItemEntity>.from(
+      state.checkoutInvalidItems,
+    );
+    if (items.isNotEmpty) {
+      emit(state.copyWith(checkoutInvalidItems: const []));
+    }
+    return items;
+  }
+
   Future<void> loadMedicines({bool refresh = false}) async {
+    if (!hasPharmacyCity) {
+      emit(
+        state.copyWith(
+          medicinesLoadingStateStatus: StateStatus.idle,
+          medicines: const [],
+          medicinesErrorMessage: null,
+          needsPharmacyCitySelection: true,
+        ),
+      );
+      return;
+    }
+
     final displayName = state.searchQuery.trim();
     emit(
       state.copyWith(
@@ -121,6 +324,8 @@ class PharmacyCubit extends Cubit<PharmacyState> {
 
     final shouldLogSearch = _pendingSearchPerformedLog;
     _pendingSearchPerformedLog = false;
+
+    if (result.isLeft && _handleApiFailureSideEffects()) return;
 
     result.fold(
       (error) {
@@ -165,6 +370,7 @@ class PharmacyCubit extends Cubit<PharmacyState> {
       state.copyWith(
         productDetailLoadingStateStatus: StateStatus.loading,
         productDetailErrorMessage: null,
+        productUnavailableInCity: false,
         selectedProduct: null,
         relatedProducts: const [],
       ),
@@ -175,25 +381,33 @@ class PharmacyCubit extends Cubit<PharmacyState> {
     );
     if (isClosed) return;
 
-    result.fold(
-      (error) => emit(
+    if (result.isLeft) {
+      final failure = _pharmacyRepository.consumeLastApiFailure();
+      final unavailable = failure?.statusCode == 404;
+      if (PharmacyApiErrorCodes.isCitySelectionError(failure?.code)) {
+        unawaited(clearPharmacyCity(promptSelection: true));
+      }
+      emit(
         state.copyWith(
           productDetailLoadingStateStatus: StateStatus.error,
-          productDetailErrorMessage: error,
+          productDetailErrorMessage: result.left,
+          productUnavailableInCity: unavailable,
         ),
+      );
+      return;
+    }
+
+    final detail = result.right;
+    emit(
+      state.copyWith(
+        productDetailLoadingStateStatus: StateStatus.success,
+        selectedProduct: detail.product,
+        relatedProducts: detail.relatedItems,
+        productDetailErrorMessage: null,
+        productUnavailableInCity: false,
       ),
-      (detail) {
-        emit(
-          state.copyWith(
-            productDetailLoadingStateStatus: StateStatus.success,
-            selectedProduct: detail.product,
-            relatedProducts: detail.relatedItems,
-            productDetailErrorMessage: null,
-          ),
-        );
-        _logItemDescription(detail.product);
-      },
     );
+    _logItemDescription(detail.product);
   }
 
   Future<void> loadMoreMedicines() async {
@@ -208,6 +422,11 @@ class PharmacyCubit extends Cubit<PharmacyState> {
       ),
     );
     if (isClosed) return;
+
+    if (result.isLeft && _handleApiFailureSideEffects()) {
+      emit(state.copyWith(isLoadingMore: false));
+      return;
+    }
 
     result.fold(
       (error) => emit(
@@ -231,26 +450,27 @@ class PharmacyCubit extends Cubit<PharmacyState> {
 
   Future<void> loadCart() async {
     if (!AuthGuard.isLoggedIn(appPref)) return;
+    if (!hasPharmacyCity) return;
 
     final result = await getPharmacyCartUseCase(const GetPharmacyCartParams());
     if (isClosed) return;
 
-    await result.fold(
-      (_) async {
-        _captureFailedPaymentId();
-      },
-      (cart) async {
-        _setFailedPaymentUnifiedOrderId(cart.failedPaymentUnifiedOrderId);
-        emit(
-          state.copyWith(
-            cartBookingId: cart.bookingId,
-            cartItems: _mergePrescriptionUrls(cart.items),
-            cartAddresses: cart.addresses,
-            paymentBreakdown: cart.paymentBreakdown,
-            cartMessages: cart.messages ?? state.cartMessages,
-          ),
-        );
-      },
+    if (result.isLeft) {
+      _captureFailedPaymentId();
+      _handleApiFailureSideEffects();
+      return;
+    }
+
+    final cart = result.right;
+    _setFailedPaymentUnifiedOrderId(cart.failedPaymentUnifiedOrderId);
+    emit(
+      state.copyWith(
+        cartBookingId: cart.bookingId,
+        cartItems: _mergePrescriptionUrls(cart.items),
+        cartAddresses: cart.addresses,
+        paymentBreakdown: cart.paymentBreakdown,
+        cartMessages: cart.messages ?? state.cartMessages,
+      ),
     );
   }
 
@@ -533,28 +753,31 @@ class PharmacyCubit extends Cubit<PharmacyState> {
     if (state.searchQuery.isEmpty) return;
     _pendingSearchPerformedLog = false;
     emit(state.copyWith(searchQuery: ''));
-    loadMedicines();
+    if (hasPharmacyCity) {
+      loadMedicines();
+    }
   }
 
   void selectCheckoutCity(String city) {
-    emit(state.copyWith(selectedCity: city));
+    // Checkout city is locked to the stored pharmacy city.
+    final pharmacyCity = state.selectedCity.trim();
+    if (pharmacyCity.isEmpty) return;
+    if (city.trim() != pharmacyCity) return;
+    emit(state.copyWith(selectedCity: pharmacyCity));
   }
 
   Future<void> loadCheckoutCities() async {
-    await citiesRepository.loadCities();
-    if (isClosed) return;
-
-    final names = citiesRepository.cityNames;
-    if (names.isEmpty) return;
-
-    final selected = names.contains(state.selectedCity)
-        ? state.selectedCity
-        : citiesRepository.defaultCityName;
-
+    final cityName = state.selectedCity.trim();
+    final cityId = state.pharmacyCityId;
+    if (cityName.isEmpty || cityId == null) {
+      _hydratePharmacyCityFromPref();
+    }
+    final resolvedName = state.selectedCity.trim();
+    if (resolvedName.isEmpty) return;
     emit(
       state.copyWith(
-        checkoutCities: names,
-        selectedCity: selected,
+        checkoutCities: [resolvedName],
+        selectedCity: resolvedName,
       ),
     );
   }
@@ -625,8 +848,10 @@ class PharmacyCubit extends Cubit<PharmacyState> {
       return const Left(AppStrings.pharmacyCheckoutMissingContextError);
     }
 
-    final cityId =
-        citiesRepository.cityIdForName(trimmedRegion)?.trim() ?? '';
+    final pharmacyCityId = state.pharmacyCityId;
+    final cityId = pharmacyCityId != null && pharmacyCityId > 0
+        ? pharmacyCityId.toString()
+        : (citiesRepository.cityIdForName(trimmedRegion)?.trim() ?? '');
     final resolvedPaymentMethod = (paymentMethod?.trim().isNotEmpty == true)
         ? paymentMethod!.trim().toUpperCase()
         : (state.selectedPaymentProviderCode ?? '').trim().toUpperCase();
@@ -665,7 +890,10 @@ class PharmacyCubit extends Cubit<PharmacyState> {
         promoCode: promoCode,
       ),
     );
-
+    if (isClosed) return checkoutResult;
+    if (checkoutResult.isLeft) {
+      _handleApiFailureSideEffects();
+    }
     return checkoutResult;
   }
 
@@ -700,9 +928,10 @@ class PharmacyCubit extends Cubit<PharmacyState> {
             : null;
       },
       (addresses) {
-        emit(state.copyWith(cartAddresses: addresses));
-        if (addresses.isNotEmpty) {
-          final first = addresses.first.address.trim();
+        final filtered = _addressesInSelectedCity(addresses);
+        emit(state.copyWith(cartAddresses: filtered));
+        if (filtered.isNotEmpty) {
+          final first = filtered.first.address.trim();
           if (first.isNotEmpty) return first;
         }
         final profileAddress =
@@ -713,6 +942,24 @@ class PharmacyCubit extends Cubit<PharmacyState> {
             : null;
       },
     );
+  }
+
+  List<PharmacyCartAddressEntity> _addressesInSelectedCity(
+    List<PharmacyCartAddressEntity> addresses,
+  ) {
+    final cityId = (state.pharmacyCityId ?? 0).toString();
+    final cityName = state.selectedCity.trim().toLowerCase();
+    return addresses.where((address) {
+      final addressCityId = address.cityId.trim();
+      if (cityId.isNotEmpty &&
+          cityId != '0' &&
+          addressCityId.isNotEmpty &&
+          addressCityId == cityId) {
+        return true;
+      }
+      final region = address.region.trim().toLowerCase();
+      return cityName.isNotEmpty && region == cityName;
+    }).toList(growable: false);
   }
 
   /// Returns address ID from list when checkout address matches an existing
@@ -956,6 +1203,17 @@ class PharmacyCubit extends Cubit<PharmacyState> {
     unawaited(
       _analytics.logEvent(AnalyticsEventKeys.pharmacyModule, {
         AnalyticsParamKeys.source: source,
+        AnalyticsParamKeys.city: state.selectedCity.trim(),
+      }),
+    );
+  }
+
+  void logCitySelected(String cityName) {
+    final name = cityName.trim();
+    if (name.isEmpty) return;
+    unawaited(
+      _analytics.logEvent(AnalyticsEventKeys.citySelected, {
+        AnalyticsParamKeys.cityName: name,
       }),
     );
   }
@@ -1045,6 +1303,8 @@ class PharmacyCubit extends Cubit<PharmacyState> {
         AnalyticsParamKeys.deliveryCharges: state.deliveryCharges,
         AnalyticsParamKeys.paymentMethod: _analyticsPaymentMethod(),
         AnalyticsParamKeys.paymentStatus: paymentStatus,
+        AnalyticsParamKeys.city: state.selectedCity.trim(),
+        AnalyticsParamKeys.partner: state.pharmacyPartner.trim(),
       });
 
       final userType =

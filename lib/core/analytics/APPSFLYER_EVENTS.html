@@ -357,7 +357,7 @@ const events = [
     name: "af_purchase_pharmacy",
     summary: "Pharmacy order is confirmed.",
     scenarios: [
-      ["Order confirmed", "Pharmacy checkout success", "Order placed (card WebView when required)", "content_type and af_content_type = Pharmacy. Order, cart, promo, and payment fields.", "Firebase pharmacy_order_confirmed"]
+      ["Order confirmed", "Pharmacy checkout success", "Order placed (card WebView when required)", "content_type and af_content_type = Pharmacy. Order, cart, promo, and payment fields. Firebase twin also sends city + partner.", "Firebase pharmacy_order_confirmed"]
     ],
     params: [
       ["content_type / af_content_type", "Pharmacy"],
@@ -371,7 +371,8 @@ const events = [
       ["wellness_order / JazzCash Auth Code / transaction_id", "Empty until the API returns them"]
     ],
     pii: true,
-    code: "PharmacyCubit.logOrderConfirmed"
+    code: "PharmacyCubit.logOrderConfirmed",
+    notes: "Firebase pharmacy_order_confirmed also sends city and partner from the stored pharmacy city preference."
   },
   {
     mod: "Lab",

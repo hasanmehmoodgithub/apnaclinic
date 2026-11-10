@@ -4,11 +4,13 @@ import '../../../../core/constants/app_strings.dart';
 import '../../../../core/functional/functional_export.dart';
 import '../../domain/entities/pharmacy_add_address_result_entity.dart';
 import '../../domain/entities/pharmacy_add_to_cart_result_entity.dart';
+import '../../domain/entities/pharmacy_api_failure_snapshot.dart';
 import '../../domain/entities/pharmacy_booking_detail_entity.dart';
 import '../../domain/entities/pharmacy_booking_entity.dart';
 import '../../domain/entities/pharmacy_cart_address_entity.dart';
 import '../../domain/entities/pharmacy_cart_entity.dart';
 import '../../domain/entities/pharmacy_checkout_result_entity.dart';
+import '../../domain/entities/pharmacy_city_entity.dart';
 import '../../domain/entities/pharmacy_products_page_entity.dart';
 import '../../domain/entities/pharmacy_product_detail_entity.dart';
 import '../../domain/entities/prescription_extract_entity.dart';
@@ -21,6 +23,7 @@ import '../data_sources/pharmacy_remote_data_source.dart';
 import '../mappers/pharmacy_bookings_mapper.dart';
 import '../mappers/pharmacy_medicine_mapper.dart';
 import '../models/pharmacy_medicine_model.dart';
+import '../pharmacy_api_failure.dart';
 import '../pharmacy_cart_api_failure.dart';
 
 class PharmacyRepositoryImpl implements PharmacyRepository {
@@ -28,6 +31,7 @@ class PharmacyRepositoryImpl implements PharmacyRepository {
 
   final PharmacyRemoteDataSource remoteDataSource;
   int? _failedPaymentUnifiedOrderId;
+  PharmacyApiFailureSnapshot? _lastApiFailure;
 
   @override
   int? consumeFailedPaymentUnifiedOrderId() {
@@ -36,11 +40,47 @@ class PharmacyRepositoryImpl implements PharmacyRepository {
     return id;
   }
 
+  @override
+  PharmacyApiFailureSnapshot? consumeLastApiFailure() {
+    final failure = _lastApiFailure;
+    _lastApiFailure = null;
+    return failure;
+  }
+
   void _rememberFailedPayment(Object error) {
     if (error is! PharmacyCartApiFailure) return;
     final id = error.failedPaymentUnifiedOrderId ?? 0;
     if (id == 0) return;
     _failedPaymentUnifiedOrderId = id;
+  }
+
+  void _rememberApiFailure(Object error) {
+    if (error is! PharmacyApiFailure) return;
+    _lastApiFailure = PharmacyApiFailureSnapshot(
+      message: error.message,
+      code: error.code,
+      statusCode: error.statusCode,
+      failedItems: error.failedItems,
+    );
+  }
+
+  ErrorMsg _leftFrom(Object error) {
+    _rememberApiFailure(error);
+    return error.toString();
+  }
+
+  @override
+  Future<Either<ErrorMsg, List<PharmacyCityEntity>>> getPharmacyCities() async {
+    try {
+      final models = await remoteDataSource.getPharmacyCities();
+      final entities = models
+          .map((model) => model.toEntity())
+          .where((city) => city.isValid)
+          .toList(growable: false);
+      return Right(entities);
+    } catch (e) {
+      return Left(_leftFrom(e));
+    }
   }
 
   @override
@@ -57,7 +97,7 @@ class PharmacyRepositoryImpl implements PharmacyRepository {
       log('Mapped pharmacy products count: ${entity.items.length}');
       return Right(entity);
     } catch (e) {
-      return Left(e.toString());
+      return Left(_leftFrom(e));
     }
   }
 
@@ -73,7 +113,7 @@ class PharmacyRepositoryImpl implements PharmacyRepository {
       log('Mapped pharmacy product detail id: ${entity.product.id}');
       return Right(entity);
     } catch (e) {
-      return Left(e.toString());
+      return Left(_leftFrom(e));
     }
   }
 
@@ -86,7 +126,7 @@ class PharmacyRepositoryImpl implements PharmacyRepository {
       return Right(entity);
     } catch (e) {
       _rememberFailedPayment(e);
-      return Left(e.toString());
+      return Left(_leftFrom(e));
     }
   }
 
@@ -106,7 +146,7 @@ class PharmacyRepositoryImpl implements PharmacyRepository {
       return Right(entity);
     } catch (e) {
       _rememberFailedPayment(e);
-      return Left(e.toString());
+      return Left(_leftFrom(e));
     }
   }
 
@@ -126,7 +166,7 @@ class PharmacyRepositoryImpl implements PharmacyRepository {
       return Right(entity);
     } catch (e) {
       _rememberFailedPayment(e);
-      return Left(e.toString());
+      return Left(_leftFrom(e));
     }
   }
 
@@ -165,7 +205,7 @@ class PharmacyRepositoryImpl implements PharmacyRepository {
       log('Mapped checkout orderNo: ${entity.orderNo}');
       return Right(entity);
     } catch (e) {
-      return Left(e.toString());
+      return Left(_leftFrom(e));
     }
   }
 

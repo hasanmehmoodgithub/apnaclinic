@@ -14,8 +14,11 @@ import '../models/pharmacy_booking_detail_model.dart';
 import '../models/pharmacy_booking_model.dart';
 import '../../domain/entities/prescription_extract_entity.dart';
 import '../../domain/prescription_scan_error_codes.dart';
+import '../models/pharmacy_city_model.dart';
 import '../models/pharmacy_medicine_model.dart';
 import '../models/prescription_extract_model.dart';
+import '../pharmacy_api_error_parser.dart';
+import '../pharmacy_api_failure.dart';
 import '../pharmacy_cart_api_failure.dart';
 import 'pharmacy_remote_data_source.dart';
 
@@ -37,6 +40,12 @@ class PharmacyRemoteDataSourceImpl implements PharmacyRemoteDataSource {
   }
 
   Never _throwCartFailure(Map<String, dynamic> response) {
+    final structured = PharmacyApiErrorParser.fromResponseBody(
+      response,
+      fallbackMessage: AppStrings.pharmacyLoadError,
+    );
+    if (structured != null) throw structured;
+
     final model = PharmacyCartResponseModel.fromJson(response);
     final message =
         (response['message'] ?? AppStrings.pharmacyLoadError).toString();
@@ -47,9 +56,84 @@ class PharmacyRemoteDataSourceImpl implements PharmacyRemoteDataSource {
   }
 
   void _rethrowCartFailure(Object error) {
-    if (error is PharmacyCartApiFailure) throw error;
+    if (error is PharmacyCartApiFailure || error is PharmacyApiFailure) {
+      throw error;
+    }
     if (error is ApiException && error.data != null) {
+      final structured = PharmacyApiErrorParser.fromResponseBody(
+        error.data,
+        fallbackMessage: error.message,
+        statusCode: error.statusCode,
+      );
+      if (structured != null) throw structured;
       _throwCartFailure(error.data!);
+    }
+  }
+
+  Never _throwStructuredOrMessage(
+    Object error, {
+    required String endpoint,
+    required String fallbackMessage,
+  }) {
+    if (error is PharmacyApiFailure) throw error;
+    if (error is ApiException) {
+      final structured = PharmacyApiErrorParser.fromResponseBody(
+        error.data,
+        fallbackMessage: error.message.isNotEmpty
+            ? error.message
+            : fallbackMessage,
+        statusCode: error.statusCode,
+      );
+      if (structured != null) throw structured;
+      final message = ErrorHandler.handleExceptions(
+        error,
+        endpoint: endpoint,
+      );
+      throw PharmacyApiFailure(
+        message: message,
+        statusCode: error.statusCode,
+      );
+    }
+    if (error is Map<String, dynamic>) {
+      final structured = PharmacyApiErrorParser.fromResponseBody(
+        error,
+        fallbackMessage: fallbackMessage,
+      );
+      if (structured != null) throw structured;
+      final message = (error['message'] ?? fallbackMessage).toString();
+      throw PharmacyApiFailure(message: message);
+    }
+    final message = ErrorHandler.handleExceptions(error, endpoint: endpoint);
+    throw PharmacyApiFailure(message: message);
+  }
+
+  @override
+  Future<List<PharmacyCityModel>> getPharmacyCities() async {
+    try {
+      final Map<String, dynamic> response;
+      if (PharmacyMockApi.useMockResponses) {
+        response = await mockApi.getPharmacyCitiesSuccessResponse();
+      } else {
+        response = await apiService.get(AppUrls.pharmacyCities);
+        log('getPharmacyCities response: $response');
+      }
+
+      if (_isSuccessResponse(response)) {
+        return PharmacyCitiesResponseModel.fromJson(response).cities;
+      }
+
+      _throwStructuredOrMessage(
+        response,
+        endpoint: AppUrls.pharmacyCities,
+        fallbackMessage: AppStrings.pharmacyLoadError,
+      );
+    } catch (e) {
+      if (e is PharmacyApiFailure) rethrow;
+      _throwStructuredOrMessage(
+        e,
+        endpoint: AppUrls.pharmacyCities,
+        fallbackMessage: AppStrings.pharmacyLoadError,
+      );
     }
   }
 
@@ -80,15 +164,18 @@ class PharmacyRemoteDataSourceImpl implements PharmacyRemoteDataSource {
         return PharmacyProductsPageModel.fromJson(response);
       }
 
-      final message = (response['message'] ?? AppStrings.pharmacyLoadError)
-          .toString();
-      return Future.error(message);
+      _throwStructuredOrMessage(
+        response,
+        endpoint: AppUrls.pharmacyProducts,
+        fallbackMessage: AppStrings.pharmacyLoadError,
+      );
     } catch (e) {
-      final message = ErrorHandler.handleExceptions(
+      if (e is PharmacyApiFailure) rethrow;
+      _throwStructuredOrMessage(
         e,
         endpoint: AppUrls.pharmacyProducts,
+        fallbackMessage: AppStrings.pharmacyLoadError,
       );
-      return Future.error(message);
     }
   }
 
@@ -122,15 +209,18 @@ class PharmacyRemoteDataSourceImpl implements PharmacyRemoteDataSource {
         return PharmacyProductDetailModel.fromJson(response);
       }
 
-      final message = (response['message'] ?? AppStrings.pharmacyLoadError)
-          .toString();
-      return Future.error(message);
+      _throwStructuredOrMessage(
+        response,
+        endpoint: AppUrls.pharmacyProductDetail,
+        fallbackMessage: AppStrings.pharmacyLoadError,
+      );
     } catch (e) {
-      final message = ErrorHandler.handleExceptions(
+      if (e is PharmacyApiFailure) rethrow;
+      _throwStructuredOrMessage(
         e,
         endpoint: AppUrls.pharmacyProductDetail,
+        fallbackMessage: AppStrings.pharmacyLoadError,
       );
-      return Future.error(message);
     }
   }
 
@@ -322,15 +412,18 @@ class PharmacyRemoteDataSourceImpl implements PharmacyRemoteDataSource {
         return response;
       }
 
-      final message = (response['message'] ?? AppStrings.pharmacyCheckoutError)
-          .toString();
-      return Future.error(message);
+      _throwStructuredOrMessage(
+        response,
+        endpoint: AppUrls.pharmacyOrderCheckout,
+        fallbackMessage: AppStrings.pharmacyCheckoutError,
+      );
     } catch (e) {
-      final message = ErrorHandler.handleExceptions(
+      if (e is PharmacyApiFailure) rethrow;
+      _throwStructuredOrMessage(
         e,
         endpoint: AppUrls.pharmacyOrderCheckout,
+        fallbackMessage: AppStrings.pharmacyCheckoutError,
       );
-      return Future.error(message);
     }
   }
 

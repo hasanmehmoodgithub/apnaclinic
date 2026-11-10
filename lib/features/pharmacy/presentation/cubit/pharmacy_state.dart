@@ -3,7 +3,9 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import '../../../../core/enums/state_status.dart';
 import '../../../consultation/domain/entities/payment_provider_entity.dart';
 import '../../domain/entities/pharmacy_cart_address_entity.dart';
+import '../../domain/entities/pharmacy_cart_invalid_item_entity.dart';
 import '../../domain/entities/pharmacy_cart_item_entity.dart';
+import '../../domain/entities/pharmacy_city_entity.dart';
 import '../../domain/entities/pharmacy_medicine_entity.dart';
 import '../../domain/entities/pharmacy_cart_messages_entity.dart';
 import '../../domain/entities/pharmacy_payment_breakdown_entity.dart';
@@ -26,7 +28,13 @@ abstract class PharmacyState with _$PharmacyState {
     PharmacyMedicineEntity? selectedProduct,
     @Default([]) List<PharmacyMedicineEntity> relatedProducts,
     String? productDetailErrorMessage,
-    @Default('Islamabad') String selectedCity,
+    @Default(false) bool productUnavailableInCity,
+    /// Stored pharmacy delivery city name (empty until the user confirms).
+    @Default('') String selectedCity,
+    int? pharmacyCityId,
+    @Default('') String pharmacyPartner,
+    @Default([]) List<PharmacyCityEntity> pharmacyCities,
+    @Default(false) bool needsPharmacyCitySelection,
     @Default([]) List<String> checkoutCities,
     String? cartBookingId,
     @Default([]) List<PharmacyCartItemEntity> cartItems,
@@ -37,6 +45,7 @@ abstract class PharmacyState with _$PharmacyState {
     String? paymentProvidersErrorMessage,
     String? selectedPaymentProviderCode,
     PharmacyCartMessagesEntity? cartMessages,
+    @Default([]) List<PharmacyCartInvalidItemEntity> checkoutInvalidItems,
     @Default(PrescriptionScanState()) PrescriptionScanState prescriptionScan,
   }) = _PharmacyState;
 }

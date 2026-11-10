@@ -16,7 +16,7 @@ Global search for doctors, pharmacy, lab tests, surgery, and more. Supports text
 ## Routes / entry
 
 - `AppRoutes.search` — `SearchScreen` with optional `SearchLaunchArgs` (`initialQuery`, `startVoiceSearch`).
-- Result taps: pharmacy → `AppRoutes.pharmacy`; doctor → `AppRoutes.consultationBookDoctor` (login); lab → `AppRoutes.labTestBooking` with `preferredLabId` from the first `labs[]` entry (login). City comes from that lab, else the saved lab city. If neither exists, the Select City dialog opens first and the chosen city is saved, then the specific test opens. Surgery offer → `AppRoutes.surgeryPatientDetails` (login).
+- Result taps: pharmacy → `AppRoutes.pharmacy` (if no pharmacy city is stored, pharmacy city picker opens first and persists the choice, then product detail opens); doctor → `AppRoutes.consultationBookDoctor` (login); lab → `AppRoutes.labTestBooking` with `preferredLabId` from the first `labs[]` entry (login). City comes from that lab, else the saved lab city. If neither exists, the Select City dialog opens first and the chosen city is saved, then the specific test opens. Surgery offer → `AppRoutes.surgeryPatientDetails` (login).
 
 ## Data & APIs
 

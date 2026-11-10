@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../../core/cities/presentation/show_select_city_dialog.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/analytics/analytics_event_keys.dart';
 import '../../../../core/enums/state_status.dart';
@@ -26,6 +25,7 @@ import '../../../promo_code/presentation/widgets/promo_code_note_widget.dart';
 import '../cubit/pharmacy_cubit.dart';
 import '../cubit/pharmacy_state.dart';
 import '../pharmacy_navigation.dart';
+import 'pharmacy_cart_items_invalid_dialog.dart';
 import 'pharmacy_checkout_notices_widget.dart';
 import 'pharmacy_checkout_widgets.dart';
 import 'pharmacy_error_dialog.dart';
@@ -90,6 +90,22 @@ class PharmacyCheckoutBodyWidget extends StatelessWidget {
     await result.fold(
       (error) async {
         final l10n = AppLocalizations.of(context)!;
+        final invalidItems = cubit.takeCheckoutInvalidItems();
+        if (invalidItems.isNotEmpty) {
+          await showPharmacyCartItemsInvalidDialog(
+            context,
+            message: error.trim().isNotEmpty
+                ? error.trim()
+                : l10n.pharmacyCheckoutFailed,
+            failedItems: invalidItems,
+            onRemove: (item) async {
+              await cubit.removeFromCart(item.productId.toString());
+            },
+          );
+          if (!context.mounted) return;
+          await cubit.loadCart();
+          return;
+        }
         await showPharmacyErrorDialog(
           context,
           title: l10n.pharmacyCheckoutTitle,
@@ -199,9 +215,7 @@ class PharmacyCheckoutBodyWidget extends StatelessWidget {
           previous.selectedPaymentProviderCode !=
               current.selectedPaymentProviderCode,
       builder: (context, state) {
-        final cities = state.checkoutCities.isNotEmpty
-            ? state.checkoutCities
-            : <String>[state.selectedCity];
+        final cityName = state.selectedCity.trim();
         return PharmacyCheckoutProScope(
           builder: (context, isPro, offerKey, onProChanged) {
             return Stack(
@@ -375,20 +389,8 @@ class PharmacyCheckoutBodyWidget extends StatelessWidget {
                 SizedBox(height: 20.h),
                 PharmacyCheckoutCityField(
                   label: l10n.pharmacyCheckoutCityLabel,
-                  value: cities.contains(state.selectedCity)
-                      ? state.selectedCity
-                      : cities.first,
-                  onTap: () async {
-                    final picked = await showSelectCityDialog(
-                      context,
-                      cities: cities,
-                      initialSelectedCity: state.selectedCity,
-                      title: l10n.selectCityTitle,
-                      searchHint: l10n.selectCitySearchHint,
-                    );
-                    if (picked == null || !context.mounted) return;
-                    context.read<PharmacyCubit>().selectCheckoutCity(picked);
-                  },
+                  value: cityName,
+                  onTap: null,
                 ),
                 SizedBox(height: 22.h),
                 Text(

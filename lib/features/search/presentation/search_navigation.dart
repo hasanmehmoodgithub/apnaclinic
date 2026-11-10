@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/analytics/analytics_event_keys.dart';
@@ -19,6 +20,8 @@ import '../../lab_test/data/constants/lab_test_catalog_defaults.dart';
 import '../../lab_test/presentation/lab_test_analytics.dart';
 import '../../lab_test/presentation/lab_test_route_args.dart';
 import '../../pharmacy/domain/entities/pharmacy_medicine_entity.dart';
+import '../../pharmacy/presentation/cubit/pharmacy_cubit.dart';
+import '../../pharmacy/presentation/pharmacy_city_flow.dart';
 import '../../pharmacy/presentation/pharmacy_navigation.dart';
 import '../../surgery/presentation/surgery_analytics.dart';
 import '../../surgery/presentation/surgery_patient_details_args.dart';
@@ -33,13 +36,23 @@ void _logSearchResultClicked(String type) {
   );
 }
 
-void openSearchPharmacyDetail(
+Future<void> openSearchPharmacyDetail(
   BuildContext context,
   SearchResultEntity item,
-) {
+) async {
   _logSearchResultClicked(AnalyticsSearchResultTypeKeys.medicineName);
   final productId = item.id.trim();
   if (productId.isEmpty) return;
+
+  final cubit = context.read<PharmacyCubit>();
+  if (!cubit.hasPharmacyCity) {
+    final confirmed = await openPharmacyCityPicker(
+      context,
+      barrierDismissible: true,
+      reloadCatalog: false,
+    );
+    if (!context.mounted || !confirmed) return;
+  }
 
   final medicine = PharmacyMedicineEntity(
     id: productId,
@@ -136,7 +149,7 @@ Future<void> openSearchLabBooking(
   if (city.isEmpty) {
     final picked = await showSelectCityDialog(context);
     if (!context.mounted) return;
-    city = picked?.trim() ?? '';
+    city = picked?.name.trim() ?? '';
     if (city.isEmpty) return;
     await sl<AppPref>().setString(AppPrefKeys.labTestSelectedCity, city);
     LabTestAnalytics.logCityChange(city);

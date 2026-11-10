@@ -44,6 +44,11 @@ class HeaderInterceptor extends Interceptor {
     if (tenantId != null) {
       options.headers['x-tenant-id'] = tenantId.toString();
     }
+
+    final pharmacyCityId = _appPref.getPharmacyCityId();
+    if (pharmacyCityId != null) {
+      options.headers['x-pharmacy-city-id'] = pharmacyCityId.toString();
+    }
   }
 
   bool _isMobileBackendUri(String uri) {

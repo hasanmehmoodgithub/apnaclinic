@@ -464,9 +464,17 @@ const events = [
     trigger: "Pharmacy hub (or product detail from global search) opens.",
     ui: "Pharmacy main / hub, or product screen from search.",
     control: "Screen open",
-    params: [["source", "home | search | banner"]],
+    params: [["source", "home | search | banner"], ["city", "Stored pharmacy city name; empty on first visit"]],
     code: "PharmacyCubit.logPharmacyModule; pharmacy_main_screen.dart; pharmacy_screen.dart",
     notes: "Home tile and promo banner pass source extra. Global search uses source=search. Not logged: ad, notification."
+  },
+  {
+    mod: "Pharmacy", name: "City_Selected",
+    trigger: "User confirms a city in the pharmacy city picker.",
+    ui: "Pharmacy city select dialog.",
+    control: "Confirm City",
+    params: [["city_name", "Lahore"]],
+    code: "PharmacyCubit.logCitySelected / confirmPharmacyCity"
   },
   {
     mod: "Pharmacy", name: "pharmacy_search_clicked",
@@ -551,11 +559,13 @@ const events = [
       ["timestamp", "M/D/YYYY H:mm"],
       ["delivery_charges", "Number"],
       ["payment_method", "COD | JC | Card"],
-      ["payment_status", "Successful | Failed"]
+      ["payment_status", "Successful | Failed"],
+      ["city", "Stored pharmacy city name"],
+      ["partner", "Stored partner slug, e.g. servaid | mediq"]
     ],
     pii: true,
     code: "PharmacyCubit.logOrderConfirmed",
-    notes: "Omits promo code, JazzCash auth code, transaction_id."
+    notes: "Omits JazzCash auth code, transaction_id. Promo code included when applied."
   },
 
   /* Consultation */

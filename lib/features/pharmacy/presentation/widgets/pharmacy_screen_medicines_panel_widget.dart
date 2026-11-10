@@ -3,13 +3,17 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/analytics/analytics_event_keys.dart';
+import '../../../../core/constants/app_colors.dart';
 import '../../../../core/enums/state_status.dart';
+import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/utils/auth_guard.dart';
+import '../../../../core/widgets/app_button_widget.dart';
 import '../../domain/entities/pharmacy_medicine_entity.dart';
 import '../cubit/pharmacy_cubit.dart';
 import '../cubit/pharmacy_state.dart';
+import '../pharmacy_city_flow.dart';
 import '../pharmacy_navigation.dart';
 import 'pharmacy_add_to_cart_sheet.dart';
 import 'pharmacy_medicine_content_section.dart';
@@ -61,6 +65,9 @@ class _PharmacyScreenMedicinesPanelWidgetState
               current.productDetailLoadingStateStatus ||
           previous.productDetailErrorMessage !=
               current.productDetailErrorMessage ||
+          previous.productUnavailableInCity !=
+              current.productUnavailableInCity ||
+          previous.selectedCity != current.selectedCity ||
           previous.selectedProduct != current.selectedProduct ||
           previous.relatedProducts != current.relatedProducts,
       builder: (context, state) {
@@ -79,6 +86,39 @@ class _PharmacyScreenMedicinesPanelWidgetState
     }
 
     if (state.productDetailLoadingStateStatus == StateStatus.error) {
+      if (state.productUnavailableInCity) {
+        final city = state.selectedCity.trim();
+        return Padding(
+          padding: EdgeInsets.symmetric(horizontal: 24.w),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                city.isEmpty
+                    ? (state.productDetailErrorMessage ?? l10n.pharmacyLoadError)
+                    : l10n.pharmacyProductNotAvailableInCity(city),
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: AppColors.clr5D758F,
+                  fontSize: 14.sp,
+                ),
+              ),
+              SizedBox(height: 16.h),
+              AppButtonWidget(
+                title: l10n.pharmacyChangeCityCta,
+                onTap: () async {
+                  final changed = await openPharmacyCityPicker(
+                    context,
+                    barrierDismissible: true,
+                  );
+                  if (!context.mounted || !changed) return;
+                  _loadProductDetail();
+                },
+              ),
+            ],
+          ),
+        );
+      }
       return PharmacyScreenStateView.error(
         message: state.productDetailErrorMessage ?? l10n.pharmacyLoadError,
       );

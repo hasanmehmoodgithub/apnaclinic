@@ -44,6 +44,9 @@ class AppPrefKeys {
       _encryption.obfuscateKey('lab_test_selected_city$_prefVersion');
   static String get surgerySelectedCity =>
       _encryption.obfuscateKey('surgery_selected_city$_prefVersion');
+  /// Pharmacy delivery city `{ id, name, partner }` — kept across logout.
+  static String get pharmacyCity =>
+      _encryption.obfuscateKey('pharmacy_city$_prefVersion');
   static String get supportSettings =>
       _encryption.obfuscateKey('support_settings$_prefVersion');
 

@@ -17,6 +17,7 @@ import 'domain/use_cases/extract_prescription_use_case.dart';
 import 'domain/use_cases/get_pharmacy_booking_detail_use_case.dart';
 import 'domain/use_cases/get_pharmacy_bookings_use_case.dart';
 import 'domain/use_cases/get_pharmacy_cart_use_case.dart';
+import 'domain/use_cases/get_pharmacy_cities_use_case.dart';
 import 'domain/use_cases/get_pharmacy_medicines_use_case.dart';
 import 'domain/use_cases/get_pharmacy_product_detail_use_case.dart';
 import 'domain/use_cases/get_pharmacy_profile_addresses_use_case.dart';
@@ -39,6 +40,10 @@ void initPharmacyInjector() {
     () => PharmacyRepositoryImpl(
       remoteDataSource: sl<PharmacyRemoteDataSource>(),
     ),
+  );
+
+  sl.registerLazySingleton<GetPharmacyCitiesUseCase>(
+    () => GetPharmacyCitiesUseCase(repository: sl<PharmacyRepository>()),
   );
 
   sl.registerLazySingleton<GetPharmacyMedicinesUseCase>(
@@ -110,6 +115,7 @@ void initPharmacyInjector() {
   sl.registerFactory<PharmacyCubit>(
     () => PharmacyCubit(
       extractPrescriptionUseCase: sl<ExtractPrescriptionUseCase>(),
+      getPharmacyCitiesUseCase: sl<GetPharmacyCitiesUseCase>(),
       getPharmacyMedicinesUseCase: sl<GetPharmacyMedicinesUseCase>(),
       getPharmacyProductDetailUseCase: sl<GetPharmacyProductDetailUseCase>(),
       getPharmacyCartUseCase: sl<GetPharmacyCartUseCase>(),
@@ -125,6 +131,7 @@ void initPharmacyInjector() {
       getPaymentProvidersUseCase: sl<GetPaymentProvidersUseCase>(),
       citiesRepository: sl<CitiesRepository>(),
       appPref: sl<AppPref>(),
+      pharmacyRepository: sl<PharmacyRepository>(),
       analytics: sl<AnalyticsService>(),
       appsFlyer: sl<AppsFlyerService>(),
     ),

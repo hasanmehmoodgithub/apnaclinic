@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../services/encryption_service.dart';
 import 'app_pref.dart';
 import 'app_pref_keys.dart';
+import 'pharmacy_city_local_model.dart';
 import 'support_settings_local_model.dart';
 import 'user_local_model.dart';
 
@@ -197,6 +198,47 @@ class AppPrefImpl implements AppPref {
     } catch (_) {
       return null;
     }
+  }
+
+  // ==================== Pharmacy city ====================
+
+  @override
+  Future<bool> setPharmacyCity(PharmacyCityLocalModel model) async {
+    if (!model.isValid) return false;
+    try {
+      return await _setEncrypted(
+        AppPrefKeys.pharmacyCity,
+        jsonEncode(model.toJson()),
+      );
+    } catch (_) {
+      return false;
+    }
+  }
+
+  @override
+  PharmacyCityLocalModel? getPharmacyCity() {
+    try {
+      final raw = _getDecrypted(AppPrefKeys.pharmacyCity, '');
+      if (raw.isEmpty) return null;
+      final decoded = jsonDecode(raw);
+      if (decoded is! Map) return null;
+      final model = PharmacyCityLocalModel.fromJson(
+        Map<String, dynamic>.from(decoded),
+      );
+      return model.isValid ? model : null;
+    } catch (_) {
+      return null;
+    }
+  }
+
+  @override
+  Future<bool> clearPharmacyCity() => remove(AppPrefKeys.pharmacyCity);
+
+  @override
+  int? getPharmacyCityId() {
+    final id = getPharmacyCity()?.id;
+    if (id == null || id <= 0) return null;
+    return id;
   }
 
   // ==================== Apna Clinic AI SDK session ====================

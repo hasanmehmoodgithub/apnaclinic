@@ -9,16 +9,16 @@ class AppsFlyerEventKeys {
   static const String instantDoctorModule = 'instant_doctor_module';
 
   /// Instant Doctor subscribe OTP succeeds.
-  static const String purchase = 'af_purchase';
+  static const String purchase = 'af_booked';
 
   /// Pharmacy order confirmed.
-  static const String purchasePharmacy = 'af_purchase_pharmacy';
+  static const String purchasePharmacy = 'af_booked_pharmacy';
 
   /// Lab booking payment succeeds.
-  static const String purchaseLab = 'af_purchase_lab';
+  static const String purchaseLab = 'af_booked_lab';
 
   /// Doctor consultation payment succeeds.
-  static const String purchaseConsultation = 'af_purchase_consultation';
+  static const String purchaseConsultation = 'af_booked_consultation';
 
   /// Surgery lead (Confirm Booking) succeeds, before payment.
   static const String leadSurgery = 'af_lead_surgery';

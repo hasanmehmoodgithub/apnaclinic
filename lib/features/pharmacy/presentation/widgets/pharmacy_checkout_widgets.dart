@@ -245,12 +245,12 @@ class PharmacyCheckoutCityField extends StatelessWidget {
     super.key,
     required this.label,
     required this.value,
-    required this.onTap,
+    this.onTap,
   });
 
   final String label;
   final String value;
-  final VoidCallback onTap;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -290,11 +290,12 @@ class PharmacyCheckoutCityField extends StatelessWidget {
                       ),
                     ),
                   ),
-                  Icon(
-                    Icons.expand_more_rounded,
-                    color: AppColors.clr5D758F,
-                    size: 20.r,
-                  ),
+                  if (onTap != null)
+                    Icon(
+                      Icons.expand_more_rounded,
+                      color: AppColors.clr5D758F,
+                      size: 20.r,
+                    ),
                 ],
               ),
             ),

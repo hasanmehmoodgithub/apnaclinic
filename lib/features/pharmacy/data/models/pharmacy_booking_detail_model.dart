@@ -108,23 +108,14 @@ class PharmacyBookingDetailModel {
         ? Map<String, dynamic>.from(root)
         : Map<String, dynamic>.from(json);
 
-    final timelineRaw = payload['statusTimeline'] ?? payload['status_timeline'];
     final itemsRaw = payload['items'] ?? payload['products'];
 
     return PharmacyBookingDetailModel(
       type: (payload['type'] ?? 'pharmacy').toString().trim(),
       orderId: _fetchOrderId(payload),
       orderNo: _displayOrderNo(payload),
-      status: (payload['status'] ?? '').toString().trim(),
-      statusTimeline: (timelineRaw is List ? timelineRaw : const <dynamic>[])
-          .whereType<Map>()
-          .map(
-            (item) => PharmacyBookingTimelineStepModel.fromJson(
-              Map<String, dynamic>.from(item),
-            ),
-          )
-          .where((step) => step.label.isNotEmpty)
-          .toList(growable: false),
+      status: _readStatus(payload),
+      statusTimeline: _readStatusTimeline(payload),
       items: (itemsRaw is List ? itemsRaw : const <dynamic>[])
           .whereType<Map>()
           .map(
@@ -162,6 +153,44 @@ class PharmacyBookingDetailModel {
         payload['messageAlert'] ?? payload['message_alert'],
       ),
     );
+  }
+
+  /// Prefer `statusV2` so cancelled / failed / invoice rules match the list.
+  static String _readStatus(Map<String, dynamic> payload) {
+    for (final key in const ['statusV2', 'status_v2', 'status']) {
+      final raw = payload[key];
+      if (raw == null) continue;
+      final value = raw.toString().trim();
+      if (value.isEmpty || value.toLowerCase() == 'null') continue;
+      return value;
+    }
+    return '';
+  }
+
+  /// Prefer `statusTimelineV2` (Pending / In Progress / …); fall back to legacy.
+  static List<PharmacyBookingTimelineStepModel> _readStatusTimeline(
+    Map<String, dynamic> payload,
+  ) {
+    for (final key in const [
+      'statusTimelineV2',
+      'status_timeline_v2',
+      'statusTimeline',
+      'status_timeline',
+    ]) {
+      final raw = payload[key];
+      if (raw is! List || raw.isEmpty) continue;
+      final steps = raw
+          .whereType<Map>()
+          .map(
+            (item) => PharmacyBookingTimelineStepModel.fromJson(
+              Map<String, dynamic>.from(item),
+            ),
+          )
+          .where((step) => step.label.isNotEmpty)
+          .toList(growable: false);
+      if (steps.isNotEmpty) return steps;
+    }
+    return const [];
   }
 
   static String? _nullableString(Object? value) {

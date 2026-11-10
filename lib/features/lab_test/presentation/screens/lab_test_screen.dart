@@ -148,14 +148,15 @@ class _LabTestScreenState extends State<LabTestScreen> {
     _isCityDialogOpen = false;
     if (picked == null || !context.mounted) return;
 
+    final pickedName = picked.name;
     final currentCity = cubit.state.selectedCity;
-    if (picked == currentCity) return;
+    if (pickedName == currentCity) return;
 
     await labTestGuardCartClearingChange(
       context,
       onProceed: () async {
-        _savedCity = picked;
-        await cubit.selectCity(picked);
+        _savedCity = pickedName;
+        await cubit.selectCity(pickedName);
         if (mounted) setState(() {});
       },
       onViewCart: () async {

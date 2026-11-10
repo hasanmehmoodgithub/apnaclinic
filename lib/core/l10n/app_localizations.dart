@@ -602,6 +602,78 @@ abstract class AppLocalizations {
   /// **'Pharmacy'**
   String get pharmacyScreenTitle;
 
+  /// No description provided for @pharmacySelectCityTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select your city'**
+  String get pharmacySelectCityTitle;
+
+  /// No description provided for @pharmacySelectCityHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Select city'**
+  String get pharmacySelectCityHint;
+
+  /// No description provided for @pharmacyConfirmCityCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm City'**
+  String get pharmacyConfirmCityCta;
+
+  /// No description provided for @pharmacyDeliveringTo.
+  ///
+  /// In en, this message translates to:
+  /// **'Delivering to {city}'**
+  String pharmacyDeliveringTo(String city);
+
+  /// No description provided for @pharmacyCityCartSwitchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Medicines and prices can differ by city. Your cart for {oldCity} is kept for when you switch back.'**
+  String pharmacyCityCartSwitchHint(String oldCity);
+
+  /// No description provided for @pharmacyProductNotAvailableInCity.
+  ///
+  /// In en, this message translates to:
+  /// **'Not available in {city}'**
+  String pharmacyProductNotAvailableInCity(String city);
+
+  /// No description provided for @pharmacyChangeCityCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Change city'**
+  String get pharmacyChangeCityCta;
+
+  /// No description provided for @pharmacyCartItemPriceChanged.
+  ///
+  /// In en, this message translates to:
+  /// **'Price changed'**
+  String get pharmacyCartItemPriceChanged;
+
+  /// No description provided for @pharmacyCartItemOutOfStock.
+  ///
+  /// In en, this message translates to:
+  /// **'Out of stock'**
+  String get pharmacyCartItemOutOfStock;
+
+  /// No description provided for @pharmacyCartItemsInvalidTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Items unavailable'**
+  String get pharmacyCartItemsInvalidTitle;
+
+  /// No description provided for @pharmacyCartItemsInvalidAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Update cart'**
+  String get pharmacyCartItemsInvalidAction;
+
+  /// No description provided for @pharmacyCitiesLoadError.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to load pharmacy cities. Please try again.'**
+  String get pharmacyCitiesLoadError;
+
   /// Pharmacy medicines list failed to load
   ///
   /// In en, this message translates to:

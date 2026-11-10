@@ -34,6 +34,8 @@ static const String token = 'auth_token$prefVersion';
 
 **Feature city prefs:** `AppPrefKeys.labTestSelectedCity`, `AppPrefKeys.surgerySelectedCity` — last city chosen in Lab Test / Surgery lists.
 
+**Pharmacy city:** `AppPrefKeys.pharmacyCity` — JSON `{ id, name, partner }` via `getPharmacyCity()` / `setPharmacyCity()` / `clearPharmacyCity()` / `getPharmacyCityId()`. Location preference for multi-partner pharmacy routing (`x-pharmacy-city-id`). **Not** cleared on logout.
+
 **FCM:** `AppPrefKeys.fcmToken` (current device token), `AppPrefKeys.fcmTokenSentToBackend` (last token successfully sent on OTP or `PUT …/notifications/device-token`). Both cleared on logout / 401 session wipe.
 
 **Support settings:** `AppPrefKeys.supportSettings` — full CMS `GET /api/v1/mobile/support` payload (`phone`, `email`, `description`, `buttonText`, `faqsUrl`, `privacyPolicyUrl`, `termsAndConditionsUrl`, …). Refreshed on every app open. Not cleared on logout.

@@ -21,5 +21,5 @@ Future<void> openSurgeryCityPicker(BuildContext context) async {
     searchHint: l10n.selectCitySearchHint,
   );
   if (picked == null || !context.mounted) return;
-  await cubit.changeCity(picked);
+  await cubit.changeCity(picked.name);
 }

@@ -360,13 +360,31 @@ class ApiService {
         final code = error.response?.statusCode ?? 0;
         final body = error.response?.data;
         final message = ApiErrorMessageUtils.parseOrDefault(body);
-        if (code == 401) return ApiUnauthorizedException(message: message);
-        if (code == 403) return ApiForbiddenException(message: message);
-        if (code == 404) return ApiNotFoundException(message: message);
-        if (code >= 500) {
-          return ApiServerException(message: message, statusCode: code);
+        Map<String, dynamic>? asMap;
+        if (body is Map) {
+          asMap = Map<String, dynamic>.from(body);
         }
-        return ApiException(message: message, statusCode: code);
+        if (code == 401) {
+          return ApiUnauthorizedException(message: message, data: asMap);
+        }
+        if (code == 403) {
+          return ApiForbiddenException(message: message, data: asMap);
+        }
+        if (code == 404) {
+          return ApiNotFoundException(message: message, data: asMap);
+        }
+        if (code >= 500) {
+          return ApiServerException(
+            message: message,
+            statusCode: code,
+            data: asMap,
+          );
+        }
+        return ApiException(
+          message: message,
+          statusCode: code,
+          data: asMap,
+        );
       case DioExceptionType.cancel:
         return ApiCancelledException(message: 'Request cancelled');
       case DioExceptionType.connectionError:

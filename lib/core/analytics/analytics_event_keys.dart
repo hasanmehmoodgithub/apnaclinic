@@ -23,6 +23,8 @@ class AnalyticsEventKeys {
       'instant_doc_prescription_download';
 
   static const pharmacyModule = 'pharmacy_module';
+  /// Pharmacy city picker confirm (multi-partner routing).
+  static const citySelected = 'City_Selected';
   static const pharmacySearchClicked = 'pharmacy_search_clicked';
   static const pharmacySearchPerformed = 'pharmacy_search_performed';
   static const medicineItemClicked = 'medicine_item_clicked';
@@ -141,6 +143,8 @@ class AnalyticsParamKeys {
   static const msisdn = 'msisdn';
   static const sourceScreen = 'source_screen';
   static const source = 'source';
+  static const city = 'city';
+  static const cityName = 'city_name';
   static const resultItems = 'result_items';
   static const productId = 'product_id';
   static const productName = 'product_name';

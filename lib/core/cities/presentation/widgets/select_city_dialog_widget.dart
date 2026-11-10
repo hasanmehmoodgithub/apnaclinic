@@ -3,7 +3,9 @@ import 'package:go_router/go_router.dart';
 
 import '../../../constants/app_colors.dart';
 import '../../../extensions/screen_util_extensions.dart';
+import '../../domain/entities/city_entity.dart';
 import '../../domain/repositories/cities_repository.dart';
+import '../selected_city_result.dart';
 import 'select_city_radio_tile_widget.dart';
 import 'select_city_search_field_widget.dart';
 
@@ -17,16 +19,20 @@ class SelectCityDialogWidget extends StatefulWidget {
     required this.emptyMessage,
     required this.noResultsMessage,
     this.initialCities,
+    this.initialCityEntities,
     this.initialSelectedCity,
+    this.showCloseButton = true,
   });
 
   final CitiesRepository citiesRepository;
   final List<String>? initialCities;
+  final List<CityEntity>? initialCityEntities;
   final String title;
   final String searchHint;
   final String emptyMessage;
   final String noResultsMessage;
   final String? initialSelectedCity;
+  final bool showCloseButton;
 
   @override
   State<SelectCityDialogWidget> createState() => _SelectCityDialogWidgetState();
@@ -35,7 +41,7 @@ class SelectCityDialogWidget extends StatefulWidget {
 class _SelectCityDialogWidgetState extends State<SelectCityDialogWidget> {
   final TextEditingController _query = TextEditingController();
   late String? _selectedCity;
-  List<String> _cities = const [];
+  List<CityEntity> _cities = const [];
   bool _loading = true;
   String? _loadError;
 
@@ -43,12 +49,23 @@ class _SelectCityDialogWidgetState extends State<SelectCityDialogWidget> {
   void initState() {
     super.initState();
     _selectedCity = widget.initialSelectedCity;
-    final provided = widget.initialCities
+    final providedEntities = widget.initialCityEntities
+        ?.where((c) => c.name.trim().isNotEmpty)
+        .toList(growable: false);
+    if (providedEntities != null && providedEntities.isNotEmpty) {
+      _cities = providedEntities;
+      _loading = false;
+      return;
+    }
+
+    final providedNames = widget.initialCities
         ?.map((c) => c.trim())
         .where((c) => c.isNotEmpty)
         .toList(growable: false);
-    if (provided != null && provided.isNotEmpty) {
-      _cities = provided;
+    if (providedNames != null && providedNames.isNotEmpty) {
+      _cities = providedNames
+          .map((name) => CityEntity(id: name, name: name, slug: ''))
+          .toList(growable: false);
       _loading = false;
     } else {
       _loadCities();
@@ -64,13 +81,13 @@ class _SelectCityDialogWidgetState extends State<SelectCityDialogWidget> {
       await widget.citiesRepository.loadCities();
       if (!mounted) return;
       setState(() {
-        _cities = widget.citiesRepository.cityNames;
+        _cities = widget.citiesRepository.cities;
         _loading = false;
       });
     } catch (_) {
       if (!mounted) return;
       setState(() {
-        _cities = widget.citiesRepository.cityNames;
+        _cities = widget.citiesRepository.cities;
         _loading = false;
         if (_cities.isEmpty) {
           _loadError = widget.emptyMessage;
@@ -85,12 +102,20 @@ class _SelectCityDialogWidgetState extends State<SelectCityDialogWidget> {
     super.dispose();
   }
 
+  void _confirm(CityEntity city) {
+    context.pop(
+      SelectedCityResult(id: city.id, name: city.name),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final filtered = _cities
         .where(
-          (c) => c.toLowerCase().contains(_query.text.trim().toLowerCase()),
+          (c) => c.name.toLowerCase().contains(
+                _query.text.trim().toLowerCase(),
+              ),
         )
         .toList(growable: false);
 
@@ -127,25 +152,26 @@ class _SelectCityDialogWidgetState extends State<SelectCityDialogWidget> {
                     ),
                   ),
                 ),
-                Material(
-                  color: Colors.transparent,
-                  child: InkWell(
-                    onTap: () => context.pop(),
-                    borderRadius: BorderRadius.circular(4.r),
-                    child: Padding(
-                      padding: EdgeInsets.fromLTRB(6.w, 0, 2.w, 2.h),
-                      child: Text(
-                        '×',
-                        style: TextStyle(
-                          fontSize: 20.sp,
-                          fontWeight: FontWeight.w300,
-                          color: AppColors.clr060,
-                          height: 1,
+                if (widget.showCloseButton)
+                  Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      onTap: () => context.pop(),
+                      borderRadius: BorderRadius.circular(4.r),
+                      child: Padding(
+                        padding: EdgeInsets.fromLTRB(6.w, 0, 2.w, 2.h),
+                        child: Text(
+                          '×',
+                          style: TextStyle(
+                            fontSize: 20.sp,
+                            fontWeight: FontWeight.w300,
+                            color: AppColors.clr060,
+                            height: 1,
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
               ],
             ),
             SizedBox(height: 12.h),
@@ -162,7 +188,7 @@ class _SelectCityDialogWidgetState extends State<SelectCityDialogWidget> {
     );
   }
 
-  Widget _buildBody(List<String> filtered) {
+  Widget _buildBody(List<CityEntity> filtered) {
     if (_loading) {
       return Padding(
         padding: EdgeInsets.symmetric(vertical: 36.h),
@@ -233,11 +259,11 @@ class _SelectCityDialogWidgetState extends State<SelectCityDialogWidget> {
       itemCount: filtered.length,
       itemBuilder: (context, index) {
         final city = filtered[index];
-        final selected = city == _selectedCity;
+        final selected = city.name == _selectedCity;
         return SelectCityRadioTileWidget(
-          city: city,
+          city: city.name,
           selected: selected,
-          onTap: () => context.pop(city),
+          onTap: () => _confirm(city),
         );
       },
     );

@@ -84,6 +84,39 @@
   "profileRemoveCta": "حذف کریں",
   "profileCancelCta": "منسوخ کریں",
   "pharmacyScreenTitle": "فارمیسی",
+  "pharmacySelectCityTitle": "براہ کرم اپنا شہر منتخب کریں",
+  "pharmacySelectCityHint": "شہر منتخب کریں",
+  "pharmacyConfirmCityCta": "شہر کی تصدیق کریں",
+  "pharmacyDeliveringTo": "ڈیلیوری: {city}",
+  "@pharmacyDeliveringTo": {
+    "placeholders": {
+      "city": {
+        "type": "String"
+      }
+    }
+  },
+  "pharmacyCityCartSwitchHint": "دوائیں اور قیمتیں شہر کے مطابق مختلف ہو سکتی ہیں۔ {oldCity} کی کارٹ محفوظ رہے گی جب آپ واپس سوئچ کریں گے۔",
+  "@pharmacyCityCartSwitchHint": {
+    "placeholders": {
+      "oldCity": {
+        "type": "String"
+      }
+    }
+  },
+  "pharmacyProductNotAvailableInCity": "{city} میں دستیاب نہیں",
+  "@pharmacyProductNotAvailableInCity": {
+    "placeholders": {
+      "city": {
+        "type": "String"
+      }
+    }
+  },
+  "pharmacyChangeCityCta": "شہر تبدیل کریں",
+  "pharmacyCartItemPriceChanged": "قیمت تبدیل ہو گئی",
+  "pharmacyCartItemOutOfStock": "اسٹاک ختم",
+  "pharmacyCartItemsInvalidTitle": "اشیاء دستیاب نہیں",
+  "pharmacyCartItemsInvalidAction": "کارٹ اپ ڈیٹ کریں",
+  "pharmacyCitiesLoadError": "فارمیسی شہر لوڈ نہیں ہو سکے۔ براہ کرم دوبارہ کوشش کریں۔",
   "pharmacyLoadError": "ابھی دوائیں لوڈ نہیں ہو سکتیں۔ براہ کرم تھوڑی دیر بعد دوبارہ کوشش کریں۔",
   "pharmacyEmptyMedicines": "کوئی دوا نہیں ملی",
   "pharmacyMainChooseMedicineTitle": "دوا منتخب کریں",

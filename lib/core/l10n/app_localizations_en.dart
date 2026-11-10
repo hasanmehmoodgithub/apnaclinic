@@ -267,6 +267,49 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pharmacyScreenTitle => 'Pharmacy';
 
   @override
+  String get pharmacySelectCityTitle => 'Please select your city';
+
+  @override
+  String get pharmacySelectCityHint => 'Select city';
+
+  @override
+  String get pharmacyConfirmCityCta => 'Confirm City';
+
+  @override
+  String pharmacyDeliveringTo(String city) {
+    return 'Delivering to $city';
+  }
+
+  @override
+  String pharmacyCityCartSwitchHint(String oldCity) {
+    return 'Medicines and prices can differ by city. Your cart for $oldCity is kept for when you switch back.';
+  }
+
+  @override
+  String pharmacyProductNotAvailableInCity(String city) {
+    return 'Not available in $city';
+  }
+
+  @override
+  String get pharmacyChangeCityCta => 'Change city';
+
+  @override
+  String get pharmacyCartItemPriceChanged => 'Price changed';
+
+  @override
+  String get pharmacyCartItemOutOfStock => 'Out of stock';
+
+  @override
+  String get pharmacyCartItemsInvalidTitle => 'Items unavailable';
+
+  @override
+  String get pharmacyCartItemsInvalidAction => 'Update cart';
+
+  @override
+  String get pharmacyCitiesLoadError =>
+      'Unable to load pharmacy cities. Please try again.';
+
+  @override
   String get pharmacyLoadError =>
       'Unable to load medicines right now. Please try again in a moment.';
 

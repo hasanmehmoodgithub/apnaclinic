@@ -7,6 +7,7 @@ import '../../../../core/extensions/screen_util_extensions.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../cubit/pharmacy_cubit.dart';
 import '../cubit/pharmacy_state.dart';
+import '../pharmacy_city_flow.dart';
 import '../pharmacy_navigation.dart';
 import '../widgets/pharmacy_main_medicines_body_widget.dart';
 import '../widgets/pharmacy_main_top_header_widget.dart';
@@ -26,57 +27,111 @@ class PharmacyMainScreen extends StatefulWidget {
 
 class _PharmacyMainScreenState extends State<PharmacyMainScreen> {
   static const double _topBannerFraction = 0.32;
+  bool _cityFlowInProgress = false;
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
-      final cubit = context.read<PharmacyCubit>();
-      cubit.logPharmacyModule(widget.source);
-      cubit.clearHubSearch();
-      cubit.loadCart();
+      _bootstrap();
     });
+  }
+
+  Future<void> _bootstrap() async {
+    final cubit = context.read<PharmacyCubit>();
+    cubit.logPharmacyModule(widget.source);
+    cubit.clearHubSearch();
+    await _ensureCityThenLoad(required: true);
+  }
+
+  Future<void> _ensureCityThenLoad({required bool required}) async {
+    if (_cityFlowInProgress || !mounted) return;
+    _cityFlowInProgress = true;
+    final cubit = context.read<PharmacyCubit>();
+    try {
+      final ready = await cubit.syncPharmacyCityOnOpen();
+      if (!mounted) return;
+      if (!ready || cubit.state.needsPharmacyCitySelection) {
+        final confirmed = await openPharmacyCityPicker(
+          context,
+          barrierDismissible: !required || cubit.hasPharmacyCity,
+        );
+        if (!mounted || !confirmed) return;
+      } else {
+        await Future.wait([
+          cubit.loadMedicines(),
+          cubit.loadCart(),
+        ]);
+      }
+    } finally {
+      _cityFlowInProgress = false;
+    }
+  }
+
+  Future<void> _onDeliveringToTap() async {
+    if (_cityFlowInProgress || !mounted) return;
+    _cityFlowInProgress = true;
+    try {
+      await openPharmacyCityPicker(context, barrierDismissible: true);
+    } finally {
+      _cityFlowInProgress = false;
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final bannerHeight = MediaQuery.sizeOf(context).height * _topBannerFraction;
-    return Scaffold(
-      body: ColoredBox(
-        color: AppColors.clrF4F6F8,
-        child: Column(
-          children: [
-            SizedBox(
-              height: bannerHeight,
-              child: BlocSelector<PharmacyCubit, PharmacyState, int>(
-                selector: (state) => state.cartCount,
-                builder: (context, cartCount) {
-                  return PharmacyMainTopHeaderWidget(
-                    title: l10n.pharmacyScreenTitle,
-                    cartCount: cartCount,
-                    onBackTap: () => pharmacyPopOrGoHome(context),
-                    onCartTap: () => pharmacyOpenCart(context),
-                  );
-                },
-              ),
-            ),
-            Expanded(
-              child: SafeArea(
-                top: false,
-                child: Container(
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    color: AppColors.clrWhite,
-                    borderRadius: BorderRadius.vertical(
-                      top: Radius.circular(42.r),
-                    ),
-                  ),
-                  child: const PharmacyMainMedicinesBodyWidget(),
+    return BlocListener<PharmacyCubit, PharmacyState>(
+      listenWhen: (previous, current) =>
+          !previous.needsPharmacyCitySelection &&
+          current.needsPharmacyCitySelection,
+      listener: (context, state) {
+        _ensureCityThenLoad(required: true);
+      },
+      child: Scaffold(
+        body: ColoredBox(
+          color: AppColors.clrF4F6F8,
+          child: Column(
+            children: [
+              SizedBox(
+                height: bannerHeight,
+                child: BlocBuilder<PharmacyCubit, PharmacyState>(
+                  buildWhen: (previous, current) =>
+                      previous.cartCount != current.cartCount ||
+                      previous.selectedCity != current.selectedCity,
+                  builder: (context, state) {
+                    return PharmacyMainTopHeaderWidget(
+                      title: l10n.pharmacyScreenTitle,
+                      cartCount: state.cartCount,
+                      deliveringToCity: state.selectedCity,
+                      onDeliveringToTap: state.selectedCity.trim().isEmpty
+                          ? null
+                          : _onDeliveringToTap,
+                      onBackTap: () => pharmacyPopOrGoHome(context),
+                      onCartTap: () => pharmacyOpenCart(context),
+                    );
+                  },
                 ),
               ),
-            ),
-          ],
+              Expanded(
+                child: SafeArea(
+                  top: false,
+                  child: Container(
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: AppColors.clrWhite,
+                      borderRadius: BorderRadius.vertical(
+                        top: Radius.circular(42.r),
+                      ),
+                    ),
+                    child: const PharmacyMainMedicinesBodyWidget(),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

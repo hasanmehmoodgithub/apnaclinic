@@ -86,7 +86,8 @@ where a tracking spec requires it (`pharmacy_order_confirmed`,
 ## Pharmacy
 | Event | When | Params |
 |---|---|---|
-| `pharmacy_module` | Hub opens, or product detail from global search | `source` (`home` / `search` / `banner`) |
+| `pharmacy_module` | Hub opens, or product detail from global search | `source` (`home` / `search` / `banner`), `city` (stored name; empty on first visit) |
+| `City_Selected` | Pharmacy city picker confirm | `city_name` |
 | `pharmacy_search_clicked` | Pharmacy search field or search icon tap | — |
 | `pharmacy_search_performed` | Non-empty pharmacy search returns | `keyword`, `result_items` |
 | `medicine_item_clicked` | Medicine card tap (hub or related) | `product_id`, `product_name`, `prescription_required` (`Yes` / `No`) |
@@ -95,7 +96,7 @@ where a tracking spec requires it (`pharmacy_order_confirmed`,
 | `pharmacy_cart_Viewed` | Cart screen opens | `af_content_type`=`Pharmacy Cart` |
 | `pharmacy_checkout` | Checkout screen opens | `af_content_type`=`Pharmacy`, `number_of_products` |
 | `pharmacy_confirm_payment` | User confirms checkout (after JazzCash MSISDN if needed) | `payment_method` (`COD` / `JC` / `Card`) |
-| `pharmacy_order_confirmed` | Order placed and card WebView succeeds when required | `order_id`, `user_name`, `msisdn`, `cart_items`, `sub_total`, `order_value`, `promo_applied`, `promo` (when a code is applied), `timestamp`, `delivery_charges`, `payment_method`, `payment_status` |
+| `pharmacy_order_confirmed` | Order placed and card WebView succeeds when required | `order_id`, `user_name`, `msisdn`, `cart_items`, `sub_total`, `order_value`, `promo_applied`, `promo` (when a code is applied), `timestamp`, `delivery_charges`, `payment_method`, `payment_status`, `city`, `partner` |
 
 ## Auth / profile
 | Event | When | Params |
