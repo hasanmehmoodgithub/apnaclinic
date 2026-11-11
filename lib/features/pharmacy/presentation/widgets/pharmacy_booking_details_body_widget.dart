@@ -77,6 +77,7 @@ class PharmacyBookingDetailsBodyWidget extends StatelessWidget {
         PharmacyBookingOrderStatusWidget(
           isCancelled: detail.isCancelled,
           steps: detail.statusTimeline,
+          cancelledLabel: detail.status,
         ),
         SizedBox(height: 16.h),
         if (detail.hasMessageAlert)

@@ -22,6 +22,7 @@ class MenuScreenBody extends StatelessWidget {
     this.proMembership,
     this.onProTap,
     this.isProMembershipLoading = false,
+    this.proPromoImageUrl = '',
   });
 
   final MenuProfileViewData profile;
@@ -33,6 +34,9 @@ class MenuScreenBody extends StatelessWidget {
   final ProMembershipEntity? proMembership;
   final VoidCallback? onProTap;
   final bool isProMembershipLoading;
+
+  /// Same home `bannerUrl` artwork used by the home Pro card.
+  final String proPromoImageUrl;
 
   @override
   Widget build(BuildContext context) {
@@ -56,6 +60,7 @@ class MenuScreenBody extends StatelessWidget {
           MenuProCard(
             membership: proMembership,
             onTap: onProTap,
+            promoImageUrl: proPromoImageUrl,
           ),
           SizedBox(height: 14.h),
         ],

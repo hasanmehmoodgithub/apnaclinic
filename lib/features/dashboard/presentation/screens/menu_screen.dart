@@ -19,6 +19,7 @@ import '../../../pro/domain/entities/pro_membership_entity.dart';
 import '../../../pro/domain/use_cases/get_pro_catalog_use_case.dart';
 import '../../../pro/presentation/pro_membership_cache.dart';
 import '../../../pro/presentation/show_pro_bottom_sheet.dart';
+import '../../domain/services/home_pro_banner_session.dart';
 import '../constants/main_navigation_tabs.dart';
 import '../helpers/menu_logout_handler.dart';
 import '../helpers/menu_profile_mapper.dart';
@@ -37,6 +38,7 @@ class MenuScreen extends StatefulWidget {
 class _MenuScreenState extends State<MenuScreen> {
   late final AppPref _appPref;
   late final AuthSessionRefresh _sessionRefresh;
+  late final HomeProBannerSession _proBannerSession;
   bool _isLoggedIn = false;
   String _appVersion = '';
   ProMembershipEntity? _proMembership;
@@ -49,12 +51,19 @@ class _MenuScreenState extends State<MenuScreen> {
     super.initState();
     _appPref = sl<AppPref>();
     _sessionRefresh = sl<AuthSessionRefresh>();
+    _proBannerSession = sl<HomeProBannerSession>();
     _isLoggedIn = AuthGuard.isLoggedIn(_appPref);
     _appliedEpoch = _sessionRefresh.epoch;
     _appliedProRevision = _sessionRefresh.proMembershipRevision;
     _sessionRefresh.addListener(_onAuthSessionChanged);
+    _proBannerSession.addListener(_onProBannerChanged);
     unawaited(_loadAppVersion());
     _restoreOrLoadProMembership();
+  }
+
+  void _onProBannerChanged() {
+    if (!mounted) return;
+    setState(() {});
   }
 
   Future<void> _loadAppVersion() async {
@@ -123,6 +132,7 @@ class _MenuScreenState extends State<MenuScreen> {
   @override
   void dispose() {
     _sessionRefresh.removeListener(_onAuthSessionChanged);
+    _proBannerSession.removeListener(_onProBannerChanged);
     super.dispose();
   }
 
@@ -136,7 +146,9 @@ class _MenuScreenState extends State<MenuScreen> {
     if (epoch != _appliedEpoch) {
       _appliedEpoch = epoch;
       _appliedProRevision = revision;
-      unawaited(_loadProMembership());
+      // Prefer Home's cached membership; fetch only on cache miss.
+      _restoreOrLoadProMembership();
+      setState(() {});
       return;
     }
     if (revision == _appliedProRevision) return;
@@ -146,7 +158,10 @@ class _MenuScreenState extends State<MenuScreen> {
       unawaited(_loadProMembershipUntil(expected));
       return;
     }
-    unawaited(_loadProMembership());
+    // Membership revision bumped without an expected flag — reuse cache if
+    // Home already refreshed it for this revision.
+    _restoreOrLoadProMembership();
+    setState(() {});
   }
 
   Future<void> _openEditProfile() async {
@@ -285,6 +300,7 @@ class _MenuScreenState extends State<MenuScreen> {
                     proMembership: _proMembership,
                     onProTap: () => unawaited(_openPro()),
                     isProMembershipLoading: _isProMembershipLoading,
+                    proPromoImageUrl: _proBannerSession.bannerUrl,
                   ),
                 ),
                 if (_isLoggedIn) MenuLogoutButton(onPressed: _onLogoutTap),

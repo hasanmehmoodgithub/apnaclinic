@@ -35,7 +35,7 @@ Unsubscribe: **POST** `proUnsubscribe` → `/acs-aggregator/api/v1/mobile/pro/un
 
 ## State
 
-- `ProCubit` / `ProState` — load catalog, `selectedPlanId` (defaults to `isCurrent` then `isRecommended`), subscribe, and unsubscribe. `subscribeStateStatus` covers both subscribe and unsubscribe (only one is on screen). Home banner reads `membership` / `isCatalogLoading` via `BlocSelector` (no screen `setState`). A confirmed catalog load is stored in `ProMembershipCache` for the current auth epoch and Pro revision so the side menu can show it without another details call. The optimistic inactive emit after unsubscribe is not cached.
+- `ProCubit` / `ProState` — load catalog, `selectedPlanId` (defaults to `isCurrent` then `isRecommended`), subscribe, and unsubscribe. `subscribeStateStatus` covers both subscribe and unsubscribe (only one is on screen). Home banner reads `membership` / `isCatalogLoading` via `BlocSelector` (no screen `setState`). `loadCatalog` / membership refresh write the confirmed membership into `ProMembershipCache` for the current auth epoch and Pro revision so Menu reuses Home’s details call and does not hit `pro/details` again. The optimistic inactive emit after unsubscribe is not cached.
 
 ## DI
 

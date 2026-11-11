@@ -14,15 +14,14 @@ class ApnaClinicProHomeBanner extends StatelessWidget {
     this.membership,
     this.onTap,
     this.isLoading = false,
-    this.imageUrl = defaultImageUrl,
+    this.imageUrl = '',
   });
-
-  /// Full-card artwork for non-Pro promo.
-  static const String defaultImageUrl = 'https://iili.io/nf5hpJj.png';
 
   final ProMembershipEntity? membership;
   final VoidCallback? onTap;
   final bool isLoading;
+
+  /// Promo artwork from home `bannerUrl` (empty → card fallback CTA).
   final String imageUrl;
 
   @override

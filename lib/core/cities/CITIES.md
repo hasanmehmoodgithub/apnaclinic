@@ -27,7 +27,7 @@ Pharmacy multi-partner routing uses **`AppUrls.pharmacyCities`** (`GET …/mobil
 |--------|-----|
 | Lab | `LabTestScreen` → `showSelectCityDialog` → `LabTestCubit.selectCity` (uses `.name`) |
 | Surgery | `openSurgeryCityPicker` → dialog → `SurgeryCubit.changeCity` (uses `.name`) |
-| Pharmacy hub | Dedicated `showPharmacyCitySelectDialog` / `openPharmacyCityPicker` (partner cities API) |
+| Pharmacy hub | `openPharmacyCityPicker` → shared `showSelectCityDialog` with pharmacy partner `cityEntities` |
 | Pharmacy checkout | City field locked to stored pharmacy city (not the general cities list) |
 
 ## DI

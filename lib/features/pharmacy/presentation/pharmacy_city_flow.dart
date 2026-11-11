@@ -2,12 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/cities/domain/entities/city_entity.dart';
+import '../../../core/cities/presentation/show_select_city_dialog.dart';
 import '../../../core/l10n/app_localizations.dart';
 import '../domain/entities/pharmacy_city_entity.dart';
 import 'cubit/pharmacy_cubit.dart';
-import 'widgets/pharmacy_city_select_dialog.dart';
 
-/// Opens the pharmacy city picker. Returns `true` if a city is confirmed.
+/// Opens the shared Lab/Surgery-style Select City dialog for pharmacy cities.
+///
+/// Returns `true` if a city is confirmed.
 Future<bool> openPharmacyCityPicker(
   BuildContext context, {
   required bool barrierDismissible,
@@ -18,18 +21,44 @@ Future<bool> openPharmacyCityPicker(
   final previousCity = cubit.state.selectedCity.trim();
   final hasCartItems = cubit.state.cartItems.isNotEmpty;
 
+  final cities = await _ensurePharmacyCities(cubit);
+  if (!context.mounted) return cubit.hasPharmacyCity;
+
+  if (cities.isEmpty) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(l10n.pharmacyCitiesLoadError)),
+    );
+    if (!barrierDismissible && context.canPop()) {
+      context.pop();
+      return false;
+    }
+    return cubit.hasPharmacyCity;
+  }
+
+  if (hasCartItems && previousCity.isNotEmpty) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(l10n.pharmacyCityCartSwitchHint(previousCity))),
+    );
+  }
+
+  final cityEntities = cities
+      .map(
+        (city) => CityEntity(
+          id: city.id.toString(),
+          name: city.name,
+          slug: city.slug,
+        ),
+      )
+      .toList(growable: false);
+
   final initial = _initialSelected(cubit);
-  final picked = await showPharmacyCitySelectDialog(
+  final picked = await showSelectCityDialog(
     context,
-    loadCities: cubit.fetchPharmacyCities,
-    cities: cubit.state.pharmacyCities.isNotEmpty
-        ? cubit.state.pharmacyCities
-        : null,
-    initialSelected: initial,
+    cityEntities: cityEntities,
+    initialSelectedCity: initial?.name,
+    title: l10n.selectCityTitle,
+    searchHint: l10n.selectCitySearchHint,
     barrierDismissible: barrierDismissible,
-    cartSwitchHint: hasCartItems && previousCity.isNotEmpty
-        ? l10n.pharmacyCityCartSwitchHint(previousCity)
-        : null,
   );
 
   if (!context.mounted) return cubit.hasPharmacyCity;
@@ -44,8 +73,44 @@ Future<bool> openPharmacyCityPicker(
     return cubit.hasPharmacyCity;
   }
 
-  await cubit.confirmPharmacyCity(picked, reloadCatalog: reloadCatalog);
+  final matched = _matchPharmacyCity(cities, picked.id, picked.name);
+  if (matched == null) {
+    return cubit.hasPharmacyCity;
+  }
+
+  await cubit.confirmPharmacyCity(matched, reloadCatalog: reloadCatalog);
   return true;
+}
+
+Future<List<PharmacyCityEntity>> _ensurePharmacyCities(
+  PharmacyCubit cubit,
+) async {
+  if (cubit.state.pharmacyCities.isNotEmpty) {
+    return cubit.state.pharmacyCities;
+  }
+  final result = await cubit.fetchPharmacyCities();
+  return result.fold(
+    (_) => cubit.state.pharmacyCities,
+    (cities) => cities,
+  );
+}
+
+PharmacyCityEntity? _matchPharmacyCity(
+  List<PharmacyCityEntity> cities,
+  String pickedId,
+  String pickedName,
+) {
+  final id = int.tryParse(pickedId);
+  if (id != null && id > 0) {
+    for (final city in cities) {
+      if (city.id == id) return city;
+    }
+  }
+  final name = pickedName.trim().toLowerCase();
+  for (final city in cities) {
+    if (city.name.trim().toLowerCase() == name) return city;
+  }
+  return null;
 }
 
 PharmacyCityEntity? _initialSelected(PharmacyCubit cubit) {

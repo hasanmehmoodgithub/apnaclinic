@@ -121,15 +121,8 @@ class ProCubit extends Cubit<ProState> {
         );
       },
       (catalog) {
-        final selected = state.selectedPlanId ?? catalog.defaultSelectedPlanId;
-        emit(
-          state.copyWith(
-            loadingStateStatus: StateStatus.success,
-            catalog: catalog,
-            selectedPlanId: selected,
-            errorMessage: null,
-          ),
-        );
+        // Persist membership so Menu (and others) reuse Home's details call.
+        _emitCatalog(catalog);
       },
     );
   }

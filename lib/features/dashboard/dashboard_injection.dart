@@ -10,6 +10,7 @@ import 'data/mock/promotional_banner_mock_api.dart';
 import 'data/repositories/dashboard_repository_impl.dart';
 import 'domain/repositories/dashboard_repository.dart';
 import 'domain/services/home_ai_enabled_session.dart';
+import 'domain/services/home_pro_banner_session.dart';
 import 'domain/services/promotional_banner_session.dart';
 import 'domain/use_cases/check_app_update_use_case.dart';
 import 'domain/use_cases/promotional_banner_use_case.dart';
@@ -18,6 +19,7 @@ import 'presentation/cubit/dashboard_services_cubit.dart';
 
 void initDashboardInjector() {
   sl.registerLazySingleton<HomeAiEnabledSession>(() => HomeAiEnabledSession());
+  sl.registerLazySingleton<HomeProBannerSession>(() => HomeProBannerSession());
   sl.registerLazySingleton<DashboardServicesMockApi>(
     () => DashboardServicesMockApi(),
   );

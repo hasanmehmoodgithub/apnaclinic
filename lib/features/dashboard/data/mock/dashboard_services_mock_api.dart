@@ -14,7 +14,7 @@ class DashboardServicesMockApi {
       'message': 'Home panel retrieved',
       'code': 200,
       'data': {
-        'bannerUrl': 'https://iili.io/nf5hpJj.png',
+        'bannerUrl': 'test',
         'aiEnabled': true,
         'aiPrescriptionEnabled': false,
         'services': [

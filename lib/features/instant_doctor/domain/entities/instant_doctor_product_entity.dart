@@ -19,6 +19,10 @@ class InstantDoctorProductEntity extends Equatable {
   final List<String> benefits;
   final String redirectUrl;
 
+  /// Pro complimentary plans (`priceDisplay: "Free with Pro"`) cannot cancel.
+  bool get isFreeWithPro =>
+      priceDisplay.trim().toLowerCase() == 'free with pro';
+
   @override
   List<Object?> get props => [
     productId,

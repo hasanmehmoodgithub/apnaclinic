@@ -406,15 +406,11 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                                     isLoading: proState.isCatalogLoading,
                                   ),
                                   builder: (context, pro) {
-                                    final bannerUrl =
-                                        state.proBannerUrl?.trim() ?? '';
                                     return ApnaClinicProHomeBanner(
                                       membership: pro.membership,
                                       isLoading: pro.isLoading,
-                                      imageUrl: bannerUrl.isEmpty
-                                          ? ApnaClinicProHomeBanner
-                                                .defaultImageUrl
-                                          : bannerUrl,
+                                      imageUrl:
+                                          state.proBannerUrl?.trim() ?? '',
                                       onTap: () => unawaited(_openPro()),
                                     );
                                   },

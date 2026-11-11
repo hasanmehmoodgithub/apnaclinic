@@ -9,7 +9,6 @@ import '../../../../core/l10n/app_localizations.dart';
 import '../../../../generated/assets.dart';
 import '../../../pro/domain/entities/pro_membership_entity.dart';
 import '../../../pro/presentation/show_pro_bottom_sheet.dart';
-import 'apna_clinic_pro_home_banner.dart';
 
 /// Menu Pro entry: promo banner when not Pro, status card when active.
 class MenuProCard extends StatelessWidget {
@@ -17,7 +16,7 @@ class MenuProCard extends StatelessWidget {
     super.key,
     required this.membership,
     this.onTap,
-    this.promoImageUrl = ApnaClinicProHomeBanner.defaultImageUrl,
+    this.promoImageUrl = '',
   });
 
   final ProMembershipEntity? membership;
@@ -56,6 +55,7 @@ class _ProSubscribePromoCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final url = imageUrl.trim();
 
     return Material(
       color: Colors.transparent,
@@ -63,37 +63,52 @@ class _ProSubscribePromoCard extends StatelessWidget {
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: onTap,
-        child: CachedNetworkImage(
-          imageUrl: imageUrl,
-          fit: BoxFit.cover,
-          width: double.infinity,
-          placeholder: (_, _) => Container(
-            height: 140.h,
-            color: AppColors.clrE8F8F5,
-            alignment: Alignment.center,
-            child: SizedBox(
-              width: 24.w,
-              height: 24.w,
-              child: const CircularProgressIndicator(
-                strokeWidth: 2.5,
-                color: AppColors.clr1FAFA3,
+        child: url.isEmpty
+            ? _PromoFallback(label: l10n.proHomeCardFallbackCta)
+            : CachedNetworkImage(
+                imageUrl: url,
+                fit: BoxFit.cover,
+                width: double.infinity,
+                placeholder: (_, _) => Container(
+                  height: 140.h,
+                  color: AppColors.clrE8F8F5,
+                  alignment: Alignment.center,
+                  child: SizedBox(
+                    width: 24.w,
+                    height: 24.w,
+                    child: const CircularProgressIndicator(
+                      strokeWidth: 2.5,
+                      color: AppColors.clr1FAFA3,
+                    ),
+                  ),
+                ),
+                errorWidget: (_, _, _) =>
+                    _PromoFallback(label: l10n.proHomeCardFallbackCta),
               ),
-            ),
-          ),
-          errorWidget: (_, _, _) => Container(
-            height: 140.h,
-            color: AppColors.clrE8F8F5,
-            padding: EdgeInsets.all(16.w),
-            alignment: Alignment.centerLeft,
-            child: Text(
-              l10n.proHomeCardFallbackCta,
-              style: TextStyle(
-                color: AppColors.clr1FAFA3,
-                fontWeight: FontWeight.w700,
-                fontSize: 14.sp,
-              ),
-            ),
-          ),
+      ),
+    );
+  }
+}
+
+class _PromoFallback extends StatelessWidget {
+  const _PromoFallback({required this.label});
+
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 140.h,
+      width: double.infinity,
+      color: AppColors.clrE8F8F5,
+      padding: EdgeInsets.all(16.w),
+      alignment: Alignment.centerLeft,
+      child: Text(
+        label,
+        style: TextStyle(
+          color: AppColors.clr1FAFA3,
+          fontWeight: FontWeight.w700,
+          fontSize: 14.sp,
         ),
       ),
     );

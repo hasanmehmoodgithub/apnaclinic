@@ -10,15 +10,20 @@ class PharmacyBookingOrderStatusWidget extends StatelessWidget {
     super.key,
     required this.isCancelled,
     required this.steps,
+    this.cancelledLabel,
   });
 
   final bool isCancelled;
   final List<PharmacyBookingTimelineStepEntity> steps;
 
+  /// Display text from API `statusV2` when the order is cancelled/failed.
+  final String? cancelledLabel;
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final items = _buildItems(l10n);
+    final statusV2Label = cancelledLabel?.trim() ?? '';
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -32,7 +37,11 @@ class PharmacyBookingOrderStatusWidget extends StatelessWidget {
         ),
         SizedBox(height: 10.h),
         if (isCancelled)
-          _CancelledRow(label: l10n.pharmacyBookingStatusCancelled)
+          _CancelledRow(
+            label: statusV2Label.isNotEmpty
+                ? statusV2Label
+                : l10n.pharmacyBookingStatusCancelled,
+          )
         else
           ...List.generate(items.length, (index) {
             final item = items[index];

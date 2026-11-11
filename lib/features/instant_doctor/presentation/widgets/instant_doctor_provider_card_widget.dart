@@ -69,6 +69,7 @@ class InstantDoctorProviderCardWidget extends StatelessWidget {
                         isLoading: isLoading,
                         onPrimaryAction: onPrimaryAction,
                         onCancelSubscription: onCancelSubscription,
+                        showCancelMenu: !provider.product.isFreeWithPro,
                         actionHeight: _actionHeight,
                         actionRadius: _actionRadius,
                       )
@@ -223,6 +224,7 @@ class _SubscribedActions extends StatelessWidget {
     required this.isLoading,
     required this.onPrimaryAction,
     required this.onCancelSubscription,
+    required this.showCancelMenu,
     required this.actionHeight,
     required this.actionRadius,
   });
@@ -231,6 +233,7 @@ class _SubscribedActions extends StatelessWidget {
   final bool isLoading;
   final VoidCallback onPrimaryAction;
   final VoidCallback onCancelSubscription;
+  final bool showCancelMenu;
   final double actionHeight;
   final double actionRadius;
 
@@ -254,12 +257,14 @@ class _SubscribedActions extends StatelessWidget {
             fontSize: 15.sp,
           ),
         ),
-        SizedBox(width: 10.w),
-        InstantDoctorProviderOptionsMenuWidget(
-          size: actionHeight.h,
-          borderRadius: actionRadius.r,
-          onCancelSubscription: onCancelSubscription,
-        ),
+        if (showCancelMenu) ...[
+          SizedBox(width: 10.w),
+          InstantDoctorProviderOptionsMenuWidget(
+            size: actionHeight.h,
+            borderRadius: actionRadius.r,
+            onCancelSubscription: onCancelSubscription,
+          ),
+        ],
       ],
     );
   }
